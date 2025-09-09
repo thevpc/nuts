@@ -108,16 +108,16 @@ Several commands are available, and you can always manually run any java and non
 
 After installing nuts try this commands to install and run some interesting apps out there
 
-| Command                                   | Short Description                        |
-|-------------------------------------------|------------------------------------------|
+| Command                                  | Short Description                        |
+|------------------------------------------|------------------------------------------|
 | nuts io.github.jiashunx:masker-flappybird | run game flappybird                      |
-| nuts org.jmeld:jmeld#3.6.0                | run a folder diff tool                   |
-| nuts org.jd:jd-gui#1.6.6                  | run a java decompiler tool               |
-| nuts jpass:jpass#0.1.26-RELEASE           | jpass a Password Manager                 |
-| nuts org.jedit:jedit#5.7.0                | jedit text tool                          |
-| nuts netbeans-launcher                    | run a multi instance runner for netbeans |
-| nuts kifkif                               | run a file duplicates tool               |
-| nuts pnote                                | run a pnote taking tool                  |
-| nuts nops                                 | run a nops DevOps tool                   |
-| nuts ntexup --view                        | run a Latex like Presentation Too        |
-|                                           |                                          |
+| nuts org.jmeld:jmeld                     | run a folder diff tool                   |
+| nuts org.jd:jd-gui                       | run a java decompiler tool               |
+| nuts jpass:jpass                         | jpass a Password Manager                 |
+| nuts org.jedit:jedit                     | jedit text editor tool                   |
+| nuts netbeans-launcher                   | run a multi instance runner for netbeans |
+| nuts kifkif                              | run a file duplicates tool               |
+| nuts pnote                               | run a pnote taking tool                  |
+| nuts nops  --gui                         | run a nops DevOps tool                   |
+| nuts ntexup --view                       | run a Latex like Presentation Tool       |
+|                                          |                                          |
