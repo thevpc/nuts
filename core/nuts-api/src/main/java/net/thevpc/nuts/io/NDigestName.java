@@ -11,5 +11,4 @@ public interface NDigestName extends NComponent {
 
     String getDigestName(Object source);
 
-    String getDigestName(Object source, String sourceType);
 }
