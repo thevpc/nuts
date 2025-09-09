@@ -134,11 +134,11 @@ public class NMsgBuilder {
                     break;
                 }
                 case 800: {
-                    newMsg = newMsg.withIntent(NMsgIntent.INFO);
+                    newMsg = newMsg.withIntent(NMsgIntent.NOTICE);
                     break;
                 }
                 case 700: {
-                    newMsg = newMsg.withIntent(NMsgIntent.CONFIG);
+                    newMsg = newMsg.withIntent(NMsgIntent.INIT);
                     break;
                 }
                 case 500:
