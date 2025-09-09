@@ -1,0 +1,47 @@
+# Figures
+albattani, ibnsina, ibnbattuta, ibnrushd, alkhwarizmi, alkhayyam, ibnqurra, alrazi, ibnhaiyan,
+alkindi, ibnalhaytham, ibnzuhr, ibnkhaldun, ibnalbaitar,
+
+# Chartage
+hamilcar, hanno, sophonisba, hamilco, hasdrubal, mago, hannibal, barca, masinissa, maharbal, Dido,
+
+# Mythology
+minerva, jupiter, juno, neptune, mars, apollo, diana, vulcan, vesta, mercury, ceres, venus,
+pegasus, gorgon, medusa, olympus, athena, chimera, poseidon, zeus, phantom,
+
+# Cities
+tunis, sousse, sfax, nabeul, mednine, kairouan, gabes, bizerte, gafsa, ariana, manouba,
+zaghouan, beja, jendouba, elkef, siliana, monastir, mahdia, kasserine, sidibouzid, tataouine, tozeur, kebili
+
+
+# Scientists & Inventors:
+pasteur, mendel, watson, crick, fleming, bell, edison, marconi, rontgen, pavlov, sklodowska, lister, jenner, volta, ohm, ampere, watt, joule, kelvin, celsius,
+fahrenheit, doppler, hertz, pascal, coulomb, gauss, fibonacci, descartes, leibniz, bernoulli, euler, lagrange, fourier, laplace, riemann, cantor, godel,
+babbage, vonneumann, shannon, dijkstra, knuth, bernerslee, jobs, wozniak, gates, torvalds
+turing, lovelace, hopper, tesla, curie, einstein, feynman, darwin, galileo, newton,
+archimedes, davinci, faraday, hawking, bohr, kepler, maxwell, planck, euclid, pythagoras,
+meninsky, sinoussi, goodall, franklin, nobel, sagan, carver, lamarr, cassini,
+
+# Mythical Creatures & Animals:
+kraken, basilisk, sphinx, minotaur, centaur, cyclops, hydra, banshee, valkyrie, fenrir, leviathan, behemoth, thunderbird, quetzal, condor, albatross, pelican, heron, crane, stork, ibis, flamingo, peacock, cardinal, robin, wren, finch, canary, nightingale, mockingbird, jay, magpie, crow, vulture, kestrel, hawk, osprey, lynx, puma, leopard, ocelot, caracal, serval, mongoose, meerkat, otter, beaver, badger, wolverine, bear, moose, elk, deer, gazelle, antelope, zebra, giraffe, rhino, hippo, crocodile, alligator, iguana, gecko, chameleon, viper, python, mamba, anaconda, barracuda, marlin, swordfish, tuna, salmon, trout, pike, bass, carp, catfish, sturgeon, ray, octopus, squid, nautilus, seahorse, starfish, jellyfish, coral, anemone
+griffin, phoenix, dragon, unicorn, griffon, falcon, eagle, wolf, tiger, lion, panther, fox,
+sparrow, raven, owl, dolphin, shark, whale, elephant, cheetah, jaguar, cobra, taha
+
+# Historical Figures:
+caesar, alexander, cleopatra, napoleon, churchill, lincoln, washington, jefferson, franklin, roosevelt, gandhi, mandela, confucius, socrates, plato, aristotle, homer, virgil, dante, shakespeare, mozart, beethoven, bach, chopin, michelangelo, leonardo, raphael, picasso, vangogh, monet, rembrandt, rodin
+
+# Gemstones & Minerals:
+diamond, ruby, emerald, sapphire, topaz, amethyst, garnet, opal, turquoise, jade, onyx, agate, jasper, carnelian, citrine, peridot, aquamarine, tanzanite, malachite, lapis, quartz, obsidian, granite, marble, slate, flint, mica, pyrite, hematite, magnetite
+
+# Celestial Bodies:
+andromeda, orion, cassiopeia, lyra, cygnus, draco, ursa, leo, scorpio, aquarius, gemini, virgo, libra, aries, taurus, cancer, sagittarius, capricorn, pisces, polaris, sirius, vega, altair, rigel, betelgeuse, aldebaran, antares, spica, arcturus, canopus, proxima, alpha, beta, gamma, delta, epsilon, zeta, eta, theta, nova, pulsar, quasar, nebula, galaxy, cosmos, stellar, lunar, solar, eclipse, solstice, equinox, aurora, meteor, comet, asteroid
+
+# Geographic Features:
+atlas, everest, kilimanjaro, fuji, mckinley, whitney, rainier, shasta, hood, adams, baker, glacier, canyon, valley, mesa, plateau, ridge, peak, summit, crest, bluff, cliff, gorge, ravine, fjord, delta, estuary, bay, cove, inlet, strait, channel, sound, reef, atoll, island, archipelago, peninsula, cape, point, headland, promontory
+
+# Weather & Natural Phenomena:
+storm, tempest, hurricane, typhoon, cyclone, tornado, whirlwind, blizzard, avalanche, landslide, earthquake, tsunami, geyser, volcano, lava, magma, thunder, lightning, rainbow, prism, spectrum, aurora, twilight, dawn, dusk, midnight, noon, zenith, horizon, mirage, oasis
+
+# Abstract Concepts:
+harmony, melody, rhythm, symphony, crescendo, forte, allegro, andante, presto, staccato, legato, cadence, resonance, echo, vibration, frequency, amplitude, wavelength, spectrum, matrix, vector, scalar, tensor, algorithm, protocol, cipher, enigma, paradox, infinity, eternity, momentum, velocity, acceleration, gravity, magnetism, electricity, energy, entropy, equilibrium, catalyst, synthesis, analysis, hypothesis, theory, axiom, theorem, proof, logic, reason, wisdom, knowledge, insight, intuition, inspiration, creativity, imagination, vision, dream, hope, courage, strength, power, force, unity, balance, serenity, tranquility, peace
+
