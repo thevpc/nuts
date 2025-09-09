@@ -1,0 +1,13 @@
+#!/bin/bash
+NUTS_VERSION=0.8.6
+NUTS_JAVA_HOME=/home/vpc/.jdks/corretto-1.8.0_452/
+NUTS_APP_JAR=~/.m2/repository/net/thevpc/nuts/nuts-app/$NUTS_VERSION/nuts-app-$NUTS_VERSION.jar
+
+
+if [ x"$NUTS_JAVA_HOME" != "x" ] ; then
+    JAVA_CMD="$NUTS_JAVA_HOME/bin/java";
+elif [ x"${JAVA_HOME}" != "x" ] ; then
+    JAVA_CMD="${JAVA_HOME}/bin/java";
+fi
+
+$JAVA_CMD $NUTS_DEBUG_ARG -jar "$NUTS_APP_JAR" -ZyS --stacktrace --sandbox net.thevpc.nuts.installers:nuts-release-tool
