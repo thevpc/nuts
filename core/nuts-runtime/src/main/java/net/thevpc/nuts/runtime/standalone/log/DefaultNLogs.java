@@ -42,33 +42,6 @@ public class DefaultNLogs implements NLogs {
     }
 
     @Override
-    public List<Handler> getHandlers() {
-        return model.getHandlers();
-    }
-
-    @Override
-    public NLogs removeHandler(Handler handler) {
-        model.removeHandler(handler);
-        return this;
-    }
-
-    @Override
-    public NLogs addHandler(Handler handler) {
-        model.addHandler(handler);
-        return this;
-    }
-
-    @Override
-    public Handler getTermHandler() {
-        return model.getTermHandler();
-    }
-
-    @Override
-    public Handler getFileHandler() {
-        return model.getFileHandler();
-    }
-
-    @Override
     public NLog getLogger(String name) {
         return model.getLogger(name);
     }
