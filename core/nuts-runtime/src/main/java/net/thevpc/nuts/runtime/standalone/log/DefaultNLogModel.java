@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.NStoreType;
-import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.*;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.NCallable;
@@ -36,10 +35,8 @@ import net.thevpc.nuts.util.NMsg;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 /**
@@ -49,8 +46,8 @@ public class DefaultNLogModel {
     private static Handler[] EMPTY = new Handler[0];
     private NWorkspace workspace;
     //    private NPrintStream out;
-    private Handler consoleHandler;
-    private Handler fileHandler;
+    private NLogConsoleHandler consoleHandler;
+    private NLogFileHandler fileHandler;
     private NLogConfig logConfig = new NLogConfig();
     private List<Handler> extraHandlers = new ArrayList<>();
     private Path logFolder;
@@ -78,6 +75,16 @@ public class DefaultNLogModel {
             logConfig.setLogFileBase(lc.getLogFileBase());
             logConfig.setLogFileSize(lc.getLogFileSize());
         }
+        consoleHandler = new NLogConsoleHandler(this);
+        consoleHandler.suspendTerminal();
+        try {
+            fileHandler = NLogFileHandler.create(
+                    logConfig, true, logFolder);
+            fileHandler.setLevel(logConfig.getLogFileLevel());
+        } catch (Exception ex) {
+            Logger.getLogger(DefaultNLogs.class.getName()).log(Level.FINE, "unable to create file handler", ex);
+        }
+
 //        out = ((NWorkspaceExt) ws).getModel().bootModel.getSystemTerminal().err();
     }
 
@@ -143,12 +150,12 @@ public class DefaultNLogModel {
     }
 
 
-    public Handler getTermHandler() {
+    public NLogConsoleHandler getTermHandler() {
         return consoleHandler;
     }
 
 
-    public Handler getFileHandler() {
+    public NLogSPI getFileHandler() {
         return fileHandler;
     }
 
@@ -163,7 +170,7 @@ public class DefaultNLogModel {
                 public void log(NMsg message) {
 
                 }
-            }, false, this, false);
+            }, this, false);
         }
         return nullLogger;
     }
@@ -172,7 +179,7 @@ public class DefaultNLogModel {
         Map<String, NLog> loaded = loaded();
         NLog y = loaded.get(name);
         if (y == null) {
-            y = new DefaultNLog(name, getFactorySPI().getLogSPI(name), false, this, false);
+            y = new DefaultNLog(name, getFactorySPI().getLogSPI(name), this, false);
             loaded.put(name, y);
         }
         return y;
@@ -182,7 +189,7 @@ public class DefaultNLogModel {
         if (name == null) {
             name = "LOGGER-" + UUID.randomUUID();
         }
-        return new DefaultNLog(name, spi, false, this, true);
+        return new DefaultNLog(name, spi, this, true);
     }
 
 
@@ -197,9 +204,6 @@ public class DefaultNLogModel {
             level = Level.INFO;
         }
         this.logConfig.setLogFileLevel(level);
-        if (consoleHandler != null) {
-            consoleHandler.setLevel(level);
-        }
     }
 
 
@@ -218,46 +222,6 @@ public class DefaultNLogModel {
             fileHandler.setLevel(level);
         }
 
-    }
-
-    public void updateHandlers(LogRecord record) {
-        updateTermHandler(record);
-        updateFileHandler(record);
-    }
-
-    public void updateFileHandler(LogRecord record) {
-        if (fileHandler == null) {
-            if (logConfig.getLogFileLevel() != Level.OFF) {
-                if (fileHandler == null) {
-                    try {
-                        fileHandler = NLogFileHandler.create(
-                                logConfig, true, logFolder);
-                        fileHandler.setLevel(logConfig.getLogFileLevel());
-                    } catch (Exception ex) {
-                        Logger.getLogger(DefaultNLogs.class.getName()).log(Level.FINE, "unable to create file handler", ex);
-                    }
-                }
-            }
-        }
-    }
-
-    public void updateTermHandler(LogRecord record) {
-        NSession session = NLogUtils.resolveSession(record);
-        NPrintStream out = session.err();
-        if (consoleHandler != null) {
-            if (consoleHandler instanceof NLogConsoleHandler) {
-                NLogConsoleHandler ch = (NLogConsoleHandler) consoleHandler;
-                if (out != ch.out()) {
-                    ch.setOutputStream(out, false);
-                }
-            } else {
-                consoleHandler.flush(); // do not close!!
-            }
-            consoleHandler.setLevel(logConfig.getLogTermLevel());
-        } else {
-            consoleHandler = new NLogConsoleHandler(out, false);
-            consoleHandler.setLevel(logConfig.getLogTermLevel());
-        }
     }
 
     public NWorkspace getWorkspace() {
