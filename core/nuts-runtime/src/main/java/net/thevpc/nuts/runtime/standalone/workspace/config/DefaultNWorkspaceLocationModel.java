@@ -207,6 +207,7 @@ public class DefaultNWorkspaceLocationModel {
             case "java-source":
             case "javadoc":
             case "eclipse-plugin":
+            case "orbit": //eclipse orbit
                 return ".jar";
             case "dll":
             case "so":
