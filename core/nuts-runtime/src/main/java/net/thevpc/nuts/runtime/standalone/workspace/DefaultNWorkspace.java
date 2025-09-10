@@ -294,7 +294,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 .setDefaultTerminal(NTerminal.of())
         ;
         wsModel.bootModel.bootSession().setTerminal(NTerminal.of());
-        ((DefaultNLog) wsModel.LOG).resumeTerminal();
+        wsModel.logModel.getTermHandler().resumeTerminal();
 
         for (NPathFactorySPI nPathFactorySPI : wsModel.extensions.createServiceLoader(NPathFactorySPI.class, NWorkspace.class).loadAll(this)) {
             this.wsModel.configModel.addPathFactory(nPathFactorySPI);
