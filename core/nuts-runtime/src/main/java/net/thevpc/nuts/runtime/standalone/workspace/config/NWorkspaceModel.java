@@ -74,7 +74,7 @@ public class NWorkspaceModel {
     public NWorkspaceModel(NWorkspace workspace, NBootOptions initialBootOptions) {
         this.workspace = workspace;
         this.logModel = new DefaultNLogModel(workspace);
-        this.LOG = new DefaultNLog(DefaultNWorkspace.class.getName(), new NLogSPIJUL(DefaultNWorkspace.class.getName()), true, logModel,false);
+        this.LOG = new DefaultNLog(DefaultNWorkspace.class.getName(), new NLogSPIJUL(DefaultNWorkspace.class.getName()), logModel,false);
         if (initialBootOptions.getIsolationLevel().orNull() == NIsolationLevel.MEMORY) {
             this.store = new NWorkspaceStoreInMemory();
         } else {
