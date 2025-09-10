@@ -33,13 +33,11 @@ import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NObservableMapListener;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NRunnable;
 
 import java.io.Closeable;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
-import java.util.logging.Filter;
 import java.util.logging.Level;
 
 /**
@@ -558,13 +556,9 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
 
     NSession setLogTermLevel(Level level);
 
-    Filter getLogTermFilter();
-
     boolean isVerboseTerm();
 
     boolean isVerboseFile();
-
-    NSession setLogFilter(Filter filter);
 
     /**
      * configure session based on Workspace options
@@ -578,10 +572,6 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
     Level getLogFileLevel();
 
     NSession setLogFileLevel(Level logFileLevel);
-
-    Filter getLogFileFilter();
-
-    NSession setLogFileFilter(Filter logFileFilter);
 
     NArrayElementBuilder eout();
 
