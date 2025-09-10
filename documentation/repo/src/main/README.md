@@ -105,19 +105,25 @@ More details at [https://thevpc.github.io/nuts/doc-nuts.html](https://thevpc.git
 ## Try Nuts (Cool Examples)
 
 
-| Command                                   | Short Description                        |
-|-------------------------------------------|------------------------------------------|
-| nuts io.github.jiashunx:masker-flappybird | run game flappybird                      |
-| nuts org.jmeld:jmeld                      | run a folder diff tool                   |
-| nuts org.jd:jd-gui                        | run a java decompiler tool               |
-| nuts jpass:jpass                          | jpass a Password Manager                 |
-| nuts org.jedit:jedit                      | jedit text editor tool                   |
-| nuts netbeans-launcher                    | run a multi instance runner for netbeans |
-| nuts kifkif                               | run a file duplicates tool               |
-| nuts pnote                                | run a pnote taking tool                  |
-| nuts nops  --gui                          | run a nops DevOps tool                   |
-| nuts ntexup --view                        | run a Latex like Presentation Tool       |
-|                                           |                                          |
+
+| Command                                                                                    | Short Description                                                             |
+|--------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| nuts io.github.jiashunx:masker-flappybird                                                  | install & run game flappybird                                                 |
+| nuts install com.github.anuken:mindustry-desktop                                           | install & run game mindustry                                                  |
+| nuts install com.github.anuken:mindustry-server                                            | install & run game mindustry server                                           |
+| nuts org.jmeld:jmeld                                                                       | install & run a folder diff tool                                              |
+| nuts org.jd:jd-gui                                                                         | install & run a java decompiler tool                                          |
+| nuts jpass:jpass                                                                           | install & run JPass a Password Manager                                        |
+| nuts org.jedit:jedit                                                                       | install & run JEdit text editor tool                                          |
+| nuts netbeans-launcher                                                                     | install & run a multi instance runner for netbeans                            |
+| nuts kifkif                                                                                | install & run a file duplicates tool                                          |
+| nuts pnote                                                                                 | install & run a pnote taking tool                                             |
+| nuts nops  --gui                                                                           | install & run a nops DevOps tool                                              |
+| nuts ntexup --view                                                                         | install & run a Latex like Presentation Tool                                  |
+| nuts com.jgoodies:jdiskreport                                                              | install & run JDiskReport Disk Tool                                           |
+| nuts com.github.todense:omnigraph                                                          | install & run Omnigraph Tool                                                  |
+| nuts org.springframework.boot:spring-boot-cli  init --dependencies=web,data-jpa my-project | install & run spring boot client and create new project using spring-boot-cli |
+| nuts com.google.tsunami:tsunami-main --ip-v4-target=127.0.0.1                              | install & run google tsunami a network security scanner tool                  |
 
 ## Contribute
 ```nuts``` is open-source and evolving. Join us!
