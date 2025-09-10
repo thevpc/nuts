@@ -1068,9 +1068,7 @@ public class DefaultNBootOptions implements NBootOptions {
                 v = new NBootLogConfig();
                 v.setLogFileBase(c.getLogFileBase());
                 v.setLogFileLevel(c.getLogFileLevel());
-                v.setLogFileFilter(c.getLogFileFilter());
                 v.setLogTermLevel(c.getLogTermLevel());
-                v.setLogTermFilter(c.getLogTermFilter());
                 v.setLogFileSize(c.getLogFileSize());
                 v.setLogFileCount(c.getLogFileCount());
                 v.setLogFileName(c.getLogFileName());
