@@ -43,9 +43,7 @@ public class NBootLogConfig implements Serializable, Cloneable {
     public static NBootLogConfig BLANK=new NBootLogConfig().readOnly();
 
     private Level logFileLevel = Level.OFF;
-    private Filter logFileFilter = null;
     private Level logTermLevel = Level.OFF;
-    private Filter logTermFilter = null;
     /**
      * Log File Size in Mega Bytes
      */
@@ -63,37 +61,11 @@ public class NBootLogConfig implements Serializable, Cloneable {
         if (other != null) {
             this.logFileLevel = other.logFileLevel;
             this.logTermLevel = other.logTermLevel;
-            this.logFileFilter = other.logFileFilter;
-            this.logTermFilter = other.logTermFilter;
             this.logFileSize = other.logFileSize;
             this.logFileCount = other.logFileCount;
             this.logFileName = other.logFileName;
             this.logFileBase = other.logFileBase;
         }
-    }
-
-    public Filter getLogFileFilter() {
-        return logFileFilter;
-    }
-
-    public NBootLogConfig setLogFileFilter(Filter logFileFilter) {
-        if(readOnly){
-            throw new IllegalArgumentException("read only");
-        }
-        this.logFileFilter = logFileFilter;
-        return this;
-    }
-
-    public Filter getLogTermFilter() {
-        return logTermFilter;
-    }
-
-    public NBootLogConfig setLogTermFilter(Filter logTermFilter) {
-        if(readOnly){
-            throw new IllegalArgumentException("read only");
-        }
-        this.logTermFilter = logTermFilter;
-        return this;
     }
 
     public Level getLogFileLevel() {
