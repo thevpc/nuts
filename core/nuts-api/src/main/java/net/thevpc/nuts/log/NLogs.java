@@ -53,43 +53,6 @@ public interface NLogs extends NComponent {
     <T> T callWithContext(NLogContext context, NCallable<T> callable);
 
     /**
-     * Log handler
-     *
-     * @return Log handler
-     */
-    List<Handler> getHandlers();
-
-    /**
-     * remove the given handler
-     *
-     * @param handler handler to remove
-     * @return this
-     */
-    NLogs removeHandler(Handler handler);
-
-    /**
-     * add the given handler
-     *
-     * @param handler handler to add
-     * @return this
-     */
-    NLogs addHandler(Handler handler);
-
-    /**
-     * terminal handler
-     *
-     * @return terminal handler
-     */
-    Handler getTermHandler();
-
-    /**
-     * file handler
-     *
-     * @return file handler
-     */
-    Handler getFileHandler();
-
-    /**
      * create an instance of {@link NLog}
      *
      * @param name logger name
