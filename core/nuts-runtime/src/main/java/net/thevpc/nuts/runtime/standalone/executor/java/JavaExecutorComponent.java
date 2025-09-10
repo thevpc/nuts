@@ -148,11 +148,9 @@ public class JavaExecutorComponent implements NExecutorComponent {
         }
         options.setExpireTime(session.getExpireTime().orNull());
 
-        Filter logFileFilter = session.getLogFileFilter();
-        Filter logTermFilter = session.getLogTermFilter();
         Level logTermLevel = session.getLogTermLevel();
         Level logFileLevel = session.getLogFileLevel();
-        if (logFileFilter != null || logTermFilter != null || logTermLevel != null || logFileLevel != null) {
+        if (logTermLevel != null || logFileLevel != null) {
             NLogConfig lc = options.getLogConfig().orNull();
             if (lc == null) {
                 lc = new NLogConfig();
@@ -164,12 +162,6 @@ public class JavaExecutorComponent implements NExecutorComponent {
             }
             if (logFileLevel != null) {
                 lc.setLogFileLevel(logFileLevel);
-            }
-            if (logTermFilter != null) {
-                lc.setLogTermFilter(logTermFilter);
-            }
-            if (logFileFilter != null) {
-                lc.setLogFileFilter(logFileFilter);
             }
         }
         for (Iterator<String> iterator = executionContext.getExecutorOptions().iterator(); iterator.hasNext(); ) {
