@@ -76,9 +76,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     private Boolean dry;
     private Boolean showStacktrace;
     private Level logTermLevel;
-    private Filter logTermFilter;
     private Level logFileLevel;
-    private Filter logFileFilter;
     private NConfirmationMode confirm = null;
     private NContentType outputFormat;
     private NArrayElementBuilder eout;
@@ -888,9 +886,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
         this.outputFormatOptions.addAll(other.getOutputFormatOptions());
         this.progressOptions = other.getProgressOptions();
         this.logTermLevel = other.getLogTermLevel();
-        this.logTermFilter = other.getLogTermFilter();
         this.logFileLevel = other.getLogFileLevel();
-        this.logFileFilter = other.getLogFileFilter();
         this.eout = other.eout();
         this.dependencySolver = other.getDependencySolver();
         return this;
@@ -916,9 +912,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
             NLogConfig logConfig = options.getLogConfig().orNull();
             if (logConfig != null) {
                 this.logTermLevel = logConfig.getLogTermLevel();
-                this.logTermFilter = logConfig.getLogTermFilter();
                 this.logFileLevel = logConfig.getLogFileLevel();
-                this.logFileFilter = logConfig.getLogFileFilter();
             }
             this.dependencySolver = options.getDependencySolver().orNull();
         }
@@ -944,9 +938,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
             NLogConfig logConfig = options.getLogConfig().orNull();
             if (logConfig != null) {
                 this.logTermLevel = logConfig.getLogTermLevel();
-                this.logTermFilter = logConfig.getLogTermFilter();
                 this.logFileLevel = logConfig.getLogFileLevel();
-                this.logFileFilter = logConfig.getLogFileFilter();
             }
             this.dependencySolver = options.getDependencySolver().orNull();
         }
@@ -1379,17 +1371,6 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public Filter getLogTermFilter() {
-        return logTermFilter;
-    }
-
-    @Override
-    public NSession setLogFilter(Filter filter) {
-        this.logTermFilter = filter;
-        return this;
-    }
-
-    @Override
     public NSession configure(NWorkspaceOptions options) {
         if (options != null) {
             if (options.getCached().isPresent()) {
@@ -1467,17 +1448,6 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     @Override
     public NSession setLogFileLevel(Level logFileLevel) {
         this.logFileLevel = logFileLevel;
-        return this;
-    }
-
-    @Override
-    public Filter getLogFileFilter() {
-        return logFileFilter;
-    }
-
-    @Override
-    public NSession setLogFileFilter(Filter logFileFilter) {
-        this.logFileFilter = logFileFilter;
         return this;
     }
 
