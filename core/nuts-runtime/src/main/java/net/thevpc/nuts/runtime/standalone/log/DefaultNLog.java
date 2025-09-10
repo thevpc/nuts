@@ -16,22 +16,16 @@ import java.util.logging.*;
 public class DefaultNLog implements NLog {
     private NLogSPI logSPI;
     private static final int offValue = Level.OFF.intValue();
-    private final LinkedList<NMsg> suspendedTerminalRecords = new LinkedList<>();
-    private int suspendedMax = 100;
-    private boolean suspendTerminalMode = false;
     private String name;
     private NLog scoped;
     private DefaultNLogModel model;
     private boolean custom;
 
-    public DefaultNLog(String name, NLogSPI logSPI, boolean suspended, DefaultNLogModel model, boolean custom) {
+    public DefaultNLog(String name, NLogSPI logSPI, DefaultNLogModel model, boolean custom) {
         this.name = name;
         this.logSPI = logSPI;
         this.model = model;
         this.custom = custom;
-        if (suspended) {
-            suspendTerminal();
-        }
     }
 
     public boolean isCustom() {
@@ -69,63 +63,60 @@ public class DefaultNLog implements NLog {
 
     public boolean isLoggable(Level level) {
         DefaultNLogModel logModel = NWorkspaceExt.of().getModel().logModel;
-        Level tlvl = logModel.getTermLevel();
-        Level flvl = logModel.getFileLevel();
-        List<Handler> handlers = logModel.getHandlers();
-        if (isLoggable(level, tlvl)) {
+        if (logModel.getTermHandler().isLoggable(level)) {
             return true;
         }
-        if (isLoggable(level, flvl)) {
+        if (logModel.getFileHandler() != null && logModel.getFileHandler().isLoggable(level)) {
             return true;
         }
-        for (Handler handler : handlers) {
-            if (isLoggable(level, handler.getLevel())) {
-                return true;
-            }
-        }
-
-        if (logSPI.isLoggable(level)) {
-            return true;
-        }
-        return false;
+        return logSPI.isLoggable(level);
     }
 
     public void log(NMsg msg) {
         if (msg == null) {
             return;
         }
-        if (!isLoggable(msg.getLevel())) {
-            return;
+        DefaultNLogModel logModel = NWorkspaceExt.of().getModel().logModel;
+
+        if (logModel.getTermHandler().isLoggable(msg.getLevel())) {
+            logModel.getTermHandler().log(msg);
         }
-        logSPI.log(prepareMsg(msg));
+        if (logModel.getFileHandler() != null && logModel.getFileHandler().isLoggable(msg.getLevel())) {
+            logModel.getFileHandler().log(msg);
+        }
+        if (logSPI.isLoggable(msg.getLevel())) {
+            logSPI.log(prepareMsg(msg));
+        }
     }
 
     @Override
     public void log(Level level, Supplier<NMsg> msgSupplier) {
         NAssert.requireNonNull(level, "level");
-        if (!isLoggable(level)) {
+        DefaultNLogModel logModel = NWorkspaceExt.of().getModel().logModel;
+        boolean term = logModel.getTermHandler().isLoggable(level);
+        boolean file = logModel.getFileHandler() != null && logModel.getFileHandler().isLoggable(level);
+        boolean other = logSPI.isLoggable(level);
+        if (!term && !file && !other) {
             return;
         }
+
         NMsg msg = msgSupplier.get();
         if (msg == null) {
             msg = prepareMsg(NMsg.ofPlain("").withLevel(level));
         } else {
             msg = prepareMsg(msg.withLevel(level));
         }
-
-//        DefaultNLogModel logManager = NWorkspaceExt.of().getModel().logModel;
-        //logManager.updateHandlers(record);
-        if (suspendTerminalMode) {
-            synchronized (suspendedTerminalRecords) {
-                suspendedTerminalRecords.add(msg);
-                if (suspendedTerminalRecords.size() > suspendedMax) {
-                    NMsg r = suspendedTerminalRecords.removeFirst();
-                    logSPI.log(r);
-                }
-            }
+        if (term) {
+            logModel.getTermHandler().log(msg);
         }
-        logSPI.log(msg);
+        if (file) {
+            logModel.getFileHandler().log(msg);
+        }
+        if (other) {
+            logSPI.log(prepareMsg(msg));
+        }
     }
+
 
     @Override
     public NLog scoped() {
@@ -134,22 +125,6 @@ public class DefaultNLog implements NLog {
         }
         return scoped;
     }
-
-    public void suspendTerminal() {
-        suspendTerminalMode = true;
-    }
-
-    public void resumeTerminal() {
-        suspendTerminalMode = false;
-        synchronized (suspendedTerminalRecords) {
-            for (Iterator<NMsg> iterator = suspendedTerminalRecords.iterator(); iterator.hasNext(); ) {
-                NMsg r = iterator.next();
-                iterator.remove();
-                logSPI.log(r);
-            }
-        }
-    }
-
 
     private NMsg prepareMsg(NMsg other) {
         NLogContext c = NLogs.of().getContext();
