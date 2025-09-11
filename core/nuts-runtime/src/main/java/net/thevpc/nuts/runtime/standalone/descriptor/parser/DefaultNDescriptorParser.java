@@ -190,6 +190,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                         String mainClass = null;
                         String implVendorId = null;
                         String implVendorTitle = null;
+                        String implTitle = null;
                         Set<NDependency> deps = new LinkedHashSet<>();
                         NId explicitId = null;
                         Map<String, String> all = new HashMap<>();
@@ -206,6 +207,9 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                             }
                             if ("Implementation-Vendor-Id".equals(attrName.toString())) {
                                 implVendorId = NStringUtils.trimToNull(attrs.getValue(attrName));
+                            }
+                            if ("Implementation-Title".equals(attrName.toString())) {
+                                implTitle = NStringUtils.trimToNull(attrs.getValue(attrName));
                             }
                             if ("Implementation-Vendor-Title".equals(attrName.toString())) {
                                 implVendorTitle = NStringUtils.trimToNull(attrs.getValue(attrName));
@@ -225,6 +229,21 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                             }
                             all.put(attrName.toString(), NStringUtils.trimToNull(attrs.getValue(attrName)));
                         }
+                        String groupId=null;
+                        String artifactId=null;
+                        String artifactVersion=NBlankable.isBlank(mainVersion) ? "1.0" : mainVersion.trim();
+                        if(!NBlankable.isBlank(implVendorId) &&  validGroupId(implVendorId.trim())){
+                            groupId=implVendorId.trim();
+                        }
+                        if(!NBlankable.isBlank(implTitle) &&  validArtifactId(implTitle)){
+                            artifactId=implTitle.trim();
+                        }
+                        if (explicitId == null && !NBlankable.isBlank(groupId) && !NBlankable.isBlank(artifactId)) {
+                            explicitId = NIdBuilder.of(groupId, artifactId)
+                                    .setVersion(
+                                            NBlankable.isBlank(artifactVersion) ? "1.0" : artifactVersion.trim()
+                                    ).build();
+                        }
                         if (explicitId == null) {
                             if (automaticModuleName == null && implVendorId == null) {
                                 if (!NBlankable.isBlank(mainClass)) {
@@ -233,16 +252,15 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                             } else if (automaticModuleName == null && implVendorId != null) {
                                 automaticModuleName = implVendorId;
                             }
-                            if (automaticModuleName != null
-                                    || mainVersion != null
-                                    || !deps.isEmpty()
-                            ) {
-                                String groupId = automaticModuleName == null ? "" : CorePlatformUtils.getPackageName(automaticModuleName);
-                                String artifactId = automaticModuleName == null ? "" : CorePlatformUtils.getSimpleClassName(automaticModuleName);
+                            if (!NBlankable.isBlank(automaticModuleName)) {
+                                if(NBlankable.isBlank(groupId) && !NBlankable.isBlank(CorePlatformUtils.getPackageName(automaticModuleName))) {
+                                    groupId = NStringUtils.trim(CorePlatformUtils.getPackageName(automaticModuleName));
+                                }
+                                if(NBlankable.isBlank(artifactId) && !NBlankable.isBlank(CorePlatformUtils.getSimpleClassName(automaticModuleName))) {
+                                    artifactId = NStringUtils.trim(CorePlatformUtils.getSimpleClassName(automaticModuleName));
+                                }
                                 explicitId = NIdBuilder.of(groupId, artifactId)
-                                        .setVersion(
-                                                NBlankable.isBlank(mainVersion) ? "1.0" : mainVersion.trim()
-                                        ).build();
+                                        .setVersion(artifactVersion).build();
                             }
                         }
                         if (explicitId != null || !deps.isEmpty()) {
@@ -326,5 +344,12 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
         return NConstants.Support.DEFAULT_SUPPORT;
+    }
+
+    public static boolean validGroupId(String g){
+        return g != null && NId.GROUP_ID_PATTERN.matcher(g).matches();
+    }
+    public static boolean validArtifactId(String a){
+        return a != null && NId.ARTIFACT_ID_PATTERN.matcher(a).matches();
     }
 }
