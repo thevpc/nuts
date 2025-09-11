@@ -47,6 +47,8 @@ public interface NId extends Comparable<NId>, NBlankable {
     NId API_ID = get(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_API_ARTIFACT_ID, "").get();
     NId RUNTIME_ID = get(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_RUNTIME_ARTIFACT_ID, "").get();
     Pattern PATTERN = Pattern.compile("^((?<group>[a-zA-Z0-9_.${}*-]*):)?(?<artifact>[a-zA-Z0-9_.${}*-]*)(:(?<classifier>[a-zA-Z0-9_.${}*-]*))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
+    Pattern GROUP_ID_PATTERN = Pattern.compile("^[A-Za-z][A-Za-z0-9_]*(?:\\.[A-Za-z][A-Za-z0-9_]*)*$");
+    Pattern ARTIFACT_ID_PATTERN = Pattern.compile("^[A-Za-z0-9]+(?:[._-][A-Za-z0-9]+)*$");
     NId BLANK = new DefaultNId();
 
     static NOptional<List<NId>> getList(String value) {
