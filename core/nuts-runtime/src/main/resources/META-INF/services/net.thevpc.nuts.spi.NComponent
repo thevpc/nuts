@@ -110,12 +110,10 @@ net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI
 net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNLibPaths
 net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest
 net.thevpc.nuts.runtime.standalone.xtra.time.DefaultNInputStreamMonitor
-net.thevpc.nuts.runtime.standalone.xtra.lock.DefaultNLockBuilder
 net.thevpc.nuts.runtime.standalone.xtra.cp.DefaultNCp
 net.thevpc.nuts.runtime.standalone.xtra.ps.DefaultNPs
 net.thevpc.nuts.runtime.standalone.xtra.compress.DefaultNCompress
 net.thevpc.nuts.runtime.standalone.xtra.compress.DefaultNUncompress
-net.thevpc.nuts.runtime.standalone.xtra.scheduler.DefaultNScheduler
 net.thevpc.nuts.runtime.standalone.descriptor.parser.DefaultNDescriptorParser
 net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder
 
@@ -169,3 +167,8 @@ net.thevpc.nuts.runtime.standalone.text.art.figlet.FigletNTextArtRendererFactory
 net.thevpc.nuts.runtime.standalone.text.art.img.PixelNTextArtRendererFactory
 net.thevpc.nuts.runtime.standalone.text.art.tree.TreeNTextArtRendererFactory
 net.thevpc.nuts.runtime.standalone.text.art.table.TableNTextArtRendererFactory
+
+
+net.thevpc.nuts.runtime.standalone.concurrent.DefaultNConcurrentFactory
+net.thevpc.nuts.runtime.standalone.concurrent.DefaultNLockBuilder
+net.thevpc.nuts.runtime.standalone.concurrent.DefaultNScheduler
