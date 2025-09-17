@@ -10,7 +10,10 @@ public interface NConcurrentFactory extends NComponent {
         return NExtensions.of(NConcurrentFactory.class);
     }
 
-    <T> NCachedValue<T> createCachedValue(Supplier<T> supplier);
+    <T> NCachedValue<T> cachedValue(Supplier<T> supplier);
 
-    <T> NStableValue<T> createStableValue(Supplier<T> supplier);
+    <T> NStableValue<T> stableValue(Supplier<T> supplier);
+
+    <T> NRateLimitedValueFactory rateLimitedValueFactory();
+    <T> NRateLimitedValueFactory rateLimitedValueFactory(NRateLimitedValueStore store);
 }
