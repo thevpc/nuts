@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 public interface NCachedValue<T> {
 
     static <T> NCachedValue<T> of(Supplier<T> supplier) {
-        return NConcurrentFactory.of().createCachedValue(supplier);
+        return NConcurrentFactory.of().cachedValue(supplier);
     }
 
     NCachedValue<T> setExpiry(Duration expiry);
