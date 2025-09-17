@@ -718,6 +718,8 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
         Matcher matchAny(Consumer<NArg> consumer);
 
+        Matcher skip();
+
         Matcher matchAnyMultiple(Consumer<NCmdLine> consumer);
 
         Matcher matchTrueFlag(Consumer<NArg> consumer);
