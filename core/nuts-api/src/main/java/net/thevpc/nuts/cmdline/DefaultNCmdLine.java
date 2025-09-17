@@ -1712,6 +1712,24 @@ public class DefaultNCmdLine implements NCmdLine {
             });
             return selector;
         }
+        @Override
+        public Matcher skip() {
+            selector.matchAll(new NCmdLineProcessor() {
+                @Override
+                public boolean process(NCmdLine cmdLine) {
+                    if (!checkCondition(cmdLine)) {
+                        return false;
+                    }
+                    NOptional<NArg> v = selector.cmdLine.next();
+                    if (v.isPresent()) {
+                        return true;
+                    }
+                    return false;
+
+                }
+            });
+            return selector;
+        }
 
         @Override
         public Matcher matchTrueFlag(Consumer<NArg> consumer) {
