@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 public interface NStableValue<T> {
 
     static <T> NStableValue<T> of(Supplier<T> supplier) {
-        return NConcurrentFactory.of().createStableValue(supplier);
+        return NConcurrentFactory.of().stableValue(supplier);
     }
 
     T get();
