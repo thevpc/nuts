@@ -821,7 +821,7 @@
 
                                                     for (int i = 0; i < 15; i++) {
                                                         NRateLimitValueResult res = limiter.take();
-                                                        if (res.isAccepted()) {
+                                                        if (res.success()) {
                                                             NOut.println("Action " + i + " allowed at " + Instant.now());
                                                         } else {
                                                             NOut.println("Action " + i + " rejected. Retry after "
