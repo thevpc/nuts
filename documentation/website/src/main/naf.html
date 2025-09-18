@@ -768,12 +768,10 @@
                                         <div class="carousel-slide">
                                             <div class="col col--3">
                                                 <h3 class="feature-title">Running Limited Actions with claimAndRun</h3>
-                                                <p>Instead of manually checking if an action is allowed,
-                                                    <code>claimAndRun</code> lets you wrap your logic in a runnable.
-                                                    The code executes only if the limiter successfully claims a slot.
-                                                    You can also define multiple independent limits (per minute, per
-                                                    day, etc.)
-                                                    in a single limiter.
+                                                <p>
+                                                    Instead of consuming tokens immediately, <code>claimAndRun</code> will wait until the limiter can provide a slot before executing your code. This is useful when you want the action to eventually run rather than fail.
+                                                    You can also define multiple independent limits (per minute, per day, etc.) in a single limiter, and <code>claimAndRun</code> will respect all limits before executing.
+                                                </p>
                                                 <pre>
                                                     <code class="language-java">
                                                     /// Example 2: Using claimAndRun
