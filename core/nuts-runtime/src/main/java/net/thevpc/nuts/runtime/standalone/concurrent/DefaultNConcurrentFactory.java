@@ -10,8 +10,8 @@ import java.util.function.Supplier;
 
 @NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNConcurrentFactory implements NConcurrentFactory {
-    private NRateLimitedValueStore memoryStore = new NRateLimitedValueStoreMemory();
-    private NRateLimitedValueFactory memoryFactory = new NRateLimitedValueFactoryImpl(memoryStore);
+    private NRateLimitValueStore memoryStore = new NRateLimitValueStoreMemory();
+    private NRateLimitValueFactory memoryFactory = new NRateLimitValueFactoryImpl(memoryStore);
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
@@ -19,13 +19,13 @@ public class DefaultNConcurrentFactory implements NConcurrentFactory {
     }
 
     @Override
-    public <T> NRateLimitedValueFactory rateLimitedValueFactory() {
+    public <T> NRateLimitValueFactory rateLimitValueFactory() {
         return memoryFactory;
     }
 
     @Override
-    public <T> NRateLimitedValueFactory rateLimitedValueFactory(NRateLimitedValueStore store) {
-        return store == null ? memoryFactory : new NRateLimitedValueFactoryImpl(store);
+    public <T> NRateLimitValueFactory rateLimitValueFactory(NRateLimitValueStore store) {
+        return store == null ? memoryFactory : new NRateLimitValueFactoryImpl(store);
     }
 
     @Override
