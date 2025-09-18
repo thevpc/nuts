@@ -7,16 +7,13 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.NBootOptionsBuilder;
 import net.thevpc.nuts.NOut;
-import net.thevpc.nuts.concurrent.NRateLimitDefaultStrategy;
-import net.thevpc.nuts.concurrent.NRateLimitedValue;
-import net.thevpc.nuts.concurrent.NRateLimitedValueFactory;
+import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 
 /**
@@ -32,54 +29,56 @@ public class RateLimitedValueTest {
 
     @Test
     public void test1() {
-        NRateLimitedValueFactory factory = NRateLimitedValueFactory.of();
-        NRateLimitedValue lv = factory.value("example").withLimit("seconds", 10).per(Duration.ofSeconds(2))
+        NRateLimitValueFactory factory = NRateLimitValueFactory.of();
+        NRateLimitValue lv = factory.valueBuilder("example")
+                .withLimit("10x2seconds", 10).per(Duration.ofSeconds(2))
                 .build();
 
         for (int i = 0; i < 100; i++) {
             int index = i;
-            lv.claim(() -> {
+            lv.takeAndRun(() -> {
                 NOut.println(Instant.now() + " : " + index);
-            });
+            }).orElseError();
         }
     }
 
     @Test
     public void test2() {
-        NRateLimitedValue lv = NRateLimitedValue.ofBuilder("example")
+        NRateLimitValueFactory factory = NRateLimitValueFactory.of();
+        NRateLimitValue lv = factory.valueBuilder("example")
                 .withLimit("seconds", 10).per(Duration.ofSeconds(2))
                 .build();
         for (int i = 0; i < 100; i++) {
             int index = i;
-            lv.claim(() -> {
+            lv.claimAndRun(() -> {
                 NOut.println(Instant.now() + " : " + index);
             });
         }
     }
     @Test
     public void test3() {
-        NRateLimitedValue lv = NRateLimitedValue.ofBuilder("example")
+        NRateLimitValue lv = NRateLimitValue.ofBuilder("example")
                 .withLimit("seconds", 10).per(Duration.ofMinutes(2))
-                .withStrategy(NRateLimitDefaultStrategy.FIXED_WINDOW)
-                .withStartDate(Instant.parse("2025-09-16T00:00:00.000Z"))
+                .withStrategy(NRateLimitDefaultStrategy.SLIDING_WINDOW)
+//                .withStartDate(Instant.parse("2025-09-16T00:00:00.000Z"))
                 .build();
         for (int i = 0; i < 100; i++) {
             int index = i;
-            lv.claim(() -> {
+            lv.claimAndRun(() -> {
                 NOut.println(Instant.now() + " : " + index);
             });
         }
     }
     @Test
     public void test4() {
-        NRateLimitedValue lv = NRateLimitedValue.ofBuilder("example")
+        NRateLimitValue lv = NRateLimitValue.ofBuilder("example")
                 .withLimit("seconds", 10).per(Duration.ofMinutes(2))
                 .withStrategy(NRateLimitDefaultStrategy.BUCKET)
                 .withStartDate(Instant.parse("2025-09-16T00:00:00.000Z"))
                 .build();
         for (int i = 0; i < 100; i++) {
             int index = i;
-            lv.claim(() -> {
+            lv.claimAndRun(() -> {
                 NOut.println(Instant.now() + " : " + index);
             });
         }
