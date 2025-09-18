@@ -17,5 +17,6 @@ public interface NStableValue<T> {
     boolean isError();
 
     boolean setIfAbsent(T value);
+
     boolean computeAndSetIfAbsent(Supplier<T> value);
 }
