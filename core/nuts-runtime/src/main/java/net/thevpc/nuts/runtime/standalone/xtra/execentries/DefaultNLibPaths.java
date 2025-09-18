@@ -85,6 +85,7 @@ public class DefaultNLibPaths implements NLibPaths {
 
     @Override
     public NOptional<NId> resolveId(Class<?> clazz) {
+        clazz=JavaClassUtils.unwrapCGLib(clazz);
         List<NId> pomIds = resolveIds(clazz);
         NId defaultValue = null;
         if (pomIds.isEmpty()) {
@@ -135,6 +136,7 @@ public class DefaultNLibPaths implements NLibPaths {
 
     @Override
     public List<NId> resolveIds(Class<?> clazz) {
+        clazz=JavaClassUtils.unwrapCGLib(clazz);
         LinkedHashSet<NId> all = new LinkedHashSet<>();
         NAppDefinition annotation = (NAppDefinition) clazz.getAnnotation(NAppDefinition.class);
         if (annotation != null) {
