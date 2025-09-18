@@ -14,6 +14,6 @@ public interface NConcurrentFactory extends NComponent {
 
     <T> NStableValue<T> stableValue(Supplier<T> supplier);
 
-    <T> NRateLimitedValueFactory rateLimitedValueFactory();
-    <T> NRateLimitedValueFactory rateLimitedValueFactory(NRateLimitedValueStore store);
+    <T> NRateLimitValueFactory rateLimitValueFactory();
+    <T> NRateLimitValueFactory rateLimitValueFactory(NRateLimitValueStore store);
 }
