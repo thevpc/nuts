@@ -48,6 +48,18 @@ public class NPomIdResolver {
                                 .withLevel(Level.FINEST)
                         );
             }
+        }else if (basePath.matches(".*[/\\\\]target[/\\\\]test-classes[/\\\\]")) {
+            String s2 = basePath.substring(0, basePath.length() - "/target/test-classes".length()) + "pom.xml";
+            //this is most likely to be a maven project
+            try {
+                all.add(new NPomXmlParser().parse(NPath.of(s2).toURL().get()).getPomId());
+            } catch (Exception ex) {
+                NLog.of(NPomXmlParser.class)
+                        .log(NMsg.ofC("failed to parse pom file %s : %s", s2, ex)
+                                .withIntent(NMsgIntent.ALERT)
+                                .withLevel(Level.FINEST)
+                        );
+            }
         }
         return all.toArray(new NPomId[0]);
     }
