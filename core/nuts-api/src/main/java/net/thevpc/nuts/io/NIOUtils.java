@@ -3,7 +3,6 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NUnexpectedException;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -18,7 +17,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 
 public class NIOUtils {
 
@@ -433,8 +431,8 @@ public class NIOUtils {
                     } catch (IOException e) {
                         if (LOG != null) {
                             LOG.log(NMsg.ofC("failed deleting folder: %s", dir)
-                                            .asFineAlert()
-                                    );
+                                    .asFineAlert()
+                            );
                         }
                         deleted[2]++;
                     }
@@ -675,6 +673,10 @@ public class NIOUtils {
 
     public static String readString(InputStream from) {
         return new String(readBytes(from));
+    }
+
+    public static String readString(Reader from) {
+        return new String(readChars(from));
     }
 
     public static byte[] readBytes(InputStream from) {
