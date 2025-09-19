@@ -24,10 +24,14 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.NOut;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElementWriter;
+import net.thevpc.nuts.format.NTableModel;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextArt;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -48,19 +52,11 @@ public class YamlTest {
     public void test1() throws Exception {
         String path = "net/thevpc/nuts/core/test/blackbox/yaml1.yml";
         NElement e = NElementParser.ofYaml().parse(getClass().getClassLoader().getResource(path), NElement.class);
-        NElementWriter.ofJson()
-                .setCompact(false)
-                .writeln(e);
-        NElementWriter.ofTson()
-                .setCompact(false)
-                .writeln(e);
-        NElementWriter.ofYaml()
-                .setCompact(false)
-                .writeln(e);
+        display(e);
     }
+
     @Test
     public void test2() throws Exception {
-        String ee = NElement.ofString("a").toString();
         NElement e = NElementParser.ofYaml().parse("\n" +
                 "id: changelog070\n" +
                 "title: Version 0.7.2.0 released\n" +
@@ -71,12 +67,57 @@ public class YamlTest {
                 "author_image_url: https://avatars3.githubusercontent.com/u/10106809?s=460&u=28d1736bdf0b6e6f81981b3a2ebbd2db369b25c8&v=4\n" +
                 "tags: [nuts]\n" +
                 "publish_date: 2020-09-23", NElement.class);
+        display(e);
+    }
+
+    @Test
+    public void test3() throws Exception {
+        NElement e = NElementParser.ofYaml().parse("\n" +
+                "id: changelog070\n" +
+                "title: | \n" +
+                "  hello\n" +
+                "  World\n" +
+                "author: thevpc\n", NElement.class);
+        display(e);
+    }
+
+    @Test
+    public void test4() throws Exception {
+        NElement e = NElementParser.ofYaml().parse("\n" +
+                "title: API Documentation\n" +
+                "type: {\"name\":\"javadoc\",\"sources\": [\"../../../../../core/nuts-api\"]}\n", NElement.class);
+        display(e);
+    }
+
+    @Test
+    public void test5() throws Exception {
+        NElement e = NElementParser.ofYaml().parse("title: Genesis\n" +
+                "subTitle: | \n" +
+                "    ##Nuts Application Framework## (NAF) is a ##lightweight##, ##modular## framework designed \n" +
+                "    to simplify the development of modern Java applications. Built on top of the ##Nuts## runtime, \n" +
+                "    <code>NAF</code> provides a unified foundation for configuration, logging, dependency injection, modularity, \n" +
+                "    and extensibility, all while remaining ##Java 8 compatible## and able to leverage the ##latest## \n" +
+                "    Java features when available.\n" +
+                "contentType: ntf\n", NElement.class);
+        display(e);
+    }
+
+    private void display(NElement e){
+        NOut.println(NTextArt.of().getTableRenderer().get().render(
+                NTableModel.of().addRow(NText.of("JSON"))
+        ));
         NElementWriter.ofJson()
                 .setCompact(false)
                 .writeln(e);
+        NOut.println(NTextArt.of().getTableRenderer().get().render(
+                NTableModel.of().addRow(NText.of("TSON"))
+        ));
         NElementWriter.ofTson()
                 .setCompact(false)
                 .writeln(e);
+        NOut.println(NTextArt.of().getTableRenderer().get().render(
+                NTableModel.of().addRow(NText.of("YAML"))
+        ));
         NElementWriter.ofYaml()
                 .setCompact(false)
                 .writeln(e);
