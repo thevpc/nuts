@@ -118,6 +118,19 @@
                             <div class="col col-12">
                                 <div class="carousel-container">
                                     <div class="carousel-slides">
+                                        {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/preview-naf')}}
+                                        <div class="carousel-slide">
+                                            <div class="col col--3">
+                                                <h3 class="feature-title">{{pageLevel1.title}}</h3>
+                                                <p>
+                                                    {{toHtml('ntf',pageLevel1.subTitle)}}
+                                                </p>
+                                                <p>
+                                                    {{toHtml(pageLevel1.type,pageLevel1.stringContent)}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {{:end}}
                                         <div class="carousel-slide">
                                             <div class="col col--3">
                                                 <h3 class="feature-title">What is NAF?</h3>
@@ -804,7 +817,7 @@
                                                 <pre>
                                                     <code class="language-java">
                                                     // Example 1: Lazy initialization
-                                                    NStableValue&lte;Double> stableRandom = NStableValue.of(Math::random);
+                                                    NStableValue&lt;Double> stableRandom = NStableValue.of(Math::random);
 
                                                     // Value is computed on first access
                                                     NOut.println("First value = " + stableRandom.get());
@@ -833,7 +846,7 @@
                                                 <pre>
                                                     <code class="language-java">
                                                     // Example 1: Cache with expiry
-                                                    NCachedValue&lte;Double> cachedRandom = NCachedValue.of(Math::random)
+                                                    NCachedValue&lt;Double> cachedRandom = NCachedValue.of(Math::random)
                                                             .setExpiry(Duration.ofSeconds(5));
 
                                                     // First call computes and caches the value
@@ -863,7 +876,7 @@
                                                     // Example 2: Cache with retries and fallback
                                                     AtomicInteger counter = new AtomicInteger();
 
-                                                    NCachedValue&lte;Integer> cached = NCachedValue.of(() -> {
+                                                    NCachedValue&lt;Integer> cached = NCachedValue.of(() -> {
                                                         int attempt = counter.incrementAndGet();
                                                         if (attempt % 2 == 0) {
                                                             throw new RuntimeException("Simulated failure");
