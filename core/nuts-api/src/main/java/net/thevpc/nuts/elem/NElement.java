@@ -1073,4 +1073,8 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
     String snippet();
 
     String snippet(int size);
+
+    NOptional<NPairElement> asNamedPair();
+
+    NOptional<NPairElement> asSimplePair();
 }
