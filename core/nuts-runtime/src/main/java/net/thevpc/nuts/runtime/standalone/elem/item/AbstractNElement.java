@@ -739,6 +739,30 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<NPairElement> asNamedPair() {
+        if (isPair()) {
+            NOptional<NPairElement> p = asPair();
+            NElement key = p.get().key();
+            if (key.isAnyString()) {
+                return p;
+            }
+        }
+        return NOptional.ofEmpty(_expected("named pair"));
+    }
+
+    @Override
+    public NOptional<NPairElement> asSimplePair() {
+        if (isPair()) {
+            NOptional<NPairElement> p = asPair();
+            NElement key = p.get().key();
+            if (key.isPrimitive()) {
+                return p;
+            }
+        }
+        return NOptional.ofEmpty(_expected("named pair"));
+    }
+
+    @Override
     public boolean isNamedPair(String name) {
         if (!isPair()) {
             return false;
