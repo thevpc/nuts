@@ -34,6 +34,7 @@ class YamlToken {
         CLOSE_BRACE,
         OPEN_BRACKET,
         OPEN_BRACE,
+        BLOCK_SCALAR,
     }
 
     @Override
