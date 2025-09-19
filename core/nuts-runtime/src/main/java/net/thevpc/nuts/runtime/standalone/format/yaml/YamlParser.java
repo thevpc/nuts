@@ -118,6 +118,7 @@ class YamlParser {
                 }
                 case NAME:
                 case DOUBLE_STRING:
+                case BLOCK_SCALAR:
                 case SINGLE_STRING:
                 case NULL:
                 case INTEGER:
@@ -180,6 +181,9 @@ class YamlParser {
                 return NElement.ofName((String) t.value);
             }
             case DOUBLE_STRING: {
+                return NElement.ofString((String) t.value, NElementType.DOUBLE_QUOTED_STRING);
+            }
+            case BLOCK_SCALAR: {
                 return NElement.ofString((String) t.value, NElementType.DOUBLE_QUOTED_STRING);
             }
             case SINGLE_STRING: {
@@ -257,7 +261,7 @@ class YamlParser {
                 acceptValue = true;
                 acceptComma = false;
                 acceptClose = false;
-            } else if (t.type == YamlToken.Type.CLOSE_BRACKET) {
+            } else if (t.type == YamlToken.Type.CLOSE_BRACE) {
                 if (!acceptClose) {
                     throw new IllegalArgumentException("unexpected ']'");
                 }
