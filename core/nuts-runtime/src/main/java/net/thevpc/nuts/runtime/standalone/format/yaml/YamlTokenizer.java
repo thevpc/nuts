@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.format.yaml;
 
 import net.thevpc.nuts.runtime.standalone.format.json.ReaderLocation;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NStringBuilder;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -151,6 +154,27 @@ public class YamlTokenizer {
                                     return continueReadOpenString('-', seenIndentation, wasNewLinePrevious);
                                 }
                             }
+                            case '>':
+                            case '|': {
+                                String scalarType = String.valueOf((char)icurr); // '>' or '|'
+                                int indent = seenIndentation;
+                                reader.mark(1);
+                                int n = reader.read();
+                                if(n==-1){
+                                    //
+                                }else if(n=='+' ||n=='-'){
+                                    scalarType+=String.valueOf((char) n);
+                                }else{
+                                    reader.reset();
+                                }
+                                String value = readBlockScalar(scalarType, indent);
+                                return new YamlToken(
+                                        value,
+                                        value,
+                                        YamlToken.Type.BLOCK_SCALAR,
+                                        indent
+                                );
+                            }
                             default: {
                                 if (icurr < 32) {
                                     throw error("invalid character " + (char) icurr);
@@ -167,6 +191,97 @@ public class YamlTokenizer {
         } catch (IOException ex) {
             return null;
         }
+    }
+
+    private String readBlockScalar(String type, int parentIndent) throws IOException {
+        NStringBuilder sb = new NStringBuilder();
+        int scalarIndent = -1;
+        int lineIndex = 0;
+        NStringBuilder emptyLines=new NStringBuilder();
+        while (true) {
+            emptyLines.clear();
+            reader.mark(1024);
+            int c = reader.read();
+            if (c == -1) break;
+
+            // measure indentation
+            int lineIndent = 0;
+            if(scalarIndent == -1) {
+                while (c == ' ' || c == '\t') {
+                    lineIndent += (c == ' ') ? 1 : 2;
+                    c = reader.read();
+                }
+
+                if (c != '\n' && c != '\r') {
+                    scalarIndent = lineIndent;
+                }
+            }else{
+                while (c == ' ' || c == '\t') {
+                    lineIndent += (c == ' ') ? 1 : 2;
+                    c = reader.read();
+                    if(lineIndent>scalarIndent) {
+                        sb.append(' ');
+                        break;
+                    }else if(lineIndent>=scalarIndent) {
+                        break;
+                    }
+                }
+            }
+
+
+            // read the full line
+            StringBuilder line = new StringBuilder();
+            while (c != -1 && c != '\n' && c != '\r') {
+                line.append((char) c);
+                c = reader.read();
+            }
+            while(c=='\n' || c=='\r') {
+                emptyLines.append((char) c);
+                c = reader.read();
+            }
+            // **stop if indentation <= parentIndent** (new key or end of parent block)
+            if (NBlankable.isBlank(line.toString()) && scalarIndent==-1) {
+                reader.reset();
+            }else if (!NBlankable.isBlank(line.toString()) && lineIndent < scalarIndent) {
+                reader.reset();
+                break;
+            }
+
+            // append line according to type
+            if (type.startsWith(">")) {
+                // folded: newline becomes space, but keep empty lines as \n
+                if(!sb.isEmpty()){
+                    sb.append(' ');
+                }
+                sb.append(NStringUtils.trim(line));
+            } else {
+                // literal: keep newlines
+                if(!sb.isEmpty()){
+                    sb.newLine();
+                }
+                sb.append(line.toString());
+            }
+            lineIndex++;
+        }
+
+        switch (type){
+            case "|-":
+            case ">-":{
+                return sb.toString();
+            }
+            case "|+":
+            case ">+":{
+                sb.append(emptyLines.toString());
+                return sb.toString();
+            }
+            case "|":
+            case ">":
+            {
+                sb.append("\n");
+                return sb.toString();
+            }
+        }
+        return sb.toString();
     }
 
     private YamlToken continueReadOpenString(char current, int indentation, boolean wasNewLinePrevious) throws IOException {
