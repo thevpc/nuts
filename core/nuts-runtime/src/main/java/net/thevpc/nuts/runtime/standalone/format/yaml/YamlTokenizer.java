@@ -196,92 +196,129 @@ public class YamlTokenizer {
     private String readBlockScalar(String type, int parentIndent) throws IOException {
         NStringBuilder sb = new NStringBuilder();
         int scalarIndent = -1;
-        int lineIndex = 0;
-        NStringBuilder emptyLines=new NStringBuilder();
+
+        // Read all lines and process them
+        List<String> lines = new ArrayList<>();
+        List<Integer> indents = new ArrayList<>();
+
         while (true) {
-            emptyLines.clear();
             reader.mark(1024);
+
+            // Read indentation
             int c = reader.read();
             if (c == -1) break;
 
-            // measure indentation
             int lineIndent = 0;
-            if(scalarIndent == -1) {
-                while (c == ' ' || c == '\t') {
-                    lineIndent += (c == ' ') ? 1 : 2;
-                    c = reader.read();
-                }
-
-                if (c != '\n' && c != '\r') {
-                    scalarIndent = lineIndent;
-                }
-            }else{
-                while (c == ' ' || c == '\t') {
-                    lineIndent += (c == ' ') ? 1 : 2;
-                    c = reader.read();
-                    if(lineIndent>scalarIndent) {
-                        sb.append(' ');
-                        break;
-                    }else if(lineIndent>=scalarIndent) {
-                        break;
-                    }
-                }
+            while (c == ' ' || c == '\t') {
+                lineIndent += (c == ' ') ? 1 : 2;
+                c = reader.read();
             }
 
-
-            // read the full line
+            // Read line content
             StringBuilder line = new StringBuilder();
             while (c != -1 && c != '\n' && c != '\r') {
                 line.append((char) c);
                 c = reader.read();
             }
-            while(c=='\n' || c=='\r') {
-                emptyLines.append((char) c);
+
+            // Skip newlines
+            while (c == '\n' || c == '\r') {
                 c = reader.read();
             }
-            // **stop if indentation <= parentIndent** (new key or end of parent block)
-            if (NBlankable.isBlank(line.toString()) && scalarIndent==-1) {
-                reader.reset();
-            }else if (!NBlankable.isBlank(line.toString()) && lineIndent < scalarIndent) {
-                reader.reset();
+
+            String lineContent = line.toString();
+            boolean isBlankLine = NBlankable.isBlank(lineContent);
+
+            // First non-blank line determines scalar indentation
+            if (scalarIndent == -1 && !isBlankLine) {
+                scalarIndent = lineIndent;
+            }
+
+            // Skip blank lines before we know the scalar indentation
+            if (scalarIndent == -1 && isBlankLine) {
+                // Put back the character after newlines and continue
+                if (c != -1) {
+                    reader.reset();
+                    // Skip to after the newlines
+                    int temp;
+                    do {
+                        temp = reader.read();
+                    } while (temp == ' ' || temp == '\t');
+                    while (temp != -1 && temp != '\n' && temp != '\r') {
+                        temp = reader.read();
+                    }
+                    while (temp == '\n' || temp == '\r') {
+                        temp = reader.read();
+                    }
+                }
+                continue;
+            }
+
+            // Check if we've outdented (end of scalar)
+            if (scalarIndent != -1 && !isBlankLine && lineIndent < scalarIndent) {
+                reader.reset(); // Put back entire line
                 break;
             }
 
-            // append line according to type
-            if (type.startsWith(">")) {
-                // folded: newline becomes space, but keep empty lines as \n
-                if(!sb.isEmpty()){
-                    sb.append(' ');
+            // Store line for processing
+            lines.add(lineContent);
+            indents.add(lineIndent);
+
+            // Put back character after newlines for next iteration
+            if (c != -1) {
+                // Simple approach: use unread() from tokenizer if available
+                // Otherwise reset and re-read to position
+                reader.reset();
+                // Skip past current line content
+                for (int i = 0; i < lineIndent; i++) {
+                    reader.read(); // skip indentation
                 }
-                sb.append(NStringUtils.trim(line));
-            } else {
-                // literal: keep newlines
-                if(!sb.isEmpty()){
-                    sb.newLine();
+                for (int i = 0; i < lineContent.length(); i++) {
+                    reader.read(); // skip content
                 }
-                sb.append(line.toString());
+                int temp = reader.read();
+                while (temp == '\n' || temp == '\r') {
+                    temp = reader.read();
+                }
             }
-            lineIndex++;
         }
 
-        switch (type){
-            case "|-":
-            case ">-":{
-                return sb.toString();
-            }
-            case "|+":
-            case ">+":{
-                sb.append(emptyLines.toString());
-                return sb.toString();
-            }
-            case "|":
-            case ">":
-            {
-                sb.append("\n");
-                return sb.toString();
+        // Process collected lines
+        for (int i = 0; i < lines.size(); i++) {
+            String lineContent = lines.get(i);
+            boolean isBlankLine = NBlankable.isBlank(lineContent);
+
+            if (type.startsWith(">")) {
+                // Folded scalar: spaces instead of newlines, except for blank lines
+                if (i > 0 && !sb.toString().isEmpty() && !isBlankLine) {
+                    sb.append(' ');
+                }
+                if (!isBlankLine) {
+                    sb.append(NStringUtils.trim(lineContent));
+                }
+            } else {
+                // Literal scalar: preserve newlines and indentation
+                if (i > 0) {
+                    sb.append('\n');
+                }
+                sb.append(lineContent);
             }
         }
-        return sb.toString();
+
+        // Apply chomping indicators
+        String result = sb.toString();
+        switch (type) {
+            case "|-":
+            case ">-":
+                return result;
+            case "|+":
+            case ">+":
+                return result + "\n";
+            case "|":
+            case ">":
+            default:
+                return result + "\n";
+        }
     }
 
     private YamlToken continueReadOpenString(char current, int indentation, boolean wasNewLinePrevious) throws IOException {
