@@ -39,6 +39,10 @@ public interface NTableModel {
         return NMutableTableModel.of();
     }
 
+    static NTableModel of(NText text) {
+        return NMutableTableModel.of().addRow(text);
+    }
+
     int getColumnsCount();
 
     int getRowsCount();
