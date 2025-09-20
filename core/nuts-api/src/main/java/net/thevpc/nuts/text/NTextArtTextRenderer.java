@@ -24,10 +24,16 @@
 package net.thevpc.nuts.text;
 
 /**
- *
  * @author vpc
  */
-public interface NTextArtTextRenderer extends NTextArtRenderer{
+public interface NTextArtTextRenderer extends NTextArtRenderer {
+    static NTextArtTextRenderer of() {
+        return NTextArt.of().getTextRenderer().get();
+    }
+
+    static NTextArtTextRenderer of(String name) {
+        return NTextArt.of().getTextRenderer(name).get();
+    }
 
     NText render(NText text);
 }
