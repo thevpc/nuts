@@ -26,10 +26,16 @@ package net.thevpc.nuts.text;
 import net.thevpc.nuts.format.*;
 
 /**
- *
  * @author vpc
  */
-public interface NTextArtTreeRenderer extends NTextArtRenderer{
+public interface NTextArtTreeRenderer extends NTextArtRenderer {
+    static NTextArtTreeRenderer of() {
+        return NTextArt.of().getTreeRenderer().get();
+    }
+
+    static NTextArtTreeRenderer of(String name) {
+        return NTextArt.of().getTreeRenderer(name).get();
+    }
 
     boolean isInfinite();
 
