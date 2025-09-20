@@ -26,10 +26,17 @@ package net.thevpc.nuts.text;
 import net.thevpc.nuts.format.NTableModel;
 
 /**
- *
  * @author vpc
  */
-public interface NTextArtTableRenderer extends NTextArtRenderer{
+public interface NTextArtTableRenderer extends NTextArtRenderer {
+
+    static NTextArtTableRenderer of() {
+        return NTextArt.of().getTableRenderer().get();
+    }
+
+    static NTextArtTableRenderer of(String name) {
+        return NTextArt.of().getTableRenderer(name).get();
+    }
 
     NText render(NTableModel text);
 }
