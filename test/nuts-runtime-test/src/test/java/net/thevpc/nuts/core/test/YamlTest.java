@@ -32,6 +32,7 @@ import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.format.NTableModel;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArt;
+import net.thevpc.nuts.text.NTextArtTableRenderer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -103,20 +104,20 @@ public class YamlTest {
     }
 
     private void display(NElement e){
-        NOut.println(NTextArt.of().getTableRenderer().get().render(
-                NTableModel.of().addRow(NText.of("JSON"))
+        NOut.println(NTextArtTableRenderer.of().render(
+                NTableModel.of(NText.of("JSON"))
         ));
         NElementWriter.ofJson()
                 .setCompact(false)
                 .writeln(e);
-        NOut.println(NTextArt.of().getTableRenderer().get().render(
-                NTableModel.of().addRow(NText.of("TSON"))
+        NOut.println(NTextArtTableRenderer.of().render(
+                NTableModel.of(NText.of("TSON"))
         ));
         NElementWriter.ofTson()
                 .setCompact(false)
                 .writeln(e);
-        NOut.println(NTextArt.of().getTableRenderer().get().render(
-                NTableModel.of().addRow(NText.of("YAML"))
+        NOut.println(NTextArtTableRenderer.of().render(
+                NTableModel.of(NText.of("YAML"))
         ));
         NElementWriter.ofYaml()
                 .setCompact(false)
