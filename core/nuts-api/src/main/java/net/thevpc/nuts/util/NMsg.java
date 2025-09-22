@@ -276,6 +276,69 @@ public class NMsg implements NBlankable {
         return codeLang;
     }
 
+    public Level getNormalizedLevel() {
+        if (level == null) {
+            return Level.INFO;
+        }
+        int v = level.intValue();
+        switch (v) {
+            case Integer.MIN_VALUE:
+                return Level.ALL;
+            case 300:
+                return Level.FINEST;
+            case 400:
+                return Level.FINER;
+            case 500:
+                return Level.FINE;
+            case 700:
+                return Level.CONFIG;
+            case 800:
+                return Level.INFO;
+            case 900:
+                return Level.WARNING;
+            case 1000:
+                return Level.SEVERE;
+            case Integer.MAX_VALUE:
+                return Level.OFF;
+        }
+        // Normalize arbitrary levels (301, 302, etc.) by bucketing intValue()/100
+        switch (v / 100) {
+            case 3:
+                return Level.FINEST;  // 301-399
+            case 4:
+                return Level.FINER;    // 401-499
+            case 5:
+            case 6:
+                return Level.FINE;     // 500-699
+            case 7:
+                return Level.CONFIG;   // 700-799
+            case 8:
+                return Level.INFO;     // 800-899
+            case 9:
+                return Level.WARNING;  // 900-999
+            case 10:
+                return Level.SEVERE;  // 1000+
+            default: {
+                if (v < Level.FINEST.intValue()) {
+                    return Level.ALL;
+                }
+                return Level.SEVERE;
+            }
+        }
+    }
+
+    public boolean isError() {
+        return level != null && level.intValue() >= Level.SEVERE.intValue() && level.intValue() < Integer.MAX_VALUE;
+    }
+
+    public boolean isWarning() {
+        return level != null && level.intValue() >= Level.WARNING.intValue() && level.intValue() < Level.SEVERE.intValue();
+    }
+
+    public boolean isInfo() {
+        return level == null || (level.intValue() >= Level.INFO.intValue() && level.intValue() < Level.WARNING.intValue());
+    }
+
     public Level getLevel() {
         return level;
     }
@@ -292,6 +355,13 @@ public class NMsg implements NBlankable {
                 }
             }
         }
+        // this is to force calling synthetic suppliers
+        if (o instanceof Supplier && o.getClass().isSynthetic()) {
+            o = ((Supplier) o).get();
+        }
+        if (o instanceof NMsgSupplier) {
+            o = ((NMsgSupplier) o).apply(this);
+        }
         if (o instanceof NTextFormattable) {
             return ((NTextFormattable) o).toText();
         }
@@ -299,7 +369,7 @@ public class NMsg implements NBlankable {
             return ((NMsgFormattable) o).toMsg();
         }
         if (o instanceof NMsg) {
-            return ((NMsg)o).withPlaceholders(placeholderBindings);
+            return ((NMsg) o).withPlaceholders(placeholderBindings);
         }
         if (o instanceof Throwable) {
             return NExceptions.getErrorMessage((Throwable) o);
@@ -646,8 +716,8 @@ public class NMsg implements NBlankable {
         });
     }
 
-    public NMsg withPlaceholder(String key,Object value) {
-        return withPlaceholders(NMaps.of(key,value));
+    public NMsg withPlaceholder(String key, Object value) {
+        return withPlaceholders(NMaps.of(key, value));
     }
 
     public NMsg withPlaceholders(Map<String, ?> placeholderMap) {
@@ -790,10 +860,28 @@ public class NMsg implements NBlankable {
             return suffixMessage;
         }
         //this if fast way to inherit level,intent, duration and throwable
-        return of(NTextFormatType.CFORMAT, "%s %s", new Object[]{cloneWithoutMeta(),suffixMessage}, null, null, level, throwable, intent, durationNano, null);
+        return of(NTextFormatType.CFORMAT, "%s %s", new Object[]{cloneWithoutMeta(), suffixMessage}, null, null, level, throwable, intent, durationNano, null);
     }
 
-    private NMsg cloneWithoutMeta(){
+    public NMsg withPrefix(NMsgSupplier<NMsg> prefixMessage) {
+        if (prefixMessage == null) {
+            return this;
+        }
+        //this if fast way to inherit level,intent, duration and throwable
+        Supplier<NMsg> prefixSupplier = () -> prefixMessage.apply(this /**/);
+        return of(NTextFormatType.CFORMAT, "%s %s", new Object[]{prefixSupplier, cloneWithoutMeta()}, null, null, level, throwable, intent, durationNano, null);
+    }
+
+    public NMsg withSuffix(NMsgSupplier<NMsg> suffixMessage) {
+        if (NBlankable.isBlank(suffixMessage)) {
+            return this;
+        }
+        //this if fast way to inherit level,intent, duration and throwable
+        Supplier<NMsg> suffixSupplier = () -> suffixMessage.apply(this /**/);
+        return of(NTextFormatType.CFORMAT, "%s %s", new Object[]{cloneWithoutMeta(), suffixSupplier}, null, null, level, throwable, intent, durationNano, null);
+    }
+
+    private NMsg cloneWithoutMeta() {
         return of(format, message, params, styles, codeLang, null, null, null, -1, placeholderBindings);
     }
 
@@ -1421,29 +1509,28 @@ public class NMsg implements NBlankable {
 
     @Override
     public boolean isBlank() {
-        if(message==null) {
+        if (message == null) {
             return true;
         }
-        switch (format){
+        switch (format) {
             case PLAIN:
             case JFORMAT:
             case VFORMAT:
             case CFORMAT:
             case CODE:
-                return NStringUtils.isEmpty((String)message);
+                return NStringUtils.isEmpty((String) message);
             case STYLED:
-            case NTF:
-            {
-                if(message instanceof NMsg) {
+            case NTF: {
+                if (message instanceof NMsg) {
                     NMsg m = (NMsg) message;
                     return m == null || m.isBlank();
                 }
-                if(message instanceof NText) {
+                if (message instanceof NText) {
                     NText m = (NText) message;
                     return m.isBlank();
                 }
-                if(message instanceof String) {
-                    return NStringUtils.isEmpty((String)message);
+                if (message instanceof String) {
+                    return NStringUtils.isEmpty((String) message);
                 }
                 return false;
             }
