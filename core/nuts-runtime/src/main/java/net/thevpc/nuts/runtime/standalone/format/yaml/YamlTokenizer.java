@@ -203,7 +203,7 @@ public class YamlTokenizer {
 
         while (true) {
             reader.mark(1024);
-
+            int currLineLength=0;
             // Read indentation
             int c = reader.read();
             if (c == -1) break;
@@ -211,18 +211,24 @@ public class YamlTokenizer {
             int lineIndent = 0;
             while (c == ' ' || c == '\t') {
                 lineIndent += (c == ' ') ? 1 : 2;
+                currLineLength++;
                 c = reader.read();
             }
-
+            if(scalarIndent>=0 && lineIndent<scalarIndent) {
+                reader.reset();
+                break;
+            }
             // Read line content
             StringBuilder line = new StringBuilder();
             while (c != -1 && c != '\n' && c != '\r') {
                 line.append((char) c);
+                currLineLength++;
                 c = reader.read();
             }
 
             // Skip newlines
             while (c == '\n' || c == '\r') {
+                currLineLength++;
                 c = reader.read();
             }
 
@@ -234,53 +240,17 @@ public class YamlTokenizer {
                 scalarIndent = lineIndent;
             }
 
+            if (c != -1) {
+                reader.reset();
+                reader.skip(currLineLength);
+            }
             // Skip blank lines before we know the scalar indentation
             if (scalarIndent == -1 && isBlankLine) {
-                // Put back the character after newlines and continue
-                if (c != -1) {
-                    reader.reset();
-                    // Skip to after the newlines
-                    int temp;
-                    do {
-                        temp = reader.read();
-                    } while (temp == ' ' || temp == '\t');
-                    while (temp != -1 && temp != '\n' && temp != '\r') {
-                        temp = reader.read();
-                    }
-                    while (temp == '\n' || temp == '\r') {
-                        temp = reader.read();
-                    }
-                }
                 continue;
             }
-
-            // Check if we've outdented (end of scalar)
-            if (scalarIndent != -1 && !isBlankLine && lineIndent < scalarIndent) {
-                reader.reset(); // Put back entire line
-                break;
-            }
-
             // Store line for processing
             lines.add(lineContent);
             indents.add(lineIndent);
-
-            // Put back character after newlines for next iteration
-            if (c != -1) {
-                // Simple approach: use unread() from tokenizer if available
-                // Otherwise reset and re-read to position
-                reader.reset();
-                // Skip past current line content
-                for (int i = 0; i < lineIndent; i++) {
-                    reader.read(); // skip indentation
-                }
-                for (int i = 0; i < lineContent.length(); i++) {
-                    reader.read(); // skip content
-                }
-                int temp = reader.read();
-                while (temp == '\n' || temp == '\r') {
-                    temp = reader.read();
-                }
-            }
         }
 
         // Process collected lines
