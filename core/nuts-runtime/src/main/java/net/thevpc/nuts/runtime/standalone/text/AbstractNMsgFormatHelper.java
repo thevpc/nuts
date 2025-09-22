@@ -5,12 +5,13 @@ import net.thevpc.nuts.NUnsupportedEnumException;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NMsgSupplier;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public abstract class AbstractNMsgFormatHelper {
     protected NMsg m;
@@ -49,6 +50,12 @@ public abstract class AbstractNMsgFormatHelper {
                     return v;
                 }
             }
+        }
+        if(any instanceof NMsgSupplier) {
+            return ((NMsgSupplier)any).apply(m);
+        }
+        if(any instanceof Supplier && any.getClass().isSynthetic()) {
+            return ((Supplier)any).get();
         }
         return any;
     }
