@@ -33,6 +33,8 @@ import net.thevpc.nuts.format.NTableModel;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArt;
 import net.thevpc.nuts.text.NTextArtTableRenderer;
+import net.thevpc.nuts.util.NAssert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -95,12 +97,11 @@ public class YamlTest {
         NElement e = NElementParser.ofYaml().parse("title: Genesis\n" +
                 "subTitle: | \n" +
                 "    ##Nuts Application Framework## (NAF) is a ##lightweight##, ##modular## framework designed \n" +
-                "    to simplify the development of modern Java applications. Built on top of the ##Nuts## runtime, \n" +
-                "    <code>NAF</code> provides a unified foundation for configuration, logging, dependency injection, modularity, \n" +
-                "    and extensibility, all while remaining ##Java 8 compatible## and able to leverage the ##latest## \n" +
                 "    Java features when available.\n" +
                 "contentType: ntf\n", NElement.class);
         display(e);
+        Assertions.assertTrue(e.isObject());
+        Assertions.assertTrue(e.asObject().get().get("contentType").get().asStringValue().get().equals("ntf"));
     }
 
     private void display(NElement e){
