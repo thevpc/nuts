@@ -2,6 +2,7 @@ package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NMsgSupplier;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -57,6 +58,9 @@ public interface NLogContext extends NBlankable {
 
     NLogContext withMessagePrefix(NMsg prefix);
 
+    NLogContext withMessagePrefix(NMsgSupplier<NMsg> prefix);
+
+    NLogContext withMessageSuffix(NMsgSupplier<NMsg> suffix);
     NLogContext withMessageSuffix(NMsg suffix);
 
     NLogContext withPlaceholders(Map<String, ?> map);
@@ -75,9 +79,9 @@ public interface NLogContext extends NBlankable {
 
     NLogContext mergedWith(NLogContext other);
 
-    NMsg getMessagePrefix();
+    NMsgSupplier<NMsg> getMessagePrefix();
 
-    NMsg getMessageSuffix();
+    NMsgSupplier<NMsg> getMessageSuffix();
 
     NLog getLog();
 
