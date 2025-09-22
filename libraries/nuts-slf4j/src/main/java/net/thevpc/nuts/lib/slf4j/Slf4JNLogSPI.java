@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.spi.LocationAwareLogger;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -21,9 +20,11 @@ public class Slf4JNLogSPI implements NLogSPI {
             Slf4JNLogSPI.class.getPackage().getName(),
             "org.slf4j"
     ));
+
     static {
         FQCN = Slf4JNLogSPI.class.getName();
     }
+
     public Slf4JNLogSPI(String loggerName) {
         this.logger = LoggerFactory.getLogger(loggerName);
         this.locationAwareLogger = (logger instanceof LocationAwareLogger)
@@ -39,7 +40,6 @@ public class Slf4JNLogSPI implements NLogSPI {
     @Override
     public boolean isLoggable(Level level) {
         org.slf4j.event.Level slf4jLevel = toSlf4jLevel(level);
-
         return logger.isEnabledForLevel(slf4jLevel);
     }
 
@@ -47,6 +47,9 @@ public class Slf4JNLogSPI implements NLogSPI {
     public void log(Level level, Supplier<NMsg> msg) {
         if (level == null) {
             level = Level.INFO;
+        }
+        if (level.intValue() == Level.OFF.intValue()) {
+            return;
         }
         org.slf4j.event.Level slf4jLevel = toSlf4jLevel(level);
         if (!logger.isEnabledForLevel(slf4jLevel)) {
@@ -58,7 +61,7 @@ public class Slf4JNLogSPI implements NLogSPI {
             NMsg msg1 = msg.get();
             if (msg1 != null) {
                 mm = msg1.toString();
-                throwable=msg1.getThrowable();
+                throwable = msg1.getThrowable();
             }
         }
         log0(slf4jLevel, mm, throwable);
@@ -67,16 +70,19 @@ public class Slf4JNLogSPI implements NLogSPI {
 
     @Override
     public void log(NMsg message) {
-        Level level = message == null ? Level.INFO : message.getLevel();
+        Level level = message == null ? Level.INFO : message.getNormalizedLevel();
         if (level == null) {
             level = Level.INFO;
+        }
+        if (level.intValue() == Level.OFF.intValue()) {
+            return;
         }
         org.slf4j.event.Level slf4jLevel = toSlf4jLevel(level);
         if (!logger.isEnabledForLevel(slf4jLevel)) {
             return;
         }
         String msgText = (message != null) ? message.toString() : "";
-        log0(slf4jLevel, msgText,message==null?null:message.getThrowable());
+        log0(slf4jLevel, msgText, message == null ? null : message.getThrowable());
     }
 
     private void log0(org.slf4j.event.Level slf4jLevel, String message, Throwable throwable) {
@@ -89,35 +95,23 @@ public class Slf4JNLogSPI implements NLogSPI {
             message = NMsg.ofC("[%s][%s] %s", callerClass, callerMethod, message).toString();
             switch (slf4jLevel) {
                 case ERROR: {
-                    if (throwable != null) {
-                        logger.error(message, throwable);
-                    } else {
-                        logger.error(message);
-                    }
+                    logger.error(message, throwable);
                     break;
                 }
                 case WARN: {
-                    if (throwable != null) {
-                        logger.warn(message, throwable);
-                    } else {
-                        logger.warn(message);
-                    }
+                    logger.warn(message, throwable);
                     break;
                 }
                 case INFO: {
-                    if (throwable != null) {
-                        logger.info(message, throwable);
-                    } else {
-                        logger.info(message);
-                    }
+                    logger.info(message, throwable);
                     break;
                 }
                 case DEBUG: {
-                    if (throwable != null) {
-                        logger.debug(message, throwable);
-                    } else {
-                        logger.debug(message);
-                    }
+                    logger.debug(message, throwable);
+                    break;
+                }
+                case TRACE: {
+                    logger.trace(message, throwable);
                     break;
                 }
             }
@@ -144,7 +138,6 @@ public class Slf4JNLogSPI implements NLogSPI {
 
     private static org.slf4j.event.Level toSlf4jLevel(Level julLevel) {
         if (julLevel == null) return org.slf4j.event.Level.TRACE;
-
         switch (julLevel.intValue()) {
             case 1000:
                 return org.slf4j.event.Level.ERROR;
@@ -155,16 +148,7 @@ public class Slf4JNLogSPI implements NLogSPI {
             case 700:
             case 500:
                 return org.slf4j.event.Level.DEBUG;
-            case 400:
-            case 300:
-                return org.slf4j.event.Level.TRACE;
             default:
-                // fallback for user-defined or unknown levels
-                int val = julLevel.intValue();
-                if (val >= Level.SEVERE.intValue()) return org.slf4j.event.Level.ERROR;
-                if (val >= Level.WARNING.intValue()) return org.slf4j.event.Level.WARN;
-                if (val >= Level.INFO.intValue()) return org.slf4j.event.Level.INFO;
-                if (val >= Level.CONFIG.intValue()) return org.slf4j.event.Level.DEBUG;
                 return org.slf4j.event.Level.TRACE;
         }
     }
