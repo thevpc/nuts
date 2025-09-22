@@ -6,16 +6,18 @@ import net.thevpc.nuts.log.NLogSPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NMsgSupplier;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class NLogContextImpl implements NLogContext {
-    private final NMsg messagePrefix;
-    private final NMsg messageSuffix;
+    private final NMsgSupplier<NMsg> messagePrefix;
+    private final NMsgSupplier<NMsg> messageSuffix;
     private final Map<String, Supplier<?>> properties;
     private final NLog log;
     public static final NLogContext BLANK = new NLogContextImpl(null, null, Collections.emptyMap(), null);
@@ -34,7 +36,7 @@ public final class NLogContextImpl implements NLogContext {
         return null;
     }
 
-    private NLogContextImpl(NMsg messagePrefix, NMsg messageSuffix, Map<String, Supplier<?>> properties, NLog log) {
+    private NLogContextImpl(NMsgSupplier<NMsg> messagePrefix, NMsgSupplier<NMsg> messageSuffix, Map<String, Supplier<?>> properties, NLog log) {
         this.messagePrefix = messagePrefix;
         this.messageSuffix = messageSuffix;
         this.properties = properties;
@@ -61,11 +63,21 @@ public final class NLogContextImpl implements NLogContext {
 
     @Override
     public NLogContext withMessagePrefix(NMsg prefix) {
-        return new NLogContextImpl(prefix, this.messageSuffix, this.properties, log);
+        return new NLogContextImpl(prefix == null ? null : m -> prefix, this.messageSuffix, this.properties, log);
     }
 
     @Override
     public NLogContext withMessageSuffix(NMsg suffix) {
+        return new NLogContextImpl(messagePrefix, suffix == null ? null : m -> suffix, this.properties, log);
+    }
+
+    @Override
+    public NLogContext withMessagePrefix(NMsgSupplier<NMsg> prefix) {
+        return new NLogContextImpl(prefix, this.messageSuffix, this.properties, log);
+    }
+
+    @Override
+    public NLogContext withMessageSuffix(NMsgSupplier<NMsg> suffix) {
         return new NLogContextImpl(messagePrefix, suffix, this.properties, log);
     }
 
@@ -153,11 +165,11 @@ public final class NLogContextImpl implements NLogContext {
             return other;
         }
         NLog newLog = log;
-        if(other.getLog() != null) {
+        if (other.getLog() != null) {
             newLog = other.getLog();
         }
-        NMsg prefix2 = messagePrefix == null ? other.getMessagePrefix() : messagePrefix.withSuffix(other.getMessagePrefix());
-        NMsg suffix2 = messageSuffix == null ? other.getMessageSuffix() : messageSuffix.withSuffix(other.getMessageSuffix());
+        NMsgSupplier<NMsg> prefix2 = mergeBoundaries(messagePrefix, other.getMessagePrefix());
+        NMsgSupplier<NMsg> suffix2 = mergeBoundaries(messageSuffix, other.getMessageSuffix());
         Map<String, Supplier<?>> properties2 = new LinkedHashMap<>(this.properties);
         for (Map.Entry<String, Supplier<?>> e : other.getPlaceholders().entrySet()) {
             if (e.getValue() != null) {
@@ -169,13 +181,33 @@ public final class NLogContextImpl implements NLogContext {
         return new NLogContextImpl(prefix2, suffix2, properties2, newLog);
     }
 
+    private NMsgSupplier<NMsg> mergeBoundaries(NMsgSupplier<NMsg> a, NMsgSupplier<NMsg> b) {
+        if (a == null) {
+            return b;
+        }
+        if (b == null) {
+            return a;
+        }
+        return msg -> {
+            NMsg aa = a.apply(msg);
+            NMsg bb = b.apply(msg);
+            if (aa == null) {
+                return bb;
+            }
+            if (bb == null) {
+                return aa;
+            }
+            return NMsg.ofC("%s %s", aa, bb);
+        };
+    }
+
     @Override
-    public NMsg getMessagePrefix() {
+    public NMsgSupplier<NMsg> getMessagePrefix() {
         return messagePrefix;
     }
 
     @Override
-    public NMsg getMessageSuffix() {
+    public NMsgSupplier<NMsg> getMessageSuffix() {
         return messageSuffix;
     }
 
@@ -190,7 +222,7 @@ public final class NLogContextImpl implements NLogContext {
         if (!properties.isEmpty()) {
             return false;
         }
-        if(log!=null){
+        if (log != null) {
             return false;
         }
         return true;
