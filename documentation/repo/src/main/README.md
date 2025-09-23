@@ -4,8 +4,8 @@ Network Updatable Things Services
      __        __    
   /\ \ \ _  __/ /______
  /  \/ / / / / __/ ___/
-/ /\  / /_/ / /_(__  )   dev version {{runtimeVersion}} 
-\_\ \/\__,_/\__/____/    production version {{stableRuntimeVersion}} 
+/ /\  / /_/ / /_(__  )   latest version {{runtimeVersion}} 
+\_\ \/\__,_/\__/____/    LTS version {{stableRuntimeVersion}} 
 </pre>
 
 Website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
