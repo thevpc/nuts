@@ -646,7 +646,7 @@ hr {
   left: 0;
   overflow: hidden;
   overflow-y: auto;
-  width: 260px;
+  width: 400px;
   height: calc(100% - 70px);
   z-index: 1;
   border-right: 1px solid rgba(0, 0, 0, 0.05);
@@ -734,7 +734,7 @@ hr {
 /*=== 3.2 Docs Content ===*/
 .idocs-content {
   position: relative;
-  margin-left: 260px;
+  margin-left: 400px;
   padding: 0px 50px 50px;
   min-height: 750px;
   transition: all 0.3s;
@@ -748,7 +748,7 @@ hr {
 
 @media (max-width: 767.98px) {
   .idocs-navigation {
-    margin-left: -260px;
+    margin-left: -400px;
   }
   .idocs-navigation.active {
     margin-left: 0;
@@ -2308,7 +2308,7 @@ hr {
 #footer {
   background: #fff;
   color: #252b33;
-  margin-left: 260px;
+  margin-left: 400px;
   padding: 66px 0px;
   padding: 4.125rem 0;
 }
