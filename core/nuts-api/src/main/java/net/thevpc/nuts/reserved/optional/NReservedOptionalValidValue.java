@@ -1,5 +1,8 @@
 package net.thevpc.nuts.reserved.optional;
 
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NUpletElementBuilder;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
@@ -34,5 +37,16 @@ public class NReservedOptionalValidValue<T> extends NReservedOptionalValid<T> im
     @Override
     public T get() {
         return value;
+    }
+
+    @Override
+    public NElement describe() {
+        return NElement.ofUpletBuilder("Optional")
+                .add("evaluated", true)
+                .add("empty", false)
+                .add("error", false)
+                .add("value", NElementDescribables.describeResolveOrDestruct(value))
+                .build()
+                ;
     }
 }
