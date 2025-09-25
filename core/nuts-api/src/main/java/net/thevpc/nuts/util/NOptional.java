@@ -1,6 +1,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NElementDescribable;
 import net.thevpc.nuts.reserved.optional.*;
 
 import java.util.Collection;
@@ -10,7 +11,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public interface NOptional<T> extends NBlankable {
+public interface NOptional<T> extends NBlankable, NElementDescribable {
 
     /**
      * return the default ExceptionFactory used for generating exceptions thrown
@@ -257,7 +258,7 @@ public interface NOptional<T> extends NBlankable {
      * NOptional.of(a).then(x->x.b()).then(x->x.c).get()
      * </pre>
      *
-     * @param <V> final result
+     * @param <V>    final result
      * @param mapper function to apply
      * @return null if this optional is null or empty otherwise, maps using
      * mapper
