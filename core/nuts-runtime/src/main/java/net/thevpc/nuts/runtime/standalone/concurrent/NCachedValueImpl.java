@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.NCachedValue;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NUpletElementBuilder;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -215,5 +218,26 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
     @SuppressWarnings("unchecked")
     private static <E extends Throwable> void throwAsRuntime(Object ex) throws E {
         throw (E) ex;
+    }
+
+    @Override
+    public NElement describe() {
+        Evaluated e = lastAttempt.get();
+        NUpletElementBuilder b = NElement.ofUpletBuilder("CachedValue")
+                .add("supplier", NElementDescribables.describeResolveOrDestruct(supplier))
+                .add("expiry", NElementDescribables.describeResolveOrDestruct(expiry.toMillis()))
+                .add("retryPeriod", NElementDescribables.describeResolveOrDestruct(retryPeriod.toMillis()))
+                .add("maxRetries", NElementDescribables.describeResolveOrDestruct(maxRetries))
+                .add("evaluated", e != null);
+        if(e != null) {
+            b.add("success", !e.isError);
+            if(!e.isError) {
+                b.add("value", NElementDescribables.describeResolveOrDestruct(e.valueOrException));
+            }else{
+                b.add("error", NElementDescribables.describeResolveOrDestruct(e.valueOrException));
+            }
+        }
+        return b
+                .build();
     }
 }
