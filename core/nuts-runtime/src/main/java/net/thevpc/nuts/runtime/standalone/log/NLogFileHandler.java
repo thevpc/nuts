@@ -5,19 +5,16 @@ import net.thevpc.nuts.NConstants;
 
 
 import net.thevpc.nuts.log.NLogConfig;
-import net.thevpc.nuts.log.NLogRecord;
 import net.thevpc.nuts.log.NLogSPI;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.time.Instant;
 import java.util.logging.FileHandler;
-import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
@@ -84,10 +81,15 @@ public class NLogFileHandler implements NLogSPI {
         if (!isLoggable(message.getLevel())) {
             return;
         }
+        Instant now = Instant.now();
+        NMsg msg2=NMsg.ofC("%s [%-6s] [%-7s] %s%s", now, message.getLevel(), message.getIntent(), message,
+                message.getDurationNanos() <= 0 ? ""
+                        : NMsg.ofC(" (duration: %s)", NDuration.ofNanos(message.getDurationNanos()))
+        );
         LogRecord r = new LogRecord(message.getLevel(),"{0}");
-        r.setMillis(System.currentTimeMillis());
+        r.setMillis(now.toEpochMilli());
         r.setThrown(message.getThrowable());
-        r.setParameters(new Object[]{message.toString()});
+        r.setParameters(new Object[]{msg2.toString()});
         this.fileHandler.publish(r);
     }
 
