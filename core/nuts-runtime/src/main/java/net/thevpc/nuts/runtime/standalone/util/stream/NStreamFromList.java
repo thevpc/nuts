@@ -5,6 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
+import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDescribable;
 import net.thevpc.nuts.util.NIterator;
 
 import java.util.*;
@@ -21,6 +24,14 @@ public class NStreamFromList<T> extends NStreamBase<T> {
     public NStreamFromList(String nutsBase, List<T> o) {
         super(nutsBase);
         this.o = o;
+    }
+
+    @Override
+    public NElement describe() {
+        if(o instanceof NElementDescribable) {
+            return ((NElementDescribable) o).describe();
+        }
+        return NElementDescribables.describeResolveOrDestruct(o);
     }
 
     @Override
