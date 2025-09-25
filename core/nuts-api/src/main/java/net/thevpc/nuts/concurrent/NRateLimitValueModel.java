@@ -1,10 +1,15 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NUpletElementBuilder;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class NRateLimitValueModel implements Serializable {
+public class NRateLimitValueModel implements Serializable, NElementDescribable {
     private String id;
     private long lastAccess;
     private NRateLimitRuleModel[] rules;
@@ -42,9 +47,25 @@ public class NRateLimitValueModel implements Serializable {
     @Override
     public String toString() {
         return "NLimitedValueData{" +
-                "uuid='" + id + '\'' +
+                "id='" + id + '\'' +
                 ", lastAccess=" + lastAccess +
                 ", rules=" + Arrays.toString(rules) +
                 '}';
+    }
+
+    @Override
+    public NElement describe() {
+        NUpletElementBuilder b = NElement.ofUpletBuilder("RateLimitValue")
+                .add("id", id);
+        if (lastAccess > 0) {
+            b.add("lastAccess", lastAccess);
+        }
+        if (rules != null && rules.length > 0) {
+            b.add("rules",
+                    NElement.ofArray(Arrays.stream(rules)
+                            .map(NRateLimitRuleModel::describe).toArray(NElement[]::new))
+            );
+        }
+        return b.build();
     }
 }
