@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.util.NStream;
@@ -104,7 +104,7 @@ public class DefaultNDependencies implements NDependencies {
 
     @Override
     public NElement describe() {
-        return NDescribables.safeDescribe(description);
+        return NElementDescribables.safeDescribe(description);
     }
 
     @Override
