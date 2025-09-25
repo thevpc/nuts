@@ -33,6 +33,7 @@ import net.thevpc.nuts.boot.NBootWorkspaceAlreadyExistsException;
 import net.thevpc.nuts.boot.NBootWorkspaceNotFoundException;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElementFactory;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.format.NVersionFormat;
@@ -51,16 +52,13 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.format.NTableModel;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.reserved.NScopedWorkspace;
 import net.thevpc.nuts.NLocationKey;
-import net.thevpc.nuts.runtime.standalone.log.DefaultNLog;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.DefaultNProperties;
@@ -1994,7 +1992,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             a.put("id", id.getLongName());
             a.put("dependencies", m.getDependencies().get().transitive()
                     .map(NDependency::getLongName)
-                    .redescribe(NDescribables.ofDesc("getLongName"))
+                    .redescribe(NElementDescribables.ofDesc("getLongName"))
                     .collect(Collectors.joining(";")));
             defs.put(m.getId().getLongId(), m);
             if (withDependencies) {
@@ -2033,9 +2031,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                         .filter(x -> !x.isOptional()
                                                 && dependencyRunFilter
                                                 .acceptDependency(x, def.getId())
-                                        ).redescribe(NDescribables.ofDesc("isOptional && runnable"))
+                                        ).redescribe(NElementDescribables.ofDesc("isOptional && runnable"))
                                         .map(x -> x.toId().getLongName())
-                                        .redescribe(NDescribables.ofDesc("toId.getLongName"))
+                                        .redescribe(NElementDescribables.ofDesc("toId.getLongName"))
                                         .toList()
                         )
                 );
