@@ -1,6 +1,7 @@
 package net.thevpc.nuts.lib.slf4j;
 
 import net.thevpc.nuts.log.NLogSPI;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,8 +82,13 @@ public class Slf4JNLogSPI implements NLogSPI {
         if (!logger.isEnabledForLevel(slf4jLevel)) {
             return;
         }
-        String msgText = (message != null) ? message.toString() : "";
-        log0(slf4jLevel, msgText, message == null ? null : message.getThrowable());
+
+        NMsg msg2=NMsg.ofC("[%-7s] %s%s", message==null?null:message.getIntent(), message,
+                (message==null || message.getDurationNanos() <= 0) ? ""
+                        : NMsg.ofC(" (duration: %s)", NDuration.ofNanos(message.getDurationNanos()))
+        );
+
+        log0(slf4jLevel, msg2.toString(), message == null ? null : message.getThrowable());
     }
 
     private void log0(org.slf4j.event.Level slf4jLevel, String message, Throwable throwable) {
