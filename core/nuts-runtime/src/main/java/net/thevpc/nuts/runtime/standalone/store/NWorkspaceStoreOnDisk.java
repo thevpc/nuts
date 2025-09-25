@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.store;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.concurrent.NLock;
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.format.NDescriptorFormat;
@@ -11,7 +11,6 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
 import net.thevpc.nuts.log.NLog;
 
-import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.NLocationKey;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -38,7 +37,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.logging.Level;
 
 public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     private NanoDB db;
@@ -313,7 +311,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                                     }
                                     return null;
                                 }
-                            }).redescribe(NDescribables.ofDesc("FileToVersion")))
+                            }).redescribe(NElementDescribables.ofDesc("FileToVersion")))
                     .notNull().iterator();
         } else {
             //ok.sort((a, b) -> CoreVersionUtils.compareVersions(a, b));
