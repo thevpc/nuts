@@ -313,6 +313,18 @@ public interface NElementFactory extends NComponent {
 
     NArrayElement ofDoubleArray(Double... items);
 
+    NArrayElement ofFloatArray(float... items);
+
+    NArrayElement ofFloatArray(Float... items);
+
+    NArrayElement ofByteArray(byte... items);
+
+    NArrayElement ofByteArray(Byte... items);
+
+    NArrayElement ofShortArray(short... items);
+
+    NArrayElement ofShortArray(Short... items);
+
     NObjectElement ofObject(NElement... items);
 
     NObjectElement ofObject(String name, NElement... items);
