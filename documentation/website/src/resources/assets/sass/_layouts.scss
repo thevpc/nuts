@@ -33,7 +33,7 @@
   left: 0;
   overflow: hidden;
   overflow-y: auto;
-  width: 260px;
+  width: 400px;
   height: calc(100% - 70px);
   z-index: 1;
   border-right: 1px solid rgba(0, 0, 0, 0.05);
@@ -137,7 +137,7 @@
 
 .idocs-content {
   position: relative;
-  margin-left: 260px;
+  margin-left: 400px;
   padding: 0px 50px 50px;
   min-height: 750px;
   transition: all 0.3s;
@@ -154,7 +154,7 @@
 
 @include media-breakpoint-down(sm) {
 .idocs-navigation {
-  margin-left: -260px;
+  margin-left: -400px;
 
   &.active {
     margin-left: 0;
