@@ -44,6 +44,18 @@ public class NHttpCode {
         this.code = code;
     }
 
+    public boolean isOk() {
+        return code == OK.code || (code >= 200 && code < 300);
+    }
+
+    public boolean isClientError() {
+        return (code >= 400 && code < 500);
+    }
+
+    public boolean isServerError() {
+        return (code >= 500);
+    }
+
     public int getCode() {
         return code;
     }
