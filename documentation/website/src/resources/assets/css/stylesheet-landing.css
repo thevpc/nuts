@@ -691,7 +691,7 @@ hr {
   left: 0;
   overflow: hidden;
   overflow-y: auto;
-  width: 260px;
+  width: 400px;
   height: calc(100% - 70px);
   z-index: 1;
   border-right: 1px solid rgba(0, 0, 0, 0.05);
@@ -792,7 +792,7 @@ hr {
 
 @media (max-width: 767.98px) {
   .idocs-navigation {
-    margin-left: -260px;
+    margin-left: -400px;
   }
   .idocs-navigation.active {
     margin-left: 0;
