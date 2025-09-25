@@ -311,6 +311,11 @@ public final class NBootWorkspaceCmdLineParser {
                         if (active && options != null) {
                             String file = NBootUtils.firstNonNull(a.getStringValue(), "");
                             options.setWorkspace(file);
+                            if ("MEMORY".equalsIgnoreCase(options.getIsolationLevel())
+                                    || "SANDBOX".equalsIgnoreCase(options.getIsolationLevel())
+                            ) {
+                                options.setIsolationLevel(null);
+                            }
                         }
                         return Collections.singletonList(a);
                     }
@@ -886,8 +891,7 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--boot-repository":
                     case "--boot-repositories":
                     case "--boot-repo":
-                    case "--boot-repos":
-                    {
+                    case "--boot-repos": {
                         a = cmdLine.nextEntry();
                         String v = a.getStringValue();
                         if (active) {
@@ -1563,6 +1567,9 @@ public final class NBootWorkspaceCmdLineParser {
                         if (active) {
                             if (options != null) {
                                 options.setIsolationLevel(a.getBooleanValue() ? "SANDBOX" : null);
+                                if (a.getBooleanValue()) {
+                                    options.setWorkspace(null);
+                                }
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1586,6 +1593,9 @@ public final class NBootWorkspaceCmdLineParser {
                         if (active) {
                             if (options != null) {
                                 options.setIsolationLevel(a.getBooleanValue() ? "MEMORY" : null);
+                                if (a.getBooleanValue()) {
+                                    options.setWorkspace(null);
+                                }
                             }
                             return (Collections.singletonList(a));
                         } else {
