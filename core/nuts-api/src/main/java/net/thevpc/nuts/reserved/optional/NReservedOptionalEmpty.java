@@ -3,6 +3,8 @@ package net.thevpc.nuts.reserved.optional;
 import net.thevpc.nuts.NDetachedEmptyOptionalException;
 import net.thevpc.nuts.NEmptyOptionalException;
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -46,7 +48,6 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
     public Optional<T> asOptional() {
         return Optional.empty();
     }
-
 
 
     @Override
@@ -158,4 +159,16 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
         }
         throw exception;
     }
+
+    @Override
+    public NElement describe() {
+        return NElement.ofUpletBuilder("Optional")
+                .add("evaluated", true)
+                .add("empty", true)
+                .add("error", false)
+                .build()
+                ;
+
+    }
+
 }
