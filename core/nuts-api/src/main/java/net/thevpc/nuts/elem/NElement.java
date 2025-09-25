@@ -55,7 +55,7 @@ import java.util.function.Predicate;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NElement extends NElementDescribable<NElement>, NBlankable/*, NLiteral*/ {
+public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ {
 
     /// ///////////////////////////////////////////////////////////////////////////////////
 
@@ -581,6 +581,30 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable/*, N
 
     static NArrayElement ofDoubleArray(Double... items) {
         return NElementFactory.of().ofDoubleArray(items);
+    }
+
+    static NArrayElement ofFloatArray(float... items) {
+        return NElementFactory.of().ofFloatArray(items);
+    }
+
+    static NArrayElement ofFloatArray(Float... items) {
+        return NElementFactory.of().ofFloatArray(items);
+    }
+
+    static NArrayElement ofByteArray(byte... items) {
+        return NElementFactory.of().ofByteArray(items);
+    }
+
+    static NArrayElement ofByteArray(Byte... items) {
+        return NElementFactory.of().ofByteArray(items);
+    }
+
+    static NArrayElement ofShortArray(short... items) {
+        return NElementFactory.of().ofShortArray(items);
+    }
+
+    static NArrayElement ofShortArray(Short... items) {
+        return NElementFactory.of().ofShortArray(items);
     }
 
     static NObjectElement ofObject(NElement... items) {
