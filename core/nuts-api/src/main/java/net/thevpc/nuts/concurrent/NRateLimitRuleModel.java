@@ -1,10 +1,14 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.elem.NUpletElementBuilder;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class NRateLimitRuleModel implements Serializable {
+public class NRateLimitRuleModel implements Serializable, NElementDescribable {
     private String id;
     private String strategy;
     private int capacity;
@@ -77,5 +81,22 @@ public class NRateLimitRuleModel implements Serializable {
                 ", available=" + available +
                 ", lastRefill=" + lastRefill +
                 '}';
+    }
+
+    @Override
+    public NElement describe() {
+        NUpletElementBuilder b = NElement.ofUpletBuilder("Rule")
+                .add("id", getId())
+                .add("capacity", getCapacity())
+                .add("available", getAvailable())
+                .add("duration", duration)
+                .add("strategy", strategy);
+        if (lastRefill > 0) {
+            b.add("lastRefill", lastRefill);
+        }
+        if (config != null && config.length > 0) {
+            b.add("config", NElement.ofByteArray(config));
+        }
+        return b.build();
     }
 }
