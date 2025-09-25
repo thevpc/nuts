@@ -1,6 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
+import net.thevpc.nuts.NExceptions;
 import net.thevpc.nuts.concurrent.NStableValue;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NUpletElementBuilder;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -69,7 +73,7 @@ public final class NStableValueImpl<T> implements NStableValue<T> {
 
     @Override
     public boolean computeAndSetIfAbsent(Supplier<T> supplier) {
-        synchronized(this) {
+        synchronized (this) {
             if (state.get() == null) {
                 try {
                     T value = supplier.get();
@@ -85,7 +89,7 @@ public final class NStableValueImpl<T> implements NStableValue<T> {
     }
 
     public boolean setIfAbsent(T value) {
-        synchronized(this) {
+        synchronized (this) {
             if (state.get() == null) {
                 state.set(new Evaluated(false, value));
                 return true;
@@ -113,5 +117,21 @@ public final class NStableValueImpl<T> implements NStableValue<T> {
     @SuppressWarnings("unchecked")
     private static <E extends Throwable> void sneakyThrow(Throwable e) throws E {
         throw (E) e;
+    }
+
+    @Override
+    public NElement describe() {
+        Evaluated v = state.get();
+        NUpletElementBuilder u = NElement.ofUpletBuilder("StableValue")
+                .add("evaluated", v != null);
+        if (v != null) {
+            u.add("success", !v.err);
+            if (v.err) {
+                u.add("error", NElementDescribables.describeResolveOrDestruct(v.value));
+            } else {
+                u.add("value", NElementDescribables.describeResolveOrDestruct(v.value));
+            }
+        }
+        return u.build();
     }
 }
