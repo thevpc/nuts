@@ -51,7 +51,7 @@ public interface NUnsafeRunnable extends NElementRedescribable<NUnsafeRunnable> 
 
     @Override
     default NElement describe() {
-        return NDescribables.ofLateToString(this).get();
+        return NElementDescribables.ofLateToString(this).get();
     }
 
     void run() throws Exception;
