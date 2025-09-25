@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NObjectElement;
 
@@ -61,7 +61,7 @@ public class NIteratorBuilder<T> {
 //    }
 
     public static <T> NIteratorBuilder<T> ofRunnable(Runnable t, String n) {
-        return ofRunnable(NRunnable.of(t).redescribe(NDescribables.ofDesc(n)));
+        return ofRunnable(NRunnable.of(t).redescribe(NElementDescribables.ofDesc(n)));
     }
 //
 //    public static <T> IteratorBuilder<T> ofSupplier(Supplier<NutsIterator<T>> from) {
