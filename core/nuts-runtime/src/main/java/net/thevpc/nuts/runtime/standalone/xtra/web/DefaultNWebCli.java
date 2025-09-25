@@ -7,6 +7,8 @@ import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NInputSourceBuilder;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
@@ -426,27 +428,52 @@ public class DefaultNWebCli implements NWebCli {
 
                 uc.setDoInput(!r.isOneWay());
                 uc.setDoOutput(someBody);
-                if (someBody) {
-                    uc.setRequestProperty("Content-Length", String.valueOf(bodyLength));
-                    NCp.of().from(requestBody).to(uc.getOutputStream()).run();
+                HttpURLConnection finalUc = uc;
+                long startTime = System.nanoTime();
+                Exception seenError = null;
+                NHttpCode rCode = null;
+
+                try {
+                    if (someBody) {
+                        uc.setRequestProperty("Content-Length", String.valueOf(bodyLength));
+                        NCp.of().from(requestBody).to(uc.getOutputStream()).run();
+                    }
+                    rCode = NHttpCode.of(uc.getResponseCode());
+                } catch (Exception err) {
+                    seenError = err;
+                } finally {
+                    if (seenError != null) {
+                        NLog.of(DefaultNWebCli.class).debug(NMsg.ofC("[%s] %s %s (%s)", "FAILED", method, spec, seenError)
+                                .withDurationNanos(System.nanoTime() - startTime)
+                                .withIntent(NMsgIntent.FAIL)
+                                .withThrowable(seenError)
+                        );
+                    } else {
+                        NLog.of(DefaultNWebCli.class).debug(NMsg.ofC("[%s] %s %s", rCode == null ? "FAILED" : rCode, method, spec)
+                                .withDurationNanos(System.nanoTime() - startTime)
+                                .withIntent((rCode != null && rCode.isOk()) ? NMsgIntent.READ : NMsgIntent.FAIL)
+                                .withThrowable(seenError)
+                        );
+                    }
+                }
+                if (seenError != null) {
+                    throw new NIOException(NMsg.ofC("error loading %s (%s)", spec, seenError), seenError);
                 }
 
-                HttpURLConnection finalUc = uc;
                 NWebResponse httpResponse = new NWebResponseImpl(
-                        NHttpCode.of(uc.getResponseCode()),
+                        rCode,
                         NMsg.ofPlain(NStringUtils.trim(uc.getResponseMessage())),
                         uc.getHeaderFields(),
                         () -> {
                             NInputSource bytes = null;
                             if (!r.isOneWay()) {
                                 //TODO change me with a smart copy input source!
-                                HttpURLConnection uc2 = finalUc;
-                                try {
-                                    bytes = NInputSourceBuilder.of(finalUc.getInputStream()).setCloseAction(() -> {
+                                try (InputStream iis = finalUc.getInputStream()) {
+                                    bytes = NInputSourceBuilder.of(iis).setCloseAction(() -> {
                                                 // close connexion when fully read!
-                                                if (uc2 != null) {
+                                                if (finalUc != null) {
                                                     try {
-                                                        uc2.disconnect();
+                                                        finalUc.disconnect();
                                                     } catch (Exception e) {
                                                         //
                                                     }
