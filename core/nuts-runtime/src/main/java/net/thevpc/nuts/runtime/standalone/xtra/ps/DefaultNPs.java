@@ -4,10 +4,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.NOsFamily;
 import net.thevpc.nuts.NPlatformFamily;
 import net.thevpc.nuts.io.NPsInfo;
@@ -294,7 +294,7 @@ public class DefaultNPs implements NPs {
                                     .setCmdLine(cmdLineString)
                                     .setCmdLineArgs(parsedCmdLine);
                             return p.build();
-                        }).redescribe(NDescribables.ofDesc("processInfo"))).build();
+                        }).redescribe(NElementDescribables.ofDesc("processInfo"))).build();
         return new NStreamFromNIterator<>("process-" + getPlatformFamily(), it);
     }
 
