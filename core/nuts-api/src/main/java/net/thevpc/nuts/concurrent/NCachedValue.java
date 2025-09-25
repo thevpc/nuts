@@ -1,9 +1,11 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.elem.NElementDescribable;
+
 import java.time.Duration;
 import java.util.function.Supplier;
 
-public interface NCachedValue<T> {
+public interface NCachedValue<T> extends Supplier<T>, NElementDescribable {
 
     static <T> NCachedValue<T> of(Supplier<T> supplier) {
         return NConcurrentFactory.of().cachedValue(supplier);
