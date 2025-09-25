@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.Iterator;
@@ -51,8 +51,8 @@ public class NConvertedIterator<F, T> extends NIteratorBase<T> {
     public NElement describe() {
         return NElement.ofObjectBuilder()
                 .name("Map")
-                .set("mapper", NDescribables.describeResolveOrDestruct(converter))
-                .set("base", NDescribables.describeResolveOrDestruct(base))
+                .set("mapper", NElementDescribables.describeResolveOrDestruct(converter))
+                .set("base", NElementDescribables.describeResolveOrDestruct(base))
                 .build();
     }
 
