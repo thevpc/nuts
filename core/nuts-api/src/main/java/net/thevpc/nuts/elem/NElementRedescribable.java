@@ -30,6 +30,6 @@ import java.util.function.Supplier;
  * Describable defines objects that define user friendly structured (NutsElement Base) toString
  * like method named @{describe}
  */
-public interface NElementRedescribable<T> extends NElementDescribable<T>{
+public interface NElementRedescribable<T> extends NElementDescribable{
     T redescribe(Supplier<NElement> description);
 }
