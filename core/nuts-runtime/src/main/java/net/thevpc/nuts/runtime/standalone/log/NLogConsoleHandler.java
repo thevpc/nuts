@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 
 public class NLogConsoleHandler implements NLogSPI {
-    private DefaultNLogModel model;
+    private final DefaultNLogModel model;
     private boolean suspendTerminalMode = false;
     private final LinkedList<Rec> suspendedTerminalRecords = new LinkedList<>();
     private int suspendedMax = 100;
