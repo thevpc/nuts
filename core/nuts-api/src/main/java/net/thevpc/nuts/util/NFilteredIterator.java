@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.Iterator;
@@ -48,7 +48,7 @@ public class NFilteredIterator<T> extends NIteratorBase<T> {
             this.base = base;
         }
         //Predicate<? super T>
-//        NDescribables.cast(filter);
+//        NElementDescribables.cast(filter);
         this.filter = filter;
     }
 
@@ -56,8 +56,8 @@ public class NFilteredIterator<T> extends NIteratorBase<T> {
     public NElement describe() {
         return NElement.ofObjectBuilder()
                 .name("Filter")
-                .set("base", NDescribables.describeResolveOrDestruct(base))
-                .set("accept", NDescribables.describeResolveOrToString(filter))
+                .set("base", NElementDescribables.describeResolveOrDestruct(base))
+                .set("accept", NElementDescribables.describeResolveOrToString(filter))
                 .build()
                 ;
     }
