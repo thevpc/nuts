@@ -515,20 +515,20 @@ all in a runtime-friendly way.
                                                 </p>
                                                 <p>
                                                     <pre><code class="language-java">
-    // Build an element
-    NElement document = NElement.ofObjectBuilder()
-        .set(&quot;app-id&quot;, NApp.of().getId().get())
-        .set(&quot;error&quot;, messageString)
-        .build();
+// Build an element
+NElement document = NElement.ofObjectBuilder()
+    .set(&quot;app-id&quot;, NApp.of().getId().get())
+    .set(&quot;error&quot;, messageString)
+    .build();
 
-    // Parse JSON into Java object
-    Person person = NElementParser.ofJson().parse(NPath.of(&quot;person.json&quot;), Person.class);
+// Parse JSON into Java object
+Person person = NElementParser.ofJson().parse(NPath.of(&quot;person.json&quot;), Person.class);
 
-    // Format and write XML to file
-    NElementFormat.ofPlainXml(document).println(NPath.of(&quot;person.xml&quot;));
+// Format and write XML to file
+NElementFormat.ofPlainXml(document).println(NPath.of(&quot;person.xml&quot;));
 
-    // Print TSON to terminal with colors
-    NElementFormat.ofNtfTson(document).println();
+// Print TSON to terminal with colors
+NElementFormat.ofNtfTson(document).println();
 </code></pre>
                                                 </p>
                                             </div>
@@ -1179,7 +1179,7 @@ NOut.println(&quot;Was executed? &quot; + executed);
             <p class="text-2 text-center mb-0">
                 Copyright © 2018-2025 Nuts Package Manager Team.
                 <br>
-                Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2025-09-22-194739
+                Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2025-09-25-011124
                 <br>
                 <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                             href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
