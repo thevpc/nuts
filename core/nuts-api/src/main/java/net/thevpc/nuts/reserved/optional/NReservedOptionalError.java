@@ -5,6 +5,8 @@ import java.util.Objects;
 import net.thevpc.nuts.NDetachedErrorOptionalException;
 import net.thevpc.nuts.NErrorOptionalException;
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -155,4 +157,13 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
     }
 
 
+    @Override
+    public NElement describe() {
+        return NElement.ofUpletBuilder("Optional")
+                .add("evaluated", true)
+                .add("empty", false)
+                .add("error", true)
+                .build()
+                ;
+    }
 }
