@@ -4,6 +4,8 @@ import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.concurrent.NLockAcquireException;
 import net.thevpc.nuts.concurrent.NLockBarrierException;
 import net.thevpc.nuts.concurrent.NLockReleaseException;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NUpletElementBuilder;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
 import net.thevpc.nuts.util.NAssert;
@@ -157,7 +159,7 @@ public class DefaultMemLock extends AbstractNLock {
             if (System.currentTimeMillis() - now > ptime.timeMs) {
                 break;
             }
-            NWorkspaceProfilerImpl.sleep(ptime.minTimeToSleep,"DefaultMemLock::tryLockInterruptibly");
+            NWorkspaceProfilerImpl.sleep(ptime.minTimeToSleep, "DefaultMemLock::tryLockInterruptibly");
         } while (true);
         return false;
     }
@@ -202,4 +204,11 @@ public class DefaultMemLock extends AbstractNLock {
     protected void relock() {
         lock.lock();
     }
+
+    @Override
+    public NElement describe() {
+        NUpletElementBuilder b = NElement.ofUpletBuilder("MemLock");
+        return b.build();
+    }
+
 }
