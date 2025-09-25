@@ -23,6 +23,7 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNElementFactory implements NElementFactory {
@@ -176,6 +177,36 @@ public class DefaultNElementFactory implements NElementFactory {
     @Override
     public NArrayElement ofDoubleArray(Double... items) {
         return ofArrayBuilder().addAll(Arrays.stream(items).map(this::ofDouble).collect(Collectors.toList())).build();
+    }
+
+    @Override
+    public NArrayElement ofFloatArray(float... items) {
+        return ofArrayBuilder().addAll(IntStream.range(0, items.length).mapToObj(i -> ofFloat(items[i])).collect(Collectors.toList())).build();
+    }
+
+    @Override
+    public NArrayElement ofFloatArray(Float... items) {
+        return ofArrayBuilder().addAll(Arrays.stream(items).map(this::ofFloat).collect(Collectors.toList())).build();
+    }
+
+    @Override
+    public NArrayElement ofByteArray(byte... items) {
+        return ofArrayBuilder().addAll(IntStream.range(0, items.length).mapToObj(i -> ofByte(items[i])).collect(Collectors.toList())).build();
+    }
+
+    @Override
+    public NArrayElement ofByteArray(Byte... items) {
+        return ofArrayBuilder().addAll(Arrays.stream(items).map(this::ofByte).collect(Collectors.toList())).build();
+    }
+
+    @Override
+    public NArrayElement ofShortArray(short... items) {
+        return ofArrayBuilder().addAll(IntStream.range(0, items.length).mapToObj(i -> ofShort(items[i])).collect(Collectors.toList())).build();
+    }
+
+    @Override
+    public NArrayElement ofShortArray(Short... items) {
+        return ofArrayBuilder().addAll(Arrays.stream(items).map(this::ofShort).collect(Collectors.toList())).build();
     }
 
     @Override
