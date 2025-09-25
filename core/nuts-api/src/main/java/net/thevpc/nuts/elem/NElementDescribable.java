@@ -28,14 +28,14 @@ package net.thevpc.nuts.elem;
  * Describable defines objects that define user friendly structured (NutsElement Base) toString
  * like method named @{describe}
  */
-public interface NElementDescribable<T> {
+public interface NElementDescribable {
     /**
      * create an element that describes this instance
      *
      * @return Structured NutsElement description
      */
     default NElement describe() {
-        return NDescribables.ofLateToString(this).get();
+        return NElementDescribables.ofLateToString(this).get();
     }
 
 }
