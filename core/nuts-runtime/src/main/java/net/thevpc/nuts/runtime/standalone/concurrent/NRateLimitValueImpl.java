@@ -1,9 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.*;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NUpletElementBuilder;
 import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NMsg;
 
+import java.lang.reflect.Array;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -38,7 +42,7 @@ class NRateLimitValueImpl implements NRateLimitValue {
             NRateLimitRule rule = factory.createRule(ruleModel);
             rules[i] = rule;
             if (!rule.tryConsume(count)) {
-                return new NRateLimitValueResultImpl(false, null,NMsg.ofC("rate limit exceeded (%s) for %s", ruleModel.getId(), id));
+                return new NRateLimitValueResultImpl(false, null, NMsg.ofC("rate limit exceeded (%s) for %s", ruleModel.getId(), id));
             }
         }
 
@@ -46,7 +50,7 @@ class NRateLimitValueImpl implements NRateLimitValue {
                 id, lastAccess == null ? 0 : lastAccess.getEpochSecond(),
                 Arrays.stream(rules).map(NRateLimitRule::toModel).toArray(NRateLimitRuleModel[]::new)
         ));
-        return new NRateLimitValueResultImpl(true, null,null);
+        return new NRateLimitValueResultImpl(true, null, null);
     }
 
     @Override
@@ -68,7 +72,6 @@ class NRateLimitValueImpl implements NRateLimitValue {
     public <T> NRateLimitValueResult takeAndCall(NCallable<T> callable) {
         return take().onSuccessCall(callable);
     }
-
 
 
     @Override
@@ -96,7 +99,7 @@ class NRateLimitValueImpl implements NRateLimitValue {
                 if (!rule.tryConsume(count)) {
                     if (take == null) {
                         faultyRuleModel = ruleModel;
-                        take = new NRateLimitValueResultImpl(false, null,NMsg.ofC("rate limit exceeded (%s) for %s", ruleModel.getId(), id));
+                        take = new NRateLimitValueResultImpl(false, null, NMsg.ofC("rate limit exceeded (%s) for %s", ruleModel.getId(), id));
                     }
                     shouldWaitForMs = Math.max(shouldWaitForMs, rule.nextAvailableMillis(count));
                 }
@@ -106,7 +109,7 @@ class NRateLimitValueImpl implements NRateLimitValue {
                     Arrays.stream(rules).map(NRateLimitRule::toModel).toArray(NRateLimitRuleModel[]::new)
             ));
             if (take == null) {
-                take = new NRateLimitValueResultImpl(true, null,null);
+                take = new NRateLimitValueResultImpl(true, null, null);
             }
             if (take.success()) {
                 return take;
@@ -118,10 +121,10 @@ class NRateLimitValueImpl implements NRateLimitValue {
                 long now = System.currentTimeMillis();
                 if (now >= deadline) {
                     if (faultyRuleModel != null) {
-                        return new NRateLimitValueResultImpl(false, null,NMsg.ofC("rate limit exceeded (%s) for %s after %s ms", faultyRuleModel.getId(), id, maxWaitTimeMillis));
+                        return new NRateLimitValueResultImpl(false, null, NMsg.ofC("rate limit exceeded (%s) for %s after %s ms", faultyRuleModel.getId(), id, maxWaitTimeMillis));
                     } else {
                         //should never happen
-                        return new NRateLimitValueResultImpl(false, null,NMsg.ofC("rate limit exceeded for %s after %s ms", id, maxWaitTimeMillis));
+                        return new NRateLimitValueResultImpl(false, null, NMsg.ofC("rate limit exceeded for %s after %s ms", id, maxWaitTimeMillis));
                     }
                 }
             }
@@ -129,10 +132,10 @@ class NRateLimitValueImpl implements NRateLimitValue {
                 Thread.sleep(shouldWaitForMs);
             } catch (InterruptedException e) {
                 if (faultyRuleModel != null) {
-                    return new NRateLimitValueResultImpl(false, null,NMsg.ofC("rate limit exceeded (%s) for %s after %s ms", faultyRuleModel.getId(), id, maxWaitTimeMillis));
+                    return new NRateLimitValueResultImpl(false, null, NMsg.ofC("rate limit exceeded (%s) for %s after %s ms", faultyRuleModel.getId(), id, maxWaitTimeMillis));
                 } else {
                     //should never happen
-                    return new NRateLimitValueResultImpl(false, null,NMsg.ofC("rate limit exceeded for %s after %s ms", id, maxWaitTimeMillis));
+                    return new NRateLimitValueResultImpl(false, null, NMsg.ofC("rate limit exceeded for %s after %s ms", id, maxWaitTimeMillis));
                 }
             }
         }
@@ -150,12 +153,12 @@ class NRateLimitValueImpl implements NRateLimitValue {
 
     @Override
     public <T> NRateLimitValueResult claimAndCall(Duration timeout, NCallable<T> callable) {
-        return claim(1,timeout).onSuccessCall(callable);
+        return claim(1, timeout).onSuccessCall(callable);
     }
 
     @Override
     public <T> NRateLimitValueResult claimAndCall(int count, Duration timeout, NCallable<T> callable) {
-        return claim(count,timeout).onSuccessCall(callable);
+        return claim(count, timeout).onSuccessCall(callable);
     }
 
     @Override
@@ -185,5 +188,9 @@ class NRateLimitValueImpl implements NRateLimitValue {
         return Objects.hash(factory, id);
     }
 
+    @Override
+    public NElement describe() {
+        return model().describe();
+    }
 
 }
