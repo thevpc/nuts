@@ -38,10 +38,9 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.TreeSet;
-import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NElementDescribables;
 
 
 import net.thevpc.nuts.io.NIOException;
@@ -49,7 +48,6 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
-import net.thevpc.nuts.DefaultNVersion;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
@@ -147,7 +145,7 @@ public class MavenRepositoryFolderHelper {
         NId bestId = null;
         NPath file = getLocalGroupAndArtifactFile(id);
         if (file.exists()) {
-            NPath[] versionFolders = file.stream().filter(NPath::isDirectory).redescribe(NDescribables.ofDesc("isDirectory"))
+            NPath[] versionFolders = file.stream().filter(NPath::isDirectory).redescribe(NElementDescribables.ofDesc("isDirectory"))
                     .toArray(NPath[]::new);
             for (NPath versionFolder : versionFolders) {
                 NId id2 = id.builder().setVersion(versionFolder.getName()).build();
