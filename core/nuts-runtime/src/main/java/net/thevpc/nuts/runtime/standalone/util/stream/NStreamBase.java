@@ -25,8 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NIteratorUtils;
@@ -196,7 +196,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public NStream<T> nonNull() {
-        return filter(Objects::nonNull).redescribe(NDescribables.ofDesc("nonNull"));
+        return filter(Objects::nonNull).redescribe(NElementDescribables.ofDesc("nonNull"));
     }
 
     @Override
@@ -215,12 +215,12 @@ public abstract class NStreamBase<T> implements NStream<T> {
                 return !((NBlankable) x).isBlank();
             }
             return true;
-        }).redescribe(NDescribables.ofDesc("nonBlank"));
+        }).redescribe(NElementDescribables.ofDesc("nonBlank"));
     }
 
     @Override
     public NStream<T> filter(Predicate<? super T> predicate) {
-//        NDescribables.cast(predicate);
+//        NElementDescribables.cast(predicate);
         return new NStreamBase<T>(nutsBase) {
             @Override
             public NIterator<T> iterator() {
@@ -232,12 +232,12 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public NStream<T> filterNonNull() {
-        return filter(Objects::nonNull).redescribe(NDescribables.ofDesc("nonNull"));
+        return filter(Objects::nonNull).redescribe(NElementDescribables.ofDesc("nonNull"));
     }
 
     @Override
     public NStream<T> filterNonBlank() {
-        return filter(x -> !NBlankable.isBlank(x)).redescribe(NDescribables.ofDesc("nonBlank"));
+        return filter(x -> !NBlankable.isBlank(x)).redescribe(NElementDescribables.ofDesc("nonBlank"));
     }
 
     @Override
