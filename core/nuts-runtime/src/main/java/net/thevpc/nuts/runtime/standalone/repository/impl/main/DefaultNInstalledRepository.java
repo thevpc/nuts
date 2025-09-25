@@ -661,7 +661,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             public NSearchRepositoryCmd run() {
                 NIterator<InstallInfoConfig> installIter = searchInstallConfig();
                 NIterator<NId> idIter = NIteratorBuilder.of(installIter)
-                        .map(NFunction.of(InstallInfoConfig::getId).redescribe(NDescribables.ofDesc("NutsInstallInformation->Id")))
+                        .map(NFunction.of(InstallInfoConfig::getId).redescribe(NElementDescribables.ofDesc("NutsInstallInformation->Id")))
                         .build();
                 NDefinitionFilter ff = getFilter();
                 if (ff != null) {
@@ -690,7 +690,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                                 return newId;
                             }
                             return null;
-                        }).nonNull().redescribe(NDescribables.ofDesc("FileToVersion")).iterator();
+                        }).nonNull().redescribe(NElementDescribables.ofDesc("FileToVersion")).iterator();
                 return this;
             }
         };
