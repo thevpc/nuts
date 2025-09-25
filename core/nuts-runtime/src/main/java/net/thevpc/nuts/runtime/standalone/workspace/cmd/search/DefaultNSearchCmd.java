@@ -131,7 +131,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                                                     .set("description", "searchVersions")
                                                                     .set("repository", repoAndMode.getRepository().getName())
                                                                     .set("fetchMode", repoAndMode.getFetchMode().id())
-                                                                    .set("filter", NDescribables.describeResolveOrDestruct(filter))
+                                                                    .set("filter", NElementDescribables.describeResolveOrDestruct(filter))
                                                                     .build()
                                                     ).safeIgnore().iterator();
                                             z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
@@ -149,7 +149,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                                                     .set("description", "search")
                                                                     .set("repository", repoAndMode.getRepository().getName())
                                                                     .set("fetchMode", repoAndMode.getFetchMode().id())
-                                                                    .set("filter", NDescribables.describeResolveOrDestruct(restrictedFilter))
+                                                                    .set("filter", NElementDescribables.describeResolveOrDestruct(restrictedFilter))
                                                                     .build()
                                                     ).safeIgnore().iterator();
                                             z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
@@ -161,9 +161,9 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                         }
                         if (fetchMode.isStopFast()) {
                             NIterator<NId> loc2 = NIteratorUtils.concat(idLocal);
-                            loc2=loc2.redescribe(NDescribables.ofDesc(NEDescHelper.addProperty(loc2.describe(),"localSearchList",true)));
+                            loc2=loc2.redescribe(NElementDescribables.ofDesc(NEDescHelper.addProperty(loc2.describe(),"localSearchList",true)));
                             NIterator<NId> rem2 = NIteratorUtils.concat(idRemote);
-                            rem2=rem2.redescribe(NDescribables.ofDesc(NEDescHelper.addProperty(rem2.describe(),"remoteSearchList",true)));
+                            rem2=rem2.redescribe(NElementDescribables.ofDesc(NEDescHelper.addProperty(rem2.describe(),"remoteSearchList",true)));
                             resultForEachAlternative.add(NIteratorUtils.coalesce(loc2, rem2));
                         } else {
                             resultForEachAlternative.add(NIteratorUtils.concatLists(idLocal, idRemote));
@@ -185,11 +185,11 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                                 .setFilter(filter)
                                                 .setFetchMode(repoAndMode.getFetchMode())
                                                 .getResult(),
-                                        NDescribables.ofDesc(NElement.ofObjectBuilder()
+                                        NElementDescribables.ofDesc(NElement.ofObjectBuilder()
                                                 .set("description", "searchRepository")
                                                 .set("repository", repoAndMode.getRepository().getName())
                                                 .set("fetchMode", repoAndMode.getFetchMode().id())
-                                                .set("filter", NDescribables.describeResolveOrDestruct(filter))
+                                                .set("filter", NElementDescribables.describeResolveOrDestruct(filter))
                                                 .build())
                                 )
                                 .safeIgnore()
@@ -221,10 +221,10 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                                         de.getDependencies().get().transitiveWithSource().iterator()
                                                 ).build();
                                             })
-                                    .redescribe(NDescribables.ofDesc("getDependencies"))
+                                    .redescribe(NElementDescribables.ofDesc("getDependencies"))
                     ).filter(NPredicates.nonNull())
                     .map(NFunction.of(NDependency::toId)
-                            .redescribe(NDescribables.ofDesc("DependencyToId"))
+                            .redescribe(NElementDescribables.ofDesc("DependencyToId"))
                     )
                     .build();
         }
@@ -242,7 +242,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                     NFunction.of(
                                     (NId nutsId) -> nutsId.getLongId()
                                             .toString())
-                            .redescribe(NDescribables.ofDesc("getLongId"))
+                            .redescribe(NElementDescribables.ofDesc("getLongId"))
             ).iterator();
         } else if (latest && distinct) {
             r = NIteratorBuilder.ofSupplier(() -> {
@@ -256,7 +256,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                             }
                         }
                         return visited.values().iterator();
-                    }, () -> NDescribables.describeResolveOrDestructAsObject(baseIterator)
+                    }, () -> NElementDescribables.describeResolveOrDestructAsObject(baseIterator)
                             .builder()
                             .set("latest", true)
                             .set("distinct", true)
@@ -276,8 +276,8 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                         oldList.add(nutsId);
                                     }
                                 }
-                                return NIteratorBuilder.ofFlatMap(NIterator.of(visited.values().iterator()).redescribe(NDescribables.ofDesc("visited"))).build();
-                            }, () -> NDescribables.describeResolveOrDestructAsObject(baseIterator)
+                                return NIteratorBuilder.ofFlatMap(NIterator.of(visited.values().iterator()).redescribe(NElementDescribables.ofDesc("visited"))).build();
+                            }, () -> NElementDescribables.describeResolveOrDestructAsObject(baseIterator)
                                     .builder()
                                     .set("latest", true)
                                     .set("duplicates", true)
