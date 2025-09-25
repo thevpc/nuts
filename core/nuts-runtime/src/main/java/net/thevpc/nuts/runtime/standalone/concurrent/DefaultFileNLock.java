@@ -5,6 +5,8 @@ import net.thevpc.nuts.concurrent.NLockAcquireException;
 import net.thevpc.nuts.concurrent.NLockBarrierException;
 import net.thevpc.nuts.concurrent.NLockReleaseException;
 
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NUpletElementBuilder;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
@@ -106,7 +108,7 @@ public class DefaultFileNLock extends AbstractNLock {
     @Override
     public synchronized void lock() {
         long now = System.currentTimeMillis();
-        long maxWaitingTime=30000;
+        long maxWaitingTime = 30000;
         PollTime ptime = preferredPollTime(maxWaitingTime, TimeUnit.MILLISECONDS);
         long lastLog = System.currentTimeMillis();
         do {
@@ -208,7 +210,7 @@ public class DefaultFileNLock extends AbstractNLock {
         long minTimeToSleep = timeMs / 10;
         if (timeMs > 500) {
             timeMs = 500;
-        }else if (timeMs < 100) {
+        } else if (timeMs < 100) {
             timeMs = 100;
         }
         return new PollTime(timeMs, minTimeToSleep);
@@ -260,15 +262,15 @@ public class DefaultFileNLock extends AbstractNLock {
                 if (!Files.exists(path)) {
                     writeLock();
                     return true;
-                }else{
+                } else {
                     LockInfo li = new LockInfo();
                     try {
                         byte[] bytes = Files.readAllBytes(path);
                         li.deserialize(new String(bytes));
-                    }catch (Exception ex) {
+                    } catch (Exception ex) {
                         //
                     }
-                    if(li.isValid() && Instant.now().compareTo(li.maxValidInstant)<=0){
+                    if (li.isValid() && Instant.now().compareTo(li.maxValidInstant) <= 0) {
                         return false;
                     }
                     writeLock();
@@ -287,12 +289,12 @@ public class DefaultFileNLock extends AbstractNLock {
             Files.createFile(path);
             LockInfo li = new LockInfo();
             NWorkspace ws = NWorkspace.of();
-            li.hostname= ws.getHostName();
-            li.instant=Instant.now();
-            li.maxValidInstant=li.instant.plusSeconds(12*3600);
-            li.pid= ws.getPid();
+            li.hostname = ws.getHostName();
+            li.instant = Instant.now();
+            li.maxValidInstant = li.instant.plusSeconds(12 * 3600);
+            li.pid = ws.getPid();
 
-            Files.write(path,li.serialize().getBytes());
+            Files.write(path, li.serialize().getBytes());
             ownerThread = Thread.currentThread();
         } catch (IOException ex) {
             throw new NLockAcquireException(NMsg.ofC("unable to acquire lock"), lockedObject, this, ex);
@@ -310,5 +312,14 @@ public class DefaultFileNLock extends AbstractNLock {
 
     @Override
     protected void relock() {
+    }
+
+    @Override
+    public NElement describe() {
+        NUpletElementBuilder b = NElement.ofUpletBuilder("FileLock");
+        if (path != null) {
+            b.add("path", path.toString());
+        }
+        return b.build();
     }
 }
