@@ -1,10 +1,11 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.elem.NElementDescribable;
 import net.thevpc.nuts.util.NCallable;
 
 import java.time.Duration;
 
-public interface NRateLimitValue {
+public interface NRateLimitValue extends NElementDescribable {
     /**
      * creates a builder based on the default (in memory) NRateLimitValueFactory.
      * should call build() to build a NRateLimitValue instance
