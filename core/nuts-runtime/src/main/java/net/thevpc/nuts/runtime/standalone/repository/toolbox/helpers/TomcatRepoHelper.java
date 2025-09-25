@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.toolbox.helpers;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
@@ -137,10 +137,10 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
 
         return NPath.of("htmlfs:https://archive.apache.org/dist/tomcat/")
                 .stream()
-                .filter(NPredicate.of((NPath x) -> x.isDirectory() && x.getName().matches("tomcat-[0-9.]+")).redescribe(NDescribables.ofDesc("directory && tomcat")))
+                .filter(NPredicate.of((NPath x) -> x.isDirectory() && x.getName().matches("tomcat-[0-9.]+")).redescribe(NElementDescribables.ofDesc("directory && tomcat")))
                 .flatMapStream(NFunction.of(
                         (NPath s) -> s.stream()
-                                .filter(NPredicate.of((NPath x2) -> x2.isDirectory() && x2.getName().startsWith("v")).redescribe(NDescribables.ofDesc("isDirectory")))
+                                .filter(NPredicate.of((NPath x2) -> x2.isDirectory() && x2.getName().startsWith("v")).redescribe(NElementDescribables.ofDesc("isDirectory")))
                                 .flatMapStream(
                                         NFunction.of(
                                                 new Function<NPath, NStream<NId>>() {
@@ -171,7 +171,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                                                     .stream()
                                                                     .filter(
                                                                             NPredicate.<NPath>of((NPath x4) -> x4.getName().matches(finalPrefix + "[0-9]+\\.[0-9]+\\.[0-9]+\\.zip"))
-                                                                                    .redescribe(NDescribables.ofDesc("name.isZip"))
+                                                                                    .redescribe(NElementDescribables.ofDesc("name.isZip"))
 
                                                                     )
                                                                     .map(NFunction.<NPath, NId>of(
@@ -184,7 +184,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                                                                     return id2;
                                                                                 }
                                                                                 return null;
-                                                                            }).<NId>redescribe(NDescribables.ofDesc("toZip")))
+                                                                            }).<NId>redescribe(NElementDescribables.ofDesc("toZip")))
                                                                     .<NId>nonNull();
                                                         } else {
                                                             NId id2 = idBuilder.setVersion(version).build();
@@ -195,8 +195,8 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                                         }
 
                                                     }
-                                                }).redescribe(NDescribables.ofDesc("flatMap")))
-                ).redescribe(NDescribables.ofDesc("flatMap"))).iterator();
+                                                }).redescribe(NElementDescribables.ofDesc("flatMap")))
+                ).redescribe(NElementDescribables.ofDesc("flatMap"))).iterator();
     }
 
     @Override
