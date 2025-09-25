@@ -1,6 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.function.Supplier;
@@ -34,10 +34,10 @@ public class NFunction2WithDescription<A,B,V> implements NFunction2<A,B,V> {
 
     @Override
     public NElement describe() {
-        return NDescribables.safeDescribe(
+        return NElementDescribables.safeDescribe(
                 description,
-                NDescribables.ofDesc(base),
-                NDescribables.ofLateToString(this)
+                NElementDescribables.ofDesc(base),
+                NElementDescribables.ofLateToString(this)
         );
     }
 }
