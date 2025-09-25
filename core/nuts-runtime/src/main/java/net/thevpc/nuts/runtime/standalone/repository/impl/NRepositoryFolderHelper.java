@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.concurrent.NLock;
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NObjectElement;
 
@@ -333,7 +333,7 @@ public class NRepositoryFolderHelper {
         NPath file = getLocalGroupAndArtifactFile(id);
         if (file.exists()) {
             NPath[] versionFolders = file.stream().filter(NPath::isDirectory)
-                    .redescribe(NDescribables.ofDesc("idDirectory"))
+                    .redescribe(NElementDescribables.ofDesc("idDirectory"))
                     .toArray(NPath[]::new);
             if (versionFolders != null) {
                 for (NPath versionFolder : versionFolders) {
