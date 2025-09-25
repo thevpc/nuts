@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.LinkedList;
@@ -26,7 +26,7 @@ public class NCoalesceIterator<T> extends NIteratorBase<T> {
                 .addAll(
                         children
                                 .stream().map(
-                                        x -> NDescribables.describeResolveOrDestruct(x)
+                                        x -> NElementDescribables.describeResolveOrDestruct(x)
                                 ).toArray(NElement[]::new)
                 )
                 .build();
