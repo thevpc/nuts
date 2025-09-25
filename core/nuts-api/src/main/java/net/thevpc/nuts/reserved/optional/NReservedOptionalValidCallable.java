@@ -4,6 +4,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NMsg;
@@ -142,4 +144,25 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
         }
         return result.get();
     }
+
+
+    @Override
+    public NElement describe() {
+        if(evaluated) {
+            return NElement.ofUpletBuilder("Optional")
+                    .add("evaluated", true)
+                    .add("error", result.isError())
+                    .add("empty", result.isEmpty())
+                    .add("value", NElementDescribables.describeResolveOrDestruct(result.get()))
+                    .build()
+                    ;
+        }else{
+            return NElement.ofUpletBuilder("Optional")
+                    .add("evaluated", false)
+                    .add("expression", NElementDescribables.describeResolveOrDestruct(value))
+                    .build()
+                    ;
+        }
+    }
+
 }
