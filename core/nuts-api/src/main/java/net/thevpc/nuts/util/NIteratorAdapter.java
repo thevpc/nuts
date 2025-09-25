@@ -1,6 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.Iterator;
@@ -35,7 +35,7 @@ public class NIteratorAdapter<T> extends NIteratorBase<T> {
         if(!a.isObject()){
             a= NElement.ofObjectBuilder().set("name",a).build();
         }
-        return NDescribables.describeResolveOrDestructAsObject(base)
+        return NElementDescribables.describeResolveOrDestructAsObject(base)
                 .builder()
                         .addAll(a.asObject().get().children().toArray(new NElement[0]))
                 .build();
