@@ -10,11 +10,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 public class NLogSPIJUL implements NLogSPI {
-    private Logger log;
-
-    public NLogSPIJUL(Logger log) {
-        this.log = log;
-    }
+    private final Logger log;
 
     public NLogSPIJUL(String name) {
         this.log = Logger.getLogger(name);
