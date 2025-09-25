@@ -1,5 +1,7 @@
 package net.thevpc.nuts.reserved.optional;
 
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.util.*;
 
 import java.util.Optional;
