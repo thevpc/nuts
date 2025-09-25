@@ -36,7 +36,6 @@ import net.thevpc.nuts.util.NMsg;
 
 import java.util.LinkedList;
 import java.util.Stack;
-import java.util.logging.Level;
 
 /**
  * Created by vpc on 2/21/17.
@@ -85,7 +84,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         return NElement.ofObjectBuilder()
                 .name("ScanPath")
                 .set("repository", repository == null ? null : repository.getName())
-                .set("filter", NDescribables.describeResolveOrDestruct(filter))
+                .set("filter", NElementDescribables.describeResolveOrDestruct(filter))
                 .add(basePath == null ? null : NElement.ofPair("path", NElements.of().toElement(basePath)))
                 .set("root", NElements.of().toElement(rootFolder))
                 .add((maxDepth < 0 || maxDepth == Integer.MAX_VALUE) ? null : NElement.ofPair("maxDepth", maxDepth))
