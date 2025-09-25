@@ -328,7 +328,7 @@ public class NColors {
     public static final NNamedColor GRAY_34 = _regGray(34);
     public static final NNamedColor GRAY_35 = _reg("Gray35","Gray", 88, 88, 88);
     public static final NNamedColor GRAY_36 = _regGray(36);
-    public static final NNamedColor GRAY_37 = _reg("Grey37","Gray", 95, 95, 95);
+    public static final NNamedColor GRAY_37 = _reg("Gray37","Gray", 95, 95, 95);
     public static final NNamedColor GRAY_38 = _regGray(38);
     public static final NNamedColor GRAY_39 = _reg("Gray39","Gray", 98, 98, 98);
     public static final NNamedColor GRAY_40 = _regGray(40);
@@ -344,7 +344,7 @@ public class NColors {
     public static final NNamedColor GRAY_50 = _reg("Gray50","Gray", 128, 128, 128);
     public static final NNamedColor GRAY_51 = _regGray(51);
     public static final NNamedColor GRAY_52 = _regGray(52);
-    public static final NNamedColor GRAY_53 = _reg("Grey53","Gray", 135, 135, 135);
+    public static final NNamedColor GRAY_53 = _reg("Gray53","Gray", 135, 135, 135);
     public static final NNamedColor GRAY_54 = _reg("Gray54","Gray", 138, 138, 138);
     public static final NNamedColor GRAY_55 = _regGray(55);
     public static final NNamedColor GRAY_56 = _regGray(56);
@@ -354,13 +354,13 @@ public class NColors {
     public static final NNamedColor GRAY_60 = _regGray(60);
     public static final NNamedColor GRAY_61 = _regGray(61);
     public static final NNamedColor GRAY_62 = _reg("Gray62","Gray", 158, 158, 158);
-    public static final NNamedColor GRAY_63 = _reg("Grey63","Gray", 175, 135, 175);
+    public static final NNamedColor GRAY_63 = _reg("Gray63","Gray", 175, 135, 175);
     public static final NNamedColor GRAY_64 = _regGray(64);
     public static final NNamedColor GRAY_65 = _regGray(65);
     public static final NNamedColor GRAY_66 = _reg("Gray66","Gray", 168, 168, 168);
     public static final NNamedColor GRAY_67 = _regGray(67);
     public static final NNamedColor GRAY_68 = _regGray(68);
-    public static final NNamedColor GRAY_69 = _reg("Grey69","Gray", 175, 175, 175);
+    public static final NNamedColor GRAY_69 = _reg("Gray69","Gray", 175, 175, 175);
     public static final NNamedColor GRAY_70 = _reg("Gray70","Gray", 178, 178, 178);
     public static final NNamedColor GRAY_71 = _regGray(71);
     public static final NNamedColor GRAY_72 = _regGray(72);
@@ -375,7 +375,7 @@ public class NColors {
     public static final NNamedColor GRAY_81 = _regGray(81);
     public static final NNamedColor GRAY_82 = _reg("Gray82","Gray", 208, 208, 208);
     public static final NNamedColor GRAY_83 = _regGray(83);
-    public static final NNamedColor GRAY_84 = _reg("Grey84","Gray", 215, 215, 215);
+    public static final NNamedColor GRAY_84 = _reg("Gray84","Gray", 215, 215, 215);
     public static final NNamedColor GRAY_85 = _reg("Gray85","Gray", 218, 218, 218);
     public static final NNamedColor GRAY_86 = _regGray(86);
     public static final NNamedColor GRAY_87 = _regGray(87);
