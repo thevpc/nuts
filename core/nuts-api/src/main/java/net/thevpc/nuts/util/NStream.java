@@ -25,6 +25,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementRedescribable;
 import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
 
@@ -45,6 +46,34 @@ public interface NStream<T> extends Iterable<T>, NElementRedescribable<NStream<T
 
     static <T> NStream<T> ofArray(T... str) {
         return NCollectionsRPI.of().arrayToStream(str);
+    }
+
+    static <T> NStream<T> ofArray(int... items) {
+        return (NStream<T>) ofStream(Stream.of(items)).redescribe(() -> NElement.ofIntArray(items));
+    }
+
+    static <T> NStream<T> ofArray(long... items) {
+        return (NStream<T>) ofStream(Stream.of(items)).redescribe(() -> NElement.ofLongArray(items));
+    }
+
+    static <T> NStream<T> ofArray(boolean... items) {
+        return (NStream<T>) ofStream(Stream.of(items)).redescribe(() -> NElement.ofBooleanArray(items));
+    }
+
+    static <T> NStream<T> ofArray(byte... items) {
+        return (NStream<T>) ofStream(Stream.of(items)).redescribe(() -> NElement.ofByteArray(items));
+    }
+
+    static <T> NStream<T> ofArray(short... items) {
+        return (NStream<T>) ofStream(Stream.of(items)).redescribe(() -> NElement.ofShortArray(items));
+    }
+
+    static <T> NStream<T> ofArray(float... items) {
+        return (NStream<T>) ofStream(Stream.of(items)).redescribe(() -> NElement.ofFloatArray(items));
+    }
+
+    static <T> NStream<T> ofArray(double... items) {
+        return (NStream<T>) ofStream(Stream.of(items)).redescribe(() -> NElement.ofDoubleArray(items));
     }
 
     static <T> NStream<T> ofOptional(NOptional<T> str) {
@@ -144,7 +173,7 @@ public interface NStream<T> extends Iterable<T>, NElementRedescribable<NStream<T
      * return NutsStream a stream consisting of the results of applying the
      * given function to the elements of this stream.
      *
-     * @param <R> to type
+     * @param <R>    to type
      * @param mapper mapper
      * @return NutsStream a stream consisting of the results of applying the
      * given function to the elements of this stream.
@@ -208,13 +237,13 @@ public interface NStream<T> extends Iterable<T>, NElementRedescribable<NStream<T
     <A> A[] toArray(IntFunction<A[]> generator);
 
     <K, U> Map<K, U> toMap(Function<? super T, ? extends K> keyMapper,
-            Function<? super T, ? extends U> valueMapper);
+                           Function<? super T, ? extends U> valueMapper);
 
     <K, U> Map<K, U> toOrderedMap(Function<? super T, ? extends K> keyMapper,
-            Function<? super T, ? extends U> valueMapper);
+                                  Function<? super T, ? extends U> valueMapper);
 
     <K, U> Map<K, U> toSortedMap(Function<? super T, ? extends K> keyMapper,
-            Function<? super T, ? extends U> valueMapper);
+                                 Function<? super T, ? extends U> valueMapper);
 
     <R> NStream<R> flatMapIter(Function<? super T, ? extends Iterator<? extends R>> mapper);
 
@@ -251,8 +280,8 @@ public interface NStream<T> extends Iterable<T>, NElementRedescribable<NStream<T
     NIterator<T> iterator();
 
     <R> R collect(Supplier<R> supplier,
-            BiConsumer<R, ? super T> accumulator,
-            BiConsumer<R, R> combiner);
+                  BiConsumer<R, ? super T> accumulator,
+                  BiConsumer<R, R> combiner);
 
     <R, A> R collect(Collector<? super T, A, R> collector);
 
