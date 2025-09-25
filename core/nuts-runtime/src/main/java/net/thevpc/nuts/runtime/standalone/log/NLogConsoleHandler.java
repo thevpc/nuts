@@ -2,32 +2,26 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 
 import net.thevpc.nuts.NErr;
-import net.thevpc.nuts.NExceptions;
 import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogConfig;
-import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.log.NLogSPI;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.io.PrintStream;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.logging.Filter;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.StreamHandler;
 
 public class NLogConsoleHandler implements NLogSPI {
     private DefaultNLogModel model;
     private boolean suspendTerminalMode = false;
     private final LinkedList<Rec> suspendedTerminalRecords = new LinkedList<>();
     private int suspendedMax = 100;
-    private static class Rec{
+
+    private static class Rec {
         Instant instant;
         NMsg msg;
 
@@ -90,7 +84,6 @@ public class NLogConsoleHandler implements NLogSPI {
 
     public void resumeTerminal() {
         suspendTerminalMode = false;
-        DefaultNLogModel logModel = NWorkspaceExt.of().getModel().logModel;
         synchronized (suspendedTerminalRecords) {
             for (Iterator<Rec> iterator = suspendedTerminalRecords.iterator(); iterator.hasNext(); ) {
                 Rec r = iterator.next();
@@ -102,7 +95,11 @@ public class NLogConsoleHandler implements NLogSPI {
 
     private void log0(Rec rec) {
         NErr.resetLine();
-        NErr.println(NMsg.ofC("%s %s %s %s", rec.instant, rec.msg.getLevel(), rec.msg.getIntent(), rec.msg));
+
+        NErr.println(NMsg.ofC("%s [%-6s] [%-7s] %s%s", rec.instant, rec.msg.getLevel(), rec.msg.getIntent(), rec.msg,
+                rec.msg.getDurationNanos() <= 0 ? ""
+                        : NMsg.ofC(" (duration: %s)", NDuration.ofNanos(rec.msg.getDurationNanos()))
+        ));
         if (rec.msg.getThrowable() != null) {
             NErr.println(NStringUtils.stacktrace(rec.msg.getThrowable()));
         }
