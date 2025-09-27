@@ -8,4 +8,8 @@ public class NCmdLineException extends NIllegalArgumentException {
         super(formattedMessage, cause);
     }
 
+    public NCmdLineException(NMsg formattedMessage) {
+        super(formattedMessage);
+    }
+
 }
