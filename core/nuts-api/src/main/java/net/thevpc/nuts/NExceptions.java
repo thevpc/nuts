@@ -56,7 +56,7 @@ public class NExceptions {
     }
 
     public static RuntimeException ofSafeCmdLineException(NMsg msg) {
-        return ofSafeAssertException(msg, null);
+        return ofSafeCmdLineException(msg, null);
     }
 
     public static RuntimeException ofSafeCmdLineException(NMsg msg, Throwable ex) {
