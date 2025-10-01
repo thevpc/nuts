@@ -125,7 +125,7 @@ public class NExceptions {
         return m;
     }
 
-    public static RuntimeException ofUncheckedException(Exception e) {
+    public static RuntimeException ofUncheckedException(Throwable e) {
         if (e == null) {
             return new NullPointerException("null exception");
         }
