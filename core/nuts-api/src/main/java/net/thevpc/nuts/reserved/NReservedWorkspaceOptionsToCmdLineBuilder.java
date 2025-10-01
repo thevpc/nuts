@@ -17,6 +17,7 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
     private static final String V084 = "0.8.4";
     private static final String V085 = "0.8.5";
     private static final String V086 = "0.8.6";
+    private static final String V087 = "0.8.7";
     private NWorkspaceOptionsConfig config;
     private NWorkspaceOptions options;
 
