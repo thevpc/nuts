@@ -1,5 +1,5 @@
 #!/bin/bash
-NUTS_VERSION=0.8.6
+NUTS_VERSION=0.8.7
 NUTS_JAVA_HOME=/home/vpc/.jdks/corretto-1.8.0_452/
 NUTS_APP_JAR=~/.m2/repository/net/thevpc/nuts/nuts-app/$NUTS_VERSION/nuts-app-$NUTS_VERSION.jar
 
