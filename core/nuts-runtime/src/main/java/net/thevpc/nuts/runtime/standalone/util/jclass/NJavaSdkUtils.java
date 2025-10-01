@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.concurrent.NConcurrent;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.concurrent.NScheduler;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 
@@ -238,7 +238,7 @@ public class NJavaSdkUtils {
         for (String s : conf) {
             all.add(searchJdkLocationsFuture(NPath.of(s)));
         }
-        return NScheduler.of().executorService().submit(() -> {
+        return NConcurrent.of().executorService().submit(() -> {
             List<NPlatformLocation> locs = new ArrayList<>();
             for (Future<NPlatformLocation[]> nutsSdkLocationFuture : all) {
                 NPlatformLocation[] e = nutsSdkLocationFuture.get();
@@ -279,7 +279,7 @@ public class NJavaSdkUtils {
         } else if (s.isDirectory()) {
             for (NPath d : s.list()) {
                 all.add(
-                        NScheduler.of().executorService().submit(() -> {
+                        NConcurrent.of().executorService().submit(() -> {
                             NPlatformLocation r = null;
                             try {
                                 r = resolveJdkLocation(d, null);
@@ -301,7 +301,7 @@ public class NJavaSdkUtils {
                 );
             }
         }
-        return NScheduler.of().executorService().submit(() -> {
+        return NConcurrent.of().executorService().submit(() -> {
             List<NPlatformLocation> locs = new ArrayList<>();
             for (Future<NPlatformLocation> nutsSdkLocationFuture : all) {
                 NPlatformLocation e = nutsSdkLocationFuture.get();
@@ -324,7 +324,7 @@ public class NJavaSdkUtils {
                 "sap:SAP",
                 "graalvm:GraalVM",
                 "temurin:IBM Temurin",
-                "sapmachine:SAP MAchine",
+                "sapmachine:SAP Machine",
                 "corretto:Amazon Corretto",
                 "jbr:Jetbrains",
                 "azul:Azul Zulu",
