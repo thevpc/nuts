@@ -2,8 +2,7 @@ package net.thevpc.nuts.runtime.standalone.executor.exec;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.concurrent.NScheduler;
-
+import net.thevpc.nuts.concurrent.NConcurrent;
 
 
 import net.thevpc.nuts.format.NExecCmdFormat;
@@ -121,6 +120,6 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         if (out != null) {
             out.run(NTerminalCmd.MOVE_LINE_START);
         }
-        return NScheduler.of().executorService().submit(() -> pb.getResultCode());
+        return NConcurrent.of().executorService().submit(() -> pb.getResultCode());
     }
 }
