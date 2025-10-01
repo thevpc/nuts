@@ -5,10 +5,13 @@ import net.thevpc.nuts.elem.NElementDescribable;
 import java.time.Duration;
 import java.util.function.Supplier;
 
+/**
+ * @since 0.8.6
+ */
 public interface NCachedValue<T> extends Supplier<T>, NElementDescribable {
 
     static <T> NCachedValue<T> of(Supplier<T> supplier) {
-        return NConcurrentFactory.of().cachedValue(supplier);
+        return NConcurrent.of().cachedValue(supplier);
     }
 
     NCachedValue<T> setExpiry(Duration expiry);
