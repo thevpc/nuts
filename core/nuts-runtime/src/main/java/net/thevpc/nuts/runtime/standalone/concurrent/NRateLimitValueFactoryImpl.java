@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.*;
+import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -10,10 +11,47 @@ import java.util.function.Function;
 
 public class NRateLimitValueFactoryImpl implements NRateLimitValueFactory {
     private NRateLimitValueStore store;
+    private NBeanContainer beanContainer;
     private Map<String, Function<NRateLimitRuleModel, NRateLimitRule>> strategies = new HashMap<>();
 
-    public NRateLimitValueFactoryImpl(NRateLimitValueStore store) {
+    public NRateLimitValueFactoryImpl(NRateLimitValueStore store, NBeanContainer beanContainer, Map<String, Function<NRateLimitRuleModel, NRateLimitRule>> strategies) {
         this.store = store;
+        this.beanContainer = beanContainer;
+        if (strategies != null) {
+            for (Map.Entry<String, Function<NRateLimitRuleModel, NRateLimitRule>> e : strategies.entrySet()) {
+                if (e.getKey() != null && e.getValue() != null) {
+                    strategies.put(e.getKey(), e.getValue());
+                }
+            }
+            this.strategies.putAll(strategies);
+        }
+    }
+
+
+    @Override
+    public NRateLimitValueFactory withStore(NRateLimitValueStore store) {
+        if (store == this.store) {
+            return this;
+        }
+        return new NRateLimitValueFactoryImpl(store, beanContainer, strategies);
+    }
+
+    @Override
+    public NRateLimitValueFactory withBeanContainer(NBeanContainer beanContainer) {
+        if (beanContainer == this.beanContainer) {
+            return this;
+        }
+        return new NRateLimitValueFactoryImpl(store, beanContainer, strategies);
+    }
+
+    @Override
+    public NBeanContainer getBeanContainer() {
+        return beanContainer;
+    }
+
+    @Override
+    public NRateLimitValueStore getStore() {
+        return store;
     }
 
     public NRateLimitRule createRule(NRateLimitRuleModel model) {
@@ -26,16 +64,16 @@ public class NRateLimitValueFactoryImpl implements NRateLimitValueFactory {
             }
         }
         switch (NNameFormat.LOWER_KEBAB_CASE.format(NStringUtils.trim(strategyId))) {
-            case "bucket":{
+            case "bucket": {
                 return new NRateLimitBucketRule(model);
             }
-            case "sliding-window":{
+            case "sliding-window": {
                 return new NRateLimitSlidingWindowRule(model);
             }
-            case "lecky-bucket":{
+            case "lecky-bucket": {
                 return new NRateLimitLeakyBucketRule(model);
             }
-            case "fixed-window":{
+            case "fixed-window": {
                 return new NRateLimitFixedWindowRule(model);
             }
             default: {
@@ -45,12 +83,13 @@ public class NRateLimitValueFactoryImpl implements NRateLimitValueFactory {
     }
 
     public NRateLimitValueFactory defineStrategy(String name, Function<NRateLimitRuleModel, NRateLimitRule> definition) {
+        Map<String, Function<NRateLimitRuleModel, NRateLimitRule>> strategies2 = new HashMap<>(strategies);
         if (definition == null) {
-            strategies.remove(name);
+            strategies2.remove(name);
         } else {
-            strategies.put(name, definition);
+            strategies2.put(name, definition);
         }
-        return this;
+        return new NRateLimitValueFactoryImpl(store, beanContainer, strategies2);
     }
 
     @Override
