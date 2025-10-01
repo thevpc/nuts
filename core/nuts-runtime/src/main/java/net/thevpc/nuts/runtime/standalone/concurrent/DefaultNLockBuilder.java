@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class DefaultNLockBuilder extends AbstractNLockBuilder {
     Map<Object,DefaultMemLock> memLocks=new HashMap<>();
-    public DefaultNLockBuilder(NWorkspace workspace) {
+    public DefaultNLockBuilder() {
         super();
     }
 
