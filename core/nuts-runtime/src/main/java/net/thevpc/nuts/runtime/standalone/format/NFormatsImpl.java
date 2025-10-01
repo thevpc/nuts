@@ -14,7 +14,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.InputStreamExt;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamTee;
 import net.thevpc.nuts.runtime.standalone.io.util.NInputStreamSource;
 import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
-import net.thevpc.nuts.runtime.standalone.util.reflect.NUseDefaultUtils;
+import net.thevpc.nuts.runtime.standalone.reflect.NUseDefaultUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
