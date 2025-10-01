@@ -5,7 +5,7 @@ Network Updatable Things Services
   /\ \ \ _  __/ /______
  /  \/ / / / / __/ ___/
 / /\  / /_/ / /_(__  )   latest version 0.8.7.0 
-\_\ \/\__,_/\__/____/    LTS version 0.8.5.0 
+\_\ \/\__,_/\__/____/    LTS version 0.8.6.0 
 </pre>
 
 Website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
