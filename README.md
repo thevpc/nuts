@@ -13,7 +13,7 @@ Docs: [Official documentation](https://thevpc.github.io/nuts/doc-nuts.html)
 
 ## What is Nuts?
 
-```nuts``` is a Java™ Package Manager that that makes running Java applications as simple as typing:
+```nuts``` is a Java™ Package Manager that makes running Java applications as simple as typing:
 
 ```bash
 nuts <package>
