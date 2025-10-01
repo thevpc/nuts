@@ -41,7 +41,7 @@ and here is how to compile/generate the website and documentation (assuming you 
 
 ```bash
 cd installers/nuts-release-tool
-java -jar target/nuts-release-tool-$0.8.6.0.jar
+java -jar target/nuts-release-tool-$0.8.7.0.jar
 ```
 
 You can now play with your development version of nuts using the generated `nuts-dev` script.
@@ -81,7 +81,7 @@ You can contribute in a myriad of ways:
   please mark them with 'bug' label. `nuts` should make best effort to work on any environment. So if you encounter any malfunctioning, please contribute with submitting the issue. We are actually unable to test on all environments, so you really are our best hope!   
 * submitting a feature request again on [github issues corner](https://github.com/thevpc/nuts/issues)
   please detail your idea and mark it with 'enhancement' label.
-* working on existing issues. The issues are marked with labels. The priority is given always to the current version milestone (example 0.8.6).
+* working on existing issues. The issues are marked with labels. The priority is given always to the current version milestone (example 0.8.7).
   The complexity of the issue is estimated with the `T-shirt sizing` approach: `size-xxs` is the simplest, `size-m` is medium sized and `size-xxl` is the more complex one.
   Complexity is relative to both required time to do the task and experience on ```nuts``` project to do the work. So please start with smallest (simplest) issues. 
 * working on media and UX by submitting enhancements/replacements of existing website/icons/themes, etc... 
