@@ -123,15 +123,15 @@ net.thevpc.nuts.runtime.standalone.dependency.filter.InternalNDependencyFilters
 net.thevpc.nuts.runtime.standalone.definition.filter.InternalNDefinitionFilters
 net.thevpc.nuts.runtime.standalone.repository.filter.InternalNRepositoryFilters
 net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilters
-net.thevpc.nuts.runtime.standalone.util.reflect.NReflectMapperImpl
+net.thevpc.nuts.runtime.standalone.reflect.NReflectMapperImpl
 
 net.thevpc.nuts.runtime.standalone.dependency.solver.DefaultNDependencySolvers
 
 net.thevpc.nuts.runtime.standalone.xtra.throwables.DefaultNExceptionWorkspaceHandler
 
-net.thevpc.nuts.runtime.standalone.util.reflect.DefaultNReflectRepository
+net.thevpc.nuts.runtime.standalone.reflect.DefaultNReflectRepository
 
-net.thevpc.nuts.runtime.standalone.util.reflect.DefaultNReflectConfigurationBuilder
+net.thevpc.nuts.runtime.standalone.reflect.DefaultNReflectConfigurationBuilder
 
 net.thevpc.nuts.runtime.standalone.xtra.mon.DefaultNProgressMonitors
 
@@ -169,6 +169,6 @@ net.thevpc.nuts.runtime.standalone.text.art.tree.TreeNTextArtRendererFactory
 net.thevpc.nuts.runtime.standalone.text.art.table.TableNTextArtRendererFactory
 
 
-net.thevpc.nuts.runtime.standalone.concurrent.DefaultNConcurrentFactory
+net.thevpc.nuts.runtime.standalone.concurrent.DefaultNConcurrent
 net.thevpc.nuts.runtime.standalone.concurrent.DefaultNLockBuilder
-net.thevpc.nuts.runtime.standalone.concurrent.DefaultNScheduler
+net.thevpc.nuts.runtime.standalone.reflect.NReflectImpl
