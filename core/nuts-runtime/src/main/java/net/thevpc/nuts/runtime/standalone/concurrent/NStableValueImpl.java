@@ -1,87 +1,121 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
-import net.thevpc.nuts.NExceptions;
+import net.thevpc.nuts.NScopedValue;
 import net.thevpc.nuts.concurrent.NStableValue;
+import net.thevpc.nuts.concurrent.NStableValueModel;
+import net.thevpc.nuts.concurrent.NStableValueStore;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NUpletElementBuilder;
+import net.thevpc.nuts.reflect.NBeanContainer;
+import net.thevpc.nuts.util.NAssert;
 
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 public final class NStableValueImpl<T> implements NStableValue<T> {
 
-    private final AtomicReference<Evaluated> state;
-    private final Supplier<T> supplier;
+    private final NStableValueStore store;
+    private final NBeanContainer beanContainer;
+    private NStableValueModel model;
 
-    private static class Evaluated {
-        boolean err;
-        Object value;
+    NStableValueImpl(String id, Supplier<T> supplier, NStableValueStore store, NBeanContainer beanContainer) {
+        NAssert.requireNonNull(supplier, "supplier");
+        this.store = store;
+        this.beanContainer = beanContainer;
+        this.model = new NStableValueModel(NAssert.requireNonNull(id, "id"), supplier);
+        reload();
+    }
 
-        public Evaluated(boolean err, Object value) {
-            this.err = err;
-            this.value = value;
+
+    public void reload() {
+        synchronized (this) {
+            String id = model.getId();
+            NScopedValue<NBeanContainer> c = NBeanContainer.current();
+            NBeanContainer currContainer = beanContainer == null ? c.get() : beanContainer;
+            Runnable cc = () -> {
+                NStableValueModel m = store.load(id);
+                if (m == null) {
+                    m = new NStableValueModel(id, model.getSupplier());
+                    _save(m);
+                } else {
+                    if (model.getSupplier() != null) {
+                        m.setSupplier(model.getSupplier());
+                        store.save(m);
+                    }
+                }
+                model = m;
+            };
+            if (c == null) {
+                cc.run();
+            } else {
+                c.runWith(currContainer, cc);
+            }
         }
     }
 
-    private NStableValueImpl(Supplier<T> supplier) {
-        Objects.requireNonNull(supplier);
-        state = new AtomicReference<>(null);
-        this.supplier = supplier;
+    private void _save(NStableValueModel model) {
+        this.model = model;
+        NScopedValue<NBeanContainer> c = NBeanContainer.current();
+        NBeanContainer currContainer = beanContainer == null ? c.get() : beanContainer;
+        Runnable cc = () -> {
+            store.save(model);
+        };
+        if (c == null) {
+            cc.run();
+        } else {
+            c.runWith(currContainer, cc);
+        }
     }
-
 
     // Factory methods
-    public static <T> NStableValueImpl<T> of(Supplier<T> supplier) {
-        return new NStableValueImpl<>(supplier);
-    }
-
     public T get() {
-        Evaluated current = state.get();
-        if (current != null) {
-            if (current.err) {
-                Throwable e = (Throwable) current.value;
+        Boolean errorState = model.getErrorState();
+        if (errorState != null) {
+            if (errorState) {
+                Throwable e = model.getThrowable();
                 sneakyThrow(e);
             }
-            return (T) current.value;
+            return (T) model.getValue();
         }
         synchronized (this) {
-            current = state.get();
-            if (current != null) {
-                if (current.err) {
-                    Throwable e = (Throwable) current.value;
+            errorState = model.getErrorState();
+            if (errorState != null) {
+                if (errorState) {
+                    Throwable e = model.getThrowable();
                     if (e instanceof RuntimeException) {
                         throw (RuntimeException) e;
                     } else {
                         throw (Error) e;
                     }
                 }
-                return (T) current.value;
+                return (T) model.getValue();
             }
-            try {
-                T value = supplier.get();
-                state.set(new Evaluated(false, value));
-                return value;
-            } catch (Throwable ex) {
-                state.set(new Evaluated(true, ex));  // write-once
-                sneakyThrow(ex);
-                return null;
-            }
+            return doSet((Supplier<T>) model.getSupplier());
+        }
+    }
+
+    private T doSet(Supplier<T> supplier) {
+        try {
+            T value = supplier.get();
+            model.setValue(value);
+            model.setThrowable(null);
+            model.setErrorState(false);
+            return value;
+        } catch (Throwable ex) {
+            model.setValue(null);
+            model.setThrowable(ex);
+            model.setErrorState(false);
+            sneakyThrow(ex);
+            return null;
         }
     }
 
     @Override
     public boolean computeAndSetIfAbsent(Supplier<T> supplier) {
         synchronized (this) {
-            if (state.get() == null) {
-                try {
-                    T value = supplier.get();
-                    state.set(new Evaluated(false, value));
-                } catch (Throwable ex) {
-                    state.set(new Evaluated(true, ex));  // write-once
-                    sneakyThrow(ex);
-                }
+            Boolean errorState = model.getErrorState();
+            if (errorState != null) {
+                doSet(supplier);
                 return true;
             }
         }
@@ -89,29 +123,30 @@ public final class NStableValueImpl<T> implements NStableValue<T> {
     }
 
     public boolean setIfAbsent(T value) {
-        synchronized (this) {
-            if (state.get() == null) {
-                state.set(new Evaluated(false, value));
-                return true;
-            }
-            return false;
-        }
+        return computeAndSetIfAbsent(() -> value);
     }
 
     @Override
     public boolean isValid() {
-        Evaluated v = state.get();
-        return v != null && !v.err;
+        Boolean errorState = model.getErrorState();
+        if (errorState != null) {
+            return !errorState;
+        }
+        return false;
     }
 
     @Override
     public boolean isError() {
-        Evaluated v = state.get();
-        return v != null && v.err;
+        Boolean errorState = model.getErrorState();
+        if (errorState != null) {
+            return errorState;
+        }
+        return false;
     }
 
     public boolean isEvaluated() {
-        return state.get() != null;
+        Boolean errorState = model.getErrorState();
+        return (errorState != null);
     }
 
     @SuppressWarnings("unchecked")
@@ -121,15 +156,15 @@ public final class NStableValueImpl<T> implements NStableValue<T> {
 
     @Override
     public NElement describe() {
-        Evaluated v = state.get();
+        Boolean errorState = model.getErrorState();
         NUpletElementBuilder u = NElement.ofUpletBuilder("StableValue")
-                .add("evaluated", v != null);
-        if (v != null) {
-            u.add("success", !v.err);
-            if (v.err) {
-                u.add("error", NElementDescribables.describeResolveOrDestruct(v.value));
+                .add("evaluated", errorState != null);
+        if (errorState != null) {
+            u.add("success", !errorState);
+            if (errorState) {
+                u.add("error", NElementDescribables.describeResolveOrDestruct(model.getValue()));
             } else {
-                u.add("value", NElementDescribables.describeResolveOrDestruct(v.value));
+                u.add("value", NElementDescribables.describeResolveOrDestruct(model.getThrowable()));
             }
         }
         return u.build();
