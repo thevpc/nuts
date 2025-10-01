@@ -201,25 +201,25 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
 
     /**
      * @return value
-     * @since 0.8.6
+     * @since 0.8.7
      */
     NOptional<Integer> getIntValue();
 
     /**
      * @return value
-     * @since 0.8.6
+     * @since 0.8.7
      */
     int intValue();
 
     /**
      * @return value
-     * @since 0.8.6
+     * @since 0.8.7
      */
     NOptional<Long> getLongValue();
 
     /**
      * @return value
-     * @since 0.8.6
+     * @since 0.8.7
      */
     double doubleValue();
 
