@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.concurrent.NScheduler;
+import net.thevpc.nuts.concurrent.NConcurrent;
 import net.thevpc.nuts.io.DefaultNContentMetadata;
 import net.thevpc.nuts.io.NInputSourceBuilder;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
@@ -31,7 +31,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
 
     public static final int DEFAULT_ADMIN_SERVER_PORT = 8898;
 
-    public NSettingsConnectSubCommand(NWorkspace workspace) {
+    public NSettingsConnectSubCommand() {
         super();
     }
 
@@ -80,7 +80,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                             NInputSourceBuilder.of(socket.getInputStream())
                                     .setMetadata(new DefaultNContentMetadata().setMessage(NMsg.ofC("pipe-out-socket-%s:%s", server, validPort)))
                                     .createNonBlockingInputStream(), NOut.asPrintStream());
-                    NScheduler.of().executorService().submit(rr);
+                    NConcurrent.of().executorService().submit(rr);
                     PrintStream out = new PrintStream(socket.getOutputStream());
                     if (!NBlankable.isBlank(login)) {
                         out.printf("connect ==%s %s== %n", login, new String(password));
