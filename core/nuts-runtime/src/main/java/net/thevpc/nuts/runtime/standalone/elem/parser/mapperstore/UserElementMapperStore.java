@@ -6,7 +6,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.builder.DefaultNElementMapperBuilder;
-import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
+import net.thevpc.nuts.runtime.standalone.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NClassMap;
