@@ -7,7 +7,7 @@ import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.NPathSPIHelper;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
-import net.thevpc.nuts.runtime.standalone.util.reflect.NUseDefaultUtils;
+import net.thevpc.nuts.runtime.standalone.reflect.NUseDefaultUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceVarExpansionFunction;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.spi.NPathSPI;
