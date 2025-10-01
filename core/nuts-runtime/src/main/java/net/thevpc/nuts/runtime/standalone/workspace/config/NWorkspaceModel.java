@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.DefaultElementMapperStore;
@@ -51,6 +52,7 @@ public class NWorkspaceModel {
     public NId apiId;
     public NId runtimeId;
     public DefaultNInstalledRepository installedRepository;
+    public NScopedValue<NBeanContainer> scopedBeanContainer = new NScopedValue<>();
     public DefaultNLogModel logModel;
     public DefaultNWorkspaceEnvManagerModel envModel;
     public DefaultNPlatformModel sdkModel;
