@@ -1,60 +1,59 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.NCachedValue;
+import net.thevpc.nuts.concurrent.NCachedValueModel;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NUpletElementBuilder;
+import net.thevpc.nuts.util.NAssert;
 
 import java.time.Duration;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 public final class NCachedValueImpl<T> implements NCachedValue<T> {
 
+    private final NCachedValueFactoryImpl factory;
     private final Supplier<T> supplier;
-    private final AtomicReference<Evaluated> lastAttempt = new AtomicReference<>(null);
+    private NCachedValueModel model;
 
-    private volatile T lastValidValue = null;
-    private volatile long lastEvalTimestamp = 0;
-    private volatile int failedAttempts = 0;
+    NCachedValueImpl(String id, Supplier<T> supplier, NCachedValueFactoryImpl factory) {
+        this.supplier = Objects.requireNonNull(supplier);
+        this.factory = Objects.requireNonNull(factory);
+        this.model = new NCachedValueModel(NAssert.requireNonNull(id, "id"));
+        reload();
+    }
 
-    private volatile Duration expiry = Duration.ofMillis(Long.MAX_VALUE);
-    private volatile Duration retryPeriod = Duration.ZERO;
-    private volatile int maxRetries = 0;
-    private volatile boolean retainLastOnFailure = false;
-
-    private static class Evaluated {
-        final Object valueOrException;
-        final boolean isError;
-
-        Evaluated(Object valueOrException, boolean isError) {
-            this.valueOrException = valueOrException;
-            this.isError = isError;
+    public void reload() {
+        synchronized (this) {
+            NCachedValueModel m = factory.load(model.getId());
+            if (m == null) {
+                m = new NCachedValueModel(model.getId());
+                m.setExpiry(Duration.ofMillis(Long.MAX_VALUE));
+                m.setRetryPeriod(Duration.ZERO);
+                factory.save(m);
+            }
+            model = m;
         }
     }
 
-    private NCachedValueImpl(Supplier<T> supplier) {
-        this.supplier = Objects.requireNonNull(supplier);
-    }
-
-    public static <T> NCachedValueImpl<T> of(Supplier<T> supplier) {
-        return new NCachedValueImpl<>(supplier);
-    }
 
     public NCachedValueImpl<T> setExpiry(Duration expiry) {
-        this.expiry = Objects.requireNonNull(expiry);
+        model.setExpiry(Objects.requireNonNull(expiry));
+        factory.save(model);
         return this;
     }
 
     public NCachedValueImpl<T> setMaxRetries(int maxRetries) {
         if (maxRetries < 0) throw new IllegalArgumentException("maxRetries >= 0");
-        this.maxRetries = maxRetries;
+        model.setMaxRetries(maxRetries);
+        factory.save(model);
         return this;
     }
 
     public NCachedValueImpl<T> setRetryPeriod(Duration retryPeriod) {
-        this.retryPeriod = retryPeriod; // allow null
+        model.setRetryPeriod(retryPeriod);
+        factory.save(model);
         return this;
     }
 
@@ -63,105 +62,120 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
     }
 
     public NCachedValueImpl<T> retainLastOnFailure(boolean retain) {
-        this.retainLastOnFailure = retain;
+        model.setRetainLastOnFailure(retain);
+        factory.save(model);
         return this;
     }
 
     public void invalidate() {
-        lastAttempt.set(null);
+        model.setErrorState(false);
+        model.setValue(null);
+        factory.save(model);
     }
 
     public boolean isValid() {
-        Evaluated e = lastAttempt.get();
-        if (e == null || e.isError) return false;
+        Boolean lastAttemptError = model.getErrorState();
+        if (lastAttemptError == null || !lastAttemptError) {
+            return false;
+        }
+        if (model.getExpiry() == null) {
+            return true;
+        }
         long now = System.currentTimeMillis();
-        return now - lastEvalTimestamp <= expiry.toMillis(); // not expired
+        return now - model.getLastEvalTimestamp() <= model.getExpiry().toMillis(); // not expired
     }
 
     public boolean isError() {
-        Evaluated e = lastAttempt.get();
-        return e != null && e.isError;
+        Boolean lastAttemptError = model.getErrorState();
+        if (lastAttemptError != null && lastAttemptError) {
+            return true;
+        }
+        return false;
     }
 
     public boolean isEvaluated() {
-        return lastAttempt.get() != null;
+        Boolean lastAttemptError = model.getErrorState();
+        return lastAttemptError != null;
     }
 
     public boolean isExpired() {
-        return System.currentTimeMillis() - lastEvalTimestamp >= expiry.toMillis();
+        if (model.getExpiry() == null) {
+            return false;
+        }
+        return System.currentTimeMillis() - model.getLastEvalTimestamp() >= model.getExpiry().toMillis();
     }
 
     public T get() {
         long now = System.currentTimeMillis();
-        Evaluated ev = lastAttempt.get();
+        Boolean evb = model.getErrorState();
 
-        boolean expired = ev == null || (now - lastEvalTimestamp >= expiry.toMillis());
-        long effectiveRetryPeriod = (retryPeriod != null ? retryPeriod.toMillis() : expiry.toMillis());
+        boolean expired = evb == null || (model.getExpiry() != null && (now - model.getLastEvalTimestamp() >= model.getExpiry().toMillis()));
+        long effectiveRetryPeriod = (model.getRetryPeriod() != null ? model.getRetryPeriod().toMillis() : model.getExpiry().toMillis());
 
-        boolean canRetry = ev == null
-                || !ev.isError
-                || (failedAttempts < maxRetries && (now - lastEvalTimestamp >= effectiveRetryPeriod));
+        boolean canRetry = evb == null
+                || !evb
+                || (model.getFailedAttempts() < model.getMaxRetries() && (now - model.getLastEvalTimestamp() >= effectiveRetryPeriod));
 
-        if (!expired && !ev.isError) {
-            return (T) ev.valueOrException;
+        if (!expired && (evb == null || !evb)) {
+            return (T) model.getValue();
         }
 
         if (!canRetry) {
-            if (retainLastOnFailure && lastValidValue != null) return lastValidValue;
-            throwAsRuntime(ev.valueOrException);
+            if (model.isRetainLastOnFailure() && model.getLastValidValue() != null)
+                return (T) model.getLastValidValue();
+            throwAsRuntime(model.getValue());
         }
 
         synchronized (this) {
-            ev = lastAttempt.get();
+            evb = model.getErrorState();
             now = System.currentTimeMillis();
-            expired = ev == null || (now - lastEvalTimestamp >= expiry.toMillis());
-            canRetry = ev == null
-                    || !ev.isError
-                    || (failedAttempts < maxRetries && (now - lastEvalTimestamp >= effectiveRetryPeriod));
+            expired = evb == null || (model.getExpiry() != null && (now - model.getLastEvalTimestamp() >= model.getExpiry().toMillis()));
+            canRetry = evb == null
+                    || !evb
+                    || (model.getFailedAttempts() < model.getMaxRetries() && (now - model.getLastEvalTimestamp() >= effectiveRetryPeriod));
 
-            if (!expired && ev != null && !ev.isError) {
-                return (T) ev.valueOrException;
+            if (!expired && evb != null && !evb) {
+                return (T) model.getValue();
             }
             if (!canRetry) {
-                if (retainLastOnFailure && lastValidValue != null) return lastValidValue;
-                throwAsRuntime(ev.valueOrException);
+                if (model.isRetainLastOnFailure() && model.getLastValidValue() != null)
+                    return (T) model.getLastValidValue();
+                throwAsRuntime(model.getThrowable());
             }
+            return _computeAndSet0(now, supplier);
+        }
+    }
 
-            try {
-                T value = supplier.get();
-                lastValidValue = value;
-                lastEvalTimestamp = now;
-                failedAttempts = 0;
-                lastAttempt.set(new Evaluated(value, false));
-                return value;
-            } catch (Throwable ex) {
-                failedAttempts++;
-                lastEvalTimestamp = now;
-                lastAttempt.set(new Evaluated(ex, true));
-                if (retainLastOnFailure && lastValidValue != null) return lastValidValue;
-                throwAsRuntime(ex);
-                return null; // unreachable
-            }
+    private T _computeAndSet0(long now, Supplier<T> supplier) {
+        try {
+            T value = supplier.get();
+            model.setLastValidValue(value);
+            model.setLastEvalTimestamp(now);
+            model.setFailedAttempts(0);
+            model.setValue(value);
+            model.setThrowable(null);
+            model.setErrorState(false);
+            factory.save(model);
+            return value;
+        } catch (Throwable ex) {
+            model.setFailedAttempts(Math.max(0, model.getFailedAttempts() + 1));
+            model.setLastEvalTimestamp(now);
+            model.setValue(null);
+            model.setThrowable(ex);
+            model.setErrorState(true);
+            factory.save(model);
+            if (model.isRetainLastOnFailure() && model.getLastValidValue() != null)
+                return (T) model.getLastValidValue();
+            throwAsRuntime(ex);
+            return null; // unreachable
         }
     }
 
     @Override
     public NCachedValue<T> computeAndSet(Supplier<T> supplier) {
         long now = System.currentTimeMillis();
-        synchronized(this) {
-            try {
-                T value = supplier.get();
-                lastValidValue = value;
-                lastEvalTimestamp = now;
-                failedAttempts = 0;
-                lastAttempt.set(new Evaluated(value, false));
-            } catch (Throwable ex) {
-                failedAttempts++;
-                lastEvalTimestamp = now;
-                lastAttempt.set(new Evaluated(ex, true));
-//                    if (retainLastOnFailure && lastValidValue != null) return lastValidValue;
-                throwAsRuntime(ex);
-            }
+        synchronized (this) {
+            _computeAndSet0(now, supplier);
         }
         return this;
     }
@@ -169,11 +183,14 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
     @Override
     public NCachedValue<T> setValue(T value) {
         long now = System.currentTimeMillis();
-        synchronized(this) {
-            lastValidValue = value;
-            lastEvalTimestamp = now;
-            failedAttempts = 0;
-            lastAttempt.set(new Evaluated(value, false));
+        synchronized (this) {
+            model.setLastValidValue(value);
+            model.setLastEvalTimestamp(now);
+            model.setFailedAttempts(0);
+            model.setValue(value);
+            model.setThrowable(null);
+            model.setErrorState(false);
+            factory.save(model);
         }
         return this;
     }
@@ -181,21 +198,9 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
     @Override
     public boolean computeAndSetIfInvalid(Supplier<T> supplier) {
         long now = System.currentTimeMillis();
-        synchronized(this) {
+        synchronized (this) {
             if (!isValid()) {
-                try {
-                    T value = supplier.get();
-                    lastValidValue = value;
-                    lastEvalTimestamp = now;
-                    failedAttempts = 0;
-                    lastAttempt.set(new Evaluated(value, false));
-                } catch (Throwable ex) {
-                    failedAttempts++;
-                    lastEvalTimestamp = now;
-                    lastAttempt.set(new Evaluated(ex, true));
-//                    if (retainLastOnFailure && lastValidValue != null) return lastValidValue;
-                    throwAsRuntime(ex);
-                }
+                _computeAndSet0(now, supplier);
                 return true;
             }
             return false;
@@ -203,12 +208,16 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
     }
 
     public boolean setValueIfInvalid(T value) {
-        synchronized(this) {
+        long now = System.currentTimeMillis();
+        synchronized (this) {
             if (!isValid()) { // no valid value currently
-                lastAttempt.set(new Evaluated( value,false));
-                lastValidValue = value;
-                lastEvalTimestamp = System.currentTimeMillis();
-                failedAttempts = 0; // reset retry
+                model.setLastValidValue(value);
+                model.setLastEvalTimestamp(now);
+                model.setFailedAttempts(0);
+                model.setValue(value);
+                model.setThrowable(null);
+                model.setErrorState(false);
+                factory.save(model);
                 return true;
             }
             return false;
@@ -222,19 +231,24 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
 
     @Override
     public NElement describe() {
-        Evaluated e = lastAttempt.get();
         NUpletElementBuilder b = NElement.ofUpletBuilder("CachedValue")
-                .add("supplier", NElementDescribables.describeResolveOrDestruct(supplier))
-                .add("expiry", NElementDescribables.describeResolveOrDestruct(expiry.toMillis()))
-                .add("retryPeriod", NElementDescribables.describeResolveOrDestruct(retryPeriod.toMillis()))
-                .add("maxRetries", NElementDescribables.describeResolveOrDestruct(maxRetries))
-                .add("evaluated", e != null);
-        if(e != null) {
-            b.add("success", !e.isError);
-            if(!e.isError) {
-                b.add("value", NElementDescribables.describeResolveOrDestruct(e.valueOrException));
-            }else{
-                b.add("error", NElementDescribables.describeResolveOrDestruct(e.valueOrException));
+                .add("supplier", NElementDescribables.describeResolveOrDestruct(supplier));
+
+        if (model.getExpiry() != null) {
+            b.add("expiry", NElementDescribables.describeResolveOrDestruct(model.getExpiry().toMillis()));
+        }
+        if (model.getRetryPeriod() != null) {
+            b.add("retryPeriod", NElementDescribables.describeResolveOrDestruct(model.getRetryPeriod().toMillis()));
+        }
+        b.add("maxRetries", NElementDescribables.describeResolveOrDestruct(model.getMaxRetries()));
+        Boolean ev = model.getErrorState();
+        b.add("evaluated", ev != null);
+        if (ev != null) {
+            b.add("success", !ev);
+            if (!ev) {
+                b.add("value", NElementDescribables.describeResolveOrDestruct(model.getValue()));
+            } else {
+                b.add("error", NElementDescribables.describeResolveOrDestruct(model.getThrowable()));
             }
         }
         return b
