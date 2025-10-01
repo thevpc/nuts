@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 /**
  * Describable Runnable
  */
-public interface NRunnable extends NElementRedescribable<NRunnable> {
+public interface NRunnable extends NElementRedescribable<NRunnable>, Runnable {
     static NRunnable of(Runnable o) {
         if (o == null) {
             return null;
