@@ -108,7 +108,7 @@ public class JavaClassUtils {
             public NVisitResult visitClassAnnotation(JavaClassByteCode.AnnotationInfo annotationInfo) {
                 if(annotationInfo.name.equals("net/thevpc/nuts/NAppDefinition")) {
                     nutsApp.set(true);
-                    nutsAppVer.set("0.8.6");
+                    nutsAppVer.set("0.8.7");
                 }
                 return NVisitResult.CONTINUE;
             }
