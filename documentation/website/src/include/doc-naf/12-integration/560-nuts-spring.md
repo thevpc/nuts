@@ -38,7 +38,7 @@ Now you can inject Nuts objects in your beans
 public class MyBean {
     @Autowired NSession session;
     @Autowired NWorkspace workspace;
-    @Autowired NScheduler scheduler;
+    @Autowired NConcurrent concurrent;
     @Autowired NTerminal term;
     @Autowired NPrintStream out;
 }
