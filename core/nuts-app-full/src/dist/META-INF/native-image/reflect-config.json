@@ -645,9 +645,6 @@
   "name":"net.thevpc.nuts.runtime.standalone.xtra.rnsh.RnshExecCmdExtension"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.xtra.scheduler.DefaultNScheduler"
-},
-{
   "name":"net.thevpc.nuts.runtime.standalone.xtra.throwables.DefaultNExceptionWorkspaceHandler"
 },
 {
