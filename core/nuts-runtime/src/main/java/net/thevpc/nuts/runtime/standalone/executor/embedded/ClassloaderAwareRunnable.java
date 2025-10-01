@@ -25,9 +25,8 @@
 */
 package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
-import net.thevpc.nuts.concurrent.NScheduler;
+import net.thevpc.nuts.concurrent.NConcurrent;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 
 /**
  *
@@ -81,7 +80,7 @@ public abstract class ClassloaderAwareRunnable implements Runnable {
 
     public void runAndWaitFor() throws Throwable {
         try {
-            NScheduler.of().executorService().submit(this).get();
+            NConcurrent.of().executorService().submit(this).get();
         } catch (InterruptedException ex) {
             setError(ex);
         }
