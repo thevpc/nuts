@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootArguments;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
-import net.thevpc.nuts.concurrent.NScheduler;
+import net.thevpc.nuts.concurrent.NConcurrent;
 
 import net.thevpc.nuts.expr.NExprs;
 import net.thevpc.nuts.ext.NExtensions;
@@ -121,9 +121,9 @@ public class NutsSpringBootConfiguration {
     }
 
     @Bean
-    public NScheduler nutsScheduler(@Autowired ApplicationArguments applicationArguments) {
+    public NConcurrent nutsConcurrent(@Autowired ApplicationArguments applicationArguments) {
         return nutsSession(applicationArguments).callWith(() -> {
-            return NScheduler.of();
+            return NConcurrent.of();
         });
     }
 
