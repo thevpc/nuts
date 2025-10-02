@@ -1,7 +1,11 @@
 package net.thevpc.nuts.concurrent;
 
+/**
+ *
+ * @since 0.8.7
+ */
 public interface NWorkBalancerCallStore {
-    NWorkBalancerCallModel load(String id);
+    NWorkBalancerModel load(String id);
 
-    void save(NWorkBalancerCallModel model);
+    void save(NWorkBalancerModel model);
 }
