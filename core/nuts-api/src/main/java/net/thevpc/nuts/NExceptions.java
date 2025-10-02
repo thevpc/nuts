@@ -1,5 +1,6 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.concurrent.NInterruptedException;
 import net.thevpc.nuts.core.NExceptionWithExitCodeBase;
 import net.thevpc.nuts.core.NI18n;
 import net.thevpc.nuts.io.NIOException;
@@ -138,6 +139,12 @@ public class NExceptions {
             }
             return new NIOException(e);
         }
-        return new UncheckedException(getErrorMessage(e),e);
+        if (e instanceof InterruptedException) {
+            if (!NWorkspace.get().isPresent()) {
+                return new NInterruptedException(NMsg.ofC("%s", e.getMessage()), e);
+            }
+            return new UncheckedException(getErrorMessage(e), e);
+        }
+        return new UncheckedException(getErrorMessage(e), e);
     }
 }
