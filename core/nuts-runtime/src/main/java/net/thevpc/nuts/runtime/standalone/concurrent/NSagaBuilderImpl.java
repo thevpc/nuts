@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 
 public class NSagaBuilderImpl implements NSagaBuilder{
     private final AtomicInteger idCounter = new AtomicInteger(1);
-    private final NSagaStore store;
+    private final NSagaCallStore store;
     private final NBeanContainer beanContainer;
-    private final List<NSagaNodeModel> roots=new ArrayList<>();
+    private final List<NSagaCallNodeModel> roots=new ArrayList<>();
 
-    public NSagaBuilderImpl(NSagaStore store, NBeanContainer beanContainer) {
+    public NSagaBuilderImpl(NSagaCallStore store, NBeanContainer beanContainer) {
         this.store = store;
         this.beanContainer = beanContainer;
     }
@@ -26,14 +26,14 @@ public class NSagaBuilderImpl implements NSagaBuilder{
     }
 
     @Override
-    public NSaga build() {
-        NSagaModel saga = new NSagaModel();
+    public NSagaCall build() {
+        NSagaCallModel saga = new NSagaCallModel();
         if(!roots.isEmpty()) {
             if(roots.size()==1) {
                 saga.setNode(roots.get(0));
             }else{
-                NSagaNodeModel m = new NSagaNodeModel();
-                m.setType(NSagaNodeType.SUITE);
+                NSagaCallNodeModel m = new NSagaCallNodeModel();
+                m.setType(NSagaCallNodeType.SUITE);
                 m.setId(UUID.randomUUID().toString());
                 m.setCompensationStrategy(NCompensationStrategy.ABORT);
                 m.setName("<root>");
@@ -41,7 +41,7 @@ public class NSagaBuilderImpl implements NSagaBuilder{
                 saga.setNode(m);
             }
         }
-        return new NSagaImpl(saga.clone(),store, beanContainer);
+        return new NSagaCallImpl(saga.clone(),store, beanContainer);
     }
 
     private String nextId() {
@@ -52,10 +52,10 @@ public class NSagaBuilderImpl implements NSagaBuilder{
     // -------------------------
     private class SuiteImpl<P> implements NSagaBuilder.Suite<P> {
         private final P parent;
-        private final List<NSagaNodeModel> currentNodes;
+        private final List<NSagaCallNodeModel> currentNodes;
         private final NSagaBuilder builder;
 
-        SuiteImpl(P parent, List<NSagaNodeModel> currentNodes, NSagaBuilder builder) {
+        SuiteImpl(P parent, List<NSagaCallNodeModel> currentNodes, NSagaBuilder builder) {
             this.parent = parent;
             this.currentNodes = currentNodes;
             this.builder = builder;
@@ -66,34 +66,34 @@ public class NSagaBuilderImpl implements NSagaBuilder{
         }
 
         @Override
-        public Suite<P> then(String name, NSagaStep step) {
-            NSagaNodeModel node = new NSagaNodeModel()
+        public Suite<P> then(String name, NSagaCallStep step) {
+            NSagaCallNodeModel node = new NSagaCallNodeModel()
                     .setId(nextId())
                     .setName(name)
                     .setStepCall(step)
-                    .setType(NSagaNodeType.STEP);
+                    .setType(NSagaCallNodeType.STEP);
             currentNodes.add(node);
             return this;
         }
 
         @Override
-        public If<Suite<P>> thenIf(String name, NSagaCondition condition) {
-            NSagaNodeModel node = new NSagaNodeModel()
+        public If<Suite<P>> thenIf(String name, NSagaCallCondition condition) {
+            NSagaCallNodeModel node = new NSagaCallNodeModel()
                     .setId(nextId())
                     .setName(name)
                     .setStepCondition(condition)
-                    .setType(NSagaNodeType.IF);
+                    .setType(NSagaCallNodeType.IF);
             currentNodes.add(node);
             return new IfImpl<>(this, node);
         }
 
         @Override
-        public While<Suite<P>> thenWhile(String name, NSagaCondition condition) {
-            NSagaNodeModel node = new NSagaNodeModel()
+        public While<Suite<P>> thenWhile(String name, NSagaCallCondition condition) {
+            NSagaCallNodeModel node = new NSagaCallNodeModel()
                     .setId(nextId())
                     .setName(name)
                     .setStepCondition(condition)
-                    .setType(NSagaNodeType.WHILE);
+                    .setType(NSagaCallNodeType.WHILE);
             currentNodes.add(node);
             return new WhileImpl<>(this, node.getChildren(), node);
         }
@@ -109,36 +109,36 @@ public class NSagaBuilderImpl implements NSagaBuilder{
     // -------------------------
     private class IfImpl<P> implements If<P> {
         private final P parent;
-        private final NSagaNodeModel ifNode;
+        private final NSagaCallNodeModel ifNode;
 
         // track which branch we are currently adding steps to
-        private List<NSagaNodeModel> currentNodes;
+        private List<NSagaCallNodeModel> currentNodes;
 
-        public IfImpl(P parent, NSagaNodeModel ifNode) {
+        public IfImpl(P parent, NSagaCallNodeModel ifNode) {
             this.parent = parent;
             this.ifNode = ifNode;
             this.currentNodes = ifNode.getChildren(); // initially the IF main branch
         }
 
         @Override
-        public If<P> then(String name, NSagaStep step) {
-            NSagaNodeModel node = new NSagaNodeModel()
+        public If<P> then(String name, NSagaCallStep step) {
+            NSagaCallNodeModel node = new NSagaCallNodeModel()
                     .setId(nextId())
                     .setName(name)
                     .setStepCall(step)
-                    .setType(NSagaNodeType.STEP);
+                    .setType(NSagaCallNodeType.STEP);
             currentNodes.add(node);
             return this;
         }
 
 
         @Override
-        public If<P> elseIf(String name, NSagaCondition condition) {
-            NSagaNodeModel node = new NSagaNodeModel()
+        public If<P> elseIf(String name, NSagaCallCondition condition) {
+            NSagaCallNodeModel node = new NSagaCallNodeModel()
                     .setId(nextId())
                     .setName(name)
                     .setStepCondition(condition)
-                    .setType(NSagaNodeType.SUITE);
+                    .setType(NSagaCallNodeType.SUITE);
 
             ifNode.getElseIfBranches().add(node);
 
@@ -151,10 +151,10 @@ public class NSagaBuilderImpl implements NSagaBuilder{
 
         @Override
         public If<P> otherwise() {
-            NSagaNodeModel node = new NSagaNodeModel()
+            NSagaCallNodeModel node = new NSagaCallNodeModel()
                     .setId(nextId())
                     .setName("otherwise")
-                    .setType(NSagaNodeType.SUITE);
+                    .setType(NSagaCallNodeType.SUITE);
 
             ifNode.getOtherwiseBranch().add(node);
 
@@ -170,23 +170,23 @@ public class NSagaBuilderImpl implements NSagaBuilder{
         }
 
         @Override
-        public If<If<P>> thenIf(String name, NSagaCondition condition) {
-            NSagaNodeModel node = new NSagaNodeModel()
+        public If<If<P>> thenIf(String name, NSagaCallCondition condition) {
+            NSagaCallNodeModel node = new NSagaCallNodeModel()
                     .setId(nextId())
                     .setName(name)
                     .setStepCondition(condition)
-                    .setType(NSagaNodeType.IF);
+                    .setType(NSagaCallNodeType.IF);
             currentNodes.add(node);
             return new IfImpl<If<P>>(this,node);
         }
 
         @Override
-        public While<If<P>> thenWhile(String name, NSagaCondition condition) {
-            NSagaNodeModel node = new NSagaNodeModel()
+        public While<If<P>> thenWhile(String name, NSagaCallCondition condition) {
+            NSagaCallNodeModel node = new NSagaCallNodeModel()
                     .setId(nextId())
                     .setName(name)
                     .setStepCondition(condition)
-                    .setType(NSagaNodeType.WHILE);
+                    .setType(NSagaCallNodeType.WHILE);
             currentNodes.add(node);
             return new WhileImpl<>(this, node.getChildren(), node);
         }
@@ -198,10 +198,10 @@ public class NSagaBuilderImpl implements NSagaBuilder{
     // -------------------------
     private class WhileImpl<P> implements NSagaBuilder.While<P> {
         private final P parent;
-        private final List<NSagaNodeModel> currentNodes;
-        private final NSagaNodeModel whileNode;
+        private final List<NSagaCallNodeModel> currentNodes;
+        private final NSagaCallNodeModel whileNode;
 
-        WhileImpl(P parent, List<NSagaNodeModel> currentNodes, NSagaNodeModel whileNode) {
+        WhileImpl(P parent, List<NSagaCallNodeModel> currentNodes, NSagaCallNodeModel whileNode) {
             this.parent = parent;
             this.currentNodes = currentNodes;
             this.whileNode = whileNode;
@@ -212,34 +212,34 @@ public class NSagaBuilderImpl implements NSagaBuilder{
         }
 
         @Override
-        public While<P> then(String name, NSagaStep step) {
-            NSagaNodeModel node = new NSagaNodeModel()
+        public While<P> then(String name, NSagaCallStep step) {
+            NSagaCallNodeModel node = new NSagaCallNodeModel()
                     .setId(nextId())
                     .setName(name)
                     .setStepCall(step)
-                    .setType(NSagaNodeType.STEP);
+                    .setType(NSagaCallNodeType.STEP);
             currentNodes.add(node);
             return this;
         }
 
         @Override
-        public If<While<P>> thenIf(String name, NSagaCondition condition) {
-            NSagaNodeModel node = new NSagaNodeModel()
+        public If<While<P>> thenIf(String name, NSagaCallCondition condition) {
+            NSagaCallNodeModel node = new NSagaCallNodeModel()
                     .setId(nextId())
                     .setName(name)
                     .setStepCondition(condition)
-                    .setType(NSagaNodeType.IF);
+                    .setType(NSagaCallNodeType.IF);
             currentNodes.add(node);
             return new IfImpl<>(this, node);
         }
 
         @Override
-        public While<While<P>> thenWhile(String name, NSagaCondition condition) {
-            NSagaNodeModel node = new NSagaNodeModel()
+        public While<While<P>> thenWhile(String name, NSagaCallCondition condition) {
+            NSagaCallNodeModel node = new NSagaCallNodeModel()
                     .setId(nextId())
                     .setName(name)
                     .setStepCondition(condition)
-                    .setType(NSagaNodeType.WHILE);
+                    .setType(NSagaCallNodeType.WHILE);
             currentNodes.add(node);
             return new WhileImpl<>(this, node.getChildren(), node);
         }
