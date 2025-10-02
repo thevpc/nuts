@@ -7,18 +7,17 @@ import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 public class NRateLimitValueFactoryImpl implements NRateLimitValueFactory {
     private NRateLimitValueStore store;
     private NBeanContainer beanContainer;
-    private Map<String, Function<NRateLimitRuleModel, NRateLimitRule>> strategies = new HashMap<>();
+    private Map<String, NRateLimitStrategy> strategies = new HashMap<>();
 
-    public NRateLimitValueFactoryImpl(NRateLimitValueStore store, NBeanContainer beanContainer, Map<String, Function<NRateLimitRuleModel, NRateLimitRule>> strategies) {
+    public NRateLimitValueFactoryImpl(NRateLimitValueStore store, NBeanContainer beanContainer, Map<String, NRateLimitStrategy> strategies) {
         this.store = store;
         this.beanContainer = beanContainer;
         if (strategies != null) {
-            for (Map.Entry<String, Function<NRateLimitRuleModel, NRateLimitRule>> e : strategies.entrySet()) {
+            for (Map.Entry<String, NRateLimitStrategy> e : strategies.entrySet()) {
                 if (e.getKey() != null && e.getValue() != null) {
                     strategies.put(e.getKey(), e.getValue());
                 }
@@ -56,9 +55,9 @@ public class NRateLimitValueFactoryImpl implements NRateLimitValueFactory {
 
     public NRateLimitRule createRule(NRateLimitRuleModel model) {
         String strategyId = model.getId();
-        Function<NRateLimitRuleModel, NRateLimitRule> d = strategies.get(strategyId);
+        NRateLimitStrategy d = strategies.get(strategyId);
         if (d != null) {
-            NRateLimitRule s = d.apply(model);
+            NRateLimitRule s = d.fromModel(model);
             if (s != null) {
                 return s;
             }
@@ -82,8 +81,8 @@ public class NRateLimitValueFactoryImpl implements NRateLimitValueFactory {
         }
     }
 
-    public NRateLimitValueFactory defineStrategy(String name, Function<NRateLimitRuleModel, NRateLimitRule> definition) {
-        Map<String, Function<NRateLimitRuleModel, NRateLimitRule>> strategies2 = new HashMap<>(strategies);
+    public NRateLimitValueFactory defineStrategy(String name, NRateLimitStrategy definition) {
+        Map<String, NRateLimitStrategy> strategies2 = new HashMap<>(strategies);
         if (definition == null) {
             strategies2.remove(name);
         } else {
@@ -93,7 +92,7 @@ public class NRateLimitValueFactoryImpl implements NRateLimitValueFactory {
     }
 
     @Override
-    public NRateLimitValueBuilder valueBuilder(String id) {
+    public NRateLimitValueBuilder ofBuilder(String id) {
         return new NRateLimitValueBuilderImpl(id, this);
     }
 
