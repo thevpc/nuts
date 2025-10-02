@@ -29,9 +29,6 @@ public interface NConcurrent extends NComponent {
 
     NCachedValueFactory cachedValueFactory();
 
-    NCachedValueFactory cachedValueFactory(NCachedValueStore store);
-
-
     <T> NStableValue<T> stableValue(Supplier<T> supplier);
 
     <T> NStableValue<T> stableValue(String id, Supplier<T> supplier);
@@ -44,17 +41,15 @@ public interface NConcurrent extends NComponent {
 
     NStableValueFactory stableValueFactory();
 
-    NStableValueFactory stableValueFactory(NStableValueStore store);
-
     NRateLimitValueFactory defaultRateLimitValueFactory();
 
     NRateLimitValueFactory memoryRateLimitValueFactory();
 
     NConcurrent setRateLimitValueFactory(NRateLimitValueFactory factory);
 
+    NWorkBalancerCallFactory workBalancerFactory();
     NRateLimitValueFactory rateLimitValueFactory();
 
-    NRateLimitValueFactory rateLimitValueFactory(NRateLimitValueStore store);
 
     /**
      * @since 0.8.7
@@ -122,15 +117,15 @@ public interface NConcurrent extends NComponent {
     /**
      * @since 0.8.7
      */
-    NSagaFactory defaultSagaFactory();
+    NSagaCallFactory defaultSagaFactory();
     /**
      * @since 0.8.7
      */
-    NSagaFactory sagaFactory();
+    NSagaCallFactory sagaFactory();
     /**
      * @since 0.8.7
      */
-    NSagaFactory memorySagaFactory();
+    NSagaCallFactory memorySagaFactory();
 
     NSagaBuilder saga();
 }
