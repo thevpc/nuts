@@ -30,6 +30,9 @@ public class DefaultNConcurrent implements NConcurrent {
     private final NCircuitBreakerCallFactory memoryCircuitBreakerCallFactory = new NCircuitBreakerCallFactoryImpl(new NCircuitBreakerCallStoreMemory(), null);
     private NCircuitBreakerCallFactory circuitBreakerCallFactory;
 
+    private final NWorkBalancerCallFactory memoryWorkBalancerCallFactory = new NWorkBalancerCallFactoryImpl(new NWorkBalancerCallStoreMemory(), null,null);
+    private NWorkBalancerCallFactory workBalancerCallFactory;
+
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
         return NConstants.Support.DEFAULT_SUPPORT;
@@ -49,11 +52,6 @@ public class DefaultNConcurrent implements NConcurrent {
     @Override
     public NCachedValueFactory defaultCachedValueFactory() {
         return memoryCachedValueFactory();
-    }
-
-    @Override
-    public NCachedValueFactory cachedValueFactory(NCachedValueStore store) {
-        return store == null ? defaultCachedValueFactory() : new NCachedValueFactoryImpl(store);
     }
 
     @Override
@@ -101,11 +99,6 @@ public class DefaultNConcurrent implements NConcurrent {
     }
 
     @Override
-    public NStableValueFactory stableValueFactory(NStableValueStore store) {
-        return store == null ? defaultStableValueFactory() : new NStableValueFactoryImpl(store, null);
-    }
-
-    @Override
     public NStableValueFactory stableValueFactory() {
         return stableValueFactory == null ? defaultStableValueFactory() : stableValueFactory;
     }
@@ -142,11 +135,6 @@ public class DefaultNConcurrent implements NConcurrent {
         return rateLimitValueFactory == null ? defaultRateLimitValueFactory() : rateLimitValueFactory;
     }
 
-
-    @Override
-    public NRateLimitValueFactory rateLimitValueFactory(NRateLimitValueStore store) {
-        return store == null ? defaultRateLimitValueFactory() : new NRateLimitValueFactoryImpl(store, null, null);
-    }
 
     @Override
     public NSagaCallFactory sagaFactory() {
@@ -191,12 +179,12 @@ public class DefaultNConcurrent implements NConcurrent {
 
     @Override
     public <T> NCircuitBreakerCall<T> circuitBreakerCall(String id, NCallable<T> callable) {
-        return circuitBreakerCallFactory().of(id,callable);
+        return circuitBreakerCallFactory().of(id, callable);
     }
 
     @Override
     public NConcurrent setCircuitBreakerCallFactory(NCircuitBreakerCallFactory circuitBreakerCallFactory) {
-        this.circuitBreakerCallFactory=circuitBreakerCallFactory;
+        this.circuitBreakerCallFactory = circuitBreakerCallFactory;
         return this;
     }
 
@@ -221,7 +209,28 @@ public class DefaultNConcurrent implements NConcurrent {
     }
 
     @Override
-    public NSagaBuilder saga() {
-        return sagaFactory().of();
+    public NSagaCallBuilder sagaCallBuilder() {
+        return sagaFactory().ofBuilder();
+    }
+
+    @Override
+    public NWorkBalancerCallFactory defaultWorkBalancerFactory() {
+        return memoryWorkBalancerCallFactory;
+    }
+
+    @Override
+    public NWorkBalancerCallFactory memoryWorkBalancerFactory() {
+        return memoryWorkBalancerCallFactory;
+    }
+
+    @Override
+    public NWorkBalancerCallFactory workBalancerFactory() {
+        return workBalancerCallFactory == null ? defaultWorkBalancerFactory() : workBalancerCallFactory;
+    }
+
+    @Override
+    public NConcurrent setWorkBalancerCallFactory(NWorkBalancerCallFactory workBalancerCallFactory) {
+        this.workBalancerCallFactory = workBalancerCallFactory;
+        return this;
     }
 }
