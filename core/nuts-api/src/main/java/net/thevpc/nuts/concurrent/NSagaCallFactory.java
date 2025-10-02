@@ -14,6 +14,6 @@ public interface NSagaCallFactory {
 
     NSagaCallFactory withStore(NSagaCallStore store);
 
-    NSagaBuilder of();
+    NSagaCallBuilder ofBuilder();
 
 }
