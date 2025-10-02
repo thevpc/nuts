@@ -13,7 +13,7 @@ public interface NStableValueFactory {
     }
 
     static NStableValueFactory of(NStableValueStore store) {
-        return NConcurrent.of().stableValueFactory(store);
+        return NConcurrent.of().stableValueFactory().withStore(store);
     }
 
     NStableValueFactory withStore(NStableValueStore store);
