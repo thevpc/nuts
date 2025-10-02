@@ -5,27 +5,27 @@ package net.thevpc.nuts.concurrent;
  */
 public interface NSagaBuilder {
     Suite<NSagaBuilder> start();
-    <T> NSaga<T> build();
+    <T> NSagaCall<T> build();
 
     interface Suite<P>  {
-        Suite<P> then(String name, NSagaStep step);
-        If<Suite<P>> thenIf(String name, NSagaCondition condition);
-        While<Suite<P>> thenWhile(String name, NSagaCondition condition);
+        Suite<P> then(String name, NSagaCallStep step);
+        If<Suite<P>> thenIf(String name, NSagaCallCondition condition);
+        While<Suite<P>> thenWhile(String name, NSagaCallCondition condition);
 
         P end();
     }
     interface While<P>  {
-        While<P> then(String name, NSagaStep step);
-        If<While<P>> thenIf(String name, NSagaCondition condition);
-        While<While<P>> thenWhile(String name, NSagaCondition condition);
+        While<P> then(String name, NSagaCallStep step);
+        If<While<P>> thenIf(String name, NSagaCallCondition condition);
+        While<While<P>> thenWhile(String name, NSagaCallCondition condition);
         P end();
     }
 
     interface If<P>  {
-        If<P> then(String name, NSagaStep step);
-        If<If<P>> thenIf(String name, NSagaCondition condition);
-        While<If<P>> thenWhile(String name, NSagaCondition condition);
-        If<P> elseIf(String name, NSagaCondition condition);
+        If<P> then(String name, NSagaCallStep step);
+        If<If<P>> thenIf(String name, NSagaCallCondition condition);
+        While<If<P>> thenWhile(String name, NSagaCallCondition condition);
+        If<P> elseIf(String name, NSagaCallCondition condition);
         If<P> otherwise();
         P end();
     }
