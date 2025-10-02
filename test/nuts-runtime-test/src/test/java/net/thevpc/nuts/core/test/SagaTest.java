@@ -31,7 +31,7 @@ public class SagaTest {
 
     @Test
     public void test1() {
-        NSagaCall<Object> saga = NConcurrent.of().saga()
+        NSagaCall<Object> saga = NConcurrent.of().sagaCallBuilder()
                 .start()
                 .then("step 1", MyNSagaCallStep.asSuccessful(1))
                 .then("step 2", MyNSagaCallStep.asSuccessful(2))
