@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
-import net.thevpc.nuts.concurrent.NSagaBuilder;
+import net.thevpc.nuts.concurrent.NSagaCallBuilder;
 import net.thevpc.nuts.concurrent.NSagaCallFactory;
 import net.thevpc.nuts.concurrent.NSagaCallStore;
 import net.thevpc.nuts.reflect.NBeanContainer;
@@ -41,7 +41,7 @@ public class NSagaCallFactoryImpl implements NSagaCallFactory {
     }
 
     @Override
-    public NSagaBuilder of() {
-        return new NSagaBuilderImpl(store, beanContainer);
+    public NSagaCallBuilder ofBuilder() {
+        return new NSagaCallBuilderImpl(store, beanContainer);
     }
 }
