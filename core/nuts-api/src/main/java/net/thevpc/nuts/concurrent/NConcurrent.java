@@ -14,6 +14,7 @@ public interface NConcurrent extends NComponent {
     static NConcurrent of() {
         return NExtensions.of(NConcurrent.class);
     }
+
     ExecutorService executorService();
 
     <T> NCachedValue<T> cachedValue(Supplier<T> supplier);
@@ -47,7 +48,12 @@ public interface NConcurrent extends NComponent {
 
     NConcurrent setRateLimitValueFactory(NRateLimitValueFactory factory);
 
+    NWorkBalancerCallFactory defaultWorkBalancerFactory();
+
+    NWorkBalancerCallFactory memoryWorkBalancerFactory();
+
     NWorkBalancerCallFactory workBalancerFactory();
+
     NRateLimitValueFactory rateLimitValueFactory();
 
 
@@ -118,14 +124,18 @@ public interface NConcurrent extends NComponent {
      * @since 0.8.7
      */
     NSagaCallFactory defaultSagaFactory();
+
     /**
      * @since 0.8.7
      */
     NSagaCallFactory sagaFactory();
+
     /**
      * @since 0.8.7
      */
     NSagaCallFactory memorySagaFactory();
 
-    NSagaBuilder saga();
+    NSagaCallBuilder sagaCallBuilder();
+
+    NConcurrent setWorkBalancerCallFactory(NWorkBalancerCallFactory workBalancerCallFactory);
 }
