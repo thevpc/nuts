@@ -10,10 +10,10 @@ public interface NRateLimitValueFactory {
     }
 
     static NRateLimitValueFactory of(NRateLimitValueStore store) {
-        return NConcurrent.of().rateLimitValueFactory(store);
+        return NConcurrent.of().rateLimitValueFactory().withStore(store);
     }
 
-    NRateLimitValueBuilder valueBuilder(String id);
+    NRateLimitValueBuilder ofBuilder(String id);
 
     NRateLimitValueFactory withStore(NRateLimitValueStore store);
 
@@ -23,5 +23,5 @@ public interface NRateLimitValueFactory {
 
     NRateLimitValueStore getStore();
 
-    NRateLimitValueFactory defineStrategy(String name, Function<NRateLimitRuleModel, NRateLimitRule> definition);
+    NRateLimitValueFactory defineStrategy(String name, NRateLimitStrategy definition);
 }
