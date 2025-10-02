@@ -14,7 +14,7 @@ public interface NRateLimitValue extends NElementDescribable {
      * @return new NRateLimitValueBuilder instance,
      */
     static NRateLimitValueBuilder ofBuilder(String name) {
-        return NRateLimitValueFactory.of().valueBuilder(name);
+        return NRateLimitValueFactory.of().ofBuilder(name);
     }
 
     NRateLimitValueResult take();
