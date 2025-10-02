@@ -16,8 +16,8 @@ public class DefaultNConcurrent implements NConcurrent {
     private final NRateLimitValueFactory memoryRateLimitValueFactory = new NRateLimitValueFactoryImpl(new NRateLimitValueStoreMemory(), null, null);
     private NRateLimitValueFactory rateLimitValueFactory;
 
-    private final NSagaFactory memorySagaFactory = new NSagaFactoryImpl(new NSagaStoreMemory(), null);
-    private NSagaFactory sagaFactory;
+    private final NSagaCallFactory memorySagaFactory = new NSagaCallFactoryImpl(new NSagaCallStoreMemory(), null);
+    private NSagaCallFactory sagaFactory;
 
     private final NCachedValueFactory memoryCachedValueFactory = new NCachedValueFactoryImpl(new NCachedValueStoreMemory());
     private NCachedValueFactory cachedValueFactory;
@@ -117,12 +117,12 @@ public class DefaultNConcurrent implements NConcurrent {
     }
 
     @Override
-    public NSagaFactory defaultSagaFactory() {
+    public NSagaCallFactory defaultSagaFactory() {
         return memorySagaFactory;
     }
 
     @Override
-    public NSagaFactory memorySagaFactory() {
+    public NSagaCallFactory memorySagaFactory() {
         return memorySagaFactory;
     }
 
@@ -149,7 +149,7 @@ public class DefaultNConcurrent implements NConcurrent {
     }
 
     @Override
-    public NSagaFactory sagaFactory() {
+    public NSagaCallFactory sagaFactory() {
         return sagaFactory == null ? defaultSagaFactory() : sagaFactory;
     }
 
