@@ -30,7 +30,7 @@ public class RateLimitedValueTest {
     @Test
     public void test1() {
         NRateLimitValueFactory factory = NRateLimitValueFactory.of();
-        NRateLimitValue lv = factory.valueBuilder("example")
+        NRateLimitValue lv = factory.ofBuilder("example")
                 .withLimit("10x2seconds", 10).per(Duration.ofSeconds(2))
                 .build();
 
@@ -45,7 +45,7 @@ public class RateLimitedValueTest {
     @Test
     public void test2() {
         NRateLimitValueFactory factory = NRateLimitValueFactory.of();
-        NRateLimitValue lv = factory.valueBuilder("example")
+        NRateLimitValue lv = factory.ofBuilder("example")
                 .withLimit("seconds", 10).per(Duration.ofSeconds(2))
                 .build();
         for (int i = 0; i < 100; i++) {
