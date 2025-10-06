@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.reflect;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.reflect.NReflectMapper;
 import net.thevpc.nuts.reflect.NReflectMapperContext;
 import net.thevpc.nuts.reflect.NReflectRepository;
