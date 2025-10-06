@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
 
 public class NDependencyFilterParser extends NTypedFiltersParser<NDependencyFilter> {
