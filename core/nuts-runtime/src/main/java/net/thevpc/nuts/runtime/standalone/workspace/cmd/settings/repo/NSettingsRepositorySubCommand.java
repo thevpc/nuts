@@ -5,14 +5,17 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.repo;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
-import net.thevpc.nuts.format.NContentType;
-import net.thevpc.nuts.format.NMutableTableModel;
-import net.thevpc.nuts.format.NTableFormat;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryConfig;
+import net.thevpc.nuts.text.NContentType;
+import net.thevpc.nuts.text.NMutableTableModel;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
@@ -22,6 +25,7 @@ import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArt;
 import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NRef;
 
