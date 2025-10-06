@@ -1,6 +1,6 @@
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.NExceptions;
+import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.util.NEnum;
 
 import java.lang.reflect.Array;
