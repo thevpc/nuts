@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NSessionProvider;
-
 import java.io.InputStream;
 import java.util.List;
 
