@@ -24,18 +24,23 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NClassLoaderNode;
+import net.thevpc.nuts.core.NConstants;
 
 
-import net.thevpc.nuts.NStoreType;
-import net.thevpc.nuts.format.NDescriptorFormat;
-import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetchModeNotSupportedException;
+import net.thevpc.nuts.command.NInstallInformation;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.text.NDescriptorFormat;
+import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.NOsFamily;
+import net.thevpc.nuts.platform.NOsFamily;
 
 import java.io.File;
 import java.io.IOException;
@@ -316,7 +321,7 @@ public class CoreNUtils {
         if (def.getDescriptor() != null) {
             x.put("descriptor", NDescriptorFormat.of(def.getDescriptor()).format());
             x.put("effective-descriptor", NDescriptorFormat.of(
-                    def.getEffectiveDescriptor().orElseGet(()->NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(),new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true)))
+                    def.getEffectiveDescriptor().orElseGet(()-> NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(),new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true)))
             ).format());
         }
         return x;
