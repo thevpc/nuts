@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
-import net.thevpc.nuts.NInstallStatus;
+import net.thevpc.nuts.command.NInstallStatus;
 
 public class NInstallStatuses {
     public static NInstallStatus S____= NInstallStatus.of(false,false,false,false);
