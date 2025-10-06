@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.security;
 
-import net.thevpc.nuts.NSecurityException;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.util.Map;
