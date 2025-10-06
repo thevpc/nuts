@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.concurrent.NLockException;
 
