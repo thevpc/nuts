@@ -28,8 +28,8 @@ package net.thevpc.nuts.runtime.standalone.extension;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.NDependency;
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigBoot;
 
 /**
