@@ -1,6 +1,7 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NOut;
+import net.thevpc.nuts.expr.NToken;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.util.*;
 import org.junit.jupiter.api.Assertions;
