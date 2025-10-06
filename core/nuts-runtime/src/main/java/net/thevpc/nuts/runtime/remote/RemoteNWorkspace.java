@@ -1,14 +1,16 @@
 package net.thevpc.nuts.runtime.remote;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.*;
 
 import net.thevpc.nuts.runtime.standalone.workspace.AbstractNWorkspace;
 import net.thevpc.nuts.runtime.standalone.xtra.ntalk.NTalkClient;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NUnsupportedOperationException;
 
 
 public abstract class RemoteNWorkspace extends AbstractNWorkspace {
