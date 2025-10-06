@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.web;
 
 import net.thevpc.nuts.util.NStringMapFormat;
-import net.thevpc.nuts.web.NHttpUrlEncoder;
-import net.thevpc.nuts.web.NWebCookie;
+import net.thevpc.nuts.net.NHttpUrlEncoder;
+import net.thevpc.nuts.net.NWebCookie;
 
 import java.util.HashMap;
 import java.util.Map;
