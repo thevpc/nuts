@@ -5,13 +5,13 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NBootOptionsBuilder;
+import net.thevpc.nuts.core.NBootOptionsBuilder;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NBeanRef;
 import net.thevpc.nuts.runtime.standalone.concurrent.NRetryCallStoreMemory;
-import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.util.NOptional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
