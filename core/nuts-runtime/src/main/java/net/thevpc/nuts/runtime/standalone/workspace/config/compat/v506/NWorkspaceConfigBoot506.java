@@ -25,8 +25,18 @@
 */
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v506;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.command.NCommandFactoryConfig;
+import net.thevpc.nuts.core.NConfigItem;
+import net.thevpc.nuts.core.NStoreStrategy;
+import net.thevpc.nuts.platform.NHomeLocation;
+import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.core.NRepositoryRef;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigBoot;
+import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
