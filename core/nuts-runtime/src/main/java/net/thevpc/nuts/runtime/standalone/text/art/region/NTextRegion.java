@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.art.region;
 
-import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.format.NTextFormattable;
+import net.thevpc.nuts.text.NPositionType;
+import net.thevpc.nuts.text.NTextFormattable;
 import net.thevpc.nuts.text.NPrimitiveText;
 import net.thevpc.nuts.text.NText;
 
