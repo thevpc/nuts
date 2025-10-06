@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.NDescriptorOrganization;
+import net.thevpc.nuts.artifact.NDescriptorOrganization;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
