@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NUnsupportedOperationException;
-import net.thevpc.nuts.format.NTreeVisitor;
+import net.thevpc.nuts.util.NUnsupportedOperationException;
+import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.*;
 
