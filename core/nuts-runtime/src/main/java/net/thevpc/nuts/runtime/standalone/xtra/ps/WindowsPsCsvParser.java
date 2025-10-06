@@ -1,13 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.xtra.ps;
 
-import net.thevpc.nuts.NShellFamily;
+import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.io.NpsStatus;
 import net.thevpc.nuts.io.NpsType;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
