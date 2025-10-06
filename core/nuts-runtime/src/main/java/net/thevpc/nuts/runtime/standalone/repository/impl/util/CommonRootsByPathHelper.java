@@ -7,8 +7,8 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.util;
 
 import java.util.*;
 
-import net.thevpc.nuts.NDefinitionFilter;
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 
