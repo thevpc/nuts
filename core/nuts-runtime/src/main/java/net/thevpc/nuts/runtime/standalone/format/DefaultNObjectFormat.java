@@ -25,24 +25,23 @@
  */
 package net.thevpc.nuts.runtime.standalone.format;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElementFormat;
 
 
-import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
-import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NMemorySize;
 import net.thevpc.nuts.runtime.standalone.format.obj.RollingFileService;
 import net.thevpc.nuts.runtime.standalone.format.plain.NFormatPlain;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.*;
 
 import java.io.File;
