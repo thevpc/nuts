@@ -1,11 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.executor.exec;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.concurrent.NConcurrent;
 
 
-import net.thevpc.nuts.format.NExecCmdFormat;
+import net.thevpc.nuts.core.NRunAs;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.text.NExecCmdFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
