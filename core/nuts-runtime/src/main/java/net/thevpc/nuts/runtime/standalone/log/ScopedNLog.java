@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogContext;
 import net.thevpc.nuts.log.NLogs;
-import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NMsgBuilder;
 
