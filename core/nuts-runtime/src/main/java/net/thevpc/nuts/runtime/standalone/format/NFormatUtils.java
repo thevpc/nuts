@@ -29,7 +29,7 @@ import java.util.Map;
 
 import static net.thevpc.nuts.runtime.standalone.util.CoreStringUtils.stringValue;
 
-import net.thevpc.nuts.NUnsupportedOperationException;
+import net.thevpc.nuts.util.NUnsupportedOperationException;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NPairElement;
