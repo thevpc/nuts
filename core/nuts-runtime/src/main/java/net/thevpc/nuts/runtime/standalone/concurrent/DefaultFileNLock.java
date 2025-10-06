@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.concurrent.NLockAcquireException;
 import net.thevpc.nuts.concurrent.NLockBarrierException;
 import net.thevpc.nuts.concurrent.NLockReleaseException;
 
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NUpletElementBuilder;
 import net.thevpc.nuts.io.NPath;
