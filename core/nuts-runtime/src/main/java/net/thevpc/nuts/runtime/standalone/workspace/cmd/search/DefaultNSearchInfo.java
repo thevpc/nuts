@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
-import net.thevpc.nuts.NDefinitionFilter;
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NRepositoryFilter;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NRepositoryFilter;
 
 import java.util.Arrays;
 import java.util.Objects;
