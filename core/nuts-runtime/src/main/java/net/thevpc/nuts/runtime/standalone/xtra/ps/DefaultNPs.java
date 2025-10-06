@@ -1,15 +1,21 @@
 package net.thevpc.nuts.runtime.standalone.xtra.ps;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 
+import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.artifact.NVersionFilter;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.io.NExecInput;
+import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.platform.NPlatformLocation;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.NOsFamily;
-import net.thevpc.nuts.NPlatformFamily;
+import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NPlatformFamily;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.io.NPs;
 import net.thevpc.nuts.util.NIteratorBuilder;
