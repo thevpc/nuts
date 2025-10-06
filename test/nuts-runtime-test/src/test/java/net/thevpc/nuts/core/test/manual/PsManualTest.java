@@ -1,31 +1,17 @@
 package net.thevpc.nuts.core.test.manual;
 
-import net.thevpc.nuts.NOut;
-import net.thevpc.nuts.NShellFamily;
-import net.thevpc.nuts.NStoreType;
-import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLines;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElementWriter;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.format.NContentType;
-import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPs;
 import net.thevpc.nuts.io.NPsInfo;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.web.NWebCli;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class PsManualTest {
