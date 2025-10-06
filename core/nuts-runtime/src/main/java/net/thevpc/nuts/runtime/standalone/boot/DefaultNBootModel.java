@@ -24,12 +24,13 @@
  */
 package net.thevpc.nuts.runtime.standalone.boot;
 
-import net.thevpc.nuts.*;
-
-import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.core.NBootOptions;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.DefaultNArg;
 
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
@@ -48,18 +49,14 @@ import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.spi.NTerminalSpec;
 import net.thevpc.nuts.log.NLog;
 
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NOsFamily;
+import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.platform.NOsFamily;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.logging.Level;
 
 /**
  * @author thevpc
