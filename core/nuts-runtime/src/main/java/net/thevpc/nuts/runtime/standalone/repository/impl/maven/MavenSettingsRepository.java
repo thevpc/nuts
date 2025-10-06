@@ -24,10 +24,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryConfig;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryList;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NRepositoryLocation;
