@@ -26,10 +26,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.runtime.standalone.version.filter.DefaultNVersionFilter;
 import net.thevpc.nuts.util.NFilterOp;
-import net.thevpc.nuts.util.NSimplifiable;
 
 import java.util.Objects;
 
