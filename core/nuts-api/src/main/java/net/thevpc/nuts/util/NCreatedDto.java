@@ -1,7 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NDTO;
-
 import java.util.function.Function;
 
 /**
