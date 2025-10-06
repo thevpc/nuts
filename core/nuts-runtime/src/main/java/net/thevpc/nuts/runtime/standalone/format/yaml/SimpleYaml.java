@@ -28,17 +28,11 @@ package net.thevpc.nuts.runtime.standalone.format.yaml;
  * @author thevpc
  */
 
-import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.Reader;
-import java.util.Base64;
-import java.util.List;
 
 public class SimpleYaml implements NElementStreamFormat {
 
