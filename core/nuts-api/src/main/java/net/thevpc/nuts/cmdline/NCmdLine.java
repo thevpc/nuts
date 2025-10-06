@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.NShellFamily;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.platform.NShellFamily;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
