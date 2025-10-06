@@ -26,9 +26,9 @@
 */
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.NFetchStrategy;
-import net.thevpc.nuts.NRepository;
-import net.thevpc.nuts.NRepositoryFilter;
+import net.thevpc.nuts.command.NFetchStrategy;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryFilter;
 
 import java.util.*;
 
