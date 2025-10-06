@@ -26,7 +26,7 @@
 package net.thevpc.nuts.time;
 
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.core.NSession;
 
 /**
  * @author thevpc
