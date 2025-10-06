@@ -25,9 +25,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.descriptor;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NEnvCondition;
-import net.thevpc.nuts.NIdLocation;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.artifact.NIdLocation;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
 
