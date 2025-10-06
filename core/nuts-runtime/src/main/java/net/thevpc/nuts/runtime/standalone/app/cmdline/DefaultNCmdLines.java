@@ -1,14 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline;
 
-import net.thevpc.nuts.*;
-
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.DefaultNCmdLine;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
 
-import net.thevpc.nuts.NShellFamily;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.option.*;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.spi.NSupportLevelContext;
