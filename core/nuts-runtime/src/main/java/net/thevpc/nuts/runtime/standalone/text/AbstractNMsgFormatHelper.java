@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NUnsupportedEnumException;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.util.NUnsupportedEnumException;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
