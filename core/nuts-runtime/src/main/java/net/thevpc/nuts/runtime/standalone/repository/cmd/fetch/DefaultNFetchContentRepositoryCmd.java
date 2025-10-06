@@ -24,10 +24,13 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.cmd.fetch;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NNotFoundException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
