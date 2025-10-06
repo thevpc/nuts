@@ -1,69 +1,57 @@
 /**
- * Nuts : Network Updatable Things Service (universal package manager) is
- * a new Open Source Package Manager to help install packages
- * and libraries for runtime execution.
- * <br>
- * <strong>nuts</strong> stands for <strong>Network Updatable Things Services</strong> tool.
- * It's a <strong>Package Manager</strong> for (mainly) Java
- * and non Java world. It helps discovering, downloading, assembling and executing  remote artifacts (packages) in
- * a very handy way.
- * <br>
- * <br>
- * Each managed artifact  is also called a <strong>nuts</strong> which  is a <i>Network Updatable Thing Service</i> .
- * <strong>nuts</strong> artifacts are  stored  into repositories. A  repository  may be local for  storing
- * local <strong>nuts</strong> or remote for accessing  remote artifacts (good examples  are  remote maven
- * repositories). It may also be a proxy repository so that remote artifacts are fetched and cached locally to save network
- * resources.
- * <br>
- * <br>
- * One manages a set of repositories called a  workspace. Managed <strong>nuts</strong>  (artifacts)  have descriptors
- * that depict dependencies between them. This dependency is seamlessly handled by  <strong>nuts</strong>  (tool) to
- * resolve and download on-need dependencies over the wire.
- * <br>
- * <br>
- * <strong>nuts</strong> is a swiss army knife tool as it acts like (and supports) maven build tool to have an abstract
- * view of the  artifacts dependency and like  <i>zypper</i>/<i>apt-get</i>/<i>pip</i>/<i>npm</i>  package manager tools
- * to install and uninstall artifacts allowing multiple versions of the very same artifact to  be installed.
- * <br>
+ * This package provides a comprehensive framework for working with textual data in a structured,
+ * consistent, and extensible manner. It is designed to support a wide variety of use cases
+ * ranging from plain text manipulation to rich, styled, and structured textual representations.
  *
- * <br>
- * Although <strong>nuts</strong> focuses on java artifacts, it still supports, by design, native and all non java artifacts.
- * Dependencies are fetched according to the current operating system type, distribution and hardware
- * architectures.
- * <br>
+ * <p>The primary goal of this package is to provide a unified abstraction for text handling,
+ * formatting, and rendering, allowing applications to produce consistent output for both
+ * humans and machines, across multiple output targets and data types.</p>
  *
- * <br>
- * <strong>nuts</strong> works either as standalone application or as java library to enable dynamic and dependency
- * aware class loading and brings a rich toolset to provide a versatile portable command line tools such
- * as <strong>nsh</strong> (a bash like shell), <strong>tomcat</strong>, <strong>derby</strong> ... wrapper tools to make it easier providing
- * development , test and deployment reproducible environments.
- * <br>
- *
- * <br>
- * With container concepts in mind, <strong>nuts</strong> is the perfect java application tool for <i>Docker</i>, <i>CoreOs</i>
- * and other container engines.
- * <br>
- * <br>
- * <strong>COMMON VERBS:</strong>
+ * <p><b>Core Capabilities:</b></p>
  * <ul>
- * <li>install,uninstall,update : install/uninstall/update an artifact (using its fetched/deployed installer)</li>
- * <li>deploy, undeploy         : manage artifacts on the local repositories</li>
- * <li>fetch,push               : download, upload to remote repositories</li>
- * <li>search                   : search for existing/installable artifacts</li>
- * <li>exec                     : execute an artifact (tool)</li>
+ *     <li><b>Structured Text Representation:</b> Text can be represented as a hierarchical model,
+ *         supporting composite elements such as styled spans, tables, trees, lists, links, titles,
+ *         and code blocks. This allows fine-grained control over presentation and manipulation.</li>
+ *
+ *     <li><b>Text Formatting:</b> Supports converting arbitrary objects or data structures into
+ *         textual representations using configurable formatters and templates. This includes
+ *         standard formats like JSON, XML, YAML, properties, terminal-friendly tables and trees,
+ *         and custom domain-specific formats.</li>
+ *
+ *     <li><b>Text Styling and Decoration:</b> Apply styling, coloring, or other textual annotations
+ *         to elements for terminal, HTML, or other visual outputs. Styles can be applied globally,
+ *         per-element, or dynamically adjusted during rendering.</li>
+ *
+ *     <li><b>Rendering to Multiple Targets:</b> Render structured text to various destinations,
+ *         including streams, writers, files, terminal consoles, and custom output channels.
+ *         Rendering takes into account styling, formatting, and target-specific constraints.</li>
+ *
+ *     <li><b>Text Transformation:</b> Supports dynamic transformations such as filtering,
+ *         reordering, aggregation, and substitution of text content. This enables flexible
+ *         preprocessing or postprocessing pipelines for text outputs.</li>
+ *
+ *     <li><b>Iterable and Streamed Text:</b> Allows iteration over collections of elements with
+ *         live formatting and progress reporting. This is useful for large datasets, paginated
+ *         output, or interactive terminal applications.</li>
+ *
+ *     <li><b>Integration with Command-line and Interactive Environments:</b> Text outputs and
+ *         formatting options can be configured via command-line arguments, interactive prompts,
+ *         or runtime configuration, providing a seamless developer and user experience.</li>
+ *
+ *     <li><b>Extensibility and Customization:</b> Provides interfaces and extension points to
+ *         define new text element types, formatters, renderers, and output strategies. This ensures
+ *         that the framework can adapt to new domains, data types, or presentation requirements
+ *         without changing the core infrastructure.</li>
+ *
+ *     <li><b>Human and Machine Readability:</b> Ensures that textual output can be both
+ *         human-readable (styled, tabular, tree-like, annotated) and machine-readable
+ *         (JSON, XML, TSON, YAML), allowing the same infrastructure to support logging,
+ *         reporting, data exchange, and documentation generation.</li>
  * </ul>
- * <br>
- * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
- * you may  not use this file except in compliance with the License. You may obtain
- * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ *
+ * <p>Overall, this package provides a robust, flexible, and consistent approach to
+ * text manipulation, formatting, and rendering, forming the foundation for building
+ * high-quality textual output in applications ranging from command-line tools
+ * to structured data reporting and visual presentation.</p>
  */
 package net.thevpc.nuts.text;
