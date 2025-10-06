@@ -1,8 +1,8 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NMapBy;
+import net.thevpc.nuts.expr.NToken;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
