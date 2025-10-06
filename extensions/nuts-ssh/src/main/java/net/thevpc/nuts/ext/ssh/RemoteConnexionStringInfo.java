@@ -1,13 +1,26 @@
 package net.thevpc.nuts.ext.ssh;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.*;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NRunAs;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementParser;
-import net.thevpc.nuts.format.NDescriptorFormat;
+import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
+import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
+import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NPlatformHome;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.text.NDescriptorFormat;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.util.NConnexionStringBuilder;
+import net.thevpc.nuts.net.NConnexionStringBuilder;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.spi.NScopeType;
@@ -17,7 +30,6 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.logging.Level;
 
 public class RemoteConnexionStringInfo {
     private String javaCommand = "java";
@@ -242,7 +254,7 @@ public class RemoteConnexionStringInfo {
             try {
                 workspaceJson = null;
                 NPath rpath = NPath.of(targetConnexion.copy()
-                        .setPath(pHome.getHome() + "/ws/" + workspaceName + "/"+NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)
+                        .setPath(pHome.getHome() + "/ws/" + workspaceName + "/"+ NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)
                         .toString());
                 if (rpath.isRegularFile()) {
                     workspaceJson = NElementParser.ofJson()
@@ -271,7 +283,7 @@ public class RemoteConnexionStringInfo {
             storeLocationCacheRepo = NPath.of(targetConnexion.copy()
                     .setPath(storeLocationCache)
                     .toString()).resolve(NConstants.Folders.ID);
-            NId appId = NApp.of().getId().orElseGet(()->NWorkspace.of().getApiId());
+            NId appId = NApp.of().getId().orElseGet(()-> NWorkspace.of().getApiId());
             storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(appId.getMavenFolder()).resolve("repo");
             NPath e = storeLocationCacheRepoSSH.resolve(".nuts-repository");
             if (!e.isRegularFile()) {
