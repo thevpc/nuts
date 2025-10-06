@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.outputstream;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NOutputStreamTransparentAdapter;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.IOException;
