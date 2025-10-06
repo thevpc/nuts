@@ -5,20 +5,28 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDefinitionFilters;
+import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NUninstallCmd;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.io.NMemoryPrintStream;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NAsk;
+import net.thevpc.nuts.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
