@@ -1,10 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetchStrategy;
+import net.thevpc.nuts.command.NSearchCmd;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NMsg;
-
-import java.util.logging.Level;
 
 public class MvnClient {
     public static final String NET_VPC_APP_NUTS_MVN = "net.thevpc.nmvn:nmvn";
