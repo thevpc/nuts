@@ -25,12 +25,16 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NUserConfig;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NRepositorySecurityManager;
+import net.thevpc.nuts.security.NAddUserCmd;
+import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
 
 /**
