@@ -1,6 +1,11 @@
 package net.thevpc.nuts.tomcatclassloader;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.core.NOpenMode;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NWorkspaceOptionsBuilder;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.loader.WebappClassLoader;
