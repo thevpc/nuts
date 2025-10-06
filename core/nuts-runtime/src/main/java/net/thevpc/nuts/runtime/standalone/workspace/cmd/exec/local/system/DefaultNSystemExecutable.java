@@ -5,10 +5,14 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.system;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExecutableType;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
@@ -74,7 +78,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
                 execCommand.getErr(),
                 execCommand.getRunAs(),
                 executorOptions.toArray(new String[0]),
-                ExtraApiUtils.asBooleanOr(execCommand.getDry(),NSession.of().isDry())
+                ExtraApiUtils.asBooleanOr(execCommand.getDry(), NSession.of().isDry())
         );
     }
 
