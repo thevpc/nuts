@@ -1,18 +1,14 @@
 package net.thevpc.nuts.core.test.oldws.impl;
 
-import net.thevpc.nuts.NExecCmd;
-import net.thevpc.nuts.NExecutionType;
-import net.thevpc.nuts.NOut;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExecutionType;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.oldws.OldWorkspace;
-import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 
 public class OldWorkspace083 extends OldWorkspace {
     public OldWorkspace083(File ws) {
