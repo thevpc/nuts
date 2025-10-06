@@ -1,11 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.repository.util;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositoryConfig;
+import net.thevpc.nuts.core.NRepositoryRef;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NBlankable;
