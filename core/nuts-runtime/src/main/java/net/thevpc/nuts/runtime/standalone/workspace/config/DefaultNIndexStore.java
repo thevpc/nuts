@@ -26,16 +26,20 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementParser;
 
-import net.thevpc.nuts.NIndexStore;
+import net.thevpc.nuts.core.NIndexStore;
 
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.core.NIndexerNotAccessibleException;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterToNIdPredicate2;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.*;
