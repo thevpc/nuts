@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.core.NWorkspace;
 
 public abstract class AbstractSingleReadNInputSource extends AbstractNInputSource{
     public AbstractSingleReadNInputSource(NWorkspace workspace) {
