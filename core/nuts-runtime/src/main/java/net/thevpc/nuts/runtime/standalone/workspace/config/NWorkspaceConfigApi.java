@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
-import net.thevpc.nuts.NConfigItem;
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NVersion;
+import net.thevpc.nuts.core.NConfigItem;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
 
 public class NWorkspaceConfigApi extends NConfigItem implements Cloneable{
     private static final long serialVersionUID = 3;
