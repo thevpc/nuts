@@ -1,14 +1,23 @@
 package net.thevpc.nuts.springboot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NApplication;
+import net.thevpc.nuts.app.NApplications;
+import net.thevpc.nuts.artifact.NDefinitionFilters;
+import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NIdFilters;
 import net.thevpc.nuts.boot.NBootArguments;
 import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.concurrent.NConcurrent;
 
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.expr.NExprs;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.format.NFormats;
+import net.thevpc.nuts.io.NLibPaths;
+import net.thevpc.nuts.text.NFormats;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
