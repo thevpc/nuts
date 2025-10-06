@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.util.filters;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.definition.filter.NDefinitionFilterNone;
 import net.thevpc.nuts.runtime.standalone.dependency.filter.NDependencyFilterNone;
 import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterNone;
@@ -8,6 +11,7 @@ import net.thevpc.nuts.runtime.standalone.repository.filter.NRepositoryFilterNon
 import net.thevpc.nuts.runtime.standalone.version.filter.NVersionFilterNone;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.*;
@@ -42,19 +46,19 @@ public class DefaultNFilterModel {
             throw new NIllegalArgumentException(NMsg.ofPlain("unable to detected Filter type"));
         }
         switch (type.getName()) {
-            case "net.thevpc.nuts.NDependencyFilter": {
+            case "net.thevpc.nuts.artifact.NDependencyFilter": {
                 return NDependencyFilters.of();
             }
-            case "net.thevpc.nuts.NDefinitionFilter": {
+            case "net.thevpc.nuts.artifact.NDefinitionFilter": {
                 return NDefinitionFilters.of();
             }
-            case "net.thevpc.nuts.NRepositoryFilter": {
+            case "net.thevpc.nuts.core.NRepositoryFilter": {
                 return NRepositoryFilters.of();
             }
-            case "net.thevpc.nuts.NIdFilter": {
+            case "net.thevpc.nuts.artifact.NIdFilter": {
                 return NIdFilters.of();
             }
-            case "net.thevpc.nuts.NVersionFilter": {
+            case "net.thevpc.nuts.artifact.NVersionFilter": {
                 return NVersionFilters.of();
             }
         }
@@ -128,7 +132,7 @@ public class DefaultNFilterModel {
             }
         }
         switch (type.getName()) {
-            case "net.thevpc.nuts.NDependencyFilter": {
+            case "net.thevpc.nuts.artifact.NDependencyFilter": {
                 List<NDependencyFilter> all = new ArrayList<>();
                 for (NFilter other : others) {
                     NDependencyFilter a = NDependencyFilters.of().from(other);
@@ -141,7 +145,7 @@ public class DefaultNFilterModel {
                 }
                 return (T) new NDependencyFilterNone(all.toArray(new NDependencyFilter[0]));
             }
-            case "net.thevpc.nuts.NRepositoryFilter": {
+            case "net.thevpc.nuts.core.NRepositoryFilter": {
                 List<NRepositoryFilter> all = new ArrayList<>();
                 for (NFilter other : others) {
                     NRepositoryFilter a = NRepositoryFilters.of().from(other);
@@ -154,7 +158,7 @@ public class DefaultNFilterModel {
                 }
                 return (T) new NRepositoryFilterNone(all.toArray(new NRepositoryFilter[0]));
             }
-            case "net.thevpc.nuts.NIdFilter": {
+            case "net.thevpc.nuts.artifact.NIdFilter": {
                 List<NIdFilter> all = new ArrayList<>();
                 for (NFilter other : others) {
                     NIdFilter a = NIdFilters.of().from(other);
@@ -167,7 +171,7 @@ public class DefaultNFilterModel {
                 }
                 return (T) new NIdFilterNone(all.toArray(new NIdFilter[0]));
             }
-            case "net.thevpc.nuts.NVersionFilter": {
+            case "net.thevpc.nuts.artifact.NVersionFilter": {
                 List<NVersionFilter> all = new ArrayList<>();
                 for (NFilter other : others) {
                     NVersionFilter a = NVersionFilters.of().from(other);
@@ -180,7 +184,7 @@ public class DefaultNFilterModel {
                 }
                 return (T) new NVersionFilterNone(all.toArray(new NVersionFilter[0]));
             }
-            case "net.thevpc.nuts.NDefinitionFilter": {
+            case "net.thevpc.nuts.artifact.NDefinitionFilter": {
                 List<NDefinitionFilter> all = new ArrayList<>();
                 for (NFilter other : others) {
                     NDefinitionFilter a = NDefinitionFilters.of().from(other);
