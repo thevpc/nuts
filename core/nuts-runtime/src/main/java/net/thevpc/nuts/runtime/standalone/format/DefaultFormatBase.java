@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.format;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NFormat;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.text.NFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.NText;
 
@@ -185,7 +185,7 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 
     @Override
     public void println(NTerminal terminal) {
-        NSession session=NSession.of();
+        NSession session= NSession.of();
         println(terminal == null ? session.getTerminal().out() : terminal.out());
     }
 
