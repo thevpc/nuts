@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.reflect;
 
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NScopedValue;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NReflect;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
