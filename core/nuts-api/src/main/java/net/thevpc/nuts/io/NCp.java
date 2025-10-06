@@ -25,12 +25,12 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.time.NProgressListener;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NUnsupportedArgumentException;
 
 import java.io.*;
 import java.net.URL;
