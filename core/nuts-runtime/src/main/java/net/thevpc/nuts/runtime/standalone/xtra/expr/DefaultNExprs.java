@@ -1,9 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.expr.*;
-import net.thevpc.nuts.util.NPlatformArgsSignature;
+import net.thevpc.nuts.reflect.NPlatformArgsSignature;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.*;
 
