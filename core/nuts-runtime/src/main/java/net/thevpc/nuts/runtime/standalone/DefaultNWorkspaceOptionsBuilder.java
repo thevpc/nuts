@@ -24,16 +24,23 @@
  */
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootHomeLocation;
 import net.thevpc.nuts.boot.NBootLogConfig;
-import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
-import net.thevpc.nuts.reserved.NReservedLangUtils;
+import net.thevpc.nuts.core.NWorkspaceCmdLineParser;
+import net.thevpc.nuts.command.NExecutionType;
+import net.thevpc.nuts.command.NFetchStrategy;
+import net.thevpc.nuts.core.*;
+import net.thevpc.nuts.platform.NHomeLocation;
+import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.util.*;
