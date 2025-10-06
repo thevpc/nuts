@@ -1,17 +1,24 @@
 package net.thevpc.nuts.ext.ssh;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
+import net.thevpc.nuts.core.*;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExecCmdExtension;
+import net.thevpc.nuts.command.NExecCmdExtensionContext;
+import net.thevpc.nuts.command.NExecutionType;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
+import net.thevpc.nuts.net.NConnexionStringBuilder;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.log.NLog;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class SshNExecCmdExtension implements NExecCmdExtension {
