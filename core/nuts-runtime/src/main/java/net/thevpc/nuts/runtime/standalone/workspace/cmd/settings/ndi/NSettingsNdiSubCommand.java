@@ -1,11 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinitionFilters;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.core.NConfirmationMode;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
@@ -345,7 +352,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             String shortcutName = null;
         }
         Data d = new Data();
-        NSession session=NSession.of();
+        NSession session= NSession.of();
         while (cmdLine.hasNext()) {
             switch (cmdLine.peek().get().key()) {
                 case "--ignore-unsupported-os": {
