@@ -6,8 +6,8 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.NDetachedEmptyOptionalException;
-import net.thevpc.nuts.NDetachedErrorOptionalException;
+import net.thevpc.nuts.util.NDetachedEmptyOptionalException;
+import net.thevpc.nuts.util.NDetachedErrorOptionalException;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import org.junit.jupiter.api.Assertions;
