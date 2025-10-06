@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.NDescriptorLicense;
-import net.thevpc.nuts.NDescriptorLicenseBuilder;
+import net.thevpc.nuts.artifact.NDescriptorLicense;
+import net.thevpc.nuts.artifact.NDescriptorLicenseBuilder;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
