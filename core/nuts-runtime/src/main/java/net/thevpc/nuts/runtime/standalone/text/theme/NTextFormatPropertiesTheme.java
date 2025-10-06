@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.text.theme;
 
-import net.thevpc.nuts.*;
 
-
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
@@ -13,6 +13,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyleType;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 
