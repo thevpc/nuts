@@ -25,8 +25,8 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.reserved.util.NComparatorFromJavaComparator;
-import net.thevpc.nuts.reserved.util.NComparatorWithDescription;
+import net.thevpc.nuts.internal.util.NComparatorFromJavaComparator;
+import net.thevpc.nuts.internal.util.NComparatorWithDescription;
 
 import java.util.Comparator;
 import java.util.function.Supplier;
