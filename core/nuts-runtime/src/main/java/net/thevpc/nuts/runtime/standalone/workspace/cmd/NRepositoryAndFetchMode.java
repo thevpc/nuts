@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
-import net.thevpc.nuts.NFetchMode;
-import net.thevpc.nuts.NRepository;
+import net.thevpc.nuts.command.NFetchMode;
+import net.thevpc.nuts.core.NRepository;
 
 import java.util.Objects;
 
