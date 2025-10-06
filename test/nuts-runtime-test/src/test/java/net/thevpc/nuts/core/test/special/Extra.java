@@ -1,6 +1,6 @@
 package net.thevpc.nuts.core.test.special;
 
-import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassByteCode;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
