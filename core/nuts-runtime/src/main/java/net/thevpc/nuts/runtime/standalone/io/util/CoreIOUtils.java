@@ -24,10 +24,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.*;
 
-
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NText;
@@ -37,7 +38,6 @@ import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAware;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAwarePrintWriter;
 import net.thevpc.nuts.runtime.standalone.text.RawOutputStream;
-import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenExist;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenNotExists;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
