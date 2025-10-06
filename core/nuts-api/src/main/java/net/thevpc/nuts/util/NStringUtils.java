@@ -25,9 +25,10 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NElementType;
-import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.reserved.NReservedLangUtils;
-import net.thevpc.nuts.reserved.NReservedUtils;
+import net.thevpc.nuts.expr.NToken;
+import net.thevpc.nuts.text.NPositionType;
+import net.thevpc.nuts.internal.NReservedLangUtils;
+import net.thevpc.nuts.internal.NReservedUtils;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
