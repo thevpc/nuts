@@ -1,8 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NSpeedQualifier;
-import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.core.NSpeedQualifier;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NFetchMode;
+import net.thevpc.nuts.core.NContentEvent;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryEvent;
+import net.thevpc.nuts.core.NRepositoryListener;
+import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
