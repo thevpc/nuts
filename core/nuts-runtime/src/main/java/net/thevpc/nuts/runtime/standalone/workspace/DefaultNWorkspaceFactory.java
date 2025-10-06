@@ -24,16 +24,22 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NIdFormat;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 
 import net.thevpc.nuts.ext.NFactoryException;
-import net.thevpc.nuts.format.NFormats;
-import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.format.NVersionFormat;
+import net.thevpc.nuts.text.NFormats;
+import net.thevpc.nuts.text.NPositionType;
+import net.thevpc.nuts.text.NVersionFormat;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
-import net.thevpc.nuts.reserved.rpi.NIORPI;
+import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory;
@@ -50,8 +56,7 @@ import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.DefaultNExprs;
-import net.thevpc.nuts.util.NClassClassMap;
-import net.thevpc.nuts.util.NListValueMap;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.stream.DefaultNCollectionsRPI;
 import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat;
@@ -64,10 +69,7 @@ import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNLibPaths;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.web.NWebCli;
+import net.thevpc.nuts.net.NWebCli;
 
 import java.io.PrintStream;
 import java.net.URL;
@@ -121,7 +123,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         // TODO should it, or should it not??
 
         switch (type.getName()) {
-            case "net.thevpc.nuts.NApp": {
+            case "net.thevpc.nuts.app.NApp": {
                 return NOptional.of((T) ((DefaultNSession) session).getPropertiesHolder().getOrComputeProperty(type.getName(), () -> new NAppImpl(), NScopeType.TRANSITIVE_SESSION));
             }
         }
@@ -140,7 +142,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     DefaultNTexts p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNTexts());
                     return NOptional.of((T) p);
                 }
-                case "net.thevpc.nuts.format.NObjectFormat": {
+                case "net.thevpc.nuts.text.NObjectFormat": {
                     DefaultNObjectFormat p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNObjectFormat(workspace));
                     return NOptional.of((T) p);
                 }
@@ -164,7 +166,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     DefaultNElementFactory p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElementFactory());
                     return NOptional.of((T) p);
                 }
-                case "net.thevpc.nuts.NLibPaths": {
+                case "net.thevpc.nuts.io.NLibPaths": {
                     DefaultNLibPaths p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNLibPaths(workspace));
                     return NOptional.of((T) p);
                 }
@@ -180,48 +182,48 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     NCollectionsRPI p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNCollectionsRPI());
                     return NOptional.of((T) p);
                 }
-                case "net.thevpc.nuts.NIdFormat": {
+                case "net.thevpc.nuts.artifact.NIdFormat": {
                     NIdFormat p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNIdFormat());
                     return NOptional.of((T) p);
                 }
-                case "net.thevpc.nuts.format.NVersionFormat": {
+                case "net.thevpc.nuts.text.NVersionFormat": {
                     NVersionFormat p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNVersionFormat(workspace));
                     return NOptional.of((T) p);
                 }
-                case "net.thevpc.nuts.NExecCmd": {
+                case "net.thevpc.nuts.command.NExecCmd": {
                     NExecCmd p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNExecCmd(workspace));
                     return NOptional.of((T) p);
                 }
-                case "net.thevpc.nuts.web.NWebCli": {
+                case "net.thevpc.nuts.net.NWebCli": {
                     NWebCli p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNWebCli());
                     return NOptional.of((T) p);
                 }
-                case "net.thevpc.nuts.NIdBuilder": {
+                case "net.thevpc.nuts.artifact.NIdBuilder": {
                     return NOptional.of((T) new DefaultNIdBuilder());
                 }
-                case "net.thevpc.nuts.NDependencyBuilder": {
+                case "net.thevpc.nuts.artifact.NDependencyBuilder": {
                     return NOptional.of((T) new DefaultNDependencyBuilder());
                 }
-                case "net.thevpc.nuts.NEnvConditionBuilder": {
+                case "net.thevpc.nuts.artifact.NEnvConditionBuilder": {
                     return NOptional.of((T) new DefaultNEnvConditionBuilder());
                 }
-                case "net.thevpc.nuts.NDescriptorBuilder": {
+                case "net.thevpc.nuts.artifact.NDescriptorBuilder": {
                     return NOptional.of((T) new DefaultNDescriptorBuilder());
                 }
-                case "net.thevpc.nuts.NBootOptionsBuilder": {
+                case "net.thevpc.nuts.core.NBootOptionsBuilder": {
                     return NOptional.of((T) new DefaultNBootOptionsBuilder());
                 }
-                case "net.thevpc.nuts.NWorkspaceOptionsBuilder": {
+                case "net.thevpc.nuts.core.NWorkspaceOptionsBuilder": {
                     return NOptional.of((T) new DefaultNWorkspaceOptionsBuilder());
                 }
                 case "net.thevpc.nuts.expr.NExprs": {
                     return NOptional.of((T) new DefaultNExprs());
                 }
-                case "net.thevpc.nuts.format.NFormats": {
+                case "net.thevpc.nuts.text.NFormats": {
                     NFormats p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new NFormatsImpl());
                     return NOptional.of((T) p);
                 }
-                case "net.thevpc.nuts.NApp": {
+                case "net.thevpc.nuts.app.NApp": {
                     return NOptional.of((T) new NAppImpl());
                 }
                 default: {
