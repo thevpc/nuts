@@ -28,7 +28,7 @@ import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.item.NElementAnnotationImpl;
 import net.thevpc.nuts.runtime.standalone.elem.item.NElementCommentImpl;
@@ -46,7 +46,7 @@ import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.javacc
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.javacc.TokenMgrError;
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.parser.javacc.TsonStreamParserImpl;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NElementUtils;
+import net.thevpc.nuts.elem.NElementUtils;
 import net.thevpc.nuts.util.NUtils;
 
 import java.io.Reader;
