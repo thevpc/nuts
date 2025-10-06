@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.art.table;
 
-import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.format.NTableCell;
+import net.thevpc.nuts.text.NPositionType;
+import net.thevpc.nuts.text.NTableCell;
 import net.thevpc.nuts.runtime.standalone.text.art.region.NTextRegion;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NStringUtils;
