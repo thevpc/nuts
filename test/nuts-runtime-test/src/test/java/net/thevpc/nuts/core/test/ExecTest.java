@@ -5,11 +5,20 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDependencies;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NDependencyTreeNode;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NWorkspaceOptionsBuilder;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 
 
-import net.thevpc.nuts.format.NVersionFormat;
+import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.text.NVersionFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
 import net.thevpc.nuts.util.NAssert;
