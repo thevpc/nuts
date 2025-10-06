@@ -26,14 +26,13 @@
  */
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.boot.NBootDescriptor;
-import net.thevpc.nuts.NEnvCondition;
-import net.thevpc.nuts.NEnvConditionBuilder;
-import net.thevpc.nuts.NIdLocation;
+import net.thevpc.nuts.artifact.NIdLocation;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.reserved.NReservedLangUtils;
+import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
