@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
-import net.thevpc.nuts.NDescriptor;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
 
