@@ -1,11 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.text.art.table;
 
-import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableCellFormat;
 import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableHeaderFormat;
 import net.thevpc.nuts.runtime.standalone.text.art.region.NTextRegion;
 import net.thevpc.nuts.runtime.standalone.text.art.region.NTextRegionImpl;
-import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.*;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
