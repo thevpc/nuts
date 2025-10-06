@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.art.region;
 
-import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextBuilder;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.*;
