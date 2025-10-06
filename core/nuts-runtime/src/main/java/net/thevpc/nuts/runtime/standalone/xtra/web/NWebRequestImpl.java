@@ -3,10 +3,10 @@ package net.thevpc.nuts.runtime.standalone.xtra.web;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.net.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.web.*;
 
 import java.io.IOException;
 import java.io.InputStream;
