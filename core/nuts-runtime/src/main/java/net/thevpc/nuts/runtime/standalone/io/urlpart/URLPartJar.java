@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.urlpart;
 
-import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.io.NIOUtils;
