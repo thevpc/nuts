@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.util;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NIdLocation;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NIdLocation;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
@@ -13,7 +13,6 @@ import net.thevpc.nuts.util.NMsg;
 
 import java.io.File;
 import java.util.List;
-import java.util.logging.Level;
 
 public class NIdLocationUtils {
     public static NPath fetch(NId id, List<NIdLocation> locations, AbstractNRepository repository) {
