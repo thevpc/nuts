@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.time.NChronometer;
