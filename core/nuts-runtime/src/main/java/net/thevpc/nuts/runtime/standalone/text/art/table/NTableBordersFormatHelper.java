@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.art.table;
 
-import net.thevpc.nuts.format.NTableBordersFormat;
-import net.thevpc.nuts.format.NTableSeparator;
+import net.thevpc.nuts.text.NTableBordersFormat;
+import net.thevpc.nuts.text.NTableSeparator;
 import net.thevpc.nuts.runtime.standalone.text.art.region.NTextRegion;
 import net.thevpc.nuts.runtime.standalone.text.art.region.NTextRegionImpl;
 
