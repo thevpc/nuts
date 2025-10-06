@@ -1,6 +1,6 @@
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.reserved.rpi.NIORPI;
+import net.thevpc.nuts.internal.rpi.NIORPI;
 
 import java.io.InputStream;
 
