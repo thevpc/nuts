@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
