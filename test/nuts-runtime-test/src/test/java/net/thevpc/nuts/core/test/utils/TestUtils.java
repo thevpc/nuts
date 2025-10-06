@@ -16,11 +16,9 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NVersion;
-import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
-import net.thevpc.nuts.boot.reserved.util.NBootUtils;
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.util.NArrays;
 import net.thevpc.nuts.io.NIOUtils;
 
