@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.format.yaml;
 
-import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPrintStream;
