@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver.maven;
 
-import net.thevpc.nuts.NDefinition;
-import net.thevpc.nuts.NDependency;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependency;
 
 class RootInfo {
     NDependency dependency;
