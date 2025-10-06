@@ -5,14 +5,16 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.java;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
-import net.thevpc.nuts.format.NMutableTableModel;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.text.NMutableTableModel;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
-import net.thevpc.nuts.NPlatformFamily;
+import net.thevpc.nuts.platform.NPlatformFamily;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArt;
 
@@ -34,7 +36,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
         if (autoSave == null) {
             autoSave = false;
         }
-        NSession session=NSession.of();
+        NSession session= NSession.of();
         NPrintStream out = session.out();
         NWorkspace workspace = NWorkspace.of();
         if (cmdLine.next("add java","java add").isPresent()) {
