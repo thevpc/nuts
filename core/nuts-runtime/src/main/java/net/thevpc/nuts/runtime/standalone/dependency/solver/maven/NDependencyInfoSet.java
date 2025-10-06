@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver.maven;
 
-import net.thevpc.nuts.NDependency;
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NId;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
