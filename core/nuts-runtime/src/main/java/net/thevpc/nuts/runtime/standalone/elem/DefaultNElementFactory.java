@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.expr.NParseException;
 import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
 import net.thevpc.nuts.math.NBigComplex;
