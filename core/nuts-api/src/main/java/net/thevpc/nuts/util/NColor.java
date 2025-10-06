@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.io.NAnsiTermHelper;
+
 import java.awt.*;
 
 /**
