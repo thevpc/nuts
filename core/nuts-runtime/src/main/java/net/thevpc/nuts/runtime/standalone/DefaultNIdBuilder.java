@@ -25,11 +25,10 @@
  */
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NEnvCondition;
-import net.thevpc.nuts.NEnvConditionBuilder;
-import net.thevpc.nuts.reserved.NReservedLangUtils;
-import net.thevpc.nuts.reserved.NReservedUtils;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.internal.NReservedLangUtils;
+import net.thevpc.nuts.internal.NReservedUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
