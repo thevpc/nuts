@@ -24,10 +24,14 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryConfig;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NFolderRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NHttpSrvRepository;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
@@ -74,7 +78,7 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
     @Override
     public List<NAddRepositoryOptions> getDefaultRepositories() {
         List<NAddRepositoryOptions> all=new ArrayList<>();
-        NSession session=NSession.of();
+        NSession session= NSession.of();
         if (!NWorkspace.of().isSystemWorkspace()) {
             all.add(NRepositorySelectorHelper.createRepositoryOptions(
                     NRepositoryLocation.of("system", NRepositoryDB.of()).get(),
