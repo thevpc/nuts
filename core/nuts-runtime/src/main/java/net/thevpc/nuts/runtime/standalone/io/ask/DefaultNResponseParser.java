@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.io.ask;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.DefaultNArg;
 import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.io.NAsk;
+import net.thevpc.nuts.io.NAskParseContext;
+import net.thevpc.nuts.io.NAskParser;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
-import net.thevpc.nuts.util.NAskParseContext;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NAsk;
-import net.thevpc.nuts.util.NAskParser;
+import net.thevpc.nuts.util.*;
 
 public class DefaultNResponseParser<T> implements NAskParser<T> {
 
