@@ -1,12 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver.maven;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NMsgFormattable;
-import net.thevpc.nuts.format.NTreeNode;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.text.NMsgFormattable;
+import net.thevpc.nuts.text.NTreeNode;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NNoSuchElementException;
 
 import java.util.*;
 import java.util.stream.Collectors;
