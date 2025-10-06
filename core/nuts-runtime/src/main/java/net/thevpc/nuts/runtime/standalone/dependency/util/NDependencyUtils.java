@@ -24,7 +24,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.dependency.util;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NDependencyScope;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NFunction;
