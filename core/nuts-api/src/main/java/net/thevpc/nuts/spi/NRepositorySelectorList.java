@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
