@@ -5,9 +5,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NIdFilter;
+import net.thevpc.nuts.command.NFetchCmd;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionDelegate;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
