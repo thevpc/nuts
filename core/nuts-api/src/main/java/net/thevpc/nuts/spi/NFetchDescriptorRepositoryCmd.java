@@ -26,10 +26,9 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NDescriptor;
-import net.thevpc.nuts.NFetchMode;
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.command.NFetchMode;
+import net.thevpc.nuts.artifact.NId;
 
 /**
  * Repository command used to fetch an artifact descriptor from a specific repository.
