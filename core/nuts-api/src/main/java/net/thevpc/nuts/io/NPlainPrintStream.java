@@ -1,11 +1,9 @@
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Writer;
