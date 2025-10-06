@@ -1,14 +1,21 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 
-import net.thevpc.nuts.NLauncherOptions;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NWorkspaceBootConfig;
+import net.thevpc.nuts.platform.NLauncherOptions;
 
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 
