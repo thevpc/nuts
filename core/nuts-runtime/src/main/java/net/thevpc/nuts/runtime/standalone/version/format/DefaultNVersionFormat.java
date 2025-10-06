@@ -1,11 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.version.format;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
-import net.thevpc.nuts.format.NVersionFormat;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.text.NVersionFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
@@ -103,7 +106,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
 
     @Override
     public void print(NPrintStream out) {
-        NSession session=NSession.of();
+        NSession session= NSession.of();
         if (!isNtf()) {
             out = out.setTerminalMode(NTerminalMode.FILTERED);
         }
