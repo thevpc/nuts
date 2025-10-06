@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.definition;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NInstallInformation;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NOptional;
 
