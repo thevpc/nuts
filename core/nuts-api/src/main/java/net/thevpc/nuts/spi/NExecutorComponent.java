@@ -26,9 +26,9 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NExecutionContext;
-import net.thevpc.nuts.NExecutionException;
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.command.NExecutionContext;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.artifact.NId;
 
 /**
  * An Executor Component is responsible of "executing" a nuts package
