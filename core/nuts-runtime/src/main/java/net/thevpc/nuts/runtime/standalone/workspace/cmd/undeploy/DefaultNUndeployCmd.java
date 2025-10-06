@@ -1,7 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.undeploy;
 
-import net.thevpc.nuts.*;
-
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.command.NFetchStrategy;
+import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NUndeployCmd;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NMsg;
@@ -14,7 +23,7 @@ public class DefaultNUndeployCmd extends AbstractNUndeployCmd {
 
     @Override
     public NUndeployCmd run() {
-        NSession session=NSession.of();
+        NSession session= NSession.of();
         NWorkspace workspace = NWorkspace.of();
         NWorkspaceUtils.of(workspace).checkReadOnly();
         if (ids.isEmpty()) {
