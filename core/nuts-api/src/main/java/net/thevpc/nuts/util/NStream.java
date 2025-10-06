@@ -24,10 +24,10 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.command.NSearchCmd;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementRedescribable;
-import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
 
 import java.util.*;
 import java.util.function.*;
