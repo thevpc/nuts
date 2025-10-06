@@ -26,7 +26,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.text.NVisitResult;
 
 import java.io.IOException;
 import java.io.InputStream;
