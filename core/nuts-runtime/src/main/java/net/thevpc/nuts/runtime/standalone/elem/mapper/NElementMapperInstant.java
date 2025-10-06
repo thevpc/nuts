@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
+import net.thevpc.nuts.util.NUnsupportedEnumException;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
