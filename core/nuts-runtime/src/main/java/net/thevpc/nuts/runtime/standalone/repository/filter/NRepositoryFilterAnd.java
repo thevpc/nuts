@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionString;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
