@@ -1,15 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NFetchMode;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NInputStreamMonitor;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 
 import net.thevpc.nuts.util.NMsg;
-
-import java.util.logging.Level;
 
 public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
 
