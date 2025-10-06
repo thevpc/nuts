@@ -26,10 +26,10 @@
  */
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.NDescriptorProperty;
-import net.thevpc.nuts.NDescriptorPropertyBuilder;
-import net.thevpc.nuts.NEnvCondition;
-import net.thevpc.nuts.NEnvConditionBuilder;
+import net.thevpc.nuts.artifact.NDescriptorProperty;
+import net.thevpc.nuts.artifact.NDescriptorPropertyBuilder;
+import net.thevpc.nuts.artifact.NEnvCondition;
+import net.thevpc.nuts.artifact.NEnvConditionBuilder;
 import net.thevpc.nuts.boot.NBootDescriptorProperty;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
