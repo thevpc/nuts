@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.concurrent.NCallable;
 
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
@@ -16,8 +16,8 @@ public class DefaultNConcurrent implements NConcurrent {
     private final NRateLimitValueFactory memoryRateLimitValueFactory = new NRateLimitValueFactoryImpl(new NRateLimitValueStoreMemory(), null, null);
     private NRateLimitValueFactory rateLimitValueFactory;
 
-    private final NSagaCallFactory memorySagaFactory = new NSagaCallFactoryImpl(new NSagaCallStoreMemory(), null);
-    private NSagaCallFactory sagaFactory;
+    private final NSagaCallableFactory memorySagaFactory = new NSagaCallableFactoryImpl(new NSagaStoreMemory(), null);
+    private NSagaCallableFactory sagaFactory;
 
     private final NCachedValueFactory memoryCachedValueFactory = new NCachedValueFactoryImpl(new NCachedValueStoreMemory());
     private NCachedValueFactory cachedValueFactory;
@@ -30,8 +30,8 @@ public class DefaultNConcurrent implements NConcurrent {
     private final NCircuitBreakerCallFactory memoryCircuitBreakerCallFactory = new NCircuitBreakerCallFactoryImpl(new NCircuitBreakerCallStoreMemory(), null);
     private NCircuitBreakerCallFactory circuitBreakerCallFactory;
 
-    private final NWorkBalancerCallFactory memoryWorkBalancerCallFactory = new NWorkBalancerCallFactoryImpl(new NWorkBalancerCallStoreMemory(), null,null);
-    private NWorkBalancerCallFactory workBalancerCallFactory;
+    private final NWorkBalancerFactory memoryWorkBalancerCallFactory = new NWorkBalancerFactoryImpl(new NWorkBalancerStoreMemory(), null,null);
+    private NWorkBalancerFactory workBalancerCallFactory;
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
@@ -110,12 +110,12 @@ public class DefaultNConcurrent implements NConcurrent {
     }
 
     @Override
-    public NSagaCallFactory defaultSagaFactory() {
+    public NSagaCallableFactory defaultSagaFactory() {
         return memorySagaFactory;
     }
 
     @Override
-    public NSagaCallFactory memorySagaFactory() {
+    public NSagaCallableFactory memorySagaFactory() {
         return memorySagaFactory;
     }
 
@@ -137,7 +137,7 @@ public class DefaultNConcurrent implements NConcurrent {
 
 
     @Override
-    public NSagaCallFactory sagaFactory() {
+    public NSagaCallableFactory sagaFactory() {
         return sagaFactory == null ? defaultSagaFactory() : sagaFactory;
     }
 
@@ -209,27 +209,27 @@ public class DefaultNConcurrent implements NConcurrent {
     }
 
     @Override
-    public NSagaCallBuilder sagaCallBuilder() {
+    public NSagaCallableBuilder sagaCallBuilder() {
         return sagaFactory().ofBuilder();
     }
 
     @Override
-    public NWorkBalancerCallFactory defaultWorkBalancerFactory() {
+    public NWorkBalancerFactory defaultWorkBalancerFactory() {
         return memoryWorkBalancerCallFactory;
     }
 
     @Override
-    public NWorkBalancerCallFactory memoryWorkBalancerFactory() {
+    public NWorkBalancerFactory memoryWorkBalancerFactory() {
         return memoryWorkBalancerCallFactory;
     }
 
     @Override
-    public NWorkBalancerCallFactory workBalancerFactory() {
+    public NWorkBalancerFactory workBalancerFactory() {
         return workBalancerCallFactory == null ? defaultWorkBalancerFactory() : workBalancerCallFactory;
     }
 
     @Override
-    public NConcurrent setWorkBalancerCallFactory(NWorkBalancerCallFactory workBalancerCallFactory) {
+    public NConcurrent setWorkBalancerCallFactory(NWorkBalancerFactory workBalancerCallFactory) {
         this.workBalancerCallFactory = workBalancerCallFactory;
         return this;
     }
