@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NIndexStore;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NIndexStore;
 import net.thevpc.nuts.spi.NIndexStoreFactory;
-import net.thevpc.nuts.NRepository;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
 public class DummyNIndexStoreFactory implements NIndexStoreFactory {
