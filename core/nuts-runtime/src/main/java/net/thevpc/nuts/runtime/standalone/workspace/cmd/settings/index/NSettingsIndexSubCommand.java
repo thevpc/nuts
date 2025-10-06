@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.index;
 
-import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.NUpdateStatsCmd;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.command.NUpdateStatsCmd;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 
