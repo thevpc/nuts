@@ -1,8 +1,8 @@
 package net.thevpc.nuts.spi.base;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.reserved.util.NUnsafeCallableWithDescription;
-import net.thevpc.nuts.util.NUnsafeCallable;
+import net.thevpc.nuts.internal.util.NUnsafeCallableWithDescription;
+import net.thevpc.nuts.concurrent.NUnsafeCallable;
 
 import java.util.function.Supplier;
 
