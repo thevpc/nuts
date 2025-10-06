@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.reserved.rpi.NIORPI;
+import net.thevpc.nuts.internal.rpi.NIORPI;
 
 public interface NMemoryPrintStream extends NPrintStream {
     static NMemoryPrintStream of() {
