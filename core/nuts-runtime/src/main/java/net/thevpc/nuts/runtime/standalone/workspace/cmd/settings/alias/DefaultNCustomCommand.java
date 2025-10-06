@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.*;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
@@ -12,7 +14,6 @@ import net.thevpc.nuts.util.NMsg;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 
 public class DefaultNCustomCommand implements NCustomCmd {
 
