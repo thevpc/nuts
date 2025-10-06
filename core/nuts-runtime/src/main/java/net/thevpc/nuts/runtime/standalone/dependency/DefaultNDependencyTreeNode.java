@@ -24,8 +24,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.dependency;
 
-import net.thevpc.nuts.NDependency;
-import net.thevpc.nuts.NDependencyTreeNode;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NDependencyTreeNode;
 
 import java.util.List;
 
