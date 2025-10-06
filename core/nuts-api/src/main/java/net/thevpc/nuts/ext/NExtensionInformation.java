@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.ext;
 
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.artifact.NId;
 
 /**
  * Extension information
