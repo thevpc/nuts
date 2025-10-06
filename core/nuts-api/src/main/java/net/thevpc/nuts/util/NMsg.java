@@ -26,9 +26,8 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NExceptions;
-import net.thevpc.nuts.format.NMsgFormattable;
-import net.thevpc.nuts.format.NTextFormattable;
+import net.thevpc.nuts.text.NMsgFormattable;
+import net.thevpc.nuts.text.NTextFormattable;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.text.*;
 
