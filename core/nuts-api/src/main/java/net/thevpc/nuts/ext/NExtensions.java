@@ -26,7 +26,10 @@
  */
 package net.thevpc.nuts.ext;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NMutableClassLoader;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NOptional;
@@ -110,7 +113,7 @@ public interface NExtensions extends NComponent  {
 
     boolean isLoadedId(NId id);
 
-    boolean isLoadedId(NId id,ClassLoader classLoader);
+    boolean isLoadedId(NId id, ClassLoader classLoader);
 
     boolean isLoadedExtensions(NId id);
 
