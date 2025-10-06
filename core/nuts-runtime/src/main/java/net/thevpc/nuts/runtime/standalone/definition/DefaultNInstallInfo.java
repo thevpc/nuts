@@ -25,9 +25,9 @@
 */
 package net.thevpc.nuts.runtime.standalone.definition;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NInstallInformation;
-import net.thevpc.nuts.NInstallStatus;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NInstallInformation;
+import net.thevpc.nuts.command.NInstallStatus;
 import net.thevpc.nuts.io.NPath;
 
 import java.time.Instant;
