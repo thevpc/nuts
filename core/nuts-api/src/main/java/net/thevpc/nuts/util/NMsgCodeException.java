@@ -1,7 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NException;
-
 public class NMsgCodeException extends NException implements NMsgCodeAware {
     private NMsgCode code;
 
