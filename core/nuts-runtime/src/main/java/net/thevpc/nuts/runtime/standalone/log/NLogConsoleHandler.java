@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 
-import net.thevpc.nuts.NErr;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.io.NErr;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLogConfig;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.log.NLogSPI;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NMsg;
