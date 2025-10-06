@@ -25,11 +25,15 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.archetype;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 
 
+import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 
