@@ -1,12 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.command.NExecutionEntry;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntry;
 
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NRef;
 
@@ -17,7 +20,6 @@ import java.io.UncheckedIOException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.*;
-import java.util.logging.Level;
 
 public class JavaClassUtils {
     public static Class unwrapCGLib(Class clazz) {
