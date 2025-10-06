@@ -24,16 +24,14 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NOut;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElementWriter;
-import net.thevpc.nuts.format.NTableModel;
+import net.thevpc.nuts.text.NTableModel;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextArt;
 import net.thevpc.nuts.text.NTextArtTableRenderer;
-import net.thevpc.nuts.util.NAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
