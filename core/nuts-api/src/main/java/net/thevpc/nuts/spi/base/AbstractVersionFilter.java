@@ -24,9 +24,10 @@
  */
 package net.thevpc.nuts.spi.base;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NVersionFilter;
+import net.thevpc.nuts.artifact.NVersionInterval;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.reserved.util.NVersionFilterWithDescription;
+import net.thevpc.nuts.internal.util.NVersionFilterWithDescription;
 import net.thevpc.nuts.util.NSimplifiable;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
