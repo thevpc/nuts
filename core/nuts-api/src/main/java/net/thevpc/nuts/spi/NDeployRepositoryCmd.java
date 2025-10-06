@@ -25,11 +25,10 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NDescriptor;
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.NSession;
 
 import java.io.File;
 import java.io.InputStream;
