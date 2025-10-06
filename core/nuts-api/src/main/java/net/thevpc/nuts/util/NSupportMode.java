@@ -24,8 +24,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NExceptions;
-
 public enum NSupportMode implements NEnum {
     SUPPORTED,
     PREFERRED,
