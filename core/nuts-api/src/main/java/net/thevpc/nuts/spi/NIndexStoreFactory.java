@@ -25,8 +25,8 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NIndexStore;
-import net.thevpc.nuts.NRepository;
+import net.thevpc.nuts.core.NIndexStore;
+import net.thevpc.nuts.core.NRepository;
 
 /**
  * Index Store Factory responsible of creating stores for a given repository
