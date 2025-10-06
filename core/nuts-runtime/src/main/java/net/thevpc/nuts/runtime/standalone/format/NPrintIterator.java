@@ -7,9 +7,10 @@ package net.thevpc.nuts.runtime.standalone.format;
 
 import java.util.Iterator;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.format.NIterableFormat;
+import net.thevpc.nuts.text.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.util.NIteratorBase;
 
