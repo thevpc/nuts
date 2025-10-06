@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.remote;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -43,7 +46,7 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
             eb.set("repositories", NElement.ofString(getRepositoryFilter().toString()));
         }
 
-        RemoteNWorkspace ws=(RemoteNWorkspace)NWorkspace.get();
+        RemoteNWorkspace ws=(RemoteNWorkspace) NWorkspace.get();
         return NIterator.of(
                 (Iterator <NId>)
                         ws.remoteCall(
