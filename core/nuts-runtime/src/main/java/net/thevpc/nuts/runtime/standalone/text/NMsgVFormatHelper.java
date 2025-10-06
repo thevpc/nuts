@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
+import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.*;
 
