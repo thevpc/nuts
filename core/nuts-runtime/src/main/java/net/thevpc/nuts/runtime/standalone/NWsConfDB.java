@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.NLocationKey;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.core.NLocationKey;
+import net.thevpc.nuts.core.NWorkspace;
 
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NBlankable;
