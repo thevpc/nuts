@@ -5,15 +5,15 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NOut;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NIllegalArgumentException;
+import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.xtra.time.CProgressBar;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NAsk;
+import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.util.NMsg;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
