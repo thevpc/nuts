@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.rnsh;
 
-import net.thevpc.nuts.NCallableSupport;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.NTempOutputStreamImpl;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
