@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NIndexStore;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NIndexStore;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NIterator;
 
