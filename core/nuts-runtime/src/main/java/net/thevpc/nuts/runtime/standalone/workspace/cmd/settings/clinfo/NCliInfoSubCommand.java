@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NBlankable;
 
