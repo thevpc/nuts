@@ -26,9 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
-import net.thevpc.nuts.NSession;
 
 /**
  * Root class for all Repository commands.
