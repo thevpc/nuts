@@ -25,11 +25,10 @@
  */
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.NArtifactCall;
-import net.thevpc.nuts.NArtifactCallBuilder;
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.reserved.NReservedLangUtils;
+import net.thevpc.nuts.artifact.NArtifactCall;
+import net.thevpc.nuts.artifact.NArtifactCallBuilder;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
