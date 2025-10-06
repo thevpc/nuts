@@ -5,9 +5,11 @@
  */
 package net.thevpc.nuts.core.test.special;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDependencyTreeNode;
+import net.thevpc.nuts.command.NExecCmd;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.format.NVersionFormat;
+import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.text.NVersionFormat;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 
