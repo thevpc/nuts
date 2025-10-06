@@ -9,69 +9,37 @@ import java.util.stream.Collectors;
 
 public class WorkBalancerStrategyContextImpl implements NWorkBalancerStrategyContext {
     private final NWorkBalancerModel model;
+    private final NWorkBalancerImpl<?> workBalancer;
 
-    public WorkBalancerStrategyContextImpl(NWorkBalancerModel model) {
+    public WorkBalancerStrategyContextImpl(NWorkBalancerModel model, NWorkBalancerImpl<?> workBalancer) {
         this.model = Objects.requireNonNull(model);
+        this.workBalancer = workBalancer;
     }
 
     @Override
-    public List<String> workers() {
+    public List<NWorkBalancerWorker> getWorkers() {
         if (model.getWorkers() == null) return Collections.emptyList();
-        return model.getWorkers().stream().map(NWorkBalancerWorkerModel::getId).collect(Collectors.toList());
+        return model.getWorkers().stream().map(NWorkBalancerWorkerImpl::new).collect(Collectors.toList());
     }
 
     @Override
     public NOptional<NWorkBalancerWorkerLoad> getWorkerLoad(String workerName) {
-        NWorkBalancerWorkerModel worker = findWorker(workerName);
-        if (worker == null || worker.getLoadSupplier() == null) {
-            return NOptional.ofEmpty();
-        }
-        return NOptional.of(new NWorkBalancerWorkerLoadImpl(worker));
+        return workBalancer.getWorkerLoad(workerName);
     }
 
     @Override
-    public Map<String, NWorkBalancerWorkerLoad> getWorkerLoad() {
-        if (model.getWorkers() == null) return Collections.emptyMap();
-        Map<String, NWorkBalancerWorkerLoad> map = new HashMap<>();
-        for (NWorkBalancerWorkerModel w : model.getWorkers()) {
-            getWorkerLoad(w.getId()).ifPresent(l -> map.put(w.getId(), l));
-        }
-        return map;
+    public Map<String, NWorkBalancerWorkerLoad> getWorkerLoads() {
+        return workBalancer.getWorkerLoads();
     }
 
     @Override
     public NOptional<NElement> getOption(String name) {
-        if (model.getOptions() != null && model.getOptions().containsKey(name)) {
-            return NOptional.of(model.getOptions().get(name));
-        }
-        return NOptional.ofEmpty();
-    }
-
-    @Override
-    public NOptional<NElement> getWorkerOption(String workerName, String name) {
-        NWorkBalancerWorkerModel w = findWorker(workerName);
-        if(w!=null){
-            if (w.getOptions() != null && w.getOptions().containsKey(name)) {
-                return NOptional.of(w.getOptions().get(name));
-            }
-        }
-        return NOptional.ofNamedEmpty(name);
-    }
-
-    @Override
-    public Map<String, NElement> getWorkerOptions(String workerName) {
-        NWorkBalancerWorkerModel w = findWorker(workerName);
-        if(w!=null){
-            if (w.getOptions() != null) {
-                return new HashMap<>(w.getOptions());
-            }
-        }
-        return new HashMap<>();
+        return workBalancer.getOption(name);
     }
 
     @Override
     public Map<String, NElement> getOptions() {
-        return model.getOptions() != null ? Collections.unmodifiableMap(model.getOptions()) : Collections.emptyMap();
+        return workBalancer.getOptions();
     }
 
     @Override
@@ -91,7 +59,7 @@ public class WorkBalancerStrategyContextImpl implements NWorkBalancerStrategyCon
     }
 
     @Override
-    public NWorkBalancerStrategyContext setWorkerVar(String workerName,String name, NElement value) {
+    public NWorkBalancerStrategyContext setWorkerVar(String workerName, String name, NElement value) {
         model.getContext().getVariables().computeIfAbsent(workerName, k -> new HashMap<>()).put(name, value);
         return this;
     }
@@ -100,15 +68,6 @@ public class WorkBalancerStrategyContextImpl implements NWorkBalancerStrategyCon
     public NWorkBalancerStrategyContext setVar(String name, NElement value) {
         model.getContext().getVariables().computeIfAbsent("", k -> new HashMap<>()).put(name, value);
         return this;
-    }
-
-    public NWorkBalancerWorkerModel findWorker(String name) {
-        if (model.getWorkers() != null) {
-            for (NWorkBalancerWorkerModel w : model.getWorkers()) {
-                if (Objects.equals(w.getId(), name)) return w;
-            }
-        }
-        return null;
     }
 
 }
