@@ -2,12 +2,9 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementDescribables;
-import net.thevpc.nuts.elem.NUpletElementBuilder;
-import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.util.NMsg;
 
-import java.lang.reflect.Array;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
