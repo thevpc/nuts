@@ -1,6 +1,6 @@
 package net.thevpc.nuts.nswing;
 
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.util.NLiteral;
 
 import javax.swing.*;
