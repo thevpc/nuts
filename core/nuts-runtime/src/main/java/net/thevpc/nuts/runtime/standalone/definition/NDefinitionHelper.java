@@ -1,10 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.definition;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.concurrent.NStableValue;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.util.NCallOnceSupplier;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -20,7 +21,7 @@ public class NDefinitionHelper {
         return new LazyLoadingNDefinition(id);
     }
 
-    public static NDefinition ofIdOnlyFromRepo(NId id, NRepository repo,String callerName) {
+    public static NDefinition ofIdOnlyFromRepo(NId id, NRepository repo, String callerName) {
         NRepositorySPI repoSPI = NWorkspaceUtils.of(repo.getWorkspace()).toRepositorySPI(repo);
         return ofIdAndLazyDescriptor(id,()->repoSPI.fetchDescriptor().setId(id).getResult(),callerName);
     }
@@ -29,7 +30,7 @@ public class NDefinitionHelper {
 //        return new DefinitionForIdOnly(id, callerName);
 //    }
 
-    public static NDefinition ofIdAndLazyDescriptor(NId id, Supplier<NDescriptor> descriptorSupplier,String callerName) {
+    public static NDefinition ofIdAndLazyDescriptor(NId id, Supplier<NDescriptor> descriptorSupplier, String callerName) {
         return new DefinitionForIdAndLazyDescriptor(id, descriptorSupplier,callerName);
     }
 
@@ -98,13 +99,13 @@ public class NDefinitionHelper {
 
     private static class DefinitionForIdAndLazyDescriptor extends NDefinitionDelegate {
         private final NId id;
-        private final NCallOnceSupplier<NDescriptor> descriptor;
+        private final NStableValue<NDescriptor> descriptor;
         private final String caller;
 
         public DefinitionForIdAndLazyDescriptor(NId id, Supplier<NDescriptor> descriptor, String caller) {
             this.id = id;
             this.caller = caller;
-            this.descriptor = new NCallOnceSupplier<>(descriptor);
+            this.descriptor = NStableValue.of(descriptor);
         }
 
         @Override
