@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.id;
 
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.artifact.NId;
 
 import java.util.Comparator;
 
