@@ -5,7 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.artifact.NDescriptorFlag;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.LinkedHashSet;
