@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.Duration;
