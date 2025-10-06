@@ -1,8 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.reserved.NApiUtilsRPI;
+import net.thevpc.nuts.internal.NApiUtilsRPI;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.logging.Level;
 
 public class NMavenSettingsLoader {
     private NLog log;
