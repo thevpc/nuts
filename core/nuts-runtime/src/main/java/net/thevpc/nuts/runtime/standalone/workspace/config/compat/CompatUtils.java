@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NUserConfig;
+import net.thevpc.nuts.command.NCommandFactoryConfig;
+import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.core.NRepositoryRef;
+import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 
