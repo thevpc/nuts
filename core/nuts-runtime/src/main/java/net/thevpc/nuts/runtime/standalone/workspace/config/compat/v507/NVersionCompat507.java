@@ -1,12 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v507;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementParser;
-import net.thevpc.nuts.elem.NElements;
 
 
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
@@ -14,8 +15,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.compat.AbstractNVersi
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class NVersionCompat507 extends AbstractNVersionCompat {
