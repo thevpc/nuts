@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NBootOptionsBuilder;
-import net.thevpc.nuts.NOut;
+import net.thevpc.nuts.core.NBootOptionsBuilder;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
