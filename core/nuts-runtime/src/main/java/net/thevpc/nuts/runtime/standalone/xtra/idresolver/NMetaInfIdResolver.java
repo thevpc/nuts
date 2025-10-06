@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.idresolver;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NDescriptorParser;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
