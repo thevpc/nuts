@@ -24,8 +24,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.extension;
 
-import net.thevpc.nuts.NException;
-import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.util.NException;
+import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.urlpart.URLPart;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
