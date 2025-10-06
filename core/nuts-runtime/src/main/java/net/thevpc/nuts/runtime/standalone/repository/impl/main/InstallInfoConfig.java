@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
-import net.thevpc.nuts.NConfigItem;
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.core.NConfigItem;
+import net.thevpc.nuts.artifact.NId;
 
 import java.time.Instant;
 import java.util.ArrayList;
