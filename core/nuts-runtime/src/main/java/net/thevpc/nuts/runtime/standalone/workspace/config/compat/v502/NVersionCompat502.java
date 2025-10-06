@@ -1,12 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v502;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementParser;
-import net.thevpc.nuts.elem.NElements;
 
 
-import net.thevpc.nuts.NUserConfig;
+import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.AbstractNVersionCompat;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;
