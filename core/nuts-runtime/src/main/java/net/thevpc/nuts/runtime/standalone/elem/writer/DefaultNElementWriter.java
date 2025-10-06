@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.elem.writer;
 
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NOut;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryContext;
