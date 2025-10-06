@@ -5,7 +5,13 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDefinitionFilters;
+import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NFetchStrategy;
+import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import java.util.List;
 
