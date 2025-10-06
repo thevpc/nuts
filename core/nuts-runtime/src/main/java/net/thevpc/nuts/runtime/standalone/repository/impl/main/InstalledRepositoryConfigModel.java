@@ -1,9 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NSpeedQualifier;
+import net.thevpc.nuts.core.NStoreStrategy;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryConfig;
+import net.thevpc.nuts.core.NRepositoryRef;
 import net.thevpc.nuts.runtime.standalone.repository.config.AbstractNRepositoryConfigModel;
+import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
