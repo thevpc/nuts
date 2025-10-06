@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script;
 
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NShellFamily;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.AbstractScriptBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSystemNdi;
