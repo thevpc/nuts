@@ -27,10 +27,11 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd.fetch;
 import java.util.Map;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
