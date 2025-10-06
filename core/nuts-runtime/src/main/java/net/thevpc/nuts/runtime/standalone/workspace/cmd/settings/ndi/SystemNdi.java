@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 
 public interface SystemNdi {
