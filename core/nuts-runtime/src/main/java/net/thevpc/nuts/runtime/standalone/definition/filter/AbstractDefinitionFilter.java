@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
-import net.thevpc.nuts.NDefinitionFilter;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.AbstractNFilter;
 import net.thevpc.nuts.util.NFilter;
