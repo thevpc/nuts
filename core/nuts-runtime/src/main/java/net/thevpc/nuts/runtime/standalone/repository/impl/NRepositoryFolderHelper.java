@@ -5,15 +5,21 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConfirmationMode;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NAlreadyDeployedException;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.concurrent.NLock;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NObjectElement;
 
 
-import net.thevpc.nuts.format.NDescriptorFormat;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.text.NDescriptorFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNContentEvent;
@@ -27,7 +33,7 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNFetchCont
 import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNRepositoryUndeployCmd;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
@@ -36,10 +42,7 @@ import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.NDeployRepositoryCmd;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.spi.NRepositoryUndeployCmd;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
