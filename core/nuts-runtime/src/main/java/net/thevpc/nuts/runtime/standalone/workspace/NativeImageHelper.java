@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLines;
 import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectFormat;
 
