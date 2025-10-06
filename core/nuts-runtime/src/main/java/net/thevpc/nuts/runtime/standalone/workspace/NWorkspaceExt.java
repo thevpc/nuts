@@ -5,7 +5,14 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NIdType;
+import net.thevpc.nuts.command.NInstallStatus;
+import net.thevpc.nuts.concurrent.NScopedValue;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
@@ -16,7 +23,6 @@ import net.thevpc.nuts.spi.NInstallerComponent;
 import net.thevpc.nuts.text.NText;
 
 import java.util.List;
-import java.util.Stack;
 
 /**
  * @author thevpc
