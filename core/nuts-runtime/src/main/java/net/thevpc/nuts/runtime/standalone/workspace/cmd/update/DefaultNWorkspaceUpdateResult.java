@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
-import net.thevpc.nuts.NUpdateResult;
-import net.thevpc.nuts.NWorkspaceUpdateResult;
+import net.thevpc.nuts.command.NUpdateResult;
+import net.thevpc.nuts.core.NWorkspaceUpdateResult;
 
 import java.util.ArrayList;
 import java.util.List;
