@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline;
 
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
-import net.thevpc.nuts.NSession;
 
 public class NCmdLineShellOptions implements Cloneable{
     private NCmdLineFormatStrategy formatStrategy;
