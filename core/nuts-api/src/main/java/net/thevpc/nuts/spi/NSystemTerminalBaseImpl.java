@@ -1,6 +1,5 @@
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NTerminalCmd;
 
 public abstract class NSystemTerminalBaseImpl implements NSystemTerminalBase {
