@@ -5,14 +5,20 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.ssh.artifact;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExecCmdExtension;
+import net.thevpc.nuts.command.NExecutableType;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
-import net.thevpc.nuts.util.NConnexionString;
+import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmdExtensionContext;
@@ -43,7 +49,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
     NExecOutput err;
 
 
-    public DefaultSpawnExecutableNutsRemote(NExecCmdExtension commExec, NDefinition def, String name,String value,String[] cmd,
+    public DefaultSpawnExecutableNutsRemote(NExecCmdExtension commExec, NDefinition def, String name, String value, String[] cmd,
                                             List<String> executorOptions, NExecCmd execCommand,
                                             NExecInput in,
                                             NExecOutput out,
