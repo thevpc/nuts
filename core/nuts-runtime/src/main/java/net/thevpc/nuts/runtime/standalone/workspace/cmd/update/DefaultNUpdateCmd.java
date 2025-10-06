@@ -5,33 +5,36 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.command.*;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NWorkspaceUpdateResult;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.io.NAsk;
+import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NIteratorUtils;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNUpdateResult;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NComparator;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NAsk;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.Instant;
 import java.util.*;
