@@ -25,7 +25,11 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependencies;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.core.NRepositoryFilter;
 
 import java.util.List;
 
