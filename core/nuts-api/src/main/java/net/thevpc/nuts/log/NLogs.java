@@ -28,10 +28,8 @@ package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.concurrent.NCallable;
 
-import java.util.List;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 
 /**
