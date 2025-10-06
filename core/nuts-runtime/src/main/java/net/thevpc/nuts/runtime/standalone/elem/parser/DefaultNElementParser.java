@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.elem.parser;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.expr.NParseException;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.elem.*;
