@@ -24,22 +24,22 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.table;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NPairElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.text.art.table.DefaultNTextArtTableRenderer;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NUnsupportedArgumentException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
