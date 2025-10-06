@@ -25,8 +25,8 @@
  */
 package net.thevpc.nuts.ext;
 
-import net.thevpc.nuts.NException;
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.util.NException;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.util.NMsg;
 
 /**
