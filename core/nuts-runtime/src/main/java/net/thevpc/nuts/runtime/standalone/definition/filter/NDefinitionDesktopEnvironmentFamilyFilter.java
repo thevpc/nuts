@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.artifact.NDefinitionFilters;
+import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
