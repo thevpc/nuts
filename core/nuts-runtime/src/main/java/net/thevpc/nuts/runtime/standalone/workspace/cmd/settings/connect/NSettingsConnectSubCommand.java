@@ -5,13 +5,15 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.connect;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.concurrent.NConcurrent;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.DefaultNContentMetadata;
 import net.thevpc.nuts.io.NInputSourceBuilder;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.executor.system.PipeRunnable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
