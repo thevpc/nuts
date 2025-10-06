@@ -1,10 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositoryConfig;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.runtime.standalone.util.NMapWithAlias;
 import net.thevpc.nuts.spi.NRepositoryDB;
@@ -12,7 +14,7 @@ import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NPlatformHome;
+import net.thevpc.nuts.platform.NPlatformHome;
 
 import java.util.*;
 
