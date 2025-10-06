@@ -1,12 +1,13 @@
 package net.thevpc.nuts.log;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NSessionProvider;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-public class NLogRecord extends LogRecord implements NSessionProvider{
+public class NLogRecord extends LogRecord implements NSessionProvider {
     private NSession session;
     private NMsg nmsg;
     private NMsgIntent verb;
