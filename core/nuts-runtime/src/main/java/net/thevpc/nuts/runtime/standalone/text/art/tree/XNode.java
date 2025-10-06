@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.format.NTreeNode;
+import net.thevpc.nuts.text.NTreeNode;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 
