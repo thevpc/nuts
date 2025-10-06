@@ -25,7 +25,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v805;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NConfigItem;
+import net.thevpc.nuts.core.NStoreStrategy;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.core.NRepositoryRef;
+import net.thevpc.nuts.security.NUserConfig;
 
 import java.util.List;
 import java.util.Map;
