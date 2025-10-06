@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.command.NExecCmd;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.util.NLiteral;
 
