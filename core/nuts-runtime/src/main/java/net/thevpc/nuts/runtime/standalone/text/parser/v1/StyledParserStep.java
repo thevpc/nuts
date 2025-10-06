@@ -1,16 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 
 
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.io.NErr;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NDebugString;
-import net.thevpc.nuts.util.NEvictingCharQueue;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStringBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
