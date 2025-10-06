@@ -1,10 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.app;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.app.*;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.cmdline.*;
 
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
