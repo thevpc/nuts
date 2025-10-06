@@ -25,8 +25,8 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.*;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.runtime.standalone.text.parser.v2.NTFParser2;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.*;
