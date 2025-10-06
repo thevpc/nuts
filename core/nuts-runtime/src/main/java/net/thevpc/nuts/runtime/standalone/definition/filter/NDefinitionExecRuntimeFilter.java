@@ -5,7 +5,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NLiteral;
 
