@@ -24,12 +24,19 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl.nuts;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NSpeedQualifier;
-import net.thevpc.nuts.NUser;
-import net.thevpc.nuts.NUserConfig;
-import net.thevpc.nuts.format.NDescriptorFormat;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NSpeedQualifier;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NFetchMode;
+import net.thevpc.nuts.command.NFetchModeNotSupportedException;
+import net.thevpc.nuts.net.NWebCli;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.security.NUser;
+import net.thevpc.nuts.security.NUserConfig;
+import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.text.NDescriptorFormat;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.util.NBlankable;
@@ -53,7 +60,6 @@ import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.web.*;
 
 public class NHttpSrvRepository extends NCachedRepository {
 
