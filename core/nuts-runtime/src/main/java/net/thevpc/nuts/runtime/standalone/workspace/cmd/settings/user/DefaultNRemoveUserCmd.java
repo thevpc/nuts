@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
-import net.thevpc.nuts.NRemoveUserCmd;
+import net.thevpc.nuts.security.NRemoveUserCmd;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 
