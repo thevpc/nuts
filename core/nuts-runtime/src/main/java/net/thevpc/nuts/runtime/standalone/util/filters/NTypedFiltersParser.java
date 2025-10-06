@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.filters;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NTypedFilters;
 import net.thevpc.nuts.util.NFilter;
 
 public abstract class NTypedFiltersParser<T extends NFilter> extends AbstractFilterParser2<T> {
