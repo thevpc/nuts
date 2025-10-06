@@ -5,8 +5,9 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NBootOptionsBuilder;
+import net.thevpc.nuts.core.NBootOptionsBuilder;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNDependencyBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNEnvConditionBuilder;
