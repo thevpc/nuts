@@ -5,10 +5,10 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.core.NIndexerNotAccessibleException;
 
 import java.util.Iterator;
 
