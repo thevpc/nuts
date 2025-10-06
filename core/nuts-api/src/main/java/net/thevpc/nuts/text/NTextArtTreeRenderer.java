@@ -23,8 +23,6 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.format.*;
-
 /**
  * @author vpc
  */
