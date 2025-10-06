@@ -1,9 +1,8 @@
 package net.thevpc.nuts.ext.ssh;
 
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NConnexionString;
-import net.thevpc.nuts.util.NConnexionStringBuilder;
+import net.thevpc.nuts.net.NConnexionString;
 
 import java.io.IOException;
 import java.io.OutputStream;
