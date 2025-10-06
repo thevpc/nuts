@@ -1,14 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 
-import net.thevpc.nuts.*;
-
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NCliInfo;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.web.NWebCli;
+import net.thevpc.nuts.net.NWebCli;
 
 import java.util.Locale;
 import java.util.Map;
