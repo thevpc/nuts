@@ -25,10 +25,10 @@
 */
 package net.thevpc.nuts.runtime.standalone.event;
 
-import net.thevpc.nuts.NDefinition;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NUpdateEvent;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.command.NUpdateEvent;
+import net.thevpc.nuts.core.NWorkspace;
 
 /**
  *
