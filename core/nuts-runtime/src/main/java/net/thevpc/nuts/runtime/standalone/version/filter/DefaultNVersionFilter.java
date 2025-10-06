@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.version.filter;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.spi.base.AbstractVersionFilter;
@@ -74,7 +74,7 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
         super(NFilterOp.CUSTOM);
     }
 
-    public static NOptional<NVersionFilter> parse(String version,NVersionComparator versionComparator) {
+    public static NOptional<NVersionFilter> parse(String version, NVersionComparator versionComparator) {
         if (NBlankable.isBlank(version) || "*".equals(version)) {
             return NOptional.of(NVersionFilters.of().always());
         }
