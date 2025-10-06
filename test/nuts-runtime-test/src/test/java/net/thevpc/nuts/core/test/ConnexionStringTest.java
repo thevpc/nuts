@@ -1,7 +1,7 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.util.DefaultNConnexionStringBuilder;
-import net.thevpc.nuts.util.NConnexionStringBuilder;
+import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
+import net.thevpc.nuts.net.NConnexionStringBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
