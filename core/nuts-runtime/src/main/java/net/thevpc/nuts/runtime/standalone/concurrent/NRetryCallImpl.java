@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
-import net.thevpc.nuts.NCancelException;
-import net.thevpc.nuts.NExceptions;
-import net.thevpc.nuts.NIllegalStateException;
-import net.thevpc.nuts.NScopedValue;
+import net.thevpc.nuts.util.NCancelException;
+import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NIllegalStateException;
+import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.util.NMsg;
 
 import java.time.Duration;
