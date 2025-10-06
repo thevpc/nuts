@@ -26,9 +26,9 @@
 */
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
-import net.thevpc.nuts.NDescriptor;
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NSearchId;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NSearchId;
 
 /**
  *
