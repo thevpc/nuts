@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NObjectElement;
