@@ -25,14 +25,13 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NEnvCondition;
+import net.thevpc.nuts.artifact.NEnvCondition;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.io.NErr;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NOsFamily;
-import net.thevpc.nuts.util.NRef;
+import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.platform.NOsFamily;
 
 import java.io.*;
 import java.util.*;
