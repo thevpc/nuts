@@ -5,10 +5,10 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NBootOptionsBuilder;
-import net.thevpc.nuts.NErr;
-import net.thevpc.nuts.NIllegalStateException;
-import net.thevpc.nuts.NOut;
+import net.thevpc.nuts.core.NBootOptionsBuilder;
+import net.thevpc.nuts.io.NErr;
+import net.thevpc.nuts.util.NIllegalStateException;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.util.NMsg;
@@ -31,42 +31,42 @@ public class SagaTest {
 
     @Test
     public void test1() {
-        NSagaCall<Object> saga = NConcurrent.of().sagaCallBuilder()
+        NSagaCallable<Object> saga = NConcurrent.of().sagaCallBuilder()
                 .start()
-                .then("step 1", MyNSagaCallStep.asSuccessful(1))
-                .then("step 2", MyNSagaCallStep.asSuccessful(2))
-                .then("step 3", MyNSagaCallStep.asErroneous(3))
-                .then("step 4", MyNSagaCallStep.asSuccessful(4))
+                .then("step 1", MyNSagaStep.asSuccessful(1))
+                .then("step 2", MyNSagaStep.asSuccessful(2))
+                .then("step 3", MyNSagaStep.asErroneous(3))
+                .then("step 4", MyNSagaStep.asSuccessful(4))
                 .end().build();
 
         saga.call();
     }
 
 
-    private static class MyNSagaCallStep implements NSagaCallStep {
+    private static class MyNSagaStep implements NSagaStep {
         String name;
         boolean err;
 
-        public MyNSagaCallStep(String name, boolean err) {
+        public MyNSagaStep(String name, boolean err) {
             this.name = name;
             this.err = err;
         }
 
-        public static MyNSagaCallStep asSuccessful(int name) {
-            return new MyNSagaCallStep(name, false);
+        public static MyNSagaStep asSuccessful(int name) {
+            return new MyNSagaStep(name, false);
         }
 
-        public static MyNSagaCallStep asErroneous(int name) {
-            return new MyNSagaCallStep(name, true);
+        public static MyNSagaStep asErroneous(int name) {
+            return new MyNSagaStep(name, true);
         }
 
-        public MyNSagaCallStep(int name, boolean err) {
+        public MyNSagaStep(int name, boolean err) {
             this.name = "step " + name;
             this.err = err;
         }
 
         @Override
-        public Object call(NSagaCallContext context) {
+        public Object call(NSagaContext context) {
             if (err) {
                 NErr.println(Instant.now() + " : err call " + name);
                 throw new NIllegalStateException(NMsg.ofC("unexpected error at %s", name));
@@ -77,7 +77,7 @@ public class SagaTest {
         }
 
         @Override
-        public void undo(NSagaCallContext context) {
+        public void undo(NSagaContext context) {
             NOut.println(Instant.now() + " : undo " + name);
         }
     }
