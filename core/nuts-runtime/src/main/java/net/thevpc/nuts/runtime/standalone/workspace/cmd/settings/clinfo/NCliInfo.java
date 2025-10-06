@@ -3,8 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.NPlatformHome;
+import net.thevpc.nuts.platform.NPlatformHome;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.nio.file.Files;
