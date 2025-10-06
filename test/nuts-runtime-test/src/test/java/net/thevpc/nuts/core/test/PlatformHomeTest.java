@@ -1,7 +1,8 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.platform.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
