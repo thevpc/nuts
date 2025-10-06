@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.util.NFunction;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
 
