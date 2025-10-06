@@ -1,12 +1,12 @@
 package net.thevpc.nuts.ext.ssh;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.DefaultNConnexionString;
-import net.thevpc.nuts.util.DefaultNConnexionStringBuilder;
-import net.thevpc.nuts.util.NConnexionString;
+import net.thevpc.nuts.net.NConnexionString;
 
 public class SshPathFactory implements NPathFactorySPI {
     NWorkspace workspace;
