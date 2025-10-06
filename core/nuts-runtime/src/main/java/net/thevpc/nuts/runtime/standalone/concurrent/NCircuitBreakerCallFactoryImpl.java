@@ -6,7 +6,7 @@ import net.thevpc.nuts.concurrent.NCircuitBreakerCallFactory;
 import net.thevpc.nuts.concurrent.NCircuitBreakerCallStore;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.concurrent.NCallable;
 
 import java.util.UUID;
 
