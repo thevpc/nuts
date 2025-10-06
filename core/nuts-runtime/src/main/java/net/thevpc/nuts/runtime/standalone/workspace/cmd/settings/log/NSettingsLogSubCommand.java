@@ -5,15 +5,17 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.log;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstallLogRecord;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
