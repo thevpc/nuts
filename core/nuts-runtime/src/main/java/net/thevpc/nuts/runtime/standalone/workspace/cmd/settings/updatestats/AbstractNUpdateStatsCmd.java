@@ -5,11 +5,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.updatestats;
 
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.NUpdateStatsCmd;
+import net.thevpc.nuts.command.NUpdateStatsCmd;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
