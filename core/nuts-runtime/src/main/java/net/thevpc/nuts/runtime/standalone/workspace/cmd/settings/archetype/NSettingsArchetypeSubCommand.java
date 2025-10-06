@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.archetype;
 
-import net.thevpc.nuts.NOut;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
