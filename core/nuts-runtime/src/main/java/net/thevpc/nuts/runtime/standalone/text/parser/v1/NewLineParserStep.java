@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.NUnsupportedOperationException;
 
 
 public class NewLineParserStep extends ParserStep {
