@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.execentries;
 import java.util.Objects;
 
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.NExecutionEntry;
+import net.thevpc.nuts.command.NExecutionEntry;
 
 /**
  *
