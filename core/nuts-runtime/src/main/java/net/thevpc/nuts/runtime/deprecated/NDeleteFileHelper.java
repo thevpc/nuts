@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.deprecated;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NBootOptions;
-import net.thevpc.nuts.NBootOptionsBuilder;
+import net.thevpc.nuts.core.*;
 
-import net.thevpc.nuts.NStoreType;
-import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.io.NAsk;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.reserved.NReservedLangUtils;
+import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.util.*;
