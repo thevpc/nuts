@@ -27,7 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.path;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.util.NToken;
+import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStreamTokenizer;
