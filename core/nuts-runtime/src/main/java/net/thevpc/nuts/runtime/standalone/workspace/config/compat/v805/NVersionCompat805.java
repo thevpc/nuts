@@ -1,9 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v805;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NVersion;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.elem.NElementParser;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
