@@ -1,7 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.info;
 
-import net.thevpc.nuts.*;
-
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -12,13 +10,22 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NCmdLineFormat;
-import net.thevpc.nuts.format.NContentType;
-import net.thevpc.nuts.format.NObjectFormat;
+import net.thevpc.nuts.command.NInfoCmd;
+import net.thevpc.nuts.core.*;
+import net.thevpc.nuts.platform.NDesktopIntegrationItem;
+import net.thevpc.nuts.platform.NShellFamily;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.text.NCmdLineFormat;
+import net.thevpc.nuts.text.NContentType;
+import net.thevpc.nuts.text.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -32,10 +39,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NPredicates;
+import net.thevpc.nuts.util.*;
 
 /**
  * type: Command Class
