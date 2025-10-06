@@ -1,8 +1,11 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.elem.NElementDescribable;
-import net.thevpc.nuts.reserved.optional.*;
+import net.thevpc.nuts.internal.optional.NReservedOptionalEmpty;
+import net.thevpc.nuts.internal.optional.NReservedOptionalError;
+import net.thevpc.nuts.internal.optional.NReservedOptionalValidCallable;
+import net.thevpc.nuts.internal.optional.NReservedOptionalValidValue;
 
 import java.util.Collection;
 import java.util.Optional;
