@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.NDependency;
-import net.thevpc.nuts.NDescriptor;
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.NBootDependency;
 import net.thevpc.nuts.boot.NBootDescriptor;
 import net.thevpc.nuts.boot.NBootId;
