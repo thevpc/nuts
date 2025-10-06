@@ -1,7 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import java.util.Objects;
-import net.thevpc.nuts.*;
+
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.util.NFilterOp;
 
