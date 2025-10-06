@@ -1,6 +1,6 @@
 package net.thevpc.nuts.spi.base;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NFilters;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
