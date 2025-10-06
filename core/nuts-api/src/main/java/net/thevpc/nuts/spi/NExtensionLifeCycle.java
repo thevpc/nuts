@@ -1,6 +1,6 @@
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NWorkspaceExtension;
+import net.thevpc.nuts.core.NWorkspaceExtension;
 
 public interface NExtensionLifeCycle extends NComponent {
     default void onInitExtension(NWorkspaceExtension extension){
