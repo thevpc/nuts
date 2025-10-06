@@ -1,10 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script;
 
-import net.thevpc.nuts.*;
 
-
-import net.thevpc.nuts.NShellFamily;
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NShellFamily;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.AbstractScriptBuilder;
