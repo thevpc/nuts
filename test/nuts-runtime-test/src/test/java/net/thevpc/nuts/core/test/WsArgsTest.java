@@ -1,6 +1,6 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
+import net.thevpc.nuts.core.NWorkspaceCmdLineParser;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
