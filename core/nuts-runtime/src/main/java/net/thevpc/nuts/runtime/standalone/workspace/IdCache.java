@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
