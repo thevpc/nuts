@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.text.art;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
