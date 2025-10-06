@@ -1,11 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.art.tree;
 
-import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextArtTextRenderer;
-import net.thevpc.nuts.text.NTextArtTreeRenderer;
-import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
 
 import java.util.*;
