@@ -26,7 +26,11 @@
 */
 package net.thevpc.nuts.runtime.standalone.event;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NInstallEvent;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 
 /**
  *
