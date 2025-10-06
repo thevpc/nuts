@@ -24,11 +24,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
-import net.thevpc.nuts.NUser;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.security.NUser;
+import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 
 import java.util.ArrayList;
 import java.util.List;
