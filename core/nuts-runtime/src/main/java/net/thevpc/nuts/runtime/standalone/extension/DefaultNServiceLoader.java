@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.io.NServiceLoader;
 
