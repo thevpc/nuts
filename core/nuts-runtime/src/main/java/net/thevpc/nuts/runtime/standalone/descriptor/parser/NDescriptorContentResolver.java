@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNDescriptorContentParserContext;
