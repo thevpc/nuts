@@ -1,13 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
-import net.thevpc.nuts.*;
-
+import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.core.NRunAs;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.NDesktopEnvironmentFamily;
-import net.thevpc.nuts.NOsFamily;
+import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
+import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.io.NNonBlockingInputStream;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.*;
