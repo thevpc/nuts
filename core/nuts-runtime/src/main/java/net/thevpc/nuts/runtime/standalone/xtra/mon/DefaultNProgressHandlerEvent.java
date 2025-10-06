@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.time.NProgressEventType;
 import net.thevpc.nuts.time.NProgressHandlerEvent;
 import net.thevpc.nuts.time.NProgressMonitorModel;
