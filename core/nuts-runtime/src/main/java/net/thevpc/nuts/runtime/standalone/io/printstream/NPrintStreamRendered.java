@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.text.FormatOutputStreamSupport;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyled;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
 
 public abstract class NPrintStreamRendered extends NPrintStreamBase {
