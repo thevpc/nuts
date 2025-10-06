@@ -25,10 +25,9 @@
 */
 package net.thevpc.nuts.runtime.standalone.format;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
-import net.thevpc.nuts.format.NContentType;
-import net.thevpc.nuts.format.NIterableFormat;
+import net.thevpc.nuts.text.NContentType;
+import net.thevpc.nuts.text.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
 
 /**
