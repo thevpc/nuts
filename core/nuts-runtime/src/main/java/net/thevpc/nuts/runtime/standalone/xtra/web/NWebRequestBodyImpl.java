@@ -4,8 +4,8 @@ import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.web.NWebRequest;
-import net.thevpc.nuts.web.NWebRequestBody;
+import net.thevpc.nuts.net.NWebRequest;
+import net.thevpc.nuts.net.NWebRequestBody;
 
 public class NWebRequestBodyImpl implements NWebRequestBody {
     private NInputSource body;
