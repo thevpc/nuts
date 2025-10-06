@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NDescriptor;
+import net.thevpc.nuts.artifact.NDescriptor;
 
 /**
  * Content parser component is responsible of resolving a Nuts descriptor form a content file
