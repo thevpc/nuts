@@ -3,9 +3,9 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.DefaultNEnvCondition;
-import net.thevpc.nuts.NEnvCondition;
-import net.thevpc.nuts.NEnvConditionBuilder;
+import net.thevpc.nuts.artifact.DefaultNEnvCondition;
+import net.thevpc.nuts.artifact.NEnvCondition;
+import net.thevpc.nuts.artifact.NEnvConditionBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNEnvConditionBuilder;
 
 import java.lang.reflect.Type;
