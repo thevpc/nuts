@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NListener;
+import net.thevpc.nuts.core.NListener;
 
 /**
  * Map Listener to catch updates
