@@ -24,8 +24,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.dependency;
 
-import net.thevpc.nuts.NDependencyScope;
-import net.thevpc.nuts.NDependencyScopePattern;
+import net.thevpc.nuts.artifact.NDependencyScope;
+import net.thevpc.nuts.artifact.NDependencyScopePattern;
 
 import java.util.Arrays;
 import java.util.Collection;
