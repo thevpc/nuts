@@ -1,12 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNQueryBaseOptions;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.expr.NParseException;
 
 public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchCmd> implements NFetchCmd {
 
