@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.reserved.NApiUtilsRPI;
+import net.thevpc.nuts.internal.NApiUtilsRPI;
 
 import java.util.Arrays;
 import java.util.List;
