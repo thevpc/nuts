@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
 import net.thevpc.nuts.concurrent.NConcurrent;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.core.NSession;
 
 /**
  *
