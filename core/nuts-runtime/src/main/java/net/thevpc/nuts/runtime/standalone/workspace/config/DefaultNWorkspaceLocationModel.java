@@ -1,7 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NBootOptions;
+import net.thevpc.nuts.core.NLocationKey;
+import net.thevpc.nuts.core.NStoreStrategy;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NHomeLocation;
+import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
