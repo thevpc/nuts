@@ -1,11 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
-import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.format.NTableCellFormat;
+import net.thevpc.nuts.text.NPositionType;
+import net.thevpc.nuts.text.NTableCellFormat;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 
 /**
  *
