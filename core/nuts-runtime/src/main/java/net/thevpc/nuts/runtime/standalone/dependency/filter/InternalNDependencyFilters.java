@@ -1,7 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NArchFamily;
+import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
+import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NPlatformFamily;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NAssert;
@@ -98,7 +103,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
     }
 
     @Override
-    public NDependencyFilter byScope(NDependencyScopePattern ... scopes) {
+    public NDependencyFilter byScope(NDependencyScopePattern... scopes) {
         if (scopes == null || scopes.length == 0) {
             return always();
         }
