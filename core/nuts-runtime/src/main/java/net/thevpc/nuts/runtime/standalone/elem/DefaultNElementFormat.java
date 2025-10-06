@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NUnsupportedOperationException;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.util.NUnsupportedOperationException;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.elem.NElementFormat;
-import net.thevpc.nuts.format.NContentType;
-import net.thevpc.nuts.format.NIterableFormat;
+import net.thevpc.nuts.text.NContentType;
+import net.thevpc.nuts.text.NIterableFormat;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.reflect.NReflectRepository;
