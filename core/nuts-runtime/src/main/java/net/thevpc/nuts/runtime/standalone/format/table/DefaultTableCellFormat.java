@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
-import net.thevpc.nuts.format.NTableCellFormat;
+import net.thevpc.nuts.text.NTableCellFormat;
 import net.thevpc.nuts.text.NText;
 
 /**
