@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat;
 
-import net.thevpc.nuts.NVersion;
+import net.thevpc.nuts.artifact.NVersion;
 
 public abstract class AbstractNVersionCompat implements NVersionCompat {
     private NVersion apiVersion;
