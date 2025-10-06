@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.core.NSession;
 
 /**
  * classes that implement this class will have their method {@link #setSession(NSession)}
