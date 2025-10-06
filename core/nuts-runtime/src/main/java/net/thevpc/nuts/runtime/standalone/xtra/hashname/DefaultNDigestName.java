@@ -1,18 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.xtra.hashname;
 
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NDigestName;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.NPlatformHome;
 import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NNames;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class DefaultNDigestName implements NDigestName {
     private Object source;
