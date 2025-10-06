@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.*;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.io.NContentMetadataProviderFormatSPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
@@ -19,7 +20,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.runtime.standalone.format.impl.NChronometerNFormatSPI;
 import net.thevpc.nuts.time.NDuration;
