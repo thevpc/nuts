@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.reflect;
 
-import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.util.NArrays;
 import net.thevpc.nuts.util.NBlankable;
