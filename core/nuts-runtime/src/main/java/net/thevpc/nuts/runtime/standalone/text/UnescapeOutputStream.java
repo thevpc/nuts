@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOpUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NUnsupportedEnumException;
 
 import java.io.IOException;
 import java.io.OutputStream;
