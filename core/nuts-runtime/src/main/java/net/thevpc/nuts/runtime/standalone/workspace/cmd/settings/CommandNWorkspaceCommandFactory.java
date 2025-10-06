@@ -1,8 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.NShellFamily;
+import net.thevpc.nuts.command.NCommandConfig;
+import net.thevpc.nuts.command.NCommandFactoryConfig;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NWorkspaceCmdFactory;
+import net.thevpc.nuts.platform.NShellFamily;
 
 import java.util.ArrayList;
 import java.util.Arrays;
