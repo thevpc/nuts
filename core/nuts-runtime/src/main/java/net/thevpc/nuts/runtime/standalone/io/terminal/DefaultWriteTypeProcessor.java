@@ -1,14 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NAsk;
+import net.thevpc.nuts.core.NConfirmationMode;
+import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.function.Supplier;
-import java.util.logging.Level;
 
 public class DefaultWriteTypeProcessor {
     private NMsg askMessage;
