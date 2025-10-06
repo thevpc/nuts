@@ -26,15 +26,16 @@ package net.thevpc.nuts.ext.term;
 
 import java.awt.Color;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.util.NAnsiTermHelper;
+import net.thevpc.nuts.io.NAnsiTermHelper;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import org.jline.reader.*;
