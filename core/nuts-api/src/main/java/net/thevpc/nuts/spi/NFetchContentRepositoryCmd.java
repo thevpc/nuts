@@ -26,7 +26,9 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.io.NPath;
 
 /**
