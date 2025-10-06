@@ -5,9 +5,16 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyScopePattern;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.command.NFetchStrategy;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspaceCmd;
+import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyFilterUtils;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.util.NLiteral;
