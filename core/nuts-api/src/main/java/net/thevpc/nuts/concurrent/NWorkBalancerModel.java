@@ -10,13 +10,52 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * Model representation of a {@link NWorkBalancer}.
+ * <p>
+ * Holds the ID, strategy, worker configurations, options, and runtime context.
+ * Primarily used as a basis for persistence, storing and restoring
+ * {@link NWorkBalancer} configurations.
+ * Can also be used to create or reconstruct {@link NWorkBalancer} instances.
+ * </p>
+ *
+ * <p>
+ * The {@link #copy()} and {@link #clone()} methods provide safe deep copies,
+ * mainly useful for persistence or snapshotting purposes.
+ * </p>
+ *
  * @since 0.8.7
  */
 public class NWorkBalancerModel implements Serializable, Cloneable, NCopiable {
+
+    /**
+     * Unique identifier of this work balancer.
+     * Used for persistence and retrieval from a store.
+     */
     private String id;
+
+    /**
+     * Arbitrary key/value options for this work balancer.
+     * Can store any configuration needed for custom strategies or workers.
+     */
     private Map<String, NElement> options = new HashMap<>();
+
+    /**
+     * Name of the strategy used by this work balancer.
+     * Should correspond to a registered strategy name or a default strategy.
+     */
     private String strategy;
+
+    /**
+     * List of worker configurations participating in this work balancer.
+     * Each {@link NWorkBalancerWorkerModel} holds name, weight, options,
+     * and host load metric provider.
+     */
     private List<NWorkBalancerWorkerModel> workers;
+
+    /**
+     * Contextual metadata for this work balancer.
+     * Stores runtime context, counters, or any additional state needed for persistence.
+     */
     private NWorkBalancerModelContext context = new NWorkBalancerModelContext();
 
     public NWorkBalancerModel() {
@@ -88,7 +127,7 @@ public class NWorkBalancerModel implements Serializable, Cloneable, NCopiable {
 
     @Override
     public String toString() {
-        return "NSagaModel{" +
+        return "NWorkBalancerModel{" +
                 "id='" + id + '\'' +
                 ", context=" + context +
                 ", options=" + options +
