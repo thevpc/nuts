@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.NDescriptorMailingList;
-import net.thevpc.nuts.NDescriptorMailingListBuilder;
+import net.thevpc.nuts.artifact.NDescriptorMailingList;
+import net.thevpc.nuts.artifact.NDescriptorMailingListBuilder;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
