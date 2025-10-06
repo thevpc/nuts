@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.platform.NPlatformLocation;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Comparator;
