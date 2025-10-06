@@ -23,11 +23,11 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NOut;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.format.NMutableTableModel;
-import net.thevpc.nuts.format.NTableModel;
-import net.thevpc.nuts.format.NTreeNode;
+import net.thevpc.nuts.text.NMutableTableModel;
+import net.thevpc.nuts.text.NTableModel;
+import net.thevpc.nuts.text.NTreeNode;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.time.NChronometer;
 import org.junit.jupiter.api.BeforeAll;
