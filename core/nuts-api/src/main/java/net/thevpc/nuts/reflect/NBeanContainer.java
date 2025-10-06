@@ -1,6 +1,6 @@
 package net.thevpc.nuts.reflect;
 
-import net.thevpc.nuts.NScopedValue;
+import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NOptional;
 
