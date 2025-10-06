@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 
 /**
  *
