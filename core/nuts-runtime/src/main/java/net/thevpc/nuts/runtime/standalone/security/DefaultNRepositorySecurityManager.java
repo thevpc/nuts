@@ -5,11 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.security;
 
-import net.thevpc.nuts.*;
-
-import net.thevpc.nuts.NUser;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.security.NAuthenticationAgent;
+import net.thevpc.nuts.core.NRepositorySecurityManager;
+import net.thevpc.nuts.security.*;
 
 import java.util.List;
 
