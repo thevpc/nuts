@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.art.table;
 
-import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.format.*;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableCellFormat;
 import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableFormatBorders;
 import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableHeaderFormat;
