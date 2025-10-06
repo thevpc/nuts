@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
-import net.thevpc.nuts.NDefinition;
-import net.thevpc.nuts.NDefinitionFilter;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
