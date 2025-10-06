@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.elem.NElementDescribable;
 import net.thevpc.nuts.elem.NElementRedescribable;
 
 import java.util.List;
