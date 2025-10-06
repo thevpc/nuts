@@ -25,10 +25,13 @@
 */
 package net.thevpc.nuts.runtime.standalone.boot;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.core.NBootOptions;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
@@ -38,7 +41,6 @@ import net.thevpc.nuts.boot.NBootWorkspaceFactory;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Created by vpc on 1/5/17.
