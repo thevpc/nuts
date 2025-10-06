@@ -5,10 +5,10 @@
 package net.thevpc.nuts.spi;
 
 import java.util.function.Supplier;
-import net.thevpc.nuts.NDefinition;
-import net.thevpc.nuts.NDescriptor;
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NRepository;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.ext.NExtensions;
 
 /**
