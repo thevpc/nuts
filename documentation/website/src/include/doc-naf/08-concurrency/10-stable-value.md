@@ -7,7 +7,6 @@ title: Stable Value
 invoked until the first call to <code>get()</code>. Once evaluated, the value remains stable
 and is reused for all subsequent accesses. This is perfect for expensive computations,
 constants, or resources that should only be initialized once.
-contentType: java
 
 
 ```java
