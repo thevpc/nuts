@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.reflect;
 
-import net.thevpc.nuts.NExceptions;
+import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.reflect.NReflectMethod;
 import net.thevpc.nuts.reflect.NReflectParameter;
 import net.thevpc.nuts.reflect.NReflectType;
