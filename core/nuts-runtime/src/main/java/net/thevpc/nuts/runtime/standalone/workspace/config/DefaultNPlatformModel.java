@@ -1,8 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NPlatformFamily;
+import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.artifact.NVersionFilter;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.platform.NPlatformFamily;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.platform.NPlatformLocation;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
