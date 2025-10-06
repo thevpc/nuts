@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.solrsearch;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NIdBuilder;
+import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
