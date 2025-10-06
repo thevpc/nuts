@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NWorkspaceBootConfig;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NWorkspaceBootConfig;
 
 class NWorkspaceBootConfigExtensionImpl implements NWorkspaceBootConfig.Extension {
     private NId id;
