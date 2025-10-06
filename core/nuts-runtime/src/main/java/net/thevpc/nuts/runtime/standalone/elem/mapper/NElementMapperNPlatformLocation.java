@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.platform.NPlatformLocation;
 
 import java.lang.reflect.Type;
 
