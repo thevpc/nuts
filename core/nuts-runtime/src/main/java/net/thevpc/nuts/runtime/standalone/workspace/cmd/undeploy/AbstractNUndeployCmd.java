@@ -1,10 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.undeploy;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.command.NUndeployCmd;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
@@ -95,7 +98,7 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
             result = new ArrayList<>();
         }
         result.add(id);
-        NSession session=NSession.of();
+        NSession session= NSession.of();
         if (session.isTrace()) {
             if (session.getOutputFormat().orNull() == null || session.getOutputFormat().orDefault() == NContentType.PLAIN) {
                 if (session.getOutputFormat().orNull() == null || session.getOutputFormat().orDefault() == NContentType.PLAIN) {
