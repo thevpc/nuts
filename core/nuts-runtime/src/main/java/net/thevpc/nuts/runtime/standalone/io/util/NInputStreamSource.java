@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.format.NFormat;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NContentMetadata;
-import net.thevpc.nuts.io.NContentMetadataProviderFormatSPI;
 import net.thevpc.nuts.io.NIOException;
 
 import java.io.IOException;
