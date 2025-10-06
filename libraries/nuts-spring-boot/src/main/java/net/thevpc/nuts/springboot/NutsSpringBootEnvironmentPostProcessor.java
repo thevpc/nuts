@@ -1,6 +1,6 @@
 package net.thevpc.nuts.springboot;
 
-import net.thevpc.nuts.NApp;
+import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.util.NOptional;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
