@@ -29,8 +29,10 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NInstallInformation;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
