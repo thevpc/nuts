@@ -5,10 +5,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.command.NPrepareCmd;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
