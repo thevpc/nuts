@@ -1,6 +1,6 @@
 package net.thevpc.nuts.math;
 
-import net.thevpc.nuts.reserved.NReservedUtils;
+import net.thevpc.nuts.internal.NReservedUtils;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NNumberUtils;
