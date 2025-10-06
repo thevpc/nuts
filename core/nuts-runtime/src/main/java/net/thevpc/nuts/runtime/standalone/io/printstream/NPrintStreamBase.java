@@ -1,12 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NObjectFormat;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.text.NObjectFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NUnsupportedOperationException;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
