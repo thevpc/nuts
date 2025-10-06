@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NIdFilter;
 import net.thevpc.nuts.spi.base.AbstractIdFilter;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionString;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
