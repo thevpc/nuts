@@ -1,9 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.installer.svc;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.NOsServiceType;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.command.NInstallSvcCmd;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.io.NTrace;
+import net.thevpc.nuts.platform.NOsServiceType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
 import net.thevpc.nuts.spi.NSupportLevelContext;
