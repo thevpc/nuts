@@ -25,24 +25,22 @@
  */
 package net.thevpc.nuts.runtime.standalone.security;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 
-import net.thevpc.nuts.NUser;
-import net.thevpc.nuts.NUserConfig;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NWorkspaceEvent;
+import net.thevpc.nuts.core.NWorkspaceListener;
+import net.thevpc.nuts.security.NUser;
+import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.security.*;
-import net.thevpc.nuts.util.NCoreCollectionUtils;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.log.NLog;
-
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
 import java.util.logging.Level;
