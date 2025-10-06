@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.util.NAnsiTermHelper;
+import net.thevpc.nuts.io.NAnsiTermHelper;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.spi.NSystemTerminalBaseImpl;
 import net.thevpc.nuts.text.NTerminalCmd;
