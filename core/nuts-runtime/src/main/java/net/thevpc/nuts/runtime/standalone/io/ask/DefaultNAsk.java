@@ -1,16 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.io.ask;
 
-import net.thevpc.nuts.*;
-
+import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
-import net.thevpc.nuts.io.NMemoryPrintStream;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNUtilGui;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.*;
