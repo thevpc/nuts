@@ -2,11 +2,10 @@ package net.thevpc.nuts.runtime.standalone.format.tree;
 
 import java.util.*;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.text.art.tree.DefaultNTextArtTreeRenderer;
 import net.thevpc.nuts.runtime.standalone.text.art.tree.XNode;
@@ -15,7 +14,7 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
 
