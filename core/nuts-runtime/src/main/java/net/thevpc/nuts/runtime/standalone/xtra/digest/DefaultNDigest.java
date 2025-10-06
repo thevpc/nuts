@@ -25,14 +25,16 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.digest;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.format.NDescriptorFormat;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.text.NDescriptorFormat;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.format.NFormats;
-import net.thevpc.nuts.format.NTreeVisitResult;
-import net.thevpc.nuts.format.NTreeVisitor;
+import net.thevpc.nuts.text.NFormats;
+import net.thevpc.nuts.text.NTreeVisitResult;
+import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
 import net.thevpc.nuts.io.NDigest;
