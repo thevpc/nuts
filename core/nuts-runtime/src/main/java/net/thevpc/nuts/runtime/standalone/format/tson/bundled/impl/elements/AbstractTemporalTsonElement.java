@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.elements;
 
-import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.*;
 import net.thevpc.nuts.util.NMsg;
 
