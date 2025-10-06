@@ -28,12 +28,15 @@ package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v502;
 import java.io.Serializable;
 import java.util.*;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NPlatformLocation;
-import net.thevpc.nuts.NStoreStrategy;
-import net.thevpc.nuts.NUserConfig;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.command.NCommandFactoryConfig;
+import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.core.NStoreStrategy;
+import net.thevpc.nuts.core.NRepositoryRef;
+import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigBoot;
-import net.thevpc.nuts.NOsFamily;
+import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.util.NStringUtils;
 
 /**
