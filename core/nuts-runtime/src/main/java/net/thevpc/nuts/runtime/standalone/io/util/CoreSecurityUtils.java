@@ -24,9 +24,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NHex;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
 
 import javax.crypto.Cipher;
