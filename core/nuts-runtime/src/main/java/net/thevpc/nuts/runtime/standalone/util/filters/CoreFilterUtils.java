@@ -25,8 +25,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.filters;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.ext.NExtensionInformation;
