@@ -25,10 +25,10 @@
  */
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NIsolationLevel;
-import net.thevpc.nuts.NStoreType;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NIsolationLevel;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementDescribable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NOptional;
@@ -77,6 +77,7 @@ public interface NLock extends Lock, NElementDescribable {
                 .toPath().get()
         ).build();
     }
+
     static NLock ofIdPath(NId id,String path) {
         return NLockBuilder.of().setSource(id.getLongId()).setResource(NPath.ofIdStore(id, NStoreType.RUN)
                 .resolve(path)
