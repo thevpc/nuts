@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NBootOptions;
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.core.NBootOptions;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NullInputStream;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
