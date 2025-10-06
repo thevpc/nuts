@@ -1,6 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
