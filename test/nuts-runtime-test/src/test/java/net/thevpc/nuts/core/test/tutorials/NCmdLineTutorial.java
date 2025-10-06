@@ -1,8 +1,8 @@
 package net.thevpc.nuts.core.test.tutorials;
 
-import net.thevpc.nuts.NApp;
-import net.thevpc.nuts.NOut;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.util.NBooleanRef;
 import net.thevpc.nuts.util.NMsg;
