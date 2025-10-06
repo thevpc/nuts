@@ -1,6 +1,6 @@
 package net.thevpc.nuts.time;
 
-import net.thevpc.nuts.NSessionProvider;
+import net.thevpc.nuts.core.NSessionProvider;
 
 public interface NProgressHandlerEvent extends NSessionProvider {
     NProgressEventType getEventType();
