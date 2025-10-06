@@ -27,7 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.format.json;
 
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NParseException;
+import net.thevpc.nuts.expr.NParseException;
 
 public class JsonStatus {
 
