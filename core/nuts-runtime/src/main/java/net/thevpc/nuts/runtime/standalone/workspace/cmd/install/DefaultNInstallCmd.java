@@ -24,26 +24,30 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConfirmationMode;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.*;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NMemoryPrintStream;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamFromList;
-import net.thevpc.nuts.util.NIteratorUtils;
+import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStream;
 
 import java.util.*;
 import java.util.function.Predicate;
