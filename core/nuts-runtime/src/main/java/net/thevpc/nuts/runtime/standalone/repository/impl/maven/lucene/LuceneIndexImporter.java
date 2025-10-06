@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.lucene;
 
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
