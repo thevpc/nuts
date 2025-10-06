@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NVersion;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v502.NVersionCompat502;
