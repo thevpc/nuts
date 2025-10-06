@@ -1,10 +1,19 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 
 
-import net.thevpc.nuts.format.NDescriptorFormat;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NDeployCmd;
+import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryDisabledException;
+import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.core.NRepositoryNotFoundException;
+import net.thevpc.nuts.text.NDescriptorFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
@@ -104,7 +113,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
 
     @Override
     public NDeployCmd run() {
-        NSession session=NSession.of();
+        NSession session= NSession.of();
         if (getContent() != null || getDescriptor() != null || getSha1() != null || getDescSha1() != null) {
             runDeployFile();
         }
