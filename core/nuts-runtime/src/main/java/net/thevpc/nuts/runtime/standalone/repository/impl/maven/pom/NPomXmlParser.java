@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NIdBuilder;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.*;
@@ -11,6 +12,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.expr.NParseException;
 import net.thevpc.nuts.util.NStringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
