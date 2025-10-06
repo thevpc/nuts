@@ -24,8 +24,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.extension;
 
-import net.thevpc.nuts.NClassLoaderNode;
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.core.NClassLoaderNode;
+import net.thevpc.nuts.artifact.NId;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.LinkedHashMap;
