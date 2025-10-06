@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
-import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NIllegalArgumentException;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.time.*;
 
