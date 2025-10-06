@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.version.filter;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.spi.base.AbstractVersionFilter;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
 import net.thevpc.nuts.util.NBlankable;
@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
     private NVersionComparator comparator;
-    public NVersionFilterParser(String str,NVersionComparator comparator) {
+    public NVersionFilterParser(String str, NVersionComparator comparator) {
         super(str);
         this.comparator=comparator;
     }
