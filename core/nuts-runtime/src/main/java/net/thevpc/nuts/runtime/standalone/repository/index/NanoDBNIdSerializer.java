@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.index;
 
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBInputStream;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBNonNullSerializer;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBOutputStream;
