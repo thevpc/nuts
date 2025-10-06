@@ -15,8 +15,8 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 
-import net.thevpc.nuts.NExecutionEntry;
-import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.command.NExecutionEntry;
+import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.core.test.utils.TestUtils;
