@@ -1,9 +1,8 @@
 package net.thevpc.nuts.core.test.oldws;
 
-import net.thevpc.nuts.NExecCmd;
-import net.thevpc.nuts.NExecutionType;
-import net.thevpc.nuts.NOut;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExecutionType;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.oldws.impl.OldWorkspace083;
 import net.thevpc.nuts.core.test.oldws.impl.OldWorkspace084;
 import net.thevpc.nuts.core.test.oldws.impl.OldWorkspace085;
