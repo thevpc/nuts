@@ -25,9 +25,9 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NPlatformFamily;
+import net.thevpc.nuts.platform.NPlatformFamily;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.util.NConnexionString;
+import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.spi.NComponent;
 
