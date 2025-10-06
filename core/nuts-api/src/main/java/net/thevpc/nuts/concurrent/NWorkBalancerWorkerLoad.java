@@ -1,103 +1,85 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.util.NOptional;
-
-import java.util.Map;
-
 /**
+ * Represents the runtime load and metrics of a {@link NWorkBalancerWorker}.
+ * <p>
+ * All values reflect the state of the worker at a point in time, or are monotonic counters.
+ * Useful for strategies to make informed decisions about worker selection.
+ * </p>
+ *
  * @since 0.8.7
  */
 public interface NWorkBalancerWorkerLoad {
     /**
-     *  A normalized indicator (0.0–1.0) of the host's overall load,
-     *  as reported by the runtime or OS. Represents the capacity pressure
-     *  on the machine hosting this worker.
-     * @return the host load factor, or empty if not available
-     */
-    NOptional<Float> hostLoadFactor();
-
-    /**
-     * Returns the CPU load of the host (normalized 0.0–1.0).
+     * Returns cached host load metrics for this worker.
+     * <p>
+     * Metrics typically include CPU, memory, or other system-level indicators,
+     * normalized between 0.0 and 1.0. May be empty if metrics are unavailable.
+     * </p>
      *
-     * @return CPU load, or empty if not available
+     * @return the cached host load metrics, or empty if not available
      */
-    NOptional<Float> hostCpuLoad();
-
+    NCachedValue<NWorkBalancerHostLoadMetrics> hostLoadMetrics();
 
     /**
-     * Returns the memory load of the host (normalized 0.0–1.0).
+     * Returns the number of currently active jobs on this worker.
+     * This is an atomic snapshot.
      *
-     * @return memory load, or empty if not available
-     */
-    NOptional<Float> hostMemoryLoad();
-
-
-    /**
-     * Returns an estimate of the host latency in milliseconds.
-     *
-     * @return host latency, or empty if not available
-     */
-    NOptional<Long> hostLatency();
-
-    /**
-     * Returns a map of additional host metrics. Can include custom metrics
-     * relevant to load balancing (e.g., disk I/O, network utilization).
-     *
-     * @return map of metric names to values
-     */
-    Map<String, NElement> hostMetrics();
-
-    /**
-     * Timestamp (nanoTime) when the host load factor was last measured or updated.
-     * Useful to assess freshness of the metric.
-     */
-    long hostLoadLastUpdateNano();
-
-    void refreshHostLoad();
-
-
-    /**
-     * number of currently active calls on that worker (atomic snapshot).
-     *
-     * @return
+     * @return the count of active jobs
      */
     long activeJobsCount();
 
     /**
-     * total number of job starts (monotonic counter).
+     * Returns the total number of job starts on this worker since initialization.
+     * This is a monotonic counter.
      *
-     * @return
+     * @return total jobs started
      */
     long totalJobsCount();
 
+    /**
+     * Returns the total number of completed jobs (both succeeded and failed).
+     *
+     * @return completed jobs count
+     */
     default long completedJobsCount() {
         return succeededJobCount() + failedJobsCount();
     }
 
     /**
-     * monotonic counters
+     * Returns the total number of succeeded jobs.
+     * This is a monotonic counter.
      *
-     * @return
+     * @return succeeded jobs count
      */
     long succeededJobCount();
 
     /**
-     * monotonic counter for failed jobs
+     * Returns the total number of failed jobs.
+     * This is a monotonic counter.
      *
-     * @return
+     * @return failed jobs count
      */
     long failedJobsCount();
 
     /**
-     * Total CPU or wall-clock time (nano) currently consumed by all active jobs
-     * on this worker. Allows estimating average remaining execution time.
+     * Returns the total CPU or wall-clock time (in nanoseconds) currently consumed
+     * by all active jobs on this worker.
+     * <p>
+     * Useful for estimating current load and predicting completion time.
+     * </p>
+     *
+     * @return total active job duration in nanoseconds
      */
     long activeJobsTotalDurationNano();
 
     /**
-     * Total CPU or wall-clock time (nano) spent by all completed jobs.
-     * Use to compute average completed-job latency or throughput.
+     * Returns the total CPU or wall-clock time (in nanoseconds) spent by all completed jobs.
+     * <p>
+     * Can be used to compute average completed-job latency or throughput.
+     * </p>
+     *
+     * @return total duration of completed jobs in nanoseconds
      */
     long completedJobsTotalDurationNano();
 }
