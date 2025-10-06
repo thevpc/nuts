@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.repository.config;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.*;
 
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
+import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NSimpleRepositoryWrapper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
