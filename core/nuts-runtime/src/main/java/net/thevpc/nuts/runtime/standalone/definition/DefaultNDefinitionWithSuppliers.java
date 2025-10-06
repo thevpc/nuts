@@ -24,9 +24,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.definition;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NInstallInformation;
+import net.thevpc.nuts.concurrent.NStableValue;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NCallOnceSupplier;
 import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -40,20 +41,20 @@ import java.util.function.Supplier;
  */
 public class DefaultNDefinitionWithSuppliers implements NDefinition, NImmutable {
 
-    final NCallOnceSupplier<NId> id;
-    final NCallOnceSupplier<String> repositoryUuid;
-    final NCallOnceSupplier<String> repositoryName;
+    final NStableValue<NId> id;
+    final NStableValue<String> repositoryUuid;
+    final NStableValue<String> repositoryName;
 
-    final NCallOnceSupplier<NId> apiId;
-    final NCallOnceSupplier<NDependency> dependency;
+    final NStableValue<NId> apiId;
+    final NStableValue<NDependency> dependency;
 
 
-    final NCallOnceSupplier<NDescriptor> descriptor;
-    final NCallOnceSupplier<NPath> content;
-    final NCallOnceSupplier<NInstallInformation> installInformation;
-    final NCallOnceSupplier<NDependencies> dependencies;
-    final NCallOnceSupplier<NDescriptor> effectiveDescriptor;
-    final NCallOnceSupplier<Set<NDescriptorFlag>> effectiveFlags;
+    final NStableValue<NDescriptor> descriptor;
+    final NStableValue<NPath> content;
+    final NStableValue<NInstallInformation> installInformation;
+    final NStableValue<NDependencies> dependencies;
+    final NStableValue<NDescriptor> effectiveDescriptor;
+    final NStableValue<Set<NDescriptorFlag>> effectiveFlags;
 
 
 
@@ -66,17 +67,17 @@ public class DefaultNDefinitionWithSuppliers implements NDefinition, NImmutable 
             , Supplier<NDependency> dependency
             , Supplier<Set<NDescriptorFlag>> effectiveFlags
     ) {
-        this.id = new NCallOnceSupplier<>(id);
-        this.descriptor = new NCallOnceSupplier<>(descriptor);
-        this.content = new NCallOnceSupplier<>(content);
-        this.installInformation = new NCallOnceSupplier<>(install);
-        this.repositoryUuid = new NCallOnceSupplier<>(repoUuid);
-        this.repositoryName = new NCallOnceSupplier<>(repoName);
-        this.apiId = new NCallOnceSupplier<>(apiId);
-        this.effectiveDescriptor = new NCallOnceSupplier<>(effectiveDescriptor);
-        this.dependencies = new NCallOnceSupplier<>(dependencies);
-        this.dependency = new NCallOnceSupplier<>(dependency);
-        this.effectiveFlags = new NCallOnceSupplier<>(effectiveFlags);
+        this.id = NStableValue.of(id);
+        this.descriptor = NStableValue.of(descriptor);
+        this.content = NStableValue.of(content);
+        this.installInformation = NStableValue.of(install);
+        this.repositoryUuid = NStableValue.of(repoUuid);
+        this.repositoryName = NStableValue.of(repoName);
+        this.apiId = NStableValue.of(apiId);
+        this.effectiveDescriptor = NStableValue.of(effectiveDescriptor);
+        this.dependencies = NStableValue.of(dependencies);
+        this.dependency = NStableValue.of(dependency);
+        this.effectiveFlags = NStableValue.of(effectiveFlags);
     }
 
     public NDependency getDependency() {
