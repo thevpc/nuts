@@ -1,7 +1,7 @@
 package net.thevpc.nuts.spi.base;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.reserved.util.NPredicateWithDescription;
+import net.thevpc.nuts.internal.util.NPredicateWithDescription;
 import net.thevpc.nuts.util.NPredicate;
 
 import java.util.function.Supplier;
