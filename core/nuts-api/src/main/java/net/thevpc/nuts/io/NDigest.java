@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NDescriptor;
+import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 
