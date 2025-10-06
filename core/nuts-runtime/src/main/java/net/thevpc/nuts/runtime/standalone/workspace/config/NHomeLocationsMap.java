@@ -28,10 +28,10 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.thevpc.nuts.NHomeLocation;
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.platform.NHomeLocation;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.NOsFamily;
+import net.thevpc.nuts.platform.NOsFamily;
 
 /**
  *
