@@ -1,13 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.*;
 
 
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.NLocationKey;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
