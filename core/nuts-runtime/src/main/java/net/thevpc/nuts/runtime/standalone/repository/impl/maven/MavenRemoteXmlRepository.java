@@ -24,10 +24,16 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NIdBuilder;
+import net.thevpc.nuts.command.NFetchMode;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenMetadata;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
