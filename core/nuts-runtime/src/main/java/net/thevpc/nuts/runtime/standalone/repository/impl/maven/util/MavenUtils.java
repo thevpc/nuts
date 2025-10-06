@@ -24,15 +24,26 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetchMode;
+import net.thevpc.nuts.command.NFetchStrategy;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.expr.NParseException;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.platform.NArchFamily;
+import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NShellFamily;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
@@ -41,7 +52,6 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.*;
 import net.thevpc.nuts.runtime.standalone.format.xml.XmlUtils;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.DefaultNVersion;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.log.NLog;
