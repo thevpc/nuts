@@ -26,13 +26,10 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.spi.NComponent;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * Class responsible of manipulating {@link NElement} type. It help parsing
