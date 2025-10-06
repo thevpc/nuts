@@ -5,7 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutableInformationExt;
 import net.thevpc.nuts.text.NText;
