@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.io.NContentMetadata;
 import net.thevpc.nuts.log.NLog;
@@ -10,7 +9,6 @@ import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.util.NRef;
