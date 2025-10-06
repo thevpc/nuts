@@ -24,10 +24,16 @@
  */
 package net.thevpc.nuts.runtime.standalone.installer;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 
 
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDefinitionBuilder;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExecutionContext;
+import net.thevpc.nuts.command.NExecutionType;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
