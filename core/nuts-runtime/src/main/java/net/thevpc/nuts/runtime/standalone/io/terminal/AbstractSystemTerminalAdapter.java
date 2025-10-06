@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.runtime.standalone.xtra.time.CProgressBar;
@@ -140,7 +140,7 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
 
     @Override
     public NSystemTerminal printProgress(float progress, NMsg message) {
-        NSession session=NSession.of();
+        NSession session= NSession.of();
         if (session.isProgress()) {
             if (getBase() instanceof NSystemTerminal) {
                 ((NSystemTerminal) getBase()).printProgress(progress, message);
