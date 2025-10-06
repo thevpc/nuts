@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.format.tson;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElementWriter;
-import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
