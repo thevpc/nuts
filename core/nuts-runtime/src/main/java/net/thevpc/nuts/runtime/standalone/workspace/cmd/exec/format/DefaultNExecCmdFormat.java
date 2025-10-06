@@ -1,9 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NExecCmdFormat;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.text.NExecCmdFormat;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPrintStream;
