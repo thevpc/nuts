@@ -145,7 +145,7 @@
                         <option>-allowaccessmodification</option>
                         <!--<option>-optimizationpasses 5</option>-->
                         <option>-overloadaggressively</option>
-                        <option>-keep public class * implements net.thevpc.nuts.NApplication { *; }</option>
+                        <option>-keep public class * implements net.thevpc.nuts.app.NApplication { *; }</option>
                         <option>-keep class com.google.** { *; }</option>
                         <option>-keep class net.thevpc.nuts.** { *; }</option>
                         <option>-keep class com.google.gson.stream.* { *; }</option>
