@@ -25,11 +25,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NHomeLocation;
-import net.thevpc.nuts.NOsFamily;
-import net.thevpc.nuts.NStoreStrategy;
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NConfigItem;
+import net.thevpc.nuts.platform.NHomeLocation;
+import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.core.NStoreStrategy;
+import net.thevpc.nuts.platform.NStoreType;
 
 import java.util.*;
 import java.util.stream.Collectors;
