@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NException;
-
 /**
  * Generic exception to be thrown when an optional is erroneous is not found.
  *
