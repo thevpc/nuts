@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
-import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.concurrent.NCallableSupport;
 
 import java.util.List;
 
