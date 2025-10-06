@@ -1,6 +1,6 @@
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NException;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NMsg;
 
 public class NInterruptException extends NException {
