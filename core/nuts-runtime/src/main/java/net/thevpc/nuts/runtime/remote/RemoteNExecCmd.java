@@ -1,6 +1,10 @@
 package net.thevpc.nuts.runtime.remote;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExecutableInformation;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecCmd;
 import net.thevpc.nuts.util.NMsg;
@@ -25,8 +29,8 @@ public class RemoteNExecCmd extends AbstractNExecCmd {
 
     @Override
     public NExecCmd run() {
-        NSession session=NSession.of();
-        RemoteNWorkspace ws=(RemoteNWorkspace)NWorkspace.get();
+        NSession session= NSession.of();
+        RemoteNWorkspace ws=(RemoteNWorkspace) NWorkspace.get();
         try {
             int r = ws.remoteCall(
                     ws.createCall("workspace.exec",
