@@ -25,8 +25,7 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.format.NFormattable;
-import net.thevpc.nuts.reserved.rpi.NIORPI;
+import net.thevpc.nuts.internal.rpi.NIORPI;
 
 import java.io.OutputStream;
 import java.io.Writer;
