@@ -1,7 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.xtra.shell;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NShellFamily;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
