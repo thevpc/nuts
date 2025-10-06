@@ -26,7 +26,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.command.NInstallInformation;
+import net.thevpc.nuts.command.NInstallStatus;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NFilter;
