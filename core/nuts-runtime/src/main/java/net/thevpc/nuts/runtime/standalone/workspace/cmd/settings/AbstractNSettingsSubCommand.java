@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
 /**
