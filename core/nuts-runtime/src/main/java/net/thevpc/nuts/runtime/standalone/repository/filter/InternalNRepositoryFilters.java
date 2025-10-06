@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 
 import java.util.Arrays;
@@ -12,6 +14,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalled
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NFilter;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
 
 public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositoryFilter>
