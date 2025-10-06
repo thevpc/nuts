@@ -1,11 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
-import net.thevpc.nuts.*;
-
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
 
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.util.NFilterOp;
