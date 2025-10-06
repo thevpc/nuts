@@ -9,10 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NFetchMode;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NElementDescribables;
-import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
