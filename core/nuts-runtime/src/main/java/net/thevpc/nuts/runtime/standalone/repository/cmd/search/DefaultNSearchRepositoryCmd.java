@@ -5,10 +5,16 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.cmd.search;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NNotFoundException;
+import net.thevpc.nuts.command.NFetchMode;
+import net.thevpc.nuts.concurrent.NRunnable;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NElementDescribables;
-import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.core.NIndexerNotAccessibleException;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NIndexFirstIterator;
 import net.thevpc.nuts.util.NIteratorBuilder;
