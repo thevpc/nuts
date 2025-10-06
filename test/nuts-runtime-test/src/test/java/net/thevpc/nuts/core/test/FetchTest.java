@@ -1,6 +1,9 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NDependencyTreeNode;
+import net.thevpc.nuts.command.NFetchCmd;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 
