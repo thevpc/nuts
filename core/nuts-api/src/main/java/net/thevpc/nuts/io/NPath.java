@@ -25,11 +25,16 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.reserved.util.NBootPlatformHome;
+import net.thevpc.nuts.core.NLocationKey;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.format.NTreeVisitor;
+import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.spi.NPathSPI;
 
 import java.io.*;
