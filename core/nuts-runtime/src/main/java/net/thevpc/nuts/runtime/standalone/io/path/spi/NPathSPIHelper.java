@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.format.NTreeVisitResult;
-import net.thevpc.nuts.format.NTreeVisitor;
+import net.thevpc.nuts.text.NTreeVisitResult;
+import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.util.NIteratorBase;
