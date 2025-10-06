@@ -5,23 +5,20 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.plain;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat;
-import net.thevpc.nuts.runtime.standalone.format.xml.XmlUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NContentType;
+import net.thevpc.nuts.text.NContentTypeFormat;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NMsg;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import net.thevpc.nuts.util.NUnsupportedArgumentException;
 
-import javax.xml.transform.stream.StreamResult;
 import java.util.*;
 
 /**
