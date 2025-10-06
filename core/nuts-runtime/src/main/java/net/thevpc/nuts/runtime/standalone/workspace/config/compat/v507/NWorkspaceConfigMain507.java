@@ -25,10 +25,10 @@
 */
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v507;
 
-import net.thevpc.nuts.NCommandFactoryConfig;
-import net.thevpc.nuts.NConfigItem;
-import net.thevpc.nuts.NPlatformLocation;
-import net.thevpc.nuts.NRepositoryRef;
+import net.thevpc.nuts.command.NCommandFactoryConfig;
+import net.thevpc.nuts.core.NConfigItem;
+import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.core.NRepositoryRef;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
