@@ -25,7 +25,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v507;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NConfigItem;
+import net.thevpc.nuts.core.NStoreStrategy;
+import net.thevpc.nuts.platform.NHomeLocation;
+import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NStoreType;
 
 import java.util.LinkedHashMap;
 import java.util.List;
