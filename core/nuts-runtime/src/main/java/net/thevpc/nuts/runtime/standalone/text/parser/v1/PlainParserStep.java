@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NStringBuilder;
 
