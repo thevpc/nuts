@@ -1,12 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
-import net.thevpc.nuts.*;
-
 import java.util.Arrays;
 import java.util.Map;
 
 import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
 import net.thevpc.nuts.security.NAuthenticationAgent;
+import net.thevpc.nuts.security.NSecurityException;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
