@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
-import net.thevpc.nuts.NVersion;
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 
 import java.util.ArrayList;
