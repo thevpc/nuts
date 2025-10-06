@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.version.filter;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.artifact.NVersionFilter;
 import net.thevpc.nuts.spi.base.AbstractVersionFilter;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionString;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
