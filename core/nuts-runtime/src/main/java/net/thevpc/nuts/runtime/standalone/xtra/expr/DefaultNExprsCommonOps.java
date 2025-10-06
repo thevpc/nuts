@@ -1,18 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.elem.NElementType;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.expr.NExprCommonOp;
 import net.thevpc.nuts.expr.NExprOpType;
-import net.thevpc.nuts.util.NPlatformArgsSignature;
+import net.thevpc.nuts.reflect.NPlatformArgsSignature;
+import net.thevpc.nuts.reflect.NPlatformSignatureMap;
 import net.thevpc.nuts.util.*;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.MathContext;
-import java.math.RoundingMode;
-import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
