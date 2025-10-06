@@ -32,7 +32,7 @@ import java.util.Map;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.format.NObjectFormat;
+import net.thevpc.nuts.text.NObjectFormat;
 import net.thevpc.nuts.text.*;
 import org.junit.jupiter.api.*;
 
