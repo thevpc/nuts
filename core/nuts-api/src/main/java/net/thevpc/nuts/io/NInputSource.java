@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.reserved.rpi.NIORPI;
+import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
