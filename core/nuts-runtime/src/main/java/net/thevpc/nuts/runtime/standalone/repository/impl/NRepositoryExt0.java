@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.NRepository;
+import net.thevpc.nuts.core.NRepository;
 
 /**
  *
