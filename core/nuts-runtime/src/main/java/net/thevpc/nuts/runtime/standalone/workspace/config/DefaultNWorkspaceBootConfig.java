@@ -1,7 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NStoreStrategy;
+import net.thevpc.nuts.core.NWorkspaceBootConfig;
+import net.thevpc.nuts.platform.NHomeLocation;
+import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NPlatformHome;
+import net.thevpc.nuts.platform.NStoreType;
 
 import java.nio.file.Paths;
 import java.util.Collections;
