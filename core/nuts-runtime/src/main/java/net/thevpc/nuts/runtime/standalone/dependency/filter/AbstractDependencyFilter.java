@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
-import net.thevpc.nuts.NDependencyFilter;
+import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.AbstractNFilter;
 import net.thevpc.nuts.util.NFilter;
