@@ -23,15 +23,15 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.NExceptions;
-import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NShellFamily;
+import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NIllegalArgumentException;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.reserved.util.NReservedSimpleCharQueue;
+import net.thevpc.nuts.internal.util.NReservedSimpleCharQueue;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.*;
 
