@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.util;
 
 
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix.AnyNixNdi;
