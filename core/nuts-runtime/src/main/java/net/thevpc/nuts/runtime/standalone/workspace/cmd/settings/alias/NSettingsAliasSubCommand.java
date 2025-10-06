@@ -5,14 +5,19 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
-import net.thevpc.nuts.NShellFamily;
-import net.thevpc.nuts.format.NPropertiesFormat;
+import net.thevpc.nuts.command.NCommandConfig;
+import net.thevpc.nuts.command.NCustomCmd;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.platform.NShellFamily;
+import net.thevpc.nuts.text.NPropertiesFormat;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
-import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.ArrayList;
