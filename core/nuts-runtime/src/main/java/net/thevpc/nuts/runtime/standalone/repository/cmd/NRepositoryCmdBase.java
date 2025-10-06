@@ -5,10 +5,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.cmd;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
+import net.thevpc.nuts.command.NFetchMode;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.spi.NRepositoryCmd;
 
 /**
