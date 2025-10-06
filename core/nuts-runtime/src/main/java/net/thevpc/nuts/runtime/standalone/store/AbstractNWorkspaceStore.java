@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.store;
 
-import net.thevpc.nuts.NLocationKey;
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.core.NLocationKey;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.util.NAssert;
 
 import java.util.function.Supplier;
