@@ -1,7 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.core.NBootOptions;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.concurrent.NScopedValue;
+import net.thevpc.nuts.core.NIsolationLevel;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
@@ -30,7 +37,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SimpleRecommendati
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public class NWorkspaceModel {
     public NLog LOG;
