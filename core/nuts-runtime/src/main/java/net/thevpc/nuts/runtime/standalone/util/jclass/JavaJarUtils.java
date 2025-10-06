@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NExecutionEntry;
+import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
