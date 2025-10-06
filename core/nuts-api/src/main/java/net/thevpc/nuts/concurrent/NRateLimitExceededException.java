@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.NException;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NMsg;
 
 /**
