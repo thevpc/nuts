@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
