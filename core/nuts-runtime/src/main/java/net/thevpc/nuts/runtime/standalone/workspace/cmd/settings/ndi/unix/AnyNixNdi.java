@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 
-import net.thevpc.nuts.*;
 
-
-import net.thevpc.nuts.NShellFamily;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntryWriter;
@@ -14,10 +14,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOp
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NAskParseContext;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NAsk;
-import net.thevpc.nuts.util.NAskParser;
+import net.thevpc.nuts.util.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
