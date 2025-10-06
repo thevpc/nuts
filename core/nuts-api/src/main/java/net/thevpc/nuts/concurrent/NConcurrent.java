@@ -2,7 +2,6 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.util.NCallable;
 
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
@@ -48,11 +47,11 @@ public interface NConcurrent extends NComponent {
 
     NConcurrent setRateLimitValueFactory(NRateLimitValueFactory factory);
 
-    NWorkBalancerCallFactory defaultWorkBalancerFactory();
+    NWorkBalancerFactory defaultWorkBalancerFactory();
 
-    NWorkBalancerCallFactory memoryWorkBalancerFactory();
+    NWorkBalancerFactory memoryWorkBalancerFactory();
 
-    NWorkBalancerCallFactory workBalancerFactory();
+    NWorkBalancerFactory workBalancerFactory();
 
     NRateLimitValueFactory rateLimitValueFactory();
 
@@ -123,19 +122,19 @@ public interface NConcurrent extends NComponent {
     /**
      * @since 0.8.7
      */
-    NSagaCallFactory defaultSagaFactory();
+    NSagaCallableFactory defaultSagaFactory();
 
     /**
      * @since 0.8.7
      */
-    NSagaCallFactory sagaFactory();
+    NSagaCallableFactory sagaFactory();
 
     /**
      * @since 0.8.7
      */
-    NSagaCallFactory memorySagaFactory();
+    NSagaCallableFactory memorySagaFactory();
 
-    NSagaCallBuilder sagaCallBuilder();
+    NSagaCallableBuilder sagaCallBuilder();
 
-    NConcurrent setWorkBalancerCallFactory(NWorkBalancerCallFactory workBalancerCallFactory);
+    NConcurrent setWorkBalancerCallFactory(NWorkBalancerFactory workBalancerCallFactory);
 }
