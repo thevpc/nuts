@@ -1,8 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NCmdLineFormat;
-import net.thevpc.nuts.NShellFamily;
+import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NAppInitInfo;
+import net.thevpc.nuts.app.NApplications;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExecutionContext;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspaceOptionsBuilder;
+import net.thevpc.nuts.core.NWorkspaceOptionsConfig;
+import net.thevpc.nuts.text.NCmdLineFormat;
+import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorOptions;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
