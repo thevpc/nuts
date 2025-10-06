@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.factorycache;
 
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.core.NSession;
 
 import java.lang.reflect.Constructor;
 
