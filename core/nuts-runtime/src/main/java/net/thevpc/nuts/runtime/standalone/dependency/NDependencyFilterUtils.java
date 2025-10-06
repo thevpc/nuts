@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.dependency;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyScope;
+import net.thevpc.nuts.artifact.NDependencyScopePattern;
 import net.thevpc.nuts.runtime.standalone.dependency.filter.NDependencyScopeFilter;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
