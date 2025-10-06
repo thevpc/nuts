@@ -3,9 +3,9 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.UserElementMapperStore;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathFilter;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
