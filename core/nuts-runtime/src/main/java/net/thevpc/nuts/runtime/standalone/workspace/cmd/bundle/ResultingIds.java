@@ -1,9 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.bundle;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStream;
 
 import java.util.*;
 
