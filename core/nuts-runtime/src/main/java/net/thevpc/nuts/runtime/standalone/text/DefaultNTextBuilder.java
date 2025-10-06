@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.parser.AbstractNText;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextList;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
@@ -9,6 +8,7 @@ import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.util.NUnsupportedOperationException;
 
 import java.io.ByteArrayOutputStream;
 import java.util.*;
