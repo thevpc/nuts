@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.bundle;
 
-import net.thevpc.nuts.NOsFamily;
+import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.util.NStringBuilder;
 
 class NutsBundleFilesConfig {
