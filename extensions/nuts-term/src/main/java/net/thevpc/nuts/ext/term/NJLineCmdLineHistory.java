@@ -5,9 +5,10 @@
  */
 package net.thevpc.nuts.ext.term;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.cmdline.NCmdLineHistoryEntry;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
