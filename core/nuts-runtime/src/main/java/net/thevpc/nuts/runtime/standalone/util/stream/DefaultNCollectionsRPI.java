@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
