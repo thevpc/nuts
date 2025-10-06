@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.format;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPrintStream;
 
 /**
