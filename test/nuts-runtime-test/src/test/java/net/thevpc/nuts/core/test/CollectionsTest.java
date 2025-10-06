@@ -2,8 +2,8 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.util.NEvictingCharQueue;
-import net.thevpc.nuts.util.NPlatformArgsSignature;
-import net.thevpc.nuts.util.NPlatformSignatureMap;
+import net.thevpc.nuts.reflect.NPlatformArgsSignature;
+import net.thevpc.nuts.reflect.NPlatformSignatureMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
