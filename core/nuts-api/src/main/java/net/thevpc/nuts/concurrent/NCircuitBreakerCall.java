@@ -1,10 +1,8 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElementDescribable;
-import net.thevpc.nuts.util.NCallable;
 
 import java.time.Duration;
-import java.util.concurrent.Future;
 import java.util.function.IntFunction;
 
 /**
