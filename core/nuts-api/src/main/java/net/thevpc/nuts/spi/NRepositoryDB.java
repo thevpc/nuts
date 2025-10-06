@@ -1,6 +1,6 @@
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.util.NOptional;
 
