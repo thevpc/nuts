@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NTreeVisitor;
+import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
