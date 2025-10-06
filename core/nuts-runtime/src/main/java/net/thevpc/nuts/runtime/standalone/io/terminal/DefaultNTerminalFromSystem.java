@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
 import net.thevpc.nuts.runtime.standalone.xtra.time.CProgressBar;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NAsk;
+import net.thevpc.nuts.io.NAsk;
 
 import java.io.*;
 import java.util.Scanner;
