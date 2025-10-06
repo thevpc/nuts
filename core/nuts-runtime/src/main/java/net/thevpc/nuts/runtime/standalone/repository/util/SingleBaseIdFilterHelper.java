@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.util;
 
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NBlankable;
 
