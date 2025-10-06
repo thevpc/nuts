@@ -24,7 +24,13 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 
