@@ -5,22 +5,20 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.backup;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementParser;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 
 
-import net.thevpc.nuts.NStoreType;
-import net.thevpc.nuts.io.NCompress;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NUncompress;
-import net.thevpc.nuts.io.NUncompressVisitor;
+import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NPlatformHome;
+import net.thevpc.nuts.platform.NPlatformHome;
 
 import java.io.File;
 import java.io.InputStream;
@@ -39,7 +37,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
 
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
-        NSession session=NSession.of();
+        NSession session= NSession.of();
         if (cmdLine.next("backup").isPresent()) {
             cmdLine.setCommandName("settings backup");
             String file = null;
