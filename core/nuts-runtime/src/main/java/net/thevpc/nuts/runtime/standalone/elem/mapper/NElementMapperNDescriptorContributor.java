@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorContributorBuilder;
-import net.thevpc.nuts.NDescriptorContributor;
+import net.thevpc.nuts.artifact.NDescriptorContributor;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
