@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.event;
 
-import net.thevpc.nuts.*;
-
+import net.thevpc.nuts.command.NInstallListener;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NWorkspaceListener;
+import net.thevpc.nuts.core.NRepositoryListener;
 import net.thevpc.nuts.util.NObservableMap;
 import net.thevpc.nuts.util.NObservableMapListener;
 
