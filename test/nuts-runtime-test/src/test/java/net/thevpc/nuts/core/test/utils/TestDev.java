@@ -1,6 +1,6 @@
 package net.thevpc.nuts.core.test.utils;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NMsg;
 import org.junit.jupiter.api.BeforeAll;
