@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
-import net.thevpc.nuts.NWorkspaceException;
+import net.thevpc.nuts.core.NWorkspaceException;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.core.NSession;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -101,7 +101,7 @@ public class CoreNApplications {
                 }
                 return "0.8.3";
             }
-            case "net.thevpc.nuts.NApplication": {
+            case "net.thevpc.nuts.app.NApplication": {
                 return "0.8.4";
             }
         }
