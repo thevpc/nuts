@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.NRepository;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCmdBase;
 import net.thevpc.nuts.spi.NUpdateRepositoryStatsCmd;
 
