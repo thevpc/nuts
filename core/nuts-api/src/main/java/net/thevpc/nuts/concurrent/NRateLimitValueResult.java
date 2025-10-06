@@ -1,6 +1,5 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.function.Consumer;
