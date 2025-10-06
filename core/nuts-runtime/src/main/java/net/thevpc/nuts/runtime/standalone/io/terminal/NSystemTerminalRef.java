@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NWorkspaceEvent;
+import net.thevpc.nuts.core.NWorkspaceListener;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEvent;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
