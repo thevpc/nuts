@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
-import net.thevpc.nuts.NScopedValue;
+import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.concurrent.NStableValue;
 import net.thevpc.nuts.concurrent.NStableValueModel;
 import net.thevpc.nuts.concurrent.NStableValueStore;
