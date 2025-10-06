@@ -5,10 +5,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBaseRepo;
+import net.thevpc.nuts.security.NRemoveUserCmd;
 
 /**
  * @author thevpc
