@@ -24,8 +24,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.art.tree;
 
-import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.format.NTreeLinkFormat;
+import net.thevpc.nuts.text.NPositionType;
+import net.thevpc.nuts.text.NTreeLinkFormat;
 import net.thevpc.nuts.text.NText;
 
 /**
