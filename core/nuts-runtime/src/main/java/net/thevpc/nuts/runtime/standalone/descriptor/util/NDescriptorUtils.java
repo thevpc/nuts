@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.util;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NEnvCondition;
-import net.thevpc.nuts.NEnvConditionBuilder;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
