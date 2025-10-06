@@ -25,7 +25,8 @@
 */
 package net.thevpc.nuts.runtime.standalone.descriptor;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 
 /**
