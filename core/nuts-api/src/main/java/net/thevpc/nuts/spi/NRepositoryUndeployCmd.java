@@ -26,8 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.artifact.NId;
 
 /**
  * @author thevpc
