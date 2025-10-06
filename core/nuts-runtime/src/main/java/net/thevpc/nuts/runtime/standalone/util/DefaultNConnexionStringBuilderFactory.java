@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.DefaultNConnexionStringBuilder;
-import net.thevpc.nuts.util.NConnexionStringBuilder;
-import net.thevpc.nuts.util.NConnexionStringBuilderFactory;
+import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
+import net.thevpc.nuts.net.NConnexionStringBuilder;
+import net.thevpc.nuts.net.NConnexionStringBuilderFactory;
 import net.thevpc.nuts.util.NOptional;
 
 public class DefaultNConnexionStringBuilderFactory implements NConnexionStringBuilderFactory {
