@@ -5,9 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.imports;
 
-import net.thevpc.nuts.NOut;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.core.NWorkspace;
 
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.cmdline.NArgName;
