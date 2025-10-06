@@ -24,11 +24,19 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 
 
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NNotFoundException;
+import net.thevpc.nuts.command.NFetchMode;
+import net.thevpc.nuts.command.NFetchModeNotSupportedException;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NFolderRepositoryBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.solrsearch.MavenSolrSearchCommand;
