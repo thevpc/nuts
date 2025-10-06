@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NAddRepositoryOptions;
-import net.thevpc.nuts.NRepository;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepository;
 
 import java.util.List;
 
