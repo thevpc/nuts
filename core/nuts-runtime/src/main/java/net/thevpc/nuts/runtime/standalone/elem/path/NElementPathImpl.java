@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.path;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NPairElement;
-import net.thevpc.nuts.util.NToken;
+import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.util.NStreamTokenizer;
 
 import java.util.*;
