@@ -1,17 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.xtra.web;
 
+import net.thevpc.nuts.concurrent.NStableValue;
 import net.thevpc.nuts.elem.NElementParser;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NInputSource;
-import net.thevpc.nuts.util.NCallOnceSupplier;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NMsgCode;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.web.NHttpCode;
-import net.thevpc.nuts.web.NWebCookie;
-import net.thevpc.nuts.web.NWebResponse;
-import net.thevpc.nuts.web.NWebResponseException;
+import net.thevpc.nuts.net.NHttpCode;
+import net.thevpc.nuts.net.NWebCookie;
+import net.thevpc.nuts.net.NWebResponse;
+import net.thevpc.nuts.net.NWebResponseException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,14 +24,14 @@ public class NWebResponseImpl implements NWebResponse {
     private NHttpCode httpCode;
     private NMsg msg;
     private DefaultNWebHeaders headers = new DefaultNWebHeaders();
-    private NCallOnceSupplier<NInputSource> content;
+    private NStableValue<NInputSource> content;
     private NMsgCode msgCode;
 
     public NWebResponseImpl(NHttpCode code, NMsg msg, Map<String, List<String>> headers, Supplier<NInputSource> content) {
         this.httpCode = code;
         this.msg = msg;
         this.headers.addHeadersMulti(headers, DefaultNWebHeaders.Mode.ALWAYS);
-        this.content = new NCallOnceSupplier<>(content);
+        this.content = NStableValue.of(content);
     }
 
     @Override
