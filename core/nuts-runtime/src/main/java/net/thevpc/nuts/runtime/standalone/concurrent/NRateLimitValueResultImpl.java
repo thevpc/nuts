@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.NRateLimitExceededException;
 import net.thevpc.nuts.concurrent.NRateLimitValueResult;
-import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.function.Consumer;
