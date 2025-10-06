@@ -26,11 +26,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBaseRepo;
+import net.thevpc.nuts.security.NAddUserCmd;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
 import java.util.*;
