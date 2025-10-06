@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.cp;
 
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.DefaultNContentMetadata;
 import net.thevpc.nuts.runtime.standalone.io.printstream.OutputTargetExt;
 import net.thevpc.nuts.io.WriterOutputStream;
