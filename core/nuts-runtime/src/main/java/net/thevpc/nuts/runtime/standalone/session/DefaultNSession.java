@@ -24,23 +24,30 @@
  */
 package net.thevpc.nuts.runtime.standalone.session;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.*;
 
-import net.thevpc.nuts.NBootOptions;
-
+import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.command.NExecutionType;
+import net.thevpc.nuts.command.NFetchStrategy;
+import net.thevpc.nuts.command.NInstallListener;
+import net.thevpc.nuts.concurrent.NCallable;
+import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.elem.NElementFormat;
+import net.thevpc.nuts.core.NRepositoryListener;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
-import net.thevpc.nuts.format.NContentType;
-import net.thevpc.nuts.format.NIterableFormat;
+import net.thevpc.nuts.text.NContentType;
+import net.thevpc.nuts.text.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogUtils;
-import net.thevpc.nuts.reserved.NScopedWorkspace;
+import net.thevpc.nuts.internal.NScopedWorkspace;
 import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNArrayElementBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.time.ProgressOptions;
 import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNTerminal;
@@ -52,7 +59,6 @@ import net.thevpc.nuts.util.*;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.*;
-import java.util.logging.Filter;
 import java.util.logging.Level;
 
 /**
@@ -821,7 +827,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
             cloned.terminal = terminal == null ? null : NTerminal.of(terminal);
             cloned.properties = new NPropertiesHolder();
             for (String s : properties.keySet()) {
-                NPropertiesHolder.NScopedValue v = properties.getScopedValue(s);
+                NPropertiesHolder.NScopedPropertyValue v = properties.getScopedValue(s);
                 switch (v.getScope()) {
                     case SHARED_SESSION: {
                         cloned.properties.setProperty(s, v.getValue(), NScopeType.SHARED_SESSION);
@@ -852,7 +858,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
         this.terminal = other.getTerminal() == null ? null : NTerminal.of(terminal);
         this.terminal = other.getTerminal();
         for (String s : ((DefaultNSession) other).properties.keySet()) {
-            NPropertiesHolder.NScopedValue v = properties.getScopedValue(s);
+            NPropertiesHolder.NScopedPropertyValue v = properties.getScopedValue(s);
             switch (v.getScope()) {
                 case SHARED_SESSION: {
                     this.properties.setProperty(s, v.getValue(), NScopeType.SHARED_SESSION);
@@ -1043,7 +1049,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
 //    public Map<String, Object> getProperties(NScopeType scope) {
 //        LinkedHashMap<String, Object> a = new LinkedHashMap<>();
 //        for (String s : properties.keySet()) {
-//            NPropertiesHolder.NScopedValue v = properties.getScopedValue(s);
+//            NPropertiesHolder.NScopedPropertyValue v = properties.getScopedValue(s);
 //            if (v.getScope()==scope) {
 //                a.put(s, v.getValue());
 //            }
