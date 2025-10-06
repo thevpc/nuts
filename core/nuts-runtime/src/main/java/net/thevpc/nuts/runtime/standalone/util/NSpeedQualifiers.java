@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.NSpeedQualifier;
+import net.thevpc.nuts.core.NSpeedQualifier;
 
 public class NSpeedQualifiers {
     public static NSpeedQualifier avg(NSpeedQualifier... all) {
