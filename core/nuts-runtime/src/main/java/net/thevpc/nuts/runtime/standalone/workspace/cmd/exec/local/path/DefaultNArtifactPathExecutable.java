@@ -5,8 +5,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.path;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.command.NExecutableType;
+import net.thevpc.nuts.command.NExecutionType;
+import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
