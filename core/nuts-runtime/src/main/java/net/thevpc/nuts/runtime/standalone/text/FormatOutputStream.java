@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NUnsupportedEnumException;
+import net.thevpc.nuts.util.NUnsupportedEnumException;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOpUtils;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
