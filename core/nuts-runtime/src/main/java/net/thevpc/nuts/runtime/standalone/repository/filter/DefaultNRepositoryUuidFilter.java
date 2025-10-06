@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NStringUtils;
 
