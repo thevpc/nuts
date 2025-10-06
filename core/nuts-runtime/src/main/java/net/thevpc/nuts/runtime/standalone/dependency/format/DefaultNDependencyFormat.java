@@ -2,11 +2,14 @@ package net.thevpc.nuts.runtime.standalone.dependency.format;
 
 import java.util.*;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NIdBuilder;
+import net.thevpc.nuts.artifact.NIdFormat;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NDependencyFormat;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.text.NDependencyFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NComponentScope;
