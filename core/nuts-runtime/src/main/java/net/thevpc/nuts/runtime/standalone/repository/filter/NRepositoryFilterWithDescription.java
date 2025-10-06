@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
-import net.thevpc.nuts.NRepositoryFilter;
+import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFilter;
