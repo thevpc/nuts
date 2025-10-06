@@ -26,8 +26,8 @@
 */
 package net.thevpc.nuts.runtime.standalone.extension;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NWorkspaceExtension;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NWorkspaceExtension;
 import net.thevpc.nuts.util.NListValueMap;
 import net.thevpc.nuts.spi.NExtensionLifeCycle;
 
