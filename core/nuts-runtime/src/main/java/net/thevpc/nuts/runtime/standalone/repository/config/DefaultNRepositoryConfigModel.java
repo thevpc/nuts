@@ -1,10 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.repository.config;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.*;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 
