@@ -2,13 +2,13 @@ package net.thevpc.nuts.runtime.standalone.format.props;
 
 import java.util.*;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.format.NPropertiesFormat;
+import net.thevpc.nuts.text.NPositionType;
+import net.thevpc.nuts.text.NPropertiesFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.ObjectOutputFormatWriterHelper;
