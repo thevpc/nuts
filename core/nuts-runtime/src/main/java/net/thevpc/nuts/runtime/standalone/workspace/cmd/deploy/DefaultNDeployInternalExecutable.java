@@ -5,7 +5,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.command.NDeployCmd;
+import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
