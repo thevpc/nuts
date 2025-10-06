@@ -25,9 +25,9 @@
  */
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.NArtifactCall;
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.reserved.NReservedLangUtils;
+import net.thevpc.nuts.artifact.NArtifactCall;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
 
