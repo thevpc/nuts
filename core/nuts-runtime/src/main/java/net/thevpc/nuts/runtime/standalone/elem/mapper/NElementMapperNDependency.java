@@ -1,12 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NDependencyFormat;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NDependencyBuilder;
+import net.thevpc.nuts.text.NDependencyFormat;
 import net.thevpc.nuts.runtime.standalone.DefaultNDependencyBuilder;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.format.NFormats;
+import net.thevpc.nuts.text.NFormats;
 import net.thevpc.nuts.text.NText;
 
 import java.lang.reflect.Type;
