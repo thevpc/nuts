@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
-import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NCollectionDiff;
