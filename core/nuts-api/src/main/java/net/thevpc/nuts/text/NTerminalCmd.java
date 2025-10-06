@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.reserved.NReservedLangUtils;
+import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.util.NLiteral;
 
 import java.util.Arrays;
