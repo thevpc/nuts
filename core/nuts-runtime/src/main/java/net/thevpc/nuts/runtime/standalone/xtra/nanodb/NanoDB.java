@@ -1,15 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.runtime.standalone.xtra.nanodb.file.NanoDBDefaultIndex;
-import net.thevpc.nuts.runtime.standalone.xtra.nanodb.file.NanoDBTableStoreFile;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
-
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 public interface NanoDB extends AutoCloseable {
     public void flush() ;
