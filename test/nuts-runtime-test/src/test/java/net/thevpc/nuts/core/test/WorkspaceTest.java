@@ -5,24 +5,29 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.command.NInfoCmd;
+import net.thevpc.nuts.command.NSearchCmd;
 import net.thevpc.nuts.concurrent.NLockBuilder;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.expr.NGlob;
-import net.thevpc.nuts.format.NCmdLineFormat;
+import net.thevpc.nuts.platform.NHomeLocation;
+import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.expr.NExprs;
-import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.NDependencySolver;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
