@@ -27,8 +27,13 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDescriptorStyle;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.boot.reserved.util.NBootJsonParser;
-import net.thevpc.nuts.NBootOptionsBuilder;
+import net.thevpc.nuts.core.NBootOptionsBuilder;
+import net.thevpc.nuts.command.NFetchStrategy;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
