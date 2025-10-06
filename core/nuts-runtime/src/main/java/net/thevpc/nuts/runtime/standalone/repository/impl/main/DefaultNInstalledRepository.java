@@ -24,16 +24,22 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NBootOptions;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NBootOptions;
+import net.thevpc.nuts.core.NConfirmationMode;
+import net.thevpc.nuts.core.NConstants;
 
 
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.*;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositorySecurityManager;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
+import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
