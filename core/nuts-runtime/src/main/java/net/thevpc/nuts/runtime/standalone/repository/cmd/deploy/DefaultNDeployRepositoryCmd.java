@@ -27,14 +27,17 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd.deploy;
 
 import java.util.logging.Level;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.spi.NDeployRepositoryCmd;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
