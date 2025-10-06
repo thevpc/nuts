@@ -1,6 +1,6 @@
 package net.thevpc.nuts.lib.slf4j;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.log.NLogFactorySPI;
 import net.thevpc.nuts.log.NLogSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
