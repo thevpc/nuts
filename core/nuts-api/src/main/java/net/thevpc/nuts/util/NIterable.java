@@ -27,8 +27,8 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
-import net.thevpc.nuts.reserved.util.NIterableWithDescription;
+import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.util.NIterableWithDescription;
 
 import java.util.function.Supplier;
 
