@@ -24,12 +24,17 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 
 
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.*;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.io.NErr;
+import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.ValueSupplier;
@@ -38,7 +43,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.*;
