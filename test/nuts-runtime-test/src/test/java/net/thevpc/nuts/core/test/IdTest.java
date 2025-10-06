@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NIdBuilder;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NIdBuilder;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
