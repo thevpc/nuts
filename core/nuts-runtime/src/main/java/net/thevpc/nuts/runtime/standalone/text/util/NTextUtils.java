@@ -25,9 +25,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.util;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.format.NFormattable;
+import net.thevpc.nuts.text.NFormattable;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.*;
