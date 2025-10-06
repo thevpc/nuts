@@ -8,10 +8,10 @@ package net.thevpc.nuts.runtime.standalone.format.tree;
 import java.util.AbstractMap;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NContentType;
-import net.thevpc.nuts.format.NTreeFormat;
-import net.thevpc.nuts.format.NTreeNode;
-import net.thevpc.nuts.format.NTreeNodeFormat;
+import net.thevpc.nuts.text.NContentType;
+import net.thevpc.nuts.text.NTreeFormat;
+import net.thevpc.nuts.text.NTreeNode;
+import net.thevpc.nuts.text.NTreeNodeFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
