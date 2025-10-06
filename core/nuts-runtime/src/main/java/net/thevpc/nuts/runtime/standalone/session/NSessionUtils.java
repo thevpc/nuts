@@ -1,13 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.session;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NSessionAware;
-import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
-
-import java.util.Objects;
+import net.thevpc.nuts.util.NUnsupportedArgumentException;
 
 public class NSessionUtils {
     public static boolean setSession(Object o, NSession session) {
