@@ -24,14 +24,18 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NIndexStore;
 
-import net.thevpc.nuts.NIndexStore;
-
-import net.thevpc.nuts.NSpeedQualifier;
+import net.thevpc.nuts.core.NSpeedQualifier;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.DefaultNDeployRepositoryCmd;
