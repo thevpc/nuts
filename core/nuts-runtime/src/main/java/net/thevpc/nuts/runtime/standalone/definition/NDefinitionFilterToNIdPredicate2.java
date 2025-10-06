@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.definition;
 
-import net.thevpc.nuts.NDefinitionFilter;
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.spi.base.AbstractNPredicate;
 
 public class NDefinitionFilterToNIdPredicate2 extends AbstractNPredicate<NId> {
