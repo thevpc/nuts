@@ -19,19 +19,19 @@ import java.util.function.Supplier;
  */
 public class NPropertiesHolder {
 
-    private Map<String, NScopedValue> properties = new LinkedHashMap<>();
+    private Map<String, NScopedPropertyValue> properties = new LinkedHashMap<>();
 
 
-    public static class NScopedValue {
+    public static class NScopedPropertyValue {
         private NScopeType scope;
         private Object value;
 
-        public NScopedValue(NScopeType scope, Object value) {
+        public NScopedPropertyValue(NScopeType scope, Object value) {
             this.scope = scope;
             this.value = value;
         }
 
-        public NScopedValue(NScopedValue other) {
+        public NScopedPropertyValue(NScopedPropertyValue other) {
             this.scope = other.scope;
             this.value = other.value;
         }
@@ -54,15 +54,15 @@ public class NPropertiesHolder {
         NPropertiesHolder h = new NPropertiesHolder();
         synchronized (this) {
             h.properties = new LinkedHashMap<>();
-            for (Map.Entry<String, NScopedValue> e : properties.entrySet()) {
-                h.properties.put(e.getKey(), new NScopedValue(e.getValue()));
+            for (Map.Entry<String, NScopedPropertyValue> e : properties.entrySet()) {
+                h.properties.put(e.getKey(), new NScopedPropertyValue(e.getValue()));
             }
         }
         return h;
     }
     public Map<String, Object> toMap() {
         Map<String, Object> lhm=new LinkedHashMap<>();
-        for (Map.Entry<String, NScopedValue> e : properties.entrySet()) {
+        for (Map.Entry<String, NScopedPropertyValue> e : properties.entrySet()) {
             lhm.put(e.getKey(), e.getValue().value);
         }
         return lhm;
@@ -80,23 +80,23 @@ public class NPropertiesHolder {
         synchronized (this) {
             this.properties.clear();
             for (Map.Entry<String, Object> e : properties.entrySet()) {
-                this.properties.put(e.getKey(), new NScopedValue(scope,e.getValue()));
+                this.properties.put(e.getKey(), new NScopedPropertyValue(scope,e.getValue()));
             }
         }
     }
 
     public Object getProperty(String key) {
-        NScopedValue a = properties.get(key);
+        NScopedPropertyValue a = properties.get(key);
         return a == null ? null : a.value;
     }
 
-    public NScopedValue getScopedValue(String key) {
-        NScopedValue a = properties.get(key);
+    public NScopedPropertyValue getScopedValue(String key) {
+        NScopedPropertyValue a = properties.get(key);
         return a;
     }
 
     public <T> NOptional<T> getOptional(String key) {
-        NScopedValue a = properties.get(key);
+        NScopedPropertyValue a = properties.get(key);
         if (a != null) {
             return NOptional.of((T) a.value);
         }
@@ -104,7 +104,7 @@ public class NPropertiesHolder {
     }
 
     public <T> T getOrComputeProperty(String key, Supplier<T> supplier, NScopeType scope) {
-        NScopedValue v = properties.get(key);
+        NScopedPropertyValue v = properties.get(key);
         if (v != null) {
             return (T) v.value;
         }
@@ -114,7 +114,7 @@ public class NPropertiesHolder {
                 return (T) v.value;
             }
             T z = supplier.get();
-            properties.put(key, new NScopedValue(scope,z));
+            properties.put(key, new NScopedPropertyValue(scope,z));
             return z;
         }
     }
@@ -124,15 +124,15 @@ public class NPropertiesHolder {
             if (properties == null) {
                 if (value != null) {
                     properties = new LinkedHashMap<>();
-                    NScopedValue o = properties.put(key, new NScopedValue(scope, value));
+                    NScopedPropertyValue o = properties.put(key, new NScopedPropertyValue(scope, value));
                     return o==null?null:o.value;
                 }
             } else {
                 if (value != null) {
-                    NScopedValue o = properties.put(key, new NScopedValue(scope, value));
+                    NScopedPropertyValue o = properties.put(key, new NScopedPropertyValue(scope, value));
                     return o==null?null:o.value;
                 } else {
-                    NScopedValue o = properties.remove(key);
+                    NScopedPropertyValue o = properties.remove(key);
                     return o==null?null:o.value;
                 }
             }
