@@ -26,11 +26,10 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.concurrent.NCallableSupport;
 import net.thevpc.nuts.io.NPath;
 
 import java.io.InputStream;
-import java.util.List;
 
 /**
  * implementations of this interface provide path/content content charset
