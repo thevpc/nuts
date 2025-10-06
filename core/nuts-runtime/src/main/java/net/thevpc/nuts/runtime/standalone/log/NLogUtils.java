@@ -1,7 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NFetchMode;
+import net.thevpc.nuts.command.NFetchStrategy;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogRecord;
 import net.thevpc.nuts.log.NMsgIntent;
