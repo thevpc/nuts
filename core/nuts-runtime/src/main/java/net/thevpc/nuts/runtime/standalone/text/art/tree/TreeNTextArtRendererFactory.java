@@ -1,10 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.text.art.tree;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.text.art.NTextArtImpl;
-import net.thevpc.nuts.runtime.standalone.text.art.figlet.FigletNTextArtTextRenderer;
 import net.thevpc.nuts.runtime.standalone.text.art.img.PixelNTextArtImageRenderer;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextArtImageRenderer;
