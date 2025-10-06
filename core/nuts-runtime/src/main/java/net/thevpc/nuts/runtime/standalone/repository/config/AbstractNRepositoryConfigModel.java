@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.config;
 
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
 
