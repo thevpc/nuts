@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.artifact.NId;
 
 import java.net.URL;
 import java.util.List;
