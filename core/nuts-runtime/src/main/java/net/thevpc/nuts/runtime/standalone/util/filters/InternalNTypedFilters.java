@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.util.NFilter;
-import net.thevpc.nuts.NTypedFilters;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.artifact.NTypedFilters;
+import net.thevpc.nuts.core.NWorkspace;
 
 import java.util.ArrayList;
 import java.util.List;
