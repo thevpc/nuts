@@ -24,7 +24,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.toolbox;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.spi.*;
 
 import java.util.Arrays;
