@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NRepository;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NPathFactorySPI;
@@ -45,32 +45,6 @@ public interface NIO extends NComponent {
     static NIO of() {
         return NExtensions.of(NIO.class);
     }
-//    static NPrintStream out(){return NSession.get().out();}
-//
-//    static InputStream in(){return NSession.get().in();}
-//
-//    /**
-//     * current error stream
-//     *
-//     * @return current error stream
-//     */
-//    static NPrintStream err(){return NSession.get().err();}
-//
-//    static NPrintStream println(NMsg b){
-//        return out().println(b);
-//    }
-//
-//    static NPrintStream println(NText b){
-//        return out().println(b);
-//    }
-//
-//    static NPrintStream println(String b){
-//        return out().println(b);
-//    }
-//
-//    static NPrintStream println(Object b){
-//        return out().println(b);
-//    }
 
     static InputStream ofNullRawInputStream(){
         return NullInputStream.INSTANCE;
