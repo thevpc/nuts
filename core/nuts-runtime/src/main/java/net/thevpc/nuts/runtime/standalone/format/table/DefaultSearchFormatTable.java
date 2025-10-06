@@ -7,13 +7,11 @@ package net.thevpc.nuts.runtime.standalone.format.table;
 
 import java.util.Arrays;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.NShellFamily;
-import net.thevpc.nuts.format.NContentType;
-import net.thevpc.nuts.format.NMutableTableModel;
-import net.thevpc.nuts.format.NTableFormat;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.text.NContentType;
+import net.thevpc.nuts.text.NMutableTableModel;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
