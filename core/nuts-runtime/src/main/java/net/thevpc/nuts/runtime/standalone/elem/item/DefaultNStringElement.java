@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
-import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NElementUtils;
+import net.thevpc.nuts.elem.NElementUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
