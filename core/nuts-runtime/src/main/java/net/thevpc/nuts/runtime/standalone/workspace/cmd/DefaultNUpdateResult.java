@@ -26,9 +26,9 @@
 */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
-import net.thevpc.nuts.NDefinition;
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NUpdateResult;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NUpdateResult;
 
 import java.util.Collections;
 import java.util.List;
