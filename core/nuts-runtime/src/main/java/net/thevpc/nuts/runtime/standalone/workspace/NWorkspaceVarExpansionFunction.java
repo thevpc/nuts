@@ -1,11 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 
 
-
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NInfoCmd;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
