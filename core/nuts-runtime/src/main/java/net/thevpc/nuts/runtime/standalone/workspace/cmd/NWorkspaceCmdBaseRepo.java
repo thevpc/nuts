@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
-import net.thevpc.nuts.NRepository;
-import net.thevpc.nuts.NWorkspaceCmd;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NWorkspaceCmd;
 
 public abstract class NWorkspaceCmdBaseRepo<T extends NWorkspaceCmd> extends NWorkspaceCmdBase<T> {
     public NWorkspaceCmdBaseRepo(String commandName) {
