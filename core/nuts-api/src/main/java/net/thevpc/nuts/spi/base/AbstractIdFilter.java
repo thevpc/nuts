@@ -25,10 +25,10 @@
 package net.thevpc.nuts.spi.base;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.reserved.util.NIdFilterWithDescriptor;
+import net.thevpc.nuts.internal.util.NIdFilterWithDescriptor;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
-import net.thevpc.nuts.NIdFilter;
+import net.thevpc.nuts.artifact.NIdFilter;
 import net.thevpc.nuts.util.NSimplifiable;
 
 import java.util.function.Supplier;
