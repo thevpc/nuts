@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.reflect.ReflectUtils;
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NUnsupportedEnumException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
