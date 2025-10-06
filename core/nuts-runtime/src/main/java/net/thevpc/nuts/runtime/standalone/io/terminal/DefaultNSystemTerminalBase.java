@@ -1,21 +1,21 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 
-import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.core.NBootOptions;
 
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
-import net.thevpc.nuts.util.NCachedSupplier;
+import net.thevpc.nuts.concurrent.NCachedSupplier;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
-import net.thevpc.nuts.util.NAnsiTermHelper;
+import net.thevpc.nuts.io.NAnsiTermHelper;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
