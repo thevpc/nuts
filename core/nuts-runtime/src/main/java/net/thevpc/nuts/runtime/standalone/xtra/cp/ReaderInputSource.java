@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.cp;
 
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NContentMetadata;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractNInputSource;
