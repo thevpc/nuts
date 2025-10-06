@@ -5,10 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
-import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
