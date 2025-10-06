@@ -5,13 +5,18 @@
  */
 package net.thevpc.nuts.runtime.standalone.extension;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NIdType;
 import net.thevpc.nuts.boot.NBootWorkspaceFactory;
-import net.thevpc.nuts.NBootOptions;
-import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.core.*;
 
 
+import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NSearchCmd;
 import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.ext.NExtensionAlreadyRegisteredException;
@@ -35,7 +40,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigBoot;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.web.NWebCli;
+import net.thevpc.nuts.net.NWebCli;
 
 import java.io.File;
 import java.io.IOException;
