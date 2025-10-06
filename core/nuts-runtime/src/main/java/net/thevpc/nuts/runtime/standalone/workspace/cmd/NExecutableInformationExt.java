@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
-import net.thevpc.nuts.NExecutableInformation;
+import net.thevpc.nuts.command.NExecutableInformation;
 
 /**
  * @author thevpc
