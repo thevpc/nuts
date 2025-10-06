@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
-import net.thevpc.nuts.NScopedValue;
+import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.concurrent.NCallable;
 
 import java.time.Duration;
 import java.util.function.IntFunction;
