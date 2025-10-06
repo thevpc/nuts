@@ -28,11 +28,17 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.*;
 
-
-import net.thevpc.nuts.NStoreType;
-import net.thevpc.nuts.NUserConfig;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.*;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NWorkspaceEvent;
+import net.thevpc.nuts.core.NWorkspaceListener;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryEvent;
+import net.thevpc.nuts.core.NRepositoryListener;
+import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
@@ -44,6 +50,7 @@ import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NUnsupportedEnumException;
 
 /**
  *
