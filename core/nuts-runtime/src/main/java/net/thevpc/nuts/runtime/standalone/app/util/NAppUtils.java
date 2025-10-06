@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.app.util;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.core.NSession;
 
 public class NAppUtils {
     public static boolean processHelpOptions(String[] args) {
