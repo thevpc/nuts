@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.NExceptions;
+import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.Arrays;
