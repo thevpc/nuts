@@ -27,7 +27,6 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
-import net.thevpc.nuts.NSession;
 
 /**
  * Command for repository maintenance and statistics building
