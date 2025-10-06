@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.shell;
 
-import net.thevpc.nuts.NOsFamily;
-import net.thevpc.nuts.NShellFamily;
+import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
 
 public interface NShellHelper {
