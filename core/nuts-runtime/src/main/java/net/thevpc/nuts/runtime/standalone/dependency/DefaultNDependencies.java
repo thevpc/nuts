@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.dependency;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NIterator;
