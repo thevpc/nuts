@@ -3,10 +3,9 @@ package net.thevpc.nuts.ext.ssh;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NConnexionString;
-import net.thevpc.nuts.util.NConnexionStringBuilder;
+import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.util.NUnused;
 
 import java.io.*;
