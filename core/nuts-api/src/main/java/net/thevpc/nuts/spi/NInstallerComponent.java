@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NExecutionContext;
+import net.thevpc.nuts.command.NExecutionContext;
 
 /**
  * Component responsible of installing other artifacts.
