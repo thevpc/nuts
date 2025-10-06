@@ -1,18 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 
-import net.thevpc.nuts.NException;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NException;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NElementWriter;
-import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.util.NIllegalArgumentException;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.UncheckedIOException;
 import java.util.Locale;
 
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.web.NWebCli;
-import net.thevpc.nuts.web.NWebRequest;
+import net.thevpc.nuts.net.NWebCli;
+import net.thevpc.nuts.net.NWebRequest;
 
 public class SimpleRecommendationConnector extends AbstractRecommendationConnector {
     public SimpleRecommendationConnector() {
