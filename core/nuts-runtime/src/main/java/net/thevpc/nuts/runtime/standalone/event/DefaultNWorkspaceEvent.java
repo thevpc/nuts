@@ -26,10 +26,10 @@
 */
 package net.thevpc.nuts.runtime.standalone.event;
 
-import net.thevpc.nuts.NRepository;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.NWorkspaceEvent;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NWorkspaceEvent;
 
 /**
  *
