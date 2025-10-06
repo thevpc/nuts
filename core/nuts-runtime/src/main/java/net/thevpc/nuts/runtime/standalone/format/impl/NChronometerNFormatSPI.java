@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.format.impl;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NFormats;
+import net.thevpc.nuts.text.NFormats;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.text.NTextStyle;
