@@ -1,8 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NExecCmd;
 import net.thevpc.nuts.concurrent.NConcurrent;
+import net.thevpc.nuts.core.NClassLoaderNode;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NPlatformFamily;
+import net.thevpc.nuts.platform.NPlatformHome;
+import net.thevpc.nuts.platform.NPlatformLocation;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
