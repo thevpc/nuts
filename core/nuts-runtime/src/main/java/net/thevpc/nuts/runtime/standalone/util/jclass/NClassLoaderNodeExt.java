@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
-import net.thevpc.nuts.NClassLoaderNode;
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.core.NClassLoaderNode;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.io.NPath;
 
 import java.util.ArrayList;
