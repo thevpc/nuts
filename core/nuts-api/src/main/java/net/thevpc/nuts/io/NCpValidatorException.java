@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * Exception thrown when copy validation fails
