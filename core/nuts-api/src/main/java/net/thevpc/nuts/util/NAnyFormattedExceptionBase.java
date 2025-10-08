@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.core.NAnyExceptionBase;
+import net.thevpc.nuts.boot.core.NAnyExceptionBase;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * Base Nuts Exception Interface. Parent of all Nuts defined Exceptions.
