@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
@@ -303,24 +303,24 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new GithubfsPath(path));
+                return NScorableCallable.of(DEFAULT_SCORE, () -> new GithubfsPath(path));
             }
             return null;
         }
 
         @Override
-        public int getSupportLevel(NSupportLevelContext context) {
-            String path= context.getConstraints();
+        public int getScore(NScorableContext context) {
+            String path= context.getCriteria();
             try {
                 if (path.startsWith(PREFIX)) {
-                    return NConstants.Support.DEFAULT_SUPPORT;
+                    return DEFAULT_SCORE;
                 }
             } catch (Exception ex) {
                 //ignore
             }
-            return NConstants.Support.NO_SUPPORT;
+            return UNSUPPORTED_SCORE;
         }
     }
 
