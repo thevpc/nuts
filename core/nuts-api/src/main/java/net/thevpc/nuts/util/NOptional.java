@@ -6,6 +6,7 @@ import net.thevpc.nuts.internal.optional.NReservedOptionalEmpty;
 import net.thevpc.nuts.internal.optional.NReservedOptionalError;
 import net.thevpc.nuts.internal.optional.NReservedOptionalValidCallable;
 import net.thevpc.nuts.internal.optional.NReservedOptionalValidValue;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.Collection;
 import java.util.Optional;
