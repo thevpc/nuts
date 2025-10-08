@@ -307,11 +307,11 @@
   "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
 },
 {
-  "name":"net.thevpc.nuts.nswing.AnsiTermPane",
+  "name":"net.thevpc.nuts.swing.AnsiTermPane",
   "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
 },
 {
-  "name":"net.thevpc.nuts.nswing.WizardPageBase",
+  "name":"net.thevpc.nuts.swing.WizardPageBase",
   "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
 },
 {
