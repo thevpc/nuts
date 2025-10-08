@@ -27,7 +27,6 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
