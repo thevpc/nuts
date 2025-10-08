@@ -11,10 +11,9 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.time.NProgressEvent;
 import net.thevpc.nuts.time.NProgressListener;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -39,6 +38,7 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
     private long startTime;
     private long lastTime;
     private boolean completed = false;
+    private boolean closed = false;
 
     //
     private boolean interrupted;
@@ -191,6 +191,10 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
 
     @Override
     public void close() {
+        if(closed) {
+            return;
+        }
+        this.closed=true;
         if(monitor!=null) {
             onComplete(null);
         }
