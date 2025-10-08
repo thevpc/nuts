@@ -8,7 +8,7 @@ import net.thevpc.nuts.artifact.NDefinitionFilters;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NIdFilters;
 import net.thevpc.nuts.boot.NBootArguments;
-import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
+import net.thevpc.nuts.boot.internal.cmdline.NBootCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.concurrent.NConcurrent;
 
