@@ -33,6 +33,7 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNFetchCont
 import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNRepositoryUndeployCmd;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
@@ -378,7 +379,7 @@ public class NRepositoryFolderHelper {
                 try (final CharacterizedExecFile c = DefaultNExecCmd.characterizeForExec(inputSource, null)) {
 //                    NutsUtils.requireNonNull(c.getDescriptor(),session,s->NMsg.ofC("invalid deployment; missing descriptor for %s", deployment.getContent()));
                     if (c.getDescriptor() == null) {
-                        throw new NNotFoundException(null,
+                        throw new NArtifactNotFoundException(null,
                                 NMsg.ofC("unable to resolve a valid descriptor for %s", deployment.getContent()), null);
                     }
                     descriptor = c.getDescriptor();
