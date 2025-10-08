@@ -25,8 +25,8 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.boot.reserved.util.NBootPlatformHome;
-import net.thevpc.nuts.boot.reserved.util.NBootUtils;
+import net.thevpc.nuts.boot.internal.util.NBootPlatformHome;
+import net.thevpc.nuts.boot.internal.util.NBootUtils;
 
 import java.io.Serializable;
 import java.util.*;
