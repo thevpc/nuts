@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.io.NContentMetadata;
 import net.thevpc.nuts.io.NInputSourceBuilder;
 import net.thevpc.nuts.io.NInterruptible;
