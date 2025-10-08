@@ -56,22 +56,22 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
-        NDescriptorContentParserContext cons = criteria.getConstraints(NDescriptorContentParserContext.class);
+    public int getScore(NScorableContext criteria) {
+        NDescriptorContentParserContext cons = criteria.getCriteria(NDescriptorContentParserContext.class);
         if (cons != null) {
             String e = NStringUtils.trim(cons.getFileExtension());
             switch (e) {
                 case "jar":
                 case "war":
                 case "ear": {
-                    return NConstants.Support.DEFAULT_SUPPORT + 10;
+                    return DEFAULT_SCORE + 10;
                 }
                 case "zip": {
-                    return NConstants.Support.DEFAULT_SUPPORT + 5;
+                    return DEFAULT_SCORE + 5;
                 }
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
     @Override
