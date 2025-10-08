@@ -25,8 +25,8 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.boot.reserved.util.NBootConstants;
-import net.thevpc.nuts.boot.reserved.util.*;
+import net.thevpc.nuts.boot.internal.util.NBootConstants;
+import net.thevpc.nuts.boot.internal.util.*;
 
 import java.util.*;
 import java.util.regex.Pattern;
