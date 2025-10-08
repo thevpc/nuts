@@ -5,14 +5,13 @@ import net.thevpc.nuts.log.NLogContext;
 import net.thevpc.nuts.log.NLogSPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NMsgSupplier;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NMsgSupplier;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class NLogContextImpl implements NLogContext {
