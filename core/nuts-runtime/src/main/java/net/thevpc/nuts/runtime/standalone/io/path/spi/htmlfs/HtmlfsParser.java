@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
-import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 
 import java.util.List;
 
 public interface HtmlfsParser {
-    NCallableSupport<List<String>> parseHtmlTomcat(byte[] bytes);
+    NScorableCallable<List<String>> parseHtmlTomcat(byte[] bytes);
 }
