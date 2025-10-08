@@ -1,9 +1,9 @@
 package net.thevpc.nuts.installer.panels.test;
 
 import net.thevpc.nuts.installer.model.InstallData;
-import net.thevpc.nuts.nswing.WizardPageBase;
-import net.thevpc.nuts.nswing.UIHelper;
-import net.thevpc.nuts.nswing.AnsiTermPane;
+import net.thevpc.nuts.installer.util.swing.AnsiTermPane;
+import net.thevpc.nuts.installer.util.swing.UIHelper;
+import net.thevpc.nuts.installer.util.swing.WizardPageBase;
 
 import javax.swing.*;
 import java.awt.*;
