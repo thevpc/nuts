@@ -6,7 +6,7 @@ import net.thevpc.nuts.runtime.standalone.text.FormatOutputStreamSupport;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyled;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 public abstract class NPrintStreamRendered extends NPrintStreamBase {
     protected FormatOutputStreamSupport support;
