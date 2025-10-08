@@ -9,7 +9,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogRecord;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.HashMap;
