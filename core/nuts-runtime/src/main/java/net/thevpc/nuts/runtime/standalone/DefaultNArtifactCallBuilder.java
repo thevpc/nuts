@@ -27,11 +27,10 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.artifact.NArtifactCall;
 import net.thevpc.nuts.artifact.NArtifactCallBuilder;
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 
 import java.io.Serializable;
 import java.util.*;
@@ -171,7 +170,7 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 }
