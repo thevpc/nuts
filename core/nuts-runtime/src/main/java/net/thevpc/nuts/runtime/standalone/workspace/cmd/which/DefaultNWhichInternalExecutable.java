@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.which;
 
+import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NNotFoundException;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExecCmd;
@@ -24,7 +24,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -115,9 +115,9 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                             if (p.getId() == null) {
                                 NId nid = NId.get(arg).get();
                                 if (nid != null) {
-                                    throw new NNotFoundException(nid);
+                                    throw new NArtifactNotFoundException(nid);
                                 } else {
-                                    throw new NNotFoundException(null, NMsg.ofC("artifact not found: %s%s", (arg == null ? "<null>" : arg)));
+                                    throw new NArtifactNotFoundException(null, NMsg.ofC("artifact not found: %s%s", (arg == null ? "<null>" : arg)));
                                 }
                             }
                             if (NOut.isPlain()) {
@@ -177,7 +177,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
 //                if (showDesc) {
 //                    out.printf("\t %s%n", arg/*, p.getDescription()*/);
 //                }
-            } catch (NNotFoundException ex) {
+            } catch (NArtifactNotFoundException ex) {
                 if (NOut.isPlain()) {
                     out.println(NMsg.ofC("%s : %s", factory.ofStyled(arg, NTextStyle.primary4()), factory.ofStyled("not found", NTextStyle.error())));
                 } else {
