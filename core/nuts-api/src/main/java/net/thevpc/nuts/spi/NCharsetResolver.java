@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 import net.thevpc.nuts.io.NPath;
 
 import java.io.InputStream;
@@ -42,7 +42,7 @@ public interface NCharsetResolver extends NComponent {
      * @param path path to probe
      * @return best probe of {@code NutsSupported.invalid()} (or null)
      */
-    NCallableSupport<String> probeCharset(NPath path);
+    NScorableCallable<String> probeCharset(NPath path);
 
     /**
      * probe from content
@@ -50,7 +50,7 @@ public interface NCharsetResolver extends NComponent {
      * @param bytes content
      * @return best probe of {@code NutsSupported.invalid()} (or null)
      */
-    NCallableSupport<String> probeCharset(byte[] bytes);
-    NCallableSupport<String> probeCharset(InputStream stream);
+    NScorableCallable<String> probeCharset(byte[] bytes);
+    NScorableCallable<String> probeCharset(InputStream stream);
 
 }
