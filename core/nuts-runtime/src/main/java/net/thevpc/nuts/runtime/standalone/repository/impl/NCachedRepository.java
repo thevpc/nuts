@@ -24,11 +24,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
+import net.thevpc.nuts.artifact.NArtifactNotFoundException;
+import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NNotFoundException;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.command.NFetchModeNotSupportedException;
 import net.thevpc.nuts.platform.NStoreType;
@@ -36,6 +37,7 @@ import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.io.NCp;
@@ -150,7 +152,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                     }
                     return NOptional.of(success);
                 } else {
-                    return NOptional.ofError(() -> NMsg.ofC(NI18n.of("nuts descriptor not found %s"), id), new NNotFoundException(id));
+                    return NOptional.ofError(() -> NMsg.ofC(NI18n.of("nuts descriptor not found %s"), id), new NArtifactNotFoundException(id));
                 }
             } catch (RuntimeException ex) {
                 return NOptional.ofError(() -> NMsg.ofC(NI18n.of("nuts descriptor not found %s"), id), ex);
@@ -220,7 +222,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
 //                } catch (Exception ex) {
 //                    //ignore....
 //                }
-            } catch (NNotFoundException ex) {
+            } catch (NArtifactNotFoundException ex) {
 //                errors.append(ex).append(" \n");
             }
         }
@@ -234,7 +236,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                                 .named(NElement.ofUplet("searchVersionInCore", NElement.ofString(getName())))
                                 .build());
             }
-        } catch (NNotFoundException ex) {
+        } catch (NArtifactNotFoundException ex) {
             //ignore error
         } catch (Exception ex) {
             _LOG()
@@ -286,12 +288,12 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 if (c2 != null) {
                     NCp.of().from(c2).to(cachePath).run();
                     return NOptional.of(cachePath.setUserCache(true).setUserTemporary(false));
-                } else if (impl2Ex instanceof NNotFoundException) {
+                } else if (impl2Ex instanceof NArtifactNotFoundException) {
                     return NOptional.ofNamedEmpty(id.toString());
                 } else if (impl2Ex != null) {
                     return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), impl2Ex);
                 } else {
-                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NNotFoundException(id));
+                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NArtifactNotFoundException(id));
                 }
             } else {
                 NPath c2 = null;
@@ -303,12 +305,12 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 }
                 if (c2 != null) {
                     return NOptional.of(c2);
-                } else if (impl2Ex instanceof NNotFoundException) {
+                } else if (impl2Ex instanceof NArtifactNotFoundException) {
                     return NOptional.ofNamedEmpty(id.toString());
                 } else if (impl2Ex != null) {
                     return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), impl2Ex);
                 } else {
-                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NNotFoundException(id));
+                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NArtifactNotFoundException(id));
                 }
             }
         };
@@ -334,18 +336,18 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             return c;
         }
         if (res.getError() != null) {
-            if (res.getError() instanceof NNotFoundException) {
+            if (res.getError() instanceof NArtifactNotFoundException) {
                 throw (RuntimeException) res.getError();
             }
-            throw new NNotFoundException(id, res.getError());
+            throw new NArtifactNotFoundException(id, res.getError());
         }
         if (mirrorsEx != null) {
-            if (mirrorsEx instanceof NNotFoundException) {
+            if (mirrorsEx instanceof NArtifactNotFoundException) {
                 throw mirrorsEx;
             }
-            throw new NNotFoundException(id, mirrorsEx);
+            throw new NArtifactNotFoundException(id, mirrorsEx);
         }
-        throw new NNotFoundException(id);
+        throw new NArtifactNotFoundException(id);
     }
 
     @Override
@@ -373,7 +375,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         NIterator<NId> p = null;
         try {
             p = searchCore(filter, basePaths.toArray(new NPath[0]), baseIds.toArray(new NId[0]), fetchMode);
-        } catch (NNotFoundException ex) {
+        } catch (NArtifactNotFoundException ex) {
             //ignore....
         } catch (Exception ex) {
             //ignore....
@@ -448,7 +450,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 if (bestId == null || (c1 != null && c1.getVersion().compareTo(bestId.getVersion()) > 0)) {
                     bestId = c1;
                 }
-            } catch (NNotFoundException | NFetchModeNotSupportedException ex) {
+            } catch (NArtifactNotFoundException | NFetchModeNotSupportedException ex) {
                 //ignore
             } catch (Exception ex) {
                 _LOG().log(NMsg.ofJ("search latest versions error : {0}", ex).asFinestFail(ex));
