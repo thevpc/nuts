@@ -1,7 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.xtra.ps;
 
-import net.thevpc.nuts.core.NConstants;
-
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.artifact.NVersionFilter;
 import net.thevpc.nuts.command.NExecCmd;
@@ -13,6 +11,7 @@ import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NPlatformFamily;
@@ -29,7 +28,7 @@ import net.thevpc.nuts.io.NPath;
 
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamEmpty;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamFromNIterator;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.*;
 
 public class DefaultNPs implements NPs {
@@ -42,8 +41,8 @@ public class DefaultNPs implements NPs {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     @Override
