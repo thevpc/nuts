@@ -30,7 +30,7 @@ import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NSessionAwareExceptionBase;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * Thrown by Nuts Workspace to indicate a security violation.
