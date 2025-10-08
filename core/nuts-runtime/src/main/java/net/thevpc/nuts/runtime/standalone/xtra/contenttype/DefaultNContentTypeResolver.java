@@ -26,10 +26,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.contenttype;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.command.NExecCmd;
-import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.io.NPathExtensionType;
@@ -39,9 +38,9 @@ import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NContentTypeResolver;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -61,7 +60,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
     public DefaultNContentTypeResolver() {
     }
 
-    public NCallableSupport<String> probeContentType(NPath path) {
+    public NScorableCallable<String> probeContentType(NPath path) {
         String contentType = null;
         if (path != null) {
             if (path.isRegularFile()) {
@@ -93,22 +92,22 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                 if (contentType == null || "text/plain".equals(contentType)) {
                     String e = NPath.of(Paths.get(name)).nameParts(NPathExtensionType.SHORT).getExtension();
                     if (e != null && e.equalsIgnoreCase("ntf")) {
-                        return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT + 10, "text/x-nuts-text-format");
+                        return NScorableCallable.of(DEFAULT_SCORE + 10, "text/x-nuts-text-format");
                     }
                 }
                 if (contentType == null || "text/plain".equals(contentType)) {
                     String e = NPath.of(Paths.get(name)).nameParts(NPathExtensionType.SHORT).getExtension();
                     if (e != null && e.equalsIgnoreCase("nuts")) {
-                        return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT + 10, "application/json");
+                        return NScorableCallable.of(DEFAULT_SCORE + 10, "application/json");
                     }
                 }
             }
             if (contentType != null) {
-                return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, contentType);
+                return NScorableCallable.of(DEFAULT_SCORE, contentType);
             }
         }
 
-        return NCallableSupport.ofInvalid(() -> NMsg.ofInvalidValue("content-type"));
+        return NScorableCallable.ofInvalid(() -> NMsg.ofInvalidValue("content-type"));
     }
 
     private String probeFile(Path file) {
@@ -221,7 +220,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
 
 
     @Override
-    public NCallableSupport<String> probeContentType(byte[] bytes) {
+    public NScorableCallable<String> probeContentType(byte[] bytes) {
         String contentType = null;
         if (bytes != null) {
             try {
@@ -231,9 +230,9 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             }
         }
         if (contentType != null) {
-            return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, contentType);
+            return NScorableCallable.of(DEFAULT_SCORE, contentType);
         }
-        return NCallableSupport.ofInvalid(() -> NMsg.ofInvalidValue("content-type"));
+        return NScorableCallable.ofInvalid(() -> NMsg.ofInvalidValue("content-type"));
     }
 
     @Override
@@ -249,8 +248,8 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     public DefaultNContentTypeResolverModel model() {
