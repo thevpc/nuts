@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
 import net.thevpc.nuts.runtime.standalone.dependency.solver.gradle.GradleNDependencySolver;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NDependencySolverFactory;
 
@@ -11,7 +11,7 @@ public class GradleNDependencySolverFactory implements NDependencySolverFactory 
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
+    public int getScore(NScorableContext context) {
         return 1;
     }
 
