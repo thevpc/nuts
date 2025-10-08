@@ -6,18 +6,18 @@ import java.util.Map;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
 import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.security.NSecurityException;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 public abstract class AbstractNAuthenticationAgent implements NAuthenticationAgent {
 
     private final String name;
-    private int supportLevel;
+    private int score;
 
-    public AbstractNAuthenticationAgent(String name, int supportLevel) {
+    public AbstractNAuthenticationAgent(String name, int score) {
         this.name = name;
-        this.supportLevel = supportLevel;
+        this.score = score;
     }
 
     @Override
@@ -32,8 +32,8 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext authenticationAgent) {
-        return supportLevel;
+    public int getScore(NScorableContext authenticationAgent) {
+        return score;
     }
 
     @Override
