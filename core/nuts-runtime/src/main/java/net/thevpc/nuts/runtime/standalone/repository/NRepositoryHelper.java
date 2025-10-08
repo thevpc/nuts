@@ -21,7 +21,7 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.util.NSpeedQualifiers;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class NRepositoryHelper {
