@@ -26,9 +26,9 @@
 package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
