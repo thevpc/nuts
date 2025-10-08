@@ -4,7 +4,7 @@ import net.thevpc.nuts.core.NSpeedQualifier;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NNotFoundException;
+import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
@@ -84,7 +84,7 @@ public class NRepositoryList extends NCachedRepository {
                 if (result != null) {
                     return result;
                 }
-            } catch (NNotFoundException e) {
+            } catch (NArtifactNotFoundException e) {
                 //ignore
             }
         }
@@ -122,7 +122,7 @@ public class NRepositoryList extends NCachedRepository {
                 if (result != null) {
                     return result;
                 }
-            } catch (NNotFoundException e) {
+            } catch (NArtifactNotFoundException e) {
                 //ignore
             }
         }
@@ -137,7 +137,7 @@ public class NRepositoryList extends NCachedRepository {
                 if (nId != null) {
                     return nId;
                 }
-            } catch (NNotFoundException e) {
+            } catch (NArtifactNotFoundException e) {
                 //ignore
             }
         }
