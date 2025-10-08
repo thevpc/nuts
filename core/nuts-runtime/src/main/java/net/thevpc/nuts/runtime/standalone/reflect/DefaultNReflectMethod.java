@@ -5,7 +5,7 @@ import net.thevpc.nuts.reflect.NReflectMethod;
 import net.thevpc.nuts.reflect.NReflectParameter;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.reflect.NSignature;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
