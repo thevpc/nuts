@@ -5,13 +5,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.table;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.text.NMutableTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.thevpc.nuts.text.NTableCell;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.text.NText;
 
 /**
@@ -217,7 +216,7 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 }
