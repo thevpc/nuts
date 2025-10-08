@@ -1,5 +1,7 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.text.NMsg;
+
 public class NDetachedAssertException extends IllegalArgumentException implements NDetachedFormattedExceptionBase {
     private NMsg formattedMessage;
 
