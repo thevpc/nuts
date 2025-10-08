@@ -30,7 +30,7 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.boot.NBootDescriptor;
 import net.thevpc.nuts.artifact.NIdLocation;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.util.*;
@@ -905,8 +905,8 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
         return developers;
     }
 
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     public boolean isNoContent() {
