@@ -9,7 +9,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NErr;
 import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.security.NSecurityException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 class WrapperNAuthenticationAgent {
