@@ -3,11 +3,12 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.cmdline.NCmdLineException;
 import net.thevpc.nuts.cmdline.NDetachedCmdLineException;
 import net.thevpc.nuts.concurrent.NInterruptedException;
-import net.thevpc.nuts.core.NExceptionWithExitCodeBase;
-import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.boot.core.NExceptionWithExitCodeBase;
+import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.internal.NReservedLangUtils;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
