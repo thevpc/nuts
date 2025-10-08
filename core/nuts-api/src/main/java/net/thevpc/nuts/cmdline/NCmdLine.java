@@ -27,7 +27,7 @@ import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Iterator;
