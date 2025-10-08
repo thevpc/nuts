@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * Exception Thrown when a locked object is invoked.
