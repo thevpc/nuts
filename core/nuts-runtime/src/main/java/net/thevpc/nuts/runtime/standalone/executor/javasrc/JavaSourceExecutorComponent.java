@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.executor.javasrc;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDefinitionBuilder;
 import net.thevpc.nuts.artifact.NId;
@@ -38,7 +37,7 @@ import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -132,17 +131,17 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
+    public int getScore(NScorableContext context) {
         if (ID == null) {
             ID = NId.get("net.thevpc.nuts.exec:exec-java-src").get();
         }
-        NDefinition def = context.getConstraints(NDefinition.class);
+        NDefinition def = context.getCriteria(NDefinition.class);
         if (def != null) {
             if ("java".equals(def.getDescriptor().getPackaging())) {
-                return NConstants.Support.DEFAULT_SUPPORT + 1;
+                return DEFAULT_SCORE + 1;
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
 }
