@@ -1,9 +1,10 @@
 package net.thevpc.nuts.platform;
 
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.internal.NApiUtilsRPI;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.io.File;
