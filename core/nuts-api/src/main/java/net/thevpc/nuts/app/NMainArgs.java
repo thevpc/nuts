@@ -1,6 +1,6 @@
 package net.thevpc.nuts.app;
 
-import net.thevpc.nuts.boot.reserved.cmdline.NBootCmdLine;
+import net.thevpc.nuts.boot.internal.cmdline.NBootCmdLine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
