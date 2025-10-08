@@ -1,7 +1,7 @@
 package net.thevpc.nuts.reflect;
 
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NOptionalMap;
 
