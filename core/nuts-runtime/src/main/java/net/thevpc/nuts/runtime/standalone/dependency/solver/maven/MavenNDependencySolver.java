@@ -9,7 +9,7 @@ import net.thevpc.nuts.text.NTreeNode;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NNoSuchElementException;
 
 import java.util.*;
@@ -164,7 +164,7 @@ public class MavenNDependencySolver implements NDependencySolver {
         try {
             def = search(dep)
                     .getResultDefinitions().findFirst().orNull();
-        } catch (NNotFoundException | NoSuchElementException | NNoSuchElementException ex) {
+        } catch (NArtifactNotFoundException | NoSuchElementException | NNoSuchElementException ex) {
             doLog("Unable to load dependency: " + dep);
         }
         return def;
