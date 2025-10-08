@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.rnsh;
 
-import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.net.*;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NMsgCode;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElementParser;
