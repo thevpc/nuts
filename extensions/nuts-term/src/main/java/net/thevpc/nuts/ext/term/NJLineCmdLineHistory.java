@@ -8,14 +8,13 @@ package net.thevpc.nuts.ext.term;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.cmdline.NCmdLineHistoryEntry;
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSystemTerminal;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import org.jline.reader.History;
 import org.jline.reader.History.Entry;
 import org.jline.reader.LineReader;
@@ -93,7 +92,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
+    public int getScore(NScorableContext context) {
         NSystemTerminal st = NIO.of().getSystemTerminal();
         boolean jline=false;
         NSystemTerminalBase b = st.getBase();
@@ -103,7 +102,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
             }
         }
         if(jline) {
-            return NConstants.Support.DEFAULT_SUPPORT + 10;
+            return DEFAULT_SCORE + 10;
         }else{
             return -1;
         }
