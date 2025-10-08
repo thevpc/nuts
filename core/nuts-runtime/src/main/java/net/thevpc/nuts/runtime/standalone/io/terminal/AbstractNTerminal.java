@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.io.NTerminal;
 
 public abstract class AbstractNTerminal implements NTerminal {
