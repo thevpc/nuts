@@ -27,7 +27,7 @@
 package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.internal.parser.NReservedVersionIntervalParser;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.Serializable;
