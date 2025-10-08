@@ -27,6 +27,7 @@ package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
+import net.thevpc.nuts.boot.core.NWorkspaceBase;
 import net.thevpc.nuts.command.NCommandConfig;
 import net.thevpc.nuts.command.NCommandFactoryConfig;
 import net.thevpc.nuts.command.NCustomCmd;
