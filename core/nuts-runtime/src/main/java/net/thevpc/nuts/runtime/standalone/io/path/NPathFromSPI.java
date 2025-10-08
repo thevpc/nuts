@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.NPathSPIHelper;
