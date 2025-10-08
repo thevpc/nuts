@@ -34,11 +34,8 @@ import net.thevpc.nuts.command.NFetchModeNotSupportedException;
 import net.thevpc.nuts.command.NInstallInformation;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.text.NDescriptorFormat;
-import net.thevpc.nuts.text.NPositionType;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.platform.NOsFamily;
 
@@ -504,7 +501,7 @@ public class CoreNUtils {
         if (ex instanceof NFetchModeNotSupportedException) {
             return true;
         }
-        if (ex instanceof NNotFoundException) {
+        if (ex instanceof NArtifactNotFoundException) {
             if (ex.getCause() != null) {
                 Throwable ex2 = ex.getCause();
                 return ex2 instanceof NFetchModeNotSupportedException;
