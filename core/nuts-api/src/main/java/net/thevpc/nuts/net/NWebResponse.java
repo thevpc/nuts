@@ -2,8 +2,8 @@ package net.thevpc.nuts.net;
 
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NInputSource;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NMsgCode;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NMsgCode;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
