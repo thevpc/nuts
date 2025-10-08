@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.elements;
 
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.runtime.standalone.format.tson.bundled.*;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 public abstract class AbstractTemporalTsonElement extends AbstractPrimitiveTsonElement {
     public AbstractTemporalTsonElement(TsonElementType type) {
