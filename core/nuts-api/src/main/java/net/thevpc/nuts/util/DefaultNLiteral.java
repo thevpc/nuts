@@ -6,6 +6,7 @@ import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
+import net.thevpc.nuts.text.NMsg;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
