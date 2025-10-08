@@ -22,7 +22,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutable
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmdExtensionContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.IOException;
 import java.util.List;
