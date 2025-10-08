@@ -17,7 +17,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.IOException;
 import java.nio.file.Files;
