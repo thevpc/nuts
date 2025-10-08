@@ -1,12 +1,12 @@
 package net.thevpc.nuts.time;
 
-import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.text.DecimalFormat;
