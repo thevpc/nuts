@@ -4,7 +4,7 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.format.xml.XmlUtils;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -24,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import java.util.logging.Level;
 
 public class MavenMetadataParser {
     private final NLog LOG;
