@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.glob;
 
-import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.expr.NGlob;
 
@@ -62,8 +61,8 @@ public class DefaultNGlob implements NGlob {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     public String escape(String s) {
