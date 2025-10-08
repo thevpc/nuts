@@ -11,7 +11,7 @@ import net.thevpc.nuts.spi.NDescriptorContentParserContext;
 
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.io.NIOUtils;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
