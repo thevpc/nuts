@@ -1,11 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.security.NSecurityException;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -61,8 +60,8 @@ public class PlainNAuthenticationAgent implements NAuthenticationAgent {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext authenticationAgent) {
-        return NConstants.Support.DEFAULT_SUPPORT - 1;
+    public int getScore(NScorableContext authenticationAgent) {
+        return DEFAULT_SCORE - 1;
     }
 
     private char[] extractId(char[] a) {
