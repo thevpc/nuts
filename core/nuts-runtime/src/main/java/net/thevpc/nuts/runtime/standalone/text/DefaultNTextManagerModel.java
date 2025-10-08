@@ -29,8 +29,9 @@ import net.thevpc.nuts.core.NBootOptions;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.text.NContentType;
-import net.thevpc.nuts.text.NFormats;
+import net.thevpc.nuts.spi.NDefaultScorableContext;
+import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
@@ -47,10 +48,6 @@ import net.thevpc.nuts.runtime.standalone.format.yaml.SimpleYaml;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NCodeHighlighter;
-import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
-import net.thevpc.nuts.text.NTextFormatTheme;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.platform.NOsFamily;
 
@@ -206,9 +203,7 @@ public class DefaultNTextManagerModel {
         }
         int best = -1;
         for (NCodeHighlighter hh : highlighters.values()) {
-            int lvl = hh.getSupportLevel(new NDefaultSupportLevelContext(
-                    lc
-            ));
+            int lvl = hh.getScore(NScorableContext.of(lc));
             if (lvl > 0 && best < lvl) {
                 best = lvl;
                 h = hh;
