@@ -15,7 +15,7 @@ import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.awt.*;
 import java.io.IOException;
