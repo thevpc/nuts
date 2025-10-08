@@ -30,7 +30,6 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NFormatSPI;
-import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Arrays;
