@@ -36,7 +36,7 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCmdBase;
 import net.thevpc.nuts.spi.NDeployRepositoryCmd;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.File;
 import java.io.InputStream;
