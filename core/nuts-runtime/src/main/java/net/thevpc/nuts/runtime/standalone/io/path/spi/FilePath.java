@@ -1,18 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.*;
 
@@ -814,7 +814,7 @@ public class FilePath implements NPathSPI {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             try {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
                     return null;
@@ -824,7 +824,7 @@ public class FilePath implements NPathSPI {
                     path = path.substring(1);
                 }
                 Path value = Paths.get(path);
-                return NCallableSupport.of(10, () -> new FilePath(value));
+                return NScorableCallable.of(10, () -> new FilePath(value));
             } catch (Exception ex) {
                 //ignore
             }
@@ -832,18 +832,18 @@ public class FilePath implements NPathSPI {
         }
 
         @Override
-        public int getSupportLevel(NSupportLevelContext context) {
-            String path = context.getConstraints();
+        public int getScore(NScorableContext context) {
+            String path = context.getCriteria();
             try {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
-                    return NConstants.Support.NO_SUPPORT;
+                    return UNSUPPORTED_SCORE;
                 }
                 Path value = Paths.get(path);
-                return NConstants.Support.DEFAULT_SUPPORT;
+                return DEFAULT_SCORE;
             } catch (Exception ex) {
                 //ignore
             }
-            return NConstants.Support.NO_SUPPORT;
+            return UNSUPPORTED_SCORE;
         }
 
     }
