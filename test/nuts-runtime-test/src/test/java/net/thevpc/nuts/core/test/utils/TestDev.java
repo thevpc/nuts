@@ -2,7 +2,7 @@ package net.thevpc.nuts.core.test.utils;
 
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
