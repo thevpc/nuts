@@ -117,7 +117,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext criteria) {
+        return DEFAULT_SCORE;
     }
 }
