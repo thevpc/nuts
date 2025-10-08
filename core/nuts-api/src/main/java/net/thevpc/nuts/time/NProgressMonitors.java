@@ -1,7 +1,7 @@
 package net.thevpc.nuts.time;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.util.NMsgTemplate;
+import net.thevpc.nuts.text.NMsgTemplate;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NOptional;
