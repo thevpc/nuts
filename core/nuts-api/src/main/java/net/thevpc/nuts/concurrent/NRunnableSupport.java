@@ -26,89 +26,37 @@
  */
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.spi.NScorable;
+import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.text.NMsg;
 
-import java.util.Collection;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
-public interface NRunnableSupport {
-    static NRunnableSupport resolve(Collection<NRunnableSupport> source, Supplier<NMsg> emptyMessage) {
-        if (source == null) {
-            return invalid(emptyMessage);
-        }
-        return resolve(source.stream(), emptyMessage);
+public interface NRunnableSupport extends NScorable {
+    static NRunnableSupport of(int score, Runnable supplier) {
+        return of(score, supplier, null);
     }
 
-    static NRunnableSupport resolve(Stream<NRunnableSupport> source, Supplier<NMsg> emptyMessage) {
-        if (source == null) {
-            return invalid(emptyMessage);
-        }
-        return resolveSupplier(source.map(x -> () -> x), emptyMessage);
-    }
-
-    static NRunnableSupport resolveSupplier(Collection<Supplier<NRunnableSupport>> source, Supplier<NMsg> emptyMessage) {
-        if (source == null) {
-            return invalid(emptyMessage);
-        }
-        return resolveSupplier(source.stream(), emptyMessage);
-    }
-
-    static NRunnableSupport resolveSupplier(Stream<Supplier<NRunnableSupport>> source, Supplier<NMsg> emptyMessage) {
-        Object[] track = new Object[2];
-        if (source != null) {
-            source.forEach(i -> {
-                NRunnableSupport s = i.get();
-                NAssert.requireNonNull(s, "NRunnableSupport");
-                int supportLevel = s.getSupportLevel();
-                boolean valid = supportLevel > 0;
-                if (valid) {
-                    if (track[0] == null) {
-                        track[0] = s;
-                        track[1] = supportLevel;
-                    } else {
-                        int oldSupportLevel = (Integer) track[1];
-                        if (supportLevel > oldSupportLevel) {
-                            track[0] = s;
-                            track[1] = supportLevel;
-                        }
-                    }
-                }
-            });
-        }
-        NRunnableSupport r = (NRunnableSupport) track[0];
-        if (r == null) {
-            return invalid(emptyMessage);
-        }
-        return (NRunnableSupport) r;
-    }
-
-    static NRunnableSupport of(int supportLevel, Runnable supplier) {
-        return of(supportLevel, supplier, null);
-    }
-
-    static NRunnableSupport of(int supportLevel, Runnable supplier, Supplier<NMsg> emptyMessage) {
-        return (supportLevel <= 0 || supplier == null) ? invalid(emptyMessage)
-                : new DefaultNRunnableSupport(supplier, supportLevel, emptyMessage)
+    static NRunnableSupport of(int score, Runnable supplier, Supplier<NMsg> emptyMessage) {
+        return (score <= 0 || supplier == null) ? ofInvalid(emptyMessage)
+                : new DefaultNRunnableSupport(supplier, score, emptyMessage)
                 ;
     }
 
     @SuppressWarnings("unchecked")
-    static NRunnableSupport invalid(Supplier<NMsg> emptyMessage) {
-        return new DefaultNRunnableSupport(null, NConstants.Support.NO_SUPPORT, emptyMessage);
+    static NRunnableSupport ofInvalid(Supplier<NMsg> emptyMessage) {
+        return new DefaultNRunnableSupport(null, UNSUPPORTED_SCORE, emptyMessage);
     }
 
-    static boolean isValid(NRunnableSupport s) {
-        return s != null && s.isValid();
+    static boolean isValid(NRunnableSupport s, NScorableContext scorableContext) {
+        return s != null && s.isValid(scorableContext);
     }
 
     void run();
 
-    default boolean isValid() {
-        return getSupportLevel() > 0;
+    default boolean isValid(NScorableContext scorableContext) {
+        return getScore(scorableContext) > 0;
     }
 
-    int getSupportLevel();
+    int getScore(NScorableContext scorableContext);
 }
