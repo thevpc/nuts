@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootWorkspaceImpl;
@@ -41,9 +40,9 @@ import net.thevpc.nuts.core.NRepositoryListener;
 import net.thevpc.nuts.internal.NScopedWorkspace;
 import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.concurrent.NCallable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NObservableMapListener;
 
 import java.util.List;
@@ -70,8 +69,8 @@ public abstract class AbstractNWorkspace implements NWorkspace {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext criteria) {
+        return DEFAULT_SCORE;
     }
 
     @Override
