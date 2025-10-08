@@ -5,7 +5,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 public class NDescriptorInputSourceFormatSPI implements NFormatSPI {
