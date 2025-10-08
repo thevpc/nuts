@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.platform;
 
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.util.List;
