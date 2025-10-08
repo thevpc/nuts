@@ -32,14 +32,14 @@ package net.thevpc.nuts.spi;
  * implementation for a given predefined interface (named Extension Point).
  * Such interfaces must extend this {@code NutsComponent} interface.
  * Implementations must implement these extension points by providing their
- * best support level (when method {@link #getSupportLevel(NSupportLevelContext)} is invoked).
+ * best support level (when method {@link #getScore(NScorableContext)} is invoked).
  * Only implementations with positive support level are considered.
  * Implementations with higher support level are selected first.
  *
  * @app.category SPI Base
  * @since 0.5.4
  */
-public interface NComponent {
+public interface NComponent extends NScorable{
 
     /**
      * evaluate support level (who much this instance should be considered convenient, acceptable)
@@ -48,8 +48,5 @@ public interface NComponent {
      * @param context evaluation context
      * @return support level value
      */
-    int getSupportLevel(NSupportLevelContext context);
-//    default int getSupportLevel(NSupportLevelContext context) {
-//        return NConstants.Support.CUSTOM_SUPPORT;
-//    }
+    int getScore(NScorableContext context);
 }
