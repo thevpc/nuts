@@ -42,12 +42,9 @@ import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamFromList;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -179,7 +176,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             if (!list.isVisited(idAndStrategy.getKey())) {
                 List<NId> allIds = NSearchCmd.of().addId(idAndStrategy.getKey()).setLatest(true).getResultIds().toList();
                 if (allIds.isEmpty()) {
-                    throw new NNotFoundException(idAndStrategy.getKey());
+                    throw new NArtifactNotFoundException(idAndStrategy.getKey());
                 }
                 for (NId id0 : allIds) {
                     list.addForInstall(id0, idAndStrategy.getValue(), false);
@@ -194,7 +191,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                 if (!list.isVisited(sid)) {
                     List<NId> allIds = NSearchCmd.of().addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().toList();
                     if (allIds.isEmpty()) {
-                        throw new NNotFoundException(sid);
+                        throw new NArtifactNotFoundException(sid);
                     }
                     for (NId id0 : allIds) {
                         list.addForInstall(id0.builder().setRepository(null).build(), this.getCompanions(), false);
