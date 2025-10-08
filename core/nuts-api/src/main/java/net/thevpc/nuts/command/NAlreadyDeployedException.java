@@ -27,7 +27,7 @@
 package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * Exception fired if the package is already deployed Created by vpc on 1/15/17.
