@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.expr.NParseException;
 import net.thevpc.nuts.io.NInputStreamProvider;
@@ -12,7 +11,8 @@ import net.thevpc.nuts.runtime.standalone.elem.builder.*;
 import net.thevpc.nuts.runtime.standalone.elem.item.*;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.math.BigDecimal;
@@ -882,8 +882,8 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     @Override
