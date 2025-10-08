@@ -10,7 +10,7 @@ import net.thevpc.nuts.runtime.standalone.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NClassMap;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NNameFormat;
 
 import java.lang.reflect.Type;
