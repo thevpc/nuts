@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
@@ -16,7 +15,7 @@ import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.io.NAnsiTermHelper;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.*;
 import java.util.Scanner;
@@ -43,7 +42,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
+    public int getScore(NScorableContext criteria) {
         NBootOptions options = NWorkspace.of().getBootOptions();
         NTerminalMode terminalMode = options.getTerminalMode().orElse(NTerminalMode.DEFAULT);
         NWorkspaceTerminalOptions bootStdFd = NWorkspaceExt.of().getModel().bootModel.getBootTerminal();
@@ -67,7 +66,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
                  this).setTerminalMode(terminalMode);
         this.in = bootStdFd.getIn();
         this.scanner = new Scanner(this.in);
-        return NConstants.Support.DEFAULT_SUPPORT;
+        return DEFAULT_SCORE;
     }
 
     @Override
