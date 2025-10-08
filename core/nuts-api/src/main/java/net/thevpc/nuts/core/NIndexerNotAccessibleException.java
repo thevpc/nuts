@@ -26,7 +26,7 @@
 package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.util.NException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * Exception thrown when copy validation fails
