@@ -5,6 +5,7 @@ import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
+import net.thevpc.nuts.text.NMsg;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
