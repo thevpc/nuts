@@ -2,12 +2,12 @@ package net.thevpc.nuts.runtime.standalone.xtra.rnsh;
 
 import net.thevpc.nuts.command.NExecCmdExtension;
 import net.thevpc.nuts.command.NExecCmdExtensionContext;
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.net.NConnexionStringBuilder;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.io.ByteArrayInputStream;
@@ -88,21 +88,21 @@ public class RnshExecCmdExtension implements NExecCmdExtension {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        Object c = context.getConstraints();
+    public int getScore(NScorableContext context) {
+        Object c = context.getCriteria();
         if (c instanceof String) {
             NConnexionString z = NConnexionString.get((String) c).orNull();
             if (z != null && isSupportedProtocol(z.getProtocol())) {
-                return NConstants.Support.DEFAULT_SUPPORT;
+                return DEFAULT_SCORE;
             }
         }
         if (c instanceof NConnexionString) {
             NConnexionString z = (NConnexionString) c;
             if (isSupportedProtocol(z.getProtocol())) {
-                return NConstants.Support.DEFAULT_SUPPORT;
+                return DEFAULT_SCORE;
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
     private boolean isSupportedProtocol(String protocol) {
