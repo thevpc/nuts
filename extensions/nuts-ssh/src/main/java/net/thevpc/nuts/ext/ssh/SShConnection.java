@@ -3,6 +3,7 @@ package net.thevpc.nuts.ext.ssh;
 import com.jcraft.jsch.*;
 import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
 import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.core.NSession;
 
