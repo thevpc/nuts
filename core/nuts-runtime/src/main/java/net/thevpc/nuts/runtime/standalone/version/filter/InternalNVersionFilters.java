@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.version.filter;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NVersionComparator;
 import net.thevpc.nuts.artifact.NVersionFilter;
 import net.thevpc.nuts.artifact.NVersionFilters;
@@ -8,10 +7,10 @@ import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 
 import java.util.List;
 
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilter> implements NVersionFilters {
@@ -108,7 +107,7 @@ public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilte
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 }
