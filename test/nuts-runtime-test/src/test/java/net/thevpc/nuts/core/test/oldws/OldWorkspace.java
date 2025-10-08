@@ -8,7 +8,7 @@ import net.thevpc.nuts.core.test.oldws.impl.OldWorkspace084;
 import net.thevpc.nuts.core.test.oldws.impl.OldWorkspace085;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NIOUtils;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.File;
 import java.io.IOException;
