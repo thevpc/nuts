@@ -27,7 +27,7 @@
 package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * Thrown to indicate that the artifact is already installed and should not be
