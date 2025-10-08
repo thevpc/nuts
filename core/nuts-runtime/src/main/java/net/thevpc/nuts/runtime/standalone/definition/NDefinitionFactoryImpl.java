@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.definition;
 
 import java.util.function.Supplier;
-import net.thevpc.nuts.core.NConstants;
+
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
@@ -32,7 +32,7 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NDefinitionFactory;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 
 /**
  *
@@ -62,8 +62,8 @@ public class NDefinitionFactoryImpl implements NDefinitionFactory {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
 }
