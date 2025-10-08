@@ -11,7 +11,7 @@ import net.thevpc.nuts.core.NRepositoryRef;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.Objects;
 import java.util.logging.Level;
