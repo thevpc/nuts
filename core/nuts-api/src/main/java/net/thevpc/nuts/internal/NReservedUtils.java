@@ -30,6 +30,7 @@ import net.thevpc.nuts.core.NBootOptions;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NPlatformHome;
 import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.*;
