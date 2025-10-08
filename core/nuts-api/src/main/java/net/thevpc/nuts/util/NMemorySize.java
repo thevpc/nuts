@@ -2,6 +2,7 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NMapBy;
 import net.thevpc.nuts.expr.NToken;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.Serializable;
 import java.io.StreamTokenizer;
