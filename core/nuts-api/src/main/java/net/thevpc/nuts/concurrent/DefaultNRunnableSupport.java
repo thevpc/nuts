@@ -5,10 +5,12 @@
  */
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.spi.NScorable;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.NExceptions;
-import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.internal.NApiUtilsRPI;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.function.Supplier;
 
@@ -19,22 +21,22 @@ import java.util.function.Supplier;
  */
 public class DefaultNRunnableSupport implements NRunnableSupport {
     private final Runnable value;
-    private final int supportLevel;
+    private final int score;
     private final Supplier<NMsg> emptyMessage;
 
-    public DefaultNRunnableSupport(Runnable value, int supportLevel, Supplier<NMsg> emptyMessage) {
+    public DefaultNRunnableSupport(Runnable value, int score, Supplier<NMsg> emptyMessage) {
         this.value = value;
-        if (this.value == null && supportLevel > 0) {
-            throw new IllegalArgumentException(NI18n.of("null runnable requires invalid support"));
-        } else if (this.value != null && supportLevel <= 0) {
-            throw new IllegalArgumentException(NI18n.of("non null runnable requires valid support"));
+        if (this.value == null && score > 0) {
+            throw new IllegalArgumentException(NI18n.of("null runnable requires invalid score"));
+        } else if (this.value != null && score <= 0) {
+            throw new IllegalArgumentException(NI18n.of("non null runnable requires valid score"));
         }
-        this.supportLevel = supportLevel;
+        this.score = score;
         this.emptyMessage = emptyMessage == null ? () -> NMsg.ofInvalidValue() : emptyMessage;
     }
 
     public void run() {
-        if (isValid()) {
+        if (NScorable.isValidScore(score)) {
             value.run();
         } else {
             NMsg nMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> emptyMessage.get());
@@ -42,8 +44,8 @@ public class DefaultNRunnableSupport implements NRunnableSupport {
         }
     }
 
-    public int getSupportLevel() {
-        return supportLevel;
+    public int getScore(NScorableContext scorableContext) {
+        return score;
     }
 
 }
