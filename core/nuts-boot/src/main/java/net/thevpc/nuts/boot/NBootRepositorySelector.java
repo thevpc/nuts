@@ -24,9 +24,9 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.boot.reserved.util.NBootMsg;
-import net.thevpc.nuts.boot.reserved.util.NBootRepositoryDB;
-import net.thevpc.nuts.boot.reserved.util.NBootUtils;
+import net.thevpc.nuts.boot.internal.util.NBootMsg;
+import net.thevpc.nuts.boot.internal.util.NBootRepositoryDB;
+import net.thevpc.nuts.boot.internal.util.NBootUtils;
 
 /**
  * @author thevpc
