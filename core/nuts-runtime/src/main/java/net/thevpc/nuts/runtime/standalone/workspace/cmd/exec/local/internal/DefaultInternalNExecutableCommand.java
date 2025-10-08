@@ -18,7 +18,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextTransformConfig;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * @author thevpc
