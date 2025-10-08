@@ -8,7 +8,7 @@ import net.thevpc.nuts.command.NFetchCmd;
 import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.command.NSearchCmd;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 public class MvnClient {
     public static final String NET_VPC_APP_NUTS_MVN = "net.thevpc.nmvn:nmvn";
