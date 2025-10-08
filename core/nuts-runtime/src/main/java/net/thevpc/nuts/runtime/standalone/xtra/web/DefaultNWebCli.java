@@ -1,8 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.web;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.boot.reserved.util.NBootLog;
+import net.thevpc.nuts.boot.internal.util.NBootLog;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
@@ -13,9 +12,9 @@ import net.thevpc.nuts.net.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
@@ -468,12 +467,13 @@ public class DefaultNWebCli implements NWebCli {
                             NInputSource bytes = null;
                             if (!r.isOneWay()) {
                                 //TODO change me with a smart copy input source!
-                                try (InputStream iis = finalUc.getInputStream()) {
-                                    bytes = NInputSourceBuilder.of(iis).setCloseAction(() -> {
+                                HttpURLConnection uc2 = finalUc;
+                                try {
+                                    bytes = NInputSourceBuilder.of(finalUc.getInputStream()).setCloseAction(() -> {
                                                 // close connexion when fully read!
-                                                if (finalUc != null) {
+                                                if (uc2 != null) {
                                                     try {
-                                                        finalUc.disconnect();
+                                                        uc2.disconnect();
                                                     } catch (Exception e) {
                                                         //
                                                     }
@@ -568,8 +568,8 @@ public class DefaultNWebCli implements NWebCli {
         return this;
     }
 
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     public static String UNIFORM_HEADER(String h) {
