@@ -1,14 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.text.NFormat;
 import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NPathSPIAware;
-import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
@@ -459,8 +458,8 @@ public class NCompressedPath extends NPathBase {
         }
 
         @Override
-        public int getSupportLevel(NSupportLevelContext context) {
-            return NConstants.Support.DEFAULT_SUPPORT;
+        public int getScore(NScorableContext context) {
+            return DEFAULT_SCORE;
         }
     }
 
