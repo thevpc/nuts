@@ -12,7 +12,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParse
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.IOException;
 import java.io.InputStream;
