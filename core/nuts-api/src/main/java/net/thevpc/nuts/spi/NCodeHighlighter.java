@@ -44,7 +44,7 @@ public interface NCodeHighlighter extends NComponent {
      * @param context evaluation context
      * @return support level value
      */
-    int getSupportLevel(NSupportLevelContext context);
+    int getScore(NScorableContext context);
 
     NText stringToText(String text, NTexts txt);
 
