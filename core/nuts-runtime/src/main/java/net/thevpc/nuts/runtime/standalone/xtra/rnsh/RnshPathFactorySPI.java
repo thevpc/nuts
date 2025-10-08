@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.xtra.rnsh;
 
-import net.thevpc.nuts.concurrent.NCallableSupport;
-import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.NTempOutputStreamImpl;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NPathSPIAware;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class RnshPathFactorySPI implements NPathFactorySPI {
     @Override
-    public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+    public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
         //fail fast!
         if (protocol != null) {
             switch (protocol) {
@@ -28,7 +28,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
                 case "rnshs":
                     break;
                 default:
-                    return NCallableSupport.ofInvalid(NMsg.ofC("Invalid path: %s", path));
+                    return NScorableCallable.ofInvalid(NMsg.ofC("Invalid path: %s", path));
             }
         }
         if (
@@ -39,24 +39,24 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
         ) {
             NConnexionString cnx = NConnexionString.get(path).orNull();
             if (cnx != null) {
-                return NCallableSupport.of(3, () -> new NServerPathSPI(cnx));
+                return NScorableCallable.of(3, () -> new NServerPathSPI(cnx));
             }
         }
-        return NCallableSupport.ofInvalid(NMsg.ofC("Invalid path: %s", path));
+        return NScorableCallable.ofInvalid(NMsg.ofC("Invalid path: %s", path));
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        String path = context.getConstraints();
+    public int getScore(NScorableContext context) {
+        String path = context.getCriteria();
         if (
                 path.startsWith("rnsh-http:")
                         || path.startsWith("rnsh:")
                         || path.startsWith("rnsh-https:")
                         || path.startsWith("rnshs:")
         ) {
-            return NConstants.Support.DEFAULT_SUPPORT;
+            return DEFAULT_SCORE;
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
     public static class NServerPathSPI implements NPathSPI {
