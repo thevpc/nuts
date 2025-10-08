@@ -5,12 +5,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
+import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NSpeedQualifier;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NNotFoundException;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.command.NPushException;
 import net.thevpc.nuts.core.NWorkspace;
@@ -34,7 +34,7 @@ import net.thevpc.nuts.spi.NPushRepositoryCmd;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +99,7 @@ public class NRepositoryMirroringHelper {
                     if (c != null) {
                         return c;
                     }
-                } catch (NNotFoundException ex) {
+                } catch (NArtifactNotFoundException ex) {
                     //ignore!
                 }
             }
@@ -174,7 +174,7 @@ public class NRepositoryMirroringHelper {
         NDescriptor desc = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of().toRepositorySPI(repo).fetchDescriptor().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
         NPath local = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of().toRepositorySPI(repo).fetchContent().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
         if (local == null) {
-            throw new NNotFoundException(id);
+            throw new NArtifactNotFoundException(id);
         }
         if (!repo.config().isSupportedMirroring()) {
             throw new NPushException(id, NMsg.ofC("unable to push %s. no repository found.", id == null ? "<null>" : id));
