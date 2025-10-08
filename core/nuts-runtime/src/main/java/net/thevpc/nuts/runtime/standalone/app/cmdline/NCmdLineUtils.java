@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline;
 
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.expr.NParseException;
 
 import java.util.ArrayList;
