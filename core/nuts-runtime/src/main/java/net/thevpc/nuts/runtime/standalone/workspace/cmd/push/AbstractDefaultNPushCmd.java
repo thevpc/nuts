@@ -24,16 +24,15 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.push;
 
-import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NNotFoundException;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NPushCmd;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,8 +55,8 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     @Override
@@ -73,7 +72,7 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
     @Override
     public NPushCmd addId(NId id) {
         if (id == null) {
-            throw new NNotFoundException(id);
+            throw new NArtifactNotFoundException(id);
         } else {
             ids.add(id);
         }
@@ -119,7 +118,7 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
     @Override
     public NPushCmd addLockedId(NId id) {
         if (id == null) {
-            throw new NNotFoundException(id);
+            throw new NArtifactNotFoundException(id);
         } else {
             if (lockedIds == null) {
                 lockedIds = new ArrayList<>();
