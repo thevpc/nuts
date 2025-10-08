@@ -39,7 +39,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConf
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  *
