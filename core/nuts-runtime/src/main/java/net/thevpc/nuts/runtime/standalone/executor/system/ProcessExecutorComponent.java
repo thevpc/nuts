@@ -25,7 +25,6 @@
 */
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExecutionContext;
@@ -53,11 +52,11 @@ public class ProcessExecutorComponent implements NExecutorComponent {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext nutsDefinition) {
+    public int getScore(NScorableContext nutsDefinition) {
         if(ID==null){
             ID= NId.get("net.thevpc.nuts.exec:exec-native").get();
         }
-        return NConstants.Support.DEFAULT_SUPPORT;
+        return DEFAULT_SCORE;
     }
 
     @Override
