@@ -5,7 +5,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLogRecord;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.Instant;
