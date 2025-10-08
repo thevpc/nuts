@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.*;
@@ -33,7 +33,7 @@ import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.GenericFilePath;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -279,7 +279,7 @@ public class PathTest {
 
     @Test
     public void testGenericFile() {
-        NCallableSupport<NPathSPI> p = new GenericFilePath.GenericPathFactory().createPath("C:", null, null);
+        NScorableCallable<NPathSPI> p = new GenericFilePath.GenericPathFactory().createPath("C:", null, null);
         NPathFromSPI u = new NPathFromSPI(p.call());
         NPath root = u.getRoot();
         System.out.println(root);
@@ -287,7 +287,7 @@ public class PathTest {
 
     @Test
     public void testGenericFile2() {
-        NCallableSupport<NPathSPI> p = new GenericFilePath.GenericPathFactory().createPath("/C:", null, null);
+        NScorableCallable<NPathSPI> p = new GenericFilePath.GenericPathFactory().createPath("/C:", null, null);
         NPathFromSPI u = new NPathFromSPI(p.call());
         NPath root = u.getRoot();
         System.out.println(root);
