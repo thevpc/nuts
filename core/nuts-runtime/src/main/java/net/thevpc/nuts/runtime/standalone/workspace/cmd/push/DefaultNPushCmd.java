@@ -47,6 +47,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.thevpc.nuts.spi.NRepositorySPI;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 /**
