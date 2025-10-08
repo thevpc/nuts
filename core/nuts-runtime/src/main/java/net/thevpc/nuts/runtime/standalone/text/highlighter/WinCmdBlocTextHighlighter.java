@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.io.NIOException;
@@ -8,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextStyled;
 import net.thevpc.nuts.spi.NCodeHighlighter;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.text.*;
 
 import java.io.BufferedReader;
@@ -128,10 +127,10 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        String s = context.getConstraints();
+    public int getScore(NScorableContext context) {
+        String s = context.getCriteria();
         if (s == null) {
-            return NConstants.Support.DEFAULT_SUPPORT;
+            return DEFAULT_SCORE;
         }
         switch (s) {
             case "bat":
@@ -141,19 +140,19 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             case "powsershell":
             case "powser-shell":
             case "text/x-msdos-batch": {
-                return NConstants.Support.DEFAULT_SUPPORT;
+                return DEFAULT_SCORE;
             }
             case "system": {
                 switch (NShellFamily.getCurrent()) {
                     case WIN_CMD:
                     case WIN_POWER_SHELL: {
-                        return NConstants.Support.DEFAULT_SUPPORT + 10;
+                        return DEFAULT_SCORE + 10;
                     }
                 }
-                return NConstants.Support.DEFAULT_SUPPORT;
+                return DEFAULT_SCORE;
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
     @Override
