@@ -4,22 +4,21 @@ import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.boot.NBootException;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
-import net.thevpc.nuts.boot.reserved.cmdline.NBootWorkspaceCmdLineParser;
-import net.thevpc.nuts.boot.reserved.util.NBootMsg;
+import net.thevpc.nuts.boot.core.NExceptionWithExitCodeBase;
+import net.thevpc.nuts.text.NI18n;
+import net.thevpc.nuts.boot.internal.cmdline.NBootWorkspaceCmdLineParser;
+import net.thevpc.nuts.boot.internal.util.NBootMsg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.text.NContentType;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.internal.NApiUtilsRPI;
 import net.thevpc.nuts.internal.NReservedLangUtils;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTextStyle;
 
 import java.util.logging.Level;
 
