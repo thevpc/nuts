@@ -31,7 +31,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -40,7 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import net.thevpc.nuts.elem.NElement;
@@ -51,7 +49,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArtImageRenderer;
 import net.thevpc.nuts.text.NTextArtTextRenderer;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
