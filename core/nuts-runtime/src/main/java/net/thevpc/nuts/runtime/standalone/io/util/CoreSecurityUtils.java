@@ -28,7 +28,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
