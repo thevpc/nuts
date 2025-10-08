@@ -8,7 +8,7 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.text.NFormats;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 /**
