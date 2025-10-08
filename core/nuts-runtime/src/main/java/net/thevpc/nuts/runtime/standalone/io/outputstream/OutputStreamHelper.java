@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.outputstream;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NOutputStreamTransparentAdapter;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.IOException;
 import java.io.OutputStream;
