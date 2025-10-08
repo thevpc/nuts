@@ -27,6 +27,7 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
 
@@ -54,5 +55,5 @@ public interface NServiceLoader<T extends NComponent> {
      * @param criteria criteria to match
      * @return load best NutsComponent instance matching criteria
      */
-    T loadBest(Object criteria);
+    NOptional<T> loadBest(Object criteria);
 }
