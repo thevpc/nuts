@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.HashMap;
 import java.util.Map;
