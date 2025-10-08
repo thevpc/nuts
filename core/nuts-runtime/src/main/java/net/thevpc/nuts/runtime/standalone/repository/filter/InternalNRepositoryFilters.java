@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.core.NRepositoryFilters;
@@ -11,11 +10,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositoryFilter>
         implements NRepositoryFilters {
@@ -175,7 +174,7 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 }
