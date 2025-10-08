@@ -12,7 +12,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.NReservedMavenUt
 import net.thevpc.nuts.internal.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.File;
 import java.io.IOException;
