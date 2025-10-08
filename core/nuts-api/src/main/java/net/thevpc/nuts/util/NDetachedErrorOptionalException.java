@@ -1,9 +1,11 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.text.NMsg;
+
 public class NDetachedErrorOptionalException extends RuntimeException implements NDetachedFormattedExceptionBase {
     private NMsg formattedMessage;
 
-    public NDetachedErrorOptionalException(NMsg formattedMessage,Throwable cause) {
+    public NDetachedErrorOptionalException(NMsg formattedMessage, Throwable cause) {
         super(formattedMessage == null ? "error optional" : formattedMessage.toString(),cause);
         this.formattedMessage = formattedMessage == null ? NMsg.ofC("error") : formattedMessage;
     }
