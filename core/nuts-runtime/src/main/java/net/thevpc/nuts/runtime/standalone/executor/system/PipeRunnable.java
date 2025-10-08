@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.executor.system;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.io.NNonBlockingInputStream;
 import net.thevpc.nuts.runtime.standalone.io.util.StopMonitor;
 
