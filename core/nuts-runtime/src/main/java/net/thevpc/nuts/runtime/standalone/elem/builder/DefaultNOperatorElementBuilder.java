@@ -5,7 +5,7 @@ import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNOperatorElement;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMapStrategy;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
