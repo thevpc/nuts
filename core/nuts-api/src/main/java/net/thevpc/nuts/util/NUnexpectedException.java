@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.text.NMsg;
+
 /**
  * @author thevpc
  * @app.category Exceptions
