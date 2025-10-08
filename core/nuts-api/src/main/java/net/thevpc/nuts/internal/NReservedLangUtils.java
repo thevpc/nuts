@@ -2,6 +2,7 @@ package net.thevpc.nuts.internal;
 
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.*;
