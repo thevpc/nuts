@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.core.NAnyCancelExceptionBase;
-import net.thevpc.nuts.boot.reserved.util.NBootMsg;
+import net.thevpc.nuts.boot.core.NAnyCancelExceptionBase;
+import net.thevpc.nuts.boot.internal.util.NBootMsg;
 
 /**
  * This Exception is thrown when the workspace fails to initialize.
