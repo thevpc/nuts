@@ -11,7 +11,7 @@ import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.expr.NParseException;
 import net.thevpc.nuts.util.NStringUtils;
 import org.w3c.dom.Document;
