@@ -1,16 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.spi.NCompressPackaging;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
@@ -204,16 +203,16 @@ public class NCompressZip implements NCompressPackaging {
 
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        NCompress c = context.getConstraints(NCompress.class);
+    public int getScore(NScorableContext context) {
+        NCompress c = context.getCriteria(NCompress.class);
         String z = NStringUtils.trim(c.getPackaging()).toLowerCase();
         if (z.isEmpty()
                 || z.equals("zip")
                 || z.equals("gzip")
                 || z.equals("gz")
         ) {
-            return NConstants.Support.DEFAULT_SUPPORT;
+            return DEFAULT_SCORE;
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 }
