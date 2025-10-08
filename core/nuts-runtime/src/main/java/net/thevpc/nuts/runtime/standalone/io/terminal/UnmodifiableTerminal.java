@@ -5,7 +5,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.runtime.standalone.xtra.time.CProgressBar;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.io.NAsk;
 
 import java.io.InputStream;
@@ -87,8 +87,8 @@ public class UnmodifiableTerminal extends AbstractNTerminal {
     }
 
 //    @Override
-//    public int getSupportLevel(NutsSupportLevelContext<NutsTerminalSpec> criteria) {
-//        return getBase().getSupportLevel(criteria);
+//    public int getScore(NutsScorableContext<NutsTerminalSpec> criteria) {
+//        return getBase().getScore(criteria);
 //    }
 
     @Override
