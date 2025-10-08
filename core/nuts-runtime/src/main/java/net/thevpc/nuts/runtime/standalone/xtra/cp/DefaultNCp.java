@@ -5,8 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.cp;
 
-import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
@@ -18,7 +17,8 @@ import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgres
 import net.thevpc.nuts.runtime.standalone.io.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.time.NProgressEvent;
@@ -77,8 +77,8 @@ public class DefaultNCp implements NCp {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     protected NLog _LOG() {
