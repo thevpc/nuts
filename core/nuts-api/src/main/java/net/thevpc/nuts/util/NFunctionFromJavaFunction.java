@@ -2,6 +2,7 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.function.Function;
 
