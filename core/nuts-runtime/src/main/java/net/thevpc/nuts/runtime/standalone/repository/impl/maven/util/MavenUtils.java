@@ -39,6 +39,7 @@ import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.*;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -555,7 +556,7 @@ public class MavenUtils {
                         } catch (NException ex) {
                             throw ex;
                         } catch (Exception ex) {
-                            throw new NNotFoundException(nutsDescriptor.getId(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.getId(), parentId, ex));
+                            throw new NArtifactNotFoundException(nutsDescriptor.getId(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.getId(), parentId, ex));
                         }
                         parentId = parentDescriptor.getId();
                     }
@@ -596,7 +597,7 @@ public class MavenUtils {
                             } catch (NException ex) {
                                 throw ex;
                             } catch (Exception ex) {
-                                throw new NNotFoundException(nutsDescriptor.getId(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.getId(), pid, ex));
+                                throw new NArtifactNotFoundException(nutsDescriptor.getId(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.getId(), pid, ex));
                             }
                         }
                         done.add(pid.getShortName());
@@ -614,7 +615,7 @@ public class MavenUtils {
                         }
                     }
                     if (CoreNUtils.containsVars(thisId)) {
-                        throw new NNotFoundException(nutsDescriptor.getId(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.getId(), parentId));
+                        throw new NArtifactNotFoundException(nutsDescriptor.getId(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.getId(), parentId));
                     }
                     nutsDescriptor = nutsDescriptor.builder().setId(thisId).build();
                 }
