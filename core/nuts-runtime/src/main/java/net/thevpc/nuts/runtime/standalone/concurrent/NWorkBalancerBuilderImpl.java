@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 import net.thevpc.nuts.util.NIllegalStateException;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.ArrayList;
 import java.util.HashMap;
