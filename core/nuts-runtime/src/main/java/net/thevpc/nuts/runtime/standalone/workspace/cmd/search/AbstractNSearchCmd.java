@@ -24,8 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
-import net.thevpc.nuts.core.NConstants;
-
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
@@ -38,6 +36,7 @@ import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.ValueSupplier;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -45,7 +44,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
@@ -97,8 +96,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     @Override
@@ -1056,14 +1055,14 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         NDefinition d = null;
         try {
             d = fetch.setId(next).getResultDefinition();
-        } catch (NNotFoundException e) {
+        } catch (NArtifactNotFoundException e) {
             if (dep.isOptional()) {
                 return null;
             }
         }
         if (d == null) {
             if (isFailFast()) {
-                throw new NNotFoundException(next);
+                throw new NArtifactNotFoundException(next);
             }
             return d;
         }
