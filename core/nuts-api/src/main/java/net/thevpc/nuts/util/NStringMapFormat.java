@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.*;
 import java.net.URLDecoder;
