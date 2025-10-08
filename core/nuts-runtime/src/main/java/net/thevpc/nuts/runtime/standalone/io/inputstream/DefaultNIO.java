@@ -5,7 +5,7 @@ import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.core.NRepository;
@@ -17,11 +17,9 @@ import net.thevpc.nuts.runtime.standalone.io.printstream.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.io.NIOUtils;
-import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStringBuilder;
 
 import java.io.*;
 import java.net.URL;
@@ -52,8 +50,8 @@ public class DefaultNIO implements NIO {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     private DefaultNBootModel getBootModel() {
@@ -385,17 +383,9 @@ public class DefaultNIO implements NIO {
 
     @Override
     public String probeContentType(NPath path) {
-        List<NContentTypeResolver> allSupported = NExtensions.of()
-                .createComponents(NContentTypeResolver.class, path);
-        NCallableSupport<String> best = null;
-        for (NContentTypeResolver r : allSupported) {
-            NCallableSupport<String> s = r.probeContentType(path);
-            if (s != null && s.isValid()) {
-                if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
-                    best = s;
-                }
-            }
-        }
+        NOptional<NContentTypeResolver> allSupported = NExtensions.of()
+                .createComponent(NContentTypeResolver.class, path);
+        NScorableCallable<String> best = (NScorableCallable<String>) allSupported.orNull();
         if (best == null) {
             return null;
         }
@@ -438,17 +428,9 @@ public class DefaultNIO implements NIO {
 
     @Override
     public String probeContentType(byte[] bytes) {
-        List<NContentTypeResolver> allSupported = NExtensions.of()
-                .createComponents(NContentTypeResolver.class, bytes);
-        NCallableSupport<String> best = null;
-        for (NContentTypeResolver r : allSupported) {
-            NCallableSupport<String> s = r.probeContentType(bytes);
-            if (s != null && s.isValid()) {
-                if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
-                    best = s;
-                }
-            }
-        }
+        NOptional<NContentTypeResolver> allSupported = NExtensions.of()
+                .createComponent(NContentTypeResolver.class, bytes);
+        NScorableCallable<String> best = (NScorableCallable<String>) allSupported.orNull();
         if (best == null) {
             return null;
         }
@@ -472,17 +454,9 @@ public class DefaultNIO implements NIO {
 
     @Override
     public String probeCharset(NPath path) {
-        List<NCharsetResolver> allSupported = NExtensions.of()
-                .createComponents(NCharsetResolver.class, path);
-        NCallableSupport<String> best = null;
-        for (NCharsetResolver r : allSupported) {
-            NCallableSupport<String> s = r.probeCharset(path);
-            if (s != null && s.isValid()) {
-                if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
-                    best = s;
-                }
-            }
-        }
+        NOptional<NCharsetResolver> allSupported = NExtensions.of()
+                .createComponent(NCharsetResolver.class, path);
+        NScorableCallable<String> best = (NScorableCallable<String>) allSupported.orNull();
         if (best == null) {
             return null;
         }
@@ -497,17 +471,9 @@ public class DefaultNIO implements NIO {
 
     @Override
     public String probeCharset(byte[] bytes) {
-        List<NCharsetResolver> allSupported = NExtensions.of()
-                .createComponents(NCharsetResolver.class, bytes);
-        NCallableSupport<String> best = null;
-        for (NCharsetResolver r : allSupported) {
-            NCallableSupport<String> s = r.probeCharset(bytes);
-            if (s != null && s.isValid()) {
-                if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
-                    best = s;
-                }
-            }
-        }
+        NOptional<NCharsetResolver> allSupported = NExtensions.of()
+                .createComponent(NCharsetResolver.class, bytes);
+        NScorableCallable<String> best = (NScorableCallable<String>) allSupported.orNull();
         if (best == null) {
             return null;
         }
