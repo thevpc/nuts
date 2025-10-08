@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.ask;
 
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.io.NAskFormat;
 import net.thevpc.nuts.util.NUnsupportedArgumentException;
