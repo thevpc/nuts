@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.boot.reserved.util.NBootMsg;
+import net.thevpc.nuts.boot.internal.util.NBootMsg;
 
 /**
  * Created by vpc on 1/15/17.
