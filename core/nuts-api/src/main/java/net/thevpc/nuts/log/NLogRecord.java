@@ -2,7 +2,7 @@ package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NSessionProvider;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
