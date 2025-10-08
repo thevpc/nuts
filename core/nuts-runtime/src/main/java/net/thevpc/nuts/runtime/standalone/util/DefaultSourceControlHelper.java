@@ -20,6 +20,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.io.NIOUtils;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class DefaultSourceControlHelper {
                 newVersionFound = NFetchCmd.of(d.getId().builder().setVersion(newVersion).build())
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDefinition();
-            } catch (NNotFoundException ex) {
+            } catch (NArtifactNotFoundException ex) {
                 _LOG()
                         .log(NMsg.ofC("failed to fetch %s", d.getId().builder().setVersion(newVersion).build()).asFine(ex));
                 //ignore
