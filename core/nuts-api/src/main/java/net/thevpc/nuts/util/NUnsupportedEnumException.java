@@ -25,7 +25,8 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.text.NI18n;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * Exception Thrown when for any reason, the enum value is not expected/supported.
