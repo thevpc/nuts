@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.core.NBootOptions;
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
@@ -12,7 +11,7 @@ import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.io.NAnsiTermHelper;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -63,8 +62,8 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
 
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext criteria) {
+        return DEFAULT_SCORE;
     }
 
     public String readLine(NPrintStream out, NMsg message) {
