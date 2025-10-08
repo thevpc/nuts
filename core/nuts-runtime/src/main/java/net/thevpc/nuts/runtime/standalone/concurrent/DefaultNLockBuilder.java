@@ -1,13 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.concurrent.NLockException;
 
 
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -150,8 +149,8 @@ public class DefaultNLockBuilder extends AbstractNLockBuilder {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
 }
