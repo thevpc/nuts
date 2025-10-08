@@ -1,7 +1,7 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.util.NDetachedFormattedExceptionBase;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 public class NDetachedCmdLineException extends IllegalArgumentException implements NDetachedFormattedExceptionBase {
     private NMsg formattedMessage;
