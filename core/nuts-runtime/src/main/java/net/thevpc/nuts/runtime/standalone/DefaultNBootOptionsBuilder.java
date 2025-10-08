@@ -41,7 +41,8 @@ import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.runtime.standalone.util.NDefaultClassLoaderNode;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.io.InputStream;
@@ -2933,7 +2934,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     }
 
     /// ///////////////////////
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 }
