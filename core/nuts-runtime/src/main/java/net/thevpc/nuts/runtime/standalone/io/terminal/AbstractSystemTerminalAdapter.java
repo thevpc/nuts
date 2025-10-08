@@ -1,19 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.runtime.standalone.xtra.time.CProgressBar;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.spi.NSystemTerminalBaseImpl;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyles;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.InputStream;
 
@@ -163,8 +162,8 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext criteria) {
+        return DEFAULT_SCORE;
     }
 
     @Override
