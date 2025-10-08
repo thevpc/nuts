@@ -27,8 +27,8 @@
 package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.util.NException;
-import net.thevpc.nuts.core.NExceptionWithExitCodeBase;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.boot.core.NExceptionWithExitCodeBase;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * Standard Execution thrown when an artifact fails to run.
