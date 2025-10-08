@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.time;
 import net.thevpc.nuts.time.NProgressMonitor;
 import net.thevpc.nuts.time.NProgressRunner;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.ArrayList;
