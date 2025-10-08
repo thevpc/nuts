@@ -5,21 +5,20 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.spi.NCompressPackaging;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.time.NProgressListener;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.File;
 import java.io.InputStream;
@@ -52,8 +51,8 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     protected NLog _LOG() {
