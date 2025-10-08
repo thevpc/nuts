@@ -1,8 +1,8 @@
 package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NMsgSupplier;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NMsgSupplier;
 
 import java.util.Map;
 import java.util.function.Supplier;
