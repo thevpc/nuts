@@ -7,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableHeaderFormat;
 import net.thevpc.nuts.runtime.standalone.text.art.region.NTextRegion;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.*;
 
