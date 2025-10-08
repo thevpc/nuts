@@ -1,8 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.AbstractPathSPIAdapter;
@@ -11,7 +10,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NUnsupportedArgumentException;
 
@@ -178,23 +177,19 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     public List<String> parseHtml(InputStream html) {
         byte[] bytes = NCp.of().from(html).getByteArrayResult();
-        NCallableSupport<List<String>> best = Arrays.stream(PARSERS).map(p -> {
-                    try {
-                        return p.parseHtmlTomcat(bytes);
-                    } catch (Exception ex) {
-                        NLog.of(HtmlfsPath.class)
-                                .log(NMsg.ofC("failed to parse using %s", p.getClass().getSimpleName()).asFinestFail(ex));
-                    }
-                    return null;
-                }).filter(p -> NCallableSupport.isValid(p)).max(Comparator.comparing(NCallableSupport::getSupportLevel))
-                .orElse(null);
-        if (best != null) {
-            List<String> value = best.call();
-            if (value != null) {
-                return value;
-            }
-        }
-        return Collections.emptyList();
+        return NScorable.<NScorableCallable<List<String>>>query()
+                .withName(NMsg.ofC("html parser"))
+                .fromStream(Arrays.stream(PARSERS)
+                        .map(p -> {
+                            try {
+                                return p.parseHtmlTomcat(bytes);
+                            } catch (Exception ex) {
+                                NLog.of(HtmlfsPath.class)
+                                        .log(NMsg.ofC("failed to parse using %s", p.getClass().getSimpleName()).asFinestFail(ex));
+                            }
+                            return null;
+                        })
+                ).getBest().map(NScorableCallable::call).orElse(Collections.emptyList());
     }
 
     @Override
@@ -208,24 +203,24 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new HtmlfsPath(path));
+                return NScorableCallable.of(DEFAULT_SCORE, () -> new HtmlfsPath(path));
             }
             return null;
         }
 
         @Override
-        public int getSupportLevel(NSupportLevelContext context) {
-            String path = context.getConstraints();
+        public int getScore(NScorableContext context) {
+            String path = context.getCriteria();
             try {
                 if (path.startsWith(PREFIX)) {
-                    return NConstants.Support.DEFAULT_SUPPORT;
+                    return DEFAULT_SCORE;
                 }
             } catch (Exception ex) {
                 //ignore
             }
-            return NConstants.Support.NO_SUPPORT;
+            return UNSUPPORTED_SCORE;
         }
     }
 
