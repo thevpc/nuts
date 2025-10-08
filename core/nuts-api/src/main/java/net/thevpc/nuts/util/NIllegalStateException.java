@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.text.NMsg;
+
 /**
  * Thrown to indicate that a method has been passed an illegal or inappropriate
  * argument.
