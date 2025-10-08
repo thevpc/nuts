@@ -4,8 +4,8 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.util.NUnsupportedEnumException;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NMsgSupplier;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NMsgSupplier;
 
 import java.util.ArrayList;
 import java.util.List;
