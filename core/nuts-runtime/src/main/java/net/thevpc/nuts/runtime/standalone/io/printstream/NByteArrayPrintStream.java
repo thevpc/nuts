@@ -6,7 +6,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextTransformConfig;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.*;
 import java.util.Arrays;
