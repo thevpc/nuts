@@ -10,7 +10,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
@@ -23,9 +22,8 @@ import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
-import net.thevpc.nuts.text.NCmdLineFormat;
-import net.thevpc.nuts.text.NContentType;
-import net.thevpc.nuts.text.NObjectFormat;
+import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -34,11 +32,6 @@ import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.runtime.standalone.dependency.solver.NDependencySolverUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.spi.NDependencySolver;
-import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 
 /**
@@ -727,8 +720,8 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     @Override
