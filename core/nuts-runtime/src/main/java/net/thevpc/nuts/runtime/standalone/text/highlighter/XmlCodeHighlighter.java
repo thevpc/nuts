@@ -1,12 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.util.NEvictingQueue;
 import net.thevpc.nuts.util.NStreamTokenizer;
 import net.thevpc.nuts.expr.NToken;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -30,10 +29,10 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        String s = context.getConstraints();
+    public int getScore(NScorableContext context) {
+        String s = context.getCriteria();
         if(s==null){
-            return NConstants.Support.DEFAULT_SUPPORT;
+            return DEFAULT_SCORE;
         }
         switch (s){
             case "xml":
@@ -44,10 +43,10 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
             case "html":
             case "sgml":
             {
-                return NConstants.Support.DEFAULT_SUPPORT;
+                return DEFAULT_SCORE;
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
     @Override
