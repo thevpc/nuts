@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.session;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NSessionAware;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnsupportedArgumentException;
 
 public class NSessionUtils {
