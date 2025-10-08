@@ -5,7 +5,7 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 
 public class NtfCodeHighlighter implements NCodeHighlighter {
     NWorkspace workspace;
@@ -19,18 +19,18 @@ public class NtfCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        String s = context.getConstraints();
+    public int getScore(NScorableContext context) {
+        String s = context.getCriteria();
         if(s==null){
-            return NConstants.Support.DEFAULT_SUPPORT;
+            return DEFAULT_SCORE;
         }
         if(NConstants.Ntf.MIME_TYPES.contains(s)){
-            return NConstants.Support.DEFAULT_SUPPORT;
+            return DEFAULT_SCORE;
         }
         if(NConstants.Ntf.NAMES.contains(s)){
-            return NConstants.Support.DEFAULT_SUPPORT;
+            return DEFAULT_SCORE;
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
     @Override
