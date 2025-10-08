@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.nanodb.file;
 
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.*;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.*;
 import java.util.Arrays;
