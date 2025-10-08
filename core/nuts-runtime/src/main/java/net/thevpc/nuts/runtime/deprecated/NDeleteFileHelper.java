@@ -11,6 +11,7 @@ import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.io.File;
