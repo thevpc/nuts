@@ -3,8 +3,8 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.log.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NMsgBuilder;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NMsgBuilder;
 
 import java.util.function.Supplier;
 import java.util.logging.*;
