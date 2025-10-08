@@ -4,7 +4,7 @@ import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.elem.NElementUtils;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 public class DefaultNStringElement extends DefaultNPrimitiveElement implements NStringElement {
