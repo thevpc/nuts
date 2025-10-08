@@ -21,20 +21,17 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
-import net.thevpc.nuts.text.NPositionType;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNUpdateResult;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 
 import java.time.Instant;
 import java.util.*;
@@ -707,7 +704,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                     oldFile = session.copy().setFetchStrategy(NFetchStrategy.ONLINE).callWith(() -> NFetchCmd.of(finalOldId)
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .getResultDefinition());
-                } catch (NNotFoundException ex) {
+                } catch (NArtifactNotFoundException ex) {
                     //ignore
                 }
                 try {
@@ -723,7 +720,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                                             latestOnlineDependencies().setFailFast(false)
                                                     .setId(finalNewId1).getResultDefinition()
                                     );
-                } catch (NNotFoundException ex) {
+                } catch (NArtifactNotFoundException ex) {
                     _LOG().log(NMsg.ofC("error : %s", ex).asError(ex));
                     //ignore
                 }
@@ -742,7 +739,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                                 .callWith(() -> NFetchCmd.of().setId(finalOldId1)
                                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                                         .getResultDefinition());
-                    } catch (NNotFoundException ex) {
+                    } catch (NArtifactNotFoundException ex) {
                         _LOG().log(NMsg.ofC("error : %s", ex).asError(ex));
                         //ignore
                     }
@@ -766,7 +763,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                                             .setFailFast(false)
                                             .getResultDefinition()
                                     );
-                } catch (NNotFoundException ex) {
+                } catch (NArtifactNotFoundException ex) {
                     _LOG().log(NMsg.ofC("error : %s", ex).asError(ex));
                     //ignore
                 }
