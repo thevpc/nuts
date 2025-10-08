@@ -25,7 +25,6 @@
 */
 package net.thevpc.nuts.runtime.standalone.executor.pom;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExecutionContext;
@@ -35,8 +34,8 @@ import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NExecutorComponent;
-import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 /**
@@ -53,26 +52,26 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
+    public int getScore(NScorableContext context) {
         if(ID==null){
             ID = NId.get("net.thevpc.nuts.exec:java-unsupported").get();
         }
         if(true){
-            return NConstants.Support.NO_SUPPORT;
+            return UNSUPPORTED_SCORE;
         }
-        NDefinition def = context.getConstraints(NDefinition.class);
+        NDefinition def = context.getCriteria(NDefinition.class);
         if (def != null) {
             switch (NStringUtils.trim(def.getDescriptor().getPackaging())){
                 case "jar":
                 case "war":
                 case "zip":
                 {
-                    return NConstants.Support.NO_SUPPORT;
+                    return UNSUPPORTED_SCORE;
                 }
             }
-            return NConstants.Support.DEFAULT_SUPPORT + 1;
+            return DEFAULT_SCORE + 1;
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
     @Override
