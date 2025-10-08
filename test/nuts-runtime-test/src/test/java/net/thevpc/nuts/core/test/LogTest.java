@@ -10,7 +10,7 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogContext;
 import net.thevpc.nuts.log.NLogs;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
