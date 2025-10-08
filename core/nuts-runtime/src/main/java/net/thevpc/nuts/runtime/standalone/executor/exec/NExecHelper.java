@@ -23,7 +23,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.nio.file.Path;
 import java.util.*;
