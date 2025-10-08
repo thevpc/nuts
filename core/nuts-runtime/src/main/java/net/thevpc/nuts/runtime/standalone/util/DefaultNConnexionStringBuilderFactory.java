@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
 import net.thevpc.nuts.net.NConnexionStringBuilder;
 import net.thevpc.nuts.net.NConnexionStringBuilderFactory;
@@ -18,8 +17,8 @@ public class DefaultNConnexionStringBuilderFactory implements NConnexionStringBu
         return DefaultNConnexionStringBuilder.of(expression);
     }
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
 }
