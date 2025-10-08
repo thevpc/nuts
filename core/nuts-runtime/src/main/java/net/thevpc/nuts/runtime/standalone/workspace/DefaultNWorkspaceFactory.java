@@ -28,13 +28,14 @@ import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NIdFormat;
 import net.thevpc.nuts.command.NExecCmd;
-import net.thevpc.nuts.concurrent.NCallableSupport;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 
 import net.thevpc.nuts.ext.NFactoryException;
+import net.thevpc.nuts.runtime.standalone.util.NScorableQueryImpl;
 import net.thevpc.nuts.text.NFormats;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.text.NVersionFormat;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -118,7 +119,6 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     @Override
     public <T extends NComponent> NOptional<T> createComponent(Class<T> type, Object supportCriteria) {
         NSession session = workspace.currentSession();
-        NSupportLevelContext context = new NDefaultSupportLevelContext(supportCriteria);
         // should handle NApp specifically because It's the root for resolving scoped properties
         // TODO should it, or should it not??
 
@@ -128,10 +128,11 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             }
         }
         List<T> all = createAll(type);
-        NCallableSupport<T> s = NCallableSupport.resolve(all.stream().map(x -> NCallableSupport.of(x.getSupportLevel(context), x)),
-                () -> NMsg.ofMissingValue(NMsg.ofC("extensions component %s", type).toString())
-        );
-        if (!s.isValid()) {
+        NOptional<T> s = new NScorableQueryImpl<T>(NScorableContext.of(supportCriteria))
+                .withName(NMsg.ofC("extensions component %s", type))
+                .fromIterable(all).getBest()
+        ;
+        if (!s.isPresent()) {
             //fallback needed in bootstrap or if the extensions are broken!
             switch (type.getName()) {
                 case "net.thevpc.nuts.log.NLogs": {
@@ -174,11 +175,11 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     NDigest p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNDigest(workspace));
                     return NOptional.of((T) p);
                 }
-                case "net.thevpc.nuts.reserved.rpi.NIORPI": {
+                case "net.thevpc.nuts.internal.rpi.NIORPI": {
                     NIORPI p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNIORPI(workspace));
                     return NOptional.of((T) p);
                 }
-                case "net.thevpc.nuts.reserved.rpi.NCollectionsRPI": {
+                case "net.thevpc.nuts.internal.rpi.NCollectionsRPI": {
                     NCollectionsRPI p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNCollectionsRPI());
                     return NOptional.of((T) p);
                 }
@@ -250,33 +251,15 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 new Throwable().printStackTrace();
             }
         }
-        return s.toOptional();
+        return s;
     }
 
     @Override
     public <T extends NComponent> List<T> createComponents(Class<T> type, Object supportCriteria) {
         List<T> list = createAll(type);
-        class TypeAndLevel {
-            final T t;
-            final int lvl;
-
-            public TypeAndLevel(T t, int lvl) {
-                this.t = t;
-                this.lvl = lvl;
-            }
-        }
-        List<TypeAndLevel> r = new ArrayList<>();
-        NDefaultSupportLevelContext context = new NDefaultSupportLevelContext(supportCriteria);
-        for (Iterator<T> iterator = list.iterator(); iterator.hasNext(); ) {
-            T t = iterator.next();
-            int supportLevel = t.getSupportLevel(context);
-            if (supportLevel <= 0) {
-                iterator.remove();
-            } else {
-                r.add(new TypeAndLevel(t, supportLevel));
-            }
-        }
-        return r.stream().sorted(Comparator.comparing(x -> -x.lvl)).map(x -> x.t).collect(Collectors.toList());
+        return new NScorableQueryImpl<T>(NScorableContext.of())
+                .fromIterable(list)
+                .getAll();
     }
 
     @Override
