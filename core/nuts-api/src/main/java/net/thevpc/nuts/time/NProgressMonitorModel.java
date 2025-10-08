@@ -1,6 +1,6 @@
 package net.thevpc.nuts.time;
 
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 public interface NProgressMonitorModel {
     boolean isSuspended();
