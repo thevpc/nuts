@@ -1,6 +1,6 @@
 package net.thevpc.nuts.installer.model;
 
-import net.thevpc.nuts.nswing.Wizard;
+import net.thevpc.nuts.installer.util.swing.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
