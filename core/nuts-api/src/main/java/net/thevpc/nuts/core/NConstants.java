@@ -47,27 +47,6 @@ public final class NConstants {
     private NConstants() {
     }
 
-    /**
-     * support constants
-     *
-     * @app.category Constants
-     */
-    public static final class Support {
-
-        /**
-         * minimum support level for user defined implementations.
-         */
-        public static final int CUSTOM_SUPPORT = 1000;
-        /**
-         * this is the default support level for runtime implementation (nuts-runtime).
-         */
-        public static final int DEFAULT_SUPPORT = 10;
-        /**
-         * when getSupportLevel(...)==NO_SUPPORT the package is discarded.
-         */
-        public static final int NO_SUPPORT = -1;
-    }
-
     public static final class Apps {
         public static final String AUTO_COMPLETE_CANDIDATE_PREFIX = "```error Candidate```: ";
     }
