@@ -27,6 +27,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.core.NNoSessionException;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * Base Boot Nuts Exception. Thrown when the Workspace could is booting
