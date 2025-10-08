@@ -1,11 +1,10 @@
 package net.thevpc.nuts.ext.ssh;
 
-import net.thevpc.nuts.concurrent.NCallableSupport;
-import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.net.NConnexionString;
 
 public class SshPathFactory implements NPathFactorySPI {
@@ -16,12 +15,12 @@ public class SshPathFactory implements NPathFactorySPI {
     }
 
     @Override
-    public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+    public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
         try{
             if(path.startsWith("ssh:")){
                 NConnexionString a= NConnexionString.get(path).orNull();
                 if(a!=null) {
-                    return NCallableSupport.of(3, () -> new SshNPath(a));
+                    return NScorableCallable.of(3, () -> new SshNPath(a));
                 }
             }
         }catch (Exception ex){
@@ -31,12 +30,12 @@ public class SshPathFactory implements NPathFactorySPI {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        String path= context.getConstraints();
+    public int getScore(NScorableContext context) {
+        String path= context.getCriteria();
         if(path.startsWith("ssh:")){
-            return NConstants.Support.DEFAULT_SUPPORT;
+            return DEFAULT_SCORE;
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
 }
