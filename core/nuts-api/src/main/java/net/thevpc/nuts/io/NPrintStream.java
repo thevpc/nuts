@@ -29,7 +29,7 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.internal.rpi.NIORPI;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
