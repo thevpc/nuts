@@ -24,12 +24,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.terminal.history;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.cmdline.NCmdLineHistoryEntry;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.NAssert;
 
 import java.io.*;
@@ -162,7 +161,7 @@ public class NCmdLineHistoryImpl implements NCmdLineHistory {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 }
