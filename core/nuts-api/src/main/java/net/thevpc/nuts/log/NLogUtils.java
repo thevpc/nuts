@@ -1,7 +1,7 @@
 package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.logging.Level;
