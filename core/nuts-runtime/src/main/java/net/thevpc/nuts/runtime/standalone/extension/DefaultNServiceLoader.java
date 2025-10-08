@@ -1,15 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.runtime.standalone.util.NScorableQueryImpl;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.io.NServiceLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
-import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NDefaultScorableContext;
+import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 public class DefaultNServiceLoader<T extends NComponent, B> implements NServiceLoader<T> {
 
@@ -31,31 +32,17 @@ public class DefaultNServiceLoader<T extends NComponent, B> implements NServiceL
 
     @Override
     public List<T> loadAll(Object criteria) {
-        List<T> all = new ArrayList<>();
-        NSupportLevelContext c=new NDefaultSupportLevelContext(criteria);
-        for (T t : loader) {
-            int p = t.getSupportLevel(c);
-            if (p > NConstants.Support.NO_SUPPORT) {
-                all.add(t);
-            }
-        }
-        return all;
+        return new NScorableQueryImpl<T>(NScorableContext.of(criteria))
+                .fromIterable(loader)
+                .withName(NMsg.ofC("component %s",serviceType))
+                .getAll();
     }
 
     @Override
-    public T loadBest(Object criteria) {
-        T best = null;
-        int bestVal = NConstants.Support.NO_SUPPORT;
-        NSupportLevelContext c=new NDefaultSupportLevelContext(criteria);
-        for (T t : loader) {
-            int p = t.getSupportLevel(c);
-            if (p > NConstants.Support.NO_SUPPORT) {
-                if (best == null || bestVal < p) {
-                    best = t;
-                    bestVal = p;
-                }
-            }
-        }
-        return best;
+    public NOptional<T> loadBest(Object criteria) {
+        return new NScorableQueryImpl<T>(NScorableContext.of(criteria))
+                .fromIterable(loader)
+                .withName(NMsg.ofC("component %s",serviceType))
+                .getBest();
     }
 }
