@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -18,7 +18,7 @@ public class ApacheReposHtmlfsParser extends AbstractHtmlfsParser {
     }
 
     @Override
-    public NCallableSupport<List<String>> parseHtmlTomcat(byte[] bytes) {
+    public NScorableCallable<List<String>> parseHtmlTomcat(byte[] bytes) {
         int expected = 0;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
             String line = null;
@@ -36,7 +36,7 @@ public class ApacheReposHtmlfsParser extends AbstractHtmlfsParser {
         }
         if (expected < 2) {
             Supplier<NMsg> msg = () -> NMsg.ofInvalidValue("apache repo");
-            return NCallableSupport.ofInvalid(msg);
+            return NScorableCallable.ofInvalid(msg);
         }
         List<String> found = new ArrayList<>();
         Pattern pattern = Pattern.compile("<img src=\"/icons/[a-z.]+\" alt=\"\\[[a-zA-Z ]+]\"> +<a href=\"(?<href>[^\"]+)\">(?<hname>[^>]+)</a> +(?<d>[^ ]+) (?<h>[^ ]+) +(?<s>[^ ]+)");
