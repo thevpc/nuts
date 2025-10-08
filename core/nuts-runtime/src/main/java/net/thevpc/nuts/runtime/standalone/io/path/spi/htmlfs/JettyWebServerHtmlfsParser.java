@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
-import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
 
 import java.io.BufferedReader;
@@ -17,7 +17,7 @@ public class JettyWebServerHtmlfsParser extends AbstractHtmlfsParser {
     }
 
     @Override
-    public NCallableSupport<List<String>> parseHtmlTomcat(byte[] bytes) {
+    public NScorableCallable<List<String>> parseHtmlTomcat(byte[] bytes) {
         List<String> found = new ArrayList<>();
         Pattern pattern = Pattern.compile("tr><td class=\"name\"><a href=\"(?<href>[^\"]+)\">(?<title>[^\"]+)</a></td><td class=\"lastmodified\">(?<date>[^\"]+)</td><td class=\"size\">(?<size>[^\"]+)</td></tr>");
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
