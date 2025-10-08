@@ -4,7 +4,7 @@ import net.thevpc.nuts.artifact.DefaultNVersionInterval;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.artifact.NVersionComparator;
 import net.thevpc.nuts.artifact.NVersionInterval;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.IOException;
