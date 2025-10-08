@@ -8,7 +8,7 @@ import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.concurrent.NCallable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
