@@ -38,6 +38,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledReposit
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NRepositorySPI;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
