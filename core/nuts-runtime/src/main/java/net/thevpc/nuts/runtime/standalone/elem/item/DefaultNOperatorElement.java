@@ -4,7 +4,7 @@ import net.thevpc.nuts.util.NUnsupportedEnumException;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
 import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNOperatorElementBuilder;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringBuilder;
 
