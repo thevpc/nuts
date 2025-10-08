@@ -7,7 +7,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecCmd;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 public class RemoteNExecCmd extends AbstractNExecCmd {
 
