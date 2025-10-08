@@ -80,23 +80,23 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
+    public int getScore(NScorableContext criteria) {
         if (criteria == null) {
-            return NConstants.Support.NO_SUPPORT;
+            return UNSUPPORTED_SCORE;
         }
-        NRepositoryConfig r = criteria.getConstraints(NRepositoryConfig.class);
+        NRepositoryConfig r = criteria.getCriteria(NRepositoryConfig.class);
         if (r != null) {
             String type = NRepositoryUtils.getRepoType(r);
             if (NBlankable.isBlank(type)) {
-                return NConstants.Support.NO_SUPPORT;
+                return UNSUPPORTED_SCORE;
             }
             if (NConstants.RepoTypes.MAVEN.equals(type)) {
-                return NConstants.Support.DEFAULT_SUPPORT + 10;
+                return DEFAULT_SCORE + 10;
             }
             if (NBlankable.isBlank(type)) {
-                return NConstants.Support.DEFAULT_SUPPORT + 5;
+                return DEFAULT_SCORE + 5;
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 }
