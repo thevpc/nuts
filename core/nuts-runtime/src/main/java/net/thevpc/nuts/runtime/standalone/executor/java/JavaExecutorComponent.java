@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.executor.java;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NIdFormat;
@@ -36,7 +35,8 @@ import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.text.NCmdLineFormat;
+import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.core.NWorkspaceCmdLineParser;
 
 import net.thevpc.nuts.core.NIsolationLevel;
@@ -61,10 +61,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NExecutorComponent;
-import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.util.*;
 
@@ -98,25 +94,25 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
 
     @Override
-    public int getSupportLevel(NSupportLevelContext ctx) {
+    public int getScore(NScorableContext ctx) {
         if (ID == null) {
             ID = NId.get("net.thevpc.nuts.exec:java").get();
         }
-        NDefinition def = ctx.getConstraints(NDefinition.class);
+        NDefinition def = ctx.getCriteria(NDefinition.class);
         if (def != null) {
             String shortName = def.getId().getShortName();
             //for executors
             if ("net.thevpc.nuts.exec:exec-java".equals(shortName)) {
-                return NConstants.Support.DEFAULT_SUPPORT + 10;
+                return DEFAULT_SCORE + 10;
             }
             if ("java".equals(shortName)) {
-                return NConstants.Support.DEFAULT_SUPPORT + 10;
+                return DEFAULT_SCORE + 10;
             }
             if ("jar".equals(def.getDescriptor().getPackaging())) {
-                return NConstants.Support.DEFAULT_SUPPORT + 10;
+                return DEFAULT_SCORE + 10;
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
     public static NWorkspaceOptionsBuilder createChildOptions(NExecutionContext executionContext) {
