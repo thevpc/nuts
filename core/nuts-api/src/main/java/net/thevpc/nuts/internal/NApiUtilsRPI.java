@@ -29,6 +29,7 @@ import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.boot.NBootLogConfig;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.core.NWorkspaceOptions;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.spi.NScopeType;
