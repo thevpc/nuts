@@ -25,10 +25,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NNotFoundException;
+import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NInstallCmd;
@@ -36,7 +35,7 @@ import net.thevpc.nuts.command.NInstallStrategy;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -82,8 +81,8 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     @Override
@@ -114,7 +113,7 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
     @Override
     public NInstallCmd addId(NId id) {
         if (id == null) {
-            throw new NNotFoundException(id);
+            throw new NArtifactNotFoundException(id);
         } else {
             ids.put(id, getStrategy());
         }
