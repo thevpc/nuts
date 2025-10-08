@@ -5,7 +5,7 @@ import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NCollectionDiff;
 import net.thevpc.nuts.util.NCollectionDiffChange;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.*;
 
