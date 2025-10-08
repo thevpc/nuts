@@ -11,7 +11,7 @@ import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPrimitiveElement;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNStringElement;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMapStrategy;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
