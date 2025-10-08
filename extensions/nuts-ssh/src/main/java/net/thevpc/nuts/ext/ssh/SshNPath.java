@@ -10,6 +10,7 @@ import net.thevpc.nuts.spi.NPathSPIAware;
 import net.thevpc.nuts.net.NConnexionStringBuilder;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
