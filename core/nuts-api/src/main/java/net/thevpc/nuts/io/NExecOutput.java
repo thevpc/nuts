@@ -1,6 +1,6 @@
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.OutputStream;
