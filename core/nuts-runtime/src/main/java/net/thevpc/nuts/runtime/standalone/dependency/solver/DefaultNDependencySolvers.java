@@ -1,12 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
-import net.thevpc.nuts.core.NConstants;
-
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NDependencySolvers;
 import net.thevpc.nuts.spi.NDependencySolver;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class DefaultNDependencySolvers implements NDependencySolvers {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 }
