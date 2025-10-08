@@ -29,7 +29,6 @@ import java.awt.Color;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.*;
@@ -37,7 +36,7 @@ import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.io.NAnsiTermHelper;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
@@ -259,15 +258,15 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
+    public int getScore(NScorableContext criteria) {
         try {
             prepare();
         } catch (Exception ex) {
             NLog.of(NJLineTerminal.class)
                     .log(NMsg.ofPlain("unable to create NutsJLineTerminal. ignored.").asFinestFail(ex));
-            return NConstants.Support.NO_SUPPORT;
+            return UNSUPPORTED_SCORE;
         }
-        return NConstants.Support.DEFAULT_SUPPORT + 1;
+        return DEFAULT_SCORE + 1;
     }
 
     @Override
