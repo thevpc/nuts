@@ -8,6 +8,7 @@ import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorProperty;
 import net.thevpc.nuts.runtime.standalone.DefaultNEnvConditionBuilder;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 
 import net.thevpc.nuts.util.*;
@@ -114,7 +115,7 @@ public class NDescriptorUtils {
                             .log(errMsg.withIntent(NMsgIntent.ALERT).withLevel(Level.FINE));
                     if (!dependency.isOptional()) {
                         topException = true;
-                        throw new NNotFoundException(effectiveDescriptor.getId(), errMsg);
+                        throw new NArtifactNotFoundException(effectiveDescriptor.getId(), errMsg);
                     }
                 }
             }
@@ -138,8 +139,8 @@ public class NDescriptorUtils {
                 throw ex;
             }
             throw new NIllegalArgumentException(NMsg.ofC("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
-        } catch (NNotFoundException ex) {
-            throw new NNotFoundException(effectiveDescriptor.getId(), NMsg.ofC("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
+        } catch (NArtifactNotFoundException ex) {
+            throw new NArtifactNotFoundException(effectiveDescriptor.getId(), NMsg.ofC("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
         } catch (Exception ex) {
             throw new NIllegalArgumentException(NMsg.ofC("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
         }
