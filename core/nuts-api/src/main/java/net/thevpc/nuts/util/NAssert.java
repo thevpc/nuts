@@ -1,5 +1,7 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.text.NMsg;
+
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Supplier;
