@@ -26,10 +26,10 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.core.NWorkspaceBase;
+import net.thevpc.nuts.boot.core.NWorkspaceBase;
 
 /**
- * Class responsible of creating and initializing Workspace
+ * Class responsible for creating and initializing Workspace
  * Created by vpc on 1/5/17.
  *
  * @app.category SPI Base
@@ -39,14 +39,14 @@ public interface NBootWorkspaceFactory {
 
     /**
      * when multiple factories are available, the best one is selected according to
-     * the maximum value of {@code getBootSupportLevel(options)}.
+     * the maximum value of {@code getBootScore(options)}.
      * Note that default value (for the reference implementation) is {@code NutsComponent.DEFAULT_SUPPORT}.
      * Any value less or equal to zero is ignored (and the factory is discarded)
      *
      * @param options command line options
      * @return support level
      */
-    int getBootSupportLevel(NBootOptionsInfo options);
+    int getBootScore(NBootOptionsInfo options);
 
     /**
      * create workspace with the given options
