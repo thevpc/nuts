@@ -7,7 +7,7 @@ import net.thevpc.nuts.artifact.NVersionFilters;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.util.NFilter;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnsupportedArgumentException;
 
 import java.lang.reflect.Type;
