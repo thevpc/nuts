@@ -172,3 +172,4 @@ net.thevpc.nuts.runtime.standalone.text.art.table.TableNTextArtRendererFactory
 net.thevpc.nuts.runtime.standalone.concurrent.DefaultNConcurrent
 net.thevpc.nuts.runtime.standalone.concurrent.DefaultNLockBuilder
 net.thevpc.nuts.runtime.standalone.reflect.NReflectImpl
+net.thevpc.nuts.runtime.standalone.util.NUtilSPIImpl
