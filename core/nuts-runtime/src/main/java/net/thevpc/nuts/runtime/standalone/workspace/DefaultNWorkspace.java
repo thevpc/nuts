@@ -25,6 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
@@ -990,8 +991,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext criteria) {
+        return DEFAULT_SCORE;
     }
 
     @Override
@@ -1694,7 +1695,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     @Override
     public NId resolveEffectiveId(NDescriptor descriptor) {
         if (descriptor == null) {
-            throw new NNotFoundException(null);
+            throw new NArtifactNotFoundException(null);
         }
         NId thisId = descriptor.getId();
         String a = thisId.getArtifactId();
@@ -1717,7 +1718,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
             }
             if (NBlankable.isBlank(g) || NBlankable.isBlank(v)) {
-                throw new NNotFoundException(thisId,
+                throw new NArtifactNotFoundException(thisId,
                         NMsg.ofC("unable to fetchEffective for %s. best Result is %s", thisId, thisId),
                         null);
             }
@@ -1743,12 +1744,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
                 all.addAll(dd.getParents());
             }
-            throw new NNotFoundException(bestId,
+            throw new NArtifactNotFoundException(bestId,
                     NMsg.ofC("unable to fetchEffective for %s. best Result is %s", bestId, bestId), null);
         }
         NId bestId = NIdBuilder.of(g, thisId.getArtifactId()).setVersion(v).build();
         if (!CoreNUtils.isEffectiveId(bestId)) {
-            throw new NNotFoundException(bestId,
+            throw new NArtifactNotFoundException(bestId,
                     NMsg.ofC("unable to fetchEffective for %s. best Result is %s", thisId, bestId), null);
         }
         return bestId;
@@ -1969,7 +1970,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (nutToInstall == null) {
                 return NInstallStatus.NONE;
             }
-        } catch (NNotFoundException e) {
+        } catch (NArtifactNotFoundException e) {
             return NInstallStatus.NONE;
         } catch (Exception ex) {
             wsModel.LOG.log(NMsg.ofJ("error: %s", ex).asError(ex));
