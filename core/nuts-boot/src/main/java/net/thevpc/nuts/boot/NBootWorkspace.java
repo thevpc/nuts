@@ -1,8 +1,8 @@
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.core.NExceptionWithExitCodeBase;
-import net.thevpc.nuts.core.NWorkspaceBase;
-import net.thevpc.nuts.boot.reserved.util.NBootUtils;
+import net.thevpc.nuts.boot.core.NExceptionWithExitCodeBase;
+import net.thevpc.nuts.boot.core.NWorkspaceBase;
+import net.thevpc.nuts.boot.internal.util.NBootUtils;
 
 import java.util.Arrays;
 
