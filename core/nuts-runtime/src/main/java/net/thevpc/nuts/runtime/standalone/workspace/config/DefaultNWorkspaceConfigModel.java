@@ -32,7 +32,7 @@ import net.thevpc.nuts.boot.NBootDescriptor;
 import net.thevpc.nuts.command.NCommandFactoryConfig;
 import net.thevpc.nuts.command.NFetchCmd;
 import net.thevpc.nuts.command.NInstallStatus;
-import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElementWriter;
@@ -50,6 +50,7 @@ import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.runtime.standalone.xtra.rnsh.RnshPathFactorySPI;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
@@ -1131,7 +1132,7 @@ public class DefaultNWorkspaceConfigModel {
         if (nd != null) {
             if (content && nd.getContent().isNotPresent()) {
                 //this is an unexpected behaviour, fail fast
-                throw new NNotFoundException(id);
+                throw new NArtifactNotFoundException(id);
             }
             return new NBootDef(nd.getId(), nd.getDependencies().get().transitive().toList(),
                     (content && nd.getContent().isPresent()) ? nd.getContent().get() : null);
@@ -1176,7 +1177,7 @@ public class DefaultNWorkspaceConfigModel {
                 );
             }
         }
-        throw new NNotFoundException(id);
+        throw new NArtifactNotFoundException(id);
     }
 
     public void prepareBootClassPathConf(NIdType idType, NId id, NId forId, NId forceRuntimeId, boolean force, boolean processDependencies) {
@@ -1496,19 +1497,20 @@ public class DefaultNWorkspaceConfigModel {
         } else {
             protocol = null;
         }
-        NCallableSupport<NPathSPI> z = Arrays.stream(getPathFactories())
-                .map(x -> {
-                    NCallableSupport<NPathSPI> v = null;
-                    try {
-                        v = x.createPath(path, protocol, finalClassLoader);
-                    } catch (Exception ex) {
-                        //
-                    }
-                    return v;
-                })
-                .filter(x -> x != null && x.getSupportLevel() > 0)
-                .max(Comparator.comparingInt(NCallableSupport::getSupportLevel))
-                .orElse(null);
+        NScorableCallable<NPathSPI> z = NScorable.<NScorableCallable<NPathSPI>>query()
+                .fromStream(
+                        Arrays.stream(getPathFactories())
+                                .map(x -> {
+                                    NScorableCallable<NPathSPI> v = null;
+                                    try {
+                                        v = x.createPath(path, protocol, finalClassLoader);
+                                    } catch (Exception ex) {
+                                        //
+                                    }
+                                    return v;
+                                })
+                )
+                .getBest().orNull();
         NPathSPI s = z == null ? null : z.call();
         if (s != null) {
             if (s instanceof NPath) {
@@ -1685,9 +1687,9 @@ public class DefaultNWorkspaceConfigModel {
 
     private class InvalidFilePathFactory implements NPathFactorySPI {
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             try {
-                return NCallableSupport.of(1, () -> new InvalidFilePath(path, workspace));
+                return NScorableCallable.of(1, () -> new InvalidFilePath(path, workspace));
             } catch (Exception ex) {
                 //ignore
             }
@@ -1695,8 +1697,8 @@ public class DefaultNWorkspaceConfigModel {
         }
 
         @Override
-        public int getSupportLevel(NSupportLevelContext context) {
-            String path = context.getConstraints();
+        public int getScore(NScorableContext context) {
+            String path = context.getCriteria();
             return 1;
         }
     }
