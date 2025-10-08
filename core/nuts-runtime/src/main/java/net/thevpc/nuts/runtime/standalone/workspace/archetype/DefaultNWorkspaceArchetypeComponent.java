@@ -43,6 +43,7 @@ import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 /**
@@ -198,8 +199,8 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
-        return NConstants.Support.DEFAULT_SUPPORT + 2;
+    public int getScore(NScorableContext criteria) {
+        return DEFAULT_SCORE + 2;
     }
 
 }
