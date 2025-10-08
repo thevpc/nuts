@@ -1,16 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.time.NDefaultProgressRunner;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.time.NProgressRunner;
-import net.thevpc.nuts.util.NMsgTemplate;
+import net.thevpc.nuts.text.NMsgTemplate;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.time.NProgressHandler;
 import net.thevpc.nuts.time.NProgressMonitors;
 import net.thevpc.nuts.time.NProgressMonitor;
@@ -187,8 +186,8 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
 
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
 
