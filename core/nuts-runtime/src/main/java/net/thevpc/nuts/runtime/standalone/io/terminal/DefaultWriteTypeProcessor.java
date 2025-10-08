@@ -4,7 +4,7 @@ import net.thevpc.nuts.core.NConfirmationMode;
 import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.function.Supplier;
 
