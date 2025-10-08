@@ -12,7 +12,7 @@ import net.thevpc.nuts.runtime.standalone.version.filter.NVersionFilterNone;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.*;
 import java.util.function.Supplier;
