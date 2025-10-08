@@ -1,7 +1,7 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.internal.rpi.NIORPI;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NProgressListener;
 
 import java.io.InputStream;
