@@ -27,7 +27,7 @@
 package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.util.NExceptionBase;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * Base Boot Nuts Exception. Thrown when the Workspace could is booting
