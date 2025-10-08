@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.core.test;
+package net.thevpc.nuts.core.test.concurrent;
 
 import net.thevpc.nuts.core.NBootOptionsBuilder;
 import net.thevpc.nuts.io.NErr;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.core.test;
+package net.thevpc.nuts.core.test.log;
 
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.utils.TestUtils;

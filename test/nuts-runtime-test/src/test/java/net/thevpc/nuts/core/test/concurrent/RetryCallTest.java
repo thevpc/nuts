@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.core.test;
+package net.thevpc.nuts.core.test.concurrent;
 
 import net.thevpc.nuts.core.NBootOptionsBuilder;
 import net.thevpc.nuts.concurrent.*;
@@ -16,6 +16,7 @@ import net.thevpc.nuts.util.NOptional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,6 +65,8 @@ public class RetryCallTest {
                 ;
         factory.of("something", NBeanRef.of("callSomeThingBean").as(NCallable.class))
                 .setHandler(NBeanRef.of("resultSomeThingBean").as(NRetryCall.Handler.class))
+                .setMaxRetries(5)
+                .setRetryPeriod(p-> Duration.ofSeconds(p))
                 .callAsync();
     }
 

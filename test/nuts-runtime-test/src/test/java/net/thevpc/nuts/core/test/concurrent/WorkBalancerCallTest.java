@@ -1,4 +1,4 @@
-package net.thevpc.nuts.core.test;
+package net.thevpc.nuts.core.test.concurrent;
 
 import net.thevpc.nuts.core.NBootOptionsBuilder;
 import net.thevpc.nuts.util.NExceptions;
