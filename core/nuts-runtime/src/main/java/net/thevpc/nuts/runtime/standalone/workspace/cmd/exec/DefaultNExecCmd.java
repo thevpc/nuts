@@ -17,6 +17,7 @@ import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.NInternalCommand;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -361,7 +362,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             if (goodId != null) {
                 cmdKind = CmdKind.ID;
             } else {
-                throw new NNotFoundException(null, NMsg.ofC("unable to resolve id %s", cmdName));
+                throw new NArtifactNotFoundException(null, NMsg.ofC("unable to resolve id %s", cmdName));
             }
         } else {
             if (cmdName.endsWith("!")) {
@@ -405,7 +406,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         if (descriptor != null) {
                             try {
                                 descriptor = NWorkspace.of().resolveEffectiveDescriptor(descriptor, new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true));
-                            } catch (NNotFoundException ex) {
+                            } catch (NArtifactNotFoundException ex) {
                                 //ignore
                                 _LOG()
                                         .log(NMsg.ofC("executable artifact descriptor found, but one of its parents or dependencies is not: %s : missing %s", descriptor.getId(),
@@ -465,7 +466,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         cmdArr.addAll(Arrays.asList(args));
                         return new DefaultUnknownExecutable(cmdArr.toArray(new String[0]), this);
                     }
-                    throw new NNotFoundException(goodId, NMsg.ofC("unable to resolve id %s", path));
+                    throw new NArtifactNotFoundException(goodId, NMsg.ofC("unable to resolve id %s", path));
                 }
             }
             case ID: {
@@ -494,7 +495,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     if (idToExec != null) {
                         return ws_execId(idToExec, cmdName, args, executorOptions, workspaceOptions, executionType, runAs);
                     } else {
-                        throw new NNotFoundException(goodId);
+                        throw new NArtifactNotFoundException(goodId);
                     }
                 }
             }
@@ -693,7 +694,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 }
             }
         }
-        throw new NNotFoundException(goodId, NMsg.ofC("unable to resolve id %s", cmdName));
+        throw new NArtifactNotFoundException(goodId, NMsg.ofC("unable to resolve id %s", cmdName));
     }
 
     private NExecutableInformationExt _runRemoteInternalCommand(String goodKw, RemoteInfo0 remoteInfo0) {
@@ -719,7 +720,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             case "nuts-boot":
             case "net.thevpc.nuts:nuts-lib":
             case "nuts-lib": {
-                throw new NNotFoundException(nid, NMsg.ofC("%s is not executable", nid));
+                throw new NArtifactNotFoundException(nid, NMsg.ofC("%s is not executable", nid));
             }
         }
         if (NConstants.Ids.NUTS_APP_ARTIFACT_ID.equals(nid.getShortName())) {
@@ -891,7 +892,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                             execComponent = new ArtifactExecutorComponent(availableExecutors[0].getId());
                         } else {
                             // availableExecutors.length=0;
-                            throw new NNotFoundException(eid, NMsg.ofC("executor not found %s", eid));
+                            throw new NArtifactNotFoundException(eid, NMsg.ofC("executor not found %s", eid));
                         }
                     }
                 }
@@ -934,7 +935,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     .build();
             return new NExecutorComponentAndContext(execComponent, executionContext);
         }
-        throw new NNotFoundException(def == null ? null : def.getId());
+        throw new NArtifactNotFoundException(def == null ? null : def.getId());
     }
 
     enum CmdKind {
