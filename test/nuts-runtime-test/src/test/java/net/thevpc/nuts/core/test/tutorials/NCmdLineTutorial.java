@@ -5,7 +5,7 @@ import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.util.NBooleanRef;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NRef;
 
 import java.util.ArrayList;
