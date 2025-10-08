@@ -10,6 +10,7 @@ import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NPlatformFamily;
 import net.thevpc.nuts.platform.NPlatformHome;
 import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
