@@ -5,7 +5,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NContentType;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.UncheckedIOException;
 import java.util.Locale;
