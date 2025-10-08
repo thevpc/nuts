@@ -27,7 +27,8 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.text.NI18n;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * @author thevpc
