@@ -27,10 +27,10 @@ package net.thevpc.nuts.app;
 
 import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.boot.NBootException;
-import net.thevpc.nuts.boot.reserved.util.NBootMsg;
-import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.boot.internal.util.NBootMsg;
+import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
