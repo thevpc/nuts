@@ -103,7 +103,7 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
-        return NConstants.Support.DEFAULT_SUPPORT + 1;
+    public int getScore(NScorableContext criteria) {
+        return DEFAULT_SCORE + 1;
     }
 }
