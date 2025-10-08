@@ -7,6 +7,7 @@ import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.io.NAskParseContext;
 import net.thevpc.nuts.io.NAskParser;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 public class DefaultNResponseParser<T> implements NAskParser<T> {
