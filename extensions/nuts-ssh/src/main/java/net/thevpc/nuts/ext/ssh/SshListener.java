@@ -1,6 +1,6 @@
 package net.thevpc.nuts.ext.ssh;
 
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.InputStream;
 
