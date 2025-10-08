@@ -26,7 +26,7 @@
 package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.boot.reserved.util.NBootUtils;
+import net.thevpc.nuts.boot.internal.util.NBootUtils;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.internal.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
