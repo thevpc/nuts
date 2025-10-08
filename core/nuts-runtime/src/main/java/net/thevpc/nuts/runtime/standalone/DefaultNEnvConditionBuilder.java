@@ -30,10 +30,9 @@ import net.thevpc.nuts.artifact.NEnvCondition;
 import net.thevpc.nuts.artifact.NEnvConditionBuilder;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.NBootEnvCondition;
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.internal.NReservedUtils;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -527,7 +526,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
         return NReservedUtils.toMap(build());
     }
 
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 }
