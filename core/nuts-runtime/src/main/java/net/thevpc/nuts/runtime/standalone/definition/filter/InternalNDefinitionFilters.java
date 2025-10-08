@@ -9,7 +9,7 @@ import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NPlatformFamily;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NFilter;
@@ -355,8 +355,8 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     @Override
