@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExecCmd;
 import net.thevpc.nuts.core.NWorkspace;
@@ -9,7 +8,7 @@ import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 
 import java.util.List;
 import java.util.Map;
@@ -259,7 +258,7 @@ public class DefaultNExecCmdFormat extends DefaultFormatBase<NExecCmdFormat> imp
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 }
