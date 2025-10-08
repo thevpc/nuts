@@ -26,7 +26,7 @@
 package net.thevpc.nuts.expr;
 
 import net.thevpc.nuts.util.NException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * Generic exception to be thrown when evaluation failed.
