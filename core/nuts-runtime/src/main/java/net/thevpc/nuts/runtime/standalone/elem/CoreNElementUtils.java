@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.text.NFormattable;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.lang.reflect.*;
 import java.time.temporal.Temporal;
