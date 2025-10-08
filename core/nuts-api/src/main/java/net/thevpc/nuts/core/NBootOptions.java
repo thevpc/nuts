@@ -15,7 +15,7 @@ import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NSupportMode;
 
