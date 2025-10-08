@@ -27,7 +27,7 @@ package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * Created by vpc on 1/15/17.
