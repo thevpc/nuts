@@ -11,6 +11,7 @@ import net.thevpc.nuts.platform.NPlatformLocation;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.*;
 
