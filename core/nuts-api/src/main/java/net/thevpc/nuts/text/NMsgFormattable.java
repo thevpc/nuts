@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.util.NMsg;
-
 /**
  * @app.category Format
  */
