@@ -1,6 +1,6 @@
 package net.thevpc.nuts.expr;
 
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 public interface NExprEvaluator {
