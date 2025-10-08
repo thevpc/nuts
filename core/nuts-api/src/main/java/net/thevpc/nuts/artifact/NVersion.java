@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.artifact;
 
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.*;
 
