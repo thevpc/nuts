@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.io.NContentMetadata;
 import net.thevpc.nuts.log.NLog;
@@ -690,8 +689,8 @@ public class DefaultNTexts implements NTexts {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     @Override
@@ -1157,8 +1156,8 @@ public class DefaultNTexts implements NTexts {
             }
 
             @Override
-            public int getSupportLevel(NSupportLevelContext context) {
-                return NConstants.Support.DEFAULT_SUPPORT;
+            public int getScore(NScorableContext context) {
+                return DEFAULT_SCORE;
             }
 
         };
