@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.xtra.execentries;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.app.NAppDefinition;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExecutionEntry;
@@ -17,9 +16,9 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.idresolver.NMetaInfIdResolver;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.IOException;
@@ -70,8 +69,8 @@ public class DefaultNLibPaths implements NLibPaths {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     @Override
