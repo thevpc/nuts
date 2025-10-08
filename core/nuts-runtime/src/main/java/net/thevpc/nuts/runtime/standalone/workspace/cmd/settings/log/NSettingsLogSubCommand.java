@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettin
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.logging.Level;
