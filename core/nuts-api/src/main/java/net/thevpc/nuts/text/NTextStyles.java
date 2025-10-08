@@ -25,7 +25,6 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.util.NEnum;
-import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
