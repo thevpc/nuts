@@ -9,7 +9,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.repository.impl.AbstractNRepository;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.File;
 import java.util.List;
