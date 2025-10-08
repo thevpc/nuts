@@ -24,10 +24,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.cmd.fetch;
 
+import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NNotFoundException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.core.NRepository;
@@ -76,7 +76,7 @@ public class DefaultNFetchContentRepositoryCmd extends AbstractNFetchContentRepo
         try {
             NPath f = xrepo.fetchContentImpl(id, descriptor0, getFetchMode());
             if (f == null) {
-                throw new NNotFoundException(id);
+                throw new NArtifactNotFoundException(id);
             }
             NLogUtils.traceMessage(_LOG(), Level.FINER, repo.getName(), getFetchMode(), id.getLongId(), NMsgIntent.SUCCESS, "fetch content", startTime, null);
             result = f;
