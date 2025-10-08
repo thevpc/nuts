@@ -9,7 +9,7 @@ import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogSPI;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.File;
 import java.io.IOException;
