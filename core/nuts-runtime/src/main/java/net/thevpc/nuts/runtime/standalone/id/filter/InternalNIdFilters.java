@@ -1,12 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 
 import java.util.List;
 
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NFilter;
 
@@ -152,8 +151,8 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
 }
