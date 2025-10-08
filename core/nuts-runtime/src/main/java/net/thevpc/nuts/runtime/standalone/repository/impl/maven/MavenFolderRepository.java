@@ -30,7 +30,7 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NNotFoundException;
+import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.command.NFetchModeNotSupportedException;
 import net.thevpc.nuts.core.NWorkspace;
@@ -46,6 +46,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.io.NIOUtils;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.log.NLog;
 
@@ -200,10 +201,10 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
 
     public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode) {
         if(disableMe){
-            throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
+            throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
         if (!acceptedFetchNoCache(fetchMode)) {
-            throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
+            throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
         InputStream stream = null;
         try {
@@ -228,7 +229,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
                     , "artifact descriptor");
             return nutsDescriptor;
         } catch (IOException | UncheckedIOException | NIOException ex) {
-            throw new NNotFoundException(id, ex);
+            throw new NArtifactNotFoundException(id, ex);
         }
     }
 }
