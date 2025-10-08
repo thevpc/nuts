@@ -1,9 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.spi.NCodeHighlighter;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.text.*;
 
 import java.util.*;
@@ -29,20 +28,20 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
 
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        String s = context.getConstraints();
+    public int getScore(NScorableContext context) {
+        String s = context.getCriteria();
         if (s == null) {
-            return NConstants.Support.DEFAULT_SUPPORT;
+            return DEFAULT_SCORE;
         }
         switch (s) {
             case "sql":
             case "text/sql":
             case "application/sql":
             {
-                return NConstants.Support.DEFAULT_SUPPORT;
+                return DEFAULT_SCORE;
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
     @Override
