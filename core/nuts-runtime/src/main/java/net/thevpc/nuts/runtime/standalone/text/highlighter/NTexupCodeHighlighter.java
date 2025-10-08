@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NColors;
 import net.thevpc.nuts.util.NNameFormat;
@@ -54,19 +53,19 @@ public class NTexupCodeHighlighter extends TsonCodeHighlighter {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        String s = context.getConstraints();
+    public int getScore(NScorableContext context) {
+        String s = context.getCriteria();
         if (s == null) {
-            return NConstants.Support.DEFAULT_SUPPORT;
+            return DEFAULT_SCORE;
         }
         switch (s) {
             case "ntexup":
             case "application/ntexup":
             case "text/ntexup": {
-                return NConstants.Support.DEFAULT_SUPPORT;
+                return DEFAULT_SCORE;
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
 
