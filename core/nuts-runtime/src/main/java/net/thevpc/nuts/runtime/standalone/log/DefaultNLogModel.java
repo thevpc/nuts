@@ -32,7 +32,7 @@ import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.log.*;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.concurrent.NCallable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
