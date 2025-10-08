@@ -40,7 +40,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NFolderRepositoryBase;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.io.NIOUtils;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.util.NUnsupportedArgumentException;
 
@@ -95,10 +95,10 @@ public class NFolderRepository extends NFolderRepositoryBase {
 
     public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode) {
         if (!acceptedFetchNoCache(fetchMode)) {
-            throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
+            throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
         NPath nutsPath = getIdRemotePath(id);
-        NNotFoundException nutsPathEx = null;
+        NArtifactNotFoundException nutsPathEx = null;
         try {
             InputStream stream = null;
             NId idDesc = id.builder().setFaceDescriptor().build();
@@ -123,10 +123,10 @@ public class NFolderRepository extends NFolderRepositoryBase {
                         , "artifact descriptor");
                 return nutsDescriptor;
             } catch (IOException | UncheckedIOException | NIOException ex) {
-                throw new NNotFoundException(id,
-                        new NNotFoundException.NIdInvalidDependency[0],
-                        new NNotFoundException.NIdInvalidLocation[]{
-                                new NNotFoundException.NIdInvalidLocation(
+                throw new NArtifactNotFoundException(id,
+                        new NArtifactNotFoundException.NIdInvalidDependency[0],
+                        new NArtifactNotFoundException.NIdInvalidLocation[]{
+                                new NArtifactNotFoundException.NIdInvalidLocation(
                                         getName(),
                                         getIdRemotePath(idDesc).toString(),
                                         ex.getMessage()
@@ -134,7 +134,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                         },
                         ex);
             }
-        } catch (NNotFoundException e) {
+        } catch (NArtifactNotFoundException e) {
             nutsPathEx = e;
             //ignore
         }
@@ -169,23 +169,23 @@ public class NFolderRepository extends NFolderRepositoryBase {
                         , "artifact descriptor");
                 return nutsDescriptor;
             } catch (IOException | UncheckedIOException | NIOException ex) {
-                throw new NNotFoundException(id,
-                        new NNotFoundException.NIdInvalidDependency[0],
-                        new NNotFoundException.NIdInvalidLocation[]{
-                                new NNotFoundException.NIdInvalidLocation(
+                throw new NArtifactNotFoundException(id,
+                        new NArtifactNotFoundException.NIdInvalidDependency[0],
+                        new NArtifactNotFoundException.NIdInvalidLocation[]{
+                                new NArtifactNotFoundException.NIdInvalidLocation(
                                         getName(), nutsPath.toString(), nutsPathEx.getMessage()
                                 ),
-                                new NNotFoundException.NIdInvalidLocation(
+                                new NArtifactNotFoundException.NIdInvalidLocation(
                                         getName(), pomURL.toString(), ex.getMessage()
                                 )
                         },
                         ex);
             }
         }
-        throw new NNotFoundException(id,
-                new NNotFoundException.NIdInvalidDependency[0],
-                new NNotFoundException.NIdInvalidLocation[]{
-                        new NNotFoundException.NIdInvalidLocation(
+        throw new NArtifactNotFoundException(id,
+                new NArtifactNotFoundException.NIdInvalidDependency[0],
+                new NArtifactNotFoundException.NIdInvalidLocation[]{
+                        new NArtifactNotFoundException.NIdInvalidLocation(
                                 getName(), nutsPath.toString(), nutsPathEx.getMessage()
                         )
                 },
