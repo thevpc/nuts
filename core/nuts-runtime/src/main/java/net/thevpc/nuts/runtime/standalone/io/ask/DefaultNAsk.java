@@ -8,6 +8,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
