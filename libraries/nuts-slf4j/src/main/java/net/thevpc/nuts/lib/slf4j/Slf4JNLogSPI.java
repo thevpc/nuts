@@ -2,7 +2,7 @@ package net.thevpc.nuts.lib.slf4j;
 
 import net.thevpc.nuts.log.NLogSPI;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.spi.LocationAwareLogger;
