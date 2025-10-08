@@ -1,12 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.spi.NSupportLevelContext;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -18,8 +17,8 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     @Override
