@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 
 import java.util.ArrayList;
@@ -8,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.thevpc.nuts.spi.NCodeHighlighter;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.text.*;
 
 public class JsonCodeHighlighter implements NCodeHighlighter {
@@ -26,20 +25,20 @@ public class JsonCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        String s = context.getConstraints();
+    public int getScore(NScorableContext context) {
+        String s = context.getCriteria();
         if(s==null){
-            return NConstants.Support.DEFAULT_SUPPORT;
+            return DEFAULT_SCORE;
         }
         switch (s){
             case "json":
             case "application/json":
             case "text/json":
             {
-                return NConstants.Support.DEFAULT_SUPPORT;
+                return DEFAULT_SCORE;
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
     @Override
