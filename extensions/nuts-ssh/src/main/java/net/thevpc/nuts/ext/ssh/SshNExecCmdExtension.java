@@ -13,7 +13,8 @@ import net.thevpc.nuts.command.NExecutionType;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
 import net.thevpc.nuts.net.NConnexionStringBuilder;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.log.NLog;
 
@@ -178,21 +179,21 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        Object c = context.getConstraints();
+    public int getScore(NScorableContext context) {
+        Object c = context.getCriteria();
         if (c instanceof String) {
             NConnexionStringBuilder z = DefaultNConnexionStringBuilder.of((String) c).orNull();
             if (z != null && "ssh".equals(z.getProtocol())) {
-                return NConstants.Support.DEFAULT_SUPPORT;
+                return DEFAULT_SCORE;
             }
         }
         if (c instanceof DefaultNConnexionStringBuilder) {
             NConnexionStringBuilder z = (NConnexionStringBuilder) c;
             if ("ssh".equals(z.getProtocol())) {
-                return NConstants.Support.DEFAULT_SUPPORT;
+                return DEFAULT_SCORE;
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
 }
