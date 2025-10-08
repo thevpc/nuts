@@ -9,7 +9,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.ntalk.NTalkClient;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnsupportedOperationException;
 
 
