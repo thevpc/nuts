@@ -11,6 +11,7 @@ import net.thevpc.nuts.core.NSpeedQualifier;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.*;
@@ -90,7 +91,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
     @Override
     public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
         if (!acceptedFetchNoCache(fetchMode)) {
-            throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
+            throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
         NPath fetch = NIdLocationUtils.fetch(id, descriptor.getLocations(), this);
         if (fetch != null) {
@@ -173,7 +174,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
             if (p.exists()) {
                 return p.copy();
             } else {
-                throw new NNotFoundException(id);
+                throw new NArtifactNotFoundException(id);
             }
         } else {
             String tempFile = NPath
@@ -187,7 +188,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                             }
                         }).run();
             } catch (UncheckedIOException | NIOException ex) {
-                throw new NNotFoundException(id, null, ex);
+                throw new NArtifactNotFoundException(id, null, ex);
             }
             return NPath.of(tempFile).setUserTemporary(true).setUserCache(true);
         }
