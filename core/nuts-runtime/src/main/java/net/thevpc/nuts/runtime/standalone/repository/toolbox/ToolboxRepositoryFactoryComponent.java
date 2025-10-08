@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.toolbox;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.spi.*;
@@ -56,7 +55,7 @@ public class ToolboxRepositoryFactoryComponent implements NRepositoryFactoryComp
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
-        return NConstants.Support.NO_SUPPORT;
+    public int getScore(NScorableContext criteria) {
+        return UNSUPPORTED_SCORE;
     }
 }
