@@ -57,7 +57,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  *
