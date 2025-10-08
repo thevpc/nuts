@@ -1,6 +1,6 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
