@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.boot.reserved.util.*;
+import net.thevpc.nuts.boot.internal.util.*;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
