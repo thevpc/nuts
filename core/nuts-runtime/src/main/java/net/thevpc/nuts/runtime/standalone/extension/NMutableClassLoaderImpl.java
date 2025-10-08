@@ -37,7 +37,7 @@ import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.net.URL;
 import java.net.URLClassLoader;
