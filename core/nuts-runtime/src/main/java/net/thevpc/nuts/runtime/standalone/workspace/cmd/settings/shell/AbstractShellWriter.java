@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.shell;
 
 import net.thevpc.nuts.platform.NShellFamily;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringBuilder;
 
 public abstract class AbstractShellWriter implements NShellWriter {
