@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.concurrent.NScopedValue;
