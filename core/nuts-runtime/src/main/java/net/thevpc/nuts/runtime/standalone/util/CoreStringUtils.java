@@ -24,8 +24,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.artifact.NNotFoundException;
+import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.expr.NToken;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -157,7 +158,7 @@ public final class CoreStringUtils {
 
     public static String exceptionToString(Throwable ex, boolean inner) {
         String msg = null;
-        if (ex instanceof NNotFoundException || ex instanceof UncheckedIOException) {
+        if (ex instanceof NArtifactNotFoundException || ex instanceof UncheckedIOException) {
             if (ex.getCause() != null) {
                 Throwable ex2 = ex.getCause();
                 if (ex2 instanceof UncheckedIOException) {
@@ -213,7 +214,7 @@ public final class CoreStringUtils {
             } else {
                 msg = NMsg.ofPlain(ex.getMessage());
             }
-        } else if (ex instanceof NNotFoundException) {
+        } else if (ex instanceof NArtifactNotFoundException) {
             if (ex.getCause() != null) {
                 Throwable ex2 = ex.getCause();
                 if (ex2 instanceof UncheckedIOException) {
@@ -221,7 +222,7 @@ public final class CoreStringUtils {
                 }
                 msg = exceptionToMessage(ex2, true);
             } else {
-                msg = ((NNotFoundException) ex).getFormattedMessage();
+                msg = ((NArtifactNotFoundException) ex).getFormattedMessage();
             }
         } else if (ex instanceof NException) {
             msg = ((NException) ex).getFormattedMessage();
