@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -12,9 +11,10 @@ import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.time.NDuration;
 
 import java.util.*;
@@ -56,8 +56,8 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     @Override
