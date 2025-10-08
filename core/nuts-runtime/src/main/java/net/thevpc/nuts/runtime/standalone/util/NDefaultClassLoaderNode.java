@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.core.NClassLoaderNode;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.boot.reserved.util.NBootUtils;
+import net.thevpc.nuts.boot.internal.util.NBootUtils;
 
 import java.net.URL;
 import java.util.Arrays;
