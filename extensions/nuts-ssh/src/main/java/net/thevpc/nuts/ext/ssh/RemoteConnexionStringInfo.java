@@ -21,6 +21,7 @@ import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.NConnexionStringBuilder;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.spi.NScopeType;
