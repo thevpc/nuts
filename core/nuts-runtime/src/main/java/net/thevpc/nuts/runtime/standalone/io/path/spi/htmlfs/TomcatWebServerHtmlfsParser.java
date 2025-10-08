@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
-import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -19,7 +19,7 @@ public class TomcatWebServerHtmlfsParser extends AbstractHtmlfsParser {
     }
 
     @Override
-    public NCallableSupport<List<String>> parseHtmlTomcat(byte[] bytes) {
+    public NScorableCallable<List<String>> parseHtmlTomcat(byte[] bytes) {
         boolean expectDirListing = false;
         boolean expectTomcat = false;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
@@ -46,7 +46,7 @@ public class TomcatWebServerHtmlfsParser extends AbstractHtmlfsParser {
         }
         if (!expectTomcat || !expectDirListing) {
             Supplier<NMsg> msg = () -> NMsg.ofInvalidValue("tomcat repo");
-            return NCallableSupport.ofInvalid(msg);
+            return NScorableCallable.ofInvalid(msg);
         }
         //<a href="/maven/net/"><tt>net/</tt></a></td>
         Pattern pattern = Pattern.compile("<a href=\"(?<href>[^\"]+)\"><tt>(?<title>[^<]+)</tt></a></td>");
