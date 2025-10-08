@@ -3,7 +3,7 @@ package net.thevpc.nuts.internal;
 import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.concurrent.NCallable;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 public class NScopedWorkspace {
