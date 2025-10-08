@@ -1,7 +1,7 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 public class NCmdLineException extends NIllegalArgumentException {
 
