@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
@@ -33,20 +33,20 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NCallableSupport.of(10, () -> new DotfilefsPath(path));
+                return NScorableCallable.of(10, () -> new DotfilefsPath(path));
             }
             return null;
         }
 
         @Override
-        public int getSupportLevel(NSupportLevelContext context) {
-            String path = context.getConstraints();
+        public int getScore(NScorableContext context) {
+            String path = context.getCriteria();
             if (path.startsWith(PREFIX)) {
-                return NConstants.Support.DEFAULT_SUPPORT;
+                return DEFAULT_SCORE;
             }
-            return NConstants.Support.NO_SUPPORT;
+            return UNSUPPORTED_SCORE;
         }
     }
 
