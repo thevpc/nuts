@@ -53,26 +53,26 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
+    public int getScore(NScorableContext criteria) {
         if (criteria == null) {
-            return NConstants.Support.NO_SUPPORT;
+            return UNSUPPORTED_SCORE;
         }
-        NRepositoryConfig r = criteria.getConstraints(NRepositoryConfig.class);
+        NRepositoryConfig r = criteria.getCriteria(NRepositoryConfig.class);
         if (r != null) {
             String type = NRepositoryUtils.getRepoType(r);
             if (NConstants.RepoTypes.NUTS.equals(type)) {
-                return NConstants.Support.DEFAULT_SUPPORT + 10;
+                return DEFAULT_SCORE + 10;
             }
             if (NBlankable.isBlank(type)) {
                 NPath rp = NPath.of(r.getLocation().getPath()).resolve("nuts-repository.json");
                 if (rp.exists()) {
                     r.setLocation(r.getLocation().setLocationType(NConstants.RepoTypes.NUTS));
-                    return NConstants.Support.DEFAULT_SUPPORT + 10;
+                    return DEFAULT_SCORE + 10;
                 }
-                return NConstants.Support.DEFAULT_SUPPORT + 2;
+                return DEFAULT_SCORE + 2;
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
     @Override
