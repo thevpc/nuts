@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.xtra.time;
 
-import net.thevpc.nuts.core.NI18n;
+import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.time.NProgressEvent;
 import net.thevpc.nuts.time.NProgressListener;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.logging.Level;
 
