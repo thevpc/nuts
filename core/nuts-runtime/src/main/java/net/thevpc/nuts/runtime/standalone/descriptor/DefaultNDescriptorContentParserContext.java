@@ -35,7 +35,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NDescriptorContentParserContext;
 import net.thevpc.nuts.io.NIOUtils;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 /**
  * Created by vpc on 1/29/17.
