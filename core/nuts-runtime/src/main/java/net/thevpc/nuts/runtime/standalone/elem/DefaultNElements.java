@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.UserElementMapperStore;
@@ -11,7 +10,7 @@ import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathFilter;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
 
@@ -117,8 +116,8 @@ public class DefaultNElements implements NElements {
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 
     public NElementType commonNumberType(NElementType aa, NElementType bb) {
