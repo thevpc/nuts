@@ -56,15 +56,15 @@ public class ZipDescriptorContentParserComponent implements NDescriptorContentPa
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("zip", "gzip", "gz","war","ear"));
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
-        NDescriptorContentParserContext constraints = criteria.getConstraints(NDescriptorContentParserContext.class);
+    public int getScore(NScorableContext criteria) {
+        NDescriptorContentParserContext constraints = criteria.getCriteria(NDescriptorContentParserContext.class);
         if(constraints!=null) {
             String e = NStringUtils.trim(constraints.getFileExtension());
             if (!POSSIBLE_EXT.contains(e)) {
-                return NConstants.Support.NO_SUPPORT;
+                return UNSUPPORTED_SCORE;
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
     @Override
