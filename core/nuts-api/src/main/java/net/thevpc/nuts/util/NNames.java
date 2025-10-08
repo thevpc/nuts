@@ -1,5 +1,7 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.text.NMsg;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
