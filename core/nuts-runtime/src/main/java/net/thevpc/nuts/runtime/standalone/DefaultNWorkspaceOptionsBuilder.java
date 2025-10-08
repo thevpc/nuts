@@ -37,7 +37,8 @@ import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.internal.NReservedLangUtils;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.text.NContentType;
@@ -2211,7 +2212,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
 }
