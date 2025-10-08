@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
@@ -9,7 +8,7 @@ import net.thevpc.nuts.command.NDeployCmd;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 
@@ -50,8 +49,8 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
         super("deploy");
     }
     @Override
-    public int getSupportLevel(NSupportLevelContext context) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getScore(NScorableContext context) {
+        return DEFAULT_SCORE;
     }
     public List<String> getParseOptions() {
         return parseOptions;
