@@ -39,6 +39,7 @@ import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.text.NDescriptorFormat;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.io.*;
@@ -103,7 +104,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         NPath content = lib.fetchContentImpl(command.getId());
         NDescriptor desc = lib.fetchDescriptorImpl(command.getId());
         if (content == null || desc == null) {
-            throw new NNotFoundException(command.getId());
+            throw new NArtifactNotFoundException(command.getId());
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         NDescriptorFormat.of(desc).print(new OutputStreamWriter(descStream));
@@ -123,7 +124,7 @@ public class NHttpSrvRepository extends NCachedRepository {
     public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode) {
         NSession session=getWorkspace().currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
-            throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
+            throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
         boolean transitive = session.isTransitive();
         session.getTerminal().printProgress(NMsg.ofC("loading descriptor for %s", id.getLongId()));
@@ -145,7 +146,7 @@ public class NHttpSrvRepository extends NCachedRepository {
     public NIterator<NId> searchVersionsCore(NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
         NSession session=getWorkspace().currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
-            throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
+            throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
         boolean transitive = session.isTransitive();
         InputStream ret = null;
@@ -214,7 +215,7 @@ public class NHttpSrvRepository extends NCachedRepository {
     public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
         NSession session = getWorkspace().currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
-            throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
+            throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
         NPath localPath=NIdLocationUtils.fetch(id, descriptor.getLocations(), this);
         if (localPath!=null) {
@@ -234,7 +235,7 @@ public class NHttpSrvRepository extends NCachedRepository {
                 return localPath.setUserCache(false);
             }
         } catch (UncheckedIOException | NIOException ex) {
-            throw new NNotFoundException(id, ex);
+            throw new NArtifactNotFoundException(id, ex);
             //
         }
         return null;
@@ -303,7 +304,7 @@ public class NHttpSrvRepository extends NCachedRepository {
 //    public void checkAllowedFetch(NutsId parse) {
 //        super.checkAllowedFetch(parse, session);
 //        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-//            throw new NNotFoundException(session(), parse);
+//            throw new NArtifactNotFoundException(session(), parse);
 //        }
 //    }
     private class NamedNIdFromStreamIterator extends NIteratorBase<NId> {
