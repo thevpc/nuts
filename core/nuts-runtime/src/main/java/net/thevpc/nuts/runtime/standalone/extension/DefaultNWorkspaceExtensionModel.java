@@ -18,6 +18,7 @@ import net.thevpc.nuts.command.NSearchCmd;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.ext.NExtensionAlreadyRegisteredException;
 import net.thevpc.nuts.ext.NExtensionInformation;
