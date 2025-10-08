@@ -24,9 +24,9 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.boot.reserved.util.NBootConstants;
-import net.thevpc.nuts.boot.reserved.util.NBootStringMapFormat;
-import net.thevpc.nuts.boot.reserved.util.NBootUtils;
+import net.thevpc.nuts.boot.internal.util.NBootConstants;
+import net.thevpc.nuts.boot.internal.util.NBootStringMapFormat;
+import net.thevpc.nuts.boot.internal.util.NBootUtils;
 
 import java.util.*;
 
