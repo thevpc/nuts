@@ -26,6 +26,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.NRepositorySPI;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.*;
@@ -222,7 +223,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                     }
                 }
                 if (descriptor == null) {
-                    throw new NNotFoundException(null, NMsg.ofC("artifact not found at %s", contentFile));
+                    throw new NArtifactNotFoundException(null, NMsg.ofC("artifact not found at %s", contentFile));
                 }
                 //remove workspace
                 descriptor = descriptor.builder().setId(descriptor.getId().builder().setRepository(null).build()).build();
