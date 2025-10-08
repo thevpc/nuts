@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.shell;
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.expr.NParseException;
 import net.thevpc.nuts.util.NUnsupportedEnumException;
 
