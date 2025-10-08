@@ -31,7 +31,7 @@ import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NNameFormat;
 
 import java.nio.file.Path;
@@ -57,10 +57,10 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                 if (!isFailFast()) {
                     return null;
                 }
-                throw new NNotFoundException(getId(), NMsg.ofC("missing content for %s", getId()));
+                throw new NArtifactNotFoundException(getId(), NMsg.ofC("missing content for %s", getId()));
             }
             return def.getContent().get();
-        } catch (NNotFoundException ex) {
+        } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
             }
@@ -76,7 +76,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
 //                return NWorkspaceExt.of().resolveEffectiveId(def.getEffectiveDescriptor().get());
 //            }
             return def.getId();
-        } catch (NNotFoundException ex) {
+        } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
             }
@@ -89,7 +89,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         try {
             Path f = getResultDefinition().getContent().flatMap(NPath::toPath).get();
             return NDigest.of().setSource(f).computeString();
-        } catch (NNotFoundException ex) {
+        } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
             }
@@ -101,7 +101,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     public String getResultDescriptorHash() {
         try {
             return NDigest.of().setSource(getResultDescriptor()).computeString();
-        } catch (NNotFoundException ex) {
+        } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
             }
@@ -113,7 +113,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     public NDefinition getResultDefinition() {
         try {
             return fetchDefinition(getId());
-        } catch (NNotFoundException ex) {
+        } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
             }
@@ -129,7 +129,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
 //                return def.getEffectiveDescriptor().get();
 //            }
             return def.getDescriptor();
-        } catch (NNotFoundException ex) {
+        } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
             }
@@ -142,7 +142,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         try {
             NDefinition def = fetchDefinition(getId());
             return def.getEffectiveDescriptor().get();
-        } catch (NNotFoundException ex) {
+        } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
             }
@@ -165,7 +165,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         try {
             NDefinition def = fetchDefinition(getId());
             return def.getContent().orNull();
-        } catch (NNotFoundException ex) {
+        } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
             }
@@ -196,7 +196,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         if (NDependencyScope.parse(id.toDependency().getScope()).orNull() == NDependencyScope.SYSTEM) {
             // TODO, fix me
             //just ignore or should we still support it?
-            throw new NNotFoundException(id);
+            throw new NArtifactNotFoundException(id);
         }
         NWorkspaceExt dws = NWorkspaceExt.of();
         NFetchStrategy nutsFetchModes = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
@@ -222,7 +222,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                     result = fetchDescriptorAsDefinition(id, nutsFetchModes, location.getFetchMode(), location.getRepository());
                     successfulDescriptorLocation = location;
                     break;
-                } catch (NNotFoundException exc) {
+                } catch (NArtifactNotFoundException exc) {
                     //
                     descTracker.addFailure(location);
                 } catch (Exception ex) {
@@ -243,7 +243,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                 foundDefinitionBuilder.setInstallInformation(new NDefInstallInformationSupplier(dws, id));
                 foundDefinitionBuilder.setEffectiveFlags(new NDefNDescriptorFlagSetSupplier(id, foundDefinitionBuilder));
             }
-        } catch (NNotFoundException ex) {
+        } catch (NArtifactNotFoundException ex) {
             reasons.add(ex);
             NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NMsgIntent.FAIL, "fetch definition", startTime);
             throw ex;
@@ -254,7 +254,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         if (foundDefinitionBuilder != null) {
             return foundDefinitionBuilder.build();
         }
-        throw new NNotFoundException(id);
+        throw new NArtifactNotFoundException(id);
     }
 
     protected DefaultNDefinitionBuilder2 fetchDescriptorAsDefinition(NId id, NFetchStrategy nutsFetchModes, NFetchMode mode, NRepository repo) {
@@ -356,8 +356,8 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
 //            }
             return result;
         }
-        throw new NNotFoundException(id, new NNotFoundException.NIdInvalidDependency[0], new NNotFoundException.NIdInvalidLocation[]{
-                new NNotFoundException.NIdInvalidLocation(repo.getName(), null, id + " not found")
+        throw new NArtifactNotFoundException(id, new NArtifactNotFoundException.NIdInvalidDependency[0], new NArtifactNotFoundException.NIdInvalidLocation[]{
+                new NArtifactNotFoundException.NIdInvalidLocation(repo.getName(), null, id + " not found")
         }, null);
     }
 
@@ -415,7 +415,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
             try {
                 return (NWorkspace.of().resolveEffectiveDescriptor(foundDefinitionBuilder.getDescriptor().get(),
                         new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(DefaultNFetchCmd.this.isIgnoreCurrentEnvironment())));
-            } catch (NNotFoundException ex) {
+            } catch (NArtifactNotFoundException ex) {
                 //ignore
                 DefaultNFetchCmd.this._LOG()
                         .log(NMsg.ofC("artifact descriptor found, but one of its parents or dependencies is not: %s : missing %s", id,
@@ -555,7 +555,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                         .setId(id1).setDescriptor(baseDescriptor)
                         .setFetchMode(repo.getFetchMode())
                         .getResult();
-            } catch (NNotFoundException ex) {
+            } catch (NArtifactNotFoundException ex) {
                 reasons.add(ex);
                 //
             }
