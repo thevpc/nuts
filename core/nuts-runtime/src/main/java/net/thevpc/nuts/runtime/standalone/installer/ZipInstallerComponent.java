@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.installer;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
@@ -40,7 +39,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NInstallerComponent;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 
 import java.io.IOException;
 
@@ -51,16 +50,16 @@ import java.io.IOException;
 public class ZipInstallerComponent implements NInstallerComponent {
 
     @Override
-    public int getSupportLevel(NSupportLevelContext ctx) {
-        NDefinition def = ctx.getConstraints(NDefinition.class);
+    public int getScore(NScorableContext ctx) {
+        NDefinition def = ctx.getCriteria(NDefinition.class);
         if (def != null) {
             if (def.getDescriptor() != null) {
                 if ("zip".equals(def.getDescriptor().getPackaging())) {
-                    return NConstants.Support.DEFAULT_SUPPORT;
+                    return DEFAULT_SCORE;
                 }
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
     @Override
