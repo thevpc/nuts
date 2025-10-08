@@ -107,7 +107,7 @@ public interface NFetchCmd extends NWorkspaceCmd {
     NFetchCmd setExpireTime(Instant value);
 
     /**
-     * when true, NNotFoundException instances are ignored
+     * when true, NArtifactNotFoundException instances are ignored
      *
      * @return true if armed FailFast mode
      */
@@ -115,9 +115,9 @@ public interface NFetchCmd extends NWorkspaceCmd {
 
     /**
      * set armed (or disarmed) fail safe mode. if true, null replaces
-     * NNotFoundException.
+     * NArtifactNotFoundException.
      *
-     * @param enable if true, null replaces NNotFoundException.
+     * @param enable if true, null replaces NArtifactNotFoundException.
      * @return {@code this} instance
      */
     NFetchCmd setFailFast(boolean enable);
