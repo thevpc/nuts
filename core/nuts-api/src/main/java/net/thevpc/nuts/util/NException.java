@@ -26,11 +26,12 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.boot.NBootOptionsInfo;
-import net.thevpc.nuts.boot.reserved.util.NBootUtils;
-import net.thevpc.nuts.core.NAnyBootAwareExceptionBase;
+import net.thevpc.nuts.boot.internal.util.NBootUtils;
+import net.thevpc.nuts.boot.core.NAnyBootAwareExceptionBase;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NSessionAwareExceptionBase;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 
 /**
