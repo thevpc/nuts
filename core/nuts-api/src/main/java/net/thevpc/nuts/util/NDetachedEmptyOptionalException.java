@@ -1,5 +1,7 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.text.NMsg;
+
 public class NDetachedEmptyOptionalException extends RuntimeException implements NDetachedFormattedExceptionBase {
     private NMsg formattedMessage;
 
