@@ -47,7 +47,7 @@ public final class NClassLoaderUtils {
     public static NClassLoaderNode definitionToClassLoaderNodeSafer(NDefinition def, NRepositoryFilter repositoryFilter) {
         try {
             return definitionToClassLoaderNode(def, repositoryFilter);
-        }catch (NNotFoundException ex){
+        }catch (NArtifactNotFoundException ex){
             return definitionToClassLoaderNode(def, null);
         }
     }
@@ -92,7 +92,7 @@ public final class NClassLoaderUtils {
                 //this would happen for pom ids (with no content)
                 return null;
             }
-        } catch (NNotFoundException ex) {
+        } catch (NArtifactNotFoundException ex) {
             //
         }
         if (cc != null) {
@@ -108,7 +108,7 @@ public final class NClassLoaderUtils {
         if (optional) {
             return null;
         }
-        throw new NNotFoundException(id);
+        throw new NArtifactNotFoundException(id);
     }
 
     private static NClassLoaderNode toClassLoaderNodeWithOptional(NDependencyTreeNode d, boolean isOptional, boolean withChildren, NRepositoryFilter repositoryFilter) {
@@ -123,7 +123,7 @@ public final class NClassLoaderUtils {
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .setRepositoryFilter(repositoryFilter)
                     .getResultContent();
-        } catch (NNotFoundException ex) {
+        } catch (NArtifactNotFoundException ex) {
             //
         }
         if (cc != null) {
@@ -147,7 +147,7 @@ public final class NClassLoaderUtils {
         if (isOptional) {
             return null;
         }
-        throw new NNotFoundException(d.getDependency().toId());
+        throw new NArtifactNotFoundException(d.getDependency().toId());
     }
 
     public static URL[] resolveClasspathURLs(ClassLoader contextClassLoader) {
