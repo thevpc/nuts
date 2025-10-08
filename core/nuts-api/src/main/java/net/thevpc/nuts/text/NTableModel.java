@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.util.NMsg;
-
 /**
  * @author thevpc
  * @app.category Format
