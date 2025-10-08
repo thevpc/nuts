@@ -49,6 +49,7 @@ import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.spi.NTerminalSpec;
 import net.thevpc.nuts.log.NLog;
 
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.platform.NOsFamily;
 
