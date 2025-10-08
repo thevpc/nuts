@@ -1,11 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NSearchCmd;
-import net.thevpc.nuts.concurrent.NCallableSupport;
+import net.thevpc.nuts.concurrent.NScorableCallable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
 import net.thevpc.nuts.runtime.standalone.io.path.NCompressedPath;
@@ -15,7 +14,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NScorableContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.*;
 
@@ -532,10 +531,10 @@ public class NResourcePath implements NPathSPI {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             try {
                 if (path.startsWith("resource:")) {
-                    return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new NResourcePath(path));
+                    return NScorableCallable.of(DEFAULT_SCORE, () -> new NResourcePath(path));
                 }
             } catch (Exception ex) {
                 //ignore
@@ -544,12 +543,12 @@ public class NResourcePath implements NPathSPI {
         }
 
         @Override
-        public int getSupportLevel(NSupportLevelContext context) {
-            String path= context.getConstraints();
+        public int getScore(NScorableContext context) {
+            String path= context.getCriteria();
             if (path.startsWith("resource:")) {
-                return NConstants.Support.DEFAULT_SUPPORT;
+                return DEFAULT_SCORE;
             }
-            return NConstants.Support.NO_SUPPORT;
+            return UNSUPPORTED_SCORE;
         }
     }
 
