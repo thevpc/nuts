@@ -12,7 +12,7 @@ import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.io.NIOUtils;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.*;
 import java.net.URISyntaxException;
