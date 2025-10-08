@@ -1,5 +1,7 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.text.NMsg;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
