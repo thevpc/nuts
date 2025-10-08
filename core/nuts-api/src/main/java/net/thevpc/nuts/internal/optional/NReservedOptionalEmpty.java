@@ -5,7 +5,7 @@ import net.thevpc.nuts.util.NEmptyOptionalException;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.internal.NApiUtilsRPI;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Objects;
