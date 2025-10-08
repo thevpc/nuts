@@ -30,7 +30,6 @@ import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NBootOptions;
 import net.thevpc.nuts.command.NExecCmd;
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLog;
 
@@ -38,7 +37,8 @@ import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.boot.NBootWorkspaceFactory;
-import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.spi.NScorable;
+import net.thevpc.nuts.text.NMsg;
 
 import java.util.List;
 
@@ -51,8 +51,8 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
     }
 
     @Override
-    public int getBootSupportLevel(NBootOptionsInfo options) {
-        return NConstants.Support.DEFAULT_SUPPORT;
+    public int getBootScore(NBootOptionsInfo options) {
+        return NScorable.DEFAULT_SCORE;
     }
 
     @Override
