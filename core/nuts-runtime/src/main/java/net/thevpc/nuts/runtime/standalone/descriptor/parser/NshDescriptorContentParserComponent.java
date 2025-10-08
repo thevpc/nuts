@@ -71,8 +71,8 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
     }
 
     @Override
-    public int getSupportLevel(NSupportLevelContext criteria) {
-        NDescriptorContentParserContext ctr=criteria.getConstraints(NDescriptorContentParserContext.class);
+    public int getScore(NScorableContext criteria) {
+        NDescriptorContentParserContext ctr=criteria.getCriteria(NDescriptorContentParserContext.class);
         if(ctr!=null) {
             String e = NStringUtils.trim(ctr.getFileExtension());
             switch (e) {
@@ -80,11 +80,11 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
                 case "sh":
                 case "nsh":
                 case "bash": {
-                    return NConstants.Support.DEFAULT_SUPPORT;
+                    return DEFAULT_SCORE;
                 }
             }
         }
-        return NConstants.Support.NO_SUPPORT;
+        return UNSUPPORTED_SCORE;
     }
 
     private static String removeBashComment(String str) {
