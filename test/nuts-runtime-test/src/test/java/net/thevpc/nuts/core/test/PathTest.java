@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.concurrent.NScorableCallable;
+import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.*;
@@ -279,7 +279,7 @@ public class PathTest {
 
     @Test
     public void testGenericFile() {
-        NScorableCallable<NPathSPI> p = new GenericFilePath.GenericPathFactory().createPath("C:", null, null);
+        NScoredCallable<NPathSPI> p = new GenericFilePath.GenericPathFactory().createPath("C:", null, null);
         NPathFromSPI u = new NPathFromSPI(p.call());
         NPath root = u.getRoot();
         System.out.println(root);
@@ -287,7 +287,7 @@ public class PathTest {
 
     @Test
     public void testGenericFile2() {
-        NScorableCallable<NPathSPI> p = new GenericFilePath.GenericPathFactory().createPath("/C:", null, null);
+        NScoredCallable<NPathSPI> p = new GenericFilePath.GenericPathFactory().createPath("/C:", null, null);
         NPathFromSPI u = new NPathFromSPI(p.call());
         NPath root = u.getRoot();
         System.out.println(root);
