@@ -9,7 +9,7 @@ import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NPlatformFamily;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NFilter;
