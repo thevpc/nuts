@@ -37,6 +37,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.io.NAnsiTermHelper;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScorableContext;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
