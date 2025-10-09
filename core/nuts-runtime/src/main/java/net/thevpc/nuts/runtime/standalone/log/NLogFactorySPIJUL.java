@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.log.NLogFactorySPI;
 import net.thevpc.nuts.log.NLogSPI;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 
 import java.util.Objects;
 
