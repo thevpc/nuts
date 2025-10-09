@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.xtra.rnsh;
 
-import net.thevpc.nuts.concurrent.NScorableCallable;
+import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.NTempOutputStreamImpl;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NPathSPIAware;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class RnshPathFactorySPI implements NPathFactorySPI {
     @Override
-    public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+    public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
         //fail fast!
         if (protocol != null) {
             switch (protocol) {
@@ -28,7 +28,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
                 case "rnshs":
                     break;
                 default:
-                    return NScorableCallable.ofInvalid(NMsg.ofC("Invalid path: %s", path));
+                    return NScoredCallable.ofInvalid(NMsg.ofC("Invalid path: %s", path));
             }
         }
         if (
@@ -39,10 +39,10 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
         ) {
             NConnexionString cnx = NConnexionString.get(path).orNull();
             if (cnx != null) {
-                return NScorableCallable.of(3, () -> new NServerPathSPI(cnx));
+                return NScoredCallable.of(3, () -> new NServerPathSPI(cnx));
             }
         }
-        return NScorableCallable.ofInvalid(NMsg.ofC("Invalid path: %s", path));
+        return NScoredCallable.ofInvalid(NMsg.ofC("Invalid path: %s", path));
     }
 
     @Override
