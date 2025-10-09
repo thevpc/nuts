@@ -7,7 +7,7 @@ import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepositoryConfig;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.runtime.standalone.util.NMapWithAlias;
 import net.thevpc.nuts.spi.NRepositoryDB;
