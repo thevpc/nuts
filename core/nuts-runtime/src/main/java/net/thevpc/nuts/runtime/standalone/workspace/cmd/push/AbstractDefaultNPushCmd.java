@@ -32,7 +32,7 @@ import net.thevpc.nuts.command.NPushCmd;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
