@@ -838,7 +838,7 @@ public class CoreIOUtils {
     }
 
     public static DefaultNContentMetadata defaultNutsInputSourceMetadata(InputStream is) {
-        Objects.requireNonNull(is);
+        NAssert.requireNonNull(is);
         if (is instanceof NInputSource) {
             return new DefaultNContentMetadata(((NInputSource) is).getMetaData());
         }
