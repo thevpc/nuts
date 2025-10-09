@@ -5,7 +5,7 @@ import net.thevpc.nuts.concurrent.NLockException;
 
 
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 
 import java.io.File;
