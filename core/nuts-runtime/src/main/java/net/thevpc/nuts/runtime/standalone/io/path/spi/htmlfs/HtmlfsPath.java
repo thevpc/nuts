@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.concurrent.NScorableCallable;
+import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.AbstractPathSPIAdapter;
@@ -9,10 +9,8 @@ import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NStream;
-import net.thevpc.nuts.util.NUnsupportedArgumentException;
 
 import java.io.*;
 import java.util.*;
@@ -177,7 +175,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     public List<String> parseHtml(InputStream html) {
         byte[] bytes = NCp.of().from(html).getByteArrayResult();
-        return NScorable.<NScorableCallable<List<String>>>query()
+        return NScorable.<NScoredCallable<List<String>>>query()
                 .withName(NMsg.ofC("html parser"))
                 .fromStream(Arrays.stream(PARSERS)
                         .map(p -> {
@@ -189,7 +187,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                             }
                             return null;
                         })
-                ).getBest().map(NScorableCallable::call).orElse(Collections.emptyList());
+                ).getBest().map(NScoredCallable::call).orElse(Collections.emptyList());
     }
 
     @Override
@@ -203,9 +201,9 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NScorableCallable.of(DEFAULT_SCORE, () -> new HtmlfsPath(path));
+                return NScoredCallable.of(DEFAULT_SCORE, () -> new HtmlfsPath(path));
             }
             return null;
         }
