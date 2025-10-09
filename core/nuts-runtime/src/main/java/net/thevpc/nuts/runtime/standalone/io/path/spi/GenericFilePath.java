@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
 
-import net.thevpc.nuts.concurrent.NScorableCallable;
+import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
@@ -10,7 +10,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -468,7 +468,7 @@ public class GenericFilePath implements NPathSPI {
         }
 
         @Override
-        public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path != null) {
                 if (path.trim().length() > 0) {
                     for (char c : path.toCharArray()) {
@@ -476,7 +476,7 @@ public class GenericFilePath implements NPathSPI {
                             return null;
                         }
                     }
-                    return NScorableCallable.of(1, () -> new GenericFilePath(path));
+                    return NScoredCallable.of(1, () -> new GenericFilePath(path));
                 }
             }
             return null;
