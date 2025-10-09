@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NUnsupportedOperationException;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.*;
