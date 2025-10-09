@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.thevpc.nuts.text.NTableCell;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NText;
 
 /**
