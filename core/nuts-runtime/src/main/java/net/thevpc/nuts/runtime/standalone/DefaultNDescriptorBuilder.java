@@ -30,7 +30,7 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.boot.NBootDescriptor;
 import net.thevpc.nuts.artifact.NIdLocation;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.util.*;
