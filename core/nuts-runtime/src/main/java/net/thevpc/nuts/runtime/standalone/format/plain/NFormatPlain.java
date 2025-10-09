@@ -11,7 +11,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NContentTypeFormat;
 import net.thevpc.nuts.text.NText;
