@@ -6,7 +6,7 @@ import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.runtime.standalone.reflect.mapper.NReflectMapperContextImpl;
 import net.thevpc.nuts.runtime.standalone.reflect.mapper.TypeMapperRepositoryDef;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.lang.reflect.Type;
