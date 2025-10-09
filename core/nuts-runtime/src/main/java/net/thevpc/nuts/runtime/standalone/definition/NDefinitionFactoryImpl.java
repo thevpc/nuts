@@ -32,7 +32,7 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NDefinitionFactory;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 
 /**
  *
