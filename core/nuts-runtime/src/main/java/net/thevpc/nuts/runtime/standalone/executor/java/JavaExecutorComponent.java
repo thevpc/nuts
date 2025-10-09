@@ -35,7 +35,7 @@ import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.core.NWorkspaceCmdLineParser;
 
