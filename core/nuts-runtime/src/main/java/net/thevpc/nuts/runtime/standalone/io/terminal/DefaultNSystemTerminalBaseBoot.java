@@ -12,6 +12,7 @@ import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.io.NAnsiTermHelper;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScorableContext;
 
 import java.io.InputStream;
 import java.util.Scanner;
