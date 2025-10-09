@@ -12,7 +12,8 @@ import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSystemTerminal;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
 import org.jline.reader.History;
@@ -270,8 +271,8 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
 
     @Override
     public void add(Instant time, String line) {
-        Objects.requireNonNull(time);
-        Objects.requireNonNull(line);
+        NAssert.requireNonNull(time);
+        NAssert.requireNonNull(line);
 
         if (getBoolean(reader, LineReader.DISABLE_HISTORY, false)) {
             return;
