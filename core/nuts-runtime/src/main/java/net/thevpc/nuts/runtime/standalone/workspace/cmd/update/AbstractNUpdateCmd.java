@@ -18,7 +18,7 @@ import net.thevpc.nuts.core.NWorkspaceUpdateResult;
 import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NUnexpectedException;
 
