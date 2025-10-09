@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.compress;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.spi.NCompressPackaging;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLog;
