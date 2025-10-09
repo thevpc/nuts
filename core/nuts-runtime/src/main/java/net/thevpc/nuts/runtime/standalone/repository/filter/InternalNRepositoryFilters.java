@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NIllegalArgumentException;
