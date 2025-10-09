@@ -16,6 +16,8 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -33,35 +35,54 @@ public class DefaultNLiteral implements NLiteral {
         return new DefaultNLiteral(any);
     }
 
-    public static final String[] DATE_TIME_FORMATS = {
-            "yyyy-MM-dd HH:mm:ss.SSS",
-            "yyyy-MM-dd HH:mm:ss",
-            "yyyy-MM-dd'T'HH:mm:ss.SSSX",
-            "yyyy/MM/dd HH:mm:ss.SSS",
-            "yyyy/MM/dd HH:mm:ss"
+    public static final DateTimeFormatter[] DATE_TIME_FORMATS = {
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"),
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
+                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX"),
+                                    DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS"),
+                                            DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")
     };
 
-    public static final String[] TIME_FORMATS = {
-            "HH:mm:ss.SSSX",
-            "HH:mm:ss.SSS",
-            "HH:mm:ss",
-            "HH:mm"
+    public static final DateTimeFormatter[] TIME_FORMATS = {
+            DateTimeFormatter.ofPattern("HH:mm:ss.SSSX"),
+                    DateTimeFormatter.ofPattern("HH:mm:ss.SSS"),
+                            DateTimeFormatter.ofPattern("HH:mm:ss"),
+                                    DateTimeFormatter.ofPattern("HH:mm")
     };
 
-    public static final String[] DATE_FORMATS = {
-            "yyyy-MM-dd",
-            "yyyy/MM/dd",
+    public static final DateTimeFormatter[] DATE_FORMATS = {
+            DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+                    DateTimeFormatter.ofPattern("yyyy/MM/dd"),
     };
 
     private Object value;
     private NElementType type;
 
     public static NOptional<Instant> parseInstant(String text) {
-        for (String f : DATE_TIME_FORMATS) {
+        for (DateTimeFormatter f : DATE_TIME_FORMATS) {
             try {
-                return NOptional.of(new SimpleDateFormat(f).parse(text).toInstant());
+                TemporalAccessor ta = f.parse(text);
+                Instant instant;
+
+                if (ta.isSupported(ChronoField.INSTANT_SECONDS)) {
+                    // directly supported
+                    instant = Instant.from(ta);
+                } else if (ta.isSupported(ChronoField.OFFSET_SECONDS)) {
+                    instant = OffsetDateTime.from(ta).toInstant();
+                } else if (ta.isSupported(ChronoField.HOUR_OF_DAY)) {
+                    // local date-time without zone
+                    LocalDateTime ldt = LocalDateTime.from(ta);
+                    instant = ldt.toInstant(ZoneOffset.UTC); // or ZoneId.systemDefault()
+                } else if (ta.isSupported(ChronoField.DAY_OF_MONTH)) {
+                    // only date provided
+                    LocalDate ld = LocalDate.from(ta);
+                    instant = ld.atStartOfDay(ZoneOffset.UTC).toInstant();
+                } else {
+                    continue; // unknown format
+                }
+                return NOptional.of(instant);
             } catch (Exception ex) {
-                //
+                // ignore and try next
             }
         }
         return NOptional.ofError(() -> NMsg.ofC("invalid Instant %s", text));
@@ -299,12 +320,9 @@ public class DefaultNLiteral implements NLiteral {
         } catch (Exception ex) {
             //
         }
-        for (String f : DATE_TIME_FORMATS) {
-            try {
-                return NOptional.of(new SimpleDateFormat(f).parse(s).toInstant());
-            } catch (Exception ex) {
-                //
-            }
+        Instant instant = parseInstant(s).orNull();
+        if(instant!=null){
+            return NOptional.of(instant);
         }
         try {
             String sd = s.replace("/", "-");
@@ -571,7 +589,7 @@ public class DefaultNLiteral implements NLiteral {
                 return NOptional.of(d.floatValue());
             }
             double abs = Math.abs(d);
-            if (abs >= Float.MIN_VALUE && abs <= Float.MIN_VALUE) {
+            if (abs >= Float.MIN_VALUE && abs <= Float.MAX_VALUE) {
                 return NOptional.of(d.floatValue());
             }
             return NOptional.ofEmpty(() -> NMsg.ofC("invalid Float %s", value));
@@ -579,7 +597,7 @@ public class DefaultNLiteral implements NLiteral {
         if (value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long) {
             double d = ((Number) value).doubleValue();
             double abs = Math.abs(d);
-            if (abs >= Float.MIN_VALUE && abs <= Float.MIN_VALUE) {
+            if (abs >= Float.MIN_VALUE && abs <= Float.MAX_VALUE) {
                 return NOptional.of((float) d);
             }
             return NOptional.ofEmpty(() -> NMsg.ofC("invalid Float %s", value));
@@ -1045,7 +1063,7 @@ public class DefaultNLiteral implements NLiteral {
             return NOptional.of((Character) value);
         }
         if (value instanceof Number) {
-            return NOptional.of((char) ((Number) value).shortValue());
+            return NOptional.of((char) ((Number) value).intValue());
         }
         if (value instanceof CharSequence) {
             CharSequence e = (CharSequence) value;
