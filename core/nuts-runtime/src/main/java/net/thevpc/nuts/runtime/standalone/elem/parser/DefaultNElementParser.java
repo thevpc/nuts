@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.parser;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.expr.NParseException;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
