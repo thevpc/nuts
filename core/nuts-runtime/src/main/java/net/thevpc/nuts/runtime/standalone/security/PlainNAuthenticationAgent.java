@@ -5,6 +5,7 @@ import net.thevpc.nuts.security.NSecurityException;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScorableContext;
 
 import java.util.Arrays;
 import java.util.Map;
