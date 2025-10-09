@@ -26,11 +26,11 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.concurrent.NScorableCallable;
+import net.thevpc.nuts.concurrent.NScoredCallable;
 
 /**
  * @app.category Input Output
  */
 public interface NPathFactorySPI extends NComponent{
-    NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader);
+    NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader);
 }
