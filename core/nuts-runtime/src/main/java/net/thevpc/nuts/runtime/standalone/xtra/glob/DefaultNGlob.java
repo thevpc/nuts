@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.glob;
 
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.expr.NGlob;
 
