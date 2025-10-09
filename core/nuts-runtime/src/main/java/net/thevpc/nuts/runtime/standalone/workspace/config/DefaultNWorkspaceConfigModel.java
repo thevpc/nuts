@@ -32,7 +32,7 @@ import net.thevpc.nuts.boot.NBootDescriptor;
 import net.thevpc.nuts.command.NCommandFactoryConfig;
 import net.thevpc.nuts.command.NFetchCmd;
 import net.thevpc.nuts.command.NInstallStatus;
-import net.thevpc.nuts.concurrent.NScorableCallable;
+import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElementWriter;
@@ -1497,11 +1497,11 @@ public class DefaultNWorkspaceConfigModel {
         } else {
             protocol = null;
         }
-        NScorableCallable<NPathSPI> z = NScorable.<NScorableCallable<NPathSPI>>query()
+        NScoredCallable<NPathSPI> z = NScorable.<NScoredCallable<NPathSPI>>query()
                 .fromStream(
                         Arrays.stream(getPathFactories())
                                 .map(x -> {
-                                    NScorableCallable<NPathSPI> v = null;
+                                    NScoredCallable<NPathSPI> v = null;
                                     try {
                                         v = x.createPath(path, protocol, finalClassLoader);
                                     } catch (Exception ex) {
@@ -1687,9 +1687,9 @@ public class DefaultNWorkspaceConfigModel {
 
     private class InvalidFilePathFactory implements NPathFactorySPI {
         @Override
-        public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             try {
-                return NScorableCallable.of(1, () -> new InvalidFilePath(path, workspace));
+                return NScoredCallable.of(1, () -> new InvalidFilePath(path, workspace));
             } catch (Exception ex) {
                 //ignore
             }
