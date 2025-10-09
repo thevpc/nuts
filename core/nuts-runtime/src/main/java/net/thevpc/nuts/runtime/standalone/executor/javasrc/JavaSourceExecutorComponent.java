@@ -38,6 +38,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScorableContext;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
