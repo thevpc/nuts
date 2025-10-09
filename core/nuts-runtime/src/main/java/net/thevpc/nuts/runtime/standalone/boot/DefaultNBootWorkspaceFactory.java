@@ -37,7 +37,7 @@ import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.boot.NBootWorkspaceFactory;
-import net.thevpc.nuts.spi.NScorable;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.text.NMsg;
 
 import java.util.List;
