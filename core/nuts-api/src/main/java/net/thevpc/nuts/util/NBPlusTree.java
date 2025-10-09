@@ -459,7 +459,7 @@ public class NBPlusTree<K extends Comparable<K>, V> extends AbstractMap<K, V> {
 
     public V computeIfAbsent(K key,
                              Function<? super K, ? extends V> mappingFunction) {
-        Objects.requireNonNull(mappingFunction);
+        NAssert.requireNonNull(mappingFunction);
         NOptional<V> u = getOptional(key);
         if (u.isNotPresent()) {
             V newValue = mappingFunction.apply(key);
