@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NDependencySolverFactory;
 
