@@ -17,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
