@@ -33,7 +33,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 
 import net.thevpc.nuts.ext.NFactoryException;
-import net.thevpc.nuts.runtime.standalone.util.NScorableQueryImpl;
+import net.thevpc.nuts.runtime.standalone.util.NScorableNScorableQueryImpl;
 import net.thevpc.nuts.runtime.standalone.util.NUtilSPIImpl;
 import net.thevpc.nuts.text.NFormats;
 import net.thevpc.nuts.text.NMsg;
@@ -129,7 +129,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             }
         }
         List<T> all = createAll(type);
-        NOptional<T> s = new NScorableQueryImpl<T>(NScorableContext.of(supportCriteria))
+        NOptional<T> s = new NScorableNScorableQueryImpl<T>(NScorableContext.of(supportCriteria))
                 .withName(NMsg.ofC("extensions component %s", type))
                 .fromIterable(all).getBest()
         ;
@@ -261,7 +261,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     @Override
     public <T extends NComponent> List<T> createComponents(Class<T> type, Object supportCriteria) {
         List<T> list = createAll(type);
-        return new NScorableQueryImpl<T>(NScorableContext.of())
+        return new NScorableNScorableQueryImpl<T>(NScorableContext.of())
                 .fromIterable(list)
                 .getAll();
     }
