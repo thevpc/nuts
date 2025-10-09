@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
@@ -12,7 +13,7 @@ public class WorkBalancerStrategyContextImpl implements NWorkBalancerStrategyCon
     private final NWorkBalancerImpl<?> workBalancer;
 
     public WorkBalancerStrategyContextImpl(NWorkBalancerModel model, NWorkBalancerImpl<?> workBalancer) {
-        this.model = Objects.requireNonNull(model);
+        this.model = NAssert.requireNonNull(model);
         this.workBalancer = workBalancer;
     }
 
