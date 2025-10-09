@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
-import net.thevpc.nuts.concurrent.NScorableCallable;
+import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 
 import java.util.Objects;
@@ -84,10 +84,10 @@ public class ClassLoaderPath extends URLPath {
         }
 
         @Override
-        public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             try {
                 if (path.startsWith("classpath:")) {
-                    return NScorableCallable.of(DEFAULT_SCORE,()->new ClassLoaderPath(path, classLoader));
+                    return NScoredCallable.of(DEFAULT_SCORE,()->new ClassLoaderPath(path, classLoader));
                 }
             } catch (Exception ex) {
                 //ignore
