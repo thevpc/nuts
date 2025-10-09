@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.util.NScorableContext;
+
 /**
  * Top Level extension Point in Nuts.
  * Extension mechanism in nuts is based on a factory that selects the best
@@ -39,7 +42,7 @@ package net.thevpc.nuts.spi;
  * @app.category SPI Base
  * @since 0.5.4
  */
-public interface NComponent extends NScorable{
+public interface NComponent extends NScorable {
 
     /**
      * evaluate support level (who much this instance should be considered convenient, acceptable)
