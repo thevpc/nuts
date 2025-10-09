@@ -18,8 +18,8 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
     private NCachedValueModel model;
 
     NCachedValueImpl(String id, Supplier<T> supplier, NCachedValueFactoryImpl factory) {
-        this.supplier = Objects.requireNonNull(supplier);
-        this.factory = Objects.requireNonNull(factory);
+        this.supplier = NAssert.requireNonNull(supplier);
+        this.factory = NAssert.requireNonNull(factory);
         this.model = new NCachedValueModel(NAssert.requireNonNull(id, "id"));
         reload();
     }
@@ -39,7 +39,7 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
 
 
     public NCachedValueImpl<T> setExpiry(Duration expiry) {
-        model.setExpiry(Objects.requireNonNull(expiry));
+        model.setExpiry(NAssert.requireNonNull(expiry));
         factory.save(model);
         return this;
     }
