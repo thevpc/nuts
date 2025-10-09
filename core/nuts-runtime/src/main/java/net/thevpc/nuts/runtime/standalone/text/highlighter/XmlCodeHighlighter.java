@@ -5,7 +5,7 @@ import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.util.NEvictingQueue;
 import net.thevpc.nuts.util.NStreamTokenizer;
 import net.thevpc.nuts.expr.NToken;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
