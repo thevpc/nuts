@@ -10,7 +10,7 @@ import net.thevpc.nuts.elem.NElementWriter;
 
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
 
 import java.util.*;
