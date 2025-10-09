@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.concurrent.NScorableCallable;
+import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementParser;
@@ -303,9 +303,9 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NScorableCallable.of(DEFAULT_SCORE, () -> new GithubfsPath(path));
+                return NScoredCallable.of(DEFAULT_SCORE, () -> new GithubfsPath(path));
             }
             return null;
         }
