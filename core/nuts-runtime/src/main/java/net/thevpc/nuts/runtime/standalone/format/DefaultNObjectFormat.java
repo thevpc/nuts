@@ -40,7 +40,7 @@ import net.thevpc.nuts.util.NMemorySize;
 import net.thevpc.nuts.runtime.standalone.format.obj.RollingFileService;
 import net.thevpc.nuts.runtime.standalone.format.plain.NFormatPlain;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.*;
 
 import java.io.File;
