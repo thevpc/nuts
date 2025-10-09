@@ -2,7 +2,7 @@ package net.thevpc.nuts.lib.slf4j;
 
 import net.thevpc.nuts.log.NLogFactorySPI;
 import net.thevpc.nuts.log.NLogSPI;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 
 public class Slf4JNLogFactorySPI implements NLogFactorySPI {
     @Override
