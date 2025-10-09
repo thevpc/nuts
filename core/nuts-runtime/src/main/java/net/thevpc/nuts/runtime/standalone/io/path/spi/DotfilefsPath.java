@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.concurrent.NScorableCallable;
+import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
@@ -33,9 +33,9 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NScorableCallable.of(10, () -> new DotfilefsPath(path));
+                return NScoredCallable.of(10, () -> new DotfilefsPath(path));
             }
             return null;
         }
