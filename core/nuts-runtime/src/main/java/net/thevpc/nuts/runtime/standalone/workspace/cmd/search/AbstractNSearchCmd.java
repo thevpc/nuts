@@ -44,7 +44,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
