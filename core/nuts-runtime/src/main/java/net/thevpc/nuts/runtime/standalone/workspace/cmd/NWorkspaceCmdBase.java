@@ -10,7 +10,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspaceCmd;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.log.NLog;
 
 /**
