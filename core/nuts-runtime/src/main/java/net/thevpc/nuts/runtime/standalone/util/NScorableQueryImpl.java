@@ -62,6 +62,7 @@ public class NScorableQueryImpl<T extends NScorable> implements NScorable.Query<
         }
         return this;
     }
+
     @Override
     public NScorable.Query<T> fromSupplierOfStream(NStream<Supplier<T>> source) {
         if (source != null) {
@@ -112,7 +113,8 @@ public class NScorableQueryImpl<T extends NScorable> implements NScorable.Query<
 
     @Override
     public NScorable.Query<T> withName(NMsg source) {
-        return null;
+        this.emptyMessage = source == null ? null : () -> source;
+        return this;
     }
 
     @Override
@@ -147,7 +149,7 @@ public class NScorableQueryImpl<T extends NScorable> implements NScorable.Query<
     }
 
     private NScorable.Result<T> findBestFromIteratorOfSupplier(Iterator<Supplier<T>> srcOk, NScorable.Result<T> track) {
-        NScorableContext context = this.context==null?NScorableContext.of():this.context;
+        NScorableContext context = this.context == null ? NScorableContext.of() : this.context;
         while (srcOk.hasNext()) {
             Supplier<T> ss = srcOk.next();
             if (ss != null) {
@@ -166,7 +168,7 @@ public class NScorableQueryImpl<T extends NScorable> implements NScorable.Query<
     }
 
     private NScorable.Result<T> findBestFromIterator(Iterator<T> srcOk, NScorable.Result<T> track) {
-        NScorableContext context = this.context==null?NScorableContext.of():this.context;
+        NScorableContext context = this.context == null ? NScorableContext.of() : this.context;
         while (srcOk.hasNext()) {
             T s = srcOk.next();
             if (s != null) {
@@ -182,7 +184,7 @@ public class NScorableQueryImpl<T extends NScorable> implements NScorable.Query<
     }
 
     private void fillIterator(Iterator<T> srcOk, List<NScorable.Result<T>> track) {
-        NScorableContext context = this.context==null?NScorableContext.of():this.context;
+        NScorableContext context = this.context == null ? NScorableContext.of() : this.context;
         while (srcOk.hasNext()) {
             T s = srcOk.next();
             if (s != null) {
@@ -195,7 +197,7 @@ public class NScorableQueryImpl<T extends NScorable> implements NScorable.Query<
     }
 
     private void fillIteratorOfSupplier(Iterator<Supplier<T>> srcOk, List<NScorable.Result<T>> track) {
-        NScorableContext context = this.context==null?NScorableContext.of():this.context;
+        NScorableContext context = this.context == null ? NScorableContext.of() : this.context;
         while (srcOk.hasNext()) {
             Supplier<T> ss = srcOk.next();
             if (ss != null) {
