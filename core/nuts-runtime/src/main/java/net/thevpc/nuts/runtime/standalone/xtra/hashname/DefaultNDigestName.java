@@ -4,7 +4,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NDigestName;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NNames;
 
