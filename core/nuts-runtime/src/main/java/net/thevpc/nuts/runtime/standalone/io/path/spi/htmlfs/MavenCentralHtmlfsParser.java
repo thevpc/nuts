@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
-import net.thevpc.nuts.concurrent.NScorableCallable;
+import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 import java.io.BufferedReader;
@@ -15,7 +15,7 @@ public class MavenCentralHtmlfsParser extends AbstractHtmlfsParser {
     }
 
     @Override
-    public NScorableCallable<List<String>> parseHtmlTomcat(byte[] bytes) {
+    public NScoredCallable<List<String>> parseHtmlTomcat(byte[] bytes) {
         List<String> found = new ArrayList<>();
 //        Pattern pattern = Pattern.compile("<tr><td class=\"link\"><a href=\"(?<href>[^\"]+)\" title=\"(?<title>[^\"]+)\">(?<title2>[^<>]+)</a></td><td class=\"size\">(?<size>[^<>]+)</td><td class=\"date\">(?<date>[^<>]+)</td></tr>");
         Pattern pattern = Pattern.compile("<a href=\"(?<href>[^\"]+)\" title=\"(?<title>[^\"]+)\">(?<title2>[^<>]+)</a>.*");
