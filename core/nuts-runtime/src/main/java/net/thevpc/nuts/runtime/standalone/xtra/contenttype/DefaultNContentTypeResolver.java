@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.contenttype;
 
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.command.NExecCmd;
-import net.thevpc.nuts.concurrent.NScorableCallable;
+import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.io.NPathExtensionType;
@@ -38,7 +38,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NContentTypeResolver;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NRef;
@@ -60,7 +60,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
     public DefaultNContentTypeResolver() {
     }
 
-    public NScorableCallable<String> probeContentType(NPath path) {
+    public NScoredCallable<String> probeContentType(NPath path) {
         String contentType = null;
         if (path != null) {
             if (path.isRegularFile()) {
@@ -92,22 +92,22 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                 if (contentType == null || "text/plain".equals(contentType)) {
                     String e = NPath.of(Paths.get(name)).nameParts(NPathExtensionType.SHORT).getExtension();
                     if (e != null && e.equalsIgnoreCase("ntf")) {
-                        return NScorableCallable.of(DEFAULT_SCORE + 10, "text/x-nuts-text-format");
+                        return NScoredCallable.of(DEFAULT_SCORE + 10, "text/x-nuts-text-format");
                     }
                 }
                 if (contentType == null || "text/plain".equals(contentType)) {
                     String e = NPath.of(Paths.get(name)).nameParts(NPathExtensionType.SHORT).getExtension();
                     if (e != null && e.equalsIgnoreCase("nuts")) {
-                        return NScorableCallable.of(DEFAULT_SCORE + 10, "application/json");
+                        return NScoredCallable.of(DEFAULT_SCORE + 10, "application/json");
                     }
                 }
             }
             if (contentType != null) {
-                return NScorableCallable.of(DEFAULT_SCORE, contentType);
+                return NScoredCallable.of(DEFAULT_SCORE, contentType);
             }
         }
 
-        return NScorableCallable.ofInvalid(() -> NMsg.ofInvalidValue("content-type"));
+        return NScoredCallable.ofInvalid(() -> NMsg.ofInvalidValue("content-type"));
     }
 
     private String probeFile(Path file) {
@@ -220,7 +220,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
 
 
     @Override
-    public NScorableCallable<String> probeContentType(byte[] bytes) {
+    public NScoredCallable<String> probeContentType(byte[] bytes) {
         String contentType = null;
         if (bytes != null) {
             try {
@@ -230,9 +230,9 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             }
         }
         if (contentType != null) {
-            return NScorableCallable.of(DEFAULT_SCORE, contentType);
+            return NScoredCallable.of(DEFAULT_SCORE, contentType);
         }
-        return NScorableCallable.ofInvalid(() -> NMsg.ofInvalidValue("content-type"));
+        return NScoredCallable.ofInvalid(() -> NMsg.ofInvalidValue("content-type"));
     }
 
     @Override
