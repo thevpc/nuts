@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.thevpc.nuts.spi.NCodeHighlighter;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.*;
 
 public class BashCodeHighlighter implements NCodeHighlighter {
