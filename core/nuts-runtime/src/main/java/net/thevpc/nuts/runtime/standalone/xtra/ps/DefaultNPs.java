@@ -28,7 +28,7 @@ import net.thevpc.nuts.io.NPath;
 
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamEmpty;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamFromNIterator;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.*;
 
 public class DefaultNPs implements NPs {
