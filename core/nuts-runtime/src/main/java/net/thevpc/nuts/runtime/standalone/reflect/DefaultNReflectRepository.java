@@ -29,7 +29,7 @@ import net.thevpc.nuts.reflect.NReflectConfiguration;
 import net.thevpc.nuts.reflect.NReflectConfigurationBuilder;
 import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.reflect.NReflectType;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
