@@ -18,7 +18,7 @@ import net.thevpc.nuts.runtime.standalone.reflect.NUseDefaultUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.runtime.standalone.format.impl.NChronometerNFormatSPI;
