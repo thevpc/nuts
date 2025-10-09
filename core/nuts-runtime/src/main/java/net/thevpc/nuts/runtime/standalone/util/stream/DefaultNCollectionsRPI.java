@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.util.stream;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
