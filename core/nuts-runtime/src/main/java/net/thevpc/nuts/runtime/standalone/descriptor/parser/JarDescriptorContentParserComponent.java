@@ -42,6 +42,7 @@ import java.util.*;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NStringUtils;
 
 /**
