@@ -9,7 +9,7 @@ import net.thevpc.nuts.io.NTrace;
 import net.thevpc.nuts.platform.NOsServiceType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
