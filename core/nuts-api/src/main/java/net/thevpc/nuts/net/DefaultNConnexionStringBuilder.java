@@ -1,6 +1,6 @@
 package net.thevpc.nuts.net;
 
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.*;
 
 import java.io.UnsupportedEncodingException;
