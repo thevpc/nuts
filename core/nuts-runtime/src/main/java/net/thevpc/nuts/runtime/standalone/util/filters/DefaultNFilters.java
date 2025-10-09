@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.artifact.NFilters;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NFilter;
 
 public class DefaultNFilters implements NFilters {
