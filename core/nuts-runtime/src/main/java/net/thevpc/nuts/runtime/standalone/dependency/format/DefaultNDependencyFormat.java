@@ -14,7 +14,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NText;
 
 @NComponentScope(NScopeType.PROTOTYPE)
