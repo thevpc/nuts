@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.runtime.standalone.util.NScorableQueryImpl;
+import net.thevpc.nuts.runtime.standalone.util.NScorableNScorableQueryImpl;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.io.NServiceLoader;
 
 import java.util.List;
 import java.util.ServiceLoader;
-import net.thevpc.nuts.spi.NDefaultScorableContext;
-import net.thevpc.nuts.spi.NScorableContext;
+
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
@@ -32,7 +32,7 @@ public class DefaultNServiceLoader<T extends NComponent, B> implements NServiceL
 
     @Override
     public List<T> loadAll(Object criteria) {
-        return new NScorableQueryImpl<T>(NScorableContext.of(criteria))
+        return new NScorableNScorableQueryImpl<T>(NScorableContext.of(criteria))
                 .fromIterable(loader)
                 .withName(NMsg.ofC("component %s",serviceType))
                 .getAll();
@@ -40,7 +40,7 @@ public class DefaultNServiceLoader<T extends NComponent, B> implements NServiceL
 
     @Override
     public NOptional<T> loadBest(Object criteria) {
-        return new NScorableQueryImpl<T>(NScorableContext.of(criteria))
+        return new NScorableNScorableQueryImpl<T>(NScorableContext.of(criteria))
                 .fromIterable(loader)
                 .withName(NMsg.ofC("component %s",serviceType))
                 .getBest();
