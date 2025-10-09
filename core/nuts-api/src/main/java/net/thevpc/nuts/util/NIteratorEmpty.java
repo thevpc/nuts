@@ -25,7 +25,7 @@ public class NIteratorEmpty<E> extends NIteratorBase<E> {
 
     @Override
     public void forEachRemaining(Consumer<? super E> action) {
-        Objects.requireNonNull(action);
+        NAssert.requireNonNull(action);
     }
 
     @Override
