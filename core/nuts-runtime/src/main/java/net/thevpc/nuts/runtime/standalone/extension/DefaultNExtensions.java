@@ -9,7 +9,7 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NMutableClassLoader;
 import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NFormats;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.log.NLogs;
