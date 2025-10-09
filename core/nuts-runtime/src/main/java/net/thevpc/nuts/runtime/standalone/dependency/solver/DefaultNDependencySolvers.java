@@ -4,7 +4,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NDependencySolvers;
 import net.thevpc.nuts.spi.NDependencySolver;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 
 import java.util.List;
 
