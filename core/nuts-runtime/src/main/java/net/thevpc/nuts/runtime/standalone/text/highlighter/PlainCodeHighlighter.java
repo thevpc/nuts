@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.spi.NCodeHighlighter;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 
