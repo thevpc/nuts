@@ -12,7 +12,7 @@ import net.thevpc.nuts.runtime.standalone.text.art.tree.XNodeFormatter;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
