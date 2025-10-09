@@ -4,7 +4,7 @@ import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NReflect;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 
 public class NReflectImpl implements NReflect {
 
