@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.digest;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.*;
