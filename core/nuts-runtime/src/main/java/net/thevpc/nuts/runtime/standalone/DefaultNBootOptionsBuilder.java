@@ -41,7 +41,7 @@ import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.runtime.standalone.util.NDefaultClassLoaderNode;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
