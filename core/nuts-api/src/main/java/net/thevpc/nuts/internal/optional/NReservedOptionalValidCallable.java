@@ -66,7 +66,7 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
 
     @Override
     public <V> NOptional<V> then(Function<T, V> mapper) {
-        Objects.requireNonNull(mapper);
+        NAssert.requireNonNull(mapper);
         if (evaluated) {
             if (result != null) {
                 if (result.isPresent()) {
