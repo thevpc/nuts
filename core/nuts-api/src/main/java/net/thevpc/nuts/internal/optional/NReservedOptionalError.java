@@ -2,19 +2,15 @@ package net.thevpc.nuts.internal.optional;
 
 import java.util.Objects;
 
-import net.thevpc.nuts.util.NDetachedErrorOptionalException;
-import net.thevpc.nuts.util.NErrorOptionalException;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.internal.NApiUtilsRPI;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import net.thevpc.nuts.util.NOptionalType;
 
 public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> implements Cloneable {
 
@@ -47,7 +43,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public <V> NOptional<V> then(Function<T, V> mapper) {
-        Objects.requireNonNull(mapper);
+        NAssert.requireNonNull(mapper);
         return (NOptional<V>) this;
     }
 
