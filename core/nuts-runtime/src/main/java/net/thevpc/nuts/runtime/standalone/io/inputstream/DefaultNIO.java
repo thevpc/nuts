@@ -5,7 +5,7 @@ import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.concurrent.NScorableCallable;
+import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.core.NRepository;
@@ -385,7 +385,7 @@ public class DefaultNIO implements NIO {
     public String probeContentType(NPath path) {
         List<NContentTypeResolver> allSupported = NExtensions.of()
                 .createComponents(NContentTypeResolver.class, path);
-        NScorableCallable<String> best=NScorable.<NScorableCallable<String>>query()
+        NScoredCallable<String> best=NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x->x.probeContentType(path)))
                 .getBest().orNull();
         if (best == null) {
@@ -432,7 +432,7 @@ public class DefaultNIO implements NIO {
     public String probeContentType(byte[] bytes) {
         List<NContentTypeResolver> allSupported = NExtensions.of()
                 .createComponents(NContentTypeResolver.class, bytes);
-        NScorableCallable<String> best=NScorable.<NScorableCallable<String>>query()
+        NScoredCallable<String> best=NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x->x.probeContentType(bytes)))
                 .getBest().orNull();
         if (best == null) {
@@ -460,7 +460,7 @@ public class DefaultNIO implements NIO {
     public String probeCharset(NPath path) {
         List<NCharsetResolver> allSupported = NExtensions.of()
                 .createComponents(NCharsetResolver.class, path);
-        NScorableCallable<String> best=NScorable.<NScorableCallable<String>>query()
+        NScoredCallable<String> best=NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x->x.probeCharset(path)))
                 .getBest().orNull();
         if (best == null) {
@@ -479,7 +479,7 @@ public class DefaultNIO implements NIO {
     public String probeCharset(byte[] bytes) {
         List<NCharsetResolver> allSupported = NExtensions.of()
                 .createComponents(NCharsetResolver.class, bytes);
-        NScorableCallable<String> best=NScorable.<NScorableCallable<String>>query()
+        NScoredCallable<String> best=NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x->x.probeCharset(bytes)))
                 .getBest().orNull();
         if (best == null) {
