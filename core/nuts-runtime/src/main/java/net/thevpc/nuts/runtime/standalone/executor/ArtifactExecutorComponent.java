@@ -30,7 +30,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExecCmd;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.spi.NExecutorComponent;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 
 import java.util.ArrayList;
 import java.util.List;
