@@ -17,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgres
 import net.thevpc.nuts.runtime.standalone.io.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NChronometer;
@@ -618,7 +618,7 @@ public class DefaultNCp implements NCp {
 
     private long transferTo(InputStream in, OutputStream out) throws IOException {
         int DEFAULT_BUFFER_SIZE = 8192;
-        Objects.requireNonNull(out, "out");
+        NAssert.requireNonNull(out, "out");
         long transferred = 0;
         byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
         int read;
