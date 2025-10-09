@@ -5,7 +5,7 @@ import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 
 import java.util.List;
 
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NFilter;
 
