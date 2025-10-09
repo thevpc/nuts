@@ -48,9 +48,9 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     }
 
     public <V> NOptional<V> flatMap(Function<T, NOptional<V>> mapper) {
-        Objects.requireNonNull(mapper);
+        NAssert.requireNonNull(mapper);
         if (isPresent()) {
-            return Objects.requireNonNull(mapper.apply(get()));
+            return NAssert.requireNonNull(mapper.apply(get()));
         }
         return (NOptional<V>) this;
     }
@@ -157,7 +157,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     
     @Override
     public <V> NOptional<V> map(Function<T, V> mapper) {
-        Objects.requireNonNull(mapper);
+        NAssert.requireNonNull(mapper);
         if (isPresent()) {
             return NOptional.of(mapper.apply(get()));
         }
@@ -165,7 +165,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     }
 
     public <V> NOptional<V> then(Function<T, V> mapper) {
-        Objects.requireNonNull(mapper);
+        NAssert.requireNonNull(mapper);
         switch (getType()) {
             case PRESENT: {
                 try {
@@ -196,9 +196,9 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
 
     @Override
     public NOptional<T> filter(NMessagedPredicate<T> predicate) {
-        Objects.requireNonNull(predicate);
+        NAssert.requireNonNull(predicate);
         Predicate<T> filter = predicate.filter();
-        Objects.requireNonNull(filter);
+        NAssert.requireNonNull(filter);
         if (isPresent()) {
             return filter.test(get()) ? this : NOptional.ofEmpty(predicate.message());
         }
@@ -207,7 +207,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
 
     @Override
     public NOptional<T> filter(Predicate<T> predicate, Supplier<NMsg> message) {
-        Objects.requireNonNull(predicate);
+        NAssert.requireNonNull(predicate);
         if (isPresent()) {
             return predicate.test(get()) ? this : NOptional.ofEmpty(message);
         }
@@ -222,7 +222,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NOptional<T> ifPresent(Consumer<T> t) {
         if (isPresent()) {
-            Objects.requireNonNull(t);
+            NAssert.requireNonNull(t);
             t.accept(get());
         }
         return this;
@@ -233,14 +233,14 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         if (isPresent()) {
             return get();
         } else {
-            throw Objects.requireNonNull(Objects.requireNonNull(exceptionSupplier).get());
+            throw NAssert.requireNonNull(NAssert.requireNonNull(exceptionSupplier).get());
         }
     }
 
     @Override
     public NOptional<T> orElseUse(Supplier<NOptional<T>> other) {
         if (isEmpty()) {
-            return Objects.requireNonNull(Objects.requireNonNull(other).get());
+            return NAssert.requireNonNull(NAssert.requireNonNull(other).get());
         }
         return this;
     }
@@ -256,7 +256,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public T orElseGet(Supplier<? extends T> other) {
         if (isNotPresent()) {
-            Objects.requireNonNull(other);
+            NAssert.requireNonNull(other);
             return other.get();
         }
         return get();
@@ -264,14 +264,14 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
 
     public NOptional<T> orElseOf(Supplier<T> other) {
         if (isNotPresent()) {
-            return NOptional.of(Objects.requireNonNull(other).get(), getMessage());
+            return NOptional.of(NAssert.requireNonNull(other).get(), getMessage());
         }
         return this;
     }
 
     public NOptional<T> orElseOfNullable(Supplier<T> other) {
         if (isNotPresent()) {
-            return NOptional.ofNullable(Objects.requireNonNull(other).get());
+            return NOptional.ofNullable(NAssert.requireNonNull(other).get());
         }
         return this;
     }
@@ -279,7 +279,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public T ifEmptyGet(Supplier<? extends T> other) {
         if (isNotPresent()) {
-            Objects.requireNonNull(other);
+            NAssert.requireNonNull(other);
             return other.get();
         }
         return get();
@@ -288,7 +288,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NOptional<T> ifEmptyOf(Supplier<T> other) {
         if (isNotPresent()) {
-            return NOptional.of(Objects.requireNonNull(other).get(), getMessage());
+            return NOptional.of(NAssert.requireNonNull(other).get(), getMessage());
         }
         return this;
     }
@@ -296,7 +296,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NOptional<T> ifEmptyOfNullable(Supplier<T> other) {
         if (isNotPresent()) {
-            return NOptional.ofNullable(Objects.requireNonNull(other).get());
+            return NOptional.ofNullable(NAssert.requireNonNull(other).get());
         }
         return this;
     }
@@ -323,8 +323,8 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NOptional<T> ifBlankUse(Supplier<NOptional<T>> other) {
         if (isBlank()) {
-            Objects.requireNonNull(other);
-            return Objects.requireNonNull(other.get());
+            NAssert.requireNonNull(other);
+            return NAssert.requireNonNull(other.get());
         }
         return this;
     }
@@ -332,10 +332,10 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NOptional<T> ifNullUse(Supplier<NOptional<T>> other) {
         if (isNull()) {
-            Objects.requireNonNull(other);
+            NAssert.requireNonNull(other);
             T v = get();
             if (v == null) {
-                return Objects.requireNonNull(other.get());
+                return NAssert.requireNonNull(other.get());
             }
         }
         return this;
@@ -352,8 +352,8 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NOptional<T> ifEmptyUse(Supplier<NOptional<T>> other) {
         if (isEmpty()) {
-            Objects.requireNonNull(other);
-            return Objects.requireNonNull(other.get());
+            NAssert.requireNonNull(other);
+            return NAssert.requireNonNull(other.get());
         }
         return this;
     }
@@ -361,8 +361,8 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NOptional<T> ifErrorUse(Supplier<NOptional<T>> other) {
         if (isError()) {
-            Objects.requireNonNull(other);
-            return Objects.requireNonNull(other.get());
+            NAssert.requireNonNull(other);
+            return NAssert.requireNonNull(other.get());
         }
         return this;
     }
