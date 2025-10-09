@@ -8,7 +8,7 @@ import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 
 import java.util.List;
 import java.util.Map;
