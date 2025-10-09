@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.concurrent.NScorableCallable;
+import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.platform.NOsFamily;
@@ -12,7 +12,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.*;
 
@@ -814,7 +814,7 @@ public class FilePath implements NPathSPI {
         }
 
         @Override
-        public NScorableCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             try {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
                     return null;
@@ -824,7 +824,7 @@ public class FilePath implements NPathSPI {
                     path = path.substring(1);
                 }
                 Path value = Paths.get(path);
-                return NScorableCallable.of(10, () -> new FilePath(value));
+                return NScoredCallable.of(10, () -> new FilePath(value));
             } catch (Exception ex) {
                 //ignore
             }
