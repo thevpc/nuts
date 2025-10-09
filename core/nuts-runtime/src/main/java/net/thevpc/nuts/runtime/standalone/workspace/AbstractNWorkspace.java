@@ -40,7 +40,7 @@ import net.thevpc.nuts.core.NRepositoryListener;
 import net.thevpc.nuts.internal.NScopedWorkspace;
 import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NObservableMapListener;
