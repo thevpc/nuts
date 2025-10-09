@@ -2,6 +2,13 @@ package net.thevpc.nuts.util;
 
 import java.util.Objects;
 
+/**
+ * Represents an operation that accepts a single {@code char}-valued argument and
+ * returns no result. This is the primitive type specialization of {@link java.util.function.Consumer}
+ * for {@code char}. Unlike most other functional interfaces, {@code CharConsumer} is expected
+ * to operate via side-effects.
+ */
+@FunctionalInterface
 public interface CharConsumer {
 
     /**
@@ -24,7 +31,7 @@ public interface CharConsumer {
      * @throws NullPointerException if {@code after} is null
      */
     default CharConsumer andThen(CharConsumer after) {
-        Objects.requireNonNull(after);
+        NAssert.requireNonNull(after);
         return (char t) -> {
             accept(t);
             after.accept(t);
