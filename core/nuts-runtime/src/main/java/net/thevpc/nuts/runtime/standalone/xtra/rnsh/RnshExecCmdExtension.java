@@ -6,7 +6,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.net.NConnexionStringBuilder;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
