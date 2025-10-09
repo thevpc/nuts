@@ -34,6 +34,7 @@ import net.thevpc.nuts.elem.NElementNotFoundException;
 
 import net.thevpc.nuts.ext.NFactoryException;
 import net.thevpc.nuts.runtime.standalone.util.NScorableQueryImpl;
+import net.thevpc.nuts.runtime.standalone.util.NUtilSPIImpl;
 import net.thevpc.nuts.text.NFormats;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NPositionType;
@@ -226,6 +227,9 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 }
                 case "net.thevpc.nuts.app.NApp": {
                     return NOptional.of((T) new NAppImpl());
+                }
+                case "net.thevpc.nuts.spi.NUtilSPI": {
+                    return NOptional.of((T) new NUtilSPIImpl());
                 }
                 default: {
                     //wont use NLog because not yet initialized!
