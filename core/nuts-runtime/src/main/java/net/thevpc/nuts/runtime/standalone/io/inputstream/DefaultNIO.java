@@ -383,9 +383,11 @@ public class DefaultNIO implements NIO {
 
     @Override
     public String probeContentType(NPath path) {
-        NOptional<NContentTypeResolver> allSupported = NExtensions.of()
-                .createComponent(NContentTypeResolver.class, path);
-        NScorableCallable<String> best = (NScorableCallable<String>) allSupported.orNull();
+        List<NContentTypeResolver> allSupported = NExtensions.of()
+                .createComponents(NContentTypeResolver.class, path);
+        NScorableCallable<String> best=NScorable.<NScorableCallable<String>>query()
+                .fromStream(allSupported.stream().map(x->x.probeContentType(path)))
+                .getBest().orNull();
         if (best == null) {
             return null;
         }
@@ -428,9 +430,11 @@ public class DefaultNIO implements NIO {
 
     @Override
     public String probeContentType(byte[] bytes) {
-        NOptional<NContentTypeResolver> allSupported = NExtensions.of()
-                .createComponent(NContentTypeResolver.class, bytes);
-        NScorableCallable<String> best = (NScorableCallable<String>) allSupported.orNull();
+        List<NContentTypeResolver> allSupported = NExtensions.of()
+                .createComponents(NContentTypeResolver.class, bytes);
+        NScorableCallable<String> best=NScorable.<NScorableCallable<String>>query()
+                .fromStream(allSupported.stream().map(x->x.probeContentType(bytes)))
+                .getBest().orNull();
         if (best == null) {
             return null;
         }
@@ -454,9 +458,11 @@ public class DefaultNIO implements NIO {
 
     @Override
     public String probeCharset(NPath path) {
-        NOptional<NCharsetResolver> allSupported = NExtensions.of()
-                .createComponent(NCharsetResolver.class, path);
-        NScorableCallable<String> best = (NScorableCallable<String>) allSupported.orNull();
+        List<NCharsetResolver> allSupported = NExtensions.of()
+                .createComponents(NCharsetResolver.class, path);
+        NScorableCallable<String> best=NScorable.<NScorableCallable<String>>query()
+                .fromStream(allSupported.stream().map(x->x.probeCharset(path)))
+                .getBest().orNull();
         if (best == null) {
             return null;
         }
@@ -471,9 +477,11 @@ public class DefaultNIO implements NIO {
 
     @Override
     public String probeCharset(byte[] bytes) {
-        NOptional<NCharsetResolver> allSupported = NExtensions.of()
-                .createComponent(NCharsetResolver.class, bytes);
-        NScorableCallable<String> best = (NScorableCallable<String>) allSupported.orNull();
+        List<NCharsetResolver> allSupported = NExtensions.of()
+                .createComponents(NCharsetResolver.class, bytes);
+        NScorableCallable<String> best=NScorable.<NScorableCallable<String>>query()
+                .fromStream(allSupported.stream().map(x->x.probeCharset(bytes)))
+                .getBest().orNull();
         if (best == null) {
             return null;
         }
