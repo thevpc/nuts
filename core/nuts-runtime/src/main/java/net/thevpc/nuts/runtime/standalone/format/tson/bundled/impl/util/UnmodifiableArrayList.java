@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.format.tson.bundled.impl.util;
 
+import net.thevpc.nuts.util.NAssert;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
@@ -90,7 +92,7 @@ public final class UnmodifiableArrayList<E> extends AbstractList<E>
 
     @Override
     public void forEach(Consumer<? super E> action) {
-        Objects.requireNonNull(action);
+        NAssert.requireNonNull(action);
         for (E e : values) {
             action.accept(e);
         }
@@ -98,7 +100,7 @@ public final class UnmodifiableArrayList<E> extends AbstractList<E>
 
     @Override
     public void replaceAll(UnaryOperator<E> operator) {
-        Objects.requireNonNull(operator);
+        NAssert.requireNonNull(operator);
         E[] a = this.values;
         for (int i = 0; i < a.length; i++) {
             a[i] = operator.apply(a[i]);
