@@ -4,7 +4,7 @@ import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.spi.NScorableContext;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.concurrent.NCallable;
 
 import java.util.concurrent.ExecutorService;
