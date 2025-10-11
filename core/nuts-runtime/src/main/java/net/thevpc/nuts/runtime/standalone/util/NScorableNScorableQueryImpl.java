@@ -142,7 +142,7 @@ public class NScorableNScorableQueryImpl<T extends NScorable> implements NScorab
                 return NMsg.ofC("missing %s", u == null ? "scorable" : u);
             };
         }
-        return null;
+        return this;
     }
 
     @Override
@@ -155,7 +155,7 @@ public class NScorableNScorableQueryImpl<T extends NScorable> implements NScorab
                 return u == null ? NMsg.ofC("missing scorable") : u;
             };
         }
-        return null;
+        return this;
     }
 
     @Override
