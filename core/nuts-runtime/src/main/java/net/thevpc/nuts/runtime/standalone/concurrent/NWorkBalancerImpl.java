@@ -15,8 +15,8 @@ public class NWorkBalancerImpl<T> implements NWorkBalancer<T> {
     final List<NWorkBalancerRunningJob> runningJobs = Collections.synchronizedList(new ArrayList<>());
     private final NWorkBalancerFactoryImpl factory;
     final NWorkBalancerModel model;
-    private final Map<String,NWorkBalancerWorkerLoadImpl> workBalancerWorkerLoadMap=new HashMap<>();
-    private final Map<String,NWorkBalancerWorkerModel> workBalancerWorkerModelMap=new HashMap<>();
+    private final Map<String, NWorkBalancerWorkerLoadImpl> workBalancerWorkerLoadMap = new HashMap<>();
+    private final Map<String, NWorkBalancerWorkerModel> workBalancerWorkerModelMap = new HashMap<>();
 
     public NWorkBalancerImpl(NWorkBalancerModel model, NWorkBalancerFactoryImpl factory) {
         this.model = model;
@@ -25,13 +25,15 @@ public class NWorkBalancerImpl<T> implements NWorkBalancer<T> {
         _updateModel();
     }
 
-    private void _updateModel(){
+    private void _updateModel() {
         workBalancerWorkerLoadMap.clear();
         workBalancerWorkerModelMap.clear();
         if (model.getWorkers() != null) {
+            int workerIndex = 0;
             for (NWorkBalancerWorkerModel w : model.getWorkers()) {
                 workBalancerWorkerModelMap.put(w.getName(), w);
-                workBalancerWorkerLoadMap.put(w.getName(), new NWorkBalancerWorkerLoadImpl(w));
+                workBalancerWorkerLoadMap.put(w.getName(), new NWorkBalancerWorkerLoadImpl(w, workerIndex));
+                workerIndex++;
             }
         }
     }
@@ -42,9 +44,9 @@ public class NWorkBalancerImpl<T> implements NWorkBalancer<T> {
     }
 
     NWorkBalancerWorkerLoadImpl selectWorker() {
-        WorkBalancerStrategyContextImpl w = new WorkBalancerStrategyContextImpl(model,this);
+        WorkBalancerStrategyContextImpl w = new WorkBalancerStrategyContextImpl(model, this);
         String s = strategy.selectWorker(w);
-        return NOptional.ofNamed(workBalancerWorkerLoadMap.get(s),s).get();
+        return NOptional.ofNamed(workBalancerWorkerLoadMap.get(s), s).get();
     }
 
     @Override
@@ -71,7 +73,7 @@ public class NWorkBalancerImpl<T> implements NWorkBalancer<T> {
     @Override
     public NOptional<NWorkBalancerWorkerLoad> getWorkerLoad(String workerName) {
         NWorkBalancerWorkerLoadImpl worker = workBalancerWorkerLoadMap.get(workerName);
-        return NOptional.ofNamed(worker,workerName);
+        return NOptional.ofNamed(worker, workerName);
     }
 
     @Override
