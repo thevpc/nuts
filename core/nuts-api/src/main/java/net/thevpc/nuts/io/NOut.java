@@ -138,11 +138,17 @@ public class NOut {
     }
 
     public static NPrintStream println(NMsg b) {
-        return out().println(b);
+        NPrintStream out = out();
+        synchronized (out) {
+            return out.println(b);
+        }
     }
 
     public static NPrintStream println(NText b) {
-        return out().println(b);
+        NPrintStream out = out();
+        synchronized (out) {
+            return out.println(b);
+        }
     }
 
     public static NPrintStream println(int x) {
