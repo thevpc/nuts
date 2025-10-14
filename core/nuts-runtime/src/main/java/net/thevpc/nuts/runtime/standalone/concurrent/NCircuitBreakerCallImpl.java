@@ -26,8 +26,6 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
         synchronized (this) {
             String oldId=model.getId();
             NCallable<?> oldCaller = model.getCaller();
-            NScopedValue<NBeanContainer> c = NBeanContainer.current();
-            NBeanContainer currContainer = beanContainer == null ? c.get() : beanContainer;
             NCallable<NCircuitBreakerCallModel> cc = () -> {
                 NCircuitBreakerCallModel m = store.load(oldId);
                 if (m == null) {
@@ -43,7 +41,7 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
                 }
                 return m;
             };
-            model = c == null ? cc.call() : c.callWith(currContainer, cc);
+            model = NBeanContainer.scopedStack().callWith(beanContainer, cc);
         }
     }
 
