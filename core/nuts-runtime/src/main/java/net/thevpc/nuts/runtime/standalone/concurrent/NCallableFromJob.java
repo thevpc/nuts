@@ -30,7 +30,7 @@ class NCallableFromJob<T> implements NCallable<T> {
         nWorkBalancer.strategy.onStartCall(new NWorkBalancerStrategyEvent(jobId, jobName, selectedWorker.worker.getName(), startNano, 0, null));
         RuntimeException throwable = null;
         try {
-            T result = (T) job.call(new NWorkBalancerJobContextImpl(jobId, jobName, new NWorkBalancerWorkerImpl(selectedWorker.worker), nWorkBalancer.model));
+            T result = (T) job.call(new NWorkBalancerJobContextImpl(jobId, jobName, new NWorkBalancerWorkerImpl(selectedWorker.worker),selectedWorker.getWorkerIndex(), nWorkBalancer.model));
             selectedWorker.succeededJobCount.incrementAndGet();
             return result;
         } catch (RuntimeException ex) {
