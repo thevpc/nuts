@@ -4,10 +4,16 @@ import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.concurrent.NCallable;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 @NComponentScope(NScopeType.WORKSPACE)
@@ -29,7 +35,7 @@ public class DefaultNConcurrent implements NConcurrent {
     private final NCircuitBreakerCallFactory memoryCircuitBreakerCallFactory = new NCircuitBreakerCallFactoryImpl(new NCircuitBreakerCallStoreMemory(), null);
     private NCircuitBreakerCallFactory circuitBreakerCallFactory;
 
-    private final NWorkBalancerFactory memoryWorkBalancerCallFactory = new NWorkBalancerFactoryImpl(new NWorkBalancerStoreMemory(), null,null);
+    private final NWorkBalancerFactory memoryWorkBalancerCallFactory = new NWorkBalancerFactoryImpl(new NWorkBalancerStoreMemory(), null, null);
     private NWorkBalancerFactory workBalancerCallFactory;
 
     @Override
@@ -231,5 +237,75 @@ public class DefaultNConcurrent implements NConcurrent {
     public NConcurrent setWorkBalancerCallFactory(NWorkBalancerFactory workBalancerCallFactory) {
         this.workBalancerCallFactory = workBalancerCallFactory;
         return this;
+    }
+
+    @Override
+    public NConcurrent sleep(NDuration durationMillis) throws NInterruptedException {
+        return sleep(durationMillis == null ? 0 : durationMillis.getTimeAsMillis());
+    }
+
+    @Override
+    public NConcurrent sleep(Duration durationMillis) throws NInterruptedException {
+        return sleep(durationMillis == null ? 0 : durationMillis.toMillis());
+    }
+
+    @Override
+    public NConcurrent sleep(long durationMillis) throws NInterruptedException {
+        if (durationMillis > 0) {
+            try {
+                Thread.sleep(durationMillis);
+            } catch (InterruptedException e) {
+                throw new NInterruptedException(e);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NTaskSet taskSet() {
+        return new NTaskSetImpl();
+    }
+
+    @Override
+    public IntFunction<NDuration> retryFixedPeriod(NDuration period) {
+        return retryFixedPeriods(period);
+    }
+
+    @Override
+    public IntFunction<NDuration> retryFixedPeriods(NDuration... periods) {
+        List<NDuration> all = new ArrayList<>();
+        if (periods == null) {
+            all.add(NDuration.ofMillis(0));
+        } else {
+            for (NDuration period : periods) {
+                if (period != null) {
+                    all.add(period);
+                } else {
+                    all.add(NDuration.ofMillis(0));
+                }
+            }
+        }
+        return new IntFunction<NDuration>() {
+            @Override
+            public NDuration apply(int i) {
+                if (i < all.size()) {
+                    return all.get(i);
+                }
+                return all.get(all.size() - 1);
+            }
+        };
+    }
+
+    @Override
+    public IntFunction<NDuration> retryMultipliedPeriod(NDuration base, double multiplier) {
+        if (base == null || base.isZero() || multiplier <= 0) {
+            return retryFixedPeriod(NDuration.ofMillis(0));
+        }
+        return new IntFunction<NDuration>() {
+            @Override
+            public NDuration apply(int i) {
+                return base.mul(multiplier * i);
+            }
+        };
     }
 }
