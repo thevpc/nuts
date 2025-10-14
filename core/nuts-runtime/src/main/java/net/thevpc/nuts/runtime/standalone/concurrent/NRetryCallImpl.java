@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCancelException;
 import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.util.NIllegalStateException;
@@ -10,7 +11,8 @@ import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.text.NMsg;
 
-import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.IntFunction;
@@ -32,8 +34,6 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
         synchronized (this) {
             String oldId=model.getId();
             NCallable<?> oldCaller = model.getCaller();
-            NScopedValue<NBeanContainer> c = NBeanContainer.current();
-            NBeanContainer currContainer = beanContainer == null ? c.get() : beanContainer;
             NCallable<NRetryCallModel> cc = () -> {
                 NRetryCallModel m = store.load(oldId);
                 if (m == null) {
@@ -49,7 +49,7 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
                 }
                 return m;
             };
-            model = c == null ? cc.call() : c.callWith(currContainer, cc);
+            model = NBeanContainer.scopedStack().callWith(beanContainer, cc);
         }
     }
 
@@ -61,7 +61,27 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
     }
 
     @Override
-    public NRetryCall<T> setRetryPeriod(IntFunction<Duration> retryPeriod) {
+    public NRetryCall<T> setMultipliedRetryPeriod(NDuration basePeriod, double multiplier) {
+        return setRetryPeriod(_retryMultipliedPeriod(basePeriod, multiplier));
+    }
+
+    @Override
+    public NRetryCall<T> setExponentialRetryPeriod(NDuration basePeriod, double multiplier) {
+        return setRetryPeriod(_retryExponentialPeriod(basePeriod, multiplier));
+    }
+
+    @Override
+    public NRetryCall<T> setRetryPeriod(NDuration period) {
+        return setRetryPeriod(_retryFixedPeriods(period));
+    }
+
+    @Override
+    public NRetryCall<T> setRetryPeriods(NDuration... periods) {
+        return setRetryPeriod(_retryFixedPeriods(periods));
+    }
+
+    @Override
+    public NRetryCall<T> setRetryPeriod(IntFunction<NDuration> retryPeriod) {
         model.setRetryPeriod(retryPeriod);
         store.save(model);
         return this;
@@ -160,14 +180,14 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
                         }
                     } else {
                         // retry delay if configured
-                        Duration wait = model.getRetryPeriod() != null
+                        NDuration wait = model.getRetryPeriod() != null
                                 ? model.getRetryPeriod().apply(attempts)
-                                : Duration.ZERO;
+                                : NDuration.ZERO;
                         if (!wait.isZero()) {
                             model.setStatus(Status.RETRYING);
                             store.save(model);
                             try {
-                                Thread.sleep(wait.toMillis());
+                                Thread.sleep(wait.getTimeAsMillis());
                             } catch (InterruptedException ie) {
                                 Thread.currentThread().interrupt();
                                 throw NExceptions.ofUncheckedException(ie);
@@ -276,5 +296,53 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
             T result = call();
             return newCallResult();
         });
+    }
+
+
+    private IntFunction<NDuration> _retryFixedPeriods(NDuration... periods) {
+        List<NDuration> all = new ArrayList<>();
+        if (periods == null) {
+            all.add(NDuration.ofMillis(0));
+        } else {
+            for (NDuration period : periods) {
+                if (period != null) {
+                    all.add(period);
+                } else {
+                    all.add(NDuration.ofMillis(0));
+                }
+            }
+        }
+        return new IntFunction<NDuration>() {
+            @Override
+            public NDuration apply(int i) {
+                if (i < all.size()) {
+                    return all.get(i);
+                }
+                return all.get(all.size() - 1);
+            }
+        };
+    }
+
+    private IntFunction<NDuration> _retryMultipliedPeriod(NDuration base, double multiplier) {
+        if (base == null || base.isZero() || multiplier <= 0) {
+            return _retryFixedPeriods(NDuration.ofMillis(0));
+        }
+        return new IntFunction<NDuration>() {
+            @Override
+            public NDuration apply(int iteration) {
+                return base.mul(multiplier * iteration);
+            }
+        };
+    }
+    private IntFunction<NDuration> _retryExponentialPeriod(NDuration base, double multiplier) {
+        if (base == null || base.isZero() || multiplier <= 0) {
+            return _retryFixedPeriods(NDuration.ofMillis(0));
+        }
+        return new IntFunction<NDuration>() {
+            @Override
+            public NDuration apply(int iteration) {
+                return base.mul(Math.pow(multiplier, iteration));
+            }
+        };
     }
 }
