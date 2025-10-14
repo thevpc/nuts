@@ -59,14 +59,8 @@ public class NBeanRef {
             if (method.getName().equals("asBeanRef") && method.getParameterCount() == 0) {
                 return ref;
             }
-            NBeanContainer container = detectContainer();
-            NAssert.requireNonNull(container, "bean container");
-            Object bean = container.of(ref); // resolves actual bean
+            Object bean = NBeanContainer.current().of(ref); // resolves actual bean
             return method.invoke(bean, args); // delegate call
-        }
-
-        private NBeanContainer detectContainer() {
-            return NBeanContainer.current().get();
         }
 
         @Override
