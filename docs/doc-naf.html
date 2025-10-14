@@ -326,17 +326,32 @@
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#U75217DA628D91C11E305BB7C6812DE7FE8800ECF">8.3 Rate Limit Value</a>
+                        <li class="nav-item"><a class="nav-link" href="#U5D9FCC33EAC31FBCB0744C865BECC169E60FD863">8.3 Task Set</a>
                             
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#U73642D55A11DC986644C8C2653FF24BC9186817E">8.4 Saga</a>
+                        <li class="nav-item"><a class="nav-link" href="#UA62104F0F35A316127610C86944DF948BF62D157">8.4 Rate Limit Value</a>
                             
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#U1D5BF68F2D014390B8F4E338AF426E499AFD23F9">8.5 Stable Value</a>
+                        <li class="nav-item"><a class="nav-link" href="#U58B14BBA40477A9345F362CDE755292DFFC91516">8.5 NRetryCall</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#UAC6FEA5509A64E3240B2BF470D096E0BD035DC55">8.6 Load Balancer</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#UB0927D4E11E5D8865BC6EE913DA40D68576E9C1C">8.7 Saga</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#UB7A296F7508CA18EF8ABA4C916E015C0978F080A">8.8 Persistent Locks</a>
                             
                             
                         </li>
@@ -776,14 +791,25 @@ NMsg.ofV("User $user completed ${task}",
                             <section id="U93ED6AF4203B8B67F1759A6BBAA4529229A2A483" >
                                 <h3 class="main-section2"><a href="#U2288F421EA2BE3916CE1B5F9A638B8F72CEF14EC">3.4 Text Rendering Formats</a></h3>
                                 <div class="text-card">
-                                NMsgnull NMsg also provides multiple text rendering formats to make messages visually expressive.  You can use plain messages that print as-is, styled messages to highlight errors, warnings, or  other emphasis,  code blocks for monospaced text with optional  language hints, and NTF (Nuts Text Format) for lightweight  markup supporting bold, italic, colors, and other rich formatting.  These  formats, combined with placeholders, allow NMsg to produce rich,  dynamic, and visually  informative output in any context.NTF allows quick and readable text formatting directly in message strings.<pre class="md-code md-code-``` java"><code class="java">
-NMsg.ofNtf("##bold## ##:/:italic## </code></pre>java public class{} <pre class="md-code md-code-``` "><code class="">");
-</code></pre>you can use Code blocks to render source code with syntax coloring<pre class="md-code md-code-``` java"><code class="java">
-NMsg.ofPlain("This is a plain message");
-NMsg.ofCode("java", "System.out.println(\"Hello NAF\");");
-</code></pre>you can also force plain text rendering<pre class="md-code md-code-``` java"><code class="java">
-NMsg.ofPlain("This is a plain message");
-</code></pre>
+                                NMsg<pre class="md-code md-code-` "><code class=""> NMsg also provides multiple text rendering formats to make messages visually expressive. 
+You can use plain messages that print as-is, styled messages to highlight errors, warnings, or  other emphasis, 
+code blocks for monospaced text with optional  language hints, and NTF (Nuts Text Format) for lightweight 
+markup supporting bold, italic, colors, and other rich formatting. 
+These  formats, combined with placeholders, allow NMsg to produce rich,  dynamic, and visually 
+informative output in any context.
+
+
+NTF allows quick and readable text formatting directly in message strings.
+
+</code></pre><p class="md-phrase"><code class="md-code md-code-` "></code>java NMsg.ofNtf("##bold## ##:/:italic## <code class="md-code md-code-``` java"> public class{} </code>");</p><pre class="md-code md-code-``` "><code class="">
+
+you can use Code blocks to render source code with syntax coloring
+
+</code></pre>java NMsg.ofPlain("This is a plain message"); NMsg.ofCode("java", "System.out.println("Hello NAF");");<pre class="md-code md-code-``` "><code class="">
+
+you can also force plain text rendering
+
+</code></pre>java NMsg.ofPlain("This is a plain message");<code class="md-code md-code-``` "></code>
                                 </div>
                                 
                             </section>
@@ -796,7 +822,7 @@ NMsg.ofPlain("This is a plain message");
                     <section id="U082C7713A2F645DEAE990E4F4399934D94A35B64" >
                         <h2 class="main-section1"><a href="#U082C7713A2F645DEAE990E4F4399934D94A35B64">4 Structured Elements</a></h2>
                         <div class="text-card">
-                        With null, null lets you build, parse, and format structured data effortlessly. From plain objects tonull, null, ornull, you can read and write files, parse into Java objects, or print with optional null color formatting — all in a runtime-friendly way.
+                        <p class="md-phrase">With <mark class="md-code md-code-` ">NElement</mark>, <mark class="md-code md-code-` ">Nuts</mark> lets you build, parse, and format structured data effortlessly. From plain objects to<mark class="md-code md-code-` ">JSON</mark>, <mark class="md-code md-code-` ">XML</mark>, or<mark class="md-code md-code-` ">TSON</mark>, you can read and write files, parse into Java objects, or print with optional <mark class="md-code md-code-` ">NTF</mark> color formatting — all in a runtime-friendly way.</p>
                         </div>
                         
                             <!--pageLevel2-->
@@ -1496,14 +1522,14 @@ nuts help
                     <section id="U2971A11A6DE6DF60D9DB661E4AB607D5913B755F" >
                         <h2 class="main-section1"><a href="#U2971A11A6DE6DF60D9DB661E4AB607D5913B755F">8 Concurrency & Stability</a></h2>
                         <div class="text-card">
-                        In Nuts, building reliable and high-performance applications requires tools that manage shared state, caching, rate-limiting, and progress tracking safely across threads and execution contexts. The Nuts framework provides a suite of concurrency primitives and stability helpers to simplify these common challenges:<ul class="md-ul"><li class="md-uli">NScopedValuenull</li></ul>
+                        In Nuts, building reliable and high-performance applications requires tools that manage shared state, caching, rate-limiting, and progress tracking safely across threads and execution contexts. The Nuts framework provides a suite of concurrency primitives and stability helpers to simplify these common challenges:<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">NScopedValue&lt;T&gt;</code> – Represents a thread- or context-local value that can be temporarily overridden within a scope. This allows safe modifications of variables without risking unintended side effects outside the current scope. Useful for contextual configurations or temporary overrides in multi-threaded environments.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">NCachedValue&lt;T&gt;</code> – Encapsulates a lazily computed value with automatic caching. It ensures that expensive computations are performed only once, optionally refreshing based on custom invalidation rules, and is safe for concurrent access.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">NRateLimitValue&lt;T&gt;</code> – Provides rate-limited access to a value or operation. It tracks usage counts over time and enforces constraints, helping prevent overuse of resources, APIs, or services in a thread-safe manner.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NLock</mark> – A versatile locking mechanism that abstracts traditional concurrency locks. NLock can be used to synchronize access to shared resources, enforce critical sections, and implement safe multi-threaded algorithms. It also supports inter-process locking via files, enabling coordination between separate JVMs or applications.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NProgressMonitor</mark> – Facilitates tracking and reporting of long-running tasks. It allows threads to report progress, handle cancellation, and provide estimated completion information. In addition, it supports structured progress monitoring, letting developers split tasks and assign weights to subtasks for fine-grained progress aggregation.</p></li></ul>Together, these primitives provide a robust foundation for concurrency, caching, and stability in Nuts-based applications, ensuring that multi-threaded code behaves predictably, resources are protected, and operations are safely monitored.
                         </div>
                         
                             <!--pageLevel2-->
                             <section id="U45C4A77F2C3D5A7610243B8A99963CE0050D5C44" >
                                 <h3 class="main-section2"><a href="#U2971A11A6DE6DF60D9DB661E4AB607D5913B755F">8.1 Stable Value</a></h3>
                                 <div class="text-card">
-                                null stores a value that is computed lazily — the supplier is not invoked until the first call to null. Once evaluated, the value remains stable and is reused for all subsequent accesses. This is perfect for expensive computations, constants, or resources that should only be initialized once.<pre class="md-code md-code-``` java"><code class="java">
+                                <p class="md-phrase"><mark class="md-code md-code-` ">NStableValue</mark> stores a value that is computed lazily — the supplier is not invoked until the first call to <code class="md-code md-code-` ">get()</code>. Once evaluated, the value remains stable and is reused for all subsequent accesses. This is perfect for expensive computations, constants, or resources that should only be initialized once.</p><pre class="md-code md-code-``` java"><code class="java">
 // Example 1: Lazy initialization
 NStableValue&amp;lt;Double&gt; stableRandom = NStableValue.of(Math::random);
 
@@ -1526,7 +1552,7 @@ NOut.println("Valid? " + stableRandom.isValid());
                             <section id="U014FEE51D2551A72350DF8C77F8DBDC5413BEBB4" >
                                 <h3 class="main-section2"><a href="#U2971A11A6DE6DF60D9DB661E4AB607D5913B755F">8.2 Cached Value</a></h3>
                                 <div class="text-card">
-                                null helps you cache expensive computations or resources. It evaluates a null once, stores the result, and reuses it until the cache expires or is invalidated. You can configure expiry policies to automatically refresh values.<pre class="md-code md-code-``` java"><code class="java">
+                                <p class="md-phrase"><mark class="md-code md-code-` ">NCachedValue</mark> helps you cache expensive computations or resources. It evaluates a <mark class="md-code md-code-` ">Supplier</mark> once, stores the result, and reuses it until the cache expires or is invalidated. You can configure expiry policies to automatically refresh values.</p><pre class="md-code md-code-``` java"><code class="java">
 // Example 1: Cache with expiry
 NCachedValue&amp;lt;Double&gt; cachedRandom = NCachedValue.of(Math::random)
         .setExpiry(Duration.ofSeconds(5));
@@ -1541,7 +1567,7 @@ NCachedValue&amp;lt;Double&gt; cachedRandom = NCachedValue.of(Math::random)
         cachedRandom.invalidate();
 NOut.println("New value after invalidate = " + cachedRandom.get());
 
-</code></pre>Sometimes a computation may fail (for example, a remote call).null can automatically retry, retain the last good value on failure, and recover gracefully. This makes it ideal for unstable resources or intermittent network services.<pre class="md-code md-code-``` java"><code class="java">
+</code></pre><p class="md-phrase">Sometimes a computation may fail (for example, a remote call).<mark class="md-code md-code-` ">NCachedValue</mark> can automatically retry, retain the last good value on failure, and recover gracefully. This makes it ideal for unstable resources or intermittent network services.</p><pre class="md-code md-code-``` java"><code class="java">
 
 // Example 2: Cache with retries and fallback
 AtomicInteger counter = new AtomicInteger();
@@ -1569,34 +1595,71 @@ NOut.println("Resilient value = " + cached.get());
                             <hr class="divider">
                         
                             <!--pageLevel2-->
-                            <section id="U75217DA628D91C11E305BB7C6812DE7FE8800ECF" >
-                                <h3 class="main-section2"><a href="#U2971A11A6DE6DF60D9DB661E4AB607D5913B755F">8.3 Rate Limit Value</a></h3>
+                            <section id="U5D9FCC33EAC31FBCB0744C865BECC169E60FD863" >
+                                <h3 class="main-section2"><a href="#U2971A11A6DE6DF60D9DB661E4AB607D5913B755F">8.3 Task Set</a></h3>
                                 <div class="text-card">
-                                null lets you control how often actions can be executed. For example, you can allow only null, using a strategy like null. This makes it easy to protect APIs, services, or expensive operations from overuse.<pre class="md-code md-code-``` java"><code class="java">
-// Example 1: Basic sliding window rate limit
+                                <p class="md-phrase"><mark class="md-code md-code-` ">NTaskSet</mark> lets you manage multiple asynchronous tasks as a single logical set. You can submit tasks as <mark class="md-code md-code-` ">Future</mark>, <mark class="md-code md-code-` ">CompletableFuture</mark>, <mark class="md-code md-code-` ">Callable</mark>, <mark class="md-code md-code-` ">Runnable</mark>, <mark class="md-code md-code-` ">Supplier</mark>, or <mark class="md-code md-code-` ">NCallable</mark>, and then wait for completion, get results, or handle errors in a consistent way.</p>This is useful for executing batches of work concurrently, coordinating results, or stopping remaining tasks once one finishes.<H4 class="md-title-3">Creating a Task Set</H4><pre class="md-code md-code-``` java"><code class="java">
+NTaskSet tasks = NTaskSet.of()
+.call(() -&gt; "Hello from callable")
+.run(() -&gt; NOut.println("Running a simple task"))
+.supply(() -&gt; computeValue());
+</code></pre><H4 class="md-title-3">Waiting for All Tasks</H4><p class="md-phrase">Use <code class="md-code md-code-` ">join()</code> to block until all tasks complete. Any exceptions are captured and can be retrieved via <code class="md-code md-code-` ">errors()</code>.</p><pre class="md-code md-code-``` java"><code class="java">
+tasks.join();  // waits for all tasks
+List&lt;?&gt; results = tasks.results();  // collect all results (null for failed tasks)
+List&lt;Throwable&gt; errors = tasks.errors();  // collect exceptions if any
+</code></pre><H4 class="md-title-3">Getting the First Completed Result</H4><p class="md-phrase"><code class="md-code md-code-` ">first()</code> returns the result of the first task that completes. Other tasks continue to run unless you pass <mark class="md-code md-code-` ">true</mark> to cancel them:</p><pre class="md-code md-code-``` java"><code class="java">
+String firstResult = tasks.first();  // peek first result, do not cancel others
+String firstAndCancel = tasks.first(true);  // returns first and cancels remaining tasks
+</code></pre><p class="md-phrase"><code class="md-code md-code-` ">firstOnly()</code> is equivalent to <code class="md-code md-code-` ">first(true)</code>:</p><pre class="md-code md-code-``` java"><code class="java">
+String winner = tasks.firstOnly();
+</code></pre><H4 class="md-title-3">Requiring All Tasks to Succeed</H4><p class="md-phrase">If you want to ensure all tasks completed successfully, use <code class="md-code md-code-` ">requireAll()</code>. The first exception encountered will be thrown.</p><pre class="md-code md-code-``` java"><code class="java">
+tasks.requireAll(); // throws CompletionException if any task failed
+List&lt;?&gt; allResults = tasks.results();
+</code></pre><H4 class="md-title-3">Adding Tasks Dynamically</H4>You can add tasks at any time:<pre class="md-code md-code-``` java"><code class="java">
+tasks.add(CompletableFuture.supplyAsync(() -&gt; "Dynamic task"));
+tasks.call(() -&gt; "Callable with executor", executorService);
+tasks.run(() -&gt; cleanup());
+</code></pre><H4 class="md-title-3">Cancelling All Tasks</H4>You can cancel all running or pending tasks:<pre class="md-code md-code-``` java"><code class="java">
+tasks.cancelAll(true); // true = may interrupt running tasks
+</code></pre><H4 class="md-title-3">Checking Task State</H4><pre class="md-code md-code-``` java"><code class="java">
+if (tasks.isDone()) {
+NOut.println("All tasks completed");
+}
+if (tasks.hasError()) {
+NOut.println("Some tasks failed");
+}
+</code></pre><p class="md-phrase"><mark class="md-code md-code-` ">NTaskSet</mark> provides a simple, fluent API for orchestrating concurrent work with flexible error handling and cancellation strategies.</p>
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="UA62104F0F35A316127610C86944DF948BF62D157" >
+                                <h3 class="main-section2"><a href="#U2971A11A6DE6DF60D9DB661E4AB607D5913B755F">8.4 Rate Limit Value</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><mark class="md-code md-code-` ">NRateLimitValue</mark> lets you control how often actions can be executed. For example, you can allow only <b class="md-bold">10 actions every 2 minutes</b>, using a strategy like <b class="md-bold">sliding window</b>. This helps protect APIs, services, or expensive operations from overuse.</p><H4 class="md-title-3">Example 1: Basic sliding window rate limit</H4><pre class="md-code md-code-``` java"><code class="java">
 NRateLimitedValue limiter = NRateLimitedValue.ofBuilder("example")
-                .withLimit("calls", 10).per(Duration.ofMinutes(2))
-                .withStrategy(NRateLimitDefaultStrategy.SLIDING_WINDOW)
-                .build();
+        .withLimit("calls", 10).per(Duration.ofMinutes(2))
+        .withStrategy(NRateLimitDefaultStrategy.SLIDING_WINDOW)
+        .build();
 
 for (int i = 0; i &lt; 15; i++) {
-NRateLimitValueResult res = limiter.take();
+    NRateLimitValueResult res = limiter.take();
     if (res.success()) {
         NOut.println("Action " + i + " allowed at " + Instant.now());
-        } else {
+    } else {
         NOut.println("Action " + i + " rejected. Retry after "
-        + res.getRetryAfter().orElse(Duration.ZERO));
-        }
-        }
-
-</code></pre>Instead of consuming tokens immediately, null will wait until the limiter can provide a slot before executing your code. This is useful when you want the action to eventually run rather than fail. You can also define multiple independent limits (per minute, per day, etc.) in a single limiter, and null will respect all limits before executing.<pre class="md-code md-code-``` java"><code class="java">
-/// Example 2: Using claimAndRun
+                     + res.getRetryAfter().orElse(Duration.ZERO));
+    }
+}
+</code></pre><H4 class="md-title-3"><p class="md-phrase">Example 2: Using <mark class="md-code md-code-` ">claimAndRun</mark></p></H4><pre class="md-code md-code-``` java"><code class="java">
 limiter.claimAndRun(() -&gt; {
     NOut.println("Doing a limited action...");
 });
 
-// Adding multiple limits at once
-NRateLimitedValue limiter2 = NRateLimitedValue.ofBuilder("api-calls")
+// Multiple independent limits (per minute, per day, etc.)
+NRateLimitValue limiter2 = NRateLimitValue.ofBuilder("api-calls")
         .withLimit("per-minute", 60).per(Duration.ofMinutes(1))
         .withLimit("per-day", 1000).per(Duration.ofDays(1))
         .build();
@@ -1604,6 +1667,80 @@ NRateLimitedValue limiter2 = NRateLimitedValue.ofBuilder("api-calls")
 limiter2.claimAndRun(() -&gt; {
     NOut.println("API call allowed");
 });
+</code></pre><H4 class="md-title-3"><p class="md-phrase">Example 3: Using <mark class="md-code md-code-` ">claimAndCall</mark></p></H4><pre class="md-code md-code-``` java"><code class="java">
+limiter.claimAndCall(() -&gt; {
+    return expensiveOperation();
+});
+</code></pre><H4 class="md-title-3">Features</H4><ul class="md-ul"><li class="md-uli"><p class="md-phrase">Immediate vs Deferred Execution: <code class="md-code md-code-` ">take()</code> vs <code class="md-code md-code-` ">claim()</code></p></li><li class="md-uli">Fluent builder for limits</li><li class="md-uli">Multiple independent limits per value</li><li class="md-uli">Optional persistence via store</li><li class="md-uli">Strategy-based control (sliding window, custom)</li><li class="md-uli">Thread-safe and suitable for concurrent environments</li></ul><H4 class="md-title-3">Notes</H4><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">claimAndRun</mark> blocks until a permit is available and then executes the runnable.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">take()</code> or <mark class="md-code md-code-` ">takeAndCall</mark> try to acquire permits immediately.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NRateLimitValueResult</mark> provides fluent callbacks for success/failure handling.</p></li><li class="md-uli">Multiple strategies can be defined via the factory.</li><li class="md-uli"><p class="md-phrase">Limits can be defined in duration units (<code class="md-code md-code-` ">per(Duration)</code>).</p></li></ul>
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="U58B14BBA40477A9345F362CDE755292DFFC91516" >
+                                <h3 class="main-section2"><a href="#U2971A11A6DE6DF60D9DB661E4AB607D5913B755F">8.5 NRetryCall</a></h3>
+                                <div class="text-card">
+                                <H4 class="md-title-1">NRetryCall</H4><p class="md-phrase"><mark class="md-code md-code-` ">NRetryCall</mark> lets you execute tasks with retry capabilities, including configurable retry periods, recover actions, and handlers. This is useful for tasks that may fail intermittently, such as network calls or database operations.</p><hr class="divider" class="md-hr"/><H4 class="md-title-2">Basic Example</H4><pre class="md-code md-code-``` java"><code class="java">
+// Create a simple retry call
+NRetryCall&lt;String&gt; retryCall = NRetryCall.of(() -&gt; {
+            NOut.println("Trying...");
+            if (new Random().nextBoolean()) {
+                throw new RuntimeException("Failed");
+            }
+            return "Success";
+        });
+
+// Set maximum retries and retry period
+retryCall.setMaxRetries(5)
+         .setRetryPeriod(Duration.ofSeconds(1));
+
+// Execute blocking
+String result = retryCall.call();
+NOut.println("Result: " + result);
+</code></pre><H4 class="md-title-3">Asynchronous Execution</H4><pre class="md-code md-code-``` java"><code class="java">
+retryCall.callAsync();
+
+// Or retrieve a future
+Future&lt;NRetryCall.Result&lt;String&gt;&gt; future = retryCall.callFuture();
+NRetryCall.Result&lt;String&gt; result = future.get();
+if (result.isValid()) {
+    NOut.println("Succeeded: " + result.result());
+} else {
+    NOut.println("Failed after retries");
+}
+</code></pre><H4 class="md-title-3">Linear Backoff</H4>Linear backoff increases the wait linearly with each attempt.<pre class="md-code md-code-``` java"><code class="java">
+retryCall.setMultipliedRetryPeriod(Duration.ofSeconds(1), 2.0);
+// Waits: 0s, 2s, 4s, 6s, 8s...
+</code></pre><H4 class="md-title-3">Exponential Backoff</H4>Exponential backoff increases the wait exponentially with each attempt.<pre class="md-code md-code-``` java"><code class="java">
+retryCall.setExponentialRetryPeriod(Duration.ofSeconds(1), 2.0);
+// Waits: 1s, 2s, 4s, 8s, 16s...
+</code></pre><H4 class="md-title-3">Custom Recover Action</H4>You can provide a recovery callable if all retries fail.<pre class="md-code md-code-``` java"><code class="java">
+retryCall.setRecover(() -&gt; {
+    NOut.println("Recovering...");
+    return "Recovered Result";
+});
+
+String result = retryCall.callOrElse(() -&gt; "Default Result");
+</code></pre><H4 class="md-title-3">Custom Handler</H4>Handlers are notified of each result, success or failure.<pre class="md-code md-code-``` java"><code class="java">
+retryCall.setHandler(result -&gt; {
+    if (result.isValid()) {
+        NOut.println("Success: " + result.result());
+    } else {
+        NOut.println("Failure for retry call id: " + result.id());
+    }
+});
+
+</code></pre><H4 class="md-title-3">Factory Usage with ID</H4><pre class="md-code md-code-``` java"><code class="java">
+NRetryCallFactory factory = NConcurrent.of().retryCallFactory();
+
+NRetryCall&lt;String&gt; retryCallWithId = factory.of("myCallId", () -&gt; {
+    return "Task Result";
+});
+
+retryCallWithId.setMaxRetries(3)
+               .setRetryPeriod(Duration.ofSeconds(2))
+        .call();
 
 </code></pre>
                                 </div>
@@ -1612,20 +1749,181 @@ limiter2.claimAndRun(() -&gt; {
                             <hr class="divider">
                         
                             <!--pageLevel2-->
-                            <section id="U73642D55A11DC986644C8C2653FF24BC9186817E" >
-                                <h3 class="main-section2"><a href="#U2971A11A6DE6DF60D9DB661E4AB607D5913B755F">8.4 Saga</a></h3>
+                            <section id="UAC6FEA5509A64E3240B2BF470D096E0BD035DC55" >
+                                <h3 class="main-section2"><a href="#U2971A11A6DE6DF60D9DB661E4AB607D5913B755F">8.6 Load Balancer</a></h3>
                                 <div class="text-card">
-                                TODO
+                                <p class="md-phrase"><mark class="md-code md-code-` ">NWorkBalancer</mark> lets you distribute jobs across multiple workers using configurable strategies. You can define weights, choose strategies like <b class="md-bold">round-robin</b> or <b class="md-bold">least-load</b>, and track running jobs for observability and control.</p>Note: The NWorkBalancer is decoupled from execution. It does not run the job when you submit it. Instead, it returns a NCallable that selects a worker according to the strategy and tracks metrics. You must explicitly call the returned NCallable to execute the task.<H4 class="md-title-3">Basic Example: Weighted Distribution</H4><pre class="md-code md-code-``` java"><code class="java">
+NWorkBalancerFactory factory = NWorkBalancerFactory.of();
+NWorkBalancer&lt;String&gt; workBalancer = factory.&lt;String&gt;ofBuilder("example")
+.addWorker("WorkerA").withWeight(1)
+.addWorker("WorkerB").withWeight(2)
+.build();
+
+NCallable&lt;String&gt; callable = workBalancer.of("hello", context -&gt; {
+NOut.println(NMsg.ofC(
+"call worker %s/%s:%s jobName:%s jobId:%s",
+context.getWorkerIndex() + 1,
+context.getWorkersCount(),
+context.getWorkerName(),
+context.getJobName(),
+context.getJobId()
+));
+NConcurrent.of().sleep(50 + new Random().nextInt(50));
+return "hello from " + context.getWorkerName();
+});
+
+NTaskSet tasks = NTaskSet.of();
+for (int i = 0; i &lt; 50; i++) {
+tasks.call(callable);
+}
+tasks.join();
+</code></pre><H4 class="md-title-3">Example: Using a Custom Strategy</H4><pre class="md-code md-code-``` java"><code class="java">
+NWorkBalancerFactory factory = NWorkBalancerFactory.of();
+NWorkBalancer&lt;String&gt; workBalancer = factory.&lt;String&gt;ofBuilder("example")
+.addWorker("WorkerA").withWeight(1)
+.addWorker("WorkerB").withWeight(2)
+.then()
+.setStrategy(NWorkBalancerDefaultStrategy.ROUND_ROBIN)
+.build();
+
+NCallable&lt;String&gt; callable = workBalancer.of("hello", context -&gt; {
+NOut.println(NMsg.ofC(
+"call worker %s/%s:%s jobName:%s jobId:%s",
+context.getWorkerIndex() + 1,
+context.getWorkersCount(),
+context.getWorkerName(),
+context.getJobName(),
+context.getJobId()
+));
+NConcurrent.of().sleep(50 + new Random().nextInt(50));
+return "hello from " + context.getWorkerName();
+});
+
+NTaskSet tasks = NTaskSet.of();
+for (int i = 0; i &lt; 50; i++) {
+tasks.call(callable);
+}
+tasks.join();
+
+NOut.println("-------------------------------------------------------------");
+NOut.println(NMsg.ofC("runningJobsCount %s", workBalancer.getRunningJobsCount()));
+NOut.println(NMsg.ofC("workerLoads %s", workBalancer.getWorkerLoads()));
+</code></pre><H4 class="md-title-3">Key Methods</H4><H4 class="md-title-4"><p class="md-phrase"><code class="md-code md-code-` ">getRunningJobs()</code></p></H4>Returns a snapshot of all currently running jobs. Useful for monitoring, metrics aggregation, or custom cancellation logic.<H4 class="md-title-4"><p class="md-phrase"><code class="md-code md-code-` ">getRunningJobsCount()</code></p></H4>Returns the number of currently active jobs for this balancer.<H4 class="md-title-4"><p class="md-phrase"><code class="md-code md-code-` ">getWorkers()</code></p></H4>Returns the list of registered workers.<H4 class="md-title-4"><p class="md-phrase"><code class="md-code md-code-` ">getWorkerLoad(String workerName)</code></p></H4>Returns the load metrics for a specific worker.<H4 class="md-title-4"><p class="md-phrase"><code class="md-code md-code-` ">of(String name, NWorkBalancerJob&lt;T&gt; job)</code></p></H4><p class="md-phrase">Wraps a job into an <mark class="md-code md-code-` ">NCallable</mark> that will execute according to the balancer strategy. Each call tracks metrics independently.</p><H4 class="md-title-4"><p class="md-phrase"><code class="md-code md-code-` ">getOption(String name)</code> / <code class="md-code md-code-` ">getOptions()</code></p></H4>Retrieve global options configured for this balancer. Options can customize worker behavior at runtime.<H4 class="md-title-3"><p class="md-phrase">Factory Usage: <mark class="md-code md-code-` ">NWorkBalancerFactory</mark></p></H4>Create balancers using a factory:<pre class="md-code md-code-``` java"><code class="java">
+NWorkBalancerFactory factory = NWorkBalancerFactory.of();
+NWorkBalancer&lt;MyResult&gt; balancer = factory.ofBuilder("my-balancer")
+.addWorker("A").withWeight(1)
+.addWorker("B").withWeight(2)
+.setStrategy(NWorkBalancerDefaultStrategy.LEAST_LOAD)
+.build();
+</code></pre>You can also register custom strategies:<pre class="md-code md-code-``` java"><code class="java">
+factory.defineStrategy("myStrategy", new MyCustomStrategy());
+NWorkBalancer&lt;MyResult&gt; balancer2 = factory.ofBuilder("callId")
+.setStrategy("myStrategy")
+.build();
+</code></pre><H4 class="md-title-3">Notes</H4><ul class="md-ul"><li class="md-uli"><p class="md-phrase">Each job submitted through <code class="md-code md-code-` ">of()</code> is automatically tracked.</p></li><li class="md-uli">You can inspect running jobs, worker loads, and metrics at any time.</li><li class="md-uli">Strategies can be swapped dynamically to optimize load distribution.</li></ul>
                                 </div>
                                 
                             </section>
                             <hr class="divider">
                         
                             <!--pageLevel2-->
-                            <section id="U1D5BF68F2D014390B8F4E338AF426E499AFD23F9" >
-                                <h3 class="main-section2"><a href="#U2971A11A6DE6DF60D9DB661E4AB607D5913B755F">8.5 Stable Value</a></h3>
+                            <section id="UB0927D4E11E5D8865BC6EE913DA40D68576E9C1C" >
+                                <h3 class="main-section2"><a href="#U2971A11A6DE6DF60D9DB661E4AB607D5913B755F">8.7 Saga</a></h3>
                                 <div class="text-card">
-                                null provides a flexible, high-level way to lock resources across threads and even processes. You can create locks from objects, paths, or resource IDs, and execute code safely while the lock is held. This ensures that critical sections are executed exclusively and consistently.<pre class="md-code md-code-``` java"><code class="java">
+                                <p class="md-phrase"><mark class="md-code md-code-` ">NSagaCallable</mark> provides a structured way to define a series of steps with <b class="md-bold">automatic compensation</b> in case of failure.   Each step can succeed or fail, and the saga system ensures that failed steps are undone according to the defined strategy.</p>This is useful for workflows that require atomicity across multiple independent operations, like distributed transactions, workflow orchestration, or resilient pipelines.<H4 class="md-title-3">Example 1: Simple Saga with failure and compensation</H4><pre class="md-code md-code-``` java"><code class="java">
+@Test
+public void testSaga() {
+    NSagaCallable&lt;Object&gt; saga = NConcurrent.of().sagaCallBuilder()
+            .start()
+            .then("step 1", MyNSagaStep.asSuccessful(1))
+            .then("step 2", MyNSagaStep.asSuccessful(2))
+            .then("step 3", MyNSagaStep.asErroneous(3))
+            .then("step 4", MyNSagaStep.asSuccessful(4))
+            .end().build();
+
+    saga.call();
+}
+
+private static class MyNSagaStep implements NSagaStep {
+    String name;
+    boolean err;
+
+    public MyNSagaStep(String name, boolean err) {
+        this.name = name;
+        this.err = err;
+    }
+
+    public static MyNSagaStep asSuccessful(int name) {
+        return new MyNSagaStep("step " + name, false);
+    }
+
+    public static MyNSagaStep asErroneous(int name) {
+        return new MyNSagaStep("step " + name, true);
+    }
+
+    @Override
+    public Object call(NSagaContext context) {
+        if (err) {
+            NErr.println(Instant.now() + " : err call " + name);
+            throw new NIllegalStateException(NMsg.ofC("unexpected error at %s", name));
+        } else {
+            NOut.println(Instant.now() + " : call " + name);
+        }
+        return name;
+    }
+
+    @Override
+    public void undo(NSagaContext context) {
+        NOut.println(Instant.now() + " : undo " + name);
+    }
+}
+</code></pre><H4 class="md-title-3">Example 2: Conditional Saga</H4><pre class="md-code md-code-``` java"><code class="java">
+NSagaCallable&lt;Object&gt; conditionalSaga = NConcurrent.of().sagaCallBuilder()
+        .start()
+        .then("step 1", MyNSagaStep.asSuccessful(1))
+        .thenIf("conditional step", ctx -&gt; ctx.getVar("shouldRun") != null &amp;&amp; (boolean)ctx.getVar("shouldRun"))
+        .then("step 2", MyNSagaStep.asSuccessful(2))
+        .otherwise()
+        .then("step 3", MyNSagaStep.asSuccessful(3))
+        .end()
+        .build();
+
+conditionalSaga.call();
+</code></pre><H4 class="md-title-3">Example 3: Saga with While Loop</H4><pre class="md-code md-code-``` java"><code class="java">
+NSagaCallable&lt;Object&gt; loopSaga = NConcurrent.of().sagaCallBuilder()
+        .start()
+        .then("init counter", ctx -&gt; {
+            ctx.setVar("counter", 0);
+            NOut.println("Counter initialized");
+            return null;
+        })
+        .thenWhile("loop while counter &lt; 3", ctx -&gt; (int)ctx.getVar("counter") &lt; 3)
+            .then("increment counter", ctx -&gt; {
+                int c = (int) ctx.getVar("counter");
+                ctx.setVar("counter", c + 1);
+                NOut.println("Counter incremented to " + (c + 1));
+                return null;
+            })
+        .end()
+        .then("final step", ctx -&gt; {
+            NOut.println("Final counter value: " + ctx.getVar("counter"));
+            return null;
+        })
+        .end()
+        .build();
+
+loopSaga.call();
+</code></pre><H4 class="md-title-3">Key Interfaces</H4><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">NSagaCallable&lt;T&gt;</code>: Represents the full saga callable.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NSagaStep</mark>: A single step, with call and undo.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NSagaContext</mark>: Context for storing variables and passing data between steps.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NSagaCallableBuilder</mark>: Fluent builder for defining sagas.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NSagaCondition</mark>: Conditional branching in a saga (for thenIf or thenWhile).</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NSagaStore</mark>: Optional persistence for saga state.</p></li></ul><H4 class="md-title-3">Status and Node Enums</H4><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NSagaNodeStatus</mark>: Status of a node (PENDING, RUNNING, FINISHED, FAILED, COMPENSATING, etc.).</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">NSagaStatus</mark>: Overall saga status (PENDING, RUNNING, SUCCESS, ROLLED_BACK, PARTIAL_ROLLBACK, FAILED).</p></li></ul><H4 class="md-title-3">Notes</H4><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">Execution vs Definition</code>: Building a saga only defines the workflow. Steps are executed when call() is invoked.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">Automatic Compensation</code>: If a step fails, prior executed steps are automatically undone using their undo methods.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">Variable Sharing</code>: Use NSagaContext to store and access variables across steps.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">Persistence</mark>: Implement NSagaStore to persist saga state for long-running workflows or distributed systems.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">Step Status</code>: Use NSagaCallable.status() to inspect progress, including compensations in progress.</p></li></ul>
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="UB7A296F7508CA18EF8ABA4C916E015C0978F080A" >
+                                <h3 class="main-section2"><a href="#U2971A11A6DE6DF60D9DB661E4AB607D5913B755F">8.8 Persistent Locks</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><mark class="md-code md-code-` ">NLock</mark> provides a flexible, high-level way to lock resources across threads and even processes. You can create locks from objects, paths, or resource IDs, and execute code safely while the lock is held. This ensures that critical sections are executed exclusively and consistently.</p><pre class="md-code md-code-``` java"><code class="java">
 // Example 1: Create a lock from an object
 NLock lock = NLock.ofPath(NPath.of("/path/to/resource.txt");
 
@@ -1640,7 +1938,7 @@ Nout.println("Is locked? " + lock.isLocked());
 // Check if current thread holds the lock
         Nout.println("Held by current thread? " + lock.isHeldByCurrentThread());
 
-</code></pre>null also supports locks tied to workspace resources or IDs, allowing inter-process synchronization. You can execute tasks immediately, with a timeout, or safely retrieve results using null.<pre class="md-code md-code-``` java"><code class="java">
+</code></pre><p class="md-phrase"><mark class="md-code md-code-` ">NLock</mark> also supports locks tied to workspace resources or IDs, allowing inter-process synchronization. You can execute tasks immediately, with a timeout, or safely retrieve results using <mark class="md-code md-code-` ">callWith</mark>.</p><pre class="md-code md-code-``` java"><code class="java">
 NId resourceId = NId.of("net.thevpc.nuts:nuts#0.8.6");
 // Lock tied to workspace resource
 NLock idLock = NLock.ofIdPath(resourceId);
@@ -1746,7 +2044,7 @@ byte[] bytes=monitoredSource.readBytes();
                                 NPs allows listing and filtering running processes across platforms and optionally killing them:<H4 class="md-title-2">To create a new process</H4><pre class="md-code md-code-``` java"><code class="java">
 // List all visible processes
 for (NPsInfo nPsInfo : NPs.of().getResultList()) {
-        System.out.println(nPsInfo);
+        NOut.println(nPsInfo);
 }
 
 // Kill all Tomcat Java processes
@@ -1835,7 +2133,7 @@ NOut.println("Output:\n" + stdout);
                             <section id="UC20E92687BDF44E6BD01145018725302B8A7E85C" >
                                 <h3 class="main-section2"><a href="#U24D047EA41968E86F27C992438EFBFED55667047">11.1 NLog for elegant Logging</a></h3>
                                 <div class="text-card">
-                                <H4 class="md-title-1"><p class="md-phrase"><mark class="md-code md-code-` ">NLog</mark> — Structured Developer Logging in Nuts</p></H4>null combines structured messages (null), styled output with colors and null formatting, and seamless integration with null ornull. Messages carry an null, similar to logging markers, which allows you to classify, filter, or style logs at runtime. Whether you’re building CLI tools, scripts, or full applications, null makes logs expressive, rich, and easy to understand.<hr class="divider" class="md-hr"/><H4 class="md-title-2">🔧 Basic Usage</H4>You can obtain a logger using:<pre class="md-code md-code-``` java"><code class="java">
+                                <H4 class="md-title-1"><p class="md-phrase"><mark class="md-code md-code-` ">NLog</mark> — Structured Developer Logging in Nuts</p></H4><p class="md-phrase"><mark class="md-code md-code-` ">NLog</mark> combines structured messages (<mark class="md-code md-code-` ">NMsg</mark>), styled output with colors and <mark class="md-code md-code-` ">NTF</mark> formatting, and seamless integration with <mark class="md-code md-code-` ">JUL</mark> or<mark class="md-code md-code-` ">SLF4J</mark>. Messages carry an <mark class="md-code md-code-` ">Intent</mark>, similar to logging markers, which allows you to classify, filter, or style logs at runtime. Whether you’re building CLI tools, scripts, or full applications, <mark class="md-code md-code-` ">NLog</mark> makes logs expressive, rich, and easy to understand.</p><hr class="divider" class="md-hr"/><H4 class="md-title-2">🔧 Basic Usage</H4>You can obtain a logger using:<pre class="md-code md-code-``` java"><code class="java">
 NLog log = NLog.of(MyClass.class);
 </code></pre>Then log messages with a semantic level:<pre class="md-code md-code-``` java"><code class="java">
 log.error(NMsg.ofC("[%s] not yet supported", featureName));
@@ -1909,23 +2207,21 @@ log.debug(NMsg.ofV("Downloading $file to $path", NMaps.of("file", id, "path", ta
                             <section id="NOptional" >
                                 <h3 class="main-section2"><a href="#U24D047EA41968E86F27C992438EFBFED55667047">11.2 NOptional</a></h3>
                                 <div class="text-card">
-                                NOptional is a powerful alternative to Java’s Optional that goes beyond being just a nullable container. It’s designed to make null handling more expressive,  composable, and safer — closer to the expressive capabilities of TypeScript or Kotlin.In addition to the standard of(), get(), and orElse() methods, it introduces:<ul class="md-ul"><li class="md-uli">Named values for better error messages (ofNamed()).</li><li class="md-uli"><p class="md-phrase">Optional chaining (<code class="md-code md-code-` ">then(...)</code>) to safely traverse object graphs.</p></li><li class="md-uli"><p class="md-phrase">Nullish coalescing (<code class="md-code md-code-` ">orElse()</code>), similar to ??.</p></li><li class="md-uli"><p class="md-phrase">Assertion-style accessors (<code class="md-code md-code-` ">get()</code> vs <code class="md-code md-code-` ">orNull()</code>).</p></li></ul><p class="md-phrase">These features make it ideal for writing expressive, <mark class="md-code md-code-` ">null-safe</mark> code in complex object hierarchies — without endless <code class="md-code md-code-` ">if (x != null)</code> checks.</p><H4 class="md-title-2">Non Null Assertion and Coalescing</H4>Java has a builtin null Check mechanism but it does not enable customized messages or exceptions. Optional are described as per Java's (c) Documentation "A container object which may or may not contain a non-null value". NOptional is more of an Object Wrapper than addes several useful null related operators like '??' '?.' and '!' in typescript. <table class="table table-bordered table-striped"><tr><th>Concept</th><th>Java</th><th>NAF (NOptional)</th><th>Equivalent TS</th></tr><tr><td>Null check with exception</td><td><p class="md-phrase">   <code class="md-code md-code-``` if"> (user == null) throw new ...</code>    </p></td><td><p class="md-phrase">         <code class="md-code md-code-``` NOptional">.ofNamed(user,"user").get()</code>          </p></td><td><p class="md-phrase">         <code class="md-code md-code-``` user">!</code>          </p></td></tr><tr><td>Null-safe call</td><td><p class="md-phrase"> <code class="md-code md-code-``` if"> (user != null) user.toUpperCase()</code> </p></td><td><p class="md-phrase"> <code class="md-code md-code-``` NOptional">.of(user).map(String::toUpperCase).orNull()</code>  </p></td><td><p class="md-phrase">  <code class="md-code md-code-``` user">?.toUpperCase()</code>   </p></td></tr><tr><td>user?.toUpperCase()</td><td><p class="md-phrase">   <code class="md-code md-code-``` user"> != null ? user : "default"</code>    </p></td><td><p class="md-phrase">         <code class="md-code md-code-``` NOptional">.of(user).orElse("default")</code>          </p></td><td><p class="md-phrase">   <code class="md-code md-code-``` user"> ?? "default"</code>    </p></td></tr></table><H4 class="md-title-2">Optional Chaining</H4>One of the most useful features of NOptional is the ability to traverse deep object graphs safely without repetitive null checks.<p class="md-phrase">With <code class="md-code md-code-` ">then(...)</code>, you can chain field access or method calls, and NOptional automatically short-circuits the chain if any part is null.</p><ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi50-tab" data-toggle="tab" href="#idi50" role="tab" aria-controls="idi50" aria-selected="false">java</a></li><li class="nav-item" role="presentation"><a class="nav-link active" id="idi51-tab" data-toggle="tab" href="#idi51" role="tab" aria-controls="idi51" aria-selected="true">NAF</a></li></ul><div class="tab-content my-3"><div class="tab-pane fade show " id="idi50" role="tabpanel" aria-labelledby="idi50-tab"><pre class="md-code md-code-``` java"><code class="java">
-    Number roadNumber=(app!=null &amp;&amp; app.person!=null &amp;&amp; app.person.road!=null)? app.person.address.road.number:null;
-</code></pre></div><div class="tab-pane fade show active" id="idi51" role="tabpanel" aria-labelledby="idi51-tab"><pre class="md-code md-code-``` java"><code class="java"> 
-    // expected var roadNumber=app?.person?.address?.road?.number;
-    Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.road).then(v-&gt;v.number).orNull();
-</code></pre></div></div><H4 class="md-title-2">Combining Optional Chaining</H4><ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi60-tab" data-toggle="tab" href="#idi60" role="tab" aria-controls="idi60" aria-selected="false">java</a></li><li class="nav-item" role="presentation"><a class="nav-link active" id="idi61-tab" data-toggle="tab" href="#idi61" role="tab" aria-controls="idi61" aria-selected="true">NAF</a></li></ul><div class="tab-content my-3"><div class="tab-pane fade show " id="idi60" role="tabpanel" aria-labelledby="idi60-tab"><pre class="md-code md-code-``` java"><code class="java">
-    Address address=(app!=null &amp;&amp; app.person!=null)?app.person.address:null;
-    if(address==null){
-       throw new IllegalArgumentException("missing address"); 
-    }
-    Number roadNumber=(address!=null 
-        &amp;&amp; address.road!=null)
-        ? address.road.number:0;
-</code></pre></div><div class="tab-pane fade show active" id="idi61" role="tabpanel" aria-labelledby="idi61-tab"><pre class="md-code md-code-``` java"><code class="java"> 
-    // expected : var roadNumber=app?.person?.address!.road?.number??0;
-    Number roadNumber=NOptional.of(app).then(v-&gt;v.person).then(v-&gt;v.address).get().then(v-&gt;v.road).then(v-&gt;v.number).orElse(0);
-</code></pre></div></div><H4 class="md-title-2">When to use get(), orNull(), and orElse()</H4><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">get()</code> – returns the value or throws an exception if absent (assertive).</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">orNull()</code> – returns null if absent (passive).</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">orElse(value)</code> – returns a fallback if absent (coalescing).</p></li></ul><H4 class="md-title-2">Why not just use Optional</H4>While Java’s built-in Optional is useful, it lacks several features needed for expressive, null-safe code in complex applications:<ul class="md-ul"><li class="md-uli">❌ No support for named values or custom exception messages.</li><li class="md-uli">❌ No built-in chaining (Optional chaining is verbose with flatMap).</li><li class="md-uli">❌ No nullish coalescing equivalent.</li><li class="md-uli">❌ No describe() or integration with structured diagnostics.</li></ul><p class="md-phrase"><mark class="md-code md-code-` ">NOptional</mark> solves all of these while remaining compatible with functional idioms.</p>
+                                <H4 class="md-title-1">NOptional</H4><p class="md-phrase"><mark class="md-code md-code-` ">NOptional</mark> is a powerful, tri-state alternative to Java’s standard <mark class="md-code md-code-` ">Optional</mark>. It evolves the concept of an optional container to handle the full complexity of data retrieval in enterprise applications, <b class="md-bold">semantically differentiating between missing data and technical failures</b>.</p><p class="md-phrase">By moving beyond the simple <b class="md-bold">Present/Absent</b> model, <mark class="md-code md-code-` ">NOptional</mark> enables safer, more expressive, and composable null-safe code, closely mirroring the capabilities of modern languages like TypeScript and Kotlin.</p><table class="table table-bordered table-striped"><tr><th>State</th><th>Meaning</th><th><p class="md-phrase"> Standard <mark class="md-code md-code-` ">Optional</mark> Equiv. </p></th><th><p class="md-phrase"> <mark class="md-code md-code-` ">NOptional</mark> Method </p></th></tr><tr><td><p class="md-phrase"> <b class="md-bold">PRESENT</b> </p></td><td><p class="md-phrase"> A value exists (which may be <mark class="md-code md-code-` ">null</mark>). </p></td><td><p class="md-phrase"> <code class="md-code md-code-` ">Optional.of(...)</code> </p></td><td><p class="md-phrase"> <code class="md-code md-code-` ">ofNullable(...)</code> </p></td></tr><tr><td><p class="md-phrase"> <b class="md-bold">EMPTY</b> </p></td><td>A value is logically missing.</td><td><p class="md-phrase"> <code class="md-code md-code-` ">Optional.empty()</code> </p></td><td><p class="md-phrase"> <code class="md-code md-code-` ">ofEmpty(...)</code> </p></td></tr><tr><td><p class="md-phrase"> <b class="md-bold">ERROR</b> </p></td><td>A technical failure occurred during evaluation.</td><td><p class="md-phrase"> <b class="md-bold">(Not Supported)</b> </p></td><td><p class="md-phrase"> <code class="md-code md-code-` ">ofError(...)</code> </p></td></tr></table><p class="md-phrase">*<b class="md-bold"></b></p><H4 class="md-title-2">💡 The Core Architectural Advantage: Tri-State Modeling</H4><p class="md-phrase">Java's <mark class="md-code md-code-` ">Optional</mark> forces you to handle technical failures (like I/O or parsing errors) with external <code class="md-code md-code-` ">try/catch</code> blocks or by collapsing them into a simple <mark class="md-code md-code-` ">empty</mark> state, losing context.</p><p class="md-phrase"><mark class="md-code md-code-` ">NOptional</mark> solves this by explicitly modeling the <b class="md-bold">ERROR</b> state. This is crucial when chaining operations: you can differentiate between a configuration value that was <b class="md-bold"><p class="md-phrase">not found (<mark class="md-code md-code-` ">EMPTY</mark>)</p></b> and one that <b class="md-bold"><p class="md-phrase">failed to load due to malformed XML (<mark class="md-code md-code-` ">ERROR</mark>)</p></b>.</p><p class="md-phrase">Methods like <code class="md-code md-code-` ">failFast()</code> (to throw immediately on error) and <code class="md-code md-code-` ">ifErrorUse()</code> (to define a fallback optional) allow for precise control over error propagation and recovery within the fluent chain.</p><p class="md-phrase">*<b class="md-bold"></b></p><H4 class="md-title-2">Fluent Null and Error Assertion</H4><p class="md-phrase"><mark class="md-code md-code-` ">NOptional</mark> introduces clean mechanisms for asserting a value's presence and providing context-rich exceptions, dramatically improving debugging and developer experience.</p><table class="table table-bordered table-striped"><tr><th>Concept</th><th>Java Equivalent (Verbose)</th><th><p class="md-phrase"> <mark class="md-code md-code-` ">NOptional</mark> (Expressive)                                   </p></th><th>Equivalent TS</th></tr><tr><td><p class="md-phrase"> <b class="md-bold">Mandatory Value Check</b> </p></td><td><p class="md-phrase"> <code class="md-code md-code-``` if"> (user == null) throw new NEx("missing user")</code> </p></td><td><p class="md-phrase"> <b class="md-bold"><code class="md-code md-code-``` NOptional">.ofNamed(user, "user").get()</code></b>            </p></td><td><p class="md-phrase"> <code class="md-code md-code-``` user">!</code>                 </p></td></tr><tr><td><p class="md-phrase"> <b class="md-bold">Null-Safe Mapping</b>     </p></td><td><p class="md-phrase"> <code class="md-code md-code-``` if"> (user != null) user.toUpperCase()</code>            </p></td><td><p class="md-phrase"> <code class="md-code md-code-``` NOptional">.of(user).map(String::toUpperCase).orNull()</code> </p></td><td><p class="md-phrase"> <code class="md-code md-code-``` user">?.toUpperCase()</code>   </p></td></tr><tr><td><p class="md-phrase"> <b class="md-bold">Nullish Coalescing</b>    </p></td><td><p class="md-phrase"> <code class="md-code md-code-``` user"> != null ? user : "default"</code>                 </p></td><td><p class="md-phrase"> <b class="md-bold"><code class="md-code md-code-``` NOptional">.of(user).orElse("default")</code></b>             </p></td><td><p class="md-phrase"> <code class="md-code md-code-``` user"> ?? "default"</code>     </p></td></tr><tr><td><p class="md-phrase"> <b class="md-bold">Error Recovery</b>        </p></td><td><p class="md-phrase"> <code class="md-code md-code-``` try"> { ... } catch (E) { fallback }</code>              </p></td><td><p class="md-phrase"> <b class="md-bold"><code class="md-code md-code-``` load">().ifErrorUse(() -&gt; defaultOptional).get()</code></b>   </p></td><td><p class="md-phrase"> <b class="md-bold">(No direct TS equivalent)</b> </p></td></tr></table><H4 class="md-title-3">Named Values and Custom Messages</H4><p class="md-phrase">By using <code class="md-code md-code-` ">ofNamed("user")</code>, your resulting exception (when calling <code class="md-code md-code-` ">get()</code>) is automatically generated with a descriptive message like "Missing required value: user." This eliminates the need for manual exception message creation and relies on the configurable <b class="md-bold"><mark class="md-code md-code-` ">ExceptionFactory</mark></b> for consistent error types.</p><p class="md-phrase">*<b class="md-bold"></b></p><H4 class="md-title-2"><p class="md-phrase">Optional Chaining for Deep Traversal (<code class="md-code md-code-` ">then(...)</code>)</p></H4><p class="md-phrase"><mark class="md-code md-code-` ">NOptional</mark> provides the <code class="md-code md-code-` ">then(...)</code> method for fluent and safe traversal of deep object graphs, acting as a direct analog to the safe-navigation operator (<code class="md-code md-code-` ">?.</code>) in modern languages. It short-circuits the chain if any part returns <mark class="md-code md-code-` ">null</mark> or is <mark class="md-code md-code-` ">EMPTY</mark>.</p><table class="table table-bordered table-striped"><tr><th>Code Style</th><th>Example</th></tr><tr><td><p class="md-phrase"> <b class="md-bold">Java (Verbose)</b> </p></td><td><p class="md-phrase"> <code class="md-code md-code-``` Number"> roadNumber = (app != null &amp;&amp; app.person != null &amp;&amp; app.person.road != null) ? app.person.address.road.number : null;</code> </p></td></tr><tr><td><p class="md-phrase"> <b class="md-bold">NOptional</b>      </p></td><td><p class="md-phrase"> <code class="md-code md-code-``` Number"> roadNumber = NOptional.of(app).then(v -&gt; v.person).then(v -&gt; v.road).then(v -&gt; v.number).orNull();</code>                   </p></td></tr></table><H4 class="md-title-3">Combining Assertion and Chaining</H4><p class="md-phrase"><mark class="md-code md-code-` ">NOptional</mark> chains can freely combine passive operations (<code class="md-code md-code-` ">then(...)</code>) with assertive ones (<code class="md-code md-code-` ">get()</code>) to enforce mandatory states within a larger flow.</p><pre class="md-code md-code-``` java"><code class="java"> 
+// Equivalent to: var roadNumber = app?.person?.address!.road?.number ?? 0;
+Number roadNumber = NOptional.of(app)
+                .then(v -&gt; v.person)
+                .then(v -&gt; v.address)
+                .get() // ASSERT: Throws if address is null/empty
+                .then(v -&gt; v.road)
+                .then(v -&gt; v.number)
+                .orElse(0); // Coalesce: Fallback to 0 if road or number is null/empty
+</code></pre><H4 class="md-title-3">Advanced Built-in Filters and Mappers</H4><p class="md-phrase"><mark class="md-code md-code-` ">NOptional</mark> provides specialized methods that handle common, tedious data validation cases, relying on the core utility <mark class="md-code md-code-` ">NBlankable</mark> to define "absence."</p><table class="table table-bordered table-striped"><tr><th>Feature</th><th>Method</th><th>Description</th><th>Example Use Case</th></tr><tr><td><p class="md-phrase"> <b class="md-bold">Blank Filtering</b>  </p></td><td><p class="md-phrase"> <code class="md-code md-code-``` mapIfNotBlank">(...)</code> </p></td><td>Filters out strings that are empty, contain only whitespace, or collections/arrays that are empty (using NBlankable rules).</td><td>Reading non-mandatory config properties.</td></tr><tr><td><p class="md-phrase"> <b class="md-bold">Error Fallback</b>   </p></td><td><p class="md-phrase"> <code class="md-code md-code-``` ifErrorUse">(...)</code>    </p></td><td>Recovers the entire optional chain if it enters the ERROR state, providing a fallback NOptional.</td><td>Switching from a primary API call (error) to a cache lookup (fallback).</td></tr><tr><td><p class="md-phrase"> <b class="md-bold">Conditional Map </b> </p></td><td><p class="md-phrase"> <code class="md-code md-code-``` mapIf">(...)</code>         </p></td><td>Executes a map operation only if a specific predicate is met, returning the optional unchanged otherwise.</td><td>Applying a transformation (e.g., trimming) only if a certain flag is set.</td></tr></table><H4 class="md-title-4">Example: Handling Blank Values</H4><pre class="md-code md-code-``` java"><code class="java">
+// NOptional: uses the integrated NBlankable logic
+String cleanToken = NOptional.of(readProperty("auth.token"))
+    .mapIfNotBlank(String::trim) // Filters null, "", and " "
+    .orNull();
+</code></pre><H4 class="md-title-2">When to Use get(), orNull(), and orElse()</H4>These three terminal operations define the contract for retrieving the value:<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">get()</code> – returns the value or throws an exception if the optional is Empty or Error (Assertive/Mandatory).</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">orNull()</code> – returns the value or returns null if the optional is Empty or Error (Passive/Safe).</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">orElse(value)</code> – returns the value or returns a defined fallback if the optional is Empty or Error (Coalescing/Fallback).</p></li></ul><H4 class="md-title-2">Why not just use Optional</H4>While Java’s built-in Optional is functional, it lacks the necessary features for large-scale, robust application development:<ul class="md-ul"><li class="md-uli">❌ No Tri-State Model: Errors must be handled and propagated outside the optional chain.</li><li class="md-uli">❌ Verbose Chaining: Optional chaining is heavy (flatMap) for deep object traversals.</li><li class="md-uli">❌ Poor Diagnostics: No support for named values or custom exception factories.</li><li class="md-uli">❌ No Utility Integration: No built-in support for filtering "blank" data.</li></ul><p class="md-phrase"><mark class="md-code md-code-` ">NOptional</mark> solves all these architectural limitations while maintaining full compatibility with functional idioms and providing asOptional() for conversion when interoperability is required.</p>
                                 </div>
                                 
                             </section>
@@ -2372,7 +2668,7 @@ Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
                             <section id="UC7C29E2524049B030FE9B20B1DB326D271EE14FD" >
                                 <h3 class="main-section2"><a href="#UDC5147345B8C70262CACF7D3D45E088FF0CBC4BF">13.1 NAF Spring Boot Integration</a></h3>
                                 <div class="text-card">
-                                nuts can work flawlessly with spring boot applications. You just need one annotation @NAppDefinition to mark your SpringBootApplication.Add the following dependency to you spring boot project<pre class="md-code md-code-``` xml"><code class="xml">
+                                nuts can work flawlessly with spring boot applications. You just need one dependency and one annotation @NAppDefinition to mark your SpringBootApplication.Add the following dependency to you spring boot project<pre class="md-code md-code-``` xml"><code class="xml">
     &lt;dependency&gt;
         &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
         &lt;artifactId&gt;nuts-spring-boot&lt;/artifactId&gt;
@@ -2402,7 +2698,37 @@ public class MyBean {
     @Autowired NPrintStream out;
 }
 
-</code></pre>
+</code></pre><H4 class="md-title-3">Using Spring-Managed Beans in Nuts</H4><p class="md-phrase">Nuts can automatically integrate with Spring's application context. By default, <mark class="md-code md-code-` ">NBeanContainer</mark> is wired with the Spring context, which allows any object managed by Spring to be referenced in Nuts using <mark class="md-code md-code-` ">NBeanRef</mark>.</p><p class="md-phrase">> <b class="md-bold">Important:</b> Only the <mark class="md-code md-code-` ">NBeanRef</mark> itself is serialized or persisted. At runtime, the actual bean is resolved dynamically from the current bean container (e.g., Spring context). This means you can safely serialize or store Nuts objects without worrying about serializing the full bean state.</p><H4 class="md-title-4">Example: Referencing Spring Beans</H4><pre class="md-code md-code-``` java"><code class="java">
+// Assume jdbcStore is an instance of a persistent store
+NRetryCallFactory factory = NConcurrent.of()
+        .retryCallFactory()
+        .withStore(jdbcStore); // optional persistence
+
+// Register Spring beans by reference using NBeanRef
+factory.of("something", NBeanRef.of("callSomeThingBean").as(NCallable.class))
+       .setHandler(NBeanRef.of("resultSomeThingBean").as(NRetryCall.Handler.class))
+       .setMaxRetries(5)
+       .setRetryPeriod(NConcurrent.of().retryMultipliedPeriod(NDuration.ofSeconds(1), 1))
+       .callAsync();
+
+// Example: Custom handler implementation
+public class ResultSomeThingHandler implements NRetryCall.Handler {
+    @Override
+    public void handle(NRetryCall.Result result) {
+        if (result.isSuccess()) {
+            logger.info("Retry call succeeded: {}", result.getValue());
+        } else {
+            logger.error("Retry call failed after {} attempts", result.getAttempts(), result.getException());
+        }
+    }
+}
+</code></pre><H4 class="md-title-4">Bean Resolution and Error Handling</H4><p class="md-phrase">The <code class="md-code md-code-` ">NBeanRef.of("beanName").as(ClassType.class)</code> call returns a proxy to the specified interface. No validation occurs at this point—the reference is simply stored. <b class="md-bold">Bean resolution happens at runtime when you invoke methods on the proxy.</b> If the referenced bean doesn't exist in the container when a method is called, a <mark class="md-code md-code-` ">NEmptyOptionalException</mark> will be thrown at that moment, not when creating the reference.</p><pre class="md-code md-code-``` java"><code class="java">
+// This creates a reference but doesn't fail
+NBeanRef.of("nonExistentBean").as(SomeInterface.class);
+
+// This will throw an exception when resolve the bean and invoke the method
+NBeanRef.of("nonExistentBean").as(SomeInterface.class).someMethod(); // ← Error thrown here
+</code></pre><H4 class="md-title-4">Notes</H4><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">NBeanRef.of("beanName").as(ClassType.class)</code> works for any Spring-managed bean, not just retry calls.</p></li><li class="md-uli">Bean references are resolved lazily at method invocation time, allowing for flexible deployment scenarios where beans may be reconfigured or reloaded.</li><li class="md-uli"><p class="md-phrase">Persistent stores (like <mark class="md-code md-code-` ">jdbcStore</mark>) are optional and provide state recovery when needed.</p></li><li class="md-uli">This approach demonstrates how Nuts and Spring can work together, enabling robust integration for retries, sagas, or other managed workflows while maintaining safe serialization boundaries.</li></ul>
                                 </div>
                                 
                             </section>
@@ -2412,13 +2738,165 @@ public class MyBean {
                             <section id="UD2CADA0F2EF5441F2FE7C07DC429E0919EC823F8" >
                                 <h3 class="main-section2"><a href="#UDC5147345B8C70262CACF7D3D45E088FF0CBC4BF">13.2 NAF SLF4J Integration</a></h3>
                                 <div class="text-card">
-                                <pre class="md-code md-code-``` xml"><code class="xml">
-    &lt;dependency&gt;
-        &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
-        &lt;artifactId&gt;nuts-nuts-slf4j&lt;/artifactId&gt;
-        &lt;version&gt;0.8.7.0&lt;/version&gt;
-    &lt;/dependency&gt;
-</code></pre>
+                                <H4 class="md-title-1">Nuts SLF4J Integration</H4><p class="md-phrase">Nuts provides seamless integration with SLF4J, the standard logging facade for Java applications. This integration allows you to use Nuts' powerful <mark class="md-code md-code-` ">NLog</mark> structured logging system while maintaining compatibility with your existing SLF4J infrastructure.</p><H4 class="md-title-2">Installation</H4>Add the following dependency to your Spring Boot project:<pre class="md-code md-code-``` xml"><code class="xml">
+&lt;dependency&gt;
+    &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
+    &lt;artifactId&gt;nuts-nuts-slf4j&lt;/artifactId&gt;
+    &lt;version&gt;0.8.7.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><H4 class="md-title-2">Why SLF4J Integration?</H4>SLF4J is the de facto standard logging facade in the Java ecosystem. By integrating Nuts with SLF4J, you get:<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Unified logging:</b> Use <mark class="md-code md-code-` ">NLog</mark> alongside your existing SLF4J loggers without conflicts</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Flexible backend support:</b> Route logs to Logback, Log4j2, or any SLF4J-compatible backend</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Structured logging:</b> Leverage Nuts' <mark class="md-code md-code-` ">NLog</mark> for rich, semantically meaningful logs with <mark class="md-code md-code-` ">NMsg</mark></p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Backward compatibility:</b> Existing SLF4J code continues to work without modification</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Context propagation:</b> MDC (Mapped Diagnostic Context) values flow seamlessly between Nuts and SLF4J</p></li></ul><H4 class="md-title-2">Basic Usage</H4><p class="md-phrase">Once the dependency is added, <mark class="md-code md-code-` ">NLog</mark> automatically delegates to SLF4J:</p><pre class="md-code md-code-``` java"><code class="java">
+import net.thevpc.nuts.NLog;
+import net.thevpc.nuts.NMsg;
+
+@Component
+public class MyService {
+    private static final NLog log = NLog.of(MyService.class);
+    
+    public void processData(String data) {
+        log.info(NMsg.ofC("Processing data: %s", data));
+        try {
+            // ... processing logic
+            log.debug(NMsg.ofC("Data processing completed successfully"));
+        } catch (Exception ex) {
+            log.error(NMsg.ofC("Failed to process data: %s", data)
+                .withThrowable(ex)
+            );
+        }
+    }
+}
+</code></pre><H4 class="md-title-2">Structured Logging with NLog and SLF4J</H4><p class="md-phrase">The true power emerges when combining <mark class="md-code md-code-` ">NLog</mark> with <mark class="md-code md-code-` ">NMsg</mark> for structured, context-aware logging:</p><pre class="md-code md-code-``` java"><code class="java">
+@Component
+public class OrderProcessor {
+    private static final NLog log = NLog.of(OrderProcessor.class);
+    
+    public void processOrder(Order order) {
+        long startTime = System.currentTimeMillis();
+        
+        try {
+            log.info(NMsg.ofC("Processing order #%s from customer %s", order.getId(), order.getCustomerId())
+                .withIntent(NMsgIntent.START)
+            );
+            
+            // ... order processing
+            
+            long duration = System.currentTimeMillis() - startTime;
+            log.info(NMsg.ofC("Order #%s completed successfully", order.getId())
+                .withIntent(NMsgIntent.SUCCESS)
+                .withDurationMs(duration)
+            );
+        } catch (PaymentException ex) {
+            log.error(NMsg.ofC("Payment failed for order #%s", order.getId())
+                .withIntent(NMsgIntent.FAIL)
+                .withThrowable(ex)
+            );
+            throw ex;
+        }
+    }
+}
+</code></pre><H4 class="md-title-2">Using NMsg Formatting Styles</H4><p class="md-phrase">The integration supports all <mark class="md-code md-code-` ">NMsg</mark> formatting styles and automatically translates them for SLF4J:</p><pre class="md-code md-code-``` java"><code class="java">
+private static final NLog log = NLog.of(MyClass.class);
+
+// C-style formatting (printf-like)
+log.info(NMsg.ofC("User %s logged in from %s", username, ipAddress));
+
+// J-style formatting (Java Logging style)
+log.warn(NMsg.ofJ("Configuration file not found: {0}", configPath));
+
+// Variable-based formatting with placeholders
+log.debug(NMsg.ofV("Cache miss for $key with TTL $ttl seconds",
+    NMaps.of("key", cacheKey, "ttl", ttlSeconds)
+));
+</code></pre><H4 class="md-title-2">Semantic Logging with Intents</H4><p class="md-phrase">Attach semantic meaning to logs using <mark class="md-code md-code-` ">NMsgIntent</mark> for better filtering, monitoring, and analysis:</p><pre class="md-code md-code-``` java"><code class="java">
+// Operational events
+log.info(NMsg.ofC("Service started on port %d", port)
+    .withIntent(NMsgIntent.START)
+);
+
+log.info(NMsg.ofC("Database connection established")
+    .withIntent(NMsgIntent.SUCCESS)
+);
+
+// Data operations
+log.debug(NMsg.ofC("Reading user record: %s", userId)
+    .withIntent(NMsgIntent.READ)
+);
+
+log.info(NMsg.ofC("User profile updated for %s", userId)
+    .withIntent(NMsgIntent.UPDATE)
+);
+
+// Resource management
+log.info(NMsg.ofC("Cache entry added for key: %s", key)
+    .withIntent(NMsgIntent.ADD)
+);
+
+log.info(NMsg.ofC("Temporary file removed: %s", tempFile)
+    .withIntent(NMsgIntent.REMOVE)
+);
+
+// Failure handling
+log.error(NMsg.ofC("Retry attempt %d failed", attemptNumber)
+    .withIntent(NMsgIntent.FAIL)
+    .withThrowable(exception)
+);
+</code></pre><H4 class="md-title-2">Scoped Logging in Spring Components</H4>Use scoped logging to apply context across multiple Spring beans and method calls:<pre class="md-code md-code-``` java"><code class="java">
+@Service
+public class RequestHandler {
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private OrderService orderService;
+    
+    public void handleRequest(RequestContext context) {
+        // Set up a logging scope for this request
+        NLogs.of().runWith(
+            NLogContext.of()
+                .withMessagePrefix(NMsg.ofC("[Request %s]", context.getRequestId()))
+                .withPlaceholder("userId", context.getUserId())
+                .withPlaceholder("sessionId", context.getSessionId()),
+            () -&gt; {
+                userService.validateUser();      // Logs inherit request context
+                orderService.processOrder();      // Logs inherit request context
+            }
+        );
+    }
+}
+
+@Service
+public class UserService {
+    private static final NLog log = NLog.of(UserService.class);
+    
+    public void validateUser() {
+        // This log automatically includes the request prefix and placeholders
+        log.info(NMsg.ofV("Validating user $userId in session $sessionId"));
+    }
+}
+</code></pre><H4 class="md-title-2">Integration with Spring Boot Logging Configuration</H4><p class="md-phrase">By default, SLF4J routes Nuts logs through your Spring Boot logging backend (Logback, Log4j2, etc.). Configure your <code class="md-code md-code-` ">application.yml</code> or <code class="md-code md-code-` ">logback-spring.xml</code> as usual:</p><pre class="md-code md-code-``` yaml"><code class="yaml">
+logging:
+  level:
+    net.thevpc.nuts: DEBUG
+    com.myapp: INFO
+  file:
+    name: logs/application.log
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+</code></pre>Nuts logs will respect these configurations automatically, allowing you to manage Nuts logging alongside your application's other loggers.<H4 class="md-title-2">Best Practices</H4><p class="md-phrase"><b class="md-bold">Use NLog for internal diagnostics:</b> <mark class="md-code md-code-` ">NLog</mark> is designed for developer-focused, structured diagnostics. Use it for tracing operations, debugging, and understanding application behavior.</p><p class="md-phrase"><b class="md-bold">Use NOut for user-facing output:</b> Reserve <mark class="md-code md-code-` ">NOut</mark> and <mark class="md-code md-code-` ">NTrace</mark> for messages intended for end users or CLI output.</p><p class="md-phrase"><b class="md-bold">Attach semantic verbs:</b> Always use <mark class="md-code md-code-` ">NMsgIntent</mark> to classify your logs. This enables powerful filtering, monitoring, and analysis downstream.</p><p class="md-phrase"><b class="md-bold">Combine with Spring AOP for cross-cutting concerns:</b> Use Spring's AOP and Nuts scoped logging for consistent request/transaction tracing:</p><pre class="md-code md-code-``` java"><code class="java">
+@Aspect
+@Component
+public class LoggingAspect {
+    
+    @Before("@annotation(com.myapp.Traced)")
+    public void beforeTracedMethod(JoinPoint joinPoint) {
+        String methodName = joinPoint.getSignature().getName();
+        NLog.of(joinPoint.getTarget().getClass())
+            .info(NMsg.ofC("Entering method: %s", methodName)
+                .withIntent(NMsgIntent.START)
+            );
+    }
+}
+</code></pre><H4 class="md-title-2">Learn More</H4>For comprehensive details on <mark class="md-code md-code-` ">NLog</mark> and <mark class="md-code md-code-` ">NMsg</mark><p class="md-phrase">, see the <a href="./nlog-guide" class="md-link">NLog for elegant Logging</a> documentation, which covers advanced features like custom log handlers, MDC integration, and output formatting.</p><H4 class="md-title-2">Summary</H4><p class="md-phrase">The Nuts SLF4J integration bridges the gap between Nuts' powerful structured logging capabilities and the Java ecosystem's standard logging facade. By combining <mark class="md-code md-code-` ">NLog</mark>, <mark class="md-code md-code-` ">NMsg</mark>, and SLF4J, you gain:</p><ul class="md-ul"><li class="md-uli">Rich, semantic logging with intents and structured messages</li><li class="md-uli">Full compatibility with existing SLF4J infrastructure</li><li class="md-uli">Scoped logging for contextual diagnostics</li><li class="md-uli">Flexible output routing and configuration</li><li class="md-uli">Seamless integration with Spring Boot applications</li></ul>
                                 </div>
                                 
                             </section>
@@ -2584,7 +3062,7 @@ session.addListener(new NWorkspaceListener() {
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-10-12-101206
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-10-14-155008
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
