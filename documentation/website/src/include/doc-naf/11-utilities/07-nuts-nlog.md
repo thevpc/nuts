@@ -4,13 +4,13 @@ title: NLog for elegant Logging
 
 # `NLog` — Structured Developer Logging in Nuts
 
-<code>NLog</code> combines structured messages (<code>NMsg</code>),
-styled output with colors and <code>NTF</code> formatting, and
-seamless integration with <strong>JUL</strong> or
-<strong>SLF4J</strong>. Messages carry an <strong>Intent</strong>,
+`NLog` combines structured messages (`NMsg`),
+styled output with colors and `NTF` formatting, and
+seamless integration with `JUL` or
+`SLF4J`. Messages carry an `Intent`,
 similar to logging markers, which allows you to classify, filter, or
 style logs at runtime. Whether you’re building CLI tools, scripts,
-or full applications, <code>NLog</code> makes logs expressive, rich,
+or full applications, `NLog` makes logs expressive, rich,
 and easy to understand.
 
 
