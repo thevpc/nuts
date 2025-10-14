@@ -8,6 +8,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 public class NDuration implements Serializable {
+    public static final NDuration ZERO = ofMillis(0);
     private long nanos;
     private long micros;
 
