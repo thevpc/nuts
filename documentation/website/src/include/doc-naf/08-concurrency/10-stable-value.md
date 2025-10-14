@@ -3,8 +3,8 @@ title: Stable Value
 ---
 
 
-<code>NStableValue</code> stores a value that is computed lazily — the supplier is not
-invoked until the first call to <code>get()</code>. Once evaluated, the value remains stable
+`NStableValue` stores a value that is computed lazily — the supplier is not
+invoked until the first call to `get()`. Once evaluated, the value remains stable
 and is reused for all subsequent accesses. This is perfect for expensive computations,
 constants, or resources that should only be initialized once.
 
