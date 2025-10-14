@@ -1,11 +1,14 @@
 package net.thevpc.nuts.reflect;
 
-import net.thevpc.nuts.concurrent.NScopedValue;
+import net.thevpc.nuts.concurrent.NScopedStack;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NOptional;
 
 public interface NBeanContainer {
-    static NScopedValue<NBeanContainer> current() {
+    static NScopedStack<NBeanContainer> scopedStack() {
+        return NReflect.of().scopedBeanContainerStack();
+    }
+    static NBeanContainer current() {
         return NReflect.of().scopedBeanContainer();
     }
 
