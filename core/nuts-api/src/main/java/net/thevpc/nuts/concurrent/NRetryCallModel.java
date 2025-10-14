@@ -1,5 +1,6 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCopiable;
 
 import java.time.Duration;
@@ -20,7 +21,7 @@ public class NRetryCallModel implements Cloneable, NCopiable {
     private NCallable<?> recover;
     private NCallable<?> caller;
     private NRetryCall.Handler<?> handler;
-    private IntFunction<Duration> retryPeriod;
+    private IntFunction<NDuration> retryPeriod;
     private int maxRetries = 0;
 
     public NRetryCallModel() {
@@ -112,11 +113,11 @@ public class NRetryCallModel implements Cloneable, NCopiable {
         return this;
     }
 
-    public IntFunction<Duration> getRetryPeriod() {
+    public IntFunction<NDuration> getRetryPeriod() {
         return retryPeriod;
     }
 
-    public NRetryCallModel setRetryPeriod(IntFunction<Duration> retryPeriod) {
+    public NRetryCallModel setRetryPeriod(IntFunction<NDuration> retryPeriod) {
         this.retryPeriod = retryPeriod;
         return this;
     }
