@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 class NWorkBalancerWorkerLoadImpl implements NWorkBalancerWorkerLoad {
     final NWorkBalancerWorkerModel worker;
+    final int workerIndex;
 
     public AtomicLong activeJobsCount = new AtomicLong(0);
 
@@ -28,8 +29,9 @@ class NWorkBalancerWorkerLoadImpl implements NWorkBalancerWorkerLoad {
     private NCachedValue<NWorkBalancerHostLoadMetrics> loadMetricsNCachedValue;
     public final List<NWorkBalancerRunningJob> runningJobs = Collections.synchronizedList(new ArrayList<>());
 
-    public NWorkBalancerWorkerLoadImpl(NWorkBalancerWorkerModel worker) {
+    public NWorkBalancerWorkerLoadImpl(NWorkBalancerWorkerModel worker,int workerIndex) {
         this.worker = worker;
+        this.workerIndex = workerIndex;
         this.loadMetricsNCachedValue = NCachedValue.of(
                 () -> {
                     NWorkBalancerHostLoadMetricProvider p = worker.getHostLoadMetricsProvider();
@@ -42,6 +44,10 @@ class NWorkBalancerWorkerLoadImpl implements NWorkBalancerWorkerLoad {
                     return new NWorkBalancerHostLoadMetrics();
                 }
         );
+    }
+
+    public int getWorkerIndex() {
+        return workerIndex;
     }
 
     @Override
