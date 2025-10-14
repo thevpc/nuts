@@ -12,11 +12,14 @@ import net.thevpc.nuts.boot.internal.cmdline.NBootCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.concurrent.NConcurrent;
 
+import net.thevpc.nuts.concurrent.NScopedStack;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.expr.NExprs;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NLibPaths;
+import net.thevpc.nuts.reflect.NBeanContainer;
+import net.thevpc.nuts.reflect.NReflect;
 import net.thevpc.nuts.text.NFormats;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
@@ -42,6 +45,16 @@ public class NutsSpringBootConfiguration {
     private ApplicationContext sac;
     @Autowired
     private Environment env;
+
+    @Bean
+    public NBeanContainer nutsBeanContainer(NWorkspace workspace) {
+        NutsSpringBeanContainer u = new NutsSpringBeanContainer(sac);
+        workspace.runWith(()->{
+            NScopedStack<NBeanContainer> nBeanContainerNScopedValue = NReflect.of().scopedBeanContainerStack();
+            nBeanContainerNScopedValue.setDefaultSupplier(()->u);
+        });
+        return u;
+    }
 
     @Bean
     public NTerminal nTerminal(@Autowired ApplicationArguments applicationArguments) {
@@ -207,4 +220,5 @@ public class NutsSpringBootConfiguration {
         args.add("--shared-instance=true");
         return args.toArray(new String[0]);
     }
+
 }
