@@ -16,8 +16,8 @@ public class NScopedStack<T> {
 
     public T get() {
         Stack<T> s = holder.get();
-        T h=null;
-        if(s!=null) {
+        T h = null;
+        if (s != null) {
             h = s.peek();
             if (h != null) {
                 return h;
@@ -29,16 +29,27 @@ public class NScopedStack<T> {
         return h;
     }
 
+    public NScopedStack<T> setDefaultSupplier(Supplier<T> defaultSupplier) {
+        this.defaultSupplier = defaultSupplier;
+        return this;
+    }
+
     public void runWith(T value, Runnable r) {
+        if (value == null) {
+            if (r != null) {
+                r.run();
+            }
+            return;
+        }
         Stack<T> s = holder.get();
 
-        if (s!=null && !s.isEmpty()) {
+        if (s != null && !s.isEmpty()) {
             T old = s.peek();
             if (old == value) {
                 if (r != null) {
                     r.run();
                 }
-            }else{
+            } else {
                 s.push(value);
                 try {
                     if (r != null) {
@@ -51,9 +62,9 @@ public class NScopedStack<T> {
                     }
                 }
             }
-        }else{
-            if(s==null){
-                holder.set(s=new Stack<>());
+        } else {
+            if (s == null) {
+                holder.set(s = new Stack<>());
             }
             s.push(value);
             try {
@@ -70,16 +81,22 @@ public class NScopedStack<T> {
     }
 
     public <V> V callWith(T value, NCallable<V> c) {
+        if (value == null) {
+            if (c != null) {
+                return c.call();
+            }
+            return null;
+        }
         Stack<T> s = holder.get();
 
-        if (s!=null && !s.isEmpty()) {
+        if (s != null && !s.isEmpty()) {
             T old = s.peek();
             if (old == value) {
                 if (c != null) {
                     return c.call();
                 }
                 return null;
-            }else{
+            } else {
                 s.push(value);
                 try {
                     if (c != null) {
@@ -93,9 +110,9 @@ public class NScopedStack<T> {
                     }
                 }
             }
-        }else{
-            if(s==null){
-                holder.set(s=new Stack<>());
+        } else {
+            if (s == null) {
+                holder.set(s = new Stack<>());
             }
             s.push(value);
             try {
@@ -111,6 +128,7 @@ public class NScopedStack<T> {
             }
         }
     }
+
     public boolean isEmpty() {
         Stack<T> s = holder.get();
         return s == null || s.isEmpty();
