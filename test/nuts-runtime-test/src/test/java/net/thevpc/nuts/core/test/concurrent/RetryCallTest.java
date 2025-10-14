@@ -12,6 +12,7 @@ import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NBeanRef;
 import net.thevpc.nuts.runtime.standalone.concurrent.NRetryCallStoreMemory;
 import net.thevpc.nuts.concurrent.NCallable;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NOptional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -66,9 +67,7 @@ public class RetryCallTest {
         factory.of("something", NBeanRef.of("callSomeThingBean").as(NCallable.class))
                 .setHandler(NBeanRef.of("resultSomeThingBean").as(NRetryCall.Handler.class))
                 .setMaxRetries(5)
-                .setRetryPeriod(p-> Duration.ofSeconds(p))
+                .setRetryPeriod(NConcurrent.of().retryMultipliedPeriod(NDuration.ofSeconds(1),1))
                 .callAsync();
     }
-
-
 }
