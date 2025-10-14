@@ -3,9 +3,9 @@ title: Cached Value
 ---
 
 
-<code>NCachedValue</code> helps you cache expensive computations or
+`NCachedValue` helps you cache expensive computations or
 resources.
-It evaluates a <code>Supplier</code> once, stores the result, and
+It evaluates a `Supplier` once, stores the result, and
 reuses it until
 the cache expires or is invalidated.
 You can configure expiry policies to automatically refresh values.
@@ -29,7 +29,7 @@ NOut.println("New value after invalidate = " + cachedRandom.get());
 ```
 
 Sometimes a computation may fail (for example, a remote call).
-<code>NCachedValue</code> can automatically retry, retain the last good value
+`NCachedValue` can automatically retry, retain the last good value
 on failure, and recover gracefully.
 This makes it ideal for unstable resources or intermittent network services.
 
