@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.concurrent.NScopedStack;
 import net.thevpc.nuts.core.NBootOptions;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
@@ -11,6 +12,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.reflect.NBeanContainer;
+import net.thevpc.nuts.reflect.NBeanRef;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.DefaultElementMapperStore;
@@ -21,6 +23,7 @@ import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreInMemory;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreOnDisk;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NProgressMonitor;
 import net.thevpc.nuts.util.NLRUMap;
 import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
@@ -34,6 +37,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalled
 import net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityModel;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SafeRecommendationConnector;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SimpleRecommendationConnector;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +62,8 @@ public class NWorkspaceModel {
     public NId apiId;
     public NId runtimeId;
     public DefaultNInstalledRepository installedRepository;
-    public NScopedValue<NBeanContainer> scopedBeanContainer = new NScopedValue<>();
+    public final NScopedStack<NBeanContainer> scopedBeanContainerStack = new NScopedStack<>(null);
+    public final NBeanContainer scopedBeanContainer = new StackBasedNBeanContainer();
     public DefaultNLogModel logModel;
     public DefaultNWorkspaceEnvManagerModel envModel;
     public DefaultNPlatformModel sdkModel;
@@ -82,7 +87,7 @@ public class NWorkspaceModel {
     public NWorkspaceModel(NWorkspace workspace, NBootOptions initialBootOptions) {
         this.workspace = workspace;
         this.logModel = new DefaultNLogModel(workspace);
-        this.LOG = new DefaultNLog(DefaultNWorkspace.class.getName(), new NLogSPIJUL(DefaultNWorkspace.class.getName()), logModel,false);
+        this.LOG = new DefaultNLog(DefaultNWorkspace.class.getName(), new NLogSPIJUL(DefaultNWorkspace.class.getName()), logModel, false);
         if (initialBootOptions.getIsolationLevel().orNull() == NIsolationLevel.MEMORY) {
             this.store = new NWorkspaceStoreInMemory();
         } else {
@@ -114,5 +119,29 @@ public class NWorkspaceModel {
                 NVersion.get(askedRuntimeId.getVersion().toString()).get()).get();
         this.logModel.init(this.bootModel.getBootEffectiveOptions(), initialBootOptions);
         this.bootModel.init();
+    }
+
+    private class StackBasedNBeanContainer implements NBeanContainer {
+        @Override
+        public <T> NOptional<T> get(NBeanRef ref) {
+            List<NBeanContainer> all ;
+            synchronized (scopedBeanContainerStack) {
+                all = scopedBeanContainerStack.getStackSnapshot();
+            }
+            NOptional<T> firstError = null;
+            for (int i = all.size()-1; i >= 0; i--) {
+                NBeanContainer e = all.get(i);
+                NOptional<T> r = e.get(ref);
+                if (r.isPresent()) {
+                    return r;
+                } else if (firstError == null) {
+                    firstError = r;
+                }
+            }
+            if (firstError != null) {
+                return firstError;
+            }
+            return NOptional.ofNamedEmpty(NMsg.ofC("bean %s", ref));
+        }
     }
 }
