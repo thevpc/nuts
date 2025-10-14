@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.time.NDuration;
 
 import java.time.Duration;
 import java.util.concurrent.Future;
@@ -25,7 +26,14 @@ public interface NRetryCall<T> extends NCallable<T>, NElementDescribable {
 
     NRetryCall<T> setMaxRetries(int maxRetries);
 
-    NRetryCall<T> setRetryPeriod(IntFunction<Duration> retryPeriod);
+    NRetryCall<T> setRetryPeriod(IntFunction<NDuration> retryPeriod);
+
+    NRetryCall<T> setMultipliedRetryPeriod(NDuration basePeriod, double multiplier);
+    NRetryCall<T> setExponentialRetryPeriod(NDuration basePeriod, double multiplier);
+
+    NRetryCall<T> setRetryPeriod(NDuration period);
+
+    NRetryCall<T> setRetryPeriods(NDuration... periods);
 
     /**
      * add recover processing when max attempts are reached without having a good result
