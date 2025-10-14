@@ -251,17 +251,10 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
     }
 
     private void _store(NSagaModel model) {
-        System.out.println(model);
-        NScopedValue<NBeanContainer> c = NBeanContainer.current();
-        NBeanContainer currContainer = beanContainer == null ? c.get() : beanContainer;
         NRunnable cc = () -> {
             store.save(model);
         };
-        if (c == null) {
-            cc.run();
-        } else {
-            c.runWith(currContainer, cc);
-        }
+        NBeanContainer.scopedStack().runWith(beanContainer, cc);
     }
 
     private void _store() {
