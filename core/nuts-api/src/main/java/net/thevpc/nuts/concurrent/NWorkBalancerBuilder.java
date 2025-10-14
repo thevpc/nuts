@@ -46,7 +46,7 @@ public interface NWorkBalancerBuilder<T> {
     /**
      * Sets a global option for this call.
      *
-     * @param optionName option key
+     * @param optionName  option key
      * @param optionValue option value
      * @return this builder
      */
@@ -55,9 +55,11 @@ public interface NWorkBalancerBuilder<T> {
     /**
      * Worker-specific configuration builder.
      */
-    interface WorkerBuilder<T>{
+    interface WorkerBuilder<T> {
         WorkerBuilder<T> withOption(String optionName, NElement optionValue);
+
         WorkerBuilder<T> withWeight(float weight);
+
         /**
          * Sets the host load provider for this worker.
          * This provider will be used by strategies to calculate worker load.
@@ -73,6 +75,9 @@ public interface NWorkBalancerBuilder<T> {
          * @return main call builder
          */
         NWorkBalancerBuilder<T> then();
+        WorkerBuilder<T> addWorker(String workerName);
+
+        NWorkBalancer<T> build();
     }
 
     /**
