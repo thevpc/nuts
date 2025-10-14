@@ -49,6 +49,10 @@ public interface NWorkBalancerJobContext {
      */
     String getWorkerName();
 
+    int getWorkerIndex();
+
+    int getWorkersCount();
+
     /**
      * Returns the {@link NWorkBalancerWorker} instance assigned
      * to execute this job.
