@@ -15,12 +15,24 @@ class NWorkBalancerJobContextImpl implements NWorkBalancerJobContext {
     private final NWorkBalancerWorkerImpl worker;
     private final String jobName;
     private final String jobId;
+    private final int workerIndex;
 
-    public NWorkBalancerJobContextImpl(String jobId, String jobName, NWorkBalancerWorkerImpl worker, NWorkBalancerModel model) {
+    public NWorkBalancerJobContextImpl(String jobId, String jobName, NWorkBalancerWorkerImpl worker, int workerIndex, NWorkBalancerModel model) {
         this.worker = worker;
         this.model = model;
         this.jobName = jobName;
         this.jobId = jobId;
+        this.workerIndex = workerIndex;
+    }
+
+    @Override
+    public int getWorkerIndex() {
+        return workerIndex;
+    }
+
+    @Override
+    public int getWorkersCount() {
+        return model.getWorkers().size();
     }
 
     @Override
