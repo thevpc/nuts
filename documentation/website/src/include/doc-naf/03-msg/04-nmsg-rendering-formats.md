@@ -2,7 +2,7 @@
 title: Text Rendering Formats
 ---
 
-NMsg</code> NMsg also provides multiple text rendering formats to make messages visually expressive. 
+NMsg` NMsg also provides multiple text rendering formats to make messages visually expressive. 
 You can use plain messages that print as-is, styled messages to highlight errors, warnings, or  other emphasis, 
 code blocks for monospaced text with optional  language hints, and NTF (Nuts Text Format) for lightweight 
 markup supporting bold, italic, colors, and other rich formatting. 
