@@ -4,116 +4,109 @@ title: NOptional
 sidebar_label: NOptional
 ---
 
-NOptional is a powerful alternative to Java’s Optional that goes beyond being just a nullable container. It’s designed to make null handling more expressive, 
-composable, and safer — closer to the expressive capabilities of TypeScript or Kotlin.
+# NOptional
 
-In addition to the standard of(), get(), and orElse() methods, it introduces:
+`NOptional` is a powerful, tri-state alternative to Java’s standard `Optional`. It evolves the concept of an optional container to handle the full complexity of data retrieval in enterprise applications, **semantically differentiating between missing data and technical failures**.
 
-- Named values for better error messages (ofNamed()).
-- Optional chaining (`then(...)`) to safely traverse object graphs.
-- Nullish coalescing (`orElse()`), similar to ??.
-- Assertion-style accessors (`get()` vs `orNull()`).
+By moving beyond the simple **Present/Absent** model, `NOptional` enables safer, more expressive, and composable null-safe code, closely mirroring the capabilities of modern languages like TypeScript and Kotlin.
 
-These features make it ideal for writing expressive, `null-safe` code in complex object hierarchies — without endless `if (x != null)` checks.
+| State | Meaning | Standard `Optional` Equiv. | `NOptional` Method |
+| :--- | :--- | :--- | :--- |
+| **PRESENT** | A value exists (which may be `null`). | `Optional.of(...)` | `ofNullable(...)` |
+| **EMPTY** | A value is logically missing. | `Optional.empty()` | `ofEmpty(...)` |
+| **ERROR** | A technical failure occurred during evaluation. | *(Not Supported)* | `ofError(...)` |
 
-## Non Null Assertion and Coalescing
+***
 
-Java has a builtin null Check mechanism but it does not enable customized messages or exceptions.
-Optional are described as per Java's (c) Documentation "A container object which may or may not contain a non-null value".
-NOptional is more of an Object Wrapper than addes several useful null related operators like '??' '?.' and '!' in typescript. 
+## 💡 The Core Architectural Advantage: Tri-State Modeling
 
+Java's `Optional` forces you to handle technical failures (like I/O or parsing errors) with external `try/catch` blocks or by collapsing them into a simple `empty` state, losing context.
 
-| Concept                   |                    Java                    |                       NAF (NOptional)                       |        Equivalent TS         |
-|:--------------------------|:------------------------------------------:|:-----------------------------------------------------------:|:----------------------------:|
-| Null check with exception |   ```if (user == null) throw new ...```    |         ```NOptional.ofNamed(user,"user").get()```          |         ```user!```          |
-| Null-safe call            | ```if (user != null) user.toUpperCase()``` | ```NOptional.of(user).map(String::toUpperCase).orNull()```  |  ```user?.toUpperCase()```   |
-| user?.toUpperCase()       |   ```user != null ? user : "default"```    |         ```NOptional.of(user).orElse("default")```          |   ```user ?? "default"```    |
+`NOptional` solves this by explicitly modeling the **ERROR** state. This is crucial when chaining operations: you can differentiate between a configuration value that was **not found (`EMPTY`)** and one that **failed to load due to malformed XML (`ERROR`)**.
 
+Methods like `failFast()` (to throw immediately on error) and `ifErrorUse()` (to define a fallback optional) allow for precise control over error propagation and recovery within the fluent chain.
 
-## Optional Chaining 
+***
 
-One of the most useful features of NOptional is the ability to traverse deep object graphs safely without repetitive null checks.
+## Fluent Null and Error Assertion
 
-With `then(...)`, you can chain field access or method calls, and NOptional automatically short-circuits the chain if any part is null.
+`NOptional` introduces clean mechanisms for asserting a value's presence and providing context-rich exceptions, dramatically improving debugging and developer experience.
 
-<Tabs
-defaultValue="NAF"
-values={[
-{ label: 'NAF', value: 'NAF', },
-{ label: 'Java', value: 'Java', },
-{ label: 'Typescript', value: 'typescript', }
-]
-}>
+| Concept                   | Java Equivalent (Verbose)                             | `NOptional` (Expressive)                                   | Equivalent TS               |
+|:--------------------------|:------------------------------------------------------|:-----------------------------------------------------------|:----------------------------|
+| **Mandatory Value Check** | ```if (user == null) throw new NEx("missing user")``` | **```NOptional.ofNamed(user, "user").get()```**            | ```user!```                 |
+| **Null-Safe Mapping**     | ```if (user != null) user.toUpperCase()```            | ```NOptional.of(user).map(String::toUpperCase).orNull()``` | ```user?.toUpperCase()```   |
+| **Nullish Coalescing**    | ```user != null ? user : "default"```                 | **```NOptional.of(user).orElse("default")```**             | ```user ?? "default"```     |
+| **Error Recovery**        | ```try { ... } catch (E) { fallback }```              | **```load().ifErrorUse(() -> defaultOptional).get()```**   | *(No direct TS equivalent)* |
 
-<TabItem value="java">
+### Named Values and Custom Messages
 
-```java
-    Number roadNumber=(app!=null && app.person!=null && app.person.road!=null)? app.person.address.road.number:null;
-```
+By using `ofNamed("user")`, your resulting exception (when calling `get()`) is automatically generated with a descriptive message like "Missing required value: user." This eliminates the need for manual exception message creation and relies on the configurable **`ExceptionFactory`** for consistent error types.
 
-</TabItem>
+***
 
-<TabItem value="NAF">
+## Optional Chaining for Deep Traversal (`then(...)`)
 
-```java 
-    // expected var roadNumber=app?.person?.address?.road?.number;
-    Number roadNumber=NOptional.of(app).then(v->v.person).then(v->v.road).then(v->v.number).orNull();
-```
+`NOptional` provides the `then(...)` method for fluent and safe traversal of deep object graphs, acting as a direct analog to the safe-navigation operator (`?.`) in modern languages. It short-circuits the chain if any part returns `null` or is `EMPTY`.
 
-</TabItem>
-
-</Tabs>
+| Code Style         | Example                                                                                                                           |
+|:-------------------|:----------------------------------------------------------------------------------------------------------------------------------|
+| **Java (Verbose)** | ```Number roadNumber = (app != null && app.person != null && app.person.road != null) ? app.person.address.road.number : null;``` |
+| **NOptional**      | ```Number roadNumber = NOptional.of(app).then(v -> v.person).then(v -> v.road).then(v -> v.number).orNull();```                   |
 
 
-## Combining Optional Chaining
+### Combining Assertion and Chaining
 
-<Tabs
-defaultValue="NAF"
-values={[
-{ label: 'NAF', value: 'NAF', },
-{ label: 'Java', value: 'Java', },
-{ label: 'Typescript', value: 'typescript', }
-]
-}>
-
-<TabItem value="java">
-
-```java
-    Address address=(app!=null && app.person!=null)?app.person.address:null;
-    if(address==null){
-       throw new IllegalArgumentException("missing address"); 
-    }
-    Number roadNumber=(address!=null 
-        && address.road!=null)
-        ? address.road.number:0;
-```
-
-</TabItem>
-
-<TabItem value="NAF">
+`NOptional` chains can freely combine passive operations (`then(...)`) with assertive ones (`get()`) to enforce mandatory states within a larger flow.
 
 ```java 
-    // expected : var roadNumber=app?.person?.address!.road?.number??0;
-    Number roadNumber=NOptional.of(app).then(v->v.person).then(v->v.address).get().then(v->v.road).then(v->v.number).orElse(0);
+// Equivalent to: var roadNumber = app?.person?.address!.road?.number ?? 0;
+Number roadNumber = NOptional.of(app)
+                .then(v -> v.person)
+                .then(v -> v.address)
+                .get() // ASSERT: Throws if address is null/empty
+                .then(v -> v.road)
+                .then(v -> v.number)
+                .orElse(0); // Coalesce: Fallback to 0 if road or number is null/empty
 ```
 
-</TabItem>
+### Advanced Built-in Filters and Mappers
+`NOptional` provides specialized methods that handle common, tedious data validation cases, relying on the core utility `NBlankable` to define "absence."
 
-</Tabs>
 
-## When to use get(), orNull(), and orElse()
+| Feature              | Method                   | Description                                                                                                                 | Example Use Case                                                           |
+|:---------------------|:-------------------------|:----------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------|
+| **Blank Filtering**  | ```mapIfNotBlank(...)``` | Filters out strings that are empty, contain only whitespace, or collections/arrays that are empty (using NBlankable rules). | Reading non-mandatory config properties.                                   |
+| **Error Fallback**   | ```ifErrorUse(...)```    | Recovers the entire optional chain if it enters the ERROR state, providing a fallback NOptional.                            | Switching from a primary API call (error) to a cache lookup (fallback).    |
+| **Conditional Map ** | ```mapIf(...)```         | Executes a map operation only if a specific predicate is met, returning the optional unchanged otherwise.                   | Applying a transformation (e.g., trimming) only if a certain flag is set.  |
 
-- `get()` – returns the value or throws an exception if absent (assertive).
-- `orNull()` – returns null if absent (passive).
-- `orElse(value)` – returns a fallback if absent (coalescing).
+
+#### Example: Handling Blank Values
+
+```java
+// NOptional: uses the integrated NBlankable logic
+String cleanToken = NOptional.of(readProperty("auth.token"))
+    .mapIfNotBlank(String::trim) // Filters null, "", and " "
+    .orNull();
+```
+
+
+## When to Use get(), orNull(), and orElse()
+
+These three terminal operations define the contract for retrieving the value:
+
+* `get()` – returns the value or throws an exception if the optional is Empty or Error (Assertive/Mandatory).
+* `orNull()` – returns the value or returns null if the optional is Empty or Error (Passive/Safe).
+* `orElse(value)` – returns the value or returns a defined fallback if the optional is Empty or Error (Coalescing/Fallback).
+
 
 ## Why not just use Optional
 
-While Java’s built-in Optional is useful, it lacks several features needed for expressive, null-safe code in complex applications:
+While Java’s built-in Optional is functional, it lacks the necessary features for large-scale, robust application development:
 
-- ❌ No support for named values or custom exception messages.
-- ❌ No built-in chaining (Optional chaining is verbose with flatMap).
-- ❌ No nullish coalescing equivalent.
-- ❌ No describe() or integration with structured diagnostics.
+- ❌ No Tri-State Model: Errors must be handled and propagated outside the optional chain.
+- ❌ Verbose Chaining: Optional chaining is heavy (flatMap) for deep object traversals.
+- ❌ Poor Diagnostics: No support for named values or custom exception factories.
+- ❌ No Utility Integration: No built-in support for filtering "blank" data.
 
-`NOptional` solves all of these while remaining compatible with functional idioms.
+`NOptional` solves all these architectural limitations while maintaining full compatibility with functional idioms and providing asOptional() for conversion when interoperability is required.
