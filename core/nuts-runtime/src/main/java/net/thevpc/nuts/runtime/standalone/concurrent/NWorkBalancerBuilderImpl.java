@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIllegalStateException;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NNames;
+import net.thevpc.nuts.util.NStringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class NWorkBalancerBuilderImpl<T> implements NWorkBalancerBuilder<T> {
@@ -25,10 +25,11 @@ public class NWorkBalancerBuilderImpl<T> implements NWorkBalancerBuilder<T> {
 
     @Override
     public WorkerBuilder<T> addWorker(String workerName) {
+        String validWorkerName = NStringUtils.trimToNull(workerName);
+        NAssert.requireFalse(workers.stream().filter(x -> Objects.equals(x.getName(), validWorkerName)).findFirst().isPresent(), () -> NMsg.ofC("duplicate worker name : %s", validWorkerName));
         NWorkBalancerWorkerModel worker = new NWorkBalancerWorkerModel()
-                .setName(workerName)
-                .setWeight(1)
-                ;
+                .setName(validWorkerName)
+                .setWeight(1);
         workers.add(worker);
         return new WorkerBuilderImpl<>(this, worker);
     }
@@ -104,6 +105,16 @@ public class NWorkBalancerBuilderImpl<T> implements NWorkBalancerBuilder<T> {
         @Override
         public NWorkBalancerBuilder<T> then() {
             return parent;
+        }
+
+        @Override
+        public WorkerBuilder<T> addWorker(String workerName) {
+            return then().addWorker(workerName);
+        }
+
+        @Override
+        public NWorkBalancer<T> build() {
+            return then().build();
         }
     }
 }
