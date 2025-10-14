@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
-import net.thevpc.nuts.concurrent.NScopedValue;
-import net.thevpc.nuts.concurrent.NStableValue;
-import net.thevpc.nuts.concurrent.NStableValueModel;
-import net.thevpc.nuts.concurrent.NStableValueStore;
+import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NUpletElementBuilder;
@@ -30,9 +27,7 @@ public final class NStableValueImpl<T> implements NStableValue<T> {
     public void reload() {
         synchronized (this) {
             String id = model.getId();
-            NScopedValue<NBeanContainer> c = NBeanContainer.current();
-            NBeanContainer currContainer = beanContainer == null ? c.get() : beanContainer;
-            Runnable cc = () -> {
+            NBeanContainer.scopedStack().runWith(beanContainer, () -> {
                 NStableValueModel m = store.load(id);
                 if (m == null) {
                     m = new NStableValueModel(id, model.getSupplier());
@@ -44,27 +39,15 @@ public final class NStableValueImpl<T> implements NStableValue<T> {
                     }
                 }
                 model = m;
-            };
-            if (c == null) {
-                cc.run();
-            } else {
-                c.runWith(currContainer, cc);
-            }
+            });
         }
     }
 
     private void _save(NStableValueModel model) {
         this.model = model;
-        NScopedValue<NBeanContainer> c = NBeanContainer.current();
-        NBeanContainer currContainer = beanContainer == null ? c.get() : beanContainer;
-        Runnable cc = () -> {
+        NBeanContainer.scopedStack().runWith(beanContainer, () -> {
             store.save(model);
-        };
-        if (c == null) {
-            cc.run();
-        } else {
-            c.runWith(currContainer, cc);
-        }
+        });
     }
 
     // Factory methods
