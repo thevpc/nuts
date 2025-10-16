@@ -1,5 +1,4 @@
 ---
-id: docker-installation
 title: Using Docker
 ---
 
@@ -18,7 +17,7 @@ Now that you are in a container
 nuts -y <your-app>...
 ```
 
-As an example here where you can run `net.thevpc.nuts.toolbox:noapi#{{latestJarLocation}}` on your config file `myrest-apis.json`.
+As an example here where you can run `net.thevpc.nuts.noapi:noapi#{{latestJarLocation}}` on your config file `myrest-apis.json`.
 
 `noapi` is actually an OpenAPI documentation tool that generates a pdf file based on a opn api definition in `JSON`, `YAML` or `TSON` formats.
 
