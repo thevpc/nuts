@@ -52,7 +52,6 @@
 
     <dependencies>
         <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>0.8.7</version></dependency>
-        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-boot-swing</artifactId><version>0.8.7.0</version></dependency>
         <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>5.8.2</version><scope>test</scope></dependency>
     </dependencies>
     <distributionManagement>
