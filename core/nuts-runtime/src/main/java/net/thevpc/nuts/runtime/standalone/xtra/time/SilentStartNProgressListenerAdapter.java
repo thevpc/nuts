@@ -34,11 +34,11 @@ class SilentStartNProgressListenerAdapter implements NProgressListener {
                 if (event.getError() != null) {
                     _LOG()
 
-                            .log(NMsg.ofC(NI18n.of("download failed    : %s"), path).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL).withDurationMillis(event.getDuration().getTimeAsMillis()));
+                            .log(NMsg.ofC(NI18n.of("download failed    : %s"), path).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL).withDurationMillis(event.getDuration().toMillis()));
                 } else {
                     _LOG()
 
-                            .log(NMsg.ofC( NI18n.of("download succeeded : %s"), path).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS).withDurationMillis(event.getDuration().getTimeAsMillis()));
+                            .log(NMsg.ofC( NI18n.of("download succeeded : %s"), path).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS).withDurationMillis(event.getDuration().toMillis()));
                 }
                 return b;
             }
