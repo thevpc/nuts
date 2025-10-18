@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.time.NDuration;
 
 import java.time.Duration;
 import java.util.function.Supplier;
@@ -14,17 +15,18 @@ public interface NCachedValue<T> extends Supplier<T>, NElementDescribable {
         return NConcurrent.of().cachedValue(supplier);
     }
 
-    NCachedValue<T> setExpiry(Duration expiry);
+    NCachedValue<T> setExpiry(NDuration expiry);
+    NCachedValue<T> setExpiryMillis(long expiry);
 
     NCachedValue<T> setMaxRetries(int maxRetries);
 
-    NCachedValue<T> setRetryPeriod(Duration retryPeriod);
+    NCachedValue<T> setRetryPeriod(NDuration retryPeriod);
 
-    NCachedValue<T> setRetry(int maxRetries, Duration retryPeriod);
+    NCachedValue<T> setRetry(int maxRetries, NDuration retryPeriod);
 
     NCachedValue<T> retainLastOnFailure(boolean retain);
 
-    void invalidate();
+    NCachedValue<T> invalidate();
 
     boolean isValid();
 
@@ -36,11 +38,13 @@ public interface NCachedValue<T> extends Supplier<T>, NElementDescribable {
 
     T get();
 
-    NCachedValue<T> computeAndSet(Supplier<T> supplier);
+    NCachedValue<T> update(Supplier<T> supplier);
+
+    NCachedValue<T> update();
 
     NCachedValue<T> setValue(T value);
 
     boolean computeAndSetIfInvalid(Supplier<T> supplier);
 
-    boolean setValueIfInvalid(T value) ;
+    boolean setValueIfInvalid(T value);
 }
