@@ -42,8 +42,8 @@ public class NMemorySize implements Serializable, NImmutable {
         this.values[NMemoryUnit.ZETA_BYTE.ordinal()] = zetaBytes;
         this.bytes = rebuildSizeBytes();
         this.bits = rebuildSizeBits();
-        this.smallestUnit = smallestUnit == null ? detectSmallestUnit() : normalize(smallestUnit);
-        largestUnit = largestUnit == null ? detectLargestUnit() : normalize(largestUnit);
+        this.smallestUnit = smallestUnit == null ? detectSmallestUnit() : smallestUnit;
+        largestUnit = largestUnit == null ? detectLargestUnit() : largestUnit;
         if (largestUnit.ordinal() < this.smallestUnit.ordinal()) {
             largestUnit = this.smallestUnit;
         }
@@ -63,8 +63,8 @@ public class NMemorySize implements Serializable, NImmutable {
         }
         this.bytes = rebuildSizeBytes();
         this.bits = rebuildSizeBits();
-        this.smallestUnit = smallestUnit == null ? detectSmallestUnit() : normalize(smallestUnit);
-        largestUnit = largestUnit == null ? detectLargestUnit() : normalize(largestUnit);
+        this.smallestUnit = smallestUnit == null ? detectSmallestUnit() : smallestUnit;
+        largestUnit = largestUnit == null ? detectLargestUnit() : largestUnit;
         if (largestUnit.ordinal() < this.smallestUnit.ordinal()) {
             largestUnit = this.smallestUnit;
         }
@@ -115,8 +115,7 @@ public class NMemorySize implements Serializable, NImmutable {
         this.bytes = memBytes;
         this.bits = memBits;
         if (smallestUnit != null && largestUnit != null) {
-            this.smallestUnit = normalize(smallestUnit);
-            largestUnit = normalize(largestUnit);
+            this.smallestUnit = smallestUnit;
             if (largestUnit.ordinal() < this.smallestUnit.ordinal()) {
                 largestUnit = this.smallestUnit;
             }
@@ -202,8 +201,8 @@ public class NMemorySize implements Serializable, NImmutable {
             memBytes = memBytes % (KB);
             values[NMemoryUnit.BYTE.ordinal()] = memBytes;
 
-            this.smallestUnit = smallestUnit == null ? detectSmallestUnit() : normalize(smallestUnit);
-            largestUnit = largestUnit == null ? detectLargestUnit() : normalize(largestUnit);
+            this.smallestUnit = smallestUnit == null ? detectSmallestUnit() : smallestUnit;
+            largestUnit = largestUnit == null ? detectLargestUnit() : largestUnit;
             if (largestUnit.ordinal() < this.smallestUnit.ordinal()) {
                 largestUnit = this.smallestUnit;
             }
@@ -352,13 +351,6 @@ public class NMemorySize implements Serializable, NImmutable {
     }
 
 
-    static NMemoryUnit normalize(NMemoryUnit smallestUnit) {
-        switch (smallestUnit) {
-            default:
-                return smallestUnit;
-        }
-    }
-
     public static NMemorySize ofBits(long bits, boolean iec) {
         long bytes = bits / 8;
         int b = (int) (bits % 8);
@@ -490,7 +482,7 @@ public class NMemorySize implements Serializable, NImmutable {
     }
 
     public static NMemorySize ofUnit(long valueInUnit, NMemoryUnit unit, boolean iec) {
-        return ofUnitOnly(valueInUnit, unit, iec).normalize();
+        return ofUnitOnly(valueInUnit, unit, iec).canonicalize();
     }
 
     public static NMemorySize ofBytes(long durationMillis, NMemoryUnit smallestUnit, NMemoryUnit largestUnit, boolean iec) {
@@ -676,26 +668,45 @@ public class NMemorySize implements Serializable, NImmutable {
 //        if (this.bytes != d.bytes || this.bits != d.bits) {
 //            throw new IllegalArgumentException("unexpected");
 //        }
-        return d;
+        return d.canonicalize();
     }
 
+    public NMemorySize normalize() {
+        return withUnits(NMemoryUnit.BIT,NMemoryUnit.ZETA_BYTE).canonicalize();
+    }
+
+    public NMemorySize withLargestUnit() {
+        return withLargestUnit(NMemoryUnit.ZETA_BYTE);
+    }
+    public NMemorySize withSmallestUnit() {
+        return withSmallestUnit(NMemoryUnit.BIT);
+    }
     public NMemorySize withLargestUnit(NMemoryUnit largestUnit) {
-        if (smallestUnit == getLargestUnit()) {
+        if (largestUnit == getLargestUnit()) {
             return this;
         }
         NMemorySize d = new NMemorySize(toUnitsArray(), smallestUnit, largestUnit, iec);
 //        if (this.bytes != d.bytes || this.bits != d.bits) {
 //            throw new IllegalArgumentException("unexpected");
 //        }
-        return d;
+        return d.canonicalize();
     }
 
     public NMemorySize withUnits(NMemoryUnit smallestUnit, NMemoryUnit largestUnit) {
+        if(smallestUnit==null){
+            smallestUnit=getSmallestUnit();
+        }
+        if(largestUnit==null){
+            largestUnit=getLargestUnit();
+        }
+        if (smallestUnit == getSmallestUnit() && largestUnit == getLargestUnit()) {
+            return this;
+        }
         NMemorySize d = new NMemorySize(toUnitsArray(), smallestUnit, largestUnit, iec);
         if (this.bytes != d.bytes || this.bits != d.bits) {
             throw new IllegalArgumentException("unexpected");
         }
-        return d;
+        return d.canonicalize();
     }
 
     private boolean normalizeNegativeUnit(long[] values, NMemoryUnit curr, NMemoryUnit next, long multiplier) {
@@ -767,7 +778,7 @@ public class NMemorySize implements Serializable, NImmutable {
         );
     }
 
-    public NMemorySize normalize() {
+    public NMemorySize canonicalize() {
         long[] values = toUnitsArray();
         NMemoryUnit[] mUnits = NMemoryUnit.values();
         for (int i = 0; i < mUnits.length - 1; i++) {
