@@ -235,7 +235,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     break;
                 }
             }
-            if (executionTime.getTimeAsMillis() <= multipleRunsMinTimeMs) {
+            if (executionTime.toMillis() <= multipleRunsMinTimeMs) {
                 //exec exited too fast
                 break;
             }
