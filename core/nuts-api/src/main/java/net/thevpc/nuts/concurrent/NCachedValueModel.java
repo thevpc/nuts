@@ -1,5 +1,6 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCopiable;
 
 import java.time.Duration;
@@ -11,18 +12,28 @@ public class NCachedValueModel implements Cloneable, NCopiable {
     private String id;
     private Object value;
     private Throwable throwable;
+    private boolean invalidated;
     private Boolean errorState;
 
     private Object lastValidValue = null;
     private long lastEvalTimestamp = 0;
     private int failedAttempts = 0;
 
-    private Duration expiry = Duration.ofMillis(Long.MAX_VALUE);
-    private Duration retryPeriod = Duration.ZERO;
+    private NDuration expiry = NDuration.ofMillis(Long.MAX_VALUE);
+    private NDuration retryPeriod = NDuration.ZERO;
     private int maxRetries = 0;
     private boolean retainLastOnFailure = false;
 
     public NCachedValueModel() {
+    }
+
+    public boolean isInvalidated() {
+        return invalidated;
+    }
+
+    public NCachedValueModel setInvalidated(boolean invalidated) {
+        this.invalidated = invalidated;
+        return this;
     }
 
     public NCachedValueModel(String id) {
@@ -92,20 +103,20 @@ public class NCachedValueModel implements Cloneable, NCopiable {
         return this;
     }
 
-    public Duration getExpiry() {
+    public NDuration getExpiry() {
         return expiry;
     }
 
-    public NCachedValueModel setExpiry(Duration expiry) {
+    public NCachedValueModel setExpiry(NDuration expiry) {
         this.expiry = expiry;
         return this;
     }
 
-    public Duration getRetryPeriod() {
+    public NDuration getRetryPeriod() {
         return retryPeriod;
     }
 
-    public NCachedValueModel setRetryPeriod(Duration retryPeriod) {
+    public NCachedValueModel setRetryPeriod(NDuration retryPeriod) {
         this.retryPeriod = retryPeriod;
         return this;
     }
