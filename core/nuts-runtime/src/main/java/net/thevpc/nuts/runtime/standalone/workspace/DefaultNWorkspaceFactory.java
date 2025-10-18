@@ -33,6 +33,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 
 import net.thevpc.nuts.ext.NFactoryException;
+import net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl;
 import net.thevpc.nuts.runtime.standalone.util.NScorableNScorableQueryImpl;
 import net.thevpc.nuts.runtime.standalone.util.NUtilSPIImpl;
 import net.thevpc.nuts.text.NFormats;
@@ -230,6 +231,9 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 }
                 case "net.thevpc.nuts.spi.NUtilSPI": {
                     return NOptional.of((T) new NUtilSPIImpl());
+                }
+                case "net.thevpc.nuts.concurrent.NConcurrent": {
+                    return NOptional.of((T) new NConcurrentImpl());
                 }
                 default: {
                     //wont use NLog because not yet initialized!
