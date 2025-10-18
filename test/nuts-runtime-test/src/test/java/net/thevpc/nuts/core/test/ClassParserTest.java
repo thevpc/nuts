@@ -61,8 +61,8 @@ public class ClassParserTest {
             parseJarFile(file.toAbsolutePath().normalize());
         }
         NDuration to = from.getDuration();
-        if (max < to.getTimeAsNanos()) {
-            max = to.getTimeAsNanos();
+        if (max < to.toNanos()) {
+            max = to.toNanos();
         }
         TestUtils.println("### TIME [" + file + "] " + to + " -- " + max);
     }
