@@ -5,10 +5,9 @@ import net.thevpc.nuts.concurrent.NCachedValueModel;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NUpletElementBuilder;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NAssert;
 
-import java.time.Duration;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 public final class NCachedValueImpl<T> implements NCachedValue<T> {
@@ -29,16 +28,20 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
             NCachedValueModel m = factory.load(model.getId());
             if (m == null) {
                 m = new NCachedValueModel(model.getId());
-                m.setExpiry(Duration.ofMillis(Long.MAX_VALUE));
-                m.setRetryPeriod(Duration.ZERO);
+                m.setExpiry(NDuration.ofMillis(Long.MAX_VALUE));
+                m.setRetryPeriod(NDuration.ZERO);
                 factory.save(m);
             }
             model = m;
         }
     }
 
+    @Override
+    public NCachedValue<T> setExpiryMillis(long expiry) {
+        return setExpiry(NDuration.ofMillis(expiry));
+    }
 
-    public NCachedValueImpl<T> setExpiry(Duration expiry) {
+    public NCachedValueImpl<T> setExpiry(NDuration expiry) {
         model.setExpiry(NAssert.requireNonNull(expiry));
         factory.save(model);
         return this;
@@ -51,13 +54,13 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
         return this;
     }
 
-    public NCachedValueImpl<T> setRetryPeriod(Duration retryPeriod) {
+    public NCachedValueImpl<T> setRetryPeriod(NDuration retryPeriod) {
         model.setRetryPeriod(retryPeriod);
         factory.save(model);
         return this;
     }
 
-    public NCachedValueImpl<T> setRetry(int maxRetries, Duration retryPeriod) {
+    public NCachedValueImpl<T> setRetry(int maxRetries, NDuration retryPeriod) {
         return setMaxRetries(maxRetries).setRetryPeriod(retryPeriod);
     }
 
@@ -67,13 +70,18 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
         return this;
     }
 
-    public void invalidate() {
+    public NCachedValue<T> invalidate() {
         model.setErrorState(false);
         model.setValue(null);
+        model.setInvalidated(true);
         factory.save(model);
+        return this;
     }
 
     public boolean isValid() {
+        if(model.isInvalidated()) {
+            return false;
+        }
         Boolean lastAttemptError = model.getErrorState();
         if (lastAttemptError == null || !lastAttemptError) {
             return false;
@@ -99,6 +107,9 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
     }
 
     public boolean isExpired() {
+        if (model.isInvalidated()) {
+            return true;
+        }
         if (model.getExpiry() == null) {
             return false;
         }
@@ -109,7 +120,7 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
         long now = System.currentTimeMillis();
         Boolean evb = model.getErrorState();
 
-        boolean expired = evb == null || (model.getExpiry() != null && (now - model.getLastEvalTimestamp() >= model.getExpiry().toMillis()));
+        boolean expired = evb == null || model.isInvalidated() || (model.getExpiry() != null && (now - model.getLastEvalTimestamp() >= model.getExpiry().toMillis()));
         long effectiveRetryPeriod = (model.getRetryPeriod() != null ? model.getRetryPeriod().toMillis() : model.getExpiry().toMillis());
 
         boolean canRetry = evb == null
@@ -129,7 +140,7 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
         synchronized (this) {
             evb = model.getErrorState();
             now = System.currentTimeMillis();
-            expired = evb == null || (model.getExpiry() != null && (now - model.getLastEvalTimestamp() >= model.getExpiry().toMillis()));
+            expired = evb == null || model.isInvalidated() || (model.getExpiry() != null && (now - model.getLastEvalTimestamp() >= model.getExpiry().toMillis()));
             canRetry = evb == null
                     || !evb
                     || (model.getFailedAttempts() < model.getMaxRetries() && (now - model.getLastEvalTimestamp() >= effectiveRetryPeriod));
@@ -147,6 +158,7 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
     }
 
     private T _computeAndSet0(long now, Supplier<T> supplier) {
+        model.setInvalidated(false);
         try {
             T value = supplier.get();
             model.setLastValidValue(value);
@@ -172,7 +184,16 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
     }
 
     @Override
-    public NCachedValue<T> computeAndSet(Supplier<T> supplier) {
+    public NCachedValue<T> update(Supplier<T> supplier) {
+        long now = System.currentTimeMillis();
+        synchronized (this) {
+            _computeAndSet0(now, supplier);
+        }
+        return this;
+    }
+
+    @Override
+    public NCachedValue<T> update() {
         long now = System.currentTimeMillis();
         synchronized (this) {
             _computeAndSet0(now, supplier);
