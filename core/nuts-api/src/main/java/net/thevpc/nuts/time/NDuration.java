@@ -623,28 +623,28 @@ public class NDuration implements Serializable {
         return false;
     }
 
-    public long getAs(ChronoUnit unit) {
+    public long to(ChronoUnit unit) {
         switch (unit) {
             case YEARS:
-                return getTimeAsYears();
+                return toYears();
             case MONTHS:
-                return getTimeAsMonths();
+                return toMonths();
             case WEEKS:
-                return getTimeAsWeeks();
+                return toWeeks();
             case DAYS:
-                return getTimeAsDays();
+                return toDays();
             case HOURS:
-                return getTimeAsHours();
+                return toHours();
             case MINUTES:
-                return getTimeAsMinutes();
+                return toMinutes();
             case SECONDS:
-                return getTimeAsSeconds();
+                return toSeconds();
             case MILLIS:
-                return getTimeAsMillis();
+                return toMillis();
             case MICROS:
-                return getTimeAsMicros();
+                return toMicros();
             case NANOS:
-                return getTimeAsNanos();
+                return toNanos();
         }
         return 0;
     }
@@ -719,31 +719,31 @@ public class NDuration implements Serializable {
         return smallestUnit;
     }
 
-    public long getTimeAsYears() {
+    public long toYears() {
         return timeMillis / 1000 / 3600 / 24 / 365;
     }
 
-    public long getTimeAsMonths() {
+    public long toMonths() {
         return timeMillis / 1000 / 3600 / 24 / 30;
     }
 
-    public long getTimeAsWeeks() {
+    public long toWeeks() {
         return timeMillis / 1000 / 3600 / 24 / 7;
     }
 
-    public long getTimeAsDays() {
+    public long toDays() {
         return timeMillis / 1000 / 3600 / 24;
     }
 
-    public long getTimeAsHours() {
+    public long toHours() {
         return timeMillis / 1000 / 3600;
     }
 
-    public long getTimeAsMinutes() {
+    public long toMinutes() {
         return timeMillis / 1000 / 60;
     }
 
-    public long getTimeAsSeconds() {
+    public long toSeconds() {
         return timeMillis / 1000;
     }
 
@@ -751,15 +751,15 @@ public class NDuration implements Serializable {
         return timeMillis / 1000.0 + ((double) timeNanos) / 1E9;
     }
 
-    public long getTimeAsMillis() {
+    public long toMillis() {
         return timeMillis;
     }
 
-    public long getTimeAsMicros() {
+    public long toMicros() {
         return timeMillis * 1000 + timeNanos / 1000;
     }
 
-    public long getTimeAsNanos() {
+    public long toNanos() {
         return timeMillis * 1000000 + timeNanos;
     }
 
