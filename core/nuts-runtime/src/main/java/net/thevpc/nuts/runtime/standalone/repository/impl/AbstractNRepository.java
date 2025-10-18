@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
+import net.thevpc.nuts.concurrent.NCachedValue;
 import net.thevpc.nuts.core.*;
 
 
@@ -32,7 +33,6 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
-import net.thevpc.nuts.concurrent.NCachedSupplier;
 import net.thevpc.nuts.util.NDefaultObservableMap;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NRepositoryLocation;
@@ -58,7 +58,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     protected DefaultNRepositorySecurityModel securityModel;
     protected NRepositoryConfigModel configModel;
     protected NObservableMap<String, Object> userProperties;
-    protected NCachedSupplier<Boolean> available;
+    protected NCachedValue<Boolean> available;
     protected boolean supportsDeploy;
     protected boolean enabled = true;
     protected NAddRepositoryOptions options;
@@ -67,8 +67,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
         this.workspace = NWorkspace.of();
         this.userProperties = new NDefaultObservableMap<>();
         this.securityModel = new DefaultNRepositorySecurityModel(this);
-        this.available = new NCachedSupplier<>(() -> isAccessibleImpl(), 0);
-        ;
+        this.available = NCachedValue.of(() -> isAccessibleImpl());
     }
 
     @Override
@@ -110,9 +109,9 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     @Override
     public boolean isAccessible(boolean force) {
         if (force) {
-            return available.update();
+            return available.invalidate().get();
         }
-        return available.getValue();
+        return available.get();
     }
 
     @Override
