@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.concurrent.NCachedValue;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
@@ -8,11 +9,11 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
-import net.thevpc.nuts.concurrent.NCachedSupplier;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
@@ -28,6 +29,7 @@ import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.logging.Level;
@@ -37,7 +39,7 @@ public class URLPath implements NPathSPI {
     public static final Pattern MOSTLY_URL_PATTERN = Pattern.compile("([a-zA-Z][a-zA-Z0-9_-]+):.*");
 
     protected URL url;
-    protected static final NLRUMap<URL, NCachedSupplier<CacheInfo>> cacheManager = new NLRUMap<URL, NCachedSupplier<CacheInfo>>(1024);
+    protected static final NLRUMap<URL, NCachedValue<CacheInfo>> cacheManager = new NLRUMap<URL, NCachedValue<CacheInfo>>(1024);
 
 
     public URLPath(URL url) {
@@ -53,12 +55,12 @@ public class URLPath implements NPathSPI {
         this.url = url;
     }
 
-    private NCachedSupplier<CacheInfo> cachedHeader() {
-        NCachedSupplier<CacheInfo> o = cacheManager.get(url);
+    private NCachedValue<CacheInfo> cachedHeader() {
+        NCachedValue<CacheInfo> o = cacheManager.get(url);
         if (o == null) {
-            o = new NCachedSupplier<>(
-                    () -> loadCacheInfo(url), 5000
-            );
+            o = NCachedValue.of(
+                    () -> loadCacheInfo(url)
+            ).setExpiry(NDuration.ofMillis(5000));
             cacheManager.put(url, o);
         }
         return o;
@@ -287,7 +289,7 @@ public class URLPath implements NPathSPI {
             return f.exists();
         }
         try {
-            CacheInfo a = cachedHeader().getValue();
+            CacheInfo a = cachedHeader().get();
             if (a != null) {
                 int r = a.responseCode;
                 return r >= 200 && r < 300;
@@ -312,7 +314,7 @@ public class URLPath implements NPathSPI {
             return f.contentLength();
         }
         try {
-            CacheInfo a = cachedHeader().getValue();
+            CacheInfo a = cachedHeader().get();
             if (a != null) {
                 return a.contentLength;
             }
@@ -324,7 +326,7 @@ public class URLPath implements NPathSPI {
 
     public String getContentEncoding(NPath basePath) {
         try {
-            CacheInfo a = cachedHeader().getValue();
+            CacheInfo a = cachedHeader().get();
             if (a != null) {
                 return a.contentEncoding;
             }
@@ -343,7 +345,7 @@ public class URLPath implements NPathSPI {
             return f.getContentType();
         }
         try {
-            CacheInfo a = cachedHeader().getValue();
+            CacheInfo a = cachedHeader().get();
             if (a != null) {
                 return a.contentType;
             }
@@ -363,7 +365,7 @@ public class URLPath implements NPathSPI {
             return f.getContentType();
         }
         try {
-            CacheInfo a = cachedHeader().getValue();
+            CacheInfo a = cachedHeader().get();
             if (a != null) {
                 return a.contentEncoding;
             }
@@ -447,7 +449,7 @@ public class URLPath implements NPathSPI {
             return f.lastModifiedInstant();
         }
         try {
-            CacheInfo a = cachedHeader().getValue();
+            CacheInfo a = cachedHeader().get();
             if (a != null) {
                 return a.lastModified;
             }
