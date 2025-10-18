@@ -118,7 +118,7 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
     }
 
     private void doLog(boolean force) {
-        long sec = chronometer.getDuration().getTimeAsSeconds();
+        long sec = chronometer.getDuration().toSeconds();
         if (sec != lastSec || force) {
             lastSec = sec;
         } else {
