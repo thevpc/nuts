@@ -19,6 +19,13 @@ public class MemorySizeTest {
         NMemorySize z = NMemorySize.parse("0", NMemoryUnit.BYTE).get();
         TestUtils.println(z);
     }
+    @Test
+    public void test02() {
+        NMemorySize z = NMemorySize.parse("123456789", NMemoryUnit.BYTE).get();
+        TestUtils.println(z);
+        NMemorySize n = z.normalize();
+        TestUtils.println(n);
+    }
 
 
 }
