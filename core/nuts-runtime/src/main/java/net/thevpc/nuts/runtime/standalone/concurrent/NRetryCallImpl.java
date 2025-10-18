@@ -4,7 +4,6 @@ import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCancelException;
 import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.util.NIllegalStateException;
-import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.util.NAssert;
@@ -187,7 +186,7 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
                             model.setStatus(Status.RETRYING);
                             store.save(model);
                             try {
-                                Thread.sleep(wait.getTimeAsMillis());
+                                Thread.sleep(wait.toMillis());
                             } catch (InterruptedException ie) {
                                 Thread.currentThread().interrupt();
                                 throw NExceptions.ofUncheckedException(ie);
