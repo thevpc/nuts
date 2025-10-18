@@ -4,18 +4,19 @@ import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 
+import net.thevpc.nuts.concurrent.NCachedValue;
 import net.thevpc.nuts.core.NBootOptions;
 
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
-import net.thevpc.nuts.concurrent.NCachedSupplier;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.io.NAnsiTermHelper;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NScorableContext;
 
 import java.io.*;
@@ -23,9 +24,9 @@ import java.util.Scanner;
 
 @NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
-    public static final int THIRTY_SECONDS = 30000;
-    NCachedSupplier<Cursor> termCursor;
-    NCachedSupplier<Size> termSize;
+    public static final NDuration EXPIRY_30S = NDuration.ofSeconds(30);
+    NCachedValue<Cursor> termCursor;
+    NCachedValue<Size> termSize;
 
     private Scanner scanner;
     private NTerminalMode outMode = NTerminalMode.FORMATTED;
@@ -55,11 +56,11 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
             }
         }
         if (bootStdFd.getFlags().contains("tty")) {
-            termCursor = new NCachedSupplier<>(() -> CoreAnsiTermHelper.evalCursor(), THIRTY_SECONDS);
-            termSize = new NCachedSupplier<>(() -> CoreAnsiTermHelper.evalSize(), THIRTY_SECONDS);
+            termCursor = NCachedValue.of(() -> CoreAnsiTermHelper.evalCursor()).setExpiry(EXPIRY_30S);
+            termSize = NCachedValue.of(() -> CoreAnsiTermHelper.evalSize()).setExpiry(EXPIRY_30S);
         } else {
-            termCursor = new NCachedSupplier<>(() -> null, THIRTY_SECONDS);
-            termSize = new NCachedSupplier<>(() -> null, THIRTY_SECONDS);
+            termCursor = NCachedValue.of(() -> (Cursor) null).setExpiry(EXPIRY_30S);
+            termSize = NCachedValue.of(() -> (Size) null).setExpiry(EXPIRY_30S);
         }
         this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFd.getFlags().contains("ansi"),
                  this).setTerminalMode(terminalMode);
@@ -171,10 +172,10 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     public Object run(NTerminalCmd command, NPrintStream printStream) {
         switch (command.getName()) {
             case NTerminalCmd.Ids.GET_CURSOR: {
-                return termCursor.getValue();
+                return termCursor.get();
             }
             case NTerminalCmd.Ids.GET_SIZE: {
-                return termSize.getValue();
+                return termSize.get();
             }
         }
         String s = NAnsiTermHelper.of().command(command);
