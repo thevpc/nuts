@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.text.theme;
 import net.thevpc.nuts.text.NTextFormatTheme;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
-import net.thevpc.nuts.util.NColors;
+import net.thevpc.nuts.util.NColor;
 
 import java.awt.*;
 
@@ -54,8 +54,8 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
             color = -color;
         }
         color = color % 255;
-        Color c = NColors.ansiToColor(color);
-        int rgb = c.getRGB();
+        NColor c = NColor.ansiToColor(color);
+        int rgb = c.getIntColor();
         return rgb;
     }
 
@@ -67,8 +67,8 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
             color = -color;
         }
         color = color % 255;
-        Color c = NColors.ansiToColor(color);
-        int rgb = c.getRGB();
+        NColor c = NColor.ansiToColor(color);
+        int rgb = c.getIntColor();
         return rgb;
     }
 
