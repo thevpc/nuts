@@ -234,7 +234,7 @@ public class NNames {
     }
 
     private static List<String[]> colorNames(int size) {
-        return CACHED_COLOR_NAMES_BY_EQ_SIZE.computeIfAbsent(size, currentSize -> NColors.ALL_CANONICAL.stream().map(x -> {
+        return CACHED_COLOR_NAMES_BY_EQ_SIZE.computeIfAbsent(size, currentSize -> NColor.ALL_CANONICAL.stream().map(x -> {
             String[] a = NNameFormat.parse(x.getName());
             if (a.length == currentSize) {
                 return a;
@@ -245,7 +245,7 @@ public class NNames {
     }
 
     private static List<String[]> colorNamesLte(int size) {
-        return CACHED_COLOR_NAMES_BY_LTE_SIZE.computeIfAbsent(size, currentSize -> NColors.ALL_CANONICAL.stream().map(x -> {
+        return CACHED_COLOR_NAMES_BY_LTE_SIZE.computeIfAbsent(size, currentSize -> NColor.ALL_CANONICAL.stream().map(x -> {
             String[] a = NNameFormat.parse(x.getName());
             if (a.length <= currentSize) {
                 return a;
