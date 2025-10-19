@@ -1,10 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
+import net.thevpc.nuts.util.NColor;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NColors;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NNamedColor;
 
 import java.util.*;
 
@@ -35,7 +34,7 @@ public class NTexupCodeHighlighter extends TsonCodeHighlighter {
     ));
 
     static {
-        for (NNamedColor c : NColors.ALL) {
+        for (NColor c : NColor.ALL) {
             values.add(c.getName());
             values.add(NNameFormat.VAR_NAME.format(c.getName()));
             values.add(NNameFormat.SNAKE_CASE.format(c.getName()));
