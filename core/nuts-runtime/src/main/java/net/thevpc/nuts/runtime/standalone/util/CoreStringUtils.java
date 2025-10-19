@@ -224,8 +224,8 @@ public final class CoreStringUtils {
             } else {
                 msg = ((NArtifactNotFoundException) ex).getFormattedMessage();
             }
-        } else if (ex instanceof NException) {
-            msg = ((NException) ex).getFormattedMessage();
+        } else if (ex instanceof NAnyFormattedExceptionBase) {
+            msg = ((NAnyFormattedExceptionBase) ex).getFormattedMessage();
         } else {
             String msg2 = ex.toString();
             if (msg2.startsWith(ex.getClass().getName() + ":")) {
