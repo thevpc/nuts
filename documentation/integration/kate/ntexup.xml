@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language>
-<language name="NDoc File" section="Sources" version="18" kateversion="5.79" indenter="cstyle" extensions="*.ndoc" mimetype="text/x-ndoc" priority="5">
+<language name="NTexUp File" section="Sources" version="18" kateversion="5.79" indenter="cstyle" extensions="*.ntx" mimetype="text/x-ntx" priority="5">
     <!--
 
 Copied from  Sebastian Pipping' C lang highlighter (webmaster@hartwork.org) aka c.xml
