@@ -33,7 +33,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NCoreCollectionUtils;
+import net.thevpc.nuts.util.NCollections;
 
 import java.util.*;
 
@@ -79,8 +79,8 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     ) {
         this.commandName = commandName;
         this.definition = definition;
-        this.arguments = NCoreCollectionUtils.nonNullList(arguments);
-        this.executorOptions = NCoreCollectionUtils.nonNullList(executorArgs);
+        this.arguments = NCollections.nonNullList(arguments);
+        this.executorOptions = NCollections.nonNullList(executorArgs);
         this.sleepMillis = sleepMillis;
         this.cwd = cwd;
         if (env == null) {
@@ -101,8 +101,8 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     public DefaultNExecutionContextBuilder(NExecutionContext other) {
         this.commandName = other.getCommandName();
         this.definition = other.getDefinition();
-        this.arguments = NCoreCollectionUtils.nonNullList(other.getArguments());
-        this.executorOptions.addAll(NCoreCollectionUtils.nonNullList(other.getExecutorOptions()));
+        this.arguments = NCollections.nonNullList(other.getArguments());
+        this.executorOptions.addAll(NCollections.nonNullList(other.getExecutorOptions()));
         this.cwd = other.getDirectory();
         this.env = other.getEnv();
         this.failFast = other.isFailFast();
@@ -214,7 +214,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     public NExecutionContextBuilder setExecutorOptions(List<String> executorOptions) {
         this.executorOptions.clear();
         if (executorOptions != null) {
-            this.executorOptions.addAll(NCoreCollectionUtils.nonNullList(executorOptions));
+            this.executorOptions.addAll(NCollections.nonNullList(executorOptions));
         }
         return this;
     }
@@ -223,7 +223,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     public NExecutionContextBuilder setWorkspaceOptions(List<String> workspaceOptions) {
         this.workspaceOptions.clear();
         if (workspaceOptions != null) {
-            this.workspaceOptions.addAll(NCoreCollectionUtils.nonNullList(workspaceOptions));
+            this.workspaceOptions.addAll(NCollections.nonNullList(workspaceOptions));
         }
         return this;
     }
@@ -255,7 +255,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
 
     @Override
     public NExecutionContextBuilder setArguments(String[] arguments) {
-        this.arguments = NCoreCollectionUtils.nonNullList(Arrays.asList(arguments));
+        this.arguments = NCollections.nonNullList(Arrays.asList(arguments));
         return this;
     }
 
