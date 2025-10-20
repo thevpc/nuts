@@ -6,7 +6,7 @@ import net.thevpc.nuts.artifact.NDefinitionFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.util.NCoreCollectionUtils;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NStream;
 
@@ -25,7 +25,7 @@ public class NDefinitionPlatformIdFilter extends AbstractDefinitionFilter {
     public NDefinitionPlatformIdFilter(Collection<NId> accepted) {
         super(NFilterOp.CUSTOM);
         LinkedHashSet<NId> s2 = new LinkedHashSet<>();
-        NCoreCollectionUtils.addAllNonNull(s2, accepted);
+        NCollections.addAllNonNull(s2, accepted);
         this.accepted = new LinkedHashSet<>(s2);
     }
 
