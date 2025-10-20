@@ -89,7 +89,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
 
     @Override
     public List<String> getCommand() {
-        return NCoreCollectionUtils.unmodifiableList(command);
+        return NCollections.unmodifiableList(command);
     }
 
     @Override
@@ -217,7 +217,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
 
     @Override
     public List<String> getWorkspaceOptions() {
-        return NCoreCollectionUtils.unmodifiableList(workspaceOptions);
+        return NCollections.unmodifiableList(workspaceOptions);
     }
 
     @Override
@@ -542,7 +542,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
 
     @Override
     public List<String> getExecutorOptions() {
-        return NCoreCollectionUtils.unmodifiableList(executorOptions);
+        return NCollections.unmodifiableList(executorOptions);
     }
 
     @Override
