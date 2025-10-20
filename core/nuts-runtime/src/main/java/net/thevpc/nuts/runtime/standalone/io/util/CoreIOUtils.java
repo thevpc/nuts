@@ -41,7 +41,7 @@ import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAwarePrintWriter;
 import net.thevpc.nuts.runtime.standalone.text.RawOutputStream;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenExist;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenNotExists;
-import net.thevpc.nuts.util.NCoreCollectionUtils;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
@@ -113,7 +113,7 @@ public class CoreIOUtils {
     }
 
     public static Stream<String> lines(Reader reader) {
-        return NCoreCollectionUtils.finiteStream(new Supplier<String>() {
+        return NCollections.finiteStream(new Supplier<String>() {
             private BufferedReader r = new BufferedReader(reader);
 
             public String get() {
