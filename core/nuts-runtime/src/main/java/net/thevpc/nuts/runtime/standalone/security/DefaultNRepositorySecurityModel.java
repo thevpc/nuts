@@ -78,7 +78,7 @@ public class DefaultNRepositorySecurityModel {
         if (s != null) {
             List<String> rr = s.getPermissions();
             aa = new NAuthorizations(
-                    NCoreCollectionUtils.nonNullList(rr)
+                    NCollections.nonNullList(rr)
             );
             authorizations.put(n, aa);
         } else {
