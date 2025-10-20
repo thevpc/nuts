@@ -7,7 +7,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.util.NCoreCollectionUtils;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.*;
@@ -39,7 +39,7 @@ public class NDependencyDEFilter extends AbstractDependencyFilter {
 
     public NDependencyDEFilter add(Collection<NDesktopEnvironmentFamily> oses) {
         EnumSet<NDesktopEnvironmentFamily> s2 = EnumSet.copyOf(this.accepted);
-        NCoreCollectionUtils.addAllNonNull(s2, oses);
+        NCollections.addAllNonNull(s2, oses);
         return new NDependencyDEFilter(s2);
     }
 
