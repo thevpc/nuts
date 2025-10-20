@@ -7,7 +7,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.util.NCoreCollectionUtils;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Collection;
@@ -45,7 +45,7 @@ public class NDependencyOsFilter extends AbstractDependencyFilter  {
             return this;
         }
         EnumSet<NOsFamily> s2 = EnumSet.copyOf(this.os);
-        NCoreCollectionUtils.addAllNonNull(s2, oses);
+        NCollections.addAllNonNull(s2, oses);
         return new NDependencyOsFilter(s2);
     }
 
