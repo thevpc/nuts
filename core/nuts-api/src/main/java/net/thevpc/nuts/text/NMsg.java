@@ -29,7 +29,6 @@ package net.thevpc.nuts.text;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.*;
 
-import java.awt.*;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
@@ -1156,34 +1155,18 @@ public class NMsg implements NBlankable {
     }
 
     public static NMsg ofStyledForegroundTrueColor(String message, NColor color) {
-        return ofStyled(message, NTextStyle.foregroundTrueColor(color.toColor()));
+        return ofStyled(message, NTextStyle.foregroundTrueColor(color));
     }
 
     public static NMsg ofStyledForegroundTrueColor(NMsg message, NColor color) {
         return ofStyled(message, NTextStyle.foregroundTrueColor(color));
     }
 
-    public static NMsg ofStyledForegroundTrueColor(String message, Color color) {
-        return ofStyled(message, NTextStyle.foregroundTrueColor(color));
-    }
-
-    public static NMsg ofStyledForegroundTrueColor(NMsg message, Color color) {
-        return ofStyled(message, NTextStyle.foregroundTrueColor(color));
-    }
-
     public static NMsg ofStyledBackgroundTrueColor(String message, NColor color) {
-        return ofStyled(message, NTextStyle.backgroundTrueColor(color.toColor()));
+        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
     }
 
     public static NMsg ofStyledBackgroundTrueColor(NMsg message, NColor color) {
-        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
-    }
-
-    public static NMsg ofStyledBackgroundTrueColor(String message, Color color) {
-        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
-    }
-
-    public static NMsg ofStyledBackgroundTrueColor(NMsg message, Color color) {
         return ofStyled(message, NTextStyle.backgroundTrueColor(color));
     }
 
@@ -1201,22 +1184,6 @@ public class NMsg implements NBlankable {
 
     public static NMsg ofStyledForegroundColor(NMsg message, NColor color) {
         return ofStyled(message, NTextStyle.foregroundColor(color));
-    }
-
-    public static NMsg ofStyledBackgroundColor(String message, Color color) {
-        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
-    }
-
-    public static NMsg ofStyledBackgroundColor(NMsg message, Color color) {
-        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
-    }
-
-    public static NMsg ofStyledForegroundColor(String message, Color color) {
-        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
-    }
-
-    public static NMsg ofStyledForegroundColor(NMsg message, Color color) {
-        return ofStyled(message, NTextStyle.backgroundTrueColor(color));
     }
 
     public static NMsg ofStyledKeyword(NMsg message) {
