@@ -498,7 +498,7 @@ public class NColor {
      * Two-step mapping ensures colors are evenly chosen across canonical colors,
      * so grays (which are more numerous) don’t dominate the distribution.
      */
-    public static NColor pickName(int hashCode) {
+    public static NColor pickColor(int hashCode) {
         int a = Math.abs(hashCode);
         NColor c = _ALL_CANONICAL.get(a % _ALL_CANONICAL.size());
         List<NColor> li = _ALL_BY_CANONICAL_NAME.get(c.getName());
@@ -572,11 +572,6 @@ public class NColor {
     }
 
     // end static
-    public static final byte TYPE4 = 4;
-    public static final byte TYPE8 = 8;
-    public static final byte TYPE24 = 24;
-    public static final byte TYPE32 = 32;
-    public static final byte TYPE64 = 64;
     private final Bits bits;
     private final long color;
     private final String name;
