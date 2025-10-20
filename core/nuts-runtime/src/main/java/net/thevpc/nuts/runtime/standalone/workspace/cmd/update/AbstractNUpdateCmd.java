@@ -16,7 +16,7 @@ import net.thevpc.nuts.command.NUpdateCmd;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceUpdateResult;
 import net.thevpc.nuts.core.NRepositoryFilter;
-import net.thevpc.nuts.util.NCoreCollectionUtils;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
@@ -63,7 +63,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public List<NId> getIds() {
-        return NCoreCollectionUtils.unmodifiableList(ids);
+        return NCollections.unmodifiableList(ids);
     }
 
     @Override
@@ -151,7 +151,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public List<String> getArgs() {
-        return NCoreCollectionUtils.unmodifiableList(args);
+        return NCollections.unmodifiableList(args);
     }
 
     @Override
@@ -193,7 +193,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public List<NId> getLockedIds() {
-        return NCoreCollectionUtils.unmodifiableList(lockedIds);
+        return NCollections.unmodifiableList(lockedIds);
     }
 
     @Override
