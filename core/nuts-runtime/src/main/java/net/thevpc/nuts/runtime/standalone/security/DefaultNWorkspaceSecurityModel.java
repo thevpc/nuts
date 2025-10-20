@@ -231,7 +231,7 @@ public class DefaultNWorkspaceSecurityModel {
         NUserConfig s = NWorkspaceExt.of(workspace).getConfigModel().getUser(n);
         if (s != null) {
             List<String> rr = s.getPermissions();
-            aa = new NAuthorizations(NCoreCollectionUtils.nonNullList(rr));
+            aa = new NAuthorizations(NCollections.nonNullList(rr));
             authorizations.put(n, aa);
         } else {
             aa = new NAuthorizations(Collections.emptyList());
