@@ -13,11 +13,11 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyleType;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NColor;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.text.NMsg;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -131,12 +131,12 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
         return NLiteral.of(props.getProperty(n)).asInt().orElse(0);
     }
 
-    private Color getVarValAsColor(String n) {
+    private NColor getVarValAsColor(String n) {
         String b = props.getProperty(n);
         if (b != null) {
             b = b.trim();
             if (b.startsWith("#")) {
-                return new Color(Integer.parseInt(b.substring(1), 16));
+                return NColor.of32(Integer.parseInt(b.substring(1), 16));
             }
         }
         return null;
@@ -231,7 +231,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                 return NTextStyles.of(NTextStyle.of(st, 0));
             }
             case FORE_COLOR: {
-                Color c = getVarValAsColor(n);
+                NColor c = getVarValAsColor(n);
                 if(c!=null){
                     return NTextStyles.of(NTextStyle.of(st, c.getRGB()));
                 }
@@ -244,7 +244,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                 }
             }
             case BACK_COLOR: {
-                Color c = getVarValAsColor(n);
+                NColor c = getVarValAsColor(n);
                 if(c!=null){
                     return NTextStyles.of(NTextStyle.of(st, c.getRGB()));
                 }
@@ -258,7 +258,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
             }
             case FORE_TRUE_COLOR:
             case BACK_TRUE_COLOR: {
-                Color c = getVarValAsColor(n);
+                NColor c = getVarValAsColor(n);
                 if(c!=null){
                     return NTextStyles.of(NTextStyle.of(st, c.getRGB()));
                 }
