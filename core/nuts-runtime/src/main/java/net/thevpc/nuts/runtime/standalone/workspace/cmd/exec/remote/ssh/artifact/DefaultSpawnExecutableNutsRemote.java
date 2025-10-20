@@ -19,7 +19,7 @@ import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.net.NConnexionString;
-import net.thevpc.nuts.util.NCoreCollectionUtils;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmdExtensionContext;
 import net.thevpc.nuts.text.NText;
@@ -70,7 +70,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
         }
         ecmdList.addAll(Arrays.asList(cmd));
         ecmd = ecmdList.toArray(new String[0]);
-        this.executorOptions = NCoreCollectionUtils.nonNullList(executorOptions);
+        this.executorOptions = NCollections.nonNullList(executorOptions);
         this.commExec = commExec;
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
         while (cmdLine.hasNext()) {
