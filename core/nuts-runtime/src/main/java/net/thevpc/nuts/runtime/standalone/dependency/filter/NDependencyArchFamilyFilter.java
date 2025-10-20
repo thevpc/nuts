@@ -7,7 +7,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.platform.NArchFamily;
-import net.thevpc.nuts.util.NCoreCollectionUtils;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Collection;
@@ -42,7 +42,7 @@ public class NDependencyArchFamilyFilter extends AbstractDependencyFilter {
 
     public NDependencyArchFamilyFilter add(Collection<NArchFamily> oses) {
         EnumSet<NArchFamily> s2 = EnumSet.copyOf(this.archs);
-        NCoreCollectionUtils.addAllNonNull(s2, oses);
+        NCollections.addAllNonNull(s2, oses);
         return new NDependencyArchFamilyFilter(s2);
     }
 
