@@ -55,7 +55,7 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.util.NCoreCollectionUtils;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.log.NLog;
 
@@ -150,7 +150,7 @@ public class DefaultNWorkspaceConfigModel {
         this.workspace = workspace;
         NBootOptions bOptions = NWorkspaceExt.of().getModel().bootModel.getBootEffectiveOptions();
         this.bootClassLoader = bOptions.getClassWorldLoader().orElseGet(() -> Thread.currentThread().getContextClassLoader());
-        this.bootClassWorldURLs = NCoreCollectionUtils.nonNullList(bOptions.getClassWorldURLs().orNull());
+        this.bootClassWorldURLs = NCollections.nonNullList(bOptions.getClassWorldURLs().orNull());
         workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(workspace);
         this.bootModel = workspace.getModel().bootModel;
         addPathFactory(new FilePath.FilePathFactory());
