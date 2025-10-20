@@ -6,7 +6,7 @@ import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.util.NCoreCollectionUtils;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NStream;
 
@@ -29,7 +29,7 @@ public class NDependencyOsDistIdFilter extends AbstractDependencyFilter  {
 
     public NDependencyOsDistIdFilter add(Collection<NId> oses) {
         LinkedHashSet<NId> s2 = new LinkedHashSet<>(accepted);
-        NCoreCollectionUtils.addAllNonNull(s2, oses);
+        NCollections.addAllNonNull(s2, oses);
         return new NDependencyOsDistIdFilter(s2);
     }
 
