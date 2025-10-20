@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.util.NCoreCollectionUtils;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.log.NLog;
@@ -121,31 +121,31 @@ public class DefaultNCustomCommand implements NCustomCmd {
 
     @Override
     public List<String> getCommand() {
-        return NCoreCollectionUtils.unmodifiableList(command);
+        return NCollections.unmodifiableList(command);
     }
 
     public DefaultNCustomCommand setCommand(List<String> command) {
-        this.command = NCoreCollectionUtils.nonNullList(command);
+        this.command = NCollections.nonNullList(command);
         return this;
     }
 
     public DefaultNCustomCommand setCommand(String[] command) {
-        this.command = NCoreCollectionUtils.nonNullListFromArray(command);
+        this.command = NCollections.nonNullListFromArray(command);
         return this;
     }
 
     @Override
     public List<String> getExecutorOptions() {
-        return NCoreCollectionUtils.unmodifiableList(executorOptions);
+        return NCollections.unmodifiableList(executorOptions);
     }
 
     public DefaultNCustomCommand setExecutorOptions(List<String> executorOptions) {
-        this.executorOptions = NCoreCollectionUtils.nonNullList(executorOptions);
+        this.executorOptions = NCollections.nonNullList(executorOptions);
         return this;
     }
 
     public DefaultNCustomCommand setExecutorOptions(String[] executorOptions) {
-        this.executorOptions = NCoreCollectionUtils.nonNullListFromArray(executorOptions);
+        this.executorOptions = NCollections.nonNullListFromArray(executorOptions);
         return this;
     }
 
