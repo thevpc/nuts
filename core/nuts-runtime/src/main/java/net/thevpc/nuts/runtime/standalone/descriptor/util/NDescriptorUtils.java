@@ -16,7 +16,6 @@ import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
-import net.thevpc.nuts.util.NCoreArrayUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -159,12 +158,12 @@ public class NDescriptorUtils {
 
 
     public static NEnvConditionBuilder simplifyNutsEnvConditionBuilder(NEnvConditionBuilder c) {
-        c.setArch(NCoreArrayUtils.toDistinctTrimmedNonEmptyList(c.getArch()));
-        c.setOs(NCoreArrayUtils.toDistinctTrimmedNonEmptyList(c.getOs()));
-        c.setOsDist(NCoreArrayUtils.toDistinctTrimmedNonEmptyList(c.getOsDist()));
-        c.setPlatform(NCoreArrayUtils.toDistinctTrimmedNonEmptyList(c.getPlatform()));
-        c.setDesktopEnvironment(NCoreArrayUtils.toDistinctTrimmedNonEmptyList(c.getDesktopEnvironment()));
-        c.setProfile(NCoreArrayUtils.toDistinctTrimmedNonEmptyList(c.getProfiles()));
+        c.setArch(NCollections.toDistinctTrimmedNonEmptyList(c.getArch()));
+        c.setOs(NCollections.toDistinctTrimmedNonEmptyList(c.getOs()));
+        c.setOsDist(NCollections.toDistinctTrimmedNonEmptyList(c.getOsDist()));
+        c.setPlatform(NCollections.toDistinctTrimmedNonEmptyList(c.getPlatform()));
+        c.setDesktopEnvironment(NCollections.toDistinctTrimmedNonEmptyList(c.getDesktopEnvironment()));
+        c.setProfile(NCollections.toDistinctTrimmedNonEmptyList(c.getProfiles()));
         return c;
     }
 
