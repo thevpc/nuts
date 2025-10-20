@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.util.NCoreCollectionUtils;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 
 public class NDependencyScopeFilter extends AbstractDependencyFilter {
@@ -31,7 +31,7 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
             return this;
         }
         EnumSet<NDependencyScope> newScopes = EnumSet.copyOf(this.scopes);
-        NCoreCollectionUtils.addAllNonNull(newScopes, scopes);
+        NCollections.addAllNonNull(newScopes, scopes);
         return new NDependencyScopeFilter(newScopes);
     }
 
