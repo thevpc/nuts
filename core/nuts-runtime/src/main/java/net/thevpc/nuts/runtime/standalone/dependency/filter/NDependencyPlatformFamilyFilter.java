@@ -6,7 +6,7 @@ import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.platform.NPlatformFamily;
-import net.thevpc.nuts.util.NCoreCollectionUtils;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Collection;
@@ -41,7 +41,7 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
 
     public NDependencyPlatformFamilyFilter add(Collection<NPlatformFamily> oses) {
         EnumSet<NPlatformFamily> s2 = EnumSet.copyOf(this.accepted);
-        NCoreCollectionUtils.addAllNonNull(s2, oses);
+        NCollections.addAllNonNull(s2, oses);
         return new NDependencyPlatformFamilyFilter(s2);
     }
 
