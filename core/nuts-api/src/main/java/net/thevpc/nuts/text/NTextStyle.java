@@ -29,7 +29,6 @@ package net.thevpc.nuts.text;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.*;
 
-import java.awt.*;
 import java.util.Objects;
 
 /**
@@ -384,12 +383,8 @@ public class NTextStyle implements NEnum {
         return of(NTextStyleType.FORE_TRUE_COLOR, variant);
     }
 
-    public static NTextStyle foregroundTrueColor(Color variant) {
-        return of(NTextStyleType.FORE_TRUE_COLOR, variant == null ? 0 : variant.getRGB());
-    }
-
     public static NTextStyle foregroundTrueColor(NColor variant) {
-        return of(NTextStyleType.FORE_TRUE_COLOR, variant == null ? 0 : variant.toColor().getRGB());
+        return of(NTextStyleType.FORE_TRUE_COLOR, variant == null ? 0 : variant.getRGB());
     }
 
     public static NTextStyle backgroundColor(int variant) {
@@ -400,52 +395,52 @@ public class NTextStyle implements NEnum {
         return of(NTextStyleType.BACK_TRUE_COLOR, variant);
     }
 
-    public static NTextStyle backgroundTrueColor(Color variant) {
-        return of(NTextStyleType.BACK_TRUE_COLOR, variant == null ? 0 : variant.getRGB());
-    }
-
     public static NTextStyle backgroundTrueColor(NColor variant) {
-        return of(NTextStyleType.BACK_TRUE_COLOR, variant == null ? 0 : variant.toColor().getRGB());
+        return of(NTextStyleType.BACK_TRUE_COLOR, variant == null ? 0 : variant.getRGB());
     }
 
     public static NTextStyle backgroundColor(NColor variant) {
         if (variant == null) {
             return backgroundColor(0);
         }
-        switch (variant.getType()) {
-            case NColor.TYPE4:
-            case NColor.TYPE8: {
+        switch (variant.getBits()) {
+            case BITS_4:
+            case BITS_8: {
                 return secondary(variant.getIntColor());
             }
-            case NColor.TYPE24: {
+            case BITS_16:
+            case BITS_24:
+            {
                 return backgroundColor(variant.getIntColor());
             }
-            case NColor.TYPE32:
-            case NColor.TYPE64: {
+            case BITS_32:
+            case BITS_64: {
                 return backgroundTrueColor(variant.getIntColor());
             }
         }
-        return of(NTextStyleType.BACK_TRUE_COLOR, variant.toColor().getRGB());
+        return of(NTextStyleType.BACK_TRUE_COLOR, variant.getRGB());
     }
 
     public static NTextStyle foregroundColor(NColor variant) {
         if (variant == null) {
             return foregroundColor(0);
         }
-        switch (variant.getType()) {
-            case NColor.TYPE4:
-            case NColor.TYPE8: {
+        switch (variant.getBits()) {
+            case BITS_4:
+            case BITS_8: {
                 return primary(variant.getIntColor());
             }
-            case NColor.TYPE24: {
+            case BITS_16:
+            case BITS_24:
+            {
                 return foregroundColor(variant.getIntColor());
             }
-            case NColor.TYPE32:
-            case NColor.TYPE64: {
+            case BITS_32:
+            case BITS_64: {
                 return foregroundTrueColor(variant.getIntColor());
             }
         }
-        return of(NTextStyleType.FORE_TRUE_COLOR, variant.toColor().getRGB());
+        return of(NTextStyleType.FORE_TRUE_COLOR, variant.getRGB());
     }
 
 
