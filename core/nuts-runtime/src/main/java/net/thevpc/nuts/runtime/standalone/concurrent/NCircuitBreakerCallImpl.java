@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.reflect.NBeanContainer;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.concurrent.NCallable;
 
@@ -60,14 +61,14 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
     }
 
     @Override
-    public NCircuitBreakerCall<T> setSuccessRetryPeriod(IntFunction<Duration> retryPeriod) {
+    public NCircuitBreakerCall<T> setSuccessRetryPeriod(IntFunction<NDuration> retryPeriod) {
         model.setSuccessRetryPeriod(retryPeriod);
         store.save(model);
         return this;
     }
 
     @Override
-    public NCircuitBreakerCall<T> setFailureRetryPeriod(IntFunction<Duration> retryPeriod) {
+    public NCircuitBreakerCall<T> setFailureRetryPeriod(IntFunction<NDuration> retryPeriod) {
         model.setFailureRetryPeriod(retryPeriod);
         store.save(model);
         return this;
