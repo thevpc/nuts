@@ -1048,7 +1048,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             NConnexionString connexionString = NConnexionString.of(target);
             if ("ssh".equals(connexionString.getProtocol())) {
                 NExtensions.of()
-                        .loadExtension(NId.get("net.thevpc.nuts.ext:next-ssh").get());
+                        .loadExtension(NId.get("net.thevpc.nuts:nuts-ssh").get());
             }
             if ("nagent".equals(connexionString.getProtocol())) {
                 NExtensions.of()
