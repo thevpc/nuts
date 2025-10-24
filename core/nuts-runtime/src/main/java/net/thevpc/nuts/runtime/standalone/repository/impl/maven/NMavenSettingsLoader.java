@@ -122,7 +122,9 @@ public class NMavenSettingsLoader {
                                 String id = elementText(NOptional.ofSingleton(elements(mirror, x -> x.getNodeName().equals("id"))).orNull());
                                 String url0 = elementText(NOptional.ofSingleton(elements(mirror, x -> x.getNodeName().equals("url"))).orNull());
                                 if (!NBlankable.isBlank(id) && !NBlankable.isBlank(url0)) {
-                                    list.add(new NRepositoryLocation(id.trim(), "maven", url0.trim()));
+                                    // mirrors are not repos, we need to implement something that handle them
+                                    // for now just ignore them
+                                    //list.add(new NRepositoryLocation(id.trim(), "maven", url0.trim()));
                                 }
                             }
                             break;
