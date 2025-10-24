@@ -5,6 +5,7 @@ import net.thevpc.nuts.elem.NMapBy;
 
 import java.io.Serializable;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 public class NDuration implements Serializable {
@@ -84,6 +85,10 @@ public class NDuration implements Serializable {
         }
         this.largestUnit = largestUnit;
         applyUnits();
+    }
+
+    public static NDuration between(Instant startCreateTime, Instant endCreateTime) {
+        return NDuration.ofDuration(Duration.between(startCreateTime, endCreateTime));
     }
 
     private int rebuildTimeNanos() {
@@ -364,15 +369,15 @@ public class NDuration implements Serializable {
         } else {
             return nanos != 0 ? ChronoUnit.NANOS :
                     micros != 0 ? ChronoUnit.MICROS :
-                            milliSeconds != 0 ? ChronoUnit.MILLIS :
-                                    seconds != 0 ? ChronoUnit.SECONDS :
-                                            minutes != 0 ? ChronoUnit.MINUTES :
-                                                    hours != 0 ? ChronoUnit.HOURS :
-                                                            days != 0 ? ChronoUnit.DAYS :
-                                                                    weeks != 0 ? ChronoUnit.WEEKS :
-                                                                            months != 0 ? ChronoUnit.MONTHS :
-                                                                                    years != 0 ? ChronoUnit.YEARS :
-                                                                                            normalize(ChronoUnit.FOREVER);
+                    milliSeconds != 0 ? ChronoUnit.MILLIS :
+                    seconds != 0 ? ChronoUnit.SECONDS :
+                    minutes != 0 ? ChronoUnit.MINUTES :
+                    hours != 0 ? ChronoUnit.HOURS :
+                    days != 0 ? ChronoUnit.DAYS :
+                    weeks != 0 ? ChronoUnit.WEEKS :
+                    months != 0 ? ChronoUnit.MONTHS :
+                    years != 0 ? ChronoUnit.YEARS :
+                    normalize(ChronoUnit.FOREVER);
         }
     }
 
@@ -382,15 +387,15 @@ public class NDuration implements Serializable {
         } else {
             return years != 0 ? ChronoUnit.YEARS :
                     months != 0 ? ChronoUnit.MONTHS :
-                            weeks != 0 ? ChronoUnit.WEEKS :
-                                    days != 0 ? ChronoUnit.DAYS :
-                                            hours != 0 ? ChronoUnit.HOURS :
-                                                    minutes != 0 ? ChronoUnit.MINUTES :
-                                                            seconds != 0 ? ChronoUnit.SECONDS :
-                                                                    milliSeconds != 0 ? ChronoUnit.MILLIS :
-                                                                            micros != 0 ? ChronoUnit.MICROS :
-                                                                                    nanos != 0 ? ChronoUnit.NANOS :
-                                                                                            normalize(ChronoUnit.FOREVER);
+                    weeks != 0 ? ChronoUnit.WEEKS :
+                    days != 0 ? ChronoUnit.DAYS :
+                    hours != 0 ? ChronoUnit.HOURS :
+                    minutes != 0 ? ChronoUnit.MINUTES :
+                    seconds != 0 ? ChronoUnit.SECONDS :
+                    milliSeconds != 0 ? ChronoUnit.MILLIS :
+                    micros != 0 ? ChronoUnit.MICROS :
+                    nanos != 0 ? ChronoUnit.NANOS :
+                    normalize(ChronoUnit.FOREVER);
         }
     }
 
