@@ -102,7 +102,7 @@ Notes : If you're working in a system context (e.g. root user or shared tools), 
 Supports Apache Tomcat and Apache Httpd directory listings.
 
 ```java
-NPath httpFolder = NPath.of("htmlfs:https://archive.apache.org/dist/tomcat/");
+NPath httpFolder = NPath.of("htmlfs+https://archive.apache.org/dist/tomcat/");
 try (NStream s = httpFolder.stream()) {
     List<NPath> matches = s.filter(x -> x.isDirectory() && x.getName().matches("tomcat-[0-9.]+"))
                             .toList();
