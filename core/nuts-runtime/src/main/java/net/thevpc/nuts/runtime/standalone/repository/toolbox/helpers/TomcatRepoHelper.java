@@ -140,7 +140,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
         }
         NIdBuilder idBuilder = NIdBuilder.of("org.apache.catalina", "apache-tomcat");
 
-        return NPath.of("htmlfs:https://archive.apache.org/dist/tomcat/")
+        return NPath.of("htmlfs+https://archive.apache.org/dist/tomcat/")
                 .stream()
                 .filter(NPredicate.of((NPath x) -> x.isDirectory() && x.getName().matches("tomcat-[0-9.]+")).redescribe(NElementDescribables.ofDesc("directory && tomcat")))
                 .flatMapStream(NFunction.of(
