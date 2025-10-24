@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
-import java.time.Duration;
+import net.thevpc.nuts.time.NDuration;
+
 import java.time.Instant;
 
 public interface NRateLimitRuleBuilder {
@@ -12,9 +13,9 @@ public interface NRateLimitRuleBuilder {
 
     NRateLimitRuleBuilder withStrategy(String strategy);
 
-    NRateLimitRuleBuilder withDuration(Duration duration);
+    NRateLimitRuleBuilder withDuration(NDuration duration);
 
-    default NRateLimitRuleBuilder per(Duration duration) {
+    default NRateLimitRuleBuilder per(NDuration duration) {
         return withDuration(duration);
     }
 
@@ -30,7 +31,7 @@ public interface NRateLimitRuleBuilder {
         return end().withLimit(limitId).withCapacity(max).withStrategy(strategy);
     }
 
-    default NRateLimitRuleBuilder withLimit(String limitId, int capacity, Duration duration) {
+    default NRateLimitRuleBuilder withLimit(String limitId, int capacity, NDuration duration) {
         return end().withLimit(limitId).withCapacity(capacity).withDuration(duration);
     }
 
@@ -38,7 +39,7 @@ public interface NRateLimitRuleBuilder {
         return end().withLimit(null).withCapacity(capacity);
     }
 
-    default NRateLimitRuleBuilder withLimit(int capacity, Duration duration) {
+    default NRateLimitRuleBuilder withLimit(int capacity, NDuration duration) {
         return end().withLimit(null).withCapacity(capacity).withDuration(duration);
     }
 
