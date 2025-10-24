@@ -23,7 +23,7 @@ import java.util.Objects;
 public class GithubfsPath extends AbstractPathSPIAdapter {
     //"https://api.github.com/repos/" + userName + "/" + repo + "/contents"
     public static final String PROTOCOL = "githubfs";
-    public static final String PREFIX = PROTOCOL + ":";
+    public static final String PREFIX = PROTOCOL + "+";
     private final Info info;
     private Object loaded;
 
