@@ -1,8 +1,8 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.time.NDuration;
 
-import java.time.Duration;
 import java.util.function.IntFunction;
 
 /**
@@ -25,8 +25,8 @@ public interface NCircuitBreakerCall<T> extends NCallable<T>, NElementDescribabl
     NCircuitBreakerCall<T> setFailureThreshold(int failureThreshold);
     NCircuitBreakerCall<T> setSuccessThreshold(int successThreshold);
 
-    NCircuitBreakerCall<T> setSuccessRetryPeriod(IntFunction<Duration> retryPeriod);
-    NCircuitBreakerCall<T> setFailureRetryPeriod(IntFunction<Duration> retryPeriod);
+    NCircuitBreakerCall<T> setSuccessRetryPeriod(IntFunction<NDuration> retryPeriod);
+    NCircuitBreakerCall<T> setFailureRetryPeriod(IntFunction<NDuration> retryPeriod);
 
     /**
      * blocking result retrieval, when error (and after recover) add a second recover
