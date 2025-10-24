@@ -119,7 +119,7 @@ More details at [https://thevpc.github.io/nuts/doc-nuts.html](https://thevpc.git
 | nuts kifkif                                                                                | install & run a file duplicates tool                                          |
 | nuts pnote                                                                                 | install & run a pnote taking tool                                             |
 | nuts nops  --gui                                                                           | install & run a nops DevOps tool                                              |
-| nuts ntexup --view                                                                         | install & run a Latex like Presentation Tool                                  |
+| nuts ntexup show                                                                           | install & run a Latex like Presentation Tool                                  |
 | nuts com.jgoodies:jdiskreport                                                              | install & run JDiskReport Disk Tool                                           |
 | nuts com.github.todense:omnigraph                                                          | install & run Omnigraph Tool                                                  |
 | nuts org.springframework.boot:spring-boot-cli  init --dependencies=web,data-jpa my-project | install & run spring boot client and create new project using spring-boot-cli |
