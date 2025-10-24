@@ -3,9 +3,9 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 import net.thevpc.nuts.concurrent.NRateLimitDefaultStrategy;
 import net.thevpc.nuts.concurrent.NRateLimitValueBuilder;
 import net.thevpc.nuts.concurrent.NRateLimitRuleBuilder;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.time.Duration;
 import java.time.Instant;
 
 class NRateLimitRuleBuilderImpl implements NRateLimitRuleBuilder {
@@ -13,7 +13,7 @@ class NRateLimitRuleBuilderImpl implements NRateLimitRuleBuilder {
     private String id;
     private String strategy;
     private int max;
-    private Duration duration;
+    private NDuration duration;
     private Instant startDate;
     public NRateLimitRuleBuilderImpl(String id, NRateLimitValueBuilderImpl defaultNLimitedValueBuilder) {
         this.id = id;
@@ -40,7 +40,7 @@ class NRateLimitRuleBuilderImpl implements NRateLimitRuleBuilder {
     }
 
     @Override
-    public NRateLimitRuleBuilder withDuration(Duration duration) {
+    public NRateLimitRuleBuilder withDuration(NDuration duration) {
         this.duration=duration;
         return this;
     }
@@ -70,7 +70,7 @@ class NRateLimitRuleBuilderImpl implements NRateLimitRuleBuilder {
         return max;
     }
 
-    public Duration getDuration() {
+    public NDuration getDuration() {
         return duration;
     }
 
