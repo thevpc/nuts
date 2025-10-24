@@ -55,7 +55,7 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
                 .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
                 .setConfig(
                         new NRepositoryConfig()
-                                .setLocation(NRepositoryLocation.of("maven@htmlfs:https://repo.maven.apache.org/maven2"))
+                                .setLocation(NRepositoryLocation.of("maven@htmlfs+https://repo.maven.apache.org/maven2"))
                                 .setEnv(NMaps.of(
                                         "maven.solrsearch.url", "https://search.maven.org/solrsearch/select",
                                         "maven.solrsearch.enable", "true"
@@ -87,7 +87,7 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
                 .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
                 .setConfig(
                         new NRepositoryConfig()
-                                .setLocation(NRepositoryLocation.of("maven@htmlfs:https://packages.atlassian.com/maven/public"))
+                                .setLocation(NRepositoryLocation.of("maven@htmlfs+https://packages.atlassian.com/maven/public"))
                 ));
         reg(new NAddRepositoryOptions().setName("atlassian-atlassian")
                 .setFailSafe(false).setCreate(true)
@@ -122,21 +122,21 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
                 .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
                 .setConfig(
                         new NRepositoryConfig()
-                                .setLocation(NRepositoryLocation.of("maven@dotfilefs:https://raw.githubusercontent.com/thevpc/vpc-public-maven/master"))
+                                .setLocation(NRepositoryLocation.of("maven@dotfilefs+https://raw.githubusercontent.com/thevpc/vpc-public-maven/master"))
                 ), "maven-thevpc-git");
         reg(new NAddRepositoryOptions().setName("nuts-public")
                 .setFailSafe(false).setCreate(true)
                 .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
                 .setConfig(
                         new NRepositoryConfig()
-                                .setLocation(NRepositoryLocation.of("nuts@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-public/master"))
+                                .setLocation(NRepositoryLocation.of("nuts@dotfilefs+https://raw.githubusercontent.com/thevpc/nuts-public/master"))
                 ),  "vpc-public-nuts", "nuts-thevpc-git");
         reg(new NAddRepositoryOptions().setName("nuts-preview")
                 .setFailSafe(false).setCreate(true)
                 .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
                 .setConfig(
                         new NRepositoryConfig()
-                                .setLocation(NRepositoryLocation.of("nuts@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-preview/master"))
+                                .setLocation(NRepositoryLocation.of("nuts@dotfilefs+https://raw.githubusercontent.com/thevpc/nuts-preview/master"))
                                 .setTags(new String[]{NConstants.RepoTags.PREVIEW})
                 ), "preview");
         reg(new NAddRepositoryOptions().setName("thevpc")
@@ -144,7 +144,7 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
                 .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
                 .setConfig(
                         new NRepositoryConfig()
-                                .setLocation(NRepositoryLocation.of("maven@htmlfs:https://maven.thevpc.net"))
+                                .setLocation(NRepositoryLocation.of("maven@htmlfs+https://maven.thevpc.net"))
                                 .setTags(new String[]{NConstants.RepoTags.PREVIEW})
                 ), "dev");
         reg(new NAddRepositoryOptions().setName("thevpc-goodies")
@@ -152,7 +152,7 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
                 .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
                 .setConfig(
                         new NRepositoryConfig()
-                                .setLocation(NRepositoryLocation.of("maven@htmlfs:https://maven-goodies.thevpc.net"))
+                                .setLocation(NRepositoryLocation.of("maven@htmlfs+https://maven-goodies.thevpc.net"))
                 ), "thevpc-goodies", "goodies");
         reg(new NAddRepositoryOptions()
                 .setName(NConstants.Names.DEFAULT_REPOSITORY_NAME)
