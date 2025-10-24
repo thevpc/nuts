@@ -8,7 +8,6 @@ package net.thevpc.nuts.time;
 import net.thevpc.nuts.elem.NMapBy;
 
 import java.io.Serializable;
-import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -156,15 +155,15 @@ public class NChronometer implements Serializable {
         return this;
     }
 
-    public Duration lap() {
+    public NDuration lap() {
         if (running) {
             long n = System.nanoTime();
             long lapValue = n - lastNanos;
             this.accumulatedNanos += lapValue;
             lastNanos = n;
-            return Duration.ofNanos(lapValue);
+            return NDuration.ofNanos(lapValue);
         }
-        return Duration.ZERO;
+        return NDuration.ZERO;
     }
 
     public boolean isSuspended() {
