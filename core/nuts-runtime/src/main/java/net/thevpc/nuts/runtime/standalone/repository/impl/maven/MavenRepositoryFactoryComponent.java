@@ -11,20 +11,23 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
@@ -60,7 +63,7 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
 
     @Override
     public NRepository create(NAddRepositoryOptions options, NRepository parentRepository) {
-        if(MavenUtils.isMavenSettingsRepository(options)){
+        if (MavenUtils.isMavenSettingsRepository(options)) {
             return new MavenSettingsRepository(options, parentRepository);
         }
         final NRepositoryConfig config = options.getConfig();
@@ -74,7 +77,31 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
             //non traversable!
             case "http":
             case "https": {
-                return new MavenRemoteXmlRepository(options, parentRepository);
+
+                NPath nr = p.resolve(".nuts-repository");
+                if (nr.exists()) {
+                    NElement e = null;
+                    String repositoryType = null;
+                    String repositoryName = null;
+                    String repositoryLayout = null;
+                    try {
+                        e = NElementParser.ofJson().parse(nr);
+                    } catch (Exception ex) {
+                        // just ignore
+                    }
+                    if (e != null && e.isAnyObject()) {
+                        NObjectElement o = e.asObject().get();
+                        repositoryType = o.getStringValue("repositoryType").orNull();
+                        repositoryName = o.getStringValue("repositoryName").orNull();
+                        repositoryLayout = o.getStringValue("repositoryLayout").orNull();
+                    }
+                    if (!NBlankable.isBlank(repositoryLayout)) {
+                        config.setLocation(config.getLocation().setPath(NStringUtils.trim(repositoryLayout) + "+" + config.getLocation().getPath()));
+                    }
+                    return new MavenFolderRepository(options, parentRepository);
+                } else {
+                    return new MavenRemoteXmlRepository(options, parentRepository);
+                }
             }
         }
         return new MavenFolderRepository(options, parentRepository);
