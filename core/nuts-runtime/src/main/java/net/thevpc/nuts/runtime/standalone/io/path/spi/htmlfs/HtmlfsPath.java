@@ -18,7 +18,7 @@ import java.util.*;
 public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     public static final String PROTOCOL = "htmlfs";
-    public static final String PREFIX = PROTOCOL + ":";
+    public static final String PREFIX = PROTOCOL + "+";
     private static final HtmlfsParser[] PARSERS = {
             new MavenCentralHtmlfsParser(),
             new ApacheReposHtmlfsParser(),
