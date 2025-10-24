@@ -160,7 +160,7 @@ public class NRepositorySelectorHelper {
 //                        .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
 //                        .setConfig(
 //                                new NRepositoryConfig()
-//                                        .setLocation(NRepositoryLocation.of("maven@htmlfs:https://repo.maven.apache.org/maven2"))
+//                                        .setLocation(NRepositoryLocation.of("maven@htmlfs+https://repo.maven.apache.org/maven2"))
 //                                        .setEnv(NMaps.of(
 //                                                "maven.solrsearch.url", "https://search.maven.org/solrsearch/select",
 //                                                "maven.solrsearch.enable", "true"
@@ -214,7 +214,7 @@ public class NRepositorySelectorHelper {
 //                        .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
 //                        .setConfig(
 //                                new NRepositoryConfig()
-//                                        .setLocation(NRepositoryLocation.of("maven@htmlfs:https://packages.atlassian.com/maven/public"))
+//                                        .setLocation(NRepositoryLocation.of("maven@htmlfs+https://packages.atlassian.com/maven/public"))
 //                        );
 //            }
 //            case "atlassian-snapshot": {
@@ -261,7 +261,7 @@ public class NRepositorySelectorHelper {
 //                        .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
 //                        .setConfig(
 //                                new NRepositoryConfig()
-//                                        .setLocation(NRepositoryLocation.of("maven@dotfilefs:https://raw.githubusercontent.com/thevpc/vpc-public-maven/master"))
+//                                        .setLocation(NRepositoryLocation.of("maven@dotfilefs+https://raw.githubusercontent.com/thevpc/vpc-public-maven/master"))
 //                        );
 //            }
 //            case "nuts-thevpc-git":
@@ -271,7 +271,7 @@ public class NRepositorySelectorHelper {
 //                        .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
 //                        .setConfig(
 //                                new NRepositoryConfig()
-//                                        .setLocation(NRepositoryLocation.of("nuts@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-public/master"))
+//                                        .setLocation(NRepositoryLocation.of("nuts@dotfilefs+https://raw.githubusercontent.com/thevpc/nuts-public/master"))
 //                        );
 //            }
 //            case "nuts-preview": {
@@ -280,7 +280,7 @@ public class NRepositorySelectorHelper {
 //                        .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
 //                        .setConfig(
 //                                new NRepositoryConfig()
-//                                        .setLocation(NRepositoryLocation.of("nuts@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-preview/master"))
+//                                        .setLocation(NRepositoryLocation.of("nuts@dotfilefs+https://raw.githubusercontent.com/thevpc/nuts-preview/master"))
 //                                        .setTags(new String[]{NConstants.RepoTags.PREVIEW})
 //                        );
 //            }
@@ -291,7 +291,7 @@ public class NRepositorySelectorHelper {
 //                        .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
 //                        .setConfig(
 //                                new NRepositoryConfig()
-//                                        .setLocation(NRepositoryLocation.of("maven@htmlfs:https://maven.thevpc.net"))
+//                                        .setLocation(NRepositoryLocation.of("maven@htmlfs+https://maven.thevpc.net"))
 //                                        .setTags(new String[]{NConstants.RepoTags.PREVIEW})
 //                        );
 //            }
@@ -302,7 +302,7 @@ public class NRepositorySelectorHelper {
 //                        .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
 //                        .setConfig(
 //                                new NRepositoryConfig()
-//                                        .setLocation(NRepositoryLocation.of("maven@htmlfs:https://maven-goodies.thevpc.net"))
+//                                        .setLocation(NRepositoryLocation.of("maven@htmlfs+https://maven-goodies.thevpc.net"))
 //                        );
 //            }
         }
