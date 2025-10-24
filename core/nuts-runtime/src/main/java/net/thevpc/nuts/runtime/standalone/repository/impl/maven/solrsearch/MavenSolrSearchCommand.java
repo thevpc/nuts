@@ -80,8 +80,8 @@ public class MavenSolrSearchCommand {
     public Iterator<NId> search(MavenSolrSearchRequest r, NPath url, NDefinitionFilter idFilter) {
         if (r != null) {
             String urlString = url.toString();
-            if (urlString.startsWith("htmlfs:")) {
-                urlString = urlString.substring("htmlfs:".length());
+            if (urlString.startsWith("htmlfs+")) {
+                urlString = urlString.substring("htmlfs+".length());
             }
             Map<String, String> m = r.toQueryMap();
             if (m != null) {
