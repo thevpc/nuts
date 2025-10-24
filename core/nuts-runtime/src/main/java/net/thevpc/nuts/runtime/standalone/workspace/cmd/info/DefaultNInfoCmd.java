@@ -455,7 +455,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("inherited-nuts-args", () ->  NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)).format());
         props.put("creation-started", () ->  NWorkspace.of().getCreationStartTime());
         props.put("creation-finished", () ->  NWorkspace.of().getCreationFinishTime());
-        props.put("creation-within", () ->  CoreTimeUtils.formatPeriodMilli(NWorkspace.of().getCreationDuration()).trim());
+        props.put("creation-within", () ->  NWorkspace.of().getCreationDuration().normalize());
         props.put("repositories-count", () ->  (NWorkspace.of().getRepositories().size()));
         return props;
     }
@@ -644,7 +644,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("inherited-nuts-args", NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)).format());
         props.put("creation-started", workspace.getCreationStartTime());
         props.put("creation-finished", workspace.getCreationFinishTime());
-        props.put("creation-within", CoreTimeUtils.formatPeriodMilli(workspace.getCreationDuration()).trim());
+        props.put("creation-within", workspace.getCreationDuration().normalize());
         props.put("repositories-count", (workspace.getRepositories().size()));
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));
