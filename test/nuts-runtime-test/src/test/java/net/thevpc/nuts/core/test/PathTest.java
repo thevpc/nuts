@@ -130,7 +130,7 @@ public class PathTest {
 
     @Test
     public void testHtmlfs1() {
-        NPath s = NPath.of("dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/");
+        NPath s = NPath.of("dotfilefs+https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/");
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
         for (NPath nutsPath : s.stream()) {
@@ -148,7 +148,7 @@ public class PathTest {
 
     @Test
     public void testHtmlfs2() {
-        NPath s = NPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-tomcat-01.html"));
+        NPath s = NPath.of("htmlfs+" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-tomcat-01.html"));
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
         for (NPath nutsPath : s.stream()) {
@@ -160,7 +160,7 @@ public class PathTest {
 
     @Test
     public void testHtmlfs3() {
-        NPath s = NPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-tomcat-02.html"));
+        NPath s = NPath.of("htmlfs+" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-tomcat-02.html"));
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
         for (NPath nutsPath : s.stream()) {
@@ -172,7 +172,7 @@ public class PathTest {
 
     @Test
     public void testHtmlfs4() {
-        NPath s = NPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-archive-apache-01.html"));
+        NPath s = NPath.of("htmlfs+" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-archive-apache-01.html"));
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
         for (NPath nutsPath : s.stream()) {
@@ -186,7 +186,7 @@ public class PathTest {
 
     @Test
     public void testHtmlfs5() {
-        NPath s = NPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-maven-central-01.html"));
+        NPath s = NPath.of("htmlfs+" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-maven-central-01.html"));
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
         for (NPath nutsPath : s.stream()) {
@@ -198,7 +198,7 @@ public class PathTest {
 
     @Test
     public void testHtmlfs6() {
-        NPath s = NPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-jetty-01.html"));
+        NPath s = NPath.of("htmlfs+" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-jetty-01.html"));
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
         for (NPath nutsPath : s.stream()) {
@@ -221,9 +221,9 @@ public class PathTest {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
-//        Assertions.assertTrue(children.contains("htmlfs:https://maven.thevpc.net/net/thevpc/nuts/nuts/0.8.3"));
+//        Assertions.assertTrue(children.contains("htmlfs+https://maven.thevpc.net/net/thevpc/nuts/nuts/0.8.3"));
 //        Assertions.assertTrue(children.contains("https://maven.thevpc.net/net/thevpc/nuts/nuts/maven-metadata-local.xml"));
-//        Assertions.assertTrue(children.contains("htmlfs:https://maven.thevpc.net/net/thevpc/nuts/nuts/0.8.2"));
+//        Assertions.assertTrue(children.contains("htmlfs+https://maven.thevpc.net/net/thevpc/nuts/nuts/0.8.2"));
 //        TestUtils.println("------------ WALK ----------");
 //        s.walk(1).forEach(x -> {
 //            TestUtils.println(x);
@@ -271,7 +271,7 @@ public class PathTest {
 
     @Test
     public void testThevpcPath() {
-        NPath a = NPath.of("htmlfs:https://maven.thevpc.net/net/thevpc/nuts/toolbox/noapi/");
+        NPath a = NPath.of("htmlfs+https://maven.thevpc.net/net/thevpc/nuts/toolbox/noapi/");
         List<NPath> nutsPaths = a.list();
         System.out.println(nutsPaths);
     }
