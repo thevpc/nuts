@@ -824,6 +824,9 @@ public class FilePath implements NPathSPI {
                     path = path.substring(1);
                 }
                 Path value = Paths.get(path);
+                if(path.matches("^([a-zA-Z][a-zA-Z0-9]+)([+]([a-zA-Z][a-zA-Z0-9]+))*:.*")){
+                    return NScoredCallable.of(5, () -> new FilePath(value));
+                }
                 return NScoredCallable.of(10, () -> new FilePath(value));
             } catch (Exception ex) {
                 //ignore
