@@ -796,7 +796,7 @@ public class URLPath implements NPathSPI {
                     if (Character.isAlphabetic(s)) {
                         try {
                             URL url = CoreIOUtils.urlOf(path);
-                            return 5;
+                            return 6;
                         } catch (Exception e) {
                             //
                         }
