@@ -102,7 +102,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
@@ -241,15 +240,19 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
         } catch (RuntimeException ex) {
             if (wsModel != null && wsModel.recomm != null) {
-                try {
-                    NId runtimeId = getRuntimeId();
-                    String sRuntimeId = runtimeId == null ? NId.getRuntime("").get().toString() : runtimeId.toString();
-                    this.runWith(() -> {
-                        displayRecommendations(wsModel.recomm.getRecommendations(new RequestQueryInfo(sRuntimeId, ex), NRecommendationPhase.BOOTSTRAP, true));
-                    });
-                } catch (Exception ex2) {
-                    //just ignore
-                }
+                this.runWith(() -> {
+                    new Thread(() -> {
+                        try {
+                            NId runtimeId = getRuntimeId();
+                            String sRuntimeId = runtimeId == null ? NId.getRuntime("").get().toString() : runtimeId.toString();
+                            this.runWith(() -> {
+                                displayRecommendations(wsModel.recomm.getRecommendations(new RequestQueryInfo(sRuntimeId, ex), NRecommendationPhase.BOOTSTRAP, true));
+                            });
+                        } catch (Exception ex2) {
+                            //just ignore
+                        }
+                    }).start();
+                });
             }
             throw ex;
         } finally {
@@ -359,19 +362,23 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         if (data.justInstalled) {
             NLiteral enableRecommendations = wsModel.bootModel.getCustomBootOptions().get("---recommendations");
             if (enableRecommendations == null || enableRecommendations.asBoolean().orElse(true)) {
-                try {
-                    Map rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(getApiId().toString(), ""), NRecommendationPhase.BOOTSTRAP, false);
-                    if (rec != null) {
-                        if (rec.get("companions") instanceof List) {
-                            List<String> recommendedCompanions = (List<String>) rec.get("companions");
-                            if (recommendedCompanions != null) {
-                                wsModel.recommendedCompanions.addAll(recommendedCompanions);
+                this.runWith(() -> {
+                    new Thread(() -> {
+                        try {
+                            Map rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(getApiId().toString(), ""), NRecommendationPhase.BOOTSTRAP, false);
+                            if (rec != null) {
+                                if (rec.get("companions") instanceof List) {
+                                    List<String> recommendedCompanions = (List<String>) rec.get("companions");
+                                    if (recommendedCompanions != null) {
+                                        wsModel.recommendedCompanions.addAll(recommendedCompanions);
+                                    }
+                                }
                             }
+                        } catch (Exception ex2) {
+                            //just ignore
                         }
-                    }
-                } catch (Exception ex2) {
-                    //just ignore
-                }
+                    }).start();
+                });
             }
             data.justInstalledArchetype.startWorkspace();
             DefaultNWorkspaceEvent workspaceCreatedEvent = new DefaultNWorkspaceEvent(session, null, null, null, null);
@@ -391,7 +398,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 .log(
                         NMsg.ofC("%s workspace loaded in %s",
                                 NMsg.ofCode("nuts"),
-                                NDuration.ofDuration(getCreationDuration())
+                                getCreationDuration()
                         ).asFine().withIntent(NMsgIntent.SUCCESS)
                 );
         if (data.effectiveBootOptions.getSharedInstance().orElse(false)) {
@@ -425,7 +432,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         .set("workspace-loaded-in",
                                 data.elems.ofObjectBuilder()
                                         .set("ms", this.getCreationDuration().toMillis())
-                                        .set("text", CoreTimeUtils.formatPeriodMilli(this.getCreationDuration()))
+                                        .set("text", this.getCreationDuration().normalize().toString())
                                         .build()
 
                         )
@@ -597,7 +604,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                 .append(" ")
                                 .append(" (")
                                 .append(getDigestName())
-                                .append(")")                );
+                                .append(")"));
             } else {
                 out.println(
                         data.text.ofBuilder()
@@ -1060,14 +1067,20 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
         boolean requireParents = true;
         try {
-            Map rec = null;
-            if (strategy0 == InstallStrategy0.INSTALL) {
-                rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString()), NRecommendationPhase.INSTALL, false);
-            } else if (strategy0 == InstallStrategy0.UPDATE) {
-                rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString()), NRecommendationPhase.UPDATE, false);
-            } else {
-                //just ignore any dependencies. recommendations are related to main artifacts
-            }
+            NDefinition finalDef = def;
+            this.runWith(() -> {
+                new Thread(() -> {
+                    Map rec = null;
+                    if (strategy0 == InstallStrategy0.INSTALL) {
+                        rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(finalDef.getId().toString()), NRecommendationPhase.INSTALL, false);
+                    } else if (strategy0 == InstallStrategy0.UPDATE) {
+                        rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(finalDef.getId().toString()), NRecommendationPhase.UPDATE, false);
+                    } else {
+                        //just ignore any dependencies. recommendations are related to main artifacts
+                    }
+                }).start();
+            });
+
             //TODO: should check here for any security issue!
         } catch (Exception ex2) {
             //just ignore
@@ -1349,19 +1362,25 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                 wsModel.LOG
                                         .log(NMsg.ofC("failed to uninstall  %s", executionContext.getDefinition().getId()).asFine(ex));
                                 //ignore if we could not uninstall
-                                try {
-                                    Map rec = null;
-                                    if (strategy0 == InstallStrategy0.INSTALL) {
-                                        rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), ex2), NRecommendationPhase.UPDATE, true);
-                                    } else if (strategy0 == InstallStrategy0.UPDATE) {
-                                        rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), ex2), NRecommendationPhase.UPDATE, true);
-                                    } else {
-                                        //just ignore any dependencies. recommendations are related to main artifacts
-                                    }
-                                    //TODO: should check here for any security issue!
-                                } catch (Exception ex3) {
-                                    //just ignore
-                                }
+                                NDefinition finalDef1 = def;
+                                this.runWith(() -> {
+                                    new Thread(() -> {
+                                        try {
+                                            Map rec = null;
+                                            if (strategy0 == InstallStrategy0.INSTALL) {
+                                                rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(finalDef1.getId().toString(), ex2), NRecommendationPhase.UPDATE, true);
+                                            } else if (strategy0 == InstallStrategy0.UPDATE) {
+                                                rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(finalDef1.getId().toString(), ex2), NRecommendationPhase.UPDATE, true);
+                                            } else {
+                                                //just ignore any dependencies. recommendations are related to main artifacts
+                                            }
+                                            //TODO: should check here for any security issue!
+                                        } catch (Exception ex3) {
+                                            //just ignore
+                                        }                                    }).start();
+                                });
+
+
                             }
                             throw new NExecutionException(NMsg.ofC("unable to install %s", def.getId()), ex);
                         }
@@ -1420,19 +1439,25 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
             }
         } catch (RuntimeException ex) {
-            try {
-                Map rec = null;
-                if (strategy0 == InstallStrategy0.INSTALL) {
-                    rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), ex), NRecommendationPhase.INSTALL, true);
-                } else if (strategy0 == InstallStrategy0.UPDATE) {
-                    rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), ex), NRecommendationPhase.UPDATE, true);
-                } else {
-                    //just ignore any dependencies. recommendations are related to main artifacts
-                }
-                //TODO: should check here for any recommendations to process
-            } catch (Exception ex2) {
-                //just ignore
-            }
+            NDefinition finalDef2 = def;
+            this.runWith(() -> {
+                new Thread(() -> {
+                    try {
+                        Map rec = null;
+                        if (strategy0 == InstallStrategy0.INSTALL) {
+                            rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(finalDef2.getId().toString(), ex), NRecommendationPhase.INSTALL, true);
+                        } else if (strategy0 == InstallStrategy0.UPDATE) {
+                            rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(finalDef2.getId().toString(), ex), NRecommendationPhase.UPDATE, true);
+                        } else {
+                            //just ignore any dependencies. recommendations are related to main artifacts
+                        }
+                        //TODO: should check here for any recommendations to process
+                    } catch (Exception ex2) {
+                        //just ignore
+                    }                }).start();
+            });
+
+
             throw ex;
         }
         if (session.isPlainTrace()) {
@@ -2162,7 +2187,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     @Override
     public NSession currentSession() {
         NSession old = wsModel.sessionScopes.get();
-        if(old==null){
+        if (old == null) {
             return defaultSession();
         }
         return old;
@@ -3070,7 +3095,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     @Override
-    public Duration getCreationDuration() {
+    public NDuration getCreationDuration() {
         return getConfigModel().getCreateDuration();
     }
 
