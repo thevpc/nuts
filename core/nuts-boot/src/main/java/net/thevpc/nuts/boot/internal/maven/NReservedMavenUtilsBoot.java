@@ -196,8 +196,8 @@ public class NReservedMavenUtilsBoot {
                 }
             }
             if (loc != null) {
-                if (loc.startsWith("htmlfs:")) {
-                    loc = loc.substring("htmlfs:".length());
+                if (loc.startsWith("htmlfs+")) {
+                    loc = loc.substring("htmlfs+".length());
                 }
                 deps = loadDependenciesFromPomUrl(loc + "/" + pomPath);
                 if (deps != null) {
@@ -413,9 +413,9 @@ public class NReservedMavenUtilsBoot {
         NBootLog log = NBootContext.log();
         try {
             String urlType = "";
-            if (mavenMetadata.startsWith("dotfilefs:")) {
+            if (mavenMetadata.startsWith("dotfilefs+")) {
                 urlType = "dotfilefs";
-                mavenMetadata = mavenMetadata.substring("dotfilefs:".length());
+                mavenMetadata = mavenMetadata.substring("dotfilefs+".length());
             }
             URL runtimeMetadata = NBootUtils.urlOf(mavenMetadata);
             DocumentBuilderFactory factory
@@ -514,9 +514,9 @@ public class NReservedMavenUtilsBoot {
                     }
                 }
             } else {
-                boolean htmlfs = repoUrl.startsWith("htmlfs:");
+                boolean htmlfs = repoUrl.startsWith("htmlfs+");
                 if (htmlfs) {
-                    repoUrl = repoUrl.substring("htmlfs:".length());
+                    repoUrl = repoUrl.substring("htmlfs+".length());
                 }
                 if (!repoUrl.endsWith("/")) {
                     repoUrl = repoUrl + "/";
@@ -742,9 +742,9 @@ public class NReservedMavenUtilsBoot {
         NBootLog log = NBootContext.log();
 
         for (String repository : expandRepoUrls(repository0)) {
-            //we know exactly the file path, so we will trim "htmlfs:" protocol
-            if (repository.startsWith("htmlfs:")) {
-                repository = repository.substring("htmlfs:".length());
+            //we know exactly the file path, so we will trim "htmlfs+" protocol
+            if (repository.startsWith("htmlfs+")) {
+                repository = repository.substring("htmlfs+".length());
             }
             repository = NBootUtils.expandPath(repository, bOptions.getWorkspace(), pathExpansionConverter);
             File repositoryFolder = null;
