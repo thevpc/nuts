@@ -206,22 +206,23 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                     NSession.of().getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, foldersFileUrl.toCompressedForm()));
                     try {
                         return NIterator.of(
-                                foldersFileUrl.stream().filter(
-                                        NPath::isDirectory
-                                ).redescribe(NElementDescribables.ofDesc("isDirectory")).map(versionFolder -> {
-                                    String versionName = versionFolder.getName();
-                                    NId expectedId = NIdBuilder.of(groupId, artifactId).setVersion(versionName).build();
-                                    if (isValidArtifactVersionFolder(expectedId, versionFolder)) {
-                                        final NId nutsId = id.builder().setVersion(versionFolder.getName()).build();
-                                        if (idFilter == null || idFilter.acceptDefinition(NDefinitionHelper.ofIdAndLazyDescriptor(
-                                                nutsId,
-                                                () -> fetchDescriptor().setId(nutsId).getResult(),
-                                                "NFolderRepositoryBase::findNonSingleVersionImpl"))) {
-                                            return expectedId;
-                                        }
-                                    }
-                                    return null;
-                                }).filterNonNull().iterator()
+                                foldersFileUrl.stream()
+                                        .filter(NPath::isDirectory).redescribe(NElementDescribables.ofDesc("isDirectory"))
+                                        .map(versionFolder -> {
+                                            String versionName = versionFolder.getName();
+                                            NId expectedId = NIdBuilder.of(groupId, artifactId).setVersion(versionName).build();
+                                            if (isValidArtifactVersionFolder(expectedId, versionFolder)) {
+                                                final NId nutsId = id.builder().setVersion(versionFolder.getName()).build();
+                                                if (idFilter == null || idFilter.acceptDefinition(NDefinitionHelper.ofIdAndLazyDescriptor(
+                                                        nutsId,
+                                                        () -> fetchDescriptor().setId(nutsId).getResult(),
+                                                        "NFolderRepositoryBase::findNonSingleVersionImpl"))) {
+                                                    return expectedId;
+                                                }
+                                            }
+                                            return null;
+                                        })
+                                        .filterNonNull().iterator()
                         ).redescribe(NElementDescribables.ofDesc("findNonSingleVersion"));
                     } catch (UncheckedIOException | NIOException ex) {
                         return NIterator.ofEmpty();
