@@ -236,8 +236,8 @@ public final class NReservedMavenUtils {
 //                    }
 //                    //this is a special cas
 //                }
-//                if (loc.startsWith("htmlfs:")) {
-//                    loc = loc.substring("htmlfs:".length());
+//                if (loc.startsWith("htmlfs+")) {
+//                    loc = loc.substring("htmlfs+".length());
 //                }
 //                deps = loadDependenciesFromPomUrl(loc + "/" + pomPath, bLog);
 //                if (deps != null) {
@@ -549,9 +549,9 @@ public final class NReservedMavenUtils {
             }
             return new VersionAndPath(bestVersion, bestPath);
         } else {
-            boolean htmlfs = repoUrl.startsWith("htmlfs:");
+            boolean htmlfs = repoUrl.startsWith("htmlfs+");
             if (htmlfs) {
-                repoUrl = repoUrl.substring("htmlfs:".length());
+                repoUrl = repoUrl.substring("htmlfs+".length());
             }
             if (!repoUrl.endsWith("/")) {
                 repoUrl = repoUrl + "/";
@@ -733,9 +733,9 @@ public final class NReservedMavenUtils {
 //            urls.add(repository0.getPath());
 //        }
 //        for (String repository : urls) {
-//            //we know exactly the file path, so we will trim "htmlfs:" protocol
-//            if (repository.startsWith("htmlfs:")) {
-//                repository = repository.substring("htmlfs:".length());
+//            //we know exactly the file path, so we will trim "htmlfs+" protocol
+//            if (repository.startsWith("htmlfs+")) {
+//                repository = repository.substring("htmlfs+".length());
 //            }
 //            repository = NReservedIOUtils.expandPath(repository, bOptions.getWorkspace().get(), pathExpansionConverter);
 //            File repositoryFolder = null;
