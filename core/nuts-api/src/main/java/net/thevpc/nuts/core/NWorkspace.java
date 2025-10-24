@@ -39,12 +39,12 @@ import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.internal.NScopedWorkspace;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NIndexStoreFactory;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
 
 import java.io.Closeable;
 import java.net.URL;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -586,7 +586,7 @@ public interface NWorkspace extends NWorkspaceBase, NEnvContext, NComponent, Clo
 
     Instant getCreationFinishTime();
 
-    Duration getCreationDuration();
+    NDuration getCreationDuration();
 
     NClassLoaderNode getBootRuntimeClassLoaderNode();
 
