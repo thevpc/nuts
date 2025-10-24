@@ -4,8 +4,8 @@ import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.time.NDuration;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Objects;
@@ -73,11 +73,11 @@ class NRateLimitValueImpl implements NRateLimitValue {
 
     @Override
     public NRateLimitValueResult claim(int count) {
-        return claim(count, (Duration) null);
+        return claim(count, (NDuration) null);
     }
 
     @Override
-    public NRateLimitValueResult claim(int count, Duration timeout) {
+    public NRateLimitValueResult claim(int count, NDuration timeout) {
         long start = System.currentTimeMillis();
         long maxWaitTimeMillis = (timeout != null) ? timeout.toMillis() : -1;
         long deadline = (timeout != null) ? start + timeout.toMillis() : Long.MAX_VALUE;
@@ -149,12 +149,12 @@ class NRateLimitValueImpl implements NRateLimitValue {
     }
 
     @Override
-    public <T> NRateLimitValueResult claimAndCall(Duration timeout, NCallable<T> callable) {
+    public <T> NRateLimitValueResult claimAndCall(NDuration timeout, NCallable<T> callable) {
         return claim(1, timeout).onSuccessCall(callable);
     }
 
     @Override
-    public <T> NRateLimitValueResult claimAndCall(int count, Duration timeout, NCallable<T> callable) {
+    public <T> NRateLimitValueResult claimAndCall(int count, NDuration timeout, NCallable<T> callable) {
         return claim(count, timeout).onSuccessCall(callable);
     }
 
@@ -164,12 +164,12 @@ class NRateLimitValueImpl implements NRateLimitValue {
     }
 
     @Override
-    public NRateLimitValueResult claimAndRun(Duration timeout, Runnable runnable) {
+    public NRateLimitValueResult claimAndRun(NDuration timeout, Runnable runnable) {
         return claim(1, timeout).onSuccess(runnable);
     }
 
     @Override
-    public NRateLimitValueResult claimAndRun(int count, Duration timeout, Runnable runnable) {
+    public NRateLimitValueResult claimAndRun(int count, NDuration timeout, Runnable runnable) {
         return claim(count, timeout).onSuccess(runnable);
     }
 
