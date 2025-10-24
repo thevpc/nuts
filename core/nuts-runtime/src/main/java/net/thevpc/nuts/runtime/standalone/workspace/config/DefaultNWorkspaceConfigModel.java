@@ -51,6 +51,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.rnsh.RnshPathFactorySPI;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
@@ -89,7 +90,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -140,7 +140,7 @@ public class DefaultNWorkspaceConfigModel {
     private NTerminal terminal;
     private Map<String, NId> protocolToExtensionMap = new HashMap<>(
             NMaps.of(
-                    "ssh", NId.get("net.thevpc.nuts.ext:next-ssh").get()
+                    "ssh", NId.get("net.thevpc.nuts:nuts-ssh").get()
             )
     );
 
@@ -448,11 +448,11 @@ public class DefaultNWorkspaceConfigModel {
         return endCreateTime;
     }
 
-    public Duration getCreateDuration() {
+    public NDuration getCreateDuration() {
         if (startCreateTime == null || endCreateTime == null) {
-            return Duration.ofMillis(0);
+            return NDuration.ofMillis(0);
         }
-        return Duration.between(startCreateTime, endCreateTime);
+        return NDuration.between(startCreateTime, endCreateTime);
     }
 
     public NWorkspaceConfigMain getStoreModelMain() {
