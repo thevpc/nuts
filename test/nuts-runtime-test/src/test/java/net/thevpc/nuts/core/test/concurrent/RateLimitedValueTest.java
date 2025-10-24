@@ -9,6 +9,7 @@ import net.thevpc.nuts.core.NBootOptionsBuilder;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.time.NDuration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +32,7 @@ public class RateLimitedValueTest {
     public void test1() {
         NRateLimitValueFactory factory = NRateLimitValueFactory.of();
         NRateLimitValue lv = factory.ofBuilder("example")
-                .withLimit("10x2seconds", 10).per(Duration.ofSeconds(2))
+                .withLimit("10x2seconds", 10).per(NDuration.ofSeconds(2))
                 .build();
 
         for (int i = 0; i < 100; i++) {
@@ -46,7 +47,7 @@ public class RateLimitedValueTest {
     public void test2() {
         NRateLimitValueFactory factory = NRateLimitValueFactory.of();
         NRateLimitValue lv = factory.ofBuilder("example")
-                .withLimit("seconds", 10).per(Duration.ofSeconds(2))
+                .withLimit("seconds", 10).per(NDuration.ofSeconds(2))
                 .build();
         for (int i = 0; i < 100; i++) {
             int index = i;
@@ -58,7 +59,7 @@ public class RateLimitedValueTest {
     @Test
     public void test3() {
         NRateLimitValue lv = NRateLimitValue.ofBuilder("example")
-                .withLimit("seconds", 10).per(Duration.ofMinutes(2))
+                .withLimit("seconds", 10).per(NDuration.ofMinutes(2))
                 .withStrategy(NRateLimitDefaultStrategy.SLIDING_WINDOW)
 //                .withStartDate(Instant.parse("2025-09-16T00:00:00.000Z"))
                 .build();
@@ -72,7 +73,7 @@ public class RateLimitedValueTest {
     @Test
     public void test4() {
         NRateLimitValue lv = NRateLimitValue.ofBuilder("example")
-                .withLimit("seconds", 10).per(Duration.ofMinutes(2))
+                .withLimit("seconds", 10).per(NDuration.ofMinutes(2))
                 .withStrategy(NRateLimitDefaultStrategy.BUCKET)
                 .withStartDate(Instant.parse("2025-09-16T00:00:00.000Z"))
                 .build();
