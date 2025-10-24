@@ -3,7 +3,6 @@ package net.thevpc.nuts.concurrent;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCopiable;
 
-import java.time.Duration;
 import java.util.function.IntFunction;
 
 /**
@@ -17,7 +16,7 @@ public class NRetryCallModel implements Cloneable, NCopiable {
     private Object result = null;
     private int failedAttempts = 0;
 
-    private Duration expiry = Duration.ofMillis(Long.MAX_VALUE);
+    private NDuration expiry = NDuration.ofMillis(Long.MAX_VALUE);
     private NCallable<?> recover;
     private NCallable<?> caller;
     private NRetryCall.Handler<?> handler;
@@ -104,11 +103,11 @@ public class NRetryCallModel implements Cloneable, NCopiable {
         return this;
     }
 
-    public Duration getExpiry() {
+    public NDuration getExpiry() {
         return expiry;
     }
 
-    public NRetryCallModel setExpiry(Duration expiry) {
+    public NRetryCallModel setExpiry(NDuration expiry) {
         this.expiry = expiry;
         return this;
     }
