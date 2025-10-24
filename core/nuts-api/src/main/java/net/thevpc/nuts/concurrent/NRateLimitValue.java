@@ -1,8 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElementDescribable;
-
-import java.time.Duration;
+import net.thevpc.nuts.time.NDuration;
 
 public interface NRateLimitValue extends NElementDescribable {
     /**
@@ -30,17 +29,17 @@ public interface NRateLimitValue extends NElementDescribable {
 
     NRateLimitValueResult claim(int count);
 
-    NRateLimitValueResult claim(int count, Duration timeout);
+    NRateLimitValueResult claim(int count, NDuration timeout);
 
     NRateLimitValueResult claimAndRun(Runnable runnable);
 
     NRateLimitValueResult claimAndRun(int count, Runnable runnable);
 
-    NRateLimitValueResult claimAndRun(Duration timeout, Runnable runnable);
+    NRateLimitValueResult claimAndRun(NDuration timeout, Runnable runnable);
 
     <T> NRateLimitValueResult claimAndCall(int count, NCallable<T> callable);
 
-    <T> NRateLimitValueResult claimAndCall(Duration timeout, NCallable<T> callable);
+    <T> NRateLimitValueResult claimAndCall(NDuration timeout, NCallable<T> callable);
 
     /**
      * Attempts to claim the specified number of permits from this rate limiter,
@@ -61,8 +60,8 @@ public interface NRateLimitValue extends NElementDescribable {
      * @return a result object describing whether the claim was successful and
      * any metadata (e.g., remaining permits, wait time)
      */
-    NRateLimitValueResult claimAndRun(int count, Duration timeout, Runnable runnable);
+    NRateLimitValueResult claimAndRun(int count, NDuration timeout, Runnable runnable);
 
-    <T> NRateLimitValueResult claimAndCall(int count, Duration timeout, NCallable<T> callable);
+    <T> NRateLimitValueResult claimAndCall(int count, NDuration timeout, NCallable<T> callable);
 
 }
