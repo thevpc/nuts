@@ -4,6 +4,7 @@ import net.thevpc.nuts.command.NExecCmdExtension;
 import net.thevpc.nuts.command.NExecCmdExtensionContext;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
 import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.net.NConnexionStringBuilder;
 import net.thevpc.nuts.util.NScorableContext;
@@ -90,9 +91,16 @@ public class RnshExecCmdExtension implements NExecCmdExtension {
     @Override
     public int getScore(NScorableContext context) {
         Object c = context.getCriteria();
+
         if (c instanceof String) {
-            NConnexionString z = NConnexionString.get((String) c).orNull();
+            NConnexionStringBuilder z = DefaultNConnexionStringBuilder.of((String) c).orNull();
             if (z != null && isSupportedProtocol(z.getProtocol())) {
+                return DEFAULT_SCORE;
+            }
+        }
+        if (c instanceof NConnexionStringBuilder) {
+            NConnexionStringBuilder z = (NConnexionStringBuilder) c;
+            if (isSupportedProtocol(z.getProtocol())) {
                 return DEFAULT_SCORE;
             }
         }
