@@ -169,7 +169,7 @@ public class GenericFilePath implements NPathSPI {
 
     @Override
     public void mkdir(boolean parents, NPath basePath) {
-        throw new NIOException(NMsg.ofC("unable to create folder out of regular file %s", this));
+        throw new NIOException(NMsg.ofC("unable to create folder %s", this));
     }
 
     @Override
