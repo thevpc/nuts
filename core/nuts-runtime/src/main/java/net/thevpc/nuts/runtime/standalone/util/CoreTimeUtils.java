@@ -27,17 +27,12 @@ package net.thevpc.nuts.runtime.standalone.util;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.time.Duration;
-
 /**
  *
  * @author thevpc
  */
 public class CoreTimeUtils {
 
-    public static String formatPeriodMilli(Duration duration) {
-        return duration.toString();
-    }
     public static String formatPeriodMilli(long period) {
         StringBuilder sb = new StringBuilder();
         boolean started = false;
