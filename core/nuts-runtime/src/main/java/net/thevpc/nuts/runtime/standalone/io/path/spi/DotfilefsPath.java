@@ -26,7 +26,7 @@ import java.util.Objects;
 public class DotfilefsPath extends AbstractPathSPIAdapter {
 
     public static final String PROTOCOL = "dotfilefs";
-    public static final String PREFIX = PROTOCOL + ":";
+    public static final String PREFIX = PROTOCOL + "+";
 
     public static class DotfilefsFactory implements NPathFactorySPI {
         public DotfilefsFactory() {
