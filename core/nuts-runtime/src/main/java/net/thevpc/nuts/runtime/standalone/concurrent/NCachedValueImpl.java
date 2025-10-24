@@ -83,7 +83,7 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
             return false;
         }
         Boolean lastAttemptError = model.getErrorState();
-        if (lastAttemptError == null || !lastAttemptError) {
+        if (lastAttemptError != null && lastAttemptError) {
             return false;
         }
         if (model.getExpiry() == null) {
@@ -121,7 +121,7 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
         Boolean evb = model.getErrorState();
 
         boolean expired = evb == null || model.isInvalidated() || (model.getExpiry() != null && (now - model.getLastEvalTimestamp() >= model.getExpiry().toMillis()));
-        long effectiveRetryPeriod = (model.getRetryPeriod() != null ? model.getRetryPeriod().toMillis() : model.getExpiry().toMillis());
+        long effectiveRetryPeriod = (model.getRetryPeriod() != null ? model.getRetryPeriod().toMillis() : 0);
 
         boolean canRetry = evb == null
                 || !evb
@@ -187,7 +187,7 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
     public NCachedValue<T> update(Supplier<T> supplier) {
         long now = System.currentTimeMillis();
         synchronized (this) {
-            _computeAndSet0(now, supplier);
+            _computeAndSet0(now, supplier==null?this.supplier:supplier);
         }
         return this;
     }
@@ -221,7 +221,7 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
         long now = System.currentTimeMillis();
         synchronized (this) {
             if (!isValid()) {
-                _computeAndSet0(now, supplier);
+                _computeAndSet0(now, supplier==null?this.supplier:supplier);
                 return true;
             }
             return false;
