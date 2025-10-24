@@ -12,6 +12,7 @@ import net.thevpc.nuts.command.NExecCmdExtensionContext;
 import net.thevpc.nuts.command.NExecutionType;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
+import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.net.NConnexionStringBuilder;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
@@ -183,17 +184,30 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         Object c = context.getCriteria();
         if (c instanceof String) {
             NConnexionStringBuilder z = DefaultNConnexionStringBuilder.of((String) c).orNull();
-            if (z != null && "ssh".equals(z.getProtocol())) {
+            if (z != null && isSupportedProtocol(z.getProtocol())) {
                 return DEFAULT_SCORE;
             }
         }
-        if (c instanceof DefaultNConnexionStringBuilder) {
+        if (c instanceof NConnexionStringBuilder) {
             NConnexionStringBuilder z = (NConnexionStringBuilder) c;
-            if ("ssh".equals(z.getProtocol())) {
+            if (isSupportedProtocol(z.getProtocol())) {
+                return DEFAULT_SCORE;
+            }
+        }
+        if (c instanceof NConnexionString) {
+            NConnexionString z = (NConnexionString) c;
+            if (isSupportedProtocol(z.getProtocol())) {
                 return DEFAULT_SCORE;
             }
         }
         return UNSUPPORTED_SCORE;
+    }
+
+
+    private boolean isSupportedProtocol(String protocol) {
+        return (
+                "ssh".equals(protocol)
+        );
     }
 
 }
