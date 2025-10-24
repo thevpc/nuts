@@ -3,8 +3,6 @@ package net.thevpc.nuts.concurrent;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCopiable;
 
-import java.time.Duration;
-
 /**
  * @since 0.8.6
  */
