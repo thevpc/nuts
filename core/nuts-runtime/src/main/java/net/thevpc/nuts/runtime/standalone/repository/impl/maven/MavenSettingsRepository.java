@@ -25,6 +25,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
@@ -80,7 +83,37 @@ public class MavenSettingsRepository extends NRepositoryList {
             //non traversable!
             case "http":
             case "https": {
-                mavenChild = new MavenRemoteXmlRepository(options, null);
+                if("maven-extra".equals(type)){
+                    NPath nr = NPath.of(url).resolve(".nuts-repository");
+                    if(nr.exists()) {
+                        NElement e=null;
+                        String repositoryType = null;
+                        String repositoryName = null;
+                        String repositoryLayout = null;
+                        try {
+                            e = NElementParser.ofJson().parse(nr);
+                        }catch (Exception ex) {
+                            // just ignore
+                        }
+                        if(e!=null && e.isAnyObject()) {
+                            NObjectElement o = e.asObject().get();
+                            repositoryType = o.getStringValue("repositoryType").orNull();
+                            repositoryName = o.getStringValue("repositoryName").orNull();
+                            repositoryLayout = o.getStringValue("repositoryLayout").orNull();
+                        }
+                        if(!NBlankable.isBlank(repositoryLayout)) {
+                            config.setLocation(new NRepositoryLocation(id, "maven", NStringUtils.trim(repositoryLayout)+"+"+url));
+                        }
+//                        if(!NBlankable.isBlank(repositoryName)) {
+//                            config.setName(repositoryName);
+//                        }
+                        mavenChild = new MavenFolderRepository(options, null);
+                    }else{
+                        mavenChild = new MavenRemoteXmlRepository(options, null);
+                    }
+                }else {
+                    mavenChild = new MavenRemoteXmlRepository(options, null);
+                }
                 break;
             }
             default: {
