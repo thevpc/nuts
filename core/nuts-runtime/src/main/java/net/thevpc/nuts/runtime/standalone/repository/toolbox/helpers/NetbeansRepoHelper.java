@@ -92,7 +92,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
         //List<NutsId> all = new ArrayList<>();
 //        NutsWorkspace ws = session.getWorkspace();
         NIdBuilder idBuilder = NIdBuilder.of("org.apache.netbeans", "netbeans");
-        NStream<NId> stream1 = NPath.of("htmlfs:https://archive.apache.org/dist/netbeans/netbeans/").stream()
+        NStream<NId> stream1 = NPath.of("htmlfs+https://archive.apache.org/dist/netbeans/netbeans/").stream()
                 .filter(path -> path.isDirectory())
                 .map(p -> {
                     ///12.0/netbeans-12.0-bin.zip
@@ -103,7 +103,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                     }
                     return null;
                 }).nonNull();
-        NStream<NId> stream2 = NPath.of("htmlfs:https://downloads.apache.org/netbeans/netbeans/").stream()
+        NStream<NId> stream2 = NPath.of("htmlfs+https://downloads.apache.org/netbeans/netbeans/").stream()
                 .filter(path -> path.isDirectory())
                 .map(p -> {
                     ///12.0/netbeans-12.0-bin.zip
