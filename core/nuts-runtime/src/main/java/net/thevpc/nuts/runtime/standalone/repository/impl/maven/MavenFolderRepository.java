@@ -88,11 +88,6 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
-        MavenSolrSearchCommand cmd=new MavenSolrSearchCommand(this);
-        NIterator<NId> aa=cmd.search(filter, baseIds, fetchMode);
-        if(aa!=null){
-            return aa;
-        }
         return super.searchCore(filter, basePaths, baseIds, fetchMode);
     }
 
@@ -108,11 +103,6 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     public NIterator<NId> findNonSingleVersionImpl(final NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
         if(disableMe){
             return NIterator.ofEmpty();
-        }
-        MavenSolrSearchCommand cmd = new MavenSolrSearchCommand(this);
-        NIterator<NId> aa = cmd.search(idFilter, new NId[]{id}, fetchMode);
-        if (aa != null) {
-            return aa;
         }
         return super.findNonSingleVersionImpl(id, idFilter, fetchMode);
     }
