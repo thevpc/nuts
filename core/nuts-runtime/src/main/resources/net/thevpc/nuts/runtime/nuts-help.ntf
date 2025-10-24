@@ -476,7 +476,7 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
       ```sh --repos=-https://jcenter.bintray.com ```
       ```sh --repos=jcenter=https://jcenter.bintray.com ```
       ```sh --repos=jcenter=maven@https://jcenter.bintray.com ```
-      ```sh --repos==dev=maven@htmlfs:https://maven.thevpc.net ```
+      ```sh --repos==dev=maven@htmlfs+https://maven.thevpc.net ```
 
       the prefix operator (+,-,=) when specified defines whether the repository is
         to include (+), to exclude (-) or to replace (=) ie all existing repositories will be
