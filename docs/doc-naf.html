@@ -1385,7 +1385,7 @@ System.out.println("User config path: " + configFolder);
 NPath logFile = NPath.ofUserStore(NStoreType.LOG).resolve("myapp.log");
 logFile.writeString("This is a log entry.\n", StandardCharsets.UTF_8);
 </code></pre><div class="alert alert-success mb-4">Notes : You can get the resolved directory path as a string via getLocation() or toString().</div><div class="alert alert-success mb-4">Notes : If you're working in a system context (e.g. root user or shared tools), consider NPath.ofSystemStore(NStoreType).</div><H4 class="md-title-2">Browsing HTML Folders</H4>Supports Apache Tomcat and Apache Httpd directory listings.<pre class="md-code md-code-``` java"><code class="java">
-NPath httpFolder = NPath.of("htmlfs:https://archive.apache.org/dist/tomcat/");
+NPath httpFolder = NPath.of("htmlfs+https://archive.apache.org/dist/tomcat/");
 try (NStream s = httpFolder.stream()) {
     List&lt;NPath&gt; matches = s.filter(x -&gt; x.isDirectory() &amp;&amp; x.getName().matches("tomcat-[0-9.]+"))
                             .toList();
