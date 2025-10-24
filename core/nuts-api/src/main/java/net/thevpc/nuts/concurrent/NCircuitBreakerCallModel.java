@@ -1,8 +1,8 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCopiable;
 
-import java.time.Duration;
 import java.util.function.IntFunction;
 
 /**
@@ -18,8 +18,8 @@ public class NCircuitBreakerCallModel implements Cloneable, NCopiable {
     private int failureCount = 0;
     private int successCount = 0;
     private long openTimestamp = 0;
-    private IntFunction<Duration> successRetryPeriod;
-    private IntFunction<Duration> failureRetryPeriod;
+    private IntFunction<NDuration> successRetryPeriod;
+    private IntFunction<NDuration> failureRetryPeriod;
 
     private Object lastValidResult;
     private NCallable<?> caller;
@@ -116,20 +116,20 @@ public class NCircuitBreakerCallModel implements Cloneable, NCopiable {
         return this;
     }
 
-    public IntFunction<Duration> getSuccessRetryPeriod() {
+    public IntFunction<NDuration> getSuccessRetryPeriod() {
         return successRetryPeriod;
     }
 
-    public NCircuitBreakerCallModel setSuccessRetryPeriod(IntFunction<Duration> successRetryPeriod) {
+    public NCircuitBreakerCallModel setSuccessRetryPeriod(IntFunction<NDuration> successRetryPeriod) {
         this.successRetryPeriod = successRetryPeriod;
         return this;
     }
 
-    public IntFunction<Duration> getFailureRetryPeriod() {
+    public IntFunction<NDuration> getFailureRetryPeriod() {
         return failureRetryPeriod;
     }
 
-    public NCircuitBreakerCallModel setFailureRetryPeriod(IntFunction<Duration> failureRetryPeriod) {
+    public NCircuitBreakerCallModel setFailureRetryPeriod(IntFunction<NDuration> failureRetryPeriod) {
         this.failureRetryPeriod = failureRetryPeriod;
         return this;
     }
