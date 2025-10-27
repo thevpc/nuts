@@ -272,7 +272,32 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     public NPath resolveSibling(NPathRenameOptions renameOptions);
 
+
+    /**
+     * Returns the name parts of this path using the default extension type strategy.
+     * <p>
+     * This is equivalent to calling {@code nameParts(NPathExtensionType.SHORT)}.
+     * </p>
+     *
+     * @return an {@link NPathNameParts} object containing the base name, extension, and full extension
+     */
     NPathNameParts nameParts();
+
+
+    /**
+     * Returns the name parts of this path using the specified extension type strategy.
+     * <p>
+     * The strategy determines how the extension is extracted from the file name:
+     * <ul>
+     *   <li>{@code SHORT} – Uses the last dot to determine the extension.</li>
+     *   <li>{@code LONG} – Uses the first dot to determine the extension.</li>
+     *   <li>{@code SMART} – Uses a version-aware or heuristic-based approach.</li>
+     * </ul>
+     * </p>
+     *
+     * @param type the extension type strategy to use; if {@code null}, defaults to {@code SHORT}
+     * @return an {@link NPathNameParts} object containing the base name, extension, and full extension
+     */
 
     NPathNameParts nameParts(NPathExtensionType type);
 
