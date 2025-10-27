@@ -29,7 +29,7 @@ public enum NHttpMethod implements NEnum {
         return id;
     }
 
-    public static NOptional<NTerminalMode> parse(String value) {
-        return NEnumUtils.parseEnum(value, NTerminalMode.class);
+    public static NOptional<NHttpMethod> parse(String value) {
+        return NEnumUtils.parseEnum(value, NHttpMethod.class);
     }
 }
