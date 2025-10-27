@@ -318,10 +318,10 @@ public class TsonNumberHelper {
         if (realStr.getNh().unit == null && br.peekAny('+', '-') != null) {
             imagStr = readOneDouble(br);
             if (br.hasNext()) {
-                throw new IllegalArgumentException("invalid number " + s + ". unable to read " + br + " in s");
+                throw new IllegalArgumentException("invalid number " + s + ". unable to read " + br);
             }
         } else if (br.hasNext()) {
-            throw new IllegalArgumentException("invalid number " + s + ". unable to read " + br + " in s");
+            throw new IllegalArgumentException("invalid number " + s + ". unable to read " + br);
         }
         if (imagStr != null) {
             NumberType newType = realStr.type.combine(imagStr.type);
