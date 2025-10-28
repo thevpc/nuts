@@ -26,6 +26,8 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.artifact.NEnvCondition;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NIdBuilder;
 import net.thevpc.nuts.command.NExecCmd;
 import net.thevpc.nuts.io.NErr;
 import net.thevpc.nuts.io.NTerminal;
@@ -145,6 +147,8 @@ public class CorePlatformUtils {
         String disId = null;
         String disName = null;
         String disVersion = null;
+        String disVersionCodeName = null;
+        String disLike = null;
         File linuxOsrelease = new File("/proc/sys/kernel/osrelease");
         StringBuilder osVersion = new StringBuilder();
         if (linuxOsrelease.isFile()) {
@@ -191,12 +195,27 @@ public class CorePlatformUtils {
                             String v = strLine.substring(i + 1);
                             switch (n) {
                                 case "ID":
-                                case "DISTRIB_ID":
+                                case "DISTRIB_ID": {
                                     if (v.startsWith("\"")) {
                                         v = v.substring(1, v.length() - 1);
                                     }
                                     disId = v;
                                     break;
+                                }
+                                case "ID_LIKE": {
+                                    if (v.startsWith("\"")) {
+                                        v = v.substring(1, v.length() - 1);
+                                    }
+                                    disLike = v;
+                                    break;
+                                }
+                                case "VERSION_CODENAME": {
+                                    if (v.startsWith("\"")) {
+                                        v = v.substring(1, v.length() - 1);
+                                    }
+                                    disVersionCodeName = v;
+                                    break;
+                                }
                                 case "VERSION_ID":
                                 case "DISTRIB_RELEASE":
                                     if (v.startsWith("\"")) {
@@ -226,21 +245,25 @@ public class CorePlatformUtils {
         m.put("distName", disName);
         m.put("distVersion", disVersion);
         m.put("osVersion", osVersion.toString().trim());
+        if(disLike!=null) {
+            m.put("like", NStringUtils.trim(disLike));
+        }
+        if(disVersionCodeName!=null) {
+            m.put("codename", NStringUtils.trim(disVersionCodeName));
+        }
         return m;
     }
 
-    public static String getPlatformOsDist() {
+    public static NId getPlatformOsDist() {
         String osInfo = getPlatformOs();
         if (osInfo.startsWith("linux")) {
             Map<String, String> m = getOsDistMap();
             String distId = m.get("distId");
             String distVersion = m.get("distVersion");
+            String like = m.get("like");
+            String codename = m.get("codename");
             if (!NBlankable.isBlank(distId)) {
-                if (!NBlankable.isBlank(distId)) {
-                    return distId + "#" + distVersion;
-                } else {
-                    return distId;
-                }
+                return NIdBuilder.of(null,distId).setVersion(distVersion).setProperty("like",like).setProperty("codename",codename).build();
             }
         }
         return null;
