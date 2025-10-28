@@ -11,6 +11,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NUninstallCmd;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.install.AbstractNInstallCmd;
 import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.util.NScorableContext;
@@ -27,11 +28,12 @@ import java.util.List;
  */
 public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstallCmd> implements NUninstallCmd {
 
-    private boolean erase = false;
-    private List<String> args;
-    private final List<NId> ids = new ArrayList<>();
+    protected boolean erase = false;
+    protected List<String> args;
+    protected List<AbstractNInstallCmd.ConditionalArguments> conditionalArguments = new ArrayList<>();
+    protected final List<NId> ids = new ArrayList<>();
 
-    public AbstractNUninstallCmd(NWorkspace workspace) {
+    public AbstractNUninstallCmd() {
         super("uninstall");
     }
 
