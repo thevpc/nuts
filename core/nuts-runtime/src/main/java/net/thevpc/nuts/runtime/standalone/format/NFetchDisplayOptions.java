@@ -55,6 +55,8 @@ public class NFetchDisplayOptions {
         this.idFormat.setOmitRepository(true);
         this.idFormat.setOmitGroupId(false);
         this.idFormat.setOmitImportedGroupId(false);
+        this.idFormat.setOmitCondition(true);
+        this.idFormat.setOmitExclusion(true);
     }
 
     public boolean isDependencies() {
