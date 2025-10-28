@@ -10,6 +10,7 @@ import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NPlatformFamily;
 import net.thevpc.nuts.platform.NPlatformHome;
 import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPath;
@@ -297,7 +298,7 @@ public class NJavaSdkUtils {
                                         workspace.currentSession().getTerminal().printProgress(
                                                 NMsg.ofC("detected java %s %s at %s", r.getPackaging(),
                                                         factory.ofStyled(r.getVersion(), NTextStyle.version()),
-                                                        factory.ofStyled(r.getPath(), NTextStyle.path()))
+                                                        NCoreLogUtils.forProgressPathString(r.getPath()))
                                         );
                                     }
                                 }
