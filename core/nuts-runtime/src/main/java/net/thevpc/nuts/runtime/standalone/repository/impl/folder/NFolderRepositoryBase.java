@@ -11,6 +11,7 @@ import net.thevpc.nuts.core.NSpeedQualifier;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.text.NTreeVisitor;
@@ -121,7 +122,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
             list.add(
                     (NIterator) NIteratorBuilder.ofRunnable(
                             () -> session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s", getName(), "browse",
-                                    (basePath == null ? repoRoot : repoRoot.resolve(basePath)).toCompressedForm()
+                                            NCoreLogUtils.forProgress((basePath == null ? repoRoot : repoRoot.resolve(basePath)))
                             )),
                             "Log"
 
@@ -203,7 +204,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         return NIteratorBuilder.ofSupplier(
                 () -> {
 //                    List<NId> ret = new ArrayList<>();
-                    NSession.of().getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, foldersFileUrl.toCompressedForm()));
+                    NSession.of().getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, NCoreLogUtils.forProgress(foldersFileUrl)));
                     try {
                         return NIterator.of(
                                 foldersFileUrl.stream()
@@ -254,11 +255,11 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                     () -> {
                         List<NId> ret = new ArrayList<>();
                         if (metadataURL.isRegularFile()) {
-                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", getName(), "found", id.getLongId(), metadataURL.toCompressedForm()));
+                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", getName(), "found", id.getLongId(), NCoreLogUtils.forProgress(NCoreLogUtils.forProgress(metadataURL))));
                             // ok found!!
                             ret.add(id);
                         } else {
-                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", getName(), "missing", id.getLongId(), metadataURL.toCompressedForm()));
+                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", getName(), "missing", id.getLongId(), NCoreLogUtils.forProgress(NCoreLogUtils.forProgress(metadataURL))));
                         }
                         return ret.iterator();
                     }
@@ -343,7 +344,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 
     public InputStream openStream(NId id, NPath path, Object source, String typeName, NMsg action) {
         NSession session = getWorkspace().currentSession();
-        session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", getName(), action, NNameFormat.LOWER_KEBAB_CASE.format(typeName), path.toCompressedForm()));
+        session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", getName(), action, NNameFormat.LOWER_KEBAB_CASE.format(typeName), NCoreLogUtils.forProgress(path)));
         return NInputStreamMonitor.of().setSource(path).setOrigin(source).setSourceTypeName(typeName).create();
     }
 
