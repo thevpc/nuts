@@ -74,11 +74,11 @@ public class DefaultNWorkspaceEnvManagerModel {
         this.workspace = ws;
         this.userProperties = new NDefaultObservableMap<>();
         this.os = NId.get(CorePlatformUtils.getPlatformOs()).get();
-        String platformOsDist = CorePlatformUtils.getPlatformOsDist();
+        NId platformOsDist = CorePlatformUtils.getPlatformOsDist();
         if (platformOsDist == null) {
-            platformOsDist = "default";
+            platformOsDist = NId.of("default");
         }
-        this.osDist = NId.get(platformOsDist).get();
+        this.osDist = platformOsDist;
         this.platform = NJavaSdkUtils.of(ws).createJdkId(System.getProperty("java.version"));
         this.arch = NId.get(System.getProperty("os.arch")).get();
 
