@@ -108,7 +108,7 @@ public final class NClassLoaderUtils {
         if (optional) {
             return null;
         }
-        throw new NArtifactNotFoundException(id);
+        throw new NArtifactNotFoundException(id.getLongId());
     }
 
     private static NClassLoaderNode toClassLoaderNodeWithOptional(NDependencyTreeNode d, boolean isOptional, boolean withChildren, NRepositoryFilter repositoryFilter) {
@@ -147,7 +147,7 @@ public final class NClassLoaderUtils {
         if (isOptional) {
             return null;
         }
-        throw new NArtifactNotFoundException(d.getDependency().toId());
+        throw new NArtifactNotFoundException(d.getDependency().toId().getLongId());
     }
 
     public static URL[] resolveClasspathURLs(ClassLoader contextClassLoader) {
