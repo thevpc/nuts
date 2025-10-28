@@ -95,7 +95,7 @@ class ResultingIds {
                     .setIgnoreCurrentEnvironment(true)
                     .getResultDefinitions().toList();
             if (list.isEmpty()) {
-                throw new NArtifactNotFoundException(id);
+                throw new NArtifactNotFoundException(id.getLongId());
             }
             for (NDefinition def : list) {
                 if (!classPath.containsKey(def.getId().getLongId())) {
