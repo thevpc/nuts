@@ -20,6 +20,8 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.install.*;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NIO;
@@ -432,7 +434,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
     }
 
     private NFetchCmd latestOnlineDependencies() {
-        NFetchCmd se=NFetchCmd.of();
+        NFetchCmd se = NFetchCmd.of();
         se.addDependencyFilter(NDependencyFilters.of().byRunnable(isOptional()));
         if (!scopes.isEmpty()) {
             se.addDependencyFilter(NDependencyFilters.of().byScope(scopes.toArray(new NDependencyScope[0])));
@@ -844,7 +846,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         NDefinition d1 = r.getAvailable();
         if (d0 == null) {
             NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.UPDATE, "update");
-            dws.updateImpl(d1, new String[0], true);
+            applyRegularUpdate0(d1, new String[0]);
             r.setUpdateApplied(true);
         } else if (d1 == null) {
             //this is very interesting. Why the hell is this happening?
@@ -855,7 +857,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                 //no update needed!
                 if (/*session.isYes() || */r.isUpdateForced()) {
                     NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.UPDATE, "update");
-                    dws.updateImpl(d1, new String[0], true);
+                    applyRegularUpdate0(d1, new String[0]);
                     r.setUpdateApplied(true);
                     r.setUpdateForced(true);
                 } else {
@@ -863,11 +865,21 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                 }
             } else {
                 NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.UPDATE, "update");
-                dws.updateImpl(d1, new String[0], true);
+                applyRegularUpdate0(d1, new String[0]);
                 r.setUpdateApplied(true);
             }
         }
         traceSingleUpdate(r);
+    }
+
+    private void applyRegularUpdate0(NDefinition d1, String[] args) {
+        InstallIdList li = new InstallIdList();
+        InstallFlags flags = new InstallFlags();
+        InstallHelper h = new InstallHelper((DefaultNWorkspace) NWorkspaceExt.of(), li, true, args == null ? new ArrayList<>() : Arrays.asList(args), null);
+        InstallIdInfo uu = li.addAsInstalled(d1.getId(), flags);
+        uu.cacheItem = h.getCache(d1.getId());
+        uu.cacheItem.revalidate(d1);
+
     }
 
     public enum Type {
