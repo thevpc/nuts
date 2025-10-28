@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.descriptor.util;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -650,6 +651,35 @@ public class NDescriptorUtils {
                     } else {
                         throw new IllegalArgumentException("unsupported condition " + cc + " for " + p);
                     }
+                }
+            }
+            switch (s){
+                case "os.detected.name":{
+                    return NWorkspace.of().getOs().getArtifactId();
+                }
+                case "os.detected.version":{
+                    return NWorkspace.of().getOs().getVersion().toString();
+                }
+                case "os.detected.os.release":{
+                    return NWorkspace.of().getOsDist().getArtifactId();
+                }
+                case "os.detected.release.version":{
+                    return NWorkspace.of().getOsDist().getVersion().toString();
+                }
+                case "os.detected.arch":{
+                    return NWorkspace.of().getArch().getArtifactId();
+                }
+                case "os.detected.classifier":{
+                    return NWorkspace.of().getOs().getArtifactId()+"-"+NWorkspace.of().getArch().getArtifactId();
+                }
+                case "os.detected.bitness":{
+                    return String.valueOf(NWorkspace.of().getArchFamily().getBits());
+                }
+                case "os.detected.release.like":{
+                    return NWorkspace.of().getOsDist().getProperties().get("like");
+                }
+                case "os.detected.release.codename":{
+                    return NWorkspace.of().getOsDist().getProperties().get("codename");
                 }
             }
             return null;
