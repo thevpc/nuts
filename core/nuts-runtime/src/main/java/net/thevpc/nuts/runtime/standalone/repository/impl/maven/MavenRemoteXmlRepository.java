@@ -38,6 +38,7 @@ import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenMetadata;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
+import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.text.NMsg;
@@ -71,7 +72,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                 () -> {
                     List<NId> ret = new ArrayList<>();
                     InputStream metadataStream = null;
-                    session.getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id,metadataURL.toCompressedForm()));
+                    session.getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, NCoreLogUtils.forProgress(metadataURL)));
                     try {
                         try {
                             metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNConstants.QueryFaces.CATALOG).build(), "artifact catalog", NMsg.ofC("retrieve %s",id.getLongId()));
