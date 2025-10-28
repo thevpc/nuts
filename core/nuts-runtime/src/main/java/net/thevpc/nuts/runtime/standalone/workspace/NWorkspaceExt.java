@@ -17,6 +17,7 @@ import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryMo
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutionContextBuilder;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.install.InstallIdInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NInstallerComponent;
@@ -53,14 +54,6 @@ public interface NWorkspaceExt {
     NIdType resolveNutsIdType(NId id);
 
     NInstallerComponent getInstaller(NDefinition nutToInstall);
-
-    void requireImpl(NDefinition def, boolean withDependencies, NId[] forId);
-
-    void installImpl(NDefinition def, String[] args, boolean updateDefaultVersion);
-
-    void updateImpl(NDefinition def, String[] args, boolean updateDefaultVersion);
-
-    void uninstallImpl(NDefinition def, String[] args, boolean runInstaller, boolean deleteFiles, boolean eraseFiles, boolean traceBeforeEvent);
 
     /**
      * true when runtime extension is required for running this workspace. A
