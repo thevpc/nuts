@@ -32,6 +32,7 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NIteratorBase;
@@ -104,18 +105,18 @@ public class NIdPathIterator extends NIteratorBase<NId> {
             PathAndDepth file = stack.remove();
             NSession session = repository.getWorkspace().currentSession();
             if (file.folder) {
-                session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s (for %s) in %s", repository.getName(), kind, "search folder", filter, file.path.toCompressedForm()));
+                session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s (for %s) in %s", repository.getName(), kind, "search folder", filter, NCoreLogUtils.forProgress(file.path)));
                 visitedFoldersCount++;
                 NPath[] children = new NPath[0];
                 try {
                     children = file.path.stream().toArray(NPath[]::new);
                 } catch (NIOException ex) {
                     //just log without stack trace!
-                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), filter, NText.ofStyledError("failed!")));
+                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.getName(), kind, "search folder", NCoreLogUtils.forProgress(file.path), filter, NText.ofStyledError("failed!")));
                     NLog.of(NIdPathIterator.class)//.error(ex)
                             .log(NMsg.ofJ("error listing : {0} : {1} : {2}", file.path, toString(), ex.toString()).asFine());
                 } catch (Exception ex) {
-                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), filter, NText.ofStyledError("failed!")));
+                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.getName(), kind, "search folder", NCoreLogUtils.forProgress(file.path), filter, NText.ofStyledError("failed!")));
                     NLog.of(NIdPathIterator.class)
                             .log(NMsg.ofJ("error listing : {0} : {1}", file.path, toString()).asFineFail(ex));
                 }
