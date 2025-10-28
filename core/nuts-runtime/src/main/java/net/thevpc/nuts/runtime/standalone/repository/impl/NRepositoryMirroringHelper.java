@@ -174,7 +174,7 @@ public class NRepositoryMirroringHelper {
         NDescriptor desc = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of().toRepositorySPI(repo).fetchDescriptor().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
         NPath local = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of().toRepositorySPI(repo).fetchContent().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
         if (local == null) {
-            throw new NArtifactNotFoundException(id);
+            throw new NArtifactNotFoundException(id.getLongId());
         }
         if (!repo.config().isSupportedMirroring()) {
             throw new NPushException(id, NMsg.ofC("unable to push %s. no repository found.", id == null ? "<null>" : id));
