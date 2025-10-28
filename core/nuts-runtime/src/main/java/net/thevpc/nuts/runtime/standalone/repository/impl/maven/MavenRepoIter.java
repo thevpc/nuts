@@ -12,6 +12,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
+import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.text.NMsg;
 
 import java.io.InputStream;
@@ -42,7 +43,7 @@ class MavenRepoIter extends NIdPathIteratorBase {
     @Override
     public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL) {
         NSession session = getWorkspace().currentSession();
-        session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "parse", pathname.toCompressedForm()));
+        session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "parse", NCoreLogUtils.forProgress(pathname)));
         return MavenUtils.of().parsePomXmlAndResolveParents(in, fetchMode, pathname.toString(), repository);
     }
 
