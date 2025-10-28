@@ -72,4 +72,9 @@ public class NHttpCode {
     public int hashCode() {
         return Objects.hash(code);
     }
+
+    @Override
+    public String toString() {
+        return "HTTP" + code;
+    }
 }
