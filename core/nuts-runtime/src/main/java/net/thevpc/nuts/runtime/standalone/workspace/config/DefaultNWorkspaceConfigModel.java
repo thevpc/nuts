@@ -1132,7 +1132,7 @@ public class DefaultNWorkspaceConfigModel {
         if (nd != null) {
             if (content && nd.getContent().isNotPresent()) {
                 //this is an unexpected behaviour, fail fast
-                throw new NArtifactNotFoundException(id);
+                throw new NArtifactNotFoundException(id.getLongId());
             }
             return new NBootDef(nd.getId(), nd.getDependencies().get().transitive().toList(),
                     (content && nd.getContent().isPresent()) ? nd.getContent().get() : null);
@@ -1177,7 +1177,7 @@ public class DefaultNWorkspaceConfigModel {
                 );
             }
         }
-        throw new NArtifactNotFoundException(id);
+        throw new NArtifactNotFoundException(id.getLongId());
     }
 
     public void prepareBootClassPathConf(NIdType idType, NId id, NId forId, NId forceRuntimeId, boolean force, boolean processDependencies) {
