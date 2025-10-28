@@ -483,8 +483,8 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
     }
 
     @Override
-    public NDefinitionFilter byDefaultValue(boolean value) {
-        return NInstallStatusDefinitionFilter2.ofDeployed(value);
+    public NDefinitionFilter byDefaultVersion(boolean value) {
+        return NInstallStatusDefinitionFilter2.ofDefaultVersion(value);
     }
 
     @Override
