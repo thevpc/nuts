@@ -226,8 +226,6 @@ public interface NInstallCmd extends NWorkspaceCmd {
      */
     NInstallCmd setDefaultVersion(boolean defaultVersion);
 
-    Map<NId, NInstallStrategy> getIdMap();
-
     /**
      * return true companions should be installed as well
      *
@@ -250,8 +248,6 @@ public interface NInstallCmd extends NWorkspaceCmd {
      */
     NInstallCmd companions(boolean value);
 
-    NInstallStrategy getCompanions();
-
     /**
      * if true update companions
      *
@@ -267,8 +263,6 @@ public interface NInstallCmd extends NWorkspaceCmd {
      */
     boolean isInstalled();
 
-    NInstallStrategy getInstalled();
-
     /**
      * if true reinstall installed artifacts
      *
@@ -276,10 +270,6 @@ public interface NInstallCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     NInstallCmd setInstalled(boolean value);
-
-    NInstallStrategy getStrategy();
-
-    NInstallCmd setStrategy(NInstallStrategy value);
 
     /**
      * execute installation and return result.
