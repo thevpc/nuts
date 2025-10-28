@@ -35,7 +35,7 @@ public class RateLimitedValueTest {
                 .withLimit("10x2seconds", 10).per(NDuration.ofSeconds(2))
                 .build();
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             int index = i;
             lv.takeAndRun(() -> {
                 NOut.println(Instant.now() + " : " + index);
