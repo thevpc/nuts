@@ -12,6 +12,7 @@ public class InstallInfoConfig extends NConfigItem implements Cloneable{
 
     private static final long serialVersionUID = 3;
     private NId id;
+    private boolean deployed;
     private boolean installed;
     private boolean required;
     private Instant creationDate;
@@ -22,6 +23,15 @@ public class InstallInfoConfig extends NConfigItem implements Cloneable{
     private String sourceRepoUUID;
     private List<InstallDepConfig> requiredBy;
     private List<InstallDepConfig> requires;
+
+    public boolean isDeployed() {
+        return deployed;
+    }
+
+    public InstallInfoConfig setDeployed(boolean deployed) {
+        this.deployed = deployed;
+        return this;
+    }
 
     public List<InstallDepConfig> getRequiredBy() {
         return requiredBy;
