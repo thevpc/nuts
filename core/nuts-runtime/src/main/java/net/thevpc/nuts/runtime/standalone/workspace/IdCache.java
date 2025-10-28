@@ -76,30 +76,26 @@ class IdCache {
                 if (!logStart.get()) {
                     Set<String> extensionPointStrings = Arrays.stream(extensionPoints).map(x -> x.getName()).collect(Collectors.toSet());
                     if (id == null) {
-                        LOG
-                                .log(NMsg.ofC("discover extensions from current classloader %s. looking for %s", bootClassLoader, extensionPointStrings)
-                                        .withIntent(NMsgIntent.NOTICE).withLevel(Level.FINE)
-                                );
+                        LOG.log(NMsg.ofC("discover extensions from current classloader %s. looking for %s", bootClassLoader, extensionPointStrings).withIntent(NMsgIntent.NOTICE).withLevel(Level.FINE));
                     } else {
-                        LOG
-                                .log(NMsg.ofC("discover extensions from %s (id=%s) (classloader %s). looking for %s", url, id, bootClassLoader, extensionPointStrings)
-                                        .withIntent(NMsgIntent.NOTICE).withLevel(Level.FINE)
-                                );
+                        LOG.log(NMsg.ofC("discover extensions from %s (id=%s) (classloader %s). looking for %s", url, id, bootClassLoader, extensionPointStrings).withIntent(NMsgIntent.NOTICE).withLevel(Level.FINE));
                     }
                     logStart.set(true);
                 }
                 if (!serviceClass.isAssignableFrom(c)) {
-                    LOG
-                            .log(NMsg.ofC("not a valid type %s <> %s, ignore...", c, serviceClass)
-                                    .withIntent(NMsgIntent.ALERT).withLevel(Level.FINE)
-                            );
+                    if("net.thevpc.nuts.spi.NComponent".equals(serviceClass.getName())) {
+                        LOG.log(NMsg.ofC("not a valid type %s <> %s, ignore...", c, serviceClass).withIntent(NMsgIntent.ALERT).withLevel(Level.FINE));
+                    }else{
+                        LOG.log(NMsg.ofC("not a valid type %s, ignore...", c).withIntent(NMsgIntent.ALERT).withLevel(Level.FINE));
+                    }
                 } else {
                     NClassClassMap cc = classes.computeIfAbsent(extensionPoint, r -> new NClassClassMap());
                     cc.add(c);
-                    LOG
-                            .log(NMsg.ofC("discovered %s as %s in %s", c, extensionPoint, url == null ? "default classloader" : url)
-                                    .withIntent(NMsgIntent.NOTICE).withLevel(Level.FINE)
-                            );
+                    if("net.thevpc.nuts.spi.NComponent".equals(extensionPoint.getName())) {
+                        LOG.log(NMsg.ofC("discovered %s in %s", c, url == null ? "default classloader" : url).withIntent(NMsgIntent.NOTICE).withLevel(Level.FINE));
+                    }else {
+                        LOG.log(NMsg.ofC("discovered %s as %s in %s", c, extensionPoint, url == null ? "default classloader" : url).withIntent(NMsgIntent.NOTICE).withLevel(Level.FINE));
+                    }
                     count++;
                 }
             }
