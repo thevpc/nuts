@@ -196,7 +196,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         if (NDependencyScope.parse(id.toDependency().getScope()).orNull() == NDependencyScope.SYSTEM) {
             // TODO, fix me
             //just ignore or should we still support it?
-            throw new NArtifactNotFoundException(id);
+            throw new NArtifactNotFoundException(id.getLongId());
         }
         NWorkspaceExt dws = NWorkspaceExt.of();
         NFetchStrategy nutsFetchModes = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
@@ -254,7 +254,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         if (foundDefinitionBuilder != null) {
             return foundDefinitionBuilder.build();
         }
-        throw new NArtifactNotFoundException(id);
+        throw new NArtifactNotFoundException(id.getLongId());
     }
 
     protected DefaultNDefinitionBuilder2 fetchDescriptorAsDefinition(NId id, NFetchStrategy nutsFetchModes, NFetchMode mode, NRepository repo) {
