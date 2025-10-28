@@ -30,6 +30,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
@@ -90,7 +91,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (file.path.isDirectory()) {
-                NSession.of().getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", file.path.toCompressedForm()));
+                NSession.of().getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", NCoreLogUtils.forProgress(file.path)));
                 visitedFoldersCount++;
                 boolean deep = maxDepth < 0 || file.depth < maxDepth;
                 if (file.path.isDirectory()) {
