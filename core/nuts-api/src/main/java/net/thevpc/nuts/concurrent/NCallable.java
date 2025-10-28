@@ -34,9 +34,58 @@ import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
 /**
- * Describable Runnable
+ * A {@link Callable} extension that integrates with the Nuts element description system.
+ * <p>
+ * {@code NCallable} behaves like a standard {@link Callable} but adds
+ * support for structured self-description through {@link NElementRedescribable}.
+ * This allows callables to carry semantic metadata that can be serialized,
+ * logged, or analyzed at runtime.
+ * </p>
+ *
+ * <p>
+ * This interface also provides exception-safety utilities for wrapping regular
+ * {@link Callable} instances so that checked exceptions are rethrown as unchecked
+ * using {@link NExceptions#ofUncheckedException(Throwable)}.
+ * </p>
+ *
+ * <p>
+ * Example:
+ * <pre>{@code
+ * NCallable<String> task = NCallable.of(() -> {
+ *     Thread.sleep(100);
+ *     return "Done";
+ * });
+ *
+ * // Optionally attach a structured description
+ * task = task.redescribe(() -> NElements.ofObject().set("task", "sleep-then-done").build());
+ *
+ * String result = task.call(); // No checked exception declaration needed
+ * }</pre>
+ * </p>
+ *
+ * @param <T> the result type returned by this callable
+ * @see NElementRedescribable
+ * @see NElement
+ * @see NExceptions
+ * @since 0.8.0
  */
 public interface NCallable<T> extends NElementRedescribable<NCallable<T>>, Callable<T> {
+
+    /**
+     * Wraps a standard {@link Callable} into an {@code NCallable}.
+     * <p>
+     * If {@code other} is already an instance of {@code NCallable}, it is returned as-is.
+     * Otherwise, this method creates a wrapper that delegates to {@code other.call()}.
+     * </p>
+     * <p>
+     * Checked exceptions thrown by the delegate are automatically rethrown
+     * as unchecked exceptions using {@link NExceptions#ofUncheckedException(Throwable)}.
+     * </p>
+     *
+     * @param other the callable to wrap, may be {@code null}
+     * @param <T>   the result type of the callable
+     * @return a non-null {@code NCallable} wrapping the given callable
+     */
     static <T> NCallable<T> of(Callable<T> other) {
         if (other instanceof NCallable) {
             return (NCallable<T>) other;
@@ -55,8 +104,32 @@ public interface NCallable<T> extends NElementRedescribable<NCallable<T>>, Calla
         };
     }
 
+    /**
+     * Executes the computation and returns its result.
+     * <p>
+     * Unlike the standard {@link Callable#call()}, this method does not
+     * declare checked exceptions; they are automatically rethrown as unchecked.
+     * </p>
+     *
+     * @return the computed result
+     * @throws RuntimeException if the computation throws any exception
+     */
     T call();
 
+    /**
+     * Associates a new structured description with this callable.
+     * <p>
+     * The description is a lazily evaluated {@link NElement} that provides
+     * additional metadata about the callable’s purpose or configuration.
+     * </p>
+     *
+     * <p>
+     * If {@code description} is {@code null}, the original callable is returned unchanged.
+     * </p>
+     *
+     * @param description supplier of the {@link NElement} description
+     * @return a new {@code NCallable} instance with the given description
+     */
     default NCallable<T> redescribe(Supplier<NElement> description) {
         if (description == null) {
             return this;
