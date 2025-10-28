@@ -96,21 +96,6 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return NLog.of(DefaultNInstalledRepository.class);
     }
 
-//    public Set<NutsId> getChildrenDependencies(NutsId id) {
-//        return Collections.emptySet();
-//    }
-//
-//    public Set<NutsId> getParentDependencies(NutsId id) {
-//        return Collections.emptySet();
-//    }
-//
-//    public void addDependency(NutsId id, NutsId parentId) {
-//
-//    }
-//
-//    public void removeDependency(NutsId id, NutsId parentId) {
-//
-//    }
 
     @Override
     public boolean isDefaultVersion(NId id) {
@@ -229,7 +214,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     public NInstallInformation install(NDefinition def) {
         boolean succeeded = false;
         try {
-            NInstallInformation a = updateInstallInformation(def, true, null, true);
+            NInstallInformation a = updateInstallInformation(def.getId(), def, null, true, null);
             succeeded = true;
             return a;
         } finally {
@@ -274,10 +259,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     @Override
-    public NInstallInformation require(NDefinition def, boolean deploy, NId[] forIds, NDependencyScope scope) {
+    public NInstallInformation require(NDefinition def, NId[] forIds, NDependencyScope scope) {
         boolean succeeded = false;
         NId requiredId = def.getId();
-        NInstallInformation nInstallInformation = updateInstallInformation(def, null, true, deploy);
+        NInstallInformation nInstallInformation = updateInstallInformation(def.getId(), def, null, null, true);
         if (forIds != null) {
             for (NId requestorId : forIds) {
                 if (requestorId != null) {
@@ -414,18 +399,16 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             defaultVersion = isDefaultVersion(ii.getId());
         }
         Instant expireTime = session.getExpireTime().orNull();
-        if (expireTime != null && (ii.isInstalled() || ii.isRequired())) {
-            if (ii.isInstalled() || ii.isRequired()) {
-                Instant lastModifiedDate = ii.getLastModificationDate();
-                if (lastModifiedDate == null) {
-                    lastModifiedDate = ii.getCreationDate();
-                }
-                if (lastModifiedDate == null || lastModifiedDate.isBefore(expireTime)) {
-                    obsolete = true;
-                }
+        if (expireTime != null && (ii.isInstalled() || ii.isRequired() || ii.isDeployed())) {
+            Instant lastModifiedDate = ii.getLastModificationDate();
+            if (lastModifiedDate == null) {
+                lastModifiedDate = ii.getCreationDate();
+            }
+            if (lastModifiedDate == null || lastModifiedDate.isBefore(expireTime)) {
+                obsolete = true;
             }
         }
-        NInstallStatus s = NInstallStatus.of(ii.isInstalled(), ii.isRequired(), obsolete, defaultVersion);
+        NInstallStatus s = NInstallStatus.of(ii.isDeployed(), ii.isInstalled(), ii.isRequired(), obsolete, defaultVersion);
         return new DefaultNInstallInfo(ii.getId(),
                 s,
                 NPath.ofIdStore(ii.getId(), NStoreType.BIN),
@@ -438,23 +421,23 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         );
     }
 
-    private NInstallInformation updateInstallInformation(NDefinition def, Boolean install, Boolean require, boolean deploy) {
-        NSession session = workspace.currentSession();
+    @Override
+    public NInstallInformation deploy(NDefinition def) {
+        this.deploy()
+                .setId(def.getId())
+                .setContent(def.getContent().orNull())
+                //.setFetchMode(NutsFetchMode.LOCAL)
+                .setDescriptor(def.getDescriptor())
+                .run();
+        return getInstallInformation(def.getId());
+    }
+
+    private NInstallInformation updateInstallInformation(NId id1, NDefinition def, Boolean deployed, Boolean install, Boolean require) {
         invalidateInstallationDigest();
-        NId id1 = def.getId();
         InstallInfoConfig ii = _wstore().loadInstallInfoConfig(id1);
         boolean wasInstalled = false;
         boolean wasRequired = false;
-        if (deploy) {
-            session.copy().setConfirm(NConfirmationMode.YES).runWith(() ->
-                    this.deploy()
-                            .setId(id1)
-                            .setContent(def.getContent().orNull())
-                            //.setFetchMode(NutsFetchMode.LOCAL)
-                            .setDescriptor(def.getDescriptor())
-                            .run()
-            );
-        }
+        boolean wasDeployed = false;
         if (ii == null) {
 //            for (NutsDependency dependency : def.getDependencies()) {
 //                Iterator<NutsId> it = searchVersions().setId(dependency.getId()).setSession(NutsWorkspaceHelper.createRepositorySession(session, this, NutsFetchMode.DEPLOYED)).getResult();
@@ -465,24 +448,35 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             NId id = id1;
             NWorkspaceUtils.of(workspace).checkReadOnly();
             try {
-                boolean _install = false;
-                boolean _require = false;
-                if (install != null && require != null) {
-                    _install = install;
-                    _require = require;
-                } else if (install != null) {
-                    _install = install;
-                    _require = !_install;
-                } else if (require != null) {
-                    _require = require;
-                    _install = !_require;
-                } else {
-                    _install = true;
+                boolean _deploy;
+                boolean _install;
+                boolean _require;
+                if (install == null && require == null && deployed == null) {
+                    _deploy = false;
+                    _install = false;
                     _require = false;
+                } else if (install != null) {
+                    _deploy = deployed == null || deployed;
+                    _install = install;
+                    _require = require != null && require;
+                } else if (require != null) {
+                    _deploy = deployed == null || require;
+                    _install = install != null && install;
+                    _require = require;
+                } else if (deployed != null) {
+                    _deploy = deployed;
+                    _install = install != null && install;
+                    _require = require != null && require;
+                } else {
+                    _deploy = deployed != null && deployed;
+                    _install = install != null && install;
+                    _require = require != null && require;
                 }
+
                 ii = new InstallInfoConfig();
                 ii.setConfigVersion(DefaultNWorkspace.VERSION_INSTALL_INFO_CONFIG);
                 ii.setId(id);
+                ii.setDeployed(_deploy);
                 ii.setInstalled(_install);
                 ii.setRequired(_require);
                 saveCreate(ii);
@@ -497,16 +491,22 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             return uu;
         } else {
             InstallInfoConfig ii0 = ii.copy();
+            wasDeployed = ii.isDeployed();
             wasInstalled = ii.isInstalled();
             wasRequired = ii.isRequired();
+            boolean _deploy = wasDeployed;
             boolean _install = wasInstalled;
             boolean _require = wasRequired;
+            if (deployed != null) {
+                _deploy = deployed;
+            }
             if (install != null) {
                 _install = install;
             }
             if (require != null) {
                 _require = require;
             }
+            ii.setDeployed(_deploy);
             ii.setInstalled(_install);
             ii.setRequired(_require);
             saveUpdate(ii, ii0);
@@ -595,6 +595,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                     NDescriptor rep = deployments.deploy(this, NConfirmationMode.YES);
                     this.setDescriptor(rep);
                     this.setId(rep.getId());
+                    updateInstallInformation(getId(), null, true, null, null);
                     succeeded = true;
                 } finally {
                     addLog(NInstallLogAction.DEPLOY, getId(), null, null, succeeded);
@@ -613,6 +614,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 boolean succeeded = false;
                 try {
                     deployments.undeploy(this);
+                    updateInstallInformation(getId(), null, false, null, null);
                     succeeded = true;
                 } finally {
                     addLog(NInstallLogAction.UNDEPLOY, getId(), null, null, succeeded);
