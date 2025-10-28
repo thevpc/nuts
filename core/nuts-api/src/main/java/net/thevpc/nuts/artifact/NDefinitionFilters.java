@@ -223,7 +223,7 @@ public interface NDefinitionFilters extends NTypedFilters<NDefinitionFilter> {
 
     NDefinitionFilter byRequired(boolean value);
 
-    NDefinitionFilter byDefaultValue(boolean value);
+    NDefinitionFilter byDefaultVersion(boolean value);
 
     NDefinitionFilter byObsolete(boolean value);
 
