@@ -152,7 +152,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                     }
                     return NOptional.of(success);
                 } else {
-                    return NOptional.ofError(() -> NMsg.ofC(NI18n.of("nuts descriptor not found %s"), id), new NArtifactNotFoundException(id));
+                    return NOptional.ofError(() -> NMsg.ofC(NI18n.of("nuts descriptor not found %s"), id.getLongId()), new NArtifactNotFoundException(id.getLongId()));
                 }
             } catch (RuntimeException ex) {
                 return NOptional.ofError(() -> NMsg.ofC(NI18n.of("nuts descriptor not found %s"), id), ex);
@@ -293,7 +293,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 } else if (impl2Ex != null) {
                     return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), impl2Ex);
                 } else {
-                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NArtifactNotFoundException(id));
+                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NArtifactNotFoundException(id.getLongId()));
                 }
             } else {
                 NPath c2 = null;
@@ -310,7 +310,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 } else if (impl2Ex != null) {
                     return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), impl2Ex);
                 } else {
-                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NArtifactNotFoundException(id));
+                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NArtifactNotFoundException(id.getLongId()));
                 }
             }
         };
