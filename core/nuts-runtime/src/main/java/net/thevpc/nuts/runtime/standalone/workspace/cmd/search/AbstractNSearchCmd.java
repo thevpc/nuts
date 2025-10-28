@@ -720,7 +720,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 return cmdLine.matcher().matchEntry((v) -> setDefinitionFilter(NDefinitionFilterUtils.addLockedIds(getDefinitionFilter(), NId.of(v.stringValue())))).anyMatch();
             }
             case "--deployed": {
-                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byDefaultValue(a.booleanValue()).and(getDefinitionFilter()))).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byDeployed(a.booleanValue()).and(getDefinitionFilter()))).anyMatch();
             }
             case "-i":
             case "--installed": {
@@ -1062,7 +1062,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         }
         if (d == null) {
             if (isFailFast()) {
-                throw new NArtifactNotFoundException(next);
+                throw new NArtifactNotFoundException(next.getLongId());
             }
             return d;
         }
