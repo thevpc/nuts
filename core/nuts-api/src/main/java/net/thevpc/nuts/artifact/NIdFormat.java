@@ -49,7 +49,7 @@ public interface NIdFormat extends NFormat, NComponent {
     }
 
     static NIdFormat of() {
-       return NExtensions.of(NIdFormat.class);
+        return NExtensions.of(NIdFormat.class);
     }
 
     /**
@@ -201,4 +201,11 @@ public interface NIdFormat extends NFormat, NComponent {
 
     NIdFormat setNtf(boolean ntf);
 
+    public boolean isOmitCondition();
+
+    public NIdFormat setOmitCondition(boolean omitCondition);
+
+    public boolean isOmitExclusion();
+
+    public NIdFormat setOmitExclusion(boolean omitExclusion);
 }
