@@ -76,7 +76,7 @@ public class DefaultNFetchContentRepositoryCmd extends AbstractNFetchContentRepo
         try {
             NPath f = xrepo.fetchContentImpl(id, descriptor0, getFetchMode());
             if (f == null) {
-                throw new NArtifactNotFoundException(id);
+                throw new NArtifactNotFoundException(id.getLongId());
             }
             NLogUtils.traceMessage(_LOG(), Level.FINER, repo.getName(), getFetchMode(), id.getLongId(), NMsgIntent.SUCCESS, "fetch content", startTime, null);
             result = f;
