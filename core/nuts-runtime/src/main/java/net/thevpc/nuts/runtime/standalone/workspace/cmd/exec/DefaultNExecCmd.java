@@ -495,7 +495,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     if (idToExec != null) {
                         return ws_execId(idToExec, cmdName, args, executorOptions, workspaceOptions, executionType, runAs);
                     } else {
-                        throw new NArtifactNotFoundException(goodId);
+                        throw new NArtifactNotFoundException(goodId.getLongId());
                     }
                 }
             }
@@ -935,7 +935,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     .build();
             return new NExecutorComponentAndContext(execComponent, executionContext);
         }
-        throw new NArtifactNotFoundException(def == null ? null : def.getId());
+        throw new NArtifactNotFoundException(def == null ? null : def.getId().getLongId());
     }
 
     enum CmdKind {
