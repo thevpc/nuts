@@ -53,6 +53,7 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.platform.NOsFamily;
 
+import java.io.Console;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -135,11 +136,15 @@ public class DefaultNBootModel implements NBootModel {
             flags.add("customErr");
             customErr = true;
         }
-        if (System.console() != null) {
+        Console console0 = System.console();
+        if (console0 != null) {
             flags.add("console");
         }
         if (!customOut) {
-            if (System.console() != null) {
+            if(System.getenv("TERM")!=null && !"dumb".equalsIgnoreCase(System.getenv("TERM"))){
+                flags.add("tty");
+                tty = true;
+            }else if (console0 != null) {
                 flags.add("tty");
                 tty = true;
             } else {
@@ -154,6 +159,10 @@ public class DefaultNBootModel implements NBootModel {
         boolean supportsAnsi = false;
         boolean acceptAnsi = false;
         boolean denyAnsi = false;
+        boolean noColor = System.getenv("NO_COLOR") != null;
+        if(noColor){
+            denyAnsi = true;
+        }
         if (bOption.getTerminalMode().isPresent()) {
             switch (bOption.getTerminalMode().get()) {
                 case FORMATTED:
