@@ -31,7 +31,6 @@ import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NInstallCmd;
-import net.thevpc.nuts.command.NInstallStrategy;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
@@ -48,16 +47,16 @@ import java.util.function.Predicate;
 public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd> implements NInstallCmd {
 
     protected boolean defaultVersion = true;
-    protected NInstallStrategy companions;
-    protected NInstallStrategy installed;
-    protected NInstallStrategy strategy = NInstallStrategy.DEFAULT;
+    protected InstallFlags companionsInstallFlags;
+    protected InstallFlags installedInstallFlags;
+    protected InstallFlags currentInstallFlags = new InstallFlags();
     protected List<String> args;
     protected List<ConditionalArguments> conditionalArguments = new ArrayList<>();
-    protected final Map<NId, NInstallStrategy> ids = new LinkedHashMap<>();
+    protected final Map<NId, InstallFlags> ids = new LinkedHashMap<>();
     protected NDefinition[] result;
     protected NId[] failed;
 
-    protected static class ConditionalArguments {
+    public static class ConditionalArguments {
 
         Predicate<NDefinition> predicate;
         List<String> args = new ArrayList<>();
@@ -78,6 +77,42 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
 
     public AbstractNInstallCmd(NWorkspace workspace) {
         super("install");
+    }
+
+    public boolean isForce() {
+        return currentInstallFlags.force;
+    }
+
+    public NInstallCmd setForce(boolean force) {
+        currentInstallFlags.force = force;
+        return this;
+    }
+
+    public boolean isSwitchVersion() {
+        return currentInstallFlags.switchVersion;
+    }
+
+    public NInstallCmd setSwitchVersion(boolean switchVersion) {
+        currentInstallFlags.switchVersion = switchVersion;
+        return this;
+    }
+
+    public boolean isRepair() {
+        return currentInstallFlags.repair;
+    }
+
+    public NInstallCmd setRepair(boolean repair) {
+        currentInstallFlags.repair = repair;
+        return this;
+    }
+
+    public boolean isDeployOnly() {
+        return currentInstallFlags.deployOnly;
+    }
+
+    public NInstallCmd setDeployOnly(boolean deployOnly) {
+        currentInstallFlags.deployOnly = deployOnly;
+        return this;
     }
 
     @Override
@@ -115,7 +150,7 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
         if (id == null) {
             throw new NArtifactNotFoundException(id);
         } else {
-            ids.put(id, getStrategy());
+            ids.put(id, currentInstallFlags.copy());
         }
         return this;
     }
@@ -211,41 +246,31 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
         return NCollections.unmodifiableList(ids == null ? null : ids.keySet());
     }
 
-    @Override
-    public Map<NId, NInstallStrategy> getIdMap() {
-        return ids == null ? new LinkedHashMap<>() : new LinkedHashMap<>(ids);
-    }
+//    @Override
+//    public Map<NId, NInstallStrategy> getIdMap() {
+//        return ids == null ? new LinkedHashMap<>() : new LinkedHashMap<>(ids);
+//    }
 
     @Override
     public boolean isCompanions() {
-        return companions != null;
+        return companionsInstallFlags != null;
     }
 
     @Override
     public NInstallCmd setCompanions(boolean value) {
-        this.companions = value ? getStrategy() : null;
+        this.companionsInstallFlags = value ? currentInstallFlags.copy() : null;
         return this;
-    }
-
-    @Override
-    public NInstallStrategy getCompanions() {
-        return companions;
     }
 
     @Override
     public boolean isInstalled() {
-        return installed != null;
+        return installedInstallFlags != null;
     }
 
     @Override
     public NInstallCmd setInstalled(boolean value) {
-        this.installed = value ? getStrategy() : null;
+        this.installedInstallFlags = value ? currentInstallFlags.copy() : null;
         return this;
-    }
-
-    @Override
-    public NInstallStrategy getInstalled() {
-        return installed;
     }
 
     @Override
@@ -279,19 +304,19 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
         return companions(true);
     }
 
-    @Override
-    public NInstallCmd setStrategy(NInstallStrategy value) {
-        if (value == null) {
-            value = NInstallStrategy.DEFAULT;
-        }
-        this.strategy = value;
-        return this;
-    }
-
-    @Override
-    public NInstallStrategy getStrategy() {
-        return strategy;
-    }
+//    @Override
+//    public NInstallCmd setStrategy(NInstallStrategy value) {
+//        if (value == null) {
+//            value = NInstallStrategy.DEFAULT;
+//        }
+//        this.strategy = value;
+//        return this;
+//    }
+//
+//    @Override
+//    public NInstallStrategy getStrategy() {
+//        return strategy;
+//    }
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
@@ -309,18 +334,18 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
             case "--installed": {
                 return cmdLine.matcher().matchFlag((v) -> this.setInstalled(v.booleanValue())).anyMatch();
             }
-            case "-s":
-            case "--strategy": {
-                return cmdLine.matcher().matchEntry(a->this.setStrategy(NInstallStrategy.parse(a.stringValue()).get())).anyMatch();
-            }
+//            case "-s":
+//            case "--strategy": {
+//                return cmdLine.matcher().matchEntry(a->this.setStrategy(NInstallStrategy.parse(a.stringValue()).get())).anyMatch();
+//            }
             case "--reinstall": {
-                return cmdLine.matcher().matchTrueFlag(a->this.setStrategy(NInstallStrategy.REINSTALL)).anyMatch();
+                return cmdLine.matcher().matchFlag(a->this.setForce(a.booleanValue())).anyMatch();
             }
-            case "--require": {
-                return cmdLine.matcher().matchTrueFlag(a->this.setStrategy(NInstallStrategy.REQUIRE)).anyMatch();
+            case "--deploy-only": {
+                return cmdLine.matcher().matchFlag(a->this.setDeployOnly(a.booleanValue())).anyMatch();
             }
             case "--repair": {
-                return cmdLine.matcher().matchTrueFlag(a->this.setStrategy(NInstallStrategy.REPAIR)).anyMatch();
+                return cmdLine.matcher().matchTrueFlag(a->this.setRepair(a.booleanValue())).anyMatch();
             }
             case "-g":
             case "--args": {
