@@ -44,7 +44,7 @@ public class NErrorHandlerIterator<T> extends NIteratorBase<T> {
             return v;
         } catch (RuntimeException ex) {
             NLog.of(NIndexFirstIterator.class)
-                    .log(NMsg.ofC("error evaluating Iterator 'hasNext()' : %s", ex).asFineAlert());
+                    .log(NMsg.ofC("error evaluating Iterator 'hasNext()' : %s", ex).asDebug().withThrowable(ex));
             switch (type) {
                 case IGNORE: {
                     // do nothing
