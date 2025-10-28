@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NLiteral;
@@ -34,7 +35,6 @@ public class CProgressBar {
     private float indeterminateRatio = 0.3f;
     private NLog logger;
     private int columns = 3;
-    private int maxColumns = 133;
     private boolean suffixMoveLineStart = true;
     private boolean prefixMoveLineStart = true;
     private long lastPrint = 0;
@@ -43,6 +43,8 @@ public class CProgressBar {
     private ProgressOptions options;
     private Formatter formatter;
     private static Map<String, Supplier<Formatter>> formatters = new HashMap();
+    private int maxColumnsInText = 133;
+    private int maxColumnsInOutput = 80;
 
     static {
         reg("", () -> {
@@ -245,6 +247,7 @@ public class CProgressBar {
             );
         });
     }
+
 
     private static void reg(String name, Supplier<Formatter> f) {
         formatters.put(name, f);
@@ -593,10 +596,7 @@ public class CProgressBar {
             if (p == null || p.isEmpty()) {
                 return;
             }
-            synchronized (CProgressBar.class) {
-                out.resetLine();
-                out.print(p);
-            }
+            printStreamWithCut(p, out);
         }
     }
 
@@ -604,17 +604,35 @@ public class CProgressBar {
         if (p == null || p.isEmpty()) {
             return;
         }
-        boolean forceNewline=out.getTerminalMode() == NTerminalMode.FILTERED;
+        boolean forceNewline = out.getTerminalMode() == NTerminalMode.FILTERED;
         Level armedLogLevel = options.getArmedLogLevel();
         if (options.isArmedNewline() || forceNewline) {
             out.print("\n");
         } else if (armedLogLevel != null) {
             logger.log(NMsg.ofNtf(p).withLevel(armedLogLevel).withIntent(NMsgIntent.PROGRESS));
         } else {
-            synchronized (CProgressBar.class) {
-                out.resetLine();
-                out.print(p);
+            printStreamWithCut(p, out);
+        }
+    }
+
+    private void printStreamWithCut(NText p, NPrintStream out) {
+        synchronized (CProgressBar.class) {
+            NSystemTerminalBase.Size size = null;
+            int max=maxColumnsInOutput;
+            try {
+                size = out.getTerminal().getTerminalSize();
+            }catch (Exception ex) {
+                // just ignore
             }
+            if(size!=null && size.getColumns()>0){
+                max=size.getColumns()-1;
+            }
+            out.resetLine();
+            int len = p.length();
+            if (len > max) {
+                p = p.substring(0, max);
+            }
+            out.print(p);
         }
     }
 
@@ -657,8 +675,8 @@ public class CProgressBar {
         if (maxMessage < s2) {
             maxMessage = s2;
         }
-        if (maxMessage > maxColumns) {
-            maxMessage = maxColumns;
+        if (maxMessage > maxColumnsInText) {
+            maxMessage = maxColumnsInText;
         }
         return sb.build();
     }
