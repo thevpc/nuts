@@ -29,7 +29,8 @@ public interface NInstalledRepository extends NRepository {
 
     void uninstall(NDefinition id);
 
-    NInstallInformation require(NDefinition id, boolean deploy, NId[] forId, NDependencyScope scope);
+    NInstallInformation require(NDefinition id, NId[] forId, NDependencyScope scope);
+    NInstallInformation deploy(NDefinition id);
 
     void unrequire(NId id, NId forId, NDependencyScope scope);
 
