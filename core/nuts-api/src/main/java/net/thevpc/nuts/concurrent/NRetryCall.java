@@ -28,6 +28,7 @@ public interface NRetryCall<T> extends NCallable<T>, NElementDescribable {
     NRetryCall<T> setRetryPeriod(IntFunction<NDuration> retryPeriod);
 
     NRetryCall<T> setMultipliedRetryPeriod(NDuration basePeriod, double multiplier);
+
     NRetryCall<T> setExponentialRetryPeriod(NDuration basePeriod, double multiplier);
 
     NRetryCall<T> setRetryPeriod(NDuration period);
