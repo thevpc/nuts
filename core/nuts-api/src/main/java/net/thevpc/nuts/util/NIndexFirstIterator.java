@@ -63,7 +63,7 @@ public class NIndexFirstIterator<T> extends NIteratorBase<T> {
                     index = null;
                 } catch (NIndexerNotAccessibleException ex) {
                     NLog.of(NIndexFirstIterator.class)
-                            .log(NMsg.ofC("error evaluating Iterator 'hasNext()' : %s", ex).asFineAlert());
+                            .log(NMsg.ofC("error evaluating Iterator 'hasNext()' : %s", ex).asDebug().withThrowable(ex));
                     other = null;
                     return false;
                 }
