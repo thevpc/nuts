@@ -13,6 +13,7 @@ import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.util.SingleBaseIdFilterHelper;
+import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
@@ -55,7 +56,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
         }
         NSession session = NSession.of();
         if (url != null) {
-            session.getTerminal().printProgress(NMsg.ofC("peek %s", url));
+            session.getTerminal().printProgress(NMsg.ofC("peek %s", NCoreLogUtils.forProgressUrl(url)));
             try (InputStream inputStream = DefaultNWebCli.prepareGlobalOpenStream(url)) {
                 //ws.io().copy().from(r).getByteArrayResult();
                 found = true;
