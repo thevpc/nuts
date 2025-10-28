@@ -47,17 +47,16 @@ public class NInstallStatus {
 
     private static final NInstallStatus[] ALL = _buildNutsInstallStatusArray();
 
-    public static final NInstallStatus NONE = of(false, false, false, false);
-    public static final NInstallStatus INSTALLED = of(true, false, false, false);
-    public static final NInstallStatus REQUIRED = of(false, true, false, false);
-    public static final NInstallStatus OBSOLETE = of(false, false, true, false);
-    public static final NInstallStatus DEFAULT_VALUE = of(false, false, false, true);
+    public static final NInstallStatus NONE = of(false,false, false, false, false);
+    public static final NInstallStatus REQUIRED = of(false,false, true, false, false);
+    private final boolean deployed;
     private final boolean installed;
     private final boolean required;
     private final boolean obsolete;
     private final boolean defaultVersion;
 
-    private NInstallStatus(boolean installed, boolean required, boolean obsolete, boolean defaultVersion) {
+    private NInstallStatus(boolean deployed, boolean installed, boolean required, boolean obsolete, boolean defaultVersion) {
+        this.deployed = deployed;
         this.installed = installed;
         this.required = required;
         this.obsolete = obsolete;
@@ -65,9 +64,10 @@ public class NInstallStatus {
     }
 
     private static NInstallStatus[] _buildNutsInstallStatusArray() {
-        NInstallStatus[] ALL = new NInstallStatus[16];
-        for (int i = 0; i < 16; i++) {
+        NInstallStatus[] ALL = new NInstallStatus[32];
+        for (int i = 0; i < 32; i++) {
             ALL[i] = new NInstallStatus(
+                    (i & 0x1) != 0,
                     (i & 0x1) != 0,
                     (i & 0x2) != 0,
                     (i & 0x4) != 0,
@@ -77,17 +77,14 @@ public class NInstallStatus {
         return ALL;
     }
 
-    public static NInstallStatus of(boolean installed, boolean required, boolean obsolete, boolean defaultVersion) {
+    public static NInstallStatus of(boolean deployed,boolean installed, boolean required, boolean obsolete, boolean defaultVersion) {
         return ALL[
-                (installed ? 1 : 0) * 1
-                        + (required ? 1 : 0) * 2
-                        + (obsolete ? 1 : 0) * 4
-                        + (defaultVersion ? 1 : 0) * 8
+                (deployed ? 1 : 0) * 1
+                + (installed ? 1 : 0) * 2
+                        + (required ? 1 : 0) * 4
+                        + (obsolete ? 1 : 0) * 8
+                        + (defaultVersion ? 1 : 0) * 16
                 ];
-    }
-
-    public boolean isDeployed() {
-        return isInstalled() || isRequired();
     }
 
     public boolean isNonDeployed() {
@@ -96,6 +93,10 @@ public class NInstallStatus {
 
     public boolean isInstalledOrRequired() {
         return isInstalled() || isRequired();
+    }
+
+    public boolean isDeployed() {
+        return deployed;
     }
 
     public boolean isInstalled() {
@@ -115,24 +116,27 @@ public class NInstallStatus {
     }
 
     public NInstallStatus withInstalled(boolean installed) {
-        return of(installed, required, obsolete, defaultVersion);
+        return of(deployed,installed, required, obsolete, defaultVersion);
+    }
+    public NInstallStatus withDeployed(boolean deployed) {
+        return of(deployed,installed, required, obsolete, defaultVersion);
     }
 
     public NInstallStatus withRequired(boolean required) {
-        return of(installed, required, obsolete, defaultVersion);
+        return of(deployed,installed, required, obsolete, defaultVersion);
     }
 
     public NInstallStatus withObsolete(boolean obsolete) {
-        return of(installed, required, obsolete, defaultVersion);
+        return of(deployed,installed, required, obsolete, defaultVersion);
     }
 
     public NInstallStatus withDefaultVersion(boolean defaultVersion) {
-        return of(installed, required, obsolete, defaultVersion);
+        return of(deployed,installed, required, obsolete, defaultVersion);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(installed, required, obsolete, defaultVersion);
+        return Objects.hash(deployed,installed, required, obsolete, defaultVersion);
     }
 
     @Override
@@ -140,7 +144,7 @@ public class NInstallStatus {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NInstallStatus that = (NInstallStatus) o;
-        return installed == that.installed && required == that.required && obsolete == that.obsolete && defaultVersion == that.defaultVersion;
+        return deployed == that.deployed && installed == that.installed && required == that.required && obsolete == that.obsolete && defaultVersion == that.defaultVersion;
     }
 
     @Override
@@ -148,6 +152,9 @@ public class NInstallStatus {
         StringBuilder sb = new StringBuilder();
         if (installed) {
             sb.append("installed");
+        }
+        if (deployed) {
+            sb.append("deployed");
         }
         if (required) {
             if (sb.length() > 0) {
