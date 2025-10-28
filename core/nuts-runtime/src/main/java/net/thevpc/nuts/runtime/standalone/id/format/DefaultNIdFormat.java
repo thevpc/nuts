@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.id.format;
 
+import net.thevpc.nuts.artifact.NEnvCondition;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NIdBuilder;
@@ -25,12 +26,32 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
     private boolean omitGroup;
     private boolean omitImportedGroup;
     private boolean omitProperties;
+    private boolean omitCondition;
+    private boolean omitExclusion;
     private boolean highlightImportedGroup;
     private Set<String> omittedProperties = new HashSet<>();
     private NId id;
 
     public DefaultNIdFormat() {
         super("id-format");
+    }
+
+    public boolean isOmitCondition() {
+        return omitCondition;
+    }
+
+    public NIdFormat setOmitCondition(boolean omitCondition) {
+        this.omitCondition = omitCondition;
+        return this;
+    }
+
+    public boolean isOmitExclusion() {
+        return omitExclusion;
+    }
+
+    public NIdFormat setOmitExclusion(boolean omitExclusion) {
+        this.omitExclusion = omitExclusion;
+        return this;
     }
 
     public NIdFormat setNtf(boolean ntf) {
@@ -149,13 +170,14 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
         String scope = queryMap.remove(NConstants.IdProperties.SCOPE);
         String optional = queryMap.remove(NConstants.IdProperties.OPTIONAL);
         String classifier = id.getClassifier();
+        NEnvCondition condition = id.getCondition();
         String exclusions = queryMap.remove(NConstants.IdProperties.EXCLUSIONS);
         String repo = queryMap.remove(NConstants.IdProperties.REPO);
         NIdBuilder idBuilder = id.builder();
         if (isOmitOtherProperties()) {
-            idBuilder.setProperties(new LinkedHashMap<>());
-        }
-        if (isOmitFace()) {
+            idBuilder.clearProperties();
+            idBuilder.setCondition(NEnvCondition.BLANK);
+        }else if (isOmitFace()) {
             idBuilder.setProperty(NConstants.IdProperties.FACE, null);
         }
         id = idBuilder.build();
@@ -235,27 +257,31 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
                 sb.append(_encodeKey(id.getRepository()), NTextStyle.pale());
             }
         }
-        for (Map.Entry<String, String> e : CoreFilterUtils.toMap(id.getCondition()).entrySet()) {
-            String kk = e.getKey();
-            String kv = e.getValue();
-            if (firstQ) {
-                sb.append("?", NTextStyle.separator());
-                firstQ = false;
-            } else {
-                sb.append("&", NTextStyle.separator());
+        if(!isOmitCondition()) {
+            for (Map.Entry<String, String> e : CoreFilterUtils.toMap(condition).entrySet()) {
+                String kk = e.getKey();
+                String kv = e.getValue();
+                if (firstQ) {
+                    sb.append("?", NTextStyle.separator());
+                    firstQ = false;
+                } else {
+                    sb.append("&", NTextStyle.separator());
+                }
+                sb.append(_encodeKey(kk), NTextStyle.keyword(2)).append("=", NTextStyle.separator());
+                sb.append(_encodeValue(kv));
             }
-            sb.append(_encodeKey(kk), NTextStyle.keyword(2)).append("=", NTextStyle.separator());
-            sb.append(_encodeValue(kv));
         }
-        if (!NBlankable.isBlank(exclusions)) {
-            if (firstQ) {
-                sb.append("?", NTextStyle.separator());
-                firstQ = false;
-            } else {
-                sb.append("&", NTextStyle.separator());
+        if(!isOmitExclusion()) {
+            if (!NBlankable.isBlank(exclusions)) {
+                if (firstQ) {
+                    sb.append("?", NTextStyle.separator());
+                    firstQ = false;
+                } else {
+                    sb.append("&", NTextStyle.separator());
+                }
+                sb.append("exclusions", NTextStyle.keyword(2)).append("=", NTextStyle.separator());
+                sb.append(_encodeKey(exclusions), NTextStyle.warn());
             }
-            sb.append("exclusions", NTextStyle.keyword(2)).append("=", NTextStyle.separator());
-            sb.append(_encodeKey(exclusions), NTextStyle.warn());
         }
         if (!NBlankable.isBlank(id.getPropertiesQuery())) {
             Set<String> otherKeys = new TreeSet<>(queryMap.keySet());
