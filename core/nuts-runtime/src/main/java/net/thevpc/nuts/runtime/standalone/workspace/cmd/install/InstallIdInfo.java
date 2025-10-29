@@ -10,15 +10,11 @@ public class InstallIdInfo implements NCopiable, Cloneable {
     public boolean extra;
     public String sid;
     public NId id;
-    public boolean doRequire;
-//    public boolean doRequireDependencies;
     public boolean ignored;
     public InstallFlags flags;
     public String doError;
-//    public NInstallStatus oldInstallStatus;
     public Set<NId> forIds = new HashSet<>();
     public InstallIdCacheItem cacheItem;
-    public boolean updateDefaultVersion;
     public List<NId> requiredForIds;
     public boolean resolveInstaller;
     public boolean loaded;
