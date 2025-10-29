@@ -66,6 +66,9 @@ public class InstallHelper {
 
     private void ensureLoaded(InstallIdInfo info) {
         if (!info.loaded) {
+            if (info.cacheItem == null) {
+                info.cacheItem = cache.get(info.id);
+            }
             if (info.flags.force || info.flags.repair) {
                 info.cacheItem.revalidate(true);
             } else {
@@ -81,7 +84,7 @@ public class InstallHelper {
 
     private void _revisitRequirements(InstallIdList list) {
         for (InstallIdInfo info : list.infos()) {
-            if (!info.ignored && info.doError != null) {
+            if (!info.ignored && info.doError == null) {
                 ensureLoaded(info);
                 if (info.flags.install) {
                     for (NDependency dependency : info.cacheItem.getDependencies()) {
@@ -155,8 +158,8 @@ public class InstallHelper {
         NMemoryPrintStream mout = NMemoryPrintStream.of();
         List<NId> nonIgnored = list.ids(x -> !x.ignored);
         List<NId> list_new_installed = list.ids(x -> x.flags.install && !x.isAlreadyExists());
-        List<NId> list_new_required = list.ids(x -> x.doRequire && !x.flags.install && !x.isAlreadyExists());
-        List<NId> list_required_rerequired = list.ids(x -> (!x.flags.install && x.doRequire) && x.isAlreadyRequired());
+        List<NId> list_new_required = list.ids(x -> x.flags.require && !x.flags.install && !x.isAlreadyExists());
+        List<NId> list_required_rerequired = list.ids(x -> (!x.flags.install && x.flags.require) && x.isAlreadyRequired());
         List<NId> list_required_installed = list.ids(x -> x.flags.install && x.isAlreadyRequired() && !x.isAlreadyInstalled());
         List<NId> list_required_reinstalled = list.ids(x -> x.flags.install && x.isAlreadyInstalled());
         List<NId> list_installed_setdefault = list.ids(x -> x.flags.switchVersion && x.isAlreadyInstalled());
