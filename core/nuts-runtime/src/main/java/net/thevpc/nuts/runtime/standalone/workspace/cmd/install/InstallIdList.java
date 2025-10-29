@@ -38,28 +38,32 @@ public class InstallIdList {
     }
 
     public InstallIdInfo addAsDeployed(NId id,InstallFlags flags) {
+        flags=flags.copy();
         cache.get(id);
         String sid = InstallIdCacheItem.normalizeId(id).toString();
         InstallIdInfo old = visited.get(sid);
         if(old!=null){
             old.flags.merge(flags);
+            old.flags.deployOnly=true;
             return old;
         }
         InstallIdInfo ii = new InstallIdInfo();
         ii.id = id;
         ii.sid = sid;
         ii.flags = flags;
+        ii.flags.deployOnly=true;
         visited.put(ii.sid, ii);
         return ii;
     }
 
     public InstallIdInfo addAsRequired(NId id,NId forId,InstallFlags flags) {
+        flags=flags.copy();
         cache.get(id);
         String sid = InstallIdCacheItem.normalizeId(id).toString();
         InstallIdInfo old = visited.get(sid);
         if(old!=null){
             old.flags.merge(flags);
-            old.doRequire=true;
+            old.flags.require=true;
             old.requiredForIds.add(forId);
             return old;
         }
@@ -67,15 +71,20 @@ public class InstallIdList {
         ii.id = id;
         ii.sid = sid;
         ii.flags = flags;
+        ii.flags.require=true;
+        ii.requiredForIds=new ArrayList<>();
+        ii.requiredForIds.add(forId);
         visited.put(ii.sid, ii);
         return ii;
     }
 
     public InstallIdInfo addAsInstalled(NId id, InstallFlags flags) {
+        flags=flags.copy();
         String sid = InstallIdCacheItem.normalizeId(id).toString();
         InstallIdInfo old = visited.get(sid);
         if(old!=null){
             old.flags.merge(flags);
+            old.flags.install=true;
             return old;
         }
         cache.get(id);
@@ -85,11 +94,13 @@ public class InstallIdList {
         ii.sid = sid;
 
         ii.flags = flags;
+        ii.flags.install=true;
         visited.put(ii.sid, ii);
         return ii;
     }
 
     public InstallIdInfo addAsUninstalled(NId id, InstallFlags flags) {
+        flags=flags.copy();
         String sid = InstallIdCacheItem.normalizeId(id).toString();
         InstallIdInfo old = visited.get(sid);
         if(old!=null){
