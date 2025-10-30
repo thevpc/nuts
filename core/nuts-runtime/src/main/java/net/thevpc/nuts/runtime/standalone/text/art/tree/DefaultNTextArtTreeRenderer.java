@@ -20,7 +20,7 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
     public final NTreeNodeFormat TO_STRING_FORMATTER = new NTreeNodeFormat() {
         @Override
         public NText format(NTreeNode o, int depth) {
-            return o.value();
+            return o==null?NText.of(""):o.value();
         }
     };
 
