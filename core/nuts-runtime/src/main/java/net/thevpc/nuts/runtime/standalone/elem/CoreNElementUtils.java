@@ -221,9 +221,6 @@ public class CoreNElementUtils {
                 if (java.util.Date.class.isAssignableFrom(cls)) {
                     return true;
                 }
-                if (NElement.class.isAssignableFrom(cls)) {
-                    return true;
-                }
                 return (
                         NText.class.isAssignableFrom(cls)
                                 || NElement.class.isAssignableFrom(cls)
