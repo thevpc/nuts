@@ -1,6 +1,7 @@
 package net.thevpc.nuts.elem;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.function.Predicate;
 
 public interface NElementMapperStore {
@@ -43,9 +44,17 @@ public interface NElementMapperStore {
     <T> NElementMapperBuilder<T> builderOf(Class<T> type);
 
 
-    public Predicate<Type> getIndestructibleTypesFilter();
+    public List<Predicate<Type>> getIndestructibleTypesFilters();
 
-    public NElementMapperStore setDefaultIndestructibleTypesFilter();
+    NElementMapperStore addIndestructibleTypesFilter(Predicate<Type> destructTypeFilter);
+    NElementMapperStore addIndestructibleTypesFilter(DefaultIndestructibleTypesFilter destructTypeFilter);
+    NElementMapperStore removeAllIndestructibleTypesFilters();
+    NElementMapperStore removeIndestructibleTypesFilter(Predicate<Type> destructTypeFilter);
+    NElementMapperStore removeIndestructibleTypesFilter(DefaultIndestructibleTypesFilter destructTypeFilter);
+//    NElementMapperStore setIndestructibleTypesFilter(Predicate<Type> destructTypeFilter);
 
-    public NElementMapperStore setIndestructibleTypesFilter(Predicate<Type> destructTypeFilter);
+    enum DefaultIndestructibleTypesFilter{
+        ALL,
+        PRIMITIVES,
+    }
 }
