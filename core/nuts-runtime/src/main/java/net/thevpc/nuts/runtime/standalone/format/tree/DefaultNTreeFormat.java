@@ -73,7 +73,9 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
 //        if(tree instanceof NutsTreeModel){
             return (NTreeNode) tree;
         }
-        Object destructredObject = NElements.of()
+        NElements ee = NElements.of();
+        ee.mapperStore().
+        Object destructredObject = ee
                 .destruct(tree);
         return XNode.root(destructredObject, rootName, xNodeFormatter);
     }
@@ -87,7 +89,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
 
     @Override
     public String toString() {
-        return renderer.render(getModel()).filteredText().toString();
+        return renderer.render(getModel()).filteredText();
     }
 
     @Override
