@@ -155,7 +155,7 @@ public class InstallHelper {
             }
             throw new NInstallException(null, NMsg.ofNtf(sb.toString().trim()), null);
         }
-        NMemoryPrintStream mout = NMemoryPrintStream.of();
+        NMemoryPrintStream mout = NMemoryPrintStream.of(NTerminalMode.FORMATTED);
         List<NId> nonIgnored = list.ids(x -> !x.ignored);
         List<NId> list_new_installed = list.ids(x -> x.flags.install && !x.isAlreadyExists());
         List<NId> list_new_required = list.ids(x -> x.flags.require && !x.flags.install && !x.isAlreadyExists());
