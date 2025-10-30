@@ -74,7 +74,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
             return (NTreeNode) tree;
         }
         NElements ee = NElements.of();
-        ee.mapperStore().
+        //ee.mapperStore().
         Object destructredObject = ee
                 .destruct(tree);
         return XNode.root(destructredObject, rootName, xNodeFormatter);
