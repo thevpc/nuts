@@ -25,7 +25,7 @@ public class UserElementMapperStore implements NElementMapperStore {
     private DefaultElementMapperStore defaultElementMapperStore;
     private final NClassMap<NElementMapper> lvl1_customMappersByType = new NClassMap<>(null, NElementMapper.class);
     private final List<NElementKeyResolverEntry> lvl2_customMappersByKey = new ArrayList<>();
-    private Predicate<Type> indestructibleTypesFilter = null;//CoreNElementUtils.DEFAULT_INDESTRUCTIBLE;
+    private List<Predicate<Type>> indestructibleTypesFilters = new ArrayList<>();//CoreNElementUtils.DEFAULT_INDESTRUCTIBLE;
     private NReflectRepository reflectRepository;
 
     static class NElementKeyResolverEntry<T> {
@@ -35,6 +35,7 @@ public class UserElementMapperStore implements NElementMapperStore {
         public NElementKeyResolverEntry(NElementKeyResolver<T> resolver) {
             this.resolver = resolver;
         }
+
         public NElementKeyResolverEntry<T> copy() {
             NElementKeyResolverEntry<T> newInstance = new NElementKeyResolverEntry<>(resolver);
             newInstance.byKey.putAll(byKey);
@@ -67,7 +68,7 @@ public class UserElementMapperStore implements NElementMapperStore {
                     this.lvl2_customMappersByKey.add(e.copy());
                 }
             }
-            this.indestructibleTypesFilter = other.getIndestructibleTypesFilter();
+            this.indestructibleTypesFilters = new ArrayList<>(other.getIndestructibleTypesFilters());
         }
         return this;
     }
@@ -82,20 +83,65 @@ public class UserElementMapperStore implements NElementMapperStore {
         return new DefaultNElementMapperBuilder<>(reflectRepository, type);
     }
 
-    public Predicate<Type> getIndestructibleTypesFilter() {
-        return indestructibleTypesFilter;
+    public List<Predicate<Type>> getIndestructibleTypesFilters() {
+        return indestructibleTypesFilters;
     }
 
     @Override
-    public UserElementMapperStore setDefaultIndestructibleTypesFilter() {
-        return setIndestructibleTypesFilter(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE);
-    }
-
-    public UserElementMapperStore setIndestructibleTypesFilter(Predicate<Type> destructTypeFilter) {
-        this.indestructibleTypesFilter = destructTypeFilter;
+    public NElementMapperStore addIndestructibleTypesFilter(Predicate<Type> destructTypeFilter) {
+        if (destructTypeFilter != null && indestructibleTypesFilters.contains(destructTypeFilter)) {
+            indestructibleTypesFilters.add(destructTypeFilter);
+        }
         return this;
     }
 
+    @Override
+    public NElementMapperStore removeIndestructibleTypesFilter(Predicate<Type> destructTypeFilter) {
+        if (destructTypeFilter != null) {
+            indestructibleTypesFilters.remove(destructTypeFilter);
+        }
+        return this;
+    }
+
+    @Override
+    public NElementMapperStore removeAllIndestructibleTypesFilters() {
+        this.indestructibleTypesFilters.clear();
+        return this;
+    }
+
+    @Override
+    public NElementMapperStore addIndestructibleTypesFilter(DefaultIndestructibleTypesFilter destructTypeFilter) {
+        if (destructTypeFilter != null) {
+            switch (destructTypeFilter) {
+                case ALL: {
+                    addIndestructibleTypesFilter(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE);
+                    break;
+                }
+                case PRIMITIVES: {
+                    addIndestructibleTypesFilter(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE);
+                    break;
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NElementMapperStore removeIndestructibleTypesFilter(DefaultIndestructibleTypesFilter destructTypeFilter) {
+        if (destructTypeFilter != null) {
+            switch (destructTypeFilter) {
+                case ALL: {
+                    removeIndestructibleTypesFilter(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE);
+                    break;
+                }
+                case PRIMITIVES: {
+                    removeIndestructibleTypesFilter(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE);
+                    break;
+                }
+            }
+        }
+        return this;
+    }
 
     public final UserElementMapperStore setMapper(Type cls, NElementMapper instance) {
         if (instance == null) {
@@ -260,7 +306,7 @@ public class UserElementMapperStore implements NElementMapperStore {
             return r;
         }
         throw new NIllegalArgumentException(NMsg.ofC(
-                "unable to find element mapper for element type %s. element is : %s", element.type().id(),element
+                "unable to find element mapper for element type %s. element is : %s", element.type().id(), element
         ));
     }
 
