@@ -84,5 +84,16 @@ public class RateLimitedValueTest {
             });
         }
     }
+    @Test
+    public void test5() {
+        NRateLimitValueFactory factory = NRateLimitValueFactory.of();
+        factory
+                .ofBuilder("TOTO")
+                .withLimit("TOTO.name" + "-1", 10, NDuration.ofMinutes(5)) // max 10 times every 5 minutes
+                .withLimit("TOTO.name" + "-2", 100, NDuration.ofDays(30)) // max 100 times every 30 days
+                .build()
+                .take()
+                .orElseThrow(msg -> new IllegalArgumentException("Too many requests"));
+    }
 
 }
