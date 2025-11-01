@@ -875,158 +875,145 @@ public class NDuration implements Serializable {
 
     public NDuration normalize() {
         long[] values = toUnitsArray();
-        if (normalizeNegativeUnit(values, ChronoUnit.NANOS, ChronoUnit.MICROS, 1000L)) {
-            if (normalizeNegativeUnit(values, ChronoUnit.NANOS, ChronoUnit.MILLIS, 1000000L)) {
-                if (normalizeNegativeUnit(values, ChronoUnit.NANOS, ChronoUnit.SECONDS, 1000000000L)) {
-                    if (normalizeNegativeUnit(values, ChronoUnit.NANOS, ChronoUnit.MINUTES, 60 * 1000000000L)) {
-                        if (normalizeNegativeUnit(values, ChronoUnit.NANOS, ChronoUnit.HOURS, 360 * 1000000000L)) {
-                            if (normalizeNegativeUnit(values, ChronoUnit.NANOS, ChronoUnit.DAYS, 24 * 360 * 1000000000L)) {
-                                if (normalizeNegativeUnit(values, ChronoUnit.NANOS, ChronoUnit.WEEKS, 7 * 24 * 360 * 1000000000L)) {
-                                    if (normalizeNegativeUnit(values, ChronoUnit.NANOS, ChronoUnit.MONTHS, 30 * 24 * 360 * 1000000000L)) {
-                                        if (normalizeNegativeUnit(values, ChronoUnit.NANOS, ChronoUnit.YEARS, 365 * 24 * 360 * 1000000000L)) {
 
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        // Step 1: Carry overflow values upward (handle both positive and negative)
+        // Only normalize between units that are within our smallest/largest range
+        if (shouldNormalizeUnit(ChronoUnit.NANOS, ChronoUnit.MICROS)) {
+            carryOverflow(values, ChronoUnit.NANOS, ChronoUnit.MICROS, 1000L);
         }
-        if (normalizeNegativeUnit(values, ChronoUnit.MICROS, ChronoUnit.MILLIS, 1000L)) {
-            if (normalizeNegativeUnit(values, ChronoUnit.MICROS, ChronoUnit.SECONDS, 1000000L)) {
-                if (normalizeNegativeUnit(values, ChronoUnit.MICROS, ChronoUnit.MINUTES, 60L * 1000000L)) {
-                    if (normalizeNegativeUnit(values, ChronoUnit.MICROS, ChronoUnit.HOURS, 360L * 1000000L)) {
-                        if (normalizeNegativeUnit(values, ChronoUnit.MICROS, ChronoUnit.DAYS, 24L * 360 * 1000000L)) {
-                            if (normalizeNegativeUnit(values, ChronoUnit.MICROS, ChronoUnit.WEEKS, 7L * 24 * 360 * 1000000L)) {
-                                if (normalizeNegativeUnit(values, ChronoUnit.MICROS, ChronoUnit.MONTHS, 30L * 24 * 360 * 1000000L)) {
-                                    if (normalizeNegativeUnit(values, ChronoUnit.MICROS, ChronoUnit.YEARS, 365L * 24 * 360 * 1000000L)) {
+        if (shouldNormalizeUnit(ChronoUnit.MICROS, ChronoUnit.MILLIS)) {
+            carryOverflow(values, ChronoUnit.MICROS, ChronoUnit.MILLIS, 1000L);
+        }
+        if (shouldNormalizeUnit(ChronoUnit.MILLIS, ChronoUnit.SECONDS)) {
+            carryOverflow(values, ChronoUnit.MILLIS, ChronoUnit.SECONDS, 1000L);
+        }
+        if (shouldNormalizeUnit(ChronoUnit.SECONDS, ChronoUnit.MINUTES)) {
+            carryOverflow(values, ChronoUnit.SECONDS, ChronoUnit.MINUTES, 60L);
+        }
+        if (shouldNormalizeUnit(ChronoUnit.MINUTES, ChronoUnit.HOURS)) {
+            carryOverflow(values, ChronoUnit.MINUTES, ChronoUnit.HOURS, 60L);
+        }
+        if (shouldNormalizeUnit(ChronoUnit.HOURS, ChronoUnit.DAYS)) {
+            carryOverflow(values, ChronoUnit.HOURS, ChronoUnit.DAYS, 24L);
+        }
+        if (shouldNormalizeUnit(ChronoUnit.DAYS, ChronoUnit.WEEKS)) {
+            carryOverflow(values, ChronoUnit.DAYS, ChronoUnit.WEEKS, 7L);
+        }
+        if (shouldNormalizeUnit(ChronoUnit.WEEKS, ChronoUnit.MONTHS)) {
+            carryOverflow(values, ChronoUnit.WEEKS, ChronoUnit.MONTHS, 4L);
+        }
+        if (shouldNormalizeUnit(ChronoUnit.MONTHS, ChronoUnit.YEARS)) {
+            carryOverflow(values, ChronoUnit.MONTHS, ChronoUnit.YEARS, 12L);
+        }
 
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        // Step 2: Normalize mixed signs (e.g., -5 seconds + 200 millis → -4 seconds - 800 millis)
+        // Only between units within our range
+        if (shouldNormalizeUnit(ChronoUnit.NANOS, ChronoUnit.MICROS)) {
+            normalizeMixedSigns(values, ChronoUnit.NANOS, ChronoUnit.MICROS, 1000L);
         }
-        if (normalizeNegativeUnit(values, ChronoUnit.MILLIS, ChronoUnit.SECONDS, 1000L)) {
-            if (normalizeNegativeUnit(values, ChronoUnit.MILLIS, ChronoUnit.MINUTES, 60L * 1000L)) {
-                if (normalizeNegativeUnit(values, ChronoUnit.MILLIS, ChronoUnit.HOURS, 360L * 1000L)) {
-                    if (normalizeNegativeUnit(values, ChronoUnit.MILLIS, ChronoUnit.DAYS, 24L * 360 * 1000L)) {
-                        if (normalizeNegativeUnit(values, ChronoUnit.MILLIS, ChronoUnit.WEEKS, 7L * 24 * 360 * 1000L)) {
-                            if (normalizeNegativeUnit(values, ChronoUnit.MILLIS, ChronoUnit.MONTHS, 30L * 24 * 360 * 1000L)) {
-                                if (normalizeNegativeUnit(values, ChronoUnit.MILLIS, ChronoUnit.YEARS, 365L * 24 * 360 * 1000L)) {
+        if (shouldNormalizeUnit(ChronoUnit.MICROS, ChronoUnit.MILLIS)) {
+            normalizeMixedSigns(values, ChronoUnit.MICROS, ChronoUnit.MILLIS, 1000L);
+        }
+        if (shouldNormalizeUnit(ChronoUnit.MILLIS, ChronoUnit.SECONDS)) {
+            normalizeMixedSigns(values, ChronoUnit.MILLIS, ChronoUnit.SECONDS, 1000L);
+        }
+        if (shouldNormalizeUnit(ChronoUnit.SECONDS, ChronoUnit.MINUTES)) {
+            normalizeMixedSigns(values, ChronoUnit.SECONDS, ChronoUnit.MINUTES, 60L);
+        }
+        if (shouldNormalizeUnit(ChronoUnit.MINUTES, ChronoUnit.HOURS)) {
+            normalizeMixedSigns(values, ChronoUnit.MINUTES, ChronoUnit.HOURS, 60L);
+        }
+        if (shouldNormalizeUnit(ChronoUnit.HOURS, ChronoUnit.DAYS)) {
+            normalizeMixedSigns(values, ChronoUnit.HOURS, ChronoUnit.DAYS, 24L);
+        }
+        if (shouldNormalizeUnit(ChronoUnit.DAYS, ChronoUnit.WEEKS)) {
+            normalizeMixedSigns(values, ChronoUnit.DAYS, ChronoUnit.WEEKS, 7L);
+        }
+        if (shouldNormalizeUnit(ChronoUnit.WEEKS, ChronoUnit.MONTHS)) {
+            normalizeMixedSigns(values, ChronoUnit.WEEKS, ChronoUnit.MONTHS, 4L);
+        }
+        if (shouldNormalizeUnit(ChronoUnit.MONTHS, ChronoUnit.YEARS)) {
+            normalizeMixedSigns(values, ChronoUnit.MONTHS, ChronoUnit.YEARS, 12L);
+        }
 
-                                }
-                            }
-                        }
-                    }
-                }
+        // Step 3: Zero out units outside our smallest/largest range
+        for (ChronoUnit unit : ChronoUnit.values()) {
+            if (unit.ordinal() < smallestUnit.ordinal() || unit.ordinal() > largestUnit.ordinal()) {
+                values[unit.ordinal()] = 0;
             }
         }
-        if (normalizeNegativeUnit(values, ChronoUnit.SECONDS, ChronoUnit.MINUTES, 60L)) {
-            if (normalizeNegativeUnit(values, ChronoUnit.SECONDS, ChronoUnit.HOURS, 360L)) {
-                if (normalizeNegativeUnit(values, ChronoUnit.MILLIS, ChronoUnit.DAYS, 24L * 360)) {
-                    if (normalizeNegativeUnit(values, ChronoUnit.SECONDS, ChronoUnit.WEEKS, 7L * 24 * 360)) {
-                        if (normalizeNegativeUnit(values, ChronoUnit.SECONDS, ChronoUnit.MONTHS, 30L * 24 * 360)) {
-                            if (normalizeNegativeUnit(values, ChronoUnit.SECONDS, ChronoUnit.YEARS, 365L * 24 * 360)) {
 
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (normalizeNegativeUnit(values, ChronoUnit.MINUTES, ChronoUnit.HOURS, 60L)) {
-            if (normalizeNegativeUnit(values, ChronoUnit.MINUTES, ChronoUnit.DAYS, 24L * 60)) {
-                if (normalizeNegativeUnit(values, ChronoUnit.MINUTES, ChronoUnit.WEEKS, 7L * 24 * 60)) {
-                    if (normalizeNegativeUnit(values, ChronoUnit.MINUTES, ChronoUnit.MONTHS, 30L * 24 * 60)) {
-                        if (normalizeNegativeUnit(values, ChronoUnit.MINUTES, ChronoUnit.YEARS, 365L * 24 * 60)) {
+        // Step 4: If we have overflow at the largest unit, keep it there
+        // (don't carry beyond largestUnit)
 
-                        }
-                    }
-                }
-            }
-        }
-        if (normalizeNegativeUnit(values, ChronoUnit.HOURS, ChronoUnit.DAYS, 24L)) {
-            if (normalizeNegativeUnit(values, ChronoUnit.HOURS, ChronoUnit.WEEKS, 7L * 24)) {
-                if (normalizeNegativeUnit(values, ChronoUnit.HOURS, ChronoUnit.MONTHS, 30L * 24)) {
-                    if (normalizeNegativeUnit(values, ChronoUnit.HOURS, ChronoUnit.YEARS, 365L * 24)) {
-
-                    }
-                }
-            }
-        }
-        if (normalizeNegativeUnit(values, ChronoUnit.DAYS, ChronoUnit.WEEKS, 7L)) {
-            if (normalizeNegativeUnit(values, ChronoUnit.DAYS, ChronoUnit.MONTHS, 30L)) {
-                if (normalizeNegativeUnit(values, ChronoUnit.DAYS, ChronoUnit.YEARS, 365L)) {
-
-                }
-            }
-        }
-        if (values[ChronoUnit.NANOS.ordinal()] < 1000) {
-            if (values[ChronoUnit.MICROS.ordinal()] > 0) {
-                long requiredMicros = (-values[ChronoUnit.MICROS.ordinal()]) / 1000;
-                if (requiredMicros * 1000 < -values[ChronoUnit.MICROS.ordinal()]) {
-                    requiredMicros++;
-                }
-                requiredMicros = Math.min(requiredMicros, values[ChronoUnit.MICROS.ordinal()]);
-                if (requiredMicros > 0) {
-                    values[ChronoUnit.NANOS.ordinal()] += requiredMicros * 1000;
-                    values[ChronoUnit.NANOS.ordinal()] -= requiredMicros;
-                }
-            }
-            if (values[ChronoUnit.NANOS.ordinal()] < 1000) {
-                if (values[ChronoUnit.MILLIS.ordinal()] > 0) {
-                    long requiredMicros = (-values[ChronoUnit.MICROS.ordinal()]) / 1000;
-                    if (requiredMicros * 1000 < -values[ChronoUnit.MICROS.ordinal()]) {
-                        requiredMicros++;
-                    }
-                    requiredMicros = Math.min(requiredMicros, values[ChronoUnit.MICROS.ordinal()]);
-                    if (requiredMicros > 0) {
-                        values[ChronoUnit.NANOS.ordinal()] += requiredMicros * 1000;
-                        values[ChronoUnit.NANOS.ordinal()] -= requiredMicros;
-                    }
-                }
-            }
-        }
-        if (values[ChronoUnit.NANOS.ordinal()] >= 1000) {
-            long n = values[ChronoUnit.NANOS.ordinal()];
-            values[ChronoUnit.NANOS.ordinal()] = n % 1000;
-            values[ChronoUnit.MICROS.ordinal()] += n / 1000;
-        }
-        if (values[ChronoUnit.MICROS.ordinal()] >= 1000) {
-            long n = values[ChronoUnit.MICROS.ordinal()];
-            values[ChronoUnit.MICROS.ordinal()] = n % 1000;
-            values[ChronoUnit.MILLIS.ordinal()] += n / 1000;
-        }
-        if (values[ChronoUnit.SECONDS.ordinal()] >= 60) {
-            long n = values[ChronoUnit.SECONDS.ordinal()];
-            values[ChronoUnit.SECONDS.ordinal()] = n % 60;
-            values[ChronoUnit.MINUTES.ordinal()] += n / 60;
-        }
-        if (values[ChronoUnit.MINUTES.ordinal()] >= 60) {
-            long n = values[ChronoUnit.MINUTES.ordinal()];
-            values[ChronoUnit.MINUTES.ordinal()] = n % 60;
-            values[ChronoUnit.HOURS.ordinal()] += n / 60;
-        }
-        if (values[ChronoUnit.MONTHS.ordinal()] >= 12 || values[ChronoUnit.WEEKS.ordinal()] >= 4 || values[ChronoUnit.DAYS.ordinal()] >= 30) {
-            long dd = values[ChronoUnit.YEARS.ordinal()] * 365 + values[ChronoUnit.MONTHS.ordinal()] * 30 + values[ChronoUnit.MONTHS.ordinal()] * 30;
-            values[ChronoUnit.YEARS.ordinal()] = dd / 365;
-            dd = dd % 365;
-            values[ChronoUnit.MONTHS.ordinal()] = dd / 30;
-            dd = dd % 30;
-            values[ChronoUnit.WEEKS.ordinal()] = dd / 7;
-            dd = dd % 7;
-            values[ChronoUnit.DAYS.ordinal()] = dd;
-        }
         NDuration d = new NDuration(values, smallestUnit, largestUnit);
         if (this.timeMillis != d.timeMillis || this.timeNanos != d.timeNanos) {
-            throw new IllegalArgumentException(NI18n.of("unexpected chronometer value"));
+            throw new IllegalArgumentException(NI18n.of("unexpected chronometer value: expected " +
+                    timeMillis + "ms " + timeNanos + "ns, got " + d.timeMillis + "ms " + d.timeNanos + "ns"));
         }
         return d;
+    }
+
+    /**
+     * Checks if we should normalize between two units based on smallestUnit and largestUnit.
+     * We only normalize if both units are within the allowed range.
+     */
+    private boolean shouldNormalizeUnit(ChronoUnit current, ChronoUnit next) {
+        int currentOrd = current.ordinal();
+        int nextOrd = next.ordinal();
+        int smallestOrd = smallestUnit.ordinal();
+        int largestOrd = largestUnit.ordinal();
+
+        // Both units must be within the range [smallestUnit, largestUnit]
+        return currentOrd >= smallestOrd && currentOrd <= largestOrd &&
+                nextOrd >= smallestOrd && nextOrd <= largestOrd;
+    }
+
+    /**
+     * Carries overflow from current unit to next larger unit.
+     * Handles both positive and negative values.
+     */
+    private void carryOverflow(long[] values, ChronoUnit current, ChronoUnit next, long multiplier) {
+        long currentValue = values[current.ordinal()];
+
+        if (currentValue >= multiplier || currentValue <= -multiplier) {
+            long carry = currentValue / multiplier;
+            long remainder = currentValue % multiplier;
+
+            values[next.ordinal()] += carry;
+            values[current.ordinal()] = remainder;
+        }
+    }
+
+    /**
+     * Normalizes mixed signs so that all units have the same sign.
+     * For example: -5 seconds + 200 millis becomes -4 seconds - 800 millis
+     * Or: 5 seconds - 200 millis becomes 4 seconds + 800 millis
+     */
+    private void normalizeMixedSigns(long[] values, ChronoUnit current, ChronoUnit next, long multiplier) {
+        long currentValue = values[current.ordinal()];
+        long nextValue = values[next.ordinal()];
+
+        // If signs are different and current is non-zero
+        if (currentValue != 0 && nextValue != 0) {
+            boolean currentNegative = currentValue < 0;
+            boolean nextNegative = nextValue < 0;
+
+            if (currentNegative != nextNegative) {
+                // They have different signs, normalize them
+                if (nextNegative) {
+                    // Next is negative, current is positive
+                    // Borrow from next: convert positive current to negative
+                    values[next.ordinal()] += 1;
+                    values[current.ordinal()] -= multiplier;
+                } else {
+                    // Next is positive, current is negative
+                    // Borrow from next: convert negative current to positive
+                    values[next.ordinal()] -= 1;
+                    values[current.ordinal()] += multiplier;
+                }
+            }
+        }
     }
 
     public boolean isZero() {
