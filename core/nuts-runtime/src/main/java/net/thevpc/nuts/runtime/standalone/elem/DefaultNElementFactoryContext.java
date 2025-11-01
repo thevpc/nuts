@@ -49,6 +49,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     private boolean ntf;
     private UserElementMapperStore userElementMapperStore;
     private final DefaultNTextManagerModel model;
+    private globalIndustructibleTypesFilter globalIndustructibleTypesFilter = new globalIndustructibleTypesFilter();
 
     public DefaultNElementFactoryContext(boolean ntf, NReflectRepository repository, UserElementMapperStore userElementMapperStore) {
         this.repository = repository;
@@ -73,7 +74,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
 
     @Override
     public Predicate<Type> getIndestructibleTypesFilter() {
-        return userElementMapperStore.getIndestructibleTypesFilter();
+        return globalIndustructibleTypesFilter;
     }
 
     @Override
@@ -81,7 +82,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
         if (any == null) {
             return false;
         }
-        Predicate<Type> f = userElementMapperStore.getIndestructibleTypesFilter();
+        Predicate<Type> f = getIndestructibleTypesFilter();
         if (f == null) {
             return false;
         }
@@ -93,7 +94,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
         if (any == null) {
             return true;
         }
-        Predicate<Type> f = userElementMapperStore.getIndestructibleTypesFilter();
+        Predicate<Type> f = getIndestructibleTypesFilter();
         if (f == null) {
             return true;
         }
@@ -267,5 +268,17 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     @Override
     public NReflectRepository getTypesRepository() {
         return repository;
+    }
+
+    private class globalIndustructibleTypesFilter implements Predicate<Type> {
+        @Override
+        public boolean test(Type type) {
+            for (Predicate<Type> f : userElementMapperStore.getIndestructibleTypesFilters()) {
+                if (f.test(type)) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
