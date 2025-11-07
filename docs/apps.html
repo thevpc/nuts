@@ -889,7 +889,7 @@ Boot Runtime Version: <span style="color: #0000A3" class="">${nuts.workspace-run
 <span style="color: #0000A3" class="">      </span><span style="color: #0000A3" class=""><span style="color: #005078" class="">--repos</span></span><span style="color: #0000A3" class="">=</span><span style="color: #0000A3" class=""><span style="color: #005078" class="">-https</span></span><span style="color: #0000A3" class="">:</span><span style="color: #0000A3" class="">//jcenter.bintray.com </span>
 <span style="color: #0000A3" class="">      </span><span style="color: #0000A3" class=""><span style="color: #005078" class="">--repos</span></span><span style="color: #0000A3" class="">=</span><span style="color: #0000A3" class="">jcenter</span><span style="color: #0000A3" class="">=</span><span style="color: #0000A3" class="">https</span><span style="color: #0000A3" class="">:</span><span style="color: #0000A3" class="">//jcenter.bintray.com </span>
 <span style="color: #0000A3" class="">      </span><span style="color: #0000A3" class=""><span style="color: #005078" class="">--repos</span></span><span style="color: #0000A3" class="">=</span><span style="color: #0000A3" class="">jcenter</span><span style="color: #0000A3" class="">=</span><span style="color: #0000A3" class="">maven@https</span><span style="color: #0000A3" class="">:</span><span style="color: #0000A3" class="">//jcenter.bintray.com </span>
-<span style="color: #0000A3" class="">      </span><span style="color: #0000A3" class=""><span style="color: #005078" class="">--repos</span></span><span style="color: #0000A3" class="">==</span><span style="color: #0000A3" class="">dev</span><span style="color: #0000A3" class="">=</span><span style="color: #0000A3" class="">maven@htmlfs</span><span style="color: #0000A3" class="">:</span><span style="color: #0000A3" class="">https</span><span style="color: #0000A3" class="">:</span><span style="color: #0000A3" class="">//maven.thevpc.net </span>
+<span style="color: #0000A3" class="">      </span><span style="color: #0000A3" class=""><span style="color: #005078" class="">--repos</span></span><span style="color: #0000A3" class="">==</span><span style="color: #0000A3" class="">dev</span><span style="color: #0000A3" class="">=</span><span style="color: #0000A3" class="">maven@htmlfs+https</span><span style="color: #0000A3" class="">:</span><span style="color: #0000A3" class="">//maven.thevpc.net </span>
 
 <span style="color: #0000A3" class="">      the prefix operator (+,-,=) when specified defines whether the repository is</span>
 <span style="color: #0000A3" class="">        to include (+), to exclude (-) or to replace (=) ie all existing repositories will be</span>
@@ -1381,21 +1381,21 @@ nuts ndiff my-app-v1.jar my-app-v2.jar
 nuts ntexup <option> file.ntexup
 
 
-Options are :
+Commands are :
 
---reopen
+reopen
 reopen last file/folder
 
---build-repo --dump
+--dump
 build repository
 
---list-templates
+list-templates
 list available templates
 
---documentation
+generate-doc
 build documentation
 
---open=<path>
+<path>
 generate file ntexup file/folder
 
 --output=<path>
@@ -1417,23 +1417,26 @@ nuts ntexup show <option>
 
 Options are :
 
---new
-open new project
+new
+create new project
 
---view-log
+--show
+create new project and show it
+
+--show-log
 show log panel
 
 
---documentation
+show-doc
 show documentation
 
---open <path>
+<path>
 
 
 <span style="color: #0000A3" class="">##)  EXAMPLES:
 </span>
 # ntexup: generate pdf
-nuts -Zy -w test ntexup myfolder
+nuts -Zy -w test ntexup show myfolder
 
                             </div>
                         </div>
@@ -2572,7 +2575,7 @@ nuts ntomcat --start
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-10-14-155008
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-11-07-103632
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
