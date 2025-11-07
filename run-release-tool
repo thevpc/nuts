@@ -1,4 +1,8 @@
 #!/bin/bash
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+
 NUTS_VERSION=0.8.7
 NUTS_JAVA_HOME=/home/vpc/.jdks/corretto-1.8.0_452/
 NUTS_APP_JAR=~/.m2/repository/net/thevpc/nuts/nuts-app/$NUTS_VERSION/nuts-app-$NUTS_VERSION.jar
@@ -11,3 +15,6 @@ elif [ x"${JAVA_HOME}" != "x" ] ; then
 fi
 
 $JAVA_CMD $NUTS_DEBUG_ARG -jar "$NUTS_APP_JAR" -ZyS --stacktrace --sandbox net.thevpc.nuts.installers:nuts-release-tool
+
+rsync -avz --progress -e ssh --info=progress2 --human-readable "$SCRIPT_DIR/scripts/thevpc.net/" "vpc@thevpc.net:/home/vpc/srv/tomcat-a/domain-webapps/thevpc.net/ROOT/nuts/"
+
