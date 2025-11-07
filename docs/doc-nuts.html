@@ -182,7 +182,7 @@
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#docker-installation">2.4 Using Docker</a>
+                        <li class="nav-item"><a class="nav-link" href="#U393D197BAD9BA2306D69F5C19E78D99B52B8D91C">2.4 Using Docker</a>
                             
                             
                         </li>
@@ -646,32 +646,20 @@ $&gt; nuts netbeans-launcher
                             <hr class="divider">
                         
                             <!--pageLevel2-->
-                            <section id="docker-installation" >
+                            <section id="U393D197BAD9BA2306D69F5C19E78D99B52B8D91C" >
                                 <h3 class="main-section2"><a href="#UA7C24B93AC88884ED622CD0CA8C58DFDDB9DEA58">2.4 Using Docker</a></h3>
                                 <div class="text-card">
                                 <H4 class="md-title-2">Running nuts in a containerized environment</H4><p class="md-phrase">If you want to run <mark class="md-code md-code-` ">nuts</mark> in a containerized docker environment without creating a Dockerfile, you would run the following commands:</p>on your bash terminal, type :<pre class="md-code md-code-``` bash"><code class="bash">
-docker pull openjdk:8
-docker run -it -v $(pwd):/workspace openjdk:8 sh
+docker run -it --rm openjdk:8 bash -c "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"
 </code></pre>Now that you are in a container<pre class="md-code md-code-``` bash"><code class="bash">
-cd /workspace
-curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -ZyS
-. ~/.bashrc
 nuts -y &lt;your-app&gt;...
-</code></pre><p class="md-phrase">As an example here where you can run <code class="md-code md-code-` ">net.thevpc.nuts.toolbox:noapi#https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar</code> on your config file <code class="md-code md-code-` ">myrest-apis.json</code>.</p><p class="md-phrase"><mark class="md-code md-code-` ">noapi</mark> is actually an OpenAPI documentation tool that generates a pdf file based on a opn api definition in <mark class="md-code md-code-` ">JSON</mark>, <mark class="md-code md-code-` ">YAML</mark> or <mark class="md-code md-code-` ">TSON</mark> formats.</p><pre class="md-code md-code-``` bash"><code class="bash">
-cd /workspace
-wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar -qO nuts.jar
-java -jar nuts.jar -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar myrest-apis.json
+</code></pre><p class="md-phrase">As an example here where you can run <code class="md-code md-code-` ">net.thevpc.nuts.noapi:noapi#https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar</code> on your config file <code class="md-code md-code-` ">myrest-apis.json</code>.</p><p class="md-phrase"><mark class="md-code md-code-` ">noapi</mark> is actually an OpenAPI documentation tool that generates a pdf file based on a opn api definition in <mark class="md-code md-code-` ">JSON</mark>, <mark class="md-code md-code-` ">YAML</mark> or <mark class="md-code md-code-` ">TSON</mark> formats.</p><pre class="md-code md-code-``` bash"><code class="bash">
+nuts -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar myrest-apis.json
 </code></pre><H4 class="md-title-2">Creating your app Dockerfile</H4><p class="md-phrase">If you are willing to deploy your application in a docker isolated environment you can use this example of <mark class="md-code md-code-` ">Dockerfile</mark> </p><pre class="md-code md-code-``` Dockerfile"><code class="Dockerfile">
 FROM openjdk:8
-RUN wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar -qO nuts.jar
-RUN java -jar nuts.jar -Zy install &lt;your application&gt;
-CMD java -jar nuts.jar -y &lt;your application&gt;
-docker run -it -v $(pwd):/workspace openjdk:8 sh
-cd /workspace
-wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar -qO nuts.jar
-java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar my-connector.json
-#############
-
+RUN curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh | bash
+RUN nuts -Zy install &lt;your application&gt;
+CMD nuts -y &lt;your application&gt;
 </code></pre><p class="md-phrase">This is a docker file to run <code class="md-code md-code-` ">net.thevpc.nuts.toolbox:noapi</code> an OpenAPI documentation tool.</p><pre class="md-code md-code-``` Dockerfile"><code class="Dockerfile">
 FROM openjdk:8
 RUN wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar -qO nuts.jar
@@ -2767,7 +2755,7 @@ show license info and exit
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-10-14-155008
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-11-07-103632
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
