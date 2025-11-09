@@ -7,24 +7,9 @@ import net.thevpc.nuts.reflect.NBeanContainer;
 
 public class NSagaCallableFactoryImpl implements NSagaCallableFactory {
     private NSagaStore store;
-    private NBeanContainer beanContainer;
 
-    public NSagaCallableFactoryImpl(NSagaStore store, NBeanContainer beanContainer) {
+    public NSagaCallableFactoryImpl(NSagaStore store) {
         this.store = store;
-        this.beanContainer = beanContainer;
-    }
-
-    @Override
-    public NBeanContainer getBeanContainer() {
-        return beanContainer;
-    }
-
-    @Override
-    public NSagaCallableFactory withBeanContainer(NBeanContainer container) {
-        if(container==this.beanContainer){
-            return this;
-        }
-        return new NSagaCallableFactoryImpl(store, container);
     }
 
     @Override
@@ -37,11 +22,11 @@ public class NSagaCallableFactoryImpl implements NSagaCallableFactory {
         if(store==this.store){
             return this;
         }
-        return new NSagaCallableFactoryImpl(store, beanContainer);
+        return new NSagaCallableFactoryImpl(store);
     }
 
     @Override
     public NSagaCallableBuilder ofBuilder() {
-        return new NSagaCallableBuilderImpl(store, beanContainer);
+        return new NSagaCallableBuilderImpl(store);
     }
 }
