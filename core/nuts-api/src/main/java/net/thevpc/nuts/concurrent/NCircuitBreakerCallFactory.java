@@ -1,6 +1,5 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.reflect.NBeanContainer;
 
 /**
  * Factory interface for creating {@link NCircuitBreakerCall} instances.
@@ -10,7 +9,7 @@ import net.thevpc.nuts.reflect.NBeanContainer;
  * manages:
  * </p>
  * <ul>
- *     <li>Bean resolution via {@link NBeanContainer}</li>
+ *     <li>Bean resolution via {@link net.thevpc.nuts.reflect.NBeanContainer}</li>
  *     <li>Persistence or state tracking via {@link NCircuitBreakerCallStore}</li>
  *     <li>Creation of new {@link NCircuitBreakerCall} instances with or without explicit identifiers</li>
  * </ul>
@@ -23,8 +22,7 @@ import net.thevpc.nuts.reflect.NBeanContainer;
  *
  * <pre>{@code
  * NCircuitBreakerCallFactory factory = ...;
- * factory = factory.withBeanContainer(beanContainer)
- *                  .withStore(circuitBreakerStore);
+ * factory = factory.withStore(circuitBreakerStore);
  *
  * NCircuitBreakerCall<String> task = factory.of("taskId", () -> fetchRemoteData());
  * }</pre>
@@ -37,22 +35,6 @@ import net.thevpc.nuts.reflect.NBeanContainer;
  * @since 0.8.7
  */
 public interface NCircuitBreakerCallFactory {
-
-    /**
-     * Returns the bean container used by this factory for dependency resolution.
-     *
-     * @return the bean container
-     */
-    NBeanContainer getBeanContainer();
-
-
-    /**
-     * Returns a new factory instance using the given bean container.
-     *
-     * @param container the bean container to use
-     * @return a new factory configured with the given container
-     */
-    NCircuitBreakerCallFactory withBeanContainer(NBeanContainer container);
 
     /**
      * Returns the store used by this factory to persist or track circuit-breaker states.
