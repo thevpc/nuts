@@ -12,24 +12,10 @@ import java.util.UUID;
 
 public class NRetryCallFactoryImpl implements NRetryCallFactory {
 
-    private final NBeanContainer beanContainer;
     private final NRetryCallStore store;
 
-    public NRetryCallFactoryImpl(NRetryCallStore store, NBeanContainer beanContainer) {
-        this.beanContainer = beanContainer;
+    public NRetryCallFactoryImpl(NRetryCallStore store) {
         this.store = store;
-    }
-
-    public NBeanContainer getBeanContainer() {
-        return beanContainer;
-    }
-
-
-    public NRetryCallFactory withBeanContainer(NBeanContainer container) {
-        if (container == this.beanContainer) {
-            return this;
-        }
-        return new NRetryCallFactoryImpl(store, container);
     }
 
     public NRetryCallStore getStore() {
@@ -40,7 +26,7 @@ public class NRetryCallFactoryImpl implements NRetryCallFactory {
         if (store == this.store) {
             return this;
         }
-        return new NRetryCallFactoryImpl(store, beanContainer);
+        return new NRetryCallFactoryImpl(store);
     }
 
     public <T> NRetryCall<T> of(NCallable<T> callable) {
@@ -52,7 +38,7 @@ public class NRetryCallFactoryImpl implements NRetryCallFactory {
             id = UUID.randomUUID().toString();
         }
         return new NRetryCallImpl<>(id, callable,
-                beanContainer, store == null ? NConcurrent.of().memoryRetryCallFactory().getStore() : store);
+                store == null ? NConcurrent.of().memoryRetryCallFactory().getStore() : store);
     }
 
 
