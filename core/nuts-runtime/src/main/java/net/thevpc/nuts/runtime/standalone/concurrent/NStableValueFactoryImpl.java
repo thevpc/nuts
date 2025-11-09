@@ -10,11 +10,9 @@ import java.util.function.Supplier;
 
 public class NStableValueFactoryImpl implements NStableValueFactory {
     private final NStableValueStore store;
-    private final NBeanContainer beanContainer;
 
-    public NStableValueFactoryImpl(NStableValueStore store, NBeanContainer beanContainer) {
+    public NStableValueFactoryImpl(NStableValueStore store) {
         this.store = store;
-        this.beanContainer = beanContainer;
     }
 
     @Override
@@ -22,20 +20,7 @@ public class NStableValueFactoryImpl implements NStableValueFactory {
         if (store == this.store) {
             return this;
         }
-        return new  NStableValueFactoryImpl(store, beanContainer);
-    }
-
-    @Override
-    public NStableValueFactory withBeanContainer(NBeanContainer beanContainer) {
-        if (beanContainer == this.beanContainer) {
-            return this;
-        }
-        return new  NStableValueFactoryImpl(store, beanContainer);
-    }
-
-    @Override
-    public NBeanContainer getBeanContainer() {
-        return beanContainer;
+        return new  NStableValueFactoryImpl(store);
     }
 
     @Override
@@ -51,7 +36,7 @@ public class NStableValueFactoryImpl implements NStableValueFactory {
     @Override
     public <T> NStableValue<T> of(String id, Supplier<T> supplier) {
         String nid = NBlankable.isBlank(id) ? UUID.randomUUID().toString() : id;
-        return new NStableValueImpl<>(nid, NAssert.requireNonNull(supplier, "supplier"), store, beanContainer);
+        return new NStableValueImpl<>(nid, NAssert.requireNonNull(supplier, "supplier"), store);
     }
 
     public NStableValueModel load(String id) {
