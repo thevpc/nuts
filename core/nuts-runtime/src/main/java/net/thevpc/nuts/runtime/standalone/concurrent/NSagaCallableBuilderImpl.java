@@ -12,12 +12,10 @@ import java.util.stream.Collectors;
 public class NSagaCallableBuilderImpl implements NSagaCallableBuilder {
     private final AtomicInteger idCounter = new AtomicInteger(1);
     private final NSagaStore store;
-    private final NBeanContainer beanContainer;
     private final List<NSagaNodeModel> roots=new ArrayList<>();
 
-    public NSagaCallableBuilderImpl(NSagaStore store, NBeanContainer beanContainer) {
+    public NSagaCallableBuilderImpl(NSagaStore store) {
         this.store = store;
-        this.beanContainer = beanContainer;
     }
 
     @Override
@@ -41,7 +39,7 @@ public class NSagaCallableBuilderImpl implements NSagaCallableBuilder {
                 saga.setNode(m);
             }
         }
-        return new NSagaCallableImpl(saga.clone(),store, beanContainer);
+        return new NSagaCallableImpl(saga.clone(),store);
     }
 
     private String nextId() {

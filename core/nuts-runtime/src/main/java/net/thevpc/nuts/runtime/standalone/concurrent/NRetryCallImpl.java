@@ -17,12 +17,10 @@ import java.util.concurrent.Future;
 import java.util.function.IntFunction;
 
 public class NRetryCallImpl<T> implements NRetryCall<T> {
-    private NBeanContainer beanContainer;
     private NRetryCallStore store;
     private NRetryCallModel model;
 
-    public NRetryCallImpl(String id, NCallable<T> callable,NBeanContainer beanContainer, NRetryCallStore store) {
-        this.beanContainer = beanContainer;
+    public NRetryCallImpl(String id, NCallable<T> callable, NRetryCallStore store) {
         this.store = store;
         this.model = new NRetryCallModel(id);
         this.model.setCaller(callable);
@@ -31,31 +29,32 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
 
     public void reload() {
         synchronized (this) {
-            String oldId=model.getId();
+            String oldId = model.getId();
             NCallable<?> oldCaller = model.getCaller();
-            NCallable<NRetryCallModel> cc = () -> {
-                NRetryCallModel m = store.load(oldId);
-                if (m == null) {
-                    NAssert.requireNonNull(oldCaller,"caller");
-                    m = new NRetryCallModel(oldId);
+            NRetryCallModel m = store.load(oldId);
+            if (m == null) {
+                NAssert.requireNonNull(oldCaller, "caller");
+                m = new NRetryCallModel(oldId);
+                m.setCaller(oldCaller);
+                store.save(m);
+            } else {
+                if (oldCaller != null) {
                     m.setCaller(oldCaller);
                     store.save(m);
-                }else{
-                    if(oldCaller!=null) {
-                        m.setCaller(oldCaller);
-                        store.save(m);
-                    }
                 }
-                return m;
-            };
-            model = NBeanContainer.scopedStack().callWith(beanContainer, cc);
+            }
+            model = m;
         }
     }
 
     @Override
     public NRetryCall<T> setMaxRetries(int maxRetries) {
-        model.setMaxRetries(maxRetries);
-        store.save(model);
+        maxRetries=Math.max(1, maxRetries);
+        int old = model.getMaxRetries();
+        if(old!=maxRetries) {
+            model.setMaxRetries(maxRetries);
+            store.save(model);
+        }
         return this;
     }
 
@@ -104,8 +103,8 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
     public T callOrElse(NCallable<T> recover) {
         try {
             return call();
-        }catch (Exception ex) {
-            if(recover!=null) {
+        } catch (Exception ex) {
+            if (recover != null) {
                 return recover.call();
             }
             return null;
@@ -333,6 +332,7 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
             }
         };
     }
+
     private IntFunction<NDuration> _retryExponentialPeriod(NDuration base, double multiplier) {
         if (base == null || base.isZero() || multiplier <= 0) {
             return _retryFixedPeriods(NDuration.ofMillis(0));
