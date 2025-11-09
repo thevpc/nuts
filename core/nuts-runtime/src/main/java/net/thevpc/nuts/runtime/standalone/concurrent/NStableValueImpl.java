@@ -12,13 +12,11 @@ import java.util.function.Supplier;
 public final class NStableValueImpl<T> implements NStableValue<T> {
 
     private final NStableValueStore store;
-    private final NBeanContainer beanContainer;
     private NStableValueModel model;
 
-    NStableValueImpl(String id, Supplier<T> supplier, NStableValueStore store, NBeanContainer beanContainer) {
+    NStableValueImpl(String id, Supplier<T> supplier, NStableValueStore store) {
         NAssert.requireNonNull(supplier, "supplier");
         this.store = store;
-        this.beanContainer = beanContainer;
         this.model = new NStableValueModel(NAssert.requireNonNull(id, "id"), supplier);
         reload();
     }
@@ -27,7 +25,7 @@ public final class NStableValueImpl<T> implements NStableValue<T> {
     public void reload() {
         synchronized (this) {
             String id = model.getId();
-            NBeanContainer.scopedStack().runWith(beanContainer, () -> {
+            NBeanContainer.scopedStack().runWith(NBeanContainer.current(), () -> {
                 NStableValueModel m = store.load(id);
                 if (m == null) {
                     m = new NStableValueModel(id, model.getSupplier());
@@ -45,7 +43,7 @@ public final class NStableValueImpl<T> implements NStableValue<T> {
 
     private void _save(NStableValueModel model) {
         this.model = model;
-        NBeanContainer.scopedStack().runWith(beanContainer, () -> {
+        NBeanContainer.scopedStack().runWith(NBeanContainer.current(), () -> {
             store.save(model);
         });
     }
