@@ -17,25 +17,28 @@ import java.util.function.Supplier;
 
 @NComponentScope(NScopeType.WORKSPACE)
 public class NConcurrentImpl implements NConcurrent {
-    private final NRateLimitValueFactory memoryRateLimitValueFactory = new NRateLimitValueFactoryImpl(new NRateLimitValueStoreMemory(), null, null);
+    private final NRateLimitValueFactory memoryRateLimitValueFactory = new NRateLimitValueFactoryImpl(new NRateLimitValueStoreMemory(), null);
     private NRateLimitValueFactory rateLimitValueFactory;
 
-    private final NSagaCallableFactory memorySagaFactory = new NSagaCallableFactoryImpl(new NSagaStoreMemory(), null);
+    private final NSagaCallableFactory memorySagaFactory = new NSagaCallableFactoryImpl(new NSagaStoreMemory());
     private NSagaCallableFactory sagaFactory;
 
     private final NCachedValueFactory memoryCachedValueFactory = new NCachedValueFactoryImpl(new NCachedValueStoreMemory());
     private NCachedValueFactory cachedValueFactory;
-    private final NStableValueFactory memoryStableValueFactory = new NStableValueFactoryImpl(new NStableValueStoreMemory(), null);
+    private final NStableValueFactory memoryStableValueFactory = new NStableValueFactoryImpl(new NStableValueStoreMemory());
     private NStableValueFactory stableValueFactory;
 
-    private final NRetryCallFactory memoryRetryValueFactory = new NRetryCallFactoryImpl(new NRetryCallStoreMemory(), null);
+    private final NRetryCallFactory memoryRetryValueFactory = new NRetryCallFactoryImpl(new NRetryCallStoreMemory());
     private NRetryCallFactory retryValueFactory;
 
     private final NCircuitBreakerCallFactory memoryCircuitBreakerCallFactory = new NCircuitBreakerCallFactoryImpl(new NCircuitBreakerCallStoreMemory(), null);
     private NCircuitBreakerCallFactory circuitBreakerCallFactory;
 
-    private final NWorkBalancerFactory memoryWorkBalancerCallFactory = new NWorkBalancerFactoryImpl(new NWorkBalancerStoreMemory(), null, null);
+    private final NWorkBalancerFactory memoryWorkBalancerCallFactory = new NWorkBalancerFactoryImpl(new NWorkBalancerStoreMemory(), null);
     private NWorkBalancerFactory workBalancerCallFactory;
+
+    private final NBulkheadCallFactory memoryBulkheadCallFactory = new NBulkheadCallFactoryImpl(new NBulkheadCallBackendAsSemaphore(),new NBulkheadCallStoreMemory());
+    private NBulkheadCallFactory bulkheadCallFactory;
 
     @Override
     public int getScore(NScorableContext context) {
@@ -306,5 +309,27 @@ public class NConcurrentImpl implements NConcurrent {
                 return base.mul(multiplier * i);
             }
         };
+    }
+
+
+    @Override
+    public NBulkheadCallFactory defaultBulkheadCallFactory() {
+        return memoryBulkheadCallFactory;
+    }
+
+    @Override
+    public NBulkheadCallFactory memoryBulkheadCallFactory() {
+        return memoryBulkheadCallFactory;
+    }
+
+    @Override
+    public NBulkheadCallFactory bulkheadCallFactory() {
+        return bulkheadCallFactory == null ? defaultBulkheadCallFactory() : bulkheadCallFactory;
+    }
+
+    @Override
+    public NConcurrent setBulkheadCallFactory(NBulkheadCallFactory bulkheadCallFactory) {
+        this.bulkheadCallFactory = bulkheadCallFactory;
+        return this;
     }
 }
