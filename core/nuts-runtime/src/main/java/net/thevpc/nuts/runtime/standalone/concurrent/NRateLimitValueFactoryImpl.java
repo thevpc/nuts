@@ -10,12 +10,10 @@ import java.util.Map;
 
 public class NRateLimitValueFactoryImpl implements NRateLimitValueFactory {
     private NRateLimitValueStore store;
-    private NBeanContainer beanContainer;
     private Map<String, NRateLimitStrategy> strategies = new HashMap<>();
 
-    public NRateLimitValueFactoryImpl(NRateLimitValueStore store, NBeanContainer beanContainer, Map<String, NRateLimitStrategy> strategies) {
+    public NRateLimitValueFactoryImpl(NRateLimitValueStore store, Map<String, NRateLimitStrategy> strategies) {
         this.store = store;
-        this.beanContainer = beanContainer;
         if (strategies != null) {
             for (Map.Entry<String, NRateLimitStrategy> e : strategies.entrySet()) {
                 if (e.getKey() != null && e.getValue() != null) {
@@ -32,20 +30,7 @@ public class NRateLimitValueFactoryImpl implements NRateLimitValueFactory {
         if (store == this.store) {
             return this;
         }
-        return new NRateLimitValueFactoryImpl(store, beanContainer, strategies);
-    }
-
-    @Override
-    public NRateLimitValueFactory withBeanContainer(NBeanContainer beanContainer) {
-        if (beanContainer == this.beanContainer) {
-            return this;
-        }
-        return new NRateLimitValueFactoryImpl(store, beanContainer, strategies);
-    }
-
-    @Override
-    public NBeanContainer getBeanContainer() {
-        return beanContainer;
+        return new NRateLimitValueFactoryImpl(store, strategies);
     }
 
     @Override
@@ -88,7 +73,7 @@ public class NRateLimitValueFactoryImpl implements NRateLimitValueFactory {
         } else {
             strategies2.put(name, definition);
         }
-        return new NRateLimitValueFactoryImpl(store, beanContainer, strategies2);
+        return new NRateLimitValueFactoryImpl(store, strategies2);
     }
 
     @Override
