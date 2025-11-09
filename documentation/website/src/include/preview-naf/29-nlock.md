@@ -7,7 +7,7 @@ subTitle:  |
 contentType: java
 ---
 
-NId resourceId = NId.of("net.thevpc.nuts:nuts#0.8.6");
+NId resourceId = NId.of("net.thevpc.nuts:nuts#0.8.8");
 // Lock tied to workspace resource
 NLock idLock = NLock.ofIdPath(resourceId);
 
