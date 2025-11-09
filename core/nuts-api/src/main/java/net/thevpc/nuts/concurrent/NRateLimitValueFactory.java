@@ -1,9 +1,5 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.reflect.NBeanContainer;
-
-import java.util.function.Function;
-
 public interface NRateLimitValueFactory {
     static NRateLimitValueFactory of() {
         return NConcurrent.of().rateLimitValueFactory();
@@ -16,10 +12,6 @@ public interface NRateLimitValueFactory {
     NRateLimitValueBuilder ofBuilder(String id);
 
     NRateLimitValueFactory withStore(NRateLimitValueStore store);
-
-    NRateLimitValueFactory withBeanContainer(NBeanContainer beanContainer);
-
-    NBeanContainer getBeanContainer();
 
     NRateLimitValueStore getStore();
 
