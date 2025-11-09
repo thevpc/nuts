@@ -2,6 +2,8 @@ package net.thevpc.nuts.time;
 
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.elem.NMapBy;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -777,9 +779,21 @@ public class NDuration implements Serializable {
     }
 
     public Duration toDuration() {
-        return Duration.ofNanos(
-                timeNanos + 1000000 * timeMillis
-        );
+        long millis=this.timeMillis;
+        long nanos=timeNanos;
+        // Separate seconds from milliseconds to avoid overflow
+        long secondsFromMillis = millis / 1000;
+        long remainingMillis = millis % 1000;
+        long nanosFromMillis = remainingMillis * 1_000_000;
+
+        // Total nanos = nanos from millis + additional nanos
+        long totalNanos = nanosFromMillis + nanos;
+
+        // Handle nano overflow by converting to additional seconds
+        long secondsFromNanos = totalNanos / 1_000_000_000;
+        long remainingNanos = totalNanos % 1_000_000_000;
+
+        return Duration.ofSeconds(secondsFromMillis + secondsFromNanos, remainingNanos);
     }
 
     public NDuration withSmallestUnit(ChronoUnit smallestUnit) {
@@ -1044,4 +1058,131 @@ public class NDuration implements Serializable {
         return DefaultNDurationFormat.DEFAULT.format(this);
     }
 
+    public static NOptional<NDuration> parse(String any) {
+        if (any == null || any.trim().isEmpty()) {
+            return NOptional.ofEmpty();
+        }
+
+        String input = any.trim().toLowerCase();
+
+        try {
+            // Try parsing as ISO-8601 duration format first
+            if (input.startsWith("p")) {
+                try {
+                    java.time.Duration jdkDuration = java.time.Duration.parse(input);
+                    long[] durationValues = new long[ChronoUnit.values().length];
+
+                    long totalSeconds = jdkDuration.getSeconds();
+                    long nanos = jdkDuration.getNano();
+
+                    durationValues[ChronoUnit.SECONDS.ordinal()] = totalSeconds;
+
+                    if (nanos > 0) {
+                        durationValues[ChronoUnit.MILLIS.ordinal()] = nanos / 1_000_000L;
+                    }
+
+                    return NOptional.of(NDuration.of(durationValues));
+                } catch (Exception e) {
+                    return NOptional.ofEmpty();
+                }
+            }
+
+            long[] durationValues = new long[ChronoUnit.values().length];
+
+            // Parse simple duration formats with spaces and various abbreviations
+            // Normalize the input: handle spaces, commas, and common abbreviations
+            input = input.replace(',', '.')
+                    .replace("  ", " ") // collapse multiple spaces
+                    .trim();
+
+            // Pattern to match number-unit pairs with optional spaces
+            // This handles: "1mn 32s", "1h 30m 15s", "2d 5h", etc.
+            String pattern = "(\\d+(?:\\.\\d+)?)\\s*([a-z]+)";
+            java.util.regex.Pattern regex = java.util.regex.Pattern.compile(pattern);
+            java.util.regex.Matcher matcher = regex.matcher(input);
+
+            boolean found = false;
+
+            while (matcher.find()) {
+                found = true;
+                double value = Double.parseDouble(matcher.group(1));
+                String unit = matcher.group(2);
+                switch (unit) {
+                    case "ns":
+                    case "nano":
+                    case "nanos":
+                        durationValues[ChronoUnit.NANOS.ordinal()] += (long)value;
+                        break;
+                    case "us":
+                    case "micro":
+                    case "micros":
+                        durationValues[ChronoUnit.MICROS.ordinal()] += (long)value;
+                        break;
+                    case "ms":
+                    case "milli":
+                    case "millis":
+                        durationValues[ChronoUnit.MILLIS.ordinal()] += (long)value;
+                        break;
+                    case "s":
+                    case "sec":
+                    case "secs":
+                    case "second":
+                    case "seconds":
+                        durationValues[ChronoUnit.SECONDS.ordinal()] += (long)value;
+                        break;
+                    case "m":
+                    case "mn":
+                    case "min":
+                    case "mins":
+                    case "minute":
+                    case "minutes":
+                        durationValues[ChronoUnit.MINUTES.ordinal()] += (long)value;
+                        break;
+                    case "h":
+                    case "hr":
+                    case "hrs":
+                    case "hour":
+                    case "hours":
+                        durationValues[ChronoUnit.HOURS.ordinal()] += (long)value;
+                        break;
+                    case "d":
+                    case "day":
+                    case "days":
+                        durationValues[ChronoUnit.DAYS.ordinal()] += (long)value;
+                        break;
+                    case "w":
+                    case "week":
+                    case "weeks":
+                        durationValues[ChronoUnit.WEEKS.ordinal()] += (long)value;
+                        break;
+                    case "mon":
+                    case "month":
+                    case "months":
+                        durationValues[ChronoUnit.MONTHS.ordinal()] += (long)value;
+                        break;
+                    case "y":
+                    case "year":
+                    case "years":
+                        durationValues[ChronoUnit.YEARS.ordinal()] += (long)value;
+                        break;
+                    default:
+                        return NOptional.ofNamedEmpty(NMsg.ofC("invalid unit value: %s", unit));
+                }
+            }
+
+            // If no units found, try parsing as plain number (assume millis)
+            if (!found) {
+                try {
+                    double millis = Double.parseDouble(input);
+                    durationValues[ChronoUnit.MILLIS.ordinal()] = (long)millis;
+                    return NOptional.of(NDuration.of(durationValues));
+                } catch (NumberFormatException e) {
+                    return NOptional.ofNamedEmpty(NMsg.ofC("invalid millis value: %s", input));
+                }
+            }
+            return NOptional.of(NDuration.of(durationValues));
+        } catch (Exception e) {
+            return NOptional.ofNamedEmpty(NMsg.ofC("invalid value: %s", any));
+        }
+    }
 }
