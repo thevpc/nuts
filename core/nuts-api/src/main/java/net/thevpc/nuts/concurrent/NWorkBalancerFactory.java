@@ -1,7 +1,5 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.reflect.NBeanContainer;
-
 /**
  * Factory for creating and managing {@link NWorkBalancer} instances.
  * <p>
@@ -87,25 +85,6 @@ public interface NWorkBalancerFactory {
      * @return a new {@link NWorkBalancerFactory} instance with the specified store
      */
     NWorkBalancerFactory withStore(NWorkBalancerStore store);
-
-    /**
-     * Returns a new {@link NWorkBalancerFactory} instance configured with the given bean container.
-     * <p>
-     * This factory is immutable; the original factory instance is not modified.
-     * The bean container will be used to instantiate workers or strategies.
-     * </p>
-     *
-     * @param beanContainer the bean container to use
-     * @return a new {@link NWorkBalancerFactory} instance with the specified bean container
-     */
-    NWorkBalancerFactory withBeanContainer(NBeanContainer beanContainer);
-
-    /**
-     * Returns the current bean container.
-     *
-     * @return the {@link NBeanContainer} instance
-     */
-    NBeanContainer getBeanContainer();
 
     /**
      * Returns the current store used for persisting balancer models.
