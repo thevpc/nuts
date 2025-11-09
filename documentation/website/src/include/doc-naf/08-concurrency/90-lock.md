@@ -31,7 +31,7 @@ inter-process synchronization. You can execute tasks immediately, with a timeout
 or safely retrieve results using `callWith`.
 
 ```java
-NId resourceId = NId.of("net.thevpc.nuts:nuts#0.8.6");
+NId resourceId = NId.of("net.thevpc.nuts:nuts#0.8.8");
 // Lock tied to workspace resource
 NLock idLock = NLock.ofIdPath(resourceId);
 
