@@ -259,9 +259,7 @@ core/nuts-app-full/target
 /server-config.tson
 /core/nuts-lib/nbproject/
 /core/target/
-/documentation/website/src/resources/download/nuts-stable.jar
 /documentation/website/src/resources/nuts-preview.jar
-/documentation/website/src/resources/download/nuts-preview.jar
-/documentation/website/src/resources/download/nuts-app-0.8.5.jar
-/core/nuts-app-full/src/dist/nuts-app-full-0.8.7.jar
+/documentation/website/src/resources/download/*.jar
+/core/nuts-app-full/src/dist/*.jar
 /libraries/nuts-slf4j/target
