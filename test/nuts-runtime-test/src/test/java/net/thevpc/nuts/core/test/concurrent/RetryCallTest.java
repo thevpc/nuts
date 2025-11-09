@@ -12,6 +12,7 @@ import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NBeanRef;
 import net.thevpc.nuts.runtime.standalone.concurrent.NRetryCallStoreMemory;
 import net.thevpc.nuts.concurrent.NCallable;
+import net.thevpc.nuts.runtime.standalone.concurrent.NSagaCallableImpl;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NOptional;
 import org.junit.jupiter.api.BeforeAll;
@@ -59,15 +60,16 @@ public class RetryCallTest {
                 return NOptional.ofNamed((T) beans.get(ref.getId()), ref.getId());
             }
         };
-        NRetryCallFactory factory = NConcurrent.of()
-                .retryCallFactory()
-                .withStore(jdbcStore)
-                .withBeanContainer(springContainer)
-                ;
-        factory.of("something", NBeanRef.of("callSomeThingBean").as(NCallable.class))
-                .setHandler(NBeanRef.of("resultSomeThingBean").as(NRetryCall.Handler.class))
-                .setMaxRetries(5)
-                .setRetryPeriod(NConcurrent.of().retryMultipliedPeriod(NDuration.ofSeconds(1),1))
-                .callAsync();
+        NBeanContainer.scopedStack().runWith(springContainer,()->{
+            NRetryCallFactory factory = NConcurrent.of()
+                    .retryCallFactory()
+                    .withStore(jdbcStore)
+                    ;
+            factory.of("something", NBeanRef.of("callSomeThingBean").as(NCallable.class))
+                    .setHandler(NBeanRef.of("resultSomeThingBean").as(NRetryCall.Handler.class))
+                    .setMaxRetries(5)
+                    .setRetryPeriod(NConcurrent.of().retryMultipliedPeriod(NDuration.ofSeconds(1),1))
+                    .callAsync();
+        });
     }
 }
