@@ -171,4 +171,13 @@ public interface NConcurrent extends NComponent {
     IntFunction<NDuration> retryFixedPeriod(NDuration period);
     IntFunction<NDuration> retryFixedPeriods(NDuration ...periods);
     IntFunction<NDuration> retryMultipliedPeriod(NDuration base, double multiplier);
+
+
+    NBulkheadCallFactory defaultBulkheadCallFactory();
+
+    NBulkheadCallFactory memoryBulkheadCallFactory();
+
+    NBulkheadCallFactory bulkheadCallFactory();
+
+    NConcurrent setBulkheadCallFactory(NBulkheadCallFactory bulkheadCallFactory);
 }
