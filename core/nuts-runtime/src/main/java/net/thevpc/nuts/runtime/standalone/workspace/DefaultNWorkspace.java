@@ -131,7 +131,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public static final String VERSION_COMMAND_ALIAS_CONFIG = "0.8.0";
     public static final String VERSION_COMMAND_ALIAS_CONFIG_FACTORY = "0.8.0";
     public static final String VERSION_USER_CONFIG = "0.8.0";
-    public static final String RUNTIME_VERSION = "0.8.7.0";
+    public static final String RUNTIME_VERSION = "0.8.8.0";
     public static final String RUNTIME_VERSION_STRING = NConstants.Ids.NUTS_RUNTIME + "#" + RUNTIME_VERSION;
     public static final NId RUNTIME_ID = NId.get(RUNTIME_VERSION_STRING).get();
     //    public NLog LOG;
