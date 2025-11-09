@@ -7,12 +7,10 @@ import java.util.*;
 
 public class NWorkBalancerFactoryImpl implements NWorkBalancerFactory {
     private NWorkBalancerStore store;
-    private NBeanContainer beanContainer;
     private Map<String, NWorkBalancerStrategy> strategies = new HashMap<>();
 
-    public NWorkBalancerFactoryImpl(NWorkBalancerStore store, NBeanContainer beanContainer, Map<String, NWorkBalancerStrategy> strategies) {
+    public NWorkBalancerFactoryImpl(NWorkBalancerStore store, Map<String, NWorkBalancerStrategy> strategies) {
         this.store = store;
-        this.beanContainer = beanContainer;
         if (strategies != null) {
             for (Map.Entry<String, NWorkBalancerStrategy> e : strategies.entrySet()) {
                 if (e.getKey() != null && e.getValue() != null) {
@@ -29,20 +27,7 @@ public class NWorkBalancerFactoryImpl implements NWorkBalancerFactory {
         if (store == this.store) {
             return this;
         }
-        return new NWorkBalancerFactoryImpl(store, beanContainer, strategies);
-    }
-
-    @Override
-    public NWorkBalancerFactory withBeanContainer(NBeanContainer beanContainer) {
-        if (beanContainer == this.beanContainer) {
-            return this;
-        }
-        return new NWorkBalancerFactoryImpl(store, beanContainer, strategies);
-    }
-
-    @Override
-    public NBeanContainer getBeanContainer() {
-        return beanContainer;
+        return new NWorkBalancerFactoryImpl(store, strategies);
     }
 
     @Override
@@ -73,7 +58,7 @@ public class NWorkBalancerFactoryImpl implements NWorkBalancerFactory {
         } else {
             strategies2.put(name, definition);
         }
-        return new NWorkBalancerFactoryImpl(store, beanContainer, strategies2);
+        return new NWorkBalancerFactoryImpl(store, strategies2);
     }
 
     @Override
