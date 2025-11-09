@@ -3,7 +3,7 @@
 :icons: font
 :icon-set: pf
 :doctype: book
-:revnumber: v0.8.6
+:revnumber: v0.8.8
 :revdate: Sun Apr 30 11:14:37 PM +0000 2023
 :toc:
 :toclevels: 4
@@ -785,10 +785,10 @@ me@linux:~> nuts fetch net.thevpc.app:netbeans-launcher#1.2.2
 
 me@linux:~> nuts info
 name                     = default-workspace
-nuts-api-version         = 0.8.6
-nuts-api-id              = net.thevpc.app.nuts:nuts#0.8.6
+nuts-api-version         = 0.8.8
+nuts-api-id              = net.thevpc.app.nuts:nuts#0.8.8
 nuts-runtime-id          = net.thevpc.app.nuts:nuts-core#0.8.7.0
-nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core/0.8.7.0/nuts-core-0.8.7.0.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/0.8.6/nuts-0.8.6.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
+nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core/0.8.7.0/nuts-core-0.8.7.0.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/0.8.8/nuts-0.8.8.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
 nuts-workspace-id        = 99b73002-804d-4e4c-9a13-f57ac1f40b3d
 nuts-store-layout        = linux
 nuts-store-strategy      = exploded
@@ -818,7 +818,7 @@ java-version             = 1.8.0_222
 platform                 = java#1.8.0_222
 java-home                = /usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre
 java-executable          = /usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre/bin/java
-java-classpath           = ~/.m2/repository/net/vpc/app/nuts/nuts/0.8.6/nuts-0.8.6.jar
+java-classpath           = ~/.m2/repository/net/vpc/app/nuts/nuts/0.8.8/nuts-0.8.8.jar
 java-library-path        = /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
 os-name                  = linux#4.12.14-lp151.28.13-default
 os-family                = linux
@@ -1182,11 +1182,11 @@ This command will show **nuts** version. It's helpful to note that **nuts** has 
 ----
 
 me@linux:~> nuts version
-0.8.6/0.8.7.0
+0.8.8/0.8.7.0
 
 ----
 
-Here the **version** command show api version (0.8.6) and the impl version (0.8.7.0)
+Here the **version** command show api version (0.8.8) and the impl version (0.8.7.0)
 === Welcome Command
 
 
@@ -1765,7 +1765,7 @@ Assuming you are always under `nuts` repo root folder, issue the following comma
 ----
 
 cd installers/nuts-release-tool
-java -jar target/nuts-release-tool-$version.jar
+java -jar target/nuts-release-tool-{{runtimeVersion}}.jar
 
 ----
 
@@ -2681,7 +2681,7 @@ To create your first `NAF` application, you will need to add nuts as a dependenc
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts-api</artifactId>
-            <version>0.8.6</version>
+            <version>0.8.8</version>
         </dependency>
         <dependency>
             <groupId>jexcelapi</groupId>
@@ -3084,7 +3084,7 @@ To create your first `NAF` application, you will need to add nuts as a dependenc
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts-api</artifactId>
-            <version>0.8.6</version>
+            <version>0.8.8</version>
         </dependency>
         <dependency>
             <groupId>jexcelapi</groupId>
@@ -4799,7 +4799,7 @@ docker run -it bellsoft/liberica-runtime-container sh
 docker pull openjdk:8
 docker run -it -v $(pwd):/workspace openjdk:8 sh
 cd /workspace
-wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
+wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar -qO nuts.jar
 java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.5.0 buat-insurance-connector.json
 #############
 
@@ -5059,7 +5059,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 [source]
 ----
 
-$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
+$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar -qO nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
 
@@ -5083,7 +5083,7 @@ Any bash terminal application is a nuts-aware terminal.
 [source]
 ----
 
-$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar
+$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 
@@ -5101,13 +5101,13 @@ Any bash terminal application is a nuts-aware terminal.
 ===== Windows
 
 
-download [nuts-app-0.8.6.jar](https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar)
+download [nuts-app-0.8.8.jar](https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar)
 
 
 [source]
 ----
 
-java -jar nuts-app-0.8.6.jar -r=+preview -Zy
+java -jar nuts-app-0.8.8.jar -r=+preview -Zy
 
 ----
 
@@ -5135,7 +5135,7 @@ Any of the created shortcuts for windows is a nuts-aware terminal.
 [source]
 ----
 
-$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -qO nuts.jar
+$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar -qO nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
 
@@ -5155,7 +5155,7 @@ Any bash terminal application is a nuts-aware terminal.
 [source]
 ----
 
-$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar
+$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar -o nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
 
