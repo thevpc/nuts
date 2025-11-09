@@ -1,7 +1,5 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.reflect.NBeanContainer;
-
 import java.util.function.Supplier;
 
 /**
@@ -17,10 +15,6 @@ public interface NStableValueFactory {
     }
 
     NStableValueFactory withStore(NStableValueStore store);
-
-    NStableValueFactory withBeanContainer(NBeanContainer beanContainer);
-
-    NBeanContainer getBeanContainer();
 
     NStableValueStore getStore();
 
