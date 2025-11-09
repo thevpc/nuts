@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 public class NSagaCallableImpl<T> implements NSagaCallable<T> {
     private NSagaModel model;
     private final NSagaStore store;
-    private final NBeanContainer beanContainer;
     private NSagaContext fcontext = new NSagaContext() {
         @Override
         public <V> V getVar(String name) {
@@ -29,10 +28,9 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
         }
     };
 
-    public NSagaCallableImpl(NSagaModel model, NSagaStore store, NBeanContainer beanContainer) {
+    public NSagaCallableImpl(NSagaModel model, NSagaStore store) {
         this.model = model;
         this.store = store;
-        this.beanContainer = beanContainer;
         _prepareModel();
         _store(model);
     }
@@ -240,7 +238,7 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
 
     @Override
     public NSagaCallable<T> copy() {
-        return new NSagaCallableImpl<>(model.clone(), store, beanContainer);
+        return new NSagaCallableImpl<>(model.clone(), store);
     }
 
     private void _store(NBooleanRef requireStore) {
@@ -254,7 +252,7 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
         NRunnable cc = () -> {
             store.save(model);
         };
-        NBeanContainer.scopedStack().runWith(beanContainer, cc);
+        NBeanContainer.scopedStack().runWith(NBeanContainer.current(), cc);
     }
 
     private void _store() {
