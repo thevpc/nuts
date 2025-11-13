@@ -3,6 +3,30 @@ package net.thevpc.nuts.concurrent;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * Internal model representing the state of a saga execution.
+ * <p>
+ * This class serves as the data container underlying a {@link NSagaContext}.
+ * It is not itself a {@link NSagaContext} implementation, but rather stores
+ * all information that the context uses to track a saga's progress, status,
+ * and variables.
+ * <p>
+ * The model includes:
+ * <ul>
+ *     <li>Execution stacks: {@code stackStepId}, {@code stackStepGroup}, {@code stackStepIndex} for tracking nested steps and iteration indices.</li>
+ *     <li>Variable storage: a {@code values} map to hold key-value pairs shared across steps.</li>
+ *     <li>Compensation tracking: {@code stepsToCompensate} stack for steps needing rollback in case of failure.</li>
+ *     <li>Status: {@link NSagaStatus} indicating the current state of the saga (RUNNING, FINISHED, FAILED, COMPENSATING).</li>
+ *     <li>Timing: {@code startTime} and {@code endTime} to track execution duration.</li>
+ *     <li>Failure details: the first failed step's ID, name, and exception.</li>
+ *     <li>Last result: stores the output of the most recently executed step.</li>
+ * </ul>
+ * <p>
+ * This class implements {@link Serializable} for persistence and {@link Cloneable}
+ * for creating shallow copies of the saga state, e.g., for branching or retrying steps.
+ *
+ * @since 0.8.7
+ */
 public class NSagaContextModel implements Serializable , Cloneable{
     private Deque<String> stackStepId = new ArrayDeque<>(); // IDs of nodes whose children are being iterated
     private Deque<String> stackStepGroup = new ArrayDeque<>(); // IDs of nodes whose children are being iterated
