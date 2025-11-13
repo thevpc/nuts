@@ -31,9 +31,21 @@ import net.thevpc.nuts.elem.*;
 import java.util.function.Supplier;
 
 /**
- * Describable Runnable
+ * A runnable task that can throw checked exceptions and can provide a descriptive element.
+ * <p>
+ * This is similar to {@link Runnable}, but the {@link #run()} method is allowed to
+ * throw any {@link Exception}. Additionally, it supports producing a structured description
+ * via {@link NElement} and can be redescribed with custom metadata.
+ *
+ * @since 0.8.7
  */
 public interface NUnsafeRunnable extends NElementRedescribable<NUnsafeRunnable> {
+    /**
+     * Returns the given {@link NUnsafeRunnable} instance or {@code null} if the input is null.
+     *
+     * @param o the unsafe runnable instance
+     * @return the same instance, or {@code null}
+     */
     static NUnsafeRunnable of(NUnsafeRunnable o) {
         if(o==null){
             return null;
@@ -41,6 +53,12 @@ public interface NUnsafeRunnable extends NElementRedescribable<NUnsafeRunnable> 
         return o;
     }
 
+    /**
+     * Creates a new {@link NUnsafeRunnable} with a custom {@link NElement} description.
+     *
+     * @param description a supplier of a description element
+     * @return a new {@link NUnsafeRunnable} with the given description
+     */
     @Override
     default NUnsafeRunnable redescribe(Supplier<NElement> description) {
         if (description == null) {
@@ -49,11 +67,25 @@ public interface NUnsafeRunnable extends NElementRedescribable<NUnsafeRunnable> 
         return new NUnsafeRunnableWithDescription(this, description);
     }
 
+    /**
+     * Returns a {@link NElement} describing this runnable.
+     * <p>
+     * By default, this uses a late-to-string description for convenience.
+     *
+     * @return a descriptive {@link NElement}
+     */
     @Override
     default NElement describe() {
         return NElementDescribables.ofLateToString(this).get();
     }
 
+    /**
+     * Executes the task.
+     * <p>
+     * This method may throw any checked exception.
+     *
+     * @throws Exception if the execution fails
+     */
     void run() throws Exception;
 
 }
