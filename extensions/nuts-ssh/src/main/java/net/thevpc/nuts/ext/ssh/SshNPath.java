@@ -306,9 +306,9 @@ class SshNPath implements NPathSPI {
             String outputString = c.getOutputString();
             String[] r = NStringUtils.trim(outputString).split(" ");
             if (r.length > 4) {
-                NLiteral size = NLiteral.of(r[4]);
-                if (size.isLong()) {
-                    return size.asLong().get();
+                NOptional<Long> size = NLiteral.of(r[4]).asLong();
+                if (size.isPresent()) {
+                    return size.get();
                 }
             }
             return -1;
