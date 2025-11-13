@@ -90,8 +90,8 @@ public class NConcurrentImpl implements NConcurrent {
 
 
     @Override
-    public NConcurrent setStableValueFactory(NStableValueFactory StableValueFactory) {
-        this.stableValueFactory = StableValueFactory;
+    public NConcurrent setStableValueFactory(NStableValueFactory stableValueFactory) {
+        this.stableValueFactory = stableValueFactory;
         return this;
     }
 
