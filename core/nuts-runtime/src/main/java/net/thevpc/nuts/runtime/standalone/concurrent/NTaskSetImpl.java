@@ -2,17 +2,22 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.concurrent.NConcurrent;
+import net.thevpc.nuts.concurrent.NTaskResult;
 import net.thevpc.nuts.concurrent.NTaskSet;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NOptional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class NTaskSetImpl implements NTaskSet {
-    private final List<CompletableFuture<?>> futures = new CopyOnWriteArrayList<>();
+    private final List<IdAndFuture> futures = new CopyOnWriteArrayList<>();
     private ExecutorService executor;
 
     public NTaskSetImpl() {
@@ -24,65 +29,106 @@ public class NTaskSetImpl implements NTaskSet {
         return this;
     }
 
+
     @Override
     public NTaskSet add(Future<?> future) {
-        if(future==null){
+        return add(null, future);
+    }
+
+    @Override
+    public NTaskSet add(String taskId, Future<?> future) {
+        if (future == null) {
             return this;
         }
         if (future instanceof CompletableFuture) {
-            return add((CompletableFuture<?>) future);
+            return add(taskId, (CompletableFuture<?>) future);
         }
-        return add(CompletableFuture.supplyAsync(() -> {
+        return add(taskId, CompletableFuture.supplyAsync(() -> {
             try {
                 return future.get();
             } catch (Exception e) {
                 throw new CompletionException(e);
             }
-        },pickExecutor(executor)));
+        }, pickExecutor(executor)));
     }
 
     @Override
     public NTaskSet add(CompletableFuture<?> future) {
-        if(future==null){
-           return this;
+        return add(null, future);
+    }
+
+    @Override
+    public NTaskSet add(String taskId, CompletableFuture<?> future) {
+        if (future == null) {
+            return this;
         }
-        futures.add(future);
+        futures.add(new IdAndFuture(taskId, future));
         return this;
     }
 
     @Override
     public NTaskSet supply(Supplier<?> supplier) {
-        return supply(supplier, executor);
+        return supply(null, supplier, executor);
+    }
+
+    @Override
+    public NTaskSet supply(String taskId, Supplier<?> supplier) {
+        return supply(taskId, supplier, executor);
     }
 
     @Override
     public NTaskSet supply(Supplier<?> supplier, ExecutorService exec) {
-        CompletableFuture<?> f = CompletableFuture.supplyAsync(supplier, pickExecutor(exec));
-        return add(f);
+        return supply(null, supplier, exec);
+    }
+
+    @Override
+    public NTaskSet supply(String taskId, Supplier<?> supplier, ExecutorService executor) {
+        CompletableFuture<?> f = CompletableFuture.supplyAsync(supplier, pickExecutor(executor));
+        return add(taskId, f);
     }
 
     @Override
     public NTaskSet run(Runnable task) {
-        return run(task, executor);
+        return run(null, task, executor);
+    }
+
+    @Override
+    public NTaskSet run(String taskId, Runnable task) {
+        return run(taskId, task, executor);
     }
 
     @Override
     public NTaskSet run(Runnable task, ExecutorService exec) {
-        if(task==null){
+        return run(null, task, exec);
+    }
+
+    @Override
+    public NTaskSet run(String taskId, Runnable task, ExecutorService executor) {
+        if (task == null) {
             return this;
         }
-        CompletableFuture<?> f = CompletableFuture.runAsync(task, pickExecutor(exec));
-        return add(f);
+        CompletableFuture<?> f = CompletableFuture.runAsync(task, pickExecutor(executor));
+        return add(taskId, f);
     }
 
     @Override
     public NTaskSet call(Callable<?> task) {
-        return call(task, executor);
+        return call(null,task, executor);
+    }
+
+    @Override
+    public NTaskSet call(String taskId,Callable<?> task) {
+        return call(taskId,task, executor);
     }
 
     @Override
     public NTaskSet call(Callable<?> task, ExecutorService exec) {
-        if(task==null){
+        return call(null, task, exec);
+    }
+
+    @Override
+    public NTaskSet call(String taskId, Callable<?> task, ExecutorService exec) {
+        if (task == null) {
             return this;
         }
         CompletableFuture<?> f = CompletableFuture.supplyAsync(() -> {
@@ -92,7 +138,7 @@ public class NTaskSetImpl implements NTaskSet {
                 throw new CompletionException(ex);
             }
         }, pickExecutor(exec));
-        return add(f);
+        return add(taskId, f);
     }
 
     @Override
@@ -102,7 +148,7 @@ public class NTaskSetImpl implements NTaskSet {
 
     @Override
     public NTaskSet call(NCallable<?> task, ExecutorService exec) {
-        if(task==null){
+        if (task == null) {
             return this;
         }
         return call((Callable<?>) task::call, exec);
@@ -110,7 +156,7 @@ public class NTaskSetImpl implements NTaskSet {
 
     @Override
     public NTaskSet join() {
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        CompletableFuture.allOf(futures.stream().map(x->x.future).toArray(CompletableFuture[]::new)).join();
         return this;
     }
 
@@ -122,7 +168,7 @@ public class NTaskSetImpl implements NTaskSet {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T first(boolean cancelOthers) {
-        CompletableFuture<?> any = CompletableFuture.anyOf(futures.toArray(new CompletableFuture[0]));
+        CompletableFuture<?> any = CompletableFuture.anyOf(futures.stream().map(x->x.future).toArray(CompletableFuture[]::new));
         T result = (T) any.join();
         if (cancelOthers) {
             cancelAll(true);
@@ -139,60 +185,40 @@ public class NTaskSetImpl implements NTaskSet {
     @SuppressWarnings("unchecked")
     public <T> List<CompletableFuture<T>> futures(Class<T> type) {
         return futures.stream()
-                .map(f -> (CompletableFuture<T>) f)
+                .map(f -> (CompletableFuture<T>) f.future)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<CompletableFuture<?>> futures() {
-        return Collections.unmodifiableList(futures);
+        return (List) futures.stream()
+                .map(f -> (CompletableFuture) f.future)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<?> results() {
+    public <T> List<NTaskResult<T>> results() {
         return futures.stream()
-                .map(f -> {
-                    try {
-                        return f.get();
-                    } catch (Exception e) {
-                        return null;
-                    }
-                }).collect(Collectors.toList());
+                .map(f -> f.<T>get()).collect(Collectors.toList());
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> List<T> results(Class<T> type) {
+    public <T> List<NTaskResult<T>> results(Class<T> type) {
         return futures.stream()
-                .map(f -> {
-                    try {
-                        return (T) f.get();
-                    } catch (Exception e) {
-                        return null;
-                    }
-                }).collect(Collectors.toList());
+                .map(f -> f.<T>get()).collect(Collectors.toList());
     }
 
     @Override
     public List<Throwable> errors() {
-        return futures.stream()
-                .map(f -> {
-                    try {
-                        f.get();
-                        return null;
-                    } catch (ExecutionException e) {
-                        return e.getCause();
-                    } catch (Exception e) {
-                        return e;
-                    }
-                })
-                .filter(Objects::nonNull)
+        return this.<Object>results().stream().filter(x->x.isError())
+                .map(x->x.getError())
                 .collect(Collectors.toList());
     }
 
     @Override
     public boolean isDone() {
-        return futures.stream().allMatch(CompletableFuture::isDone);
+        return futures.stream().allMatch(x->x.future.isDone());
     }
 
     @Override
@@ -202,7 +228,7 @@ public class NTaskSetImpl implements NTaskSet {
 
     @Override
     public NTaskSet cancelAll(boolean mayInterrupt) {
-        futures.forEach(f -> f.cancel(mayInterrupt));
+        futures.forEach(f -> f.future.cancel(mayInterrupt));
         return this;
     }
 
@@ -230,4 +256,120 @@ public class NTaskSetImpl implements NTaskSet {
         }
         return this;
     }
+
+
+    public <T> NOptional<NTaskResult<T>> firstMatch(Predicate<NTaskResult<T>> predicate, boolean cancelOthers) {
+        Objects.requireNonNull(predicate);
+
+        CompletableFuture<NTaskResult<T>> resultFuture = new CompletableFuture<>();
+        AtomicInteger remaining = new AtomicInteger(futures.size());
+
+        for (IdAndFuture cf : futures) {
+            @SuppressWarnings("unchecked")
+            CompletableFuture<T> typed = (CompletableFuture<T>) cf.future;
+
+            typed.whenComplete((r, ex) -> {
+                if (!resultFuture.isDone()) {
+                    NTaskResult<T> tr = (ex == null)
+                            ? NTaskResult.ofSuccess(cf.id,r)
+                            : NTaskResult.ofError(cf.id,(ex instanceof CompletionException && ((CompletionException) ex).getCause()!=null) ? ((CompletionException) ex).getCause() : ex);
+
+                    boolean match = false;
+                    try {
+                        match = predicate.test(tr);
+                    } catch (Exception e) {
+                        resultFuture.complete(NTaskResult.ofError(cf.id,e));
+                        if (cancelOthers) cancelAll(true);
+                        return;
+                    }
+
+                    if (match) {
+                        resultFuture.complete(tr);
+                        if (cancelOthers) cancelAll(true);
+                        return;
+                    }
+
+                    // No match: check if all tasks are completed
+                    if (remaining.decrementAndGet() == 0) {
+                        resultFuture.complete(null); // signal no match
+                    }
+                }
+            });
+        }
+
+        try {
+            NTaskResult<T> res = resultFuture.get();
+            return res == null ? NOptional.ofEmpty() : NOptional.of(res);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return NOptional.ofEmpty();
+        } catch (ExecutionException e) {
+            return NOptional.of(NTaskResult.ofError(null, e.getCause()));
+        }
+    }
+
+
+    public <T> CompletableFuture<NOptional<NTaskResult<T>>> firstMatchAsync(Predicate<NTaskResult<T>> predicate, boolean cancelOthers) {
+        Objects.requireNonNull(predicate);
+        CompletableFuture<NTaskResult<T>> resultFuture = new CompletableFuture<>();
+        AtomicInteger remaining = new AtomicInteger(futures.size());
+
+        for (IdAndFuture cf : futures) {
+            @SuppressWarnings("unchecked")
+            CompletableFuture<T> typed = (CompletableFuture<T>) cf.future;
+
+            typed.whenComplete((r, ex) -> {
+                if (!resultFuture.isDone()) {
+                    NTaskResult<T> tr = (ex == null)
+                            ? NTaskResult.ofSuccess(cf.id,r)
+                            : NTaskResult.ofError(cf.id,ex);
+
+                    boolean match = false;
+                    try {
+                        match = predicate.test(tr);
+                    } catch (Exception e) {
+                        resultFuture.completeExceptionally(e);
+                        if (cancelOthers) cancelAll(true);
+                        return;
+                    }
+
+                    if (match) {
+                        resultFuture.complete(tr);
+                        if (cancelOthers) cancelAll(true);
+                        return;
+                    }
+
+                    if (remaining.decrementAndGet() == 0) {
+                        resultFuture.complete(null);
+                    }
+                }
+            });
+        }
+
+        return resultFuture.thenApply(res -> res == null ? NOptional.<NTaskResult<T>>ofEmpty() : NOptional.of(res));
+    }
+
+    private static class IdAndFuture {
+        String id;
+        CompletableFuture<?> future;
+
+        public IdAndFuture(String id, CompletableFuture<?> future) {
+            this.id = NBlankable.isBlank(id) ? UUID.randomUUID().toString() : id;
+            this.future = future;
+        }
+
+        public <T> NTaskResult<T> get(){
+            try {
+                return NTaskResult.<T>ofSuccess(id,(T)future.get());
+            } catch (ExecutionException e) {
+                if(e.getCause()!=null){
+                    return NTaskResult.<T>ofError(id,e.getCause());
+                }
+                return NTaskResult.<T>ofError(id,e);
+            } catch (Exception e) {
+                return NTaskResult.<T>ofError(id,e);
+            }
+        }
+    }
+
 }
