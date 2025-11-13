@@ -349,10 +349,10 @@ public class DefaultNLiteral implements NLiteral {
             //
         }
 
-        if (isLong()) {
+        if (asLong().isPresent()) {
             try {
                 try {
-                    return NOptional.of(Instant.ofEpochMilli(((Number) value).longValue()));
+                    return NOptional.of(Instant.ofEpochMilli(asLong().get()));
                 } catch (Exception any) {
                     //
                 }
