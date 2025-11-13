@@ -7,6 +7,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Represents a node within a saga workflow model.
+ * <p>
+ * Each node can be of type {@link NSagaNodeType}, such as STEP, IF, or WHILE.
+ * The node contains all information necessary to execute or evaluate it,
+ * including its children, conditional branches, and compensation strategy.
+ * <p>
+ * This class serves as the **internal model** of a saga node and is used
+ * by {@link NSagaModel} to define the workflow structure. It is serializable,
+ * cloneable, and supports deep copying via {@link #clone()} and {@link #copy()}.
+ * <p>
+ * Node features include:
+ * <ul>
+ *     <li><b>id</b>: unique identifier of the node</li>
+ *     <li><b>name</b>: human-readable name of the node</li>
+ *     <li><b>type</b>: type of node ({@link NSagaNodeType})</li>
+ *     <li><b>stepCall</b>: for STEP nodes, the actual {@link NSagaStep} to execute</li>
+ *     <li><b>stepCondition</b>: for IF or WHILE nodes, the condition ({@link NSagaCondition}) to evaluate</li>
+ *     <li><b>children</b>: list of child nodes to execute sequentially</li>
+ *     <li><b>elseIfBranches</b>: list of conditional branches for IF nodes</li>
+ *     <li><b>otherwiseBranch</b>: list of nodes to execute if no IF conditions match</li>
+ *     <li><b>status</b>: execution status of this node ({@link NSagaNodeStatus})</li>
+ *     <li><b>compensationStrategy</b>: strategy for handling failures ({@link NCompensationStrategy})</li>
+ * </ul>
+ * <p>
+ * Cloning a node recursively clones all children and branches, preserving the
+ * structure of the workflow. This allows independent execution or simulation
+ * of workflow branches.
+ *
  * @since 0.8.7
  */
 public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
