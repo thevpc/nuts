@@ -517,12 +517,12 @@ public class DefaultNArg implements NArg {
 
 
     public boolean isBoolean() {
-        return toLiteral().isBoolean();
+        return toLiteral().asBoolean().isPresent();
     }
 
 
     public boolean isString() {
-        return toLiteral().isString();
+        return toLiteral().asString().isPresent();
     }
 
 
@@ -532,12 +532,21 @@ public class DefaultNArg implements NArg {
 
 
     public boolean isTemporal() {
-        return toLiteral().isTemporal();
+        NLiteral t = toLiteral();
+        return t.asLocalDate().isPresent()
+                || t.asLocalDateTime().isPresent()
+                || t.asLocalTime().isPresent()
+                || t.asInstant().isPresent()
+                ;
     }
 
 
     public boolean isLocalTemporal() {
-        return toLiteral().isLocalTemporal();
+        NLiteral t = toLiteral();
+        return t.asLocalDate().isPresent()
+                || t.asLocalDateTime().isPresent()
+                || t.asLocalTime().isPresent()
+                ;
     }
 
 
@@ -547,57 +556,57 @@ public class DefaultNArg implements NArg {
 
 
     public boolean isByte() {
-        return toLiteral().isByte();
+        return toLiteral().asByte().isPresent();
     }
 
 
     public boolean isDecimalNumber() {
-        return toLiteral().isDecimalNumber();
+        return toLiteral().asBigDecimal().isPresent();
     }
 
 
     public boolean isBigNumber() {
-        return toLiteral().isBigNumber();
+        return toLiteral().asBigDecimal().isPresent();
     }
 
 
     public boolean isBigDecimal() {
-        return toLiteral().isBigDecimal();
+        return toLiteral().asBigDecimal().isPresent();
     }
 
 
     public boolean isBigInt() {
-        return toLiteral().isBigInt();
+        return toLiteral().asBigInt().isPresent();
     }
 
 
     public boolean isInt() {
-        return toLiteral().isInt();
+        return toLiteral().asInt().isPresent();
     }
 
 
     public boolean isLong() {
-        return toLiteral().isLong();
+        return toLiteral().asLong().isPresent();
     }
 
 
     public boolean isShort() {
-        return toLiteral().isShort();
+        return toLiteral().asShort().isPresent();
     }
 
 
     public boolean isFloat() {
-        return toLiteral().isFloat();
+        return toLiteral().asFloat().isPresent();
     }
 
 
     public boolean isDouble() {
-        return toLiteral().isDouble();
+        return toLiteral().asDouble().isPresent();
     }
 
 
     public boolean isInstant() {
-        return toLiteral().isInstant();
+        return toLiteral().asInstant().isPresent();
     }
 
 
@@ -611,7 +620,7 @@ public class DefaultNArg implements NArg {
     }
 
     public boolean isNumber() {
-        return toLiteral().isNumber();
+        return toLiteral().asNumber().isPresent();
     }
 
     @Override
@@ -686,12 +695,12 @@ public class DefaultNArg implements NArg {
 
 
     public boolean isOrdinalNumber() {
-        return toLiteral().isOrdinalNumber();
+        return toLiteral().asBigInt().isPresent();
     }
 
 
     public boolean isFloatingNumber() {
-        return toLiteral().isFloatingNumber();
+        return toLiteral().asBigDecimal().isPresent();
     }
 
     @Override
