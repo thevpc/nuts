@@ -1,7 +1,10 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.util.NOptional;
+
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -67,6 +70,15 @@ public interface NTaskSet {
     NTaskSet add(Future<?> future);
 
     /**
+     * Adds an existing {@link Future} to the task set.
+     *
+     * @param taskId task id or null
+     * @param future the future to track
+     * @return this task set
+     */
+    NTaskSet add(String taskId, Future<?> future);
+
+    /**
      * Adds an existing {@link CompletableFuture} to the task set.
      *
      * @param future the future to track
@@ -75,12 +87,30 @@ public interface NTaskSet {
     NTaskSet add(CompletableFuture<?> future);
 
     /**
+     * Adds an existing {@link CompletableFuture} to the task set.
+     *
+     * @param taskId task id or null
+     * @param future the future to track
+     * @return this task set
+     */
+    NTaskSet add(String taskId,CompletableFuture<?> future);
+
+    /**
      * Submits a {@link Supplier} to be executed asynchronously.
      *
      * @param supplier the supplier to execute
      * @return this task set
      */
     NTaskSet supply(Supplier<?> supplier);
+
+    /**
+     * @param taskId task id or null
+     * Submits a {@link Supplier} to be executed asynchronously.
+     *
+     * @param supplier the supplier to execute
+     * @return this task set
+     */
+    NTaskSet supply(String taskId,Supplier<?> supplier);
 
     /**
      * Submits a {@link Supplier} to be executed asynchronously using the provided executor.
@@ -92,6 +122,16 @@ public interface NTaskSet {
     NTaskSet supply(Supplier<?> supplier, ExecutorService executor);
 
     /**
+     * Submits a {@link Supplier} to be executed asynchronously using the provided executor.
+     *
+     * @param taskId task id or null
+     * @param supplier the supplier to execute
+     * @param executor the executor to use
+     * @return this task set
+     */
+    NTaskSet supply(String taskId, Supplier<?> supplier, ExecutorService executor);
+
+    /**
      * Submits a {@link Runnable} to be executed asynchronously.
      *
      * @param task the runnable to execute
@@ -99,6 +139,14 @@ public interface NTaskSet {
      */
     NTaskSet run(Runnable task);
 
+    /**
+     * Submits a {@link Runnable} to be executed asynchronously.
+     *
+     * @param taskId task id or null
+     * @param task the runnable to execute
+     * @return this task set
+     */
+    NTaskSet run(String taskId,Runnable task);
 
     /**
      * Submits a {@link Runnable} to be executed asynchronously using the provided executor.
@@ -110,12 +158,31 @@ public interface NTaskSet {
     NTaskSet run(Runnable task, ExecutorService executor);
 
     /**
+     * Submits a {@link Runnable} to be executed asynchronously using the provided executor.
+     *
+     * @param taskId task id or null
+     * @param task the runnable to execute
+     * @param executor the executor to use
+     * @return this task set
+     */
+    NTaskSet run(String taskId,Runnable task, ExecutorService executor);
+
+    /**
      * Submits a {@link Callable} to be executed asynchronously.
      *
      * @param task the callable to execute
      * @return this task set
      */
     NTaskSet call(Callable<?> task);
+
+    /**
+     * Submits a {@link Callable} to be executed asynchronously.
+     *
+     * @param taskId task id or null
+     * @param task the callable to execute
+     * @return this task set
+     */
+    NTaskSet call(String taskId,Callable<?> task);
 
     /**
      * Submits a {@link Callable} to be executed asynchronously using the provided executor.
@@ -126,6 +193,7 @@ public interface NTaskSet {
      */
     NTaskSet call(Callable<?> task, ExecutorService executor);
 
+    NTaskSet call(String taskId, Callable<?> task, ExecutorService exec);
 
     /**
      * Submits an {@link NCallable} to be executed asynchronously.
@@ -201,7 +269,7 @@ public interface NTaskSet {
      *
      * @return list of results
      */
-    List<?> results();
+    <T> List<NTaskResult<T>> results();
 
     /**
      * Returns results of all tasks cast to the given type.
@@ -211,7 +279,7 @@ public interface NTaskSet {
      * @param type the class type
      * @return list of results
      */
-    <T> List<T> results(Class<T> type);
+    <T> List<NTaskResult<T>> results(Class<T> type);
 
     /**
      * Returns a list of all exceptions thrown by tasks.
@@ -257,4 +325,23 @@ public interface NTaskSet {
      * @throws CompletionException if any task failed
      */
     NTaskSet requireAll() throws CompletionException;
+
+    /**
+     * Blocking version: returns the first result matching the predicate.
+     * @param predicate the match condition
+     * @param cancelOthers if true, cancels remaining tasks once match is found
+     * @param <T> type of result
+     * @return NOptional of the first match, or empty if none match
+     */
+    <T> NOptional<NTaskResult<T>> firstMatch(Predicate<NTaskResult<T>> predicate, boolean cancelOthers) ;
+
+    /**
+     * Non-blocking async version: returns CompletableFuture of first matching result
+     * @param predicate the match condition
+     * @param cancelOthers if true, cancels remaining tasks once match is found
+     * @param <T> type of result
+     * @return CompletableFuture of NOptional matching result
+     */
+    <T> CompletableFuture<NOptional<NTaskResult<T>>> firstMatchAsync(Predicate<NTaskResult<T>> predicate, boolean cancelOthers) ;
+
 }
