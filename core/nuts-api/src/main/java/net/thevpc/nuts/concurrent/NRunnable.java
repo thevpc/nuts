@@ -33,9 +33,23 @@ import net.thevpc.nuts.internal.util.NRunnableWithDescription;
 import java.util.function.Supplier;
 
 /**
- * Describable Runnable
+ * A {@link Runnable} that can provide a description of itself as an {@link NElement}.
+ * <p>
+ * This interface extends the standard {@link Runnable} with a "describable" capability,
+ * allowing it to be converted into an {@link NElement} for logging, monitoring, or inspection.
+ *
+ * @since 0.8.7
  */
 public interface NRunnable extends NElementRedescribable<NRunnable>, Runnable {
+    /**
+     * Wraps a standard {@link Runnable} into an {@link NRunnable}.
+     * <p>
+     * If the given runnable is already an {@link NRunnable}, it is returned as-is.
+     * Otherwise, it is wrapped into an {@link NRunnableFromJavaRunnable}.
+     *
+     * @param o the runnable to wrap
+     * @return a non-null {@link NRunnable} wrapper, or {@code null} if input is {@code null}
+     */
     static NRunnable of(Runnable o) {
         if (o == null) {
             return null;
@@ -46,6 +60,16 @@ public interface NRunnable extends NElementRedescribable<NRunnable>, Runnable {
         return new NRunnableFromJavaRunnable(o);
     }
 
+
+    /**
+     * Returns a new {@link NRunnable} with a custom description.
+     * <p>
+     * The provided {@link Supplier} of {@link NElement} will be used when the
+     * runnable is described via {@link #describe()} or similar methods.
+     *
+     * @param description supplier providing the description element
+     * @return a new {@link NRunnable} wrapping this instance with the custom description
+     */
     @Override
     default NRunnable redescribe(Supplier<NElement> description) {
         if (description == null) {
@@ -54,5 +78,10 @@ public interface NRunnable extends NElementRedescribable<NRunnable>, Runnable {
         return new NRunnableWithDescription(this, description);
     }
 
+    /**
+     * Executes the runnable task.
+     * <p>
+     * This overrides {@link Runnable#run()}.
+     */
     void run();
 }
