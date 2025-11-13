@@ -49,9 +49,9 @@ public class NutsSpringBootConfiguration {
     @Bean
     public NBeanContainer nutsBeanContainer(NWorkspace workspace) {
         NutsSpringBeanContainer u = new NutsSpringBeanContainer(sac);
-        workspace.runWith(()->{
+        workspace.runWith(() -> {
             NScopedStack<NBeanContainer> nBeanContainerNScopedValue = NReflect.of().scopedBeanContainerStack();
-            nBeanContainerNScopedValue.setDefaultSupplier(()->u);
+            nBeanContainerNScopedValue.setDefaultSupplier(() -> u);
         });
         return u;
     }
@@ -217,7 +217,11 @@ public class NutsSpringBootConfiguration {
     private String[] resolveNutsArgs() {
         List<String> args = new ArrayList<>(Arrays.asList(NBootCmdLine.parseDefault(env.getProperty("nuts.args"))));
         //always enable main instance in spring apps
+        if (args.isEmpty()) {
+            args.add("--sandbox");
+        }
         args.add("--shared-instance=true");
+        args.add("--yes");
         return args.toArray(new String[0]);
     }
 
