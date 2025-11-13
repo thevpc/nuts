@@ -10,8 +10,61 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * NDuration represents a comprehensive and precise time duration
+ * with support for multiple temporal units ranging from nanoseconds
+ * up to years. Unlike {@link java.time.Duration}, which is limited
+ * to seconds and nanoseconds, NDuration allows tracking weeks, months,
+ * and years, providing full temporal granularity for long-term
+ * scheduling, reporting, and time calculations.
+ * <p>
+ * <b>Key Features:</b>
+ * <ul>
+ *   <li>Supports all standard temporal units: nanoseconds, microseconds,
+ *       milliseconds, seconds, minutes, hours, days, weeks, months, and years.</li>
+ *   <li>Immutable once constructed.</li>
+ *   <li>Normalization support to ensure unit values are consistent with
+ *       conventional temporal rules (e.g., 1000 milliseconds → 1 second).</li>
+ *   <li>Support for arithmetic operations: addition, subtraction, multiplication,
+ *       negation.</li>
+ *   <li>Conversion methods to {@link Duration}, milliseconds, seconds, or
+ *       nanoseconds.</li>
+ *   <li>Support for defining smallest and largest considered units for calculations.</li>
+ * </ul>
+ * <p>
+ * <b>Usage Examples:</b>
+ * <pre>{@code
+ * // Create a duration of 2 hours, 30 minutes, and 45 seconds
+ * NDuration duration = new NDuration(0, 0, 0, 0, 2, 30, 45, 0, 0, 0, ChronoUnit.NANOS, ChronoUnit.HOURS);
+ *
+ * // Convert to java.time.Duration
+ * Duration javaDuration = duration.toDuration();
+ *
+ * // Add another duration
+ * NDuration combined = duration.add(NDuration.ofUnit(15, ChronoUnit.MINUTES));
+ *
+ * // Normalize duration so that all unit values are consistent
+ * NDuration normalized = combined.normalize();
+ *
+ * // Multiply duration by 2
+ * NDuration doubled = normalized.mul(2);
+ * }</pre>
+ * <p>
+ * Internally, NDuration stores milliseconds and nanoseconds for precision,
+ * while keeping separate fields for each larger temporal unit. It can
+ * operate with partial durations (e.g., only hours and minutes) or full
+ * durations covering all units.
+ */
 public class NDuration implements Serializable {
+    /**
+     * A constant representing a duration of zero.
+     */
     public static final NDuration ZERO = ofMillis(0);
+
+    // ----------------------
+    // Internal Fields
+    // ----------------------
+
     private long nanos;
     private long micros;
 
@@ -31,6 +84,29 @@ public class NDuration implements Serializable {
     private final long timeMillis;
     private final int timeNanos;
 
+    // ----------------------
+    // Constructors
+    // ----------------------
+
+    /**
+     * Constructs a NDuration with all possible units specified.
+     * <p>
+     * <b>Note:</b> The provided units are not automatically normalized.
+     * Use {@link #normalize()} if normalization is required.
+     *
+     * @param years        number of years
+     * @param months       number of months
+     * @param weeks        number of weeks
+     * @param days         number of days
+     * @param hours        number of hours
+     * @param minutes      number of minutes
+     * @param seconds      number of seconds
+     * @param milliSeconds number of milliseconds
+     * @param micros       number of microseconds
+     * @param nanos        number of nanoseconds
+     * @param smallestUnit the smallest temporal unit considered in calculations
+     * @param largestUnit  the largest temporal unit considered in calculations
+     */
     @NMapBy
     public NDuration(
             @NMapBy(name = "years") long years,
@@ -67,6 +143,13 @@ public class NDuration implements Serializable {
         applyUnits();
     }
 
+    /**
+     * Constructs a NDuration from an array of unit values.
+     *
+     * @param values       array of unit values ordered by {@link ChronoUnit} ordinal
+     * @param smallestUnit the smallest unit considered
+     * @param largestUnit  the largest unit considered
+     */
     public NDuration(long[] values, ChronoUnit smallestUnit, ChronoUnit largestUnit) {
         this.nanos = values[ChronoUnit.NANOS.ordinal()];
         this.micros = values[ChronoUnit.MICROS.ordinal()];
@@ -89,25 +172,12 @@ public class NDuration implements Serializable {
         applyUnits();
     }
 
-    public static NDuration between(Instant startCreateTime, Instant endCreateTime) {
-        return NDuration.ofDuration(Duration.between(startCreateTime, endCreateTime));
-    }
-
-    private int rebuildTimeNanos() {
-        return (int) (nanos + micros * 1000);
-    }
-
-    private long rebuildTimeMillis() {
-        return milliSeconds
-                + seconds * 1000
-                + minutes * 1000 * 60
-                + hours * 1000 * 60 * 60
-                + days * 1000 * 60 * 60 * 24
-                + weeks * 1000 * 60 * 60 * 24 * 7
-                + months * 1000 * 60 * 60 * 24 * 30
-                + years * 1000 * 60 * 60 * 24 * 365;
-    }
-
+    /**
+     * Constructs a NDuration from milliseconds and nanoseconds.
+     *
+     * @param timeMillis total milliseconds
+     * @param timeNanos  remaining nanoseconds
+     */
     public NDuration(long timeMillis, int timeNanos) {
         this.timeMillis = timeMillis;
         this.timeNanos = timeNanos;
@@ -130,6 +200,16 @@ public class NDuration implements Serializable {
         this.largestUnit = detectLargestUnit();
     }
 
+
+    /**
+     * Constructs a NDuration from milliseconds and nanoseconds with specified
+     * smallest and largest units.
+     *
+     * @param timeMillis   total milliseconds
+     * @param timeNanos    remaining nanoseconds
+     * @param smallestUnit the smallest unit considered
+     * @param largestUnit  the largest unit considered
+     */
     public NDuration(long timeMillis, int timeNanos, ChronoUnit smallestUnit, ChronoUnit largestUnit) {
         this.timeMillis = timeMillis;
         this.timeNanos = timeNanos;
@@ -237,6 +317,37 @@ public class NDuration implements Serializable {
             this.largestUnit = largestUnit;
             applyUnits();
         }
+    }
+
+
+    // ----------------------
+    // Factory Methods
+    // ----------------------
+
+    /**
+     * Returns a NDuration representing the duration between two instants.
+     *
+     * @param start the start instant
+     * @param end   the end instant
+     * @return duration between start and end
+     */
+    public static NDuration between(Instant start, Instant end) {
+        return NDuration.ofDuration(Duration.between(start, end));
+    }
+
+    private int rebuildTimeNanos() {
+        return (int) (nanos + micros * 1000);
+    }
+
+    private long rebuildTimeMillis() {
+        return milliSeconds
+                + seconds * 1000
+                + minutes * 1000 * 60
+                + hours * 1000 * 60 * 60
+                + days * 1000 * 60 * 60 * 24
+                + weeks * 1000 * 60 * 60 * 24 * 7
+                + months * 1000 * 60 * 60 * 24 * 30
+                + years * 1000 * 60 * 60 * 24 * 365;
     }
 
     private void applyUnits() {
@@ -421,6 +532,12 @@ public class NDuration implements Serializable {
         }
     }
 
+    /**
+     * Creates a NDuration from total nanoseconds.
+     *
+     * @param durationNanos total nanoseconds
+     * @return corresponding NDuration
+     */
     public static NDuration ofNanos(long durationNanos) {
         long ms = durationNanos / 1000000;
         int ns = (int) (durationNanos % 1000000);
@@ -779,8 +896,8 @@ public class NDuration implements Serializable {
     }
 
     public Duration toDuration() {
-        long millis=this.timeMillis;
-        long nanos=timeNanos;
+        long millis = this.timeMillis;
+        long nanos = timeNanos;
         // Separate seconds from milliseconds to avoid overflow
         long secondsFromMillis = millis / 1000;
         long remainingMillis = millis % 1000;
@@ -1111,24 +1228,24 @@ public class NDuration implements Serializable {
                     case "ns":
                     case "nano":
                     case "nanos":
-                        durationValues[ChronoUnit.NANOS.ordinal()] += (long)value;
+                        durationValues[ChronoUnit.NANOS.ordinal()] += (long) value;
                         break;
                     case "us":
                     case "micro":
                     case "micros":
-                        durationValues[ChronoUnit.MICROS.ordinal()] += (long)value;
+                        durationValues[ChronoUnit.MICROS.ordinal()] += (long) value;
                         break;
                     case "ms":
                     case "milli":
                     case "millis":
-                        durationValues[ChronoUnit.MILLIS.ordinal()] += (long)value;
+                        durationValues[ChronoUnit.MILLIS.ordinal()] += (long) value;
                         break;
                     case "s":
                     case "sec":
                     case "secs":
                     case "second":
                     case "seconds":
-                        durationValues[ChronoUnit.SECONDS.ordinal()] += (long)value;
+                        durationValues[ChronoUnit.SECONDS.ordinal()] += (long) value;
                         break;
                     case "m":
                     case "mn":
@@ -1136,34 +1253,34 @@ public class NDuration implements Serializable {
                     case "mins":
                     case "minute":
                     case "minutes":
-                        durationValues[ChronoUnit.MINUTES.ordinal()] += (long)value;
+                        durationValues[ChronoUnit.MINUTES.ordinal()] += (long) value;
                         break;
                     case "h":
                     case "hr":
                     case "hrs":
                     case "hour":
                     case "hours":
-                        durationValues[ChronoUnit.HOURS.ordinal()] += (long)value;
+                        durationValues[ChronoUnit.HOURS.ordinal()] += (long) value;
                         break;
                     case "d":
                     case "day":
                     case "days":
-                        durationValues[ChronoUnit.DAYS.ordinal()] += (long)value;
+                        durationValues[ChronoUnit.DAYS.ordinal()] += (long) value;
                         break;
                     case "w":
                     case "week":
                     case "weeks":
-                        durationValues[ChronoUnit.WEEKS.ordinal()] += (long)value;
+                        durationValues[ChronoUnit.WEEKS.ordinal()] += (long) value;
                         break;
                     case "mon":
                     case "month":
                     case "months":
-                        durationValues[ChronoUnit.MONTHS.ordinal()] += (long)value;
+                        durationValues[ChronoUnit.MONTHS.ordinal()] += (long) value;
                         break;
                     case "y":
                     case "year":
                     case "years":
-                        durationValues[ChronoUnit.YEARS.ordinal()] += (long)value;
+                        durationValues[ChronoUnit.YEARS.ordinal()] += (long) value;
                         break;
                     default:
                         return NOptional.ofNamedEmpty(NMsg.ofC("invalid unit value: %s", unit));
@@ -1174,7 +1291,7 @@ public class NDuration implements Serializable {
             if (!found) {
                 try {
                     double millis = Double.parseDouble(input);
-                    durationValues[ChronoUnit.MILLIS.ordinal()] = (long)millis;
+                    durationValues[ChronoUnit.MILLIS.ordinal()] = (long) millis;
                     return NOptional.of(NDuration.of(durationValues));
                 } catch (NumberFormatException e) {
                     return NOptional.ofNamedEmpty(NMsg.ofC("invalid millis value: %s", input));
