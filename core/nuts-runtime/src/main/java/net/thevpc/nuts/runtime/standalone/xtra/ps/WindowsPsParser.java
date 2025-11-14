@@ -48,13 +48,9 @@ public class WindowsPsParser {
             throw new NIOException(e);
         }
         if (line == null) {
-            System.out.println(">> " + line);
             return null;
         }
         String normalized = normalizeLine(line).trim();
-//        System.out.println(">> " + line);
-//        System.out.println(">>>> " + normalized);
-        System.out.println(line);
         return new String[]{
                 normalized,
                 line,
@@ -182,7 +178,6 @@ public class WindowsPsParser {
                             break;
                         }
                         default:{
-                            System.out.println("what");
                         }
 
                     }
