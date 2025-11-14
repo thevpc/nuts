@@ -99,7 +99,7 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
                 switch (yy.getType()) {
                     case FORE_COLOR:
                     case BACK_COLOR: {
-                        System.out.println("why");
+                        //System.out.println("why");
                     }
                 }
             }
