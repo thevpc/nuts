@@ -1,6 +1,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NPs;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.ps.LinuxPsParser;
@@ -26,7 +27,7 @@ public class PsTest {
             LinuxPsParser p = new LinuxPsParser();
             List<NPsInfo> parsed = p.parse(r).toList();
             for (NPsInfo nPsInfo : parsed) {
-                System.out.println(nPsInfo);
+                NOut.println(nPsInfo);
             }
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex);
@@ -39,7 +40,7 @@ public class PsTest {
             UnixPsParser p = new UnixPsParser();
             List<NPsInfo> parsed = p.parse(r).toList();
             for (NPsInfo nPsInfo : parsed) {
-                System.out.println(nPsInfo);
+                NOut.println(nPsInfo);
             }
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex);
@@ -52,7 +53,7 @@ public class PsTest {
             WindowsPsParser p = new WindowsPsParser();
             List<NPsInfo> parsed = p.parse(r).toList();
             for (NPsInfo nPsInfo : parsed) {
-                System.out.println(nPsInfo);
+                NOut.println(nPsInfo);
             }
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex);
@@ -65,7 +66,7 @@ public class PsTest {
             WindowsPsParser p = new WindowsPsParser();
             List<NPsInfo> parsed = p.parse(r).toList();
             for (NPsInfo nPsInfo : parsed) {
-                System.out.println(nPsInfo);
+                NOut.println(nPsInfo);
             }
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex);
@@ -75,7 +76,14 @@ public class PsTest {
     @Test
     public void test06() {
         for (NPsInfo nPsInfo : NPs.of().getResultList()) {
-            System.out.println(nPsInfo);
+            NOut.println(nPsInfo);
+        }
+    }
+
+    @Test
+    public void test07() {
+        for (NPsInfo nPsInfo : NPs.of().at("ssh://vpc@thevpc.net").getResultList()) {
+            NOut.println(nPsInfo);
         }
     }
 
