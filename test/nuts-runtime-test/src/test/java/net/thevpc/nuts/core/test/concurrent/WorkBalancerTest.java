@@ -22,7 +22,7 @@ public class WorkBalancerTest {
     @BeforeAll
     public static void init() {
         TestUtils.openNewMinTestWorkspace();
-        System.out.println(NBootOptionsBuilder.of().toString());
+        NOut.println(NBootOptionsBuilder.of().toString());
     }
 
     @Test
