@@ -470,27 +470,6 @@ public class NColor {
         }
         ANSI_COLORS_256 = Collections.unmodifiableList(ansiColors);
     }
-//    static {
-//        for (NColor nNamedColor : _ALL_CANONICAL) {
-//            List<NColor> li = _ALL_BY_CANONICAL_NAME.get(nNamedColor.getName());
-//            System.out.println(nNamedColor.getName()+" :: "+li.stream().map(x->x.getName()).sorted().collect(Collectors.joining(",")));
-//            boolean light=li.stream().anyMatch(x->x.getName().contains("Light"));
-//            boolean dark=li.stream().anyMatch(x->x.getName().contains("Dark"));
-//            boolean medium=li.stream().anyMatch(x->x.getName().contains("Medium"));
-//            if(light&&!dark){
-//                System.out.println(">>>>>>>> missing Dark"+nNamedColor.getName());
-//            }
-//            if(!light&&dark){
-//                System.out.println(">>>>>>>> missing Light"+nNamedColor.getName());
-//            }
-//            if(medium&&!light){
-//                System.out.println(">>>>>>>> missing Light"+nNamedColor.getName());
-//            }
-//            if(medium&&!dark){
-//                System.out.println(">>>>>>>> missing Dark"+nNamedColor.getName());
-//            }
-//        }
-//    }
 
     /**
      * Deterministic mapping from int → NColor.
