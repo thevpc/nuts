@@ -547,7 +547,6 @@ public class YamlTokenizer {
 
     private void unread() throws IOException {
         if (!pushedBack) {
-//            System.out.println("undead "+curr);
             stored = curr.clone();
             pushedBack = true;
         } else {
@@ -558,20 +557,17 @@ public class YamlTokenizer {
     private int read() throws IOException {
         if (pushedBack) {
             curr = stored;
-//            System.out.println("re-read "+curr);
             pushedBack = false;
             return curr.current;
         } else {
             curr.current = reader.read();
             if (curr.current == -1) {
-//                System.out.println("read "+curr);
                 return -1;
             }
             curr.fileOffset++;
             if (curr.current == '\n') {
                 curr.lineNumber++;
                 curr.lineOffset = 0;
-//                System.out.println("read "+curr);
                 return curr.current;
             } else if (curr.current == '\r') {
                 curr.lineNumber++;
@@ -579,7 +575,6 @@ public class YamlTokenizer {
                 reader.mark(1);
                 int n = reader.read();
                 if (n == -1) {
-//                    System.out.println("read "+curr);
                     return curr.current;
                 } else if (n == '\n') {
                     curr.fileOffset++;
@@ -587,11 +582,9 @@ public class YamlTokenizer {
                 } else {
                     reader.reset();
                 }
-//                System.out.println("read "+curr);
                 return curr.current;
             } else {
                 curr.lineOffset++;
-//                System.out.println("read "+curr);
                 return curr.current;
             }
         }
