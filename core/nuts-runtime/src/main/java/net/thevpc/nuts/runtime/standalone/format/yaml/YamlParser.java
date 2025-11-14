@@ -22,13 +22,6 @@ class YamlParser {
 
     public NElement parseElement(Reader reader) {
         this.tokenizer = new YamlTokenizer(reader);
-//        while (true){
-//            YamlToken u = this.tokenizer.next();
-//            if(u==null){
-//                break;
-//            }
-//            System.out.println(u);
-//        }
         List<NElement> all = new ArrayList<>();
         while (true) {
             YamlElement e = parseAny(0, AsWhat.ANY);
