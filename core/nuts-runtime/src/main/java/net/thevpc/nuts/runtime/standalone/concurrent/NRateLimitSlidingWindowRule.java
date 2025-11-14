@@ -26,9 +26,7 @@ public class NRateLimitSlidingWindowRule implements NRateLimitRule {
 
     @Override
     public synchronized boolean tryConsume(int count) {
-        System.out.println("before refill Deque size=" + timestamps.size() + ", max=" + capacity);
         refill();
-        System.out.println("after refill Deque size=" + timestamps.size() + ", max=" + capacity);
         if (timestamps.size() + count <= capacity) {
             long now = System.currentTimeMillis();
             for (int i = 0; i < count; i++) timestamps.addLast(now);
