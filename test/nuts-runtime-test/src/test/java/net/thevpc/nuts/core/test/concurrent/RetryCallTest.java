@@ -8,6 +8,7 @@ package net.thevpc.nuts.core.test.concurrent;
 import net.thevpc.nuts.core.NBootOptionsBuilder;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NBeanRef;
 import net.thevpc.nuts.runtime.standalone.concurrent.NRetryCallStoreMemory;
@@ -31,7 +32,7 @@ public class RetryCallTest {
     @BeforeAll
     public static void init() {
         TestUtils.openNewMinTestWorkspace();
-        System.out.println(NBootOptionsBuilder.of().toString());
+        NOut.println(NBootOptionsBuilder.of().toString());
     }
 
     @Test
