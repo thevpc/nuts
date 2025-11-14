@@ -3,18 +3,6 @@ package net.thevpc.nuts.runtime.standalone.format.tson.bundled.util;
 import java.util.Arrays;
 
 public class Kmp {
-//    public static void main(String[] args) {
-//        KmpAlgo kmp = KmpAlgo.compile("AB");
-//        System.out.println(kmp.search("EZABH"));
-//        for (char c : "EZABH".toCharArray()) {
-//            if (kmp.next(c)) {
-//                System.out.println("OK " + c);
-//            } else {
-//                System.out.println("KO " + c);
-//            }
-//        }
-//    }
-
     private char[] pattern;
     private int[] lsp;
     private int incrementalIndex = 0;
