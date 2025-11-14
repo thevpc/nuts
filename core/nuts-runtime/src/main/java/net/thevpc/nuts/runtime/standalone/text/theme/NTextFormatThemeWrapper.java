@@ -50,16 +50,12 @@ public class NTextFormatThemeWrapper implements NTextFormatTheme {
             for (NTextStyle s : t) {
                 if (s.getType().trueBasic()) {
                     rr.add(s);
-                } else {
-                    System.out.println("Error");
                 }
             }
         }else{
             for (NTextStyle s : t) {
                 if (s.getType().basic()) {
                     rr.add(s);
-                } else {
-                    System.out.println("Error");
                 }
             }
         }
