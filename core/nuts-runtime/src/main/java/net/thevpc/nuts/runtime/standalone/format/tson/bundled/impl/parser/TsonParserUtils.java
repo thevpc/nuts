@@ -91,9 +91,6 @@ public class TsonParserUtils {
     }
 
     public static double parseDouble(String s) {
-//        if(s.endsWith("f") || s.endsWith("F")){
-//            s=s.substring(s.length()-1);
-//        }
         return Double.parseDouble(s);
     }
 
@@ -101,79 +98,6 @@ public class TsonParserUtils {
         return parseRawString(s, TsonElementType.SINGLE_QUOTED_STRING).charAt(0);
     }
 
-//    public static TsonElement parseCharElem(String s) {
-//        if (s.length() != 1) {
-//            return parseStringElem(s, TsonStringLayout.SINGLE_QUOTE);
-//        }
-//        return new TsonCharImpl(parseRawString(s, TsonStringLayout.SINGLE_QUOTE).charAt(0));
-//    }
-//
-//    public static TsonElement parseStringElem(String s) {
-//        return parseStringElem(s, TsonStringLayout.DOUBLE_QUOTE);
-//    }
-
-//    public static TsonElement parseStringElem(String s, TsonStringLayout layout) {
-//        layout = layout == null ? TsonStringLayout.DOUBLE_QUOTE : layout;
-//        return Tson.parseString(s, layout);
-//    }
-
-//    public static TsonElement parseAliasElem(String s) {
-//        return new TsonAliasImpl(s.substring(1));
-//    }
-
-//    public static void main(String[] args) {
-//        for (String string : new String[]{"\"Hello \\nWorld\"","\"Hello World\""}) {
-//            System.out.println(string);
-//            System.out.println(parseString(string));
-//            System.out.println(parseString2(string));
-//        }
-//        final int count = 10000;
-//
-//        Chrono c2=Chrono.start();
-//        for (int i = 0; i < count; i++) {
-//            for (String string : new String[]{"\"Hello \\nWorld\""}) {
-//                parseString(string);
-//            }
-//        }
-//        c2.stop();
-//        
-//        Chrono c3=Chrono.start();
-//        for (int i = 0; i < count; i++) {
-//            for (String string : new String[]{"\"Hello \\nWorld\""}) {
-//                parseString2(string);
-//            }
-//        }
-//        c3.stop();
-//        System.out.println(c2);
-//        System.out.println(c3);
-//    }
-
-
-//    public static String extractRawString(String s, TsonStringLayout layout) {
-//        char[] chars = s.toCharArray();
-//        int len = chars.length;
-//        int borderLen;
-//        switch (layout) {
-//            case DOUBLE_QUOTE:
-//            case SINGLE_QUOTE:
-//            case ANTI_QUOTE: {
-//                borderLen = 1;
-//                break;
-//            }
-//            case TRIPLE_ANTI_QUOTE:
-//            case TRIPLE_DOUBLE_QUOTE:
-//            case TRIPLE_SINGLE_QUOTE: {
-//                borderLen = 3;
-//                break;
-//            }
-//            default: {
-//                throw new IllegalArgumentException("unsupported");
-//            }
-//        }
-//        return s.substring(borderLen, len - borderLen);
-//    }
-//
-//
     public static String parseRawString(String s, TsonElementType layout) {
         char[] chars = s.toCharArray();
         int len = chars.length;
