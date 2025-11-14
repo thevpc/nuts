@@ -339,12 +339,6 @@ public class TypeHelper {
 
                     boolean typeArgEquality = Arrays.equals(actualTypeArguments, // avoid clone
                             that.getActualTypeArguments());
-//                    for (Type t : actualTypeArguments) {
-//                        System.out.printf("\t\t%s%s%n", t, t.getClass());
-//                    }
-//
-//                    System.out.printf("\towner %s\traw %s\ttypeArg %s%n",
-//                            ownerEquality, rawEquality, typeArgEquality);
                     return ownerEquality && rawEquality && typeArgEquality;
                 }
 
