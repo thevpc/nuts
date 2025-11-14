@@ -133,7 +133,7 @@ public class MavenNDependencySolver implements NDependencySolver {
 
 
     void doLog(String message) {
-//        System.out.println(message);
+//        NOut.println(message);
     }
 
     void logRejectedDependency(NDependency effDependency) {
