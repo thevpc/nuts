@@ -95,48 +95,6 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
         return getErr();
     }
 
-//    @Override
-//    public boolean isStandardOutputStream(OutputStream out) {
-//        if (out == null) {
-//            return true;
-//        }
-//        if (out == System.out || out == CoreIOUtils.out(ws)) {
-//            return true;
-//        }
-//        if (out instanceof NutsOutputStreamTransparentAdapter) {
-//            return isStandardOutputStream(((NutsOutputStreamTransparentAdapter) out).baseOutputStream());
-//        }
-//        return false;
-//    }
-
-//    @Override
-//    public boolean isStandardErrorStream(OutputStream out) {
-//        if (out == null) {
-//            return true;
-//        }
-//        if (out == System.err || out == CoreIOUtils.err(ws)) {
-//            return true;
-//        }
-//        if (out instanceof NutsOutputStreamTransparentAdapter) {
-//            return isStandardErrorStream(((NutsOutputStreamTransparentAdapter) out).baseOutputStream());
-//        }
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean isStandardInputStream(InputStream in) {
-//        if (in == null) {
-//            return true;
-//        }
-//        if (in == System.in || in == CoreIOUtils.in(ws)) {
-//            return true;
-//        }
-//        if (in instanceof NutsInputStreamTransparentAdapter) {
-//            return isStandardInputStream(((NutsInputStreamTransparentAdapter) in).baseInputStream());
-//        }
-//        return false;
-//    }
-
     @Override
     public NSystemTerminal printProgress(float progress, NMsg message) {
         NSession session= NSession.of();
