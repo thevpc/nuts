@@ -49,7 +49,6 @@ public class DependencyTest {
                 t1.equals(s2.toString())
                         || t2.equals(s2.toString())
         );
-        System.out.println("Okkay");
     }
 
     @Test
