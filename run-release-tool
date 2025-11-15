@@ -1,12 +1,34 @@
 #!/bin/bash
+NUTS_VERSION=0.8.8
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+compare_versions(){
+  local curdir=$(pwd)
+  v1=$1
+  v2=$2
+  cd $SCRIPT_DIR/documentation/website/src/main/
+  japi-compliance-checker /home/vpc/.m2/repository/net/thevpc/nuts/nuts/$v1/nuts-$v1.jar /home/vpc/.m2/repository/net/thevpc/nuts/nuts/$v2/nuts-$v2.jar
 
-NUTS_VERSION=0.8.7
+  cd "$curdir" || return 1
+}
+
+versions=(0.8.4 0.8.5 0.8.6 0.8.7 0.8.8)
+
 NUTS_JAVA_HOME=/home/vpc/.jdks/corretto-1.8.0_452/
 NUTS_APP_JAR=~/.m2/repository/net/thevpc/nuts/nuts-app/$NUTS_VERSION/nuts-app-$NUTS_VERSION.jar
 
+
+for ((i=0;i<${#versions[@]};i++)); do
+  for ((j=i+1;j<${#versions[@]};j++)); do
+    v1=${versions[i]}
+    v2=${versions[j]}
+    echo "Comparing $v1 -> $v2"
+    compare_versions "$v1" "$v2"
+  done
+done
+
+exit
 
 if [ x"$NUTS_JAVA_HOME" != "x" ] ; then
     JAVA_CMD="$NUTS_JAVA_HOME/bin/java";
