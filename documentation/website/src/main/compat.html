@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <link href="assets/images/favicon.ico" rel="icon"/>
+    <title>Nuts Compatibility Matrix</title>
+    <meta name="description" content="Nuts Java Package Manager">
+    <meta name="author" content="thevpc">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap/css/bootstrap.min.css"/>
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/font-awesome/css/all.min.css"/>
+    <!-- Magnific Popup -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/magnific-popup/magnific-popup.min.css"/>
+    <!-- Highlight Syntax -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-landing.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/caroussel.css"/>
+
+    <style>
+        table { border-collapse: collapse; width: 80%; margin: 20px auto; }
+        th, td { border: 1px solid #333; padding: 8px; text-align: center; }
+        th { background: #555; color: #fff; }
+        td a { text-decoration: none; color: #0066cc; }
+        td.compatible { background: #cfc; }
+        td.incompatible { background: #fcc; }
+        td.na { background: #ccc; }
+        td.disabled {
+            background-color: #ccc;      /* gray background for the whole cell */
+            pointer-events: none;        /* disable clicking on everything inside */
+            text-align: center;          /* optional, center text */
+        }
+
+        /* hide text inside the link but keep the element there */
+        td.disabled a {
+            color: transparent;          /* hide the text */
+            text-decoration: none;       /* remove underline */
+        }
+
+    </style>
+</head>
+<body>
+<h1 style="text-align:center;">Nuts API Compatibility Matrix</h1>
+
+<table>
+    <tr>
+        <th>From \ To</th>
+        <th>0.8.4</th>
+        <th>0.8.5</th>
+        <th>0.8.6</th>
+        <th>0.8.7</th>
+        <th>0.8.8</th>
+        <th>0.8.9</th>
+        <th>0.8.10</th>
+        <th>0.8.11</th>
+        <th>0.8.12</th>
+    </tr>
+
+    <tr>
+        <th>0.8.4</th>
+        <td class="na">-</td>
+        <td><a href="compat_reports/nuts/0.8.4_to_0.8.5/compat_report.html" target="_blank">0.8.4→0.8.5</a></td>
+        <td><a href="compat_reports/nuts/0.8.4_to_0.8.6/compat_report.html" target="_blank">0.8.4→0.8.6</a></td>
+        <td><a href="compat_reports/nuts/0.8.4_to_0.8.7/compat_report.html" target="_blank">0.8.4→0.8.7</a></td>
+        <td><a href="compat_reports/nuts/0.8.4_to_0.8.8/compat_report.html" target="_blank">0.8.4→0.8.8</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.4_to_0.8.9/compat_report.html"   target="_blank">0.8.4→0.8.9</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.4_to_0.8.10/compat_report.html"  target="_blank">0.8.4→0.8.10</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.4_to_0.8.11/compat_report.html"  target="_blank">0.8.4→0.8.11</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.4_to_0.8.12/compat_report.html"  target="_blank">0.8.4→0.8.12</a></td>
+    </tr>
+
+    <tr>
+        <th>0.8.5</th>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td><a href="compat_reports/nuts/0.8.5_to_0.8.6/compat_report.html" target="_blank">0.8.5→0.8.6</a></td>
+        <td><a href="compat_reports/nuts/0.8.5_to_0.8.7/compat_report.html" target="_blank">0.8.5→0.8.7</a></td>
+        <td><a href="compat_reports/nuts/0.8.5_to_0.8.8/compat_report.html" target="_blank">0.8.5→0.8.8</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.5_to_0.8.9/compat_report.html"  target="_blank">0.8.5→0.8.9</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.5_to_0.8.10/compat_report.html" target="_blank">0.8.5→0.8.10</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.5_to_0.8.11/compat_report.html" target="_blank">0.8.5→0.8.11</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.5_to_0.8.12/compat_report.html" target="_blank">0.8.5→0.8.12</a></td>
+    </tr>
+
+    <tr>
+        <th>0.8.6</th>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td><a href="compat_reports/nuts/0.8.6_to_0.8.7/compat_report.html" target="_blank">0.8.6→0.8.7</a></td>
+        <td><a href="compat_reports/nuts/0.8.6_to_0.8.8/compat_report.html" target="_blank">0.8.6→0.8.8</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.6_to_0.8.9/compat_report.html"  target="_blank">0.8.6→0.8.9</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.6_to_0.8.10/compat_report.html" target="_blank">0.8.6→0.8.10</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.6_to_0.8.11/compat_report.html" target="_blank">0.8.6→0.8.11</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.6_to_0.8.12/compat_report.html" target="_blank">0.8.6→0.8.12</a></td>
+    </tr>
+
+    <tr>
+        <th>0.8.7</th>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td><a href="compat_reports/nuts/0.8.7_to_0.8.8/compat_report.html" target="_blank">0.8.7→0.8.8</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.7_to_0.8.9/compat_report.html"  target="_blank">0.8.7→0.8.9</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.7_to_0.8.10/compat_report.html" target="_blank">0.8.7→0.8.10</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.7_to_0.8.11/compat_report.html" target="_blank">0.8.7→0.8.11</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.7_to_0.8.12/compat_report.html" target="_blank">0.8.7→0.8.12</a></td>
+    </tr>
+
+    <tr>
+        <th>0.8.8</th>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.8_to_0.8.9/compat_report.html"  target="_blank">0.8.8→0.8.9</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.8_to_0.8.10/compat_report.html" target="_blank">0.8.8→0.8.10</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.8_to_0.8.11/compat_report.html" target="_blank">0.8.8→0.8.11</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.8_to_0.8.12/compat_report.html" target="_blank">0.8.8→0.8.12</a></td>
+    </tr>
+
+    <tr>
+        <th>0.8.9</th>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.9_to_0.8.10/compat_report.html" target="_blank">0.8.9→0.8.10</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.9_to_0.8.11/compat_report.html" target="_blank">0.8.9→0.8.11</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.9_to_0.8.12/compat_report.html" target="_blank">0.8.9→0.8.12</a></td>
+    </tr>
+
+    <tr>
+        <th>0.8.10</th>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.10_to_0.8.11/compat_report.html" target="_blank">0.8.10→0.8.11</a></td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.10_to_0.8.12/compat_report.html" target="_blank">0.8.10→0.8.12</a></td>
+    </tr>
+
+    <tr>
+        <th>0.8.11</th>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="na">-</td>
+        <td class="disabled"><a href="compat_reports/nuts/0.8.11_to_0.8.12/compat_report.html" target="_blank">0.8.11→0.8.12</a></td>
+    </tr>
+
+</table>
+</body>
+</html>
