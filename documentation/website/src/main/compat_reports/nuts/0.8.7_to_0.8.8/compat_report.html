@@ -1,0 +1,1953 @@
+<!-- kind:binary;verdict:incompatible;affected:0.5;added:67;removed:13;type_problems_high:12;type_problems_medium:0;type_problems_low:0;method_problems_high:0;method_problems_medium:0;method_problems_low:0;checked_methods:12546;checked_types:912;tool_version:2.4 -->
+<!-- kind:source;verdict:incompatible;affected:0.7;added:67;removed:13;type_problems_high:16;type_problems_medium:0;type_problems_low:0;method_problems_high:0;method_problems_medium:0;method_problems_low:0;checked_methods:12546;checked_types:912;tool_version:2.4 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="keywords" content="nuts, compatibility" />
+<meta name="description" content="Compatibility report for the nuts library between 0.8.7 and 0.8.8 versions" />
+<title>nuts: 0.8.7 to 0.8.8 compatibility report</title>
+<style type="text/css">
+body {
+    font-family:Arial, sans-serif;
+    background-color:White;
+    color:Black;
+}
+hr {
+    color:Black;
+    background-color:Black;
+    height:1px;
+    border:0;
+}
+h1 {
+    margin-bottom:0px;
+    padding-bottom:0px;
+    font-size:1.625em;
+}
+h2 {
+    margin-bottom:0px;
+    padding-bottom:0px;
+    font-size:1.25em;
+    white-space:nowrap;
+}
+div.symbols {
+    color:#003E69;
+}
+div.symbols i {
+    color:Brown;
+}
+span.section {
+    font-weight:bold;
+    cursor:pointer;
+    color:#003E69;
+    white-space:nowrap;
+    margin-left:0.3125em;
+}
+span:hover.section {
+    color:#336699;
+}
+span.sect_aff {
+    cursor:pointer;
+    padding-left:1.55em;
+    font-size:0.875em;
+    color:#cc3300;
+}
+span.ext {
+    font-weight:normal;
+}
+span.jar {
+    color:#cc3300;
+    font-size:0.875em;
+    font-weight:bold;
+}
+div.jar_list {
+    padding-left:0.4em;
+    font-size:0.94em;
+}
+span.pkg_t {
+    color:#408080;
+    font-size:0.875em;
+}
+span.pkg {
+    color:#408080;
+    font-size:0.875em;
+    font-weight:bold;
+}
+span.cname {
+    color:Green;
+    font-size:0.875em;
+    font-weight:bold;
+}
+span.iname_b {
+    font-weight:bold;
+}
+span.iname_a {
+    color:#333333;
+    font-weight:bold;
+    font-size:0.94em;
+}
+span.sym_p {
+    font-weight:normal;
+    white-space:normal;
+}
+span.sym_pd {
+    white-space:normal;
+}
+span.sym_p span, span.sym_pd span {
+    white-space:nowrap;
+}
+span.attr {
+    color:Black;
+    font-weight:normal;
+}
+span.deprecated {
+    color:Red;
+    font-weight:bold;
+    font-family:Monaco, monospace;
+}
+div.affect {
+    padding-left:1em;
+    padding-bottom:10px;
+    font-size:0.87em;
+    font-style:italic;
+    line-height:0.9em;
+}
+div.affected {
+    padding-left:2em;
+    padding-top:10px;
+}
+table.ptable {
+    border-collapse:collapse;
+    border:1px outset black;
+    margin-left:0.95em;
+    margin-top:3px;
+    margin-bottom:3px;
+    width:56.25em;
+}
+table.ptable td {
+    border:1px solid Gray;
+    padding:3px;
+    font-size:0.875em;
+    text-align:left;
+    vertical-align:top;
+    max-width:28em;
+    word-wrap:break-word;
+}
+table.ptable th {
+    background-color:#eeeeee;
+    font-weight:bold;
+    color:#333333;
+    font-family:Verdana, Arial;
+    font-size:0.875em;
+    border:1px solid Gray;
+    text-align:center;
+    vertical-align:top;
+    white-space:nowrap;
+    padding:3px;
+}
+table.summary {
+    border-collapse:collapse;
+    border:1px outset black;
+}
+table.summary th {
+    background-color:#eeeeee;
+    font-weight:normal;
+    text-align:left;
+    font-size:0.94em;
+    white-space:nowrap;
+    border:1px inset Gray;
+    padding:3px;
+}
+table.summary td {
+    text-align:right;
+    white-space:nowrap;
+    border:1px inset Gray;
+    padding:3px 5px 3px 10px;
+}
+span.mngl {
+    padding-left:1em;
+    font-size:0.875em;
+    cursor:text;
+    color:#444444;
+    font-weight:bold;
+}
+span.pleft {
+    padding-left:2.5em;
+}
+span.color_p {
+    font-style:italic;
+    color:Brown;
+}
+span.param {
+    font-style:italic;
+}
+span.focus_p {
+    font-style:italic;
+    background-color:#DCDCDC;
+}
+span.ttype {
+    font-weight:normal;
+}
+span.nowrap {
+    white-space:nowrap;
+}
+span.value {
+    white-space:nowrap;
+    font-weight:bold;
+}
+.passed {
+    background-color:#CCFFCC;
+    font-weight:normal;
+}
+.warning {
+    background-color:#F4F4AF;
+    font-weight:normal;
+}
+.failed {
+    background-color:#FFCCCC;
+    font-weight:normal;
+}
+.new {
+    background-color:#C6DEFF;
+    font-weight:normal;
+}
+
+.compatible {
+    background-color:#CCFFCC;
+    font-weight:normal;
+}
+.almost_compatible {
+    background-color:#FFDAA3;
+    font-weight:normal;
+}
+.incompatible {
+    background-color:#FFCCCC;
+    font-weight:normal;
+}
+.gray {
+    background-color:#DCDCDC;
+    font-weight:normal;
+}
+
+.top_ref {
+    font-size:0.69em;
+}
+.footer {
+    font-size:0.8125em;
+}
+.tabset {
+    float:left;
+}
+a.tab {
+    border:1px solid Black;
+    float:left;
+    margin:0px 5px -1px 0px;
+    padding:3px 5px 3px 5px;
+    position:relative;
+    font-size:0.875em;
+    background-color:#DDD;
+    text-decoration:none;
+    color:Black;
+}
+a.disabled:hover
+{
+    color:Black;
+    background:#EEE;
+}
+a.active:hover
+{
+    color:Black;
+    background:White;
+}
+a.active {
+    border-bottom-color:White;
+    background-color:White;
+}
+div.tab {
+    border-top:1px solid Black;
+    padding:0px;
+    width:100%;
+    clear:both;
+}
+
+</style>
+<script type="text/javascript" language="JavaScript">
+<!--
+function sC(header, id)
+{
+    e = document.getElementById(id);
+    if(e.style.display == 'none')
+    {
+        e.style.display = 'block';
+        e.style.visibility = 'visible';
+        header.innerHTML = header.innerHTML.replace(/\[[^0-9 ]\]/gi, "[&minus;]");
+    }
+    else
+    {
+        e.style.display = 'none';
+        e.style.visibility = 'hidden';
+        header.innerHTML = header.innerHTML.replace(/\[[^0-9 ]\]/gi, "[+]");
+    }
+}
+function initTabs()
+{
+    var url = window.location.href;
+    if(url.indexOf('_Source_')!=-1 || url.indexOf('#Source')!=-1)
+    {
+        var tab1 = document.getElementById('BinaryID');
+        var tab2 = document.getElementById('SourceID');
+        tab1.className='tab disabled';
+        tab2.className='tab active';
+    }
+    
+    var sets = document.getElementsByTagName('div');
+    for (var i = 0; i < sets.length; i++)
+    {
+        if (sets[i].className.indexOf('tabset') != -1)
+        {
+            var tabs = [];
+            var links = sets[i].getElementsByTagName('a');
+            for (var j = 0; j < links.length; j++)
+            {
+                if (links[j].className.indexOf('tab') != -1)
+                {
+                    tabs.push(links[j]);
+                    links[j].tabs = tabs;
+                    var tab = document.getElementById(links[j].href.substr(links[j].href.indexOf('#') + 1));
+                    //reset all tabs on start
+                    if (tab)
+                    {
+                        if (links[j].className.indexOf('active')!=-1) {
+                            tab.style.display = 'block';
+                        }
+                        else {
+                            tab.style.display = 'none';
+                        }
+                    }
+                    links[j].onclick = function()
+                    {
+                        var tab = document.getElementById(this.href.substr(this.href.indexOf('#') + 1));
+                        if (tab)
+                        {
+                            //reset all tabs before change
+                            for (var k = 0; k < this.tabs.length; k++)
+                            {
+                                document.getElementById(this.tabs[k].href.substr(this.tabs[k].href.indexOf('#') + 1)).style.display = 'none';
+                                this.tabs[k].className = this.tabs[k].className.replace('active', 'disabled');
+                            }
+                            this.className = 'tab active';
+                            tab.style.display = 'block';
+                            // window.location.hash = this.id.replace('ID', '');
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    if(url.indexOf('#')!=-1) {
+        location.href=location.href;
+    }
+}
+
+if (window.addEventListener) window.addEventListener('load', initTabs, false);
+else if (window.attachEvent) window.attachEvent('onload', initTabs);
+
+-->
+</script>
+</head>
+<body><a name='Source'></a><a name='Binary'></a><a name='Top'></a><h1>API compatibility report for the <span style='color:Blue;'>nuts</span> library between <span style='color:Red;'>0.8.7</span> and <span style='color:Red;'>0.8.8</span> versions</h1>
+<br/><div class='tabset'>
+<a id='BinaryID' href='#BinaryTab' class='tab active'>Binary<br/>Compatibility</a>
+<a id='SourceID' href='#SourceTab' style='margin-left:3px' class='tab disabled'>Source<br/>Compatibility</a>
+</div>
+<div id='BinaryTab' class='tab'>
+<h2>Test Info</h2><hr/>
+<table class='summary'>
+<tr><th>Library Name</th><td>nuts</td></tr>
+<tr><th>Version #1</th><td>0.8.7</td></tr>
+<tr><th>Version #2</th><td>0.8.8</td></tr>
+<tr><th>Subject</th><td width='150px'>Binary Compatibility</td></tr>
+</table>
+<h2>Test Results</h2><hr/>
+<table class='summary'>
+<tr><th>Total Java Modules</th><td><a href='#Checked_Archives' style='color:Blue;'>1</a></td></tr>
+<tr><th>Total Methods / Classes</th><td>12546 / 912</td></tr>
+<tr><th>Compatibility</th>
+<td class='warning'>99.5%</td>
+</tr>
+</table>
+<h2>Problem Summary</h2><hr/>
+<table class='summary'>
+<tr><th></th><th style='text-align:center;'>Severity</th><th style='text-align:center;'>Count</th></tr>
+<tr><th>Added Methods</th><td>-</td><td class='new'><a href='#Binary_Added' style='color:Blue;'>67</a></td></tr>
+<tr><th>Removed Methods</th><td>High</td><td class='failed'><a href='#Binary_Removed' style='color:Blue;'>13</a></td></tr>
+<tr><th rowspan='3'>Problems with<br/>Data Types</th><td>High</td><td class='failed'><a href='#Type_Binary_Problems_High' style='color:Blue;'>12</a></td></tr>
+<tr><td>Medium</td><td>0</td></tr>
+<tr><td>Low</td><td>0</td></tr>
+<tr><th rowspan='3'>Problems with<br/>Methods</th><td>High</td><td>0</td></tr>
+<tr><td>Medium</td><td>0</td></tr>
+<tr><td>Low</td><td>0</td></tr>
+<tr><th>Other Changes<br/>in Data Types</th><td>-</td><td class='passed'><a href='#Other_Binary_Changes_In_Types' style='color:Blue;'>4</a></td></tr>
+</table>
+
+<a name='Binary_Added'></a><h2>Added Methods <span class='new'>&nbsp;67&nbsp;</span></h2><hr/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NBulkheadCall.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_1')">
+NBulkheadCall&lt;T&gt;.callBlocking&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;T</span></span>
+<br/>
+<div id="c_1" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.callBlocking:()Ljava/lang/Object;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_2')">
+NBulkheadCall&lt;T&gt;.callBlocking&#160;<span class='sym_p'><span>(&#160;NDuration <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;T</span></span>
+<br/>
+<div id="c_2" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.callBlocking:(Lnet/thevpc/nuts/time/NDuration;)Ljava/lang/Object;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_3')">
+NBulkheadCall&lt;T&gt;.callOrElse&#160;<span class='sym_p'><span>(&#160;NDuration <span class='color_p'>p1</span></span>, <span>NCallable&lt;T&gt; <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;T</span></span>
+<br/>
+<div id="c_3" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.callOrElse:(Lnet/thevpc/nuts/time/NDuration;Lnet/thevpc/nuts/concurrent/NCallable;)Ljava/lang/Object;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_4')">
+NBulkheadCall&lt;T&gt;.getActiveCalls&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_4" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.getActiveCalls:()I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_5')">
+NBulkheadCall&lt;T&gt;.getAvailableSlots&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_5" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.getAvailableSlots:()I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_6')">
+NBulkheadCall&lt;T&gt;.getMaxConcurrent&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_6" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.getMaxConcurrent:()I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_7')">
+NBulkheadCall&lt;T&gt;.isFull&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;boolean</span></span>
+<br/>
+<div id="c_7" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.isFull:()Z</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_8')">
+NBulkheadCall&lt;T&gt;.of&#160;<span class='sym_p'><span>(&#160;NCallable&lt;T&gt; <span class='color_p'>callable</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCall&lt;T&gt;</span></span>
+<br/>
+<div id="c_8" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.of:(Lnet/thevpc/nuts/concurrent/NCallable;)Lnet/thevpc/nuts/concurrent/NBulkheadCall;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_9')">
+NBulkheadCall&lt;T&gt;.of&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>id</span></span>, <span>NCallable&lt;T&gt; <span class='color_p'>callable</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCall&lt;T&gt;</span></span>
+<br/>
+<div id="c_9" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.of:(Ljava/lang/String;Lnet/thevpc/nuts/concurrent/NCallable;)Lnet/thevpc/nuts/concurrent/NBulkheadCall;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_10')">
+NBulkheadCall&lt;T&gt;.setMaxConcurrent&#160;<span class='sym_p'><span>(&#160;int <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCall&lt;T&gt;</span></span>
+<br/>
+<div id="c_10" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.setMaxConcurrent:(I)Lnet/thevpc/nuts/concurrent/NBulkheadCall;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_11')">
+NBulkheadCall&lt;T&gt;.setPermitExpiry&#160;<span class='sym_p'><span>(&#160;NDuration <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCall&lt;T&gt;</span></span>
+<br/>
+<div id="c_11" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.setPermitExpiry:(Lnet/thevpc/nuts/time/NDuration;)Lnet/thevpc/nuts/concurrent/NBulkheadCall;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_12')">
+NBulkheadCall&lt;T&gt;.tryCall&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NOptional&lt;T&gt;</span></span>
+<br/>
+<div id="c_12" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.tryCall:()Lnet/thevpc/nuts/util/NOptional;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_13')">
+NBulkheadCall&lt;T&gt;.tryCallOrElse&#160;<span class='sym_p'><span>(&#160;NCallable&lt;T&gt; <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;T</span></span>
+<br/>
+<div id="c_13" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.tryCallOrElse:(Lnet/thevpc/nuts/concurrent/NCallable;)Ljava/lang/Object;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NBulkheadCallBackend.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_14')">
+NBulkheadCallBackend.cleanupExpired&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>p1</span></span>, <span>NDuration <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_14" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.cleanupExpired:(Ljava/lang/String;Lnet/thevpc/nuts/time/NDuration;)I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_15')">
+NBulkheadCallBackend.getMetrics&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadMetrics</span></span>
+<br/>
+<div id="c_15" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.getMetrics:(Ljava/lang/String;)Lnet/thevpc/nuts/concurrent/NBulkheadMetrics;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_16')">
+NBulkheadCallBackend.release&#160;<span class='sym_p'><span>(&#160;NBulkheadCallBackend.NBulkheadPermit <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;void</span></span>
+<br/>
+<div id="c_16" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.release:(Lnet/thevpc/nuts/concurrent/NBulkheadCallBackend$NBulkheadPermit;)V</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_17')">
+NBulkheadCallBackend.tryAcquire&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>p1</span></span>, <span>int <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NOptional&lt;NBulkheadCallBackend.NBulkheadPermit&gt;</span></span>
+<br/>
+<div id="c_17" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.tryAcquire:(Ljava/lang/String;I)Lnet/thevpc/nuts/util/NOptional;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_18')">
+NBulkheadCallBackend.tryAcquire&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>p1</span></span>, <span>int <span class='color_p'>p2</span></span>, <span>NDuration <span class='color_p'>p3</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NOptional&lt;NBulkheadCallBackend.NBulkheadPermit&gt;</span></span>
+<br/>
+<div id="c_18" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.tryAcquire:(Ljava/lang/String;ILnet/thevpc/nuts/time/NDuration;)Lnet/thevpc/nuts/util/NOptional;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NBulkheadCallFactory.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_19')">
+NBulkheadCallFactory.bulkheadCall&#160;<span class='sym_p'><span>(&#160;NCallable&lt;T&gt; <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCall&lt;T&gt;</span></span>
+<br/>
+<div id="c_19" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.bulkheadCall:(Lnet/thevpc/nuts/concurrent/NCallable;)Lnet/thevpc/nuts/concurrent/NBulkheadCall;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_20')">
+NBulkheadCallFactory.bulkheadCall&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>p1</span></span>, <span>NCallable&lt;T&gt; <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCall&lt;T&gt;</span></span>
+<br/>
+<div id="c_20" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.bulkheadCall:(Ljava/lang/String;Lnet/thevpc/nuts/concurrent/NCallable;)Lnet/thevpc/nuts/concurrent/NBulkheadCall;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_21')">
+NBulkheadCallFactory.getBackend&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallBackend</span></span>
+<br/>
+<div id="c_21" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.getBackend:()Lnet/thevpc/nuts/concurrent/NBulkheadCallBackend;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_22')">
+NBulkheadCallFactory.getStore&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallStore</span></span>
+<br/>
+<div id="c_22" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.getStore:()Lnet/thevpc/nuts/concurrent/NBulkheadCallStore;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_23')">
+NBulkheadCallFactory.of&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallFactory</span></span>
+<br/>
+<div id="c_23" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.of:()Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_24')">
+NBulkheadCallFactory.of&#160;<span class='sym_p'><span>(&#160;NBulkheadCallStore <span class='color_p'>store</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallFactory</span></span>
+<br/>
+<div id="c_24" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.of:(Lnet/thevpc/nuts/concurrent/NBulkheadCallStore;)Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_25')">
+NBulkheadCallFactory.withBackend&#160;<span class='sym_p'><span>(&#160;NBulkheadCallBackend <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallFactory</span></span>
+<br/>
+<div id="c_25" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.withBackend:(Lnet/thevpc/nuts/concurrent/NBulkheadCallBackend;)Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_26')">
+NBulkheadCallFactory.withStore&#160;<span class='sym_p'><span>(&#160;NBulkheadCallStore <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallFactory</span></span>
+<br/>
+<div id="c_26" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.withStore:(Lnet/thevpc/nuts/concurrent/NBulkheadCallStore;)Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NBulkheadCallModel.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_27')">
+NBulkheadCallModel.clone&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallModel</span></span>
+<br/>
+<div id="c_27" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.clone:()Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_28')">
+NBulkheadCallModel.clone&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;Object</span></span>
+<br/>
+<div id="c_28" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.clone:()Ljava/lang/Object;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_29')">
+NBulkheadCallModel.copy&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallModel</span></span>
+<br/>
+<div id="c_29" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.copy:()Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_30')">
+NBulkheadCallModel.copy&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;Object</span></span>
+<br/>
+<div id="c_30" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.copy:()Ljava/lang/Object;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_31')">
+NBulkheadCallModel.getCaller&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NCallable&lt;?&gt;</span></span>
+<br/>
+<div id="c_31" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.getCaller:()Lnet/thevpc/nuts/concurrent/NCallable;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_32')">
+NBulkheadCallModel.getId&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;String</span></span>
+<br/>
+<div id="c_32" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.getId:()Ljava/lang/String;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_33')">
+NBulkheadCallModel.getMaxConcurrent&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_33" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.getMaxConcurrent:()I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_34')">
+NBulkheadCallModel.getPermitExpiry&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDuration</span></span>
+<br/>
+<div id="c_34" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.getPermitExpiry:()Lnet/thevpc/nuts/time/NDuration;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_35')">
+NBulkheadCallModel.NBulkheadCallModel&#160;<span class='sym_p'>(&#160;)</span></span>
+<br/>
+<div id="c_35" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.&quot;&lt;init&gt;&quot;:()V</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_36')">
+NBulkheadCallModel.NBulkheadCallModel&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>id</span></span>&#160;)</span></span>
+<br/>
+<div id="c_36" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.&quot;&lt;init&gt;&quot;:(Ljava/lang/String;)V</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_37')">
+NBulkheadCallModel.setCaller&#160;<span class='sym_p'><span>(&#160;NCallable&lt;?&gt; <span class='color_p'>caller</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallModel</span></span>
+<br/>
+<div id="c_37" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.setCaller:(Lnet/thevpc/nuts/concurrent/NCallable;)Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_38')">
+NBulkheadCallModel.setId&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>id</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallModel</span></span>
+<br/>
+<div id="c_38" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.setId:(Ljava/lang/String;)Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_39')">
+NBulkheadCallModel.setMaxConcurrent&#160;<span class='sym_p'><span>(&#160;int <span class='color_p'>maxConcurrent</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallModel</span></span>
+<br/>
+<div id="c_39" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.setMaxConcurrent:(I)Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_40')">
+NBulkheadCallModel.setPermitExpiry&#160;<span class='sym_p'><span>(&#160;NDuration <span class='color_p'>permitExpiry</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallModel</span></span>
+<br/>
+<div id="c_40" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.setPermitExpiry:(Lnet/thevpc/nuts/time/NDuration;)Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NBulkheadCallStore.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_41')">
+NBulkheadCallStore.load&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallModel</span></span>
+<br/>
+<div id="c_41" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallStore.load:(Ljava/lang/String;)Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_42')">
+NBulkheadCallStore.save&#160;<span class='sym_p'><span>(&#160;NBulkheadCallModel <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;void</span></span>
+<br/>
+<div id="c_42" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallStore.save:(Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;)V</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NBulkheadMetrics.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_43')">
+NBulkheadMetrics.describe&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NElement</span></span>
+<br/>
+<div id="c_43" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.describe:()Lnet/thevpc/nuts/elem/NElement;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_44')">
+NBulkheadMetrics.getActiveCalls&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_44" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getActiveCalls:()I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_45')">
+NBulkheadMetrics.getAvailableSlots&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_45" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getAvailableSlots:()I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_46')">
+NBulkheadMetrics.getBulkheadId&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;String</span></span>
+<br/>
+<div id="c_46" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getBulkheadId:()Ljava/lang/String;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_47')">
+NBulkheadMetrics.getMaxConcurrent&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_47" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getMaxConcurrent:()I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_48')">
+NBulkheadMetrics.getMaxHoldTimeMillis&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;long</span></span>
+<br/>
+<div id="c_48" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getMaxHoldTimeMillis:()J</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_49')">
+NBulkheadMetrics.getMaxWaitTimeMillis&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;long</span></span>
+<br/>
+<div id="c_49" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getMaxWaitTimeMillis:()J</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_50')">
+NBulkheadMetrics.getRejectionRate&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;double</span></span>
+<br/>
+<div id="c_50" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getRejectionRate:()D</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_51')">
+NBulkheadMetrics.getTotalAcquired&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;long</span></span>
+<br/>
+<div id="c_51" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getTotalAcquired:()J</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_52')">
+NBulkheadMetrics.getTotalRejected&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;long</span></span>
+<br/>
+<div id="c_52" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getTotalRejected:()J</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_53')">
+NBulkheadMetrics.getTotalReleased&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;long</span></span>
+<br/>
+<div id="c_53" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getTotalReleased:()J</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_54')">
+NBulkheadMetrics.isFull&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;boolean</span></span>
+<br/>
+<div id="c_54" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.isFull:()Z</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_55')">
+NBulkheadMetrics.NBulkheadMetrics&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>bulkheadId</span></span>, <span>int <span class='color_p'>maxConcurrent</span></span>, <span>int <span class='color_p'>activeCalls</span></span>, <span>int <span class='color_p'>availableSlots</span></span>, <span>long <span class='color_p'>totalAcquired</span></span>, <span>long <span class='color_p'>totalReleased</span></span>, <span>long <span class='color_p'>totalRejected</span></span>, <span>long <span class='color_p'>maxWaitTimeMillis</span></span>, <span>long <span class='color_p'>maxHoldTimeMillis</span></span>&#160;)</span></span>
+<br/>
+<div id="c_55" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.&quot;&lt;init&gt;&quot;:(Ljava/lang/String;IIIJJJJJ)V</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NBulkheadPermit.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_56')">
+NBulkheadCallBackend.NBulkheadPermit.getAcquiredAt&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;long</span></span>
+<br/>
+<div id="c_56" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.NBulkheadPermit.getAcquiredAt:()J</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_57')">
+NBulkheadCallBackend.NBulkheadPermit.getBulkheadId&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;String</span></span>
+<br/>
+<div id="c_57" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.NBulkheadPermit.getBulkheadId:()Ljava/lang/String;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_58')">
+NBulkheadCallBackend.NBulkheadPermit.getPermitId&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;String</span></span>
+<br/>
+<div id="c_58" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.NBulkheadPermit.getPermitId:()Ljava/lang/String;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NConcurrencyLimitException.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_59')">
+NConcurrencyLimitException.NConcurrencyLimitException&#160;<span class='sym_p'><span>(&#160;NMsg <span class='color_p'>message</span></span>&#160;)</span></span>
+<br/>
+<div id="c_59" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NConcurrencyLimitException.&quot;&lt;init&gt;&quot;:(Lnet/thevpc/nuts/text/NMsg;)V</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_60')">
+NConcurrencyLimitException.NConcurrencyLimitException&#160;<span class='sym_p'><span>(&#160;NMsg <span class='color_p'>message</span></span>, <span>Throwable <span class='color_p'>cause</span></span>&#160;)</span></span>
+<br/>
+<div id="c_60" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NConcurrencyLimitException.&quot;&lt;init&gt;&quot;:(Lnet/thevpc/nuts/text/NMsg;Ljava/lang/Throwable;)V</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NConcurrent.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_61')">
+NConcurrent.bulkheadCallFactory&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallFactory</span></span>
+<br/>
+<div id="c_61" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NConcurrent.bulkheadCallFactory:()Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_62')">
+NConcurrent.defaultBulkheadCallFactory&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallFactory</span></span>
+<br/>
+<div id="c_62" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NConcurrent.defaultBulkheadCallFactory:()Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_63')">
+NConcurrent.memoryBulkheadCallFactory&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallFactory</span></span>
+<br/>
+<div id="c_63" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NConcurrent.memoryBulkheadCallFactory:()Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_64')">
+NConcurrent.setBulkheadCallFactory&#160;<span class='sym_p'><span>(&#160;NBulkheadCallFactory <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NConcurrent</span></span>
+<br/>
+<div id="c_64" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NConcurrent.setBulkheadCallFactory:(Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;)Lnet/thevpc/nuts/concurrent/NConcurrent;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NDuration.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.time</span><br/>
+<span class="section" onclick="sC(this, 'c_65')">
+NDuration.parse&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>any</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NOptional&lt;NDuration&gt;</span></span>
+<br/>
+<div id="c_65" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/time/NDuration.parse:(Ljava/lang/String;)Lnet/thevpc/nuts/util/NOptional;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NTimeoutException.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_66')">
+NTimeoutException.NTimeoutException&#160;<span class='sym_p'><span>(&#160;NMsg <span class='color_p'>message</span></span>&#160;)</span></span>
+<br/>
+<div id="c_66" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NTimeoutException.&quot;&lt;init&gt;&quot;:(Lnet/thevpc/nuts/text/NMsg;)V</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_67')">
+NTimeoutException.NTimeoutException&#160;<span class='sym_p'><span>(&#160;NMsg <span class='color_p'>message</span></span>, <span>Throwable <span class='color_p'>cause</span></span>&#160;)</span></span>
+<br/>
+<div id="c_67" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NTimeoutException.&quot;&lt;init&gt;&quot;:(Lnet/thevpc/nuts/text/NMsg;Ljava/lang/Throwable;)V</span><br/><br/></div>
+
+<br/>
+<a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Binary_Removed'></a><a name='Binary_Withdrawn'></a><h2>Removed Methods <span class='failed'>&nbsp;13&nbsp;</span></h2><hr/>
+<span class='jar'>nuts-0.8.7.jar</span>, <span class='cname'>NCircuitBreakerCallFactory.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_68')">
+NCircuitBreakerCallFactory.getBeanContainer&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBeanContainer</span></span>
+<br/>
+<div id="c_68" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NCircuitBreakerCallFactory.getBeanContainer:()Lnet/thevpc/nuts/reflect/NBeanContainer;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_69')">
+NCircuitBreakerCallFactory.withBeanContainer&#160;<span class='sym_p'><span>(&#160;NBeanContainer <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NCircuitBreakerCallFactory</span></span>
+<br/>
+<div id="c_69" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NCircuitBreakerCallFactory.withBeanContainer:(Lnet/thevpc/nuts/reflect/NBeanContainer;)Lnet/thevpc/nuts/concurrent/NCircuitBreakerCallFactory;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.7.jar</span>, <span class='cname'>NDuration.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.time</span><br/>
+<span class="section" onclick="sC(this, 'c_70')">
+NDuration.normalizeOld&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDuration</span></span>
+<br/>
+<div id="c_70" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/time/NDuration.normalizeOld:()Lnet/thevpc/nuts/time/NDuration;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.7.jar</span>, <span class='cname'>NRateLimitValueFactory.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_71')">
+NRateLimitValueFactory.getBeanContainer&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBeanContainer</span></span>
+<br/>
+<div id="c_71" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NRateLimitValueFactory.getBeanContainer:()Lnet/thevpc/nuts/reflect/NBeanContainer;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_72')">
+NRateLimitValueFactory.withBeanContainer&#160;<span class='sym_p'><span>(&#160;NBeanContainer <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NRateLimitValueFactory</span></span>
+<br/>
+<div id="c_72" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NRateLimitValueFactory.withBeanContainer:(Lnet/thevpc/nuts/reflect/NBeanContainer;)Lnet/thevpc/nuts/concurrent/NRateLimitValueFactory;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.7.jar</span>, <span class='cname'>NRetryCallFactory.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_73')">
+NRetryCallFactory.getBeanContainer&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBeanContainer</span></span>
+<br/>
+<div id="c_73" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NRetryCallFactory.getBeanContainer:()Lnet/thevpc/nuts/reflect/NBeanContainer;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_74')">
+NRetryCallFactory.withBeanContainer&#160;<span class='sym_p'><span>(&#160;NBeanContainer <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NRetryCallFactory</span></span>
+<br/>
+<div id="c_74" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NRetryCallFactory.withBeanContainer:(Lnet/thevpc/nuts/reflect/NBeanContainer;)Lnet/thevpc/nuts/concurrent/NRetryCallFactory;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.7.jar</span>, <span class='cname'>NSagaCallableFactory.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_75')">
+NSagaCallableFactory.getBeanContainer&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBeanContainer</span></span>
+<br/>
+<div id="c_75" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NSagaCallableFactory.getBeanContainer:()Lnet/thevpc/nuts/reflect/NBeanContainer;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_76')">
+NSagaCallableFactory.withBeanContainer&#160;<span class='sym_p'><span>(&#160;NBeanContainer <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NSagaCallableFactory</span></span>
+<br/>
+<div id="c_76" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NSagaCallableFactory.withBeanContainer:(Lnet/thevpc/nuts/reflect/NBeanContainer;)Lnet/thevpc/nuts/concurrent/NSagaCallableFactory;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.7.jar</span>, <span class='cname'>NStableValueFactory.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_77')">
+NStableValueFactory.getBeanContainer&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBeanContainer</span></span>
+<br/>
+<div id="c_77" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NStableValueFactory.getBeanContainer:()Lnet/thevpc/nuts/reflect/NBeanContainer;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_78')">
+NStableValueFactory.withBeanContainer&#160;<span class='sym_p'><span>(&#160;NBeanContainer <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NStableValueFactory</span></span>
+<br/>
+<div id="c_78" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NStableValueFactory.withBeanContainer:(Lnet/thevpc/nuts/reflect/NBeanContainer;)Lnet/thevpc/nuts/concurrent/NStableValueFactory;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.7.jar</span>, <span class='cname'>NWorkBalancerFactory.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_79')">
+NWorkBalancerFactory.getBeanContainer&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBeanContainer</span></span>
+<br/>
+<div id="c_79" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NWorkBalancerFactory.getBeanContainer:()Lnet/thevpc/nuts/reflect/NBeanContainer;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_80')">
+NWorkBalancerFactory.withBeanContainer&#160;<span class='sym_p'><span>(&#160;NBeanContainer <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NWorkBalancerFactory</span></span>
+<br/>
+<div id="c_80" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NWorkBalancerFactory.withBeanContainer:(Lnet/thevpc/nuts/reflect/NBeanContainer;)Lnet/thevpc/nuts/concurrent/NWorkBalancerFactory;</span><br/><br/></div>
+
+<br/>
+<a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='High_Risk_Binary_Problems'></a><a name='Type_Binary_Problems_High'></a>
+<h2>Problems with Data Types, High Severity <span class='failed'>&nbsp;12&nbsp;</span></h2><hr/>
+<span class='jar'>nuts-0.8.7.jar</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_81')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NCircuitBreakerCallFactory <span class='failed'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_81" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBeanContainer</b> getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> has been removed from this interface.</td>
+<td>A client program may be interrupted by <b>NoSuchMethodError</b> exception.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NCircuitBreakerCallFactory</b> withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> has been removed from this interface.</td>
+<td>A client program may be interrupted by <b>NoSuchMethodError</b> exception.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_82')">
+[+] affected methods: 8 (0.1%)</span>
+<div id="c_82" style="display:none;">
+<div class='affected'><span class='iname_a'>NCircuitBreakerCallFactory.getStore&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NCircuitBreakerCallFactory' interface.</div>
+<span class='iname_a'>NCircuitBreakerCallFactory.of&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>, <span>NCallable&lt;T&gt; <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NCircuitBreakerCallFactory' interface.</div>
+<span class='iname_a'>NCircuitBreakerCallFactory.of&#160;<span class='sym_p'><span>(&#160;NCallable&lt;T&gt; <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NCircuitBreakerCallFactory' interface.</div>
+<span class='iname_a'>NCircuitBreakerCallFactory.withStore&#160;<span class='sym_p'><span>(&#160;NCircuitBreakerCallStore <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NCircuitBreakerCallFactory' interface.</div>
+<span class='iname_a'>NConcurrent.circuitBreakerCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NCircuitBreakerCallFactory'.</div>
+<span class='iname_a'>NConcurrent.defaultCircuitBreakerCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NCircuitBreakerCallFactory'.</div>
+<span class='iname_a'>NConcurrent.memoryCircuitBreakerCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NCircuitBreakerCallFactory'.</div>
+<span class='iname_a'>NConcurrent.setCircuitBreakerCallFactory&#160;<span class='sym_p'><span>(&#160;NCircuitBreakerCallFactory <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NCircuitBreakerCallFactory'.</div>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_83')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NRateLimitValueFactory <span class='failed'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_83" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBeanContainer</b> getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> has been removed from this interface.</td>
+<td>A client program may be interrupted by <b>NoSuchMethodError</b> exception.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NRateLimitValueFactory</b> withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> has been removed from this interface.</td>
+<td>A client program may be interrupted by <b>NoSuchMethodError</b> exception.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_84')">
+[+] affected methods: 10 (0.1%)</span>
+<div id="c_84" style="display:none;">
+<div class='affected'><span class='iname_a'>NConcurrent.defaultRateLimitValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NRateLimitValueFactory'.</div>
+<span class='iname_a'>NConcurrent.memoryRateLimitValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NRateLimitValueFactory'.</div>
+<span class='iname_a'>NConcurrent.rateLimitValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NRateLimitValueFactory'.</div>
+<span class='iname_a'>NConcurrent.setRateLimitValueFactory&#160;<span class='sym_p'><span>(&#160;NRateLimitValueFactory <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NRateLimitValueFactory'.</div>
+<span class='iname_a'>NRateLimitValueFactory.defineStrategy&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>, <span>NRateLimitStrategy <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRateLimitValueFactory' interface.</div>
+<span class='iname_a'>NRateLimitValueFactory.getStore&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRateLimitValueFactory' interface.</div>
+<span class='iname_a'>NRateLimitValueFactory.of&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This method is from 'NRateLimitValueFactory' interface.</div>
+<span class='iname_a'>NRateLimitValueFactory.of&#160;<span class='sym_p'><span>(&#160;NRateLimitValueStore <i>store</i></span>&#160;)</span></span><br/><div class='affect'>This method is from 'NRateLimitValueFactory' interface.</div>
+<span class='iname_a'>NRateLimitValueFactory.ofBuilder&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRateLimitValueFactory' interface.</div>
+<span class='iname_a'>NRateLimitValueFactory.withStore&#160;<span class='sym_p'><span>(&#160;NRateLimitValueStore <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRateLimitValueFactory' interface.</div>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_85')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NRetryCallFactory <span class='failed'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_85" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBeanContainer</b> getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> has been removed from this interface.</td>
+<td>A client program may be interrupted by <b>NoSuchMethodError</b> exception.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NRetryCallFactory</b> withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> has been removed from this interface.</td>
+<td>A client program may be interrupted by <b>NoSuchMethodError</b> exception.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_86')">
+[+] affected methods: 8 (0.1%)</span>
+<div id="c_86" style="display:none;">
+<div class='affected'><span class='iname_a'>NConcurrent.defaultRetryCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NRetryCallFactory'.</div>
+<span class='iname_a'>NConcurrent.memoryRetryCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NRetryCallFactory'.</div>
+<span class='iname_a'>NConcurrent.retryCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NRetryCallFactory'.</div>
+<span class='iname_a'>NConcurrent.setRetryCallFactory&#160;<span class='sym_p'><span>(&#160;NRetryCallFactory <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NRetryCallFactory'.</div>
+<span class='iname_a'>NRetryCallFactory.getStore&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRetryCallFactory' interface.</div>
+<span class='iname_a'>NRetryCallFactory.of&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>, <span>NCallable&lt;T&gt; <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRetryCallFactory' interface.</div>
+<span class='iname_a'>NRetryCallFactory.of&#160;<span class='sym_p'><span>(&#160;NCallable&lt;T&gt; <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRetryCallFactory' interface.</div>
+<span class='iname_a'>NRetryCallFactory.withStore&#160;<span class='sym_p'><span>(&#160;NRetryCallStore <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRetryCallFactory' interface.</div>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_87')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NSagaCallableFactory <span class='failed'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_87" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBeanContainer</b> getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> has been removed from this interface.</td>
+<td>A client program may be interrupted by <b>NoSuchMethodError</b> exception.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NSagaCallableFactory</b> withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> has been removed from this interface.</td>
+<td>A client program may be interrupted by <b>NoSuchMethodError</b> exception.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_88')">
+[+] affected methods: 6 (0.05%)</span>
+<div id="c_88" style="display:none;">
+<div class='affected'><span class='iname_a'>NConcurrent.defaultSagaFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NSagaCallableFactory'.</div>
+<span class='iname_a'>NConcurrent.memorySagaFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NSagaCallableFactory'.</div>
+<span class='iname_a'>NConcurrent.sagaFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NSagaCallableFactory'.</div>
+<span class='iname_a'>NSagaCallableFactory.getStore&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NSagaCallableFactory' interface.</div>
+<span class='iname_a'>NSagaCallableFactory.ofBuilder&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NSagaCallableFactory' interface.</div>
+<span class='iname_a'>NSagaCallableFactory.withStore&#160;<span class='sym_p'><span>(&#160;NSagaStore <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NSagaCallableFactory' interface.</div>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_89')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NStableValueFactory <span class='failed'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_89" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBeanContainer</b> getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> has been removed from this interface.</td>
+<td>A client program may be interrupted by <b>NoSuchMethodError</b> exception.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NStableValueFactory</b> withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> has been removed from this interface.</td>
+<td>A client program may be interrupted by <b>NoSuchMethodError</b> exception.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_90')">
+[+] affected methods: 10 (0.1%)</span>
+<div id="c_90" style="display:none;">
+<div class='affected'><span class='iname_a'>NConcurrent.defaultStableValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NStableValueFactory'.</div>
+<span class='iname_a'>NConcurrent.memoryStableValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NStableValueFactory'.</div>
+<span class='iname_a'>NConcurrent.setStableValueFactory&#160;<span class='sym_p'><span>(&#160;NStableValueFactory <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NStableValueFactory'.</div>
+<span class='iname_a'>NConcurrent.stableValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NStableValueFactory'.</div>
+<span class='iname_a'>NStableValueFactory.getStore&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NStableValueFactory' interface.</div>
+<span class='iname_a'>NStableValueFactory.of&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This method is from 'NStableValueFactory' interface.</div>
+<span class='iname_a'>NStableValueFactory.of&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>, <span>Supplier&lt;T&gt; <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NStableValueFactory' interface.</div>
+<span class='iname_a'>NStableValueFactory.of&#160;<span class='sym_p'><span>(&#160;Supplier&lt;T&gt; <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NStableValueFactory' interface.</div>
+<span class='iname_a'>NStableValueFactory.of&#160;<span class='sym_p'><span>(&#160;NStableValueStore <i>store</i></span>&#160;)</span></span><br/><div class='affect'>This method is from 'NStableValueFactory' interface.</div>
+<span class='iname_a'>NStableValueFactory.withStore&#160;<span class='sym_p'><span>(&#160;NStableValueStore <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NStableValueFactory' interface.</div>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_91')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NWorkBalancerFactory <span class='failed'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_91" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBeanContainer</b> getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> has been removed from this interface.</td>
+<td>A client program may be interrupted by <b>NoSuchMethodError</b> exception.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NWorkBalancerFactory</b> withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> has been removed from this interface.</td>
+<td>A client program may be interrupted by <b>NoSuchMethodError</b> exception.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_92')">
+[+] affected methods: 10 (0.1%)</span>
+<div id="c_92" style="display:none;">
+<div class='affected'><span class='iname_a'>NConcurrent.defaultWorkBalancerFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NWorkBalancerFactory'.</div>
+<span class='iname_a'>NConcurrent.memoryWorkBalancerFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NWorkBalancerFactory'.</div>
+<span class='iname_a'>NConcurrent.setWorkBalancerCallFactory&#160;<span class='sym_p'><span>(&#160;NWorkBalancerFactory <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NWorkBalancerFactory'.</div>
+<span class='iname_a'>NConcurrent.workBalancerFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NWorkBalancerFactory'.</div>
+<span class='iname_a'>NWorkBalancerFactory.defineStrategy&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>, <span>NWorkBalancerStrategy <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NWorkBalancerFactory' interface.</div>
+<span class='iname_a'>NWorkBalancerFactory.getStore&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NWorkBalancerFactory' interface.</div>
+<span class='iname_a'>NWorkBalancerFactory.of&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This method is from 'NWorkBalancerFactory' interface.</div>
+<span class='iname_a'>NWorkBalancerFactory.of&#160;<span class='sym_p'><span>(&#160;NWorkBalancerStore <i>store</i></span>&#160;)</span></span><br/><div class='affect'>This method is from 'NWorkBalancerFactory' interface.</div>
+<span class='iname_a'>NWorkBalancerFactory.ofBuilder&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NWorkBalancerFactory' interface.</div>
+<span class='iname_a'>NWorkBalancerFactory.withStore&#160;<span class='sym_p'><span>(&#160;NWorkBalancerStore <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NWorkBalancerFactory' interface.</div>
+</div></div>
+<br/><br/></div>
+
+<br/><a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Other_Binary_Changes'></a><a name='Other_Binary_Changes_In_Types'></a>
+<h2>Other Changes in Data Types <span class='passed'>&nbsp;4&nbsp;</span></h2><hr/>
+<span class='jar'>nuts-0.8.7.jar</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_93')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NConcurrent <span class='passed'>&nbsp;4&nbsp;</span></span>
+<br/>
+<div id="c_93" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBulkheadCallFactory</b> bulkheadCallFactory&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NBulkheadCallFactory</b> defaultBulkheadCallFactory&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Abstract method <span class='iname_b'><b>NBulkheadCallFactory</b> memoryBulkheadCallFactory&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Abstract method <span class='iname_b'><b>NConcurrent</b> setBulkheadCallFactory&#160;<span class='sym_pd'><span>(&#160;NBulkheadCallFactory</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_94')">
+[+] affected methods: 45 (0.4%)</span>
+<div id="c_94" style="display:none;">
+<div class='affected'><span class='iname_a'>NConcurrent.cachedValue&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>, <span>Supplier&lt;T&gt; <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.cachedValue&#160;<span class='sym_p'><span>(&#160;Supplier&lt;T&gt; <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.cachedValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.circuitBreakerCall&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>, <span>NCallable&lt;T&gt; <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.circuitBreakerCall&#160;<span class='sym_p'><span>(&#160;NCallable&lt;T&gt; <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.circuitBreakerCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.defaultCachedValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.defaultCircuitBreakerCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.defaultRateLimitValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.defaultRetryCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+ <b>...</b>
+<br/>
+</div></div>
+<br/><br/></div>
+
+<br/><a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Checked_Archives'></a><h2>Java Archives <span class='gray'>&nbsp;1&nbsp;</span></h2>
+<hr/><div class='jar_list'>
+nuts-0.8.7.jar<br/>
+</div><br/><a class='top_ref' href='#Top'>to the top</a><br/>
+<br/><br/><br/></div><div id='SourceTab' class='tab'>
+<h2>Test Info</h2><hr/>
+<table class='summary'>
+<tr><th>Library Name</th><td>nuts</td></tr>
+<tr><th>Version #1</th><td>0.8.7</td></tr>
+<tr><th>Version #2</th><td>0.8.8</td></tr>
+<tr><th>Subject</th><td width='150px'>Source Compatibility</td></tr>
+</table>
+<h2>Test Results</h2><hr/>
+<table class='summary'>
+<tr><th>Total Java Modules</th><td><a href='#Checked_Archives' style='color:Blue;'>1</a></td></tr>
+<tr><th>Total Methods / Classes</th><td>12546 / 912</td></tr>
+<tr><th>Compatibility</th>
+<td class='warning'>99.3%</td>
+</tr>
+</table>
+<h2>Problem Summary</h2><hr/>
+<table class='summary'>
+<tr><th></th><th style='text-align:center;'>Severity</th><th style='text-align:center;'>Count</th></tr>
+<tr><th>Added Methods</th><td>-</td><td class='new'><a href='#Source_Added' style='color:Blue;'>67</a></td></tr>
+<tr><th>Removed Methods</th><td>High</td><td class='failed'><a href='#Source_Removed' style='color:Blue;'>13</a></td></tr>
+<tr><th rowspan='3'>Problems with<br/>Data Types</th><td>High</td><td class='failed'><a href='#Type_Source_Problems_High' style='color:Blue;'>16</a></td></tr>
+<tr><td>Medium</td><td>0</td></tr>
+<tr><td>Low</td><td>0</td></tr>
+<tr><th rowspan='3'>Problems with<br/>Methods</th><td>High</td><td>0</td></tr>
+<tr><td>Medium</td><td>0</td></tr>
+<tr><td>Low</td><td>0</td></tr>
+</table>
+
+<a name='Source_Added'></a><h2>Added Methods <span class='new'>&nbsp;67&nbsp;</span></h2><hr/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NBulkheadCall.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_95')">
+NBulkheadCall&lt;T&gt;.callBlocking&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;T</span></span>
+<br/>
+<div id="c_95" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.callBlocking:()Ljava/lang/Object;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_96')">
+NBulkheadCall&lt;T&gt;.callBlocking&#160;<span class='sym_p'><span>(&#160;NDuration <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;T</span></span>
+<br/>
+<div id="c_96" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.callBlocking:(Lnet/thevpc/nuts/time/NDuration;)Ljava/lang/Object;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_97')">
+NBulkheadCall&lt;T&gt;.callOrElse&#160;<span class='sym_p'><span>(&#160;NDuration <span class='color_p'>p1</span></span>, <span>NCallable&lt;T&gt; <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;T</span></span>
+<br/>
+<div id="c_97" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.callOrElse:(Lnet/thevpc/nuts/time/NDuration;Lnet/thevpc/nuts/concurrent/NCallable;)Ljava/lang/Object;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_98')">
+NBulkheadCall&lt;T&gt;.getActiveCalls&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_98" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.getActiveCalls:()I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_99')">
+NBulkheadCall&lt;T&gt;.getAvailableSlots&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_99" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.getAvailableSlots:()I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_100')">
+NBulkheadCall&lt;T&gt;.getMaxConcurrent&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_100" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.getMaxConcurrent:()I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_101')">
+NBulkheadCall&lt;T&gt;.isFull&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;boolean</span></span>
+<br/>
+<div id="c_101" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.isFull:()Z</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_102')">
+NBulkheadCall&lt;T&gt;.of&#160;<span class='sym_p'><span>(&#160;NCallable&lt;T&gt; <span class='color_p'>callable</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCall&lt;T&gt;</span></span>
+<br/>
+<div id="c_102" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.of:(Lnet/thevpc/nuts/concurrent/NCallable;)Lnet/thevpc/nuts/concurrent/NBulkheadCall;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_103')">
+NBulkheadCall&lt;T&gt;.of&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>id</span></span>, <span>NCallable&lt;T&gt; <span class='color_p'>callable</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCall&lt;T&gt;</span></span>
+<br/>
+<div id="c_103" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.of:(Ljava/lang/String;Lnet/thevpc/nuts/concurrent/NCallable;)Lnet/thevpc/nuts/concurrent/NBulkheadCall;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_104')">
+NBulkheadCall&lt;T&gt;.setMaxConcurrent&#160;<span class='sym_p'><span>(&#160;int <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCall&lt;T&gt;</span></span>
+<br/>
+<div id="c_104" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.setMaxConcurrent:(I)Lnet/thevpc/nuts/concurrent/NBulkheadCall;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_105')">
+NBulkheadCall&lt;T&gt;.setPermitExpiry&#160;<span class='sym_p'><span>(&#160;NDuration <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCall&lt;T&gt;</span></span>
+<br/>
+<div id="c_105" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.setPermitExpiry:(Lnet/thevpc/nuts/time/NDuration;)Lnet/thevpc/nuts/concurrent/NBulkheadCall;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_106')">
+NBulkheadCall&lt;T&gt;.tryCall&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NOptional&lt;T&gt;</span></span>
+<br/>
+<div id="c_106" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.tryCall:()Lnet/thevpc/nuts/util/NOptional;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_107')">
+NBulkheadCall&lt;T&gt;.tryCallOrElse&#160;<span class='sym_p'><span>(&#160;NCallable&lt;T&gt; <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;T</span></span>
+<br/>
+<div id="c_107" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCall.tryCallOrElse:(Lnet/thevpc/nuts/concurrent/NCallable;)Ljava/lang/Object;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NBulkheadCallBackend.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_108')">
+NBulkheadCallBackend.cleanupExpired&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>p1</span></span>, <span>NDuration <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_108" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.cleanupExpired:(Ljava/lang/String;Lnet/thevpc/nuts/time/NDuration;)I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_109')">
+NBulkheadCallBackend.getMetrics&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadMetrics</span></span>
+<br/>
+<div id="c_109" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.getMetrics:(Ljava/lang/String;)Lnet/thevpc/nuts/concurrent/NBulkheadMetrics;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_110')">
+NBulkheadCallBackend.release&#160;<span class='sym_p'><span>(&#160;NBulkheadCallBackend.NBulkheadPermit <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;void</span></span>
+<br/>
+<div id="c_110" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.release:(Lnet/thevpc/nuts/concurrent/NBulkheadCallBackend$NBulkheadPermit;)V</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_111')">
+NBulkheadCallBackend.tryAcquire&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>p1</span></span>, <span>int <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NOptional&lt;NBulkheadCallBackend.NBulkheadPermit&gt;</span></span>
+<br/>
+<div id="c_111" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.tryAcquire:(Ljava/lang/String;I)Lnet/thevpc/nuts/util/NOptional;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_112')">
+NBulkheadCallBackend.tryAcquire&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>p1</span></span>, <span>int <span class='color_p'>p2</span></span>, <span>NDuration <span class='color_p'>p3</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NOptional&lt;NBulkheadCallBackend.NBulkheadPermit&gt;</span></span>
+<br/>
+<div id="c_112" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.tryAcquire:(Ljava/lang/String;ILnet/thevpc/nuts/time/NDuration;)Lnet/thevpc/nuts/util/NOptional;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NBulkheadCallFactory.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_113')">
+NBulkheadCallFactory.bulkheadCall&#160;<span class='sym_p'><span>(&#160;NCallable&lt;T&gt; <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCall&lt;T&gt;</span></span>
+<br/>
+<div id="c_113" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.bulkheadCall:(Lnet/thevpc/nuts/concurrent/NCallable;)Lnet/thevpc/nuts/concurrent/NBulkheadCall;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_114')">
+NBulkheadCallFactory.bulkheadCall&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>p1</span></span>, <span>NCallable&lt;T&gt; <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCall&lt;T&gt;</span></span>
+<br/>
+<div id="c_114" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.bulkheadCall:(Ljava/lang/String;Lnet/thevpc/nuts/concurrent/NCallable;)Lnet/thevpc/nuts/concurrent/NBulkheadCall;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_115')">
+NBulkheadCallFactory.getBackend&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallBackend</span></span>
+<br/>
+<div id="c_115" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.getBackend:()Lnet/thevpc/nuts/concurrent/NBulkheadCallBackend;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_116')">
+NBulkheadCallFactory.getStore&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallStore</span></span>
+<br/>
+<div id="c_116" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.getStore:()Lnet/thevpc/nuts/concurrent/NBulkheadCallStore;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_117')">
+NBulkheadCallFactory.of&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallFactory</span></span>
+<br/>
+<div id="c_117" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.of:()Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_118')">
+NBulkheadCallFactory.of&#160;<span class='sym_p'><span>(&#160;NBulkheadCallStore <span class='color_p'>store</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallFactory</span></span>
+<br/>
+<div id="c_118" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.of:(Lnet/thevpc/nuts/concurrent/NBulkheadCallStore;)Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_119')">
+NBulkheadCallFactory.withBackend&#160;<span class='sym_p'><span>(&#160;NBulkheadCallBackend <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallFactory</span></span>
+<br/>
+<div id="c_119" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.withBackend:(Lnet/thevpc/nuts/concurrent/NBulkheadCallBackend;)Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_120')">
+NBulkheadCallFactory.withStore&#160;<span class='sym_p'><span>(&#160;NBulkheadCallStore <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallFactory</span></span>
+<br/>
+<div id="c_120" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallFactory.withStore:(Lnet/thevpc/nuts/concurrent/NBulkheadCallStore;)Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NBulkheadCallModel.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_121')">
+NBulkheadCallModel.clone&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallModel</span></span>
+<br/>
+<div id="c_121" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.clone:()Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_122')">
+NBulkheadCallModel.clone&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;Object</span></span>
+<br/>
+<div id="c_122" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.clone:()Ljava/lang/Object;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_123')">
+NBulkheadCallModel.copy&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallModel</span></span>
+<br/>
+<div id="c_123" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.copy:()Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_124')">
+NBulkheadCallModel.copy&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;Object</span></span>
+<br/>
+<div id="c_124" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.copy:()Ljava/lang/Object;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_125')">
+NBulkheadCallModel.getCaller&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NCallable&lt;?&gt;</span></span>
+<br/>
+<div id="c_125" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.getCaller:()Lnet/thevpc/nuts/concurrent/NCallable;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_126')">
+NBulkheadCallModel.getId&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;String</span></span>
+<br/>
+<div id="c_126" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.getId:()Ljava/lang/String;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_127')">
+NBulkheadCallModel.getMaxConcurrent&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_127" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.getMaxConcurrent:()I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_128')">
+NBulkheadCallModel.getPermitExpiry&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDuration</span></span>
+<br/>
+<div id="c_128" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.getPermitExpiry:()Lnet/thevpc/nuts/time/NDuration;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_129')">
+NBulkheadCallModel.NBulkheadCallModel&#160;<span class='sym_p'>(&#160;)</span></span>
+<br/>
+<div id="c_129" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.&quot;&lt;init&gt;&quot;:()V</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_130')">
+NBulkheadCallModel.NBulkheadCallModel&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>id</span></span>&#160;)</span></span>
+<br/>
+<div id="c_130" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.&quot;&lt;init&gt;&quot;:(Ljava/lang/String;)V</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_131')">
+NBulkheadCallModel.setCaller&#160;<span class='sym_p'><span>(&#160;NCallable&lt;?&gt; <span class='color_p'>caller</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallModel</span></span>
+<br/>
+<div id="c_131" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.setCaller:(Lnet/thevpc/nuts/concurrent/NCallable;)Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_132')">
+NBulkheadCallModel.setId&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>id</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallModel</span></span>
+<br/>
+<div id="c_132" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.setId:(Ljava/lang/String;)Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_133')">
+NBulkheadCallModel.setMaxConcurrent&#160;<span class='sym_p'><span>(&#160;int <span class='color_p'>maxConcurrent</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallModel</span></span>
+<br/>
+<div id="c_133" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.setMaxConcurrent:(I)Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_134')">
+NBulkheadCallModel.setPermitExpiry&#160;<span class='sym_p'><span>(&#160;NDuration <span class='color_p'>permitExpiry</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallModel</span></span>
+<br/>
+<div id="c_134" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallModel.setPermitExpiry:(Lnet/thevpc/nuts/time/NDuration;)Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NBulkheadCallStore.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_135')">
+NBulkheadCallStore.load&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallModel</span></span>
+<br/>
+<div id="c_135" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallStore.load:(Ljava/lang/String;)Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_136')">
+NBulkheadCallStore.save&#160;<span class='sym_p'><span>(&#160;NBulkheadCallModel <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;void</span></span>
+<br/>
+<div id="c_136" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallStore.save:(Lnet/thevpc/nuts/concurrent/NBulkheadCallModel;)V</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NBulkheadMetrics.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_137')">
+NBulkheadMetrics.describe&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NElement</span></span>
+<br/>
+<div id="c_137" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.describe:()Lnet/thevpc/nuts/elem/NElement;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_138')">
+NBulkheadMetrics.getActiveCalls&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_138" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getActiveCalls:()I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_139')">
+NBulkheadMetrics.getAvailableSlots&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_139" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getAvailableSlots:()I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_140')">
+NBulkheadMetrics.getBulkheadId&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;String</span></span>
+<br/>
+<div id="c_140" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getBulkheadId:()Ljava/lang/String;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_141')">
+NBulkheadMetrics.getMaxConcurrent&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;int</span></span>
+<br/>
+<div id="c_141" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getMaxConcurrent:()I</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_142')">
+NBulkheadMetrics.getMaxHoldTimeMillis&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;long</span></span>
+<br/>
+<div id="c_142" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getMaxHoldTimeMillis:()J</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_143')">
+NBulkheadMetrics.getMaxWaitTimeMillis&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;long</span></span>
+<br/>
+<div id="c_143" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getMaxWaitTimeMillis:()J</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_144')">
+NBulkheadMetrics.getRejectionRate&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;double</span></span>
+<br/>
+<div id="c_144" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getRejectionRate:()D</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_145')">
+NBulkheadMetrics.getTotalAcquired&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;long</span></span>
+<br/>
+<div id="c_145" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getTotalAcquired:()J</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_146')">
+NBulkheadMetrics.getTotalRejected&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;long</span></span>
+<br/>
+<div id="c_146" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getTotalRejected:()J</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_147')">
+NBulkheadMetrics.getTotalReleased&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;long</span></span>
+<br/>
+<div id="c_147" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.getTotalReleased:()J</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_148')">
+NBulkheadMetrics.isFull&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;boolean</span></span>
+<br/>
+<div id="c_148" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.isFull:()Z</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_149')">
+NBulkheadMetrics.NBulkheadMetrics&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>bulkheadId</span></span>, <span>int <span class='color_p'>maxConcurrent</span></span>, <span>int <span class='color_p'>activeCalls</span></span>, <span>int <span class='color_p'>availableSlots</span></span>, <span>long <span class='color_p'>totalAcquired</span></span>, <span>long <span class='color_p'>totalReleased</span></span>, <span>long <span class='color_p'>totalRejected</span></span>, <span>long <span class='color_p'>maxWaitTimeMillis</span></span>, <span>long <span class='color_p'>maxHoldTimeMillis</span></span>&#160;)</span></span>
+<br/>
+<div id="c_149" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadMetrics.&quot;&lt;init&gt;&quot;:(Ljava/lang/String;IIIJJJJJ)V</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NBulkheadPermit.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_150')">
+NBulkheadCallBackend.NBulkheadPermit.getAcquiredAt&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;long</span></span>
+<br/>
+<div id="c_150" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.NBulkheadPermit.getAcquiredAt:()J</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_151')">
+NBulkheadCallBackend.NBulkheadPermit.getBulkheadId&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;String</span></span>
+<br/>
+<div id="c_151" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.NBulkheadPermit.getBulkheadId:()Ljava/lang/String;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_152')">
+NBulkheadCallBackend.NBulkheadPermit.getPermitId&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;String</span></span>
+<br/>
+<div id="c_152" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NBulkheadCallBackend.NBulkheadPermit.getPermitId:()Ljava/lang/String;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NConcurrencyLimitException.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_153')">
+NConcurrencyLimitException.NConcurrencyLimitException&#160;<span class='sym_p'><span>(&#160;NMsg <span class='color_p'>message</span></span>&#160;)</span></span>
+<br/>
+<div id="c_153" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NConcurrencyLimitException.&quot;&lt;init&gt;&quot;:(Lnet/thevpc/nuts/text/NMsg;)V</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_154')">
+NConcurrencyLimitException.NConcurrencyLimitException&#160;<span class='sym_p'><span>(&#160;NMsg <span class='color_p'>message</span></span>, <span>Throwable <span class='color_p'>cause</span></span>&#160;)</span></span>
+<br/>
+<div id="c_154" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NConcurrencyLimitException.&quot;&lt;init&gt;&quot;:(Lnet/thevpc/nuts/text/NMsg;Ljava/lang/Throwable;)V</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NConcurrent.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_155')">
+NConcurrent.bulkheadCallFactory&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallFactory</span></span>
+<br/>
+<div id="c_155" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NConcurrent.bulkheadCallFactory:()Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_156')">
+NConcurrent.defaultBulkheadCallFactory&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallFactory</span></span>
+<br/>
+<div id="c_156" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NConcurrent.defaultBulkheadCallFactory:()Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_157')">
+NConcurrent.memoryBulkheadCallFactory&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBulkheadCallFactory</span></span>
+<br/>
+<div id="c_157" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NConcurrent.memoryBulkheadCallFactory:()Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_158')">
+NConcurrent.setBulkheadCallFactory&#160;<span class='sym_p'><span>(&#160;NBulkheadCallFactory <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NConcurrent</span></span>
+<br/>
+<div id="c_158" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NConcurrent.setBulkheadCallFactory:(Lnet/thevpc/nuts/concurrent/NBulkheadCallFactory;)Lnet/thevpc/nuts/concurrent/NConcurrent;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NDuration.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.time</span><br/>
+<span class="section" onclick="sC(this, 'c_159')">
+NDuration.parse&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>any</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NOptional&lt;NDuration&gt;</span></span>
+<br/>
+<div id="c_159" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/time/NDuration.parse:(Ljava/lang/String;)Lnet/thevpc/nuts/util/NOptional;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.8.jar</span>, <span class='cname'>NTimeoutException.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_160')">
+NTimeoutException.NTimeoutException&#160;<span class='sym_p'><span>(&#160;NMsg <span class='color_p'>message</span></span>&#160;)</span></span>
+<br/>
+<div id="c_160" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NTimeoutException.&quot;&lt;init&gt;&quot;:(Lnet/thevpc/nuts/text/NMsg;)V</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_161')">
+NTimeoutException.NTimeoutException&#160;<span class='sym_p'><span>(&#160;NMsg <span class='color_p'>message</span></span>, <span>Throwable <span class='color_p'>cause</span></span>&#160;)</span></span>
+<br/>
+<div id="c_161" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NTimeoutException.&quot;&lt;init&gt;&quot;:(Lnet/thevpc/nuts/text/NMsg;Ljava/lang/Throwable;)V</span><br/><br/></div>
+
+<br/>
+<a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Source_Removed'></a><a name='Source_Withdrawn'></a><h2>Removed Methods <span class='failed'>&nbsp;13&nbsp;</span></h2><hr/>
+<span class='jar'>nuts-0.8.7.jar</span>, <span class='cname'>NCircuitBreakerCallFactory.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_162')">
+NCircuitBreakerCallFactory.getBeanContainer&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBeanContainer</span></span>
+<br/>
+<div id="c_162" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NCircuitBreakerCallFactory.getBeanContainer:()Lnet/thevpc/nuts/reflect/NBeanContainer;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_163')">
+NCircuitBreakerCallFactory.withBeanContainer&#160;<span class='sym_p'><span>(&#160;NBeanContainer <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NCircuitBreakerCallFactory</span></span>
+<br/>
+<div id="c_163" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NCircuitBreakerCallFactory.withBeanContainer:(Lnet/thevpc/nuts/reflect/NBeanContainer;)Lnet/thevpc/nuts/concurrent/NCircuitBreakerCallFactory;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.7.jar</span>, <span class='cname'>NDuration.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.time</span><br/>
+<span class="section" onclick="sC(this, 'c_164')">
+NDuration.normalizeOld&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDuration</span></span>
+<br/>
+<div id="c_164" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/time/NDuration.normalizeOld:()Lnet/thevpc/nuts/time/NDuration;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.7.jar</span>, <span class='cname'>NRateLimitValueFactory.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_165')">
+NRateLimitValueFactory.getBeanContainer&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBeanContainer</span></span>
+<br/>
+<div id="c_165" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NRateLimitValueFactory.getBeanContainer:()Lnet/thevpc/nuts/reflect/NBeanContainer;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_166')">
+NRateLimitValueFactory.withBeanContainer&#160;<span class='sym_p'><span>(&#160;NBeanContainer <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NRateLimitValueFactory</span></span>
+<br/>
+<div id="c_166" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NRateLimitValueFactory.withBeanContainer:(Lnet/thevpc/nuts/reflect/NBeanContainer;)Lnet/thevpc/nuts/concurrent/NRateLimitValueFactory;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.7.jar</span>, <span class='cname'>NRetryCallFactory.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_167')">
+NRetryCallFactory.getBeanContainer&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBeanContainer</span></span>
+<br/>
+<div id="c_167" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NRetryCallFactory.getBeanContainer:()Lnet/thevpc/nuts/reflect/NBeanContainer;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_168')">
+NRetryCallFactory.withBeanContainer&#160;<span class='sym_p'><span>(&#160;NBeanContainer <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NRetryCallFactory</span></span>
+<br/>
+<div id="c_168" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NRetryCallFactory.withBeanContainer:(Lnet/thevpc/nuts/reflect/NBeanContainer;)Lnet/thevpc/nuts/concurrent/NRetryCallFactory;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.7.jar</span>, <span class='cname'>NSagaCallableFactory.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_169')">
+NSagaCallableFactory.getBeanContainer&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBeanContainer</span></span>
+<br/>
+<div id="c_169" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NSagaCallableFactory.getBeanContainer:()Lnet/thevpc/nuts/reflect/NBeanContainer;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_170')">
+NSagaCallableFactory.withBeanContainer&#160;<span class='sym_p'><span>(&#160;NBeanContainer <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NSagaCallableFactory</span></span>
+<br/>
+<div id="c_170" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NSagaCallableFactory.withBeanContainer:(Lnet/thevpc/nuts/reflect/NBeanContainer;)Lnet/thevpc/nuts/concurrent/NSagaCallableFactory;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.7.jar</span>, <span class='cname'>NStableValueFactory.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_171')">
+NStableValueFactory.getBeanContainer&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBeanContainer</span></span>
+<br/>
+<div id="c_171" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NStableValueFactory.getBeanContainer:()Lnet/thevpc/nuts/reflect/NBeanContainer;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_172')">
+NStableValueFactory.withBeanContainer&#160;<span class='sym_p'><span>(&#160;NBeanContainer <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NStableValueFactory</span></span>
+<br/>
+<div id="c_172" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NStableValueFactory.withBeanContainer:(Lnet/thevpc/nuts/reflect/NBeanContainer;)Lnet/thevpc/nuts/concurrent/NStableValueFactory;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-0.8.7.jar</span>, <span class='cname'>NWorkBalancerFactory.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_173')">
+NWorkBalancerFactory.getBeanContainer&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBeanContainer</span></span>
+<br/>
+<div id="c_173" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NWorkBalancerFactory.getBeanContainer:()Lnet/thevpc/nuts/reflect/NBeanContainer;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_174')">
+NWorkBalancerFactory.withBeanContainer&#160;<span class='sym_p'><span>(&#160;NBeanContainer <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NWorkBalancerFactory</span></span>
+<br/>
+<div id="c_174" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/concurrent/NWorkBalancerFactory.withBeanContainer:(Lnet/thevpc/nuts/reflect/NBeanContainer;)Lnet/thevpc/nuts/concurrent/NWorkBalancerFactory;</span><br/><br/></div>
+
+<br/>
+<a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='High_Risk_Source_Problems'></a><a name='Type_Source_Problems_High'></a>
+<h2>Problems with Data Types, High Severity <span class='failed'>&nbsp;16&nbsp;</span></h2><hr/>
+<span class='jar'>nuts-0.8.7.jar</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.concurrent</span><br/>
+<span class="section" onclick="sC(this, 'c_175')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NCircuitBreakerCallFactory <span class='failed'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_175" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBeanContainer</b> getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> has been removed from this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: cannot find method <span class='iname_b'>getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> in interface <b>NCircuitBreakerCallFactory</b>.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NCircuitBreakerCallFactory</b> withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> has been removed from this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: cannot find method <span class='iname_b'>withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> in interface <b>NCircuitBreakerCallFactory</b>.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_176')">
+[+] affected methods: 8 (0.1%)</span>
+<div id="c_176" style="display:none;">
+<div class='affected'><span class='iname_a'>NCircuitBreakerCallFactory.getStore&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NCircuitBreakerCallFactory' interface.</div>
+<span class='iname_a'>NCircuitBreakerCallFactory.of&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>, <span>NCallable&lt;T&gt; <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NCircuitBreakerCallFactory' interface.</div>
+<span class='iname_a'>NCircuitBreakerCallFactory.of&#160;<span class='sym_p'><span>(&#160;NCallable&lt;T&gt; <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NCircuitBreakerCallFactory' interface.</div>
+<span class='iname_a'>NCircuitBreakerCallFactory.withStore&#160;<span class='sym_p'><span>(&#160;NCircuitBreakerCallStore <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NCircuitBreakerCallFactory' interface.</div>
+<span class='iname_a'>NConcurrent.circuitBreakerCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NCircuitBreakerCallFactory'.</div>
+<span class='iname_a'>NConcurrent.defaultCircuitBreakerCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NCircuitBreakerCallFactory'.</div>
+<span class='iname_a'>NConcurrent.memoryCircuitBreakerCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NCircuitBreakerCallFactory'.</div>
+<span class='iname_a'>NConcurrent.setCircuitBreakerCallFactory&#160;<span class='sym_p'><span>(&#160;NCircuitBreakerCallFactory <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NCircuitBreakerCallFactory'.</div>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_177')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NConcurrent <span class='failed'>&nbsp;4&nbsp;</span></span>
+<br/>
+<div id="c_177" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBulkheadCallFactory</b> bulkheadCallFactory&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>bulkheadCallFactory&#160;<span class='sym_pd'>(&#160;)</span></span> in <b>NConcurrent</b>.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NBulkheadCallFactory</b> defaultBulkheadCallFactory&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>defaultBulkheadCallFactory&#160;<span class='sym_pd'>(&#160;)</span></span> in <b>NConcurrent</b>.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Abstract method <span class='iname_b'><b>NBulkheadCallFactory</b> memoryBulkheadCallFactory&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>memoryBulkheadCallFactory&#160;<span class='sym_pd'>(&#160;)</span></span> in <b>NConcurrent</b>.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Abstract method <span class='iname_b'><b>NConcurrent</b> setBulkheadCallFactory&#160;<span class='sym_pd'><span>(&#160;NBulkheadCallFactory</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>setBulkheadCallFactory&#160;<span class='sym_pd'><span>(&#160;NBulkheadCallFactory</span>&#160;)</span></span> in <b>NConcurrent</b>.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_178')">
+[+] affected methods: 45 (0.4%)</span>
+<div id="c_178" style="display:none;">
+<div class='affected'><span class='iname_a'>NConcurrent.cachedValue&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>, <span>Supplier&lt;T&gt; <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.cachedValue&#160;<span class='sym_p'><span>(&#160;Supplier&lt;T&gt; <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.cachedValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.circuitBreakerCall&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>, <span>NCallable&lt;T&gt; <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.circuitBreakerCall&#160;<span class='sym_p'><span>(&#160;NCallable&lt;T&gt; <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.circuitBreakerCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.defaultCachedValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.defaultCircuitBreakerCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.defaultRateLimitValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+<span class='iname_a'>NConcurrent.defaultRetryCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NConcurrent' interface.</div>
+ <b>...</b>
+<br/>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_179')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NRateLimitValueFactory <span class='failed'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_179" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBeanContainer</b> getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> has been removed from this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: cannot find method <span class='iname_b'>getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> in interface <b>NRateLimitValueFactory</b>.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NRateLimitValueFactory</b> withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> has been removed from this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: cannot find method <span class='iname_b'>withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> in interface <b>NRateLimitValueFactory</b>.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_180')">
+[+] affected methods: 10 (0.1%)</span>
+<div id="c_180" style="display:none;">
+<div class='affected'><span class='iname_a'>NConcurrent.defaultRateLimitValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NRateLimitValueFactory'.</div>
+<span class='iname_a'>NConcurrent.memoryRateLimitValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NRateLimitValueFactory'.</div>
+<span class='iname_a'>NConcurrent.rateLimitValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NRateLimitValueFactory'.</div>
+<span class='iname_a'>NConcurrent.setRateLimitValueFactory&#160;<span class='sym_p'><span>(&#160;NRateLimitValueFactory <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NRateLimitValueFactory'.</div>
+<span class='iname_a'>NRateLimitValueFactory.defineStrategy&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>, <span>NRateLimitStrategy <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRateLimitValueFactory' interface.</div>
+<span class='iname_a'>NRateLimitValueFactory.getStore&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRateLimitValueFactory' interface.</div>
+<span class='iname_a'>NRateLimitValueFactory.of&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This method is from 'NRateLimitValueFactory' interface.</div>
+<span class='iname_a'>NRateLimitValueFactory.of&#160;<span class='sym_p'><span>(&#160;NRateLimitValueStore <i>store</i></span>&#160;)</span></span><br/><div class='affect'>This method is from 'NRateLimitValueFactory' interface.</div>
+<span class='iname_a'>NRateLimitValueFactory.ofBuilder&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRateLimitValueFactory' interface.</div>
+<span class='iname_a'>NRateLimitValueFactory.withStore&#160;<span class='sym_p'><span>(&#160;NRateLimitValueStore <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRateLimitValueFactory' interface.</div>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_181')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NRetryCallFactory <span class='failed'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_181" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBeanContainer</b> getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> has been removed from this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: cannot find method <span class='iname_b'>getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> in interface <b>NRetryCallFactory</b>.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NRetryCallFactory</b> withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> has been removed from this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: cannot find method <span class='iname_b'>withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> in interface <b>NRetryCallFactory</b>.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_182')">
+[+] affected methods: 8 (0.1%)</span>
+<div id="c_182" style="display:none;">
+<div class='affected'><span class='iname_a'>NConcurrent.defaultRetryCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NRetryCallFactory'.</div>
+<span class='iname_a'>NConcurrent.memoryRetryCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NRetryCallFactory'.</div>
+<span class='iname_a'>NConcurrent.retryCallFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NRetryCallFactory'.</div>
+<span class='iname_a'>NConcurrent.setRetryCallFactory&#160;<span class='sym_p'><span>(&#160;NRetryCallFactory <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NRetryCallFactory'.</div>
+<span class='iname_a'>NRetryCallFactory.getStore&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRetryCallFactory' interface.</div>
+<span class='iname_a'>NRetryCallFactory.of&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>, <span>NCallable&lt;T&gt; <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRetryCallFactory' interface.</div>
+<span class='iname_a'>NRetryCallFactory.of&#160;<span class='sym_p'><span>(&#160;NCallable&lt;T&gt; <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRetryCallFactory' interface.</div>
+<span class='iname_a'>NRetryCallFactory.withStore&#160;<span class='sym_p'><span>(&#160;NRetryCallStore <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NRetryCallFactory' interface.</div>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_183')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NSagaCallableFactory <span class='failed'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_183" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBeanContainer</b> getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> has been removed from this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: cannot find method <span class='iname_b'>getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> in interface <b>NSagaCallableFactory</b>.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NSagaCallableFactory</b> withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> has been removed from this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: cannot find method <span class='iname_b'>withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> in interface <b>NSagaCallableFactory</b>.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_184')">
+[+] affected methods: 6 (0.05%)</span>
+<div id="c_184" style="display:none;">
+<div class='affected'><span class='iname_a'>NConcurrent.defaultSagaFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NSagaCallableFactory'.</div>
+<span class='iname_a'>NConcurrent.memorySagaFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NSagaCallableFactory'.</div>
+<span class='iname_a'>NConcurrent.sagaFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NSagaCallableFactory'.</div>
+<span class='iname_a'>NSagaCallableFactory.getStore&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NSagaCallableFactory' interface.</div>
+<span class='iname_a'>NSagaCallableFactory.ofBuilder&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NSagaCallableFactory' interface.</div>
+<span class='iname_a'>NSagaCallableFactory.withStore&#160;<span class='sym_p'><span>(&#160;NSagaStore <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NSagaCallableFactory' interface.</div>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_185')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NStableValueFactory <span class='failed'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_185" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBeanContainer</b> getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> has been removed from this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: cannot find method <span class='iname_b'>getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> in interface <b>NStableValueFactory</b>.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NStableValueFactory</b> withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> has been removed from this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: cannot find method <span class='iname_b'>withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> in interface <b>NStableValueFactory</b>.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_186')">
+[+] affected methods: 10 (0.1%)</span>
+<div id="c_186" style="display:none;">
+<div class='affected'><span class='iname_a'>NConcurrent.defaultStableValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NStableValueFactory'.</div>
+<span class='iname_a'>NConcurrent.memoryStableValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NStableValueFactory'.</div>
+<span class='iname_a'>NConcurrent.setStableValueFactory&#160;<span class='sym_p'><span>(&#160;NStableValueFactory <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NStableValueFactory'.</div>
+<span class='iname_a'>NConcurrent.stableValueFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NStableValueFactory'.</div>
+<span class='iname_a'>NStableValueFactory.getStore&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NStableValueFactory' interface.</div>
+<span class='iname_a'>NStableValueFactory.of&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This method is from 'NStableValueFactory' interface.</div>
+<span class='iname_a'>NStableValueFactory.of&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>, <span>Supplier&lt;T&gt; <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NStableValueFactory' interface.</div>
+<span class='iname_a'>NStableValueFactory.of&#160;<span class='sym_p'><span>(&#160;Supplier&lt;T&gt; <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NStableValueFactory' interface.</div>
+<span class='iname_a'>NStableValueFactory.of&#160;<span class='sym_p'><span>(&#160;NStableValueStore <i>store</i></span>&#160;)</span></span><br/><div class='affect'>This method is from 'NStableValueFactory' interface.</div>
+<span class='iname_a'>NStableValueFactory.withStore&#160;<span class='sym_p'><span>(&#160;NStableValueStore <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NStableValueFactory' interface.</div>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_187')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NWorkBalancerFactory <span class='failed'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_187" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBeanContainer</b> getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> has been removed from this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: cannot find method <span class='iname_b'>getBeanContainer&#160;<span class='sym_pd'>(&#160;)</span></span> in interface <b>NWorkBalancerFactory</b>.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NWorkBalancerFactory</b> withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> has been removed from this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: cannot find method <span class='iname_b'>withBeanContainer&#160;<span class='sym_pd'><span>(&#160;NBeanContainer</span>&#160;)</span></span> in interface <b>NWorkBalancerFactory</b>.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_188')">
+[+] affected methods: 10 (0.1%)</span>
+<div id="c_188" style="display:none;">
+<div class='affected'><span class='iname_a'>NConcurrent.defaultWorkBalancerFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NWorkBalancerFactory'.</div>
+<span class='iname_a'>NConcurrent.memoryWorkBalancerFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NWorkBalancerFactory'.</div>
+<span class='iname_a'>NConcurrent.setWorkBalancerCallFactory&#160;<span class='sym_p'><span>(&#160;NWorkBalancerFactory <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NWorkBalancerFactory'.</div>
+<span class='iname_a'>NConcurrent.workBalancerFactory&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NWorkBalancerFactory'.</div>
+<span class='iname_a'>NWorkBalancerFactory.defineStrategy&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>, <span>NWorkBalancerStrategy <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NWorkBalancerFactory' interface.</div>
+<span class='iname_a'>NWorkBalancerFactory.getStore&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NWorkBalancerFactory' interface.</div>
+<span class='iname_a'>NWorkBalancerFactory.of&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This method is from 'NWorkBalancerFactory' interface.</div>
+<span class='iname_a'>NWorkBalancerFactory.of&#160;<span class='sym_p'><span>(&#160;NWorkBalancerStore <i>store</i></span>&#160;)</span></span><br/><div class='affect'>This method is from 'NWorkBalancerFactory' interface.</div>
+<span class='iname_a'>NWorkBalancerFactory.ofBuilder&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NWorkBalancerFactory' interface.</div>
+<span class='iname_a'>NWorkBalancerFactory.withStore&#160;<span class='sym_p'><span>(&#160;NWorkBalancerStore <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NWorkBalancerFactory' interface.</div>
+</div></div>
+<br/><br/></div>
+
+<br/><a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Checked_Archives'></a><h2>Java Archives <span class='gray'>&nbsp;1&nbsp;</span></h2>
+<hr/><div class='jar_list'>
+nuts-0.8.7.jar<br/>
+</div><br/><a class='top_ref' href='#Top'>to the top</a><br/>
+<br/><br/><br/></div><hr/><div class='footer' align='right'><i>Generated by <a href='https://github.com/lvc/japi-compliance-checker'>Java API Compliance Checker</a> 2.4 &#160;</i></div><br/>
+</body></html>
