@@ -13,15 +13,28 @@ public class MemorySizeTest {
     }
 
 
-
     @Test
     public void test01() {
         NMemorySize z = NMemorySize.parse("0", NMemoryUnit.BYTE).get();
         TestUtils.println(z);
     }
+
     @Test
     public void test02() {
         NMemorySize z = NMemorySize.parse("123456789", NMemoryUnit.BYTE).get();
+        TestUtils.println(z);
+        NMemorySize n = z.normalize();
+        TestUtils.println(n);
+    }
+
+    @Test
+    public void test03() {
+        NMemorySize z = new NMemorySize(
+                new long[]{0, 449, 130, 0, 0, 0, 0, 0},
+                NMemoryUnit.KILO_BYTE,
+                NMemoryUnit.KILO_BYTE,
+                false
+        );
         TestUtils.println(z);
         NMemorySize n = z.normalize();
         TestUtils.println(n);
