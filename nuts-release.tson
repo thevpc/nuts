@@ -1,0 +1,43 @@
+// change root location which MUST point to nuts repository root folder
+root:"../.."
+
+// define stable versions
+lts-api-version: "0.8.7"
+lts-app-version: "0.8.7"
+lts-runtime-version: "0.8.7.0"
+
+// enable more logging information
+trace:true
+verbose:true
+
+// enable native executable generation
+build-native:false
+
+// build documentation website and github readme.md
+build-site:true
+
+// build nuts-public repo index
+build-repo-nuts-public:false
+
+// build nuts-preview repo index
+build-repo-nuts-preview:false
+
+// build nuts-app-full binaries and native executables
+build-bin:false
+
+// build nuts-installer binaries and native executables
+build-installer:false
+
+// generate version compatibility html file, requires 'japi-compliance-checker' to be installed
+build-compat:true
+
+// publish (push) binaries to production server (thevpc.net)
+publish:true
+
+update-version:false
+keep-stamp:false
+production-mode:false
+
+vars:{
+
+}
