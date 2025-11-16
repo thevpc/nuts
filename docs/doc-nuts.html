@@ -59,7 +59,7 @@
             <a class="logo ml-md-3" href="index.html" title="Nuts Package Manager"> <img
                     src="assets/images/nuts-icon.png" alt="Nuts Package Manager" width="32px"/> </a>
             <span class="text-4 ml-2" style="font-family: ZeroesTwo;"><strong><a href="index.html">Nuts Package Manager</a></strong></span>
-            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.7.0</span></span>
+            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.8.0</span></span>
             <!-- Logo End -->
 
             <!-- Navbar Toggler -->
@@ -452,7 +452,7 @@
                                 <H4 class="md-title-2">Let's start the journey</H4><p class="md-phrase">Get started by <b class="md-bold">running your first application</b>. Nuts is not a build tool (like <mark class="md-code md-code-` ">maven</mark> and <mark class="md-code md-code-` ">gradle</mark>). Nuts is more likely to be compared with nodejs <mark class="md-code md-code-` ">npm</mark> or python's <mark class="md-code md-code-` ">pip</mark></p>It consists mainly of a commandline application that is used to install, uninstall and run other java applications in a smooth elegant way.<H4 class="md-title-3">What you'll need</H4><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-` ">java</mark>  compatible operating system including [Linux],[Windows] and [MacOS]</p></li><li class="md-uli"><p class="md-phrase"><a href="https://www.java.com" class="md-link">java</a> version 1.8 or above. JRE is sufficient, JDK allows you to do more with <mark class="md-code md-code-` ">nuts</mark></p></li></ul>Let's check that java is installed :<pre class="md-code md-code-``` "><code class="">
 java --version
 </code></pre><p class="md-phrase">But in the following example, I am assuming you are using a Linux distribution et MacOS.  If you are using Windows please refer to the <a href="#Installation" class="md-link">installation</a> section.</p><H4 class="md-title-3">Installing and Running Nuts</H4><p class="md-phrase">We start by opening a new terminal (term, konsole or whatever you prefer) then download <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> using this command : On linux/MacOS system we issue :</p><pre class="md-code md-code-``` "><code class="">
-curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy
+curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy
 </code></pre>You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.The command also installs all necessary dependencies you need to run Docusaurus.<p class="md-phrase">We used the flags <mark class="md-code md-code-``` ">-y</mark> to auto-confirm and <mark class="md-code md-code-``` ">-z</mark> to ignore cached binaries (combined here as <mark class="md-code md-code-``` ">-zy</mark>). These flags are optional and are used here to demonstrate some of Nuts' available options. The installation process may take several minutes, as it involves downloading all required dependencies, companions, and tools.</p>You should then see this message<pre class="md-code md-code-``` "><code class="">
 Welcome to nuts. Yeah, It's working...
 </code></pre><p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is well installed, just restart your terminal.</p><p class="md-phrase">Now we will install <mark class="md-code md-code-` ">jedit</mark>, a tremendous underrated text editor. So in your terminal type:</p><pre class="md-code md-code-``` bash"><code class="bash">
@@ -545,9 +545,9 @@ $ java -version
 openjdk version "24.0.1" 2025-04-15
 OpenJDK Runtime Environment (build 24.0.1+9-suse-1.1-x8664)
 OpenJDK 64-Bit Server VM (build 24.0.1+9-suse-1.1-x8664, mixed mode, sharing)
-</code></pre><H4 class="md-title-2">Installation</H4><ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi10-tab" data-toggle="tab" href="#idi10" role="tab" aria-controls="idi10" aria-selected="false">windows</a></li><li class="nav-item" role="presentation"><a class="nav-link active" id="idi11-tab" data-toggle="tab" href="#idi11" role="tab" aria-controls="idi11" aria-selected="true">linux</a></li><li class="nav-item" role="presentation"><a class="nav-link " id="idi12-tab" data-toggle="tab" href="#idi12" role="tab" aria-controls="idi12" aria-selected="false">macos</a></li></ul><div class="tab-content my-3"><div class="tab-pane fade show " id="idi10" role="tabpanel" aria-labelledby="idi10-tab"><p class="md-phrase">download <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar" class="md-link">nuts-app-0.8.7.jar</a></p><pre class="md-code md-code-``` "><code class="">
-java -jar nuts-app-0.8.7.jar -Zy
-</code></pre>On Windows systems, first launch will create a new <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.- <b class="md-bold">nuts-cmd-0.8.7</b> : this shortcut will open a configured command terminal. <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> command will be available as well as several nuts companion tools installed by <b class="md-bold">nadmin</b> by default- <b class="md-bold">nuts-cmd</b>       : this shortcut will point to the last installed <b class="md-bold">nuts</b> version, here 0.8.7  Any of these shortcuts will launch a nuts-aware terminal.Supported Windows systems include Window 7 and later.<div class="alert alert-success mb-4">Any of the created shortcuts for windows is a nuts-aware terminal.</div></div><div class="tab-pane fade show active" id="idi11" role="tabpanel" aria-labelledby="idi11-tab"><pre class="md-code md-code-``` "><code class="">
+</code></pre><H4 class="md-title-2">Installation</H4><ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi10-tab" data-toggle="tab" href="#idi10" role="tab" aria-controls="idi10" aria-selected="false">windows</a></li><li class="nav-item" role="presentation"><a class="nav-link active" id="idi11-tab" data-toggle="tab" href="#idi11" role="tab" aria-controls="idi11" aria-selected="true">linux</a></li><li class="nav-item" role="presentation"><a class="nav-link " id="idi12-tab" data-toggle="tab" href="#idi12" role="tab" aria-controls="idi12" aria-selected="false">macos</a></li></ul><div class="tab-content my-3"><div class="tab-pane fade show " id="idi10" role="tabpanel" aria-labelledby="idi10-tab"><p class="md-phrase">download <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar" class="md-link">nuts-app-0.8.8.jar</a></p><pre class="md-code md-code-``` "><code class="">
+java -jar nuts-app-0.8.8.jar -Zy
+</code></pre>On Windows systems, first launch will create a new <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.- <b class="md-bold">nuts-cmd-0.8.8</b> : this shortcut will open a configured command terminal. <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> command will be available as well as several nuts companion tools installed by <b class="md-bold">nadmin</b> by default- <b class="md-bold">nuts-cmd</b>       : this shortcut will point to the last installed <b class="md-bold">nuts</b> version, here 0.8.8  Any of these shortcuts will launch a nuts-aware terminal.Supported Windows systems include Window 7 and later.<div class="alert alert-success mb-4">Any of the created shortcuts for windows is a nuts-aware terminal.</div></div><div class="tab-pane fade show active" id="idi11" role="tabpanel" aria-labelledby="idi11-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -s https://thevpc.net/nuts/install-latest.sh | bash
 $ exit
 </code></pre>Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that <b class="md-bold">nuts</b> and other companion tool commands will be available in any future terminal instances. Using <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> on unix-like system should be seamless. A simple bash terminal (Gnome Terminal, KDE Konsole,...) is already a nuts-aware terminal.All Linux versions and distributions should work with or without X Window (or equivalent). Graphical system is required only if you plan to run a gui application using <b class="md-bold">nuts</b>. All tests where performed on OpenSuse Tumbleweed.<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.</div></div><div class="tab-pane fade show " id="idi12" role="tabpanel" aria-labelledby="idi12-tab"><pre class="md-code md-code-``` "><code class="">
@@ -556,7 +556,7 @@ $ exit
 </code></pre>MacOS Systems installation is based on <b class="md-bold">zsh</b> shell. First launch will configure "~/.zshrc" so that <b class="md-bold">nuts</b> and other companion tool commands will be available in any future terminal instances. Using <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.</div></div></div>Yous should then see some log like the following :<p><img src="assets/images/console/install-log-example.png" class="md-img img-fluid border" alt="install-log-example"></img></p><p class="md-phrase">As you can see, installation upon first launch, will also trigger installation of other optional programs called "companion tools". The main recommended helpful is <b class="md-bold">nsh</b>  (stands for <b class="md-bold">Nuts Shell</b>), is a bash compatible shell implementation application that will run equally on linux and windows systems.</p><div class="alert alert-success mb-4">After installation, you need to restart the terminal application for the configuration to take effect.</div><H4 class="md-title-2">Test Installation</H4>To test installation the simplest way is to open a nuts-aware terminal and type : <pre class="md-code md-code-``` "><code class="">
 nuts --version
 </code></pre>It should show a result in the format : nuts-api-version/nuts-impl-version<pre class="md-code md-code-``` "><code class="">
-0.8.7/0.8.7.0
+0.8.8/0.8.8.0
 </code></pre><H4 class="md-title-2">Run a command</H4><p class="md-phrase">To run a command using <b class="md-bold">nuts</b> just type</p><pre class="md-code md-code-``` "><code class="">
 nuts &lt;command&gt;
 </code></pre>Several commands are available, and you can always manually run any java and non java application.
@@ -576,9 +576,9 @@ $&gt; java -version
 openjdk version "24.0.1" 2025-04-15
 OpenJDK Runtime Environment (build 24.0.1+9-suse-1.1-x8664)
 OpenJDK 64-Bit Server VM (build 24.0.1+9-suse-1.1-x8664, mixed mode, sharing)
-</code></pre><H4 class="md-title-2">Installation</H4><ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi20-tab" data-toggle="tab" href="#idi20" role="tab" aria-controls="idi20" aria-selected="false">windows</a></li><li class="nav-item" role="presentation"><a class="nav-link active" id="idi21-tab" data-toggle="tab" href="#idi21" role="tab" aria-controls="idi21" aria-selected="true">linux</a></li><li class="nav-item" role="presentation"><a class="nav-link " id="idi22-tab" data-toggle="tab" href="#idi22" role="tab" aria-controls="idi22" aria-selected="false">macos</a></li></ul><div class="tab-content my-3"><div class="tab-pane fade show " id="idi20" role="tabpanel" aria-labelledby="idi20-tab"><p class="md-phrase">download <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar" class="md-link">nuts-app-0.8.6.jar</a></p><pre class="md-code md-code-``` "><code class="">
-java -jar nuts-app-0.8.6.jar  -Zy
-</code></pre>On Windows systems, first launch will create a new <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.- <b class="md-bold">nuts-cmd-0.8.6</b> : this shortcut will open a configured command terminal. <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> command will be available as well as several nuts companion tools installed by <b class="md-bold">nadmin</b> by default- <b class="md-bold">nuts-cmd</b>       : this shortcut will point to the last installed <b class="md-bold">nuts</b> version, here 0.8.6 Any of these shortcuts will launch a nuts-aware terminal.Supported Windows systems include Window 7 and later.<div class="alert alert-success mb-4">Any of the created shortcuts for windows is a nuts-aware terminal.</div></div><div class="tab-pane fade show active" id="idi21" role="tabpanel" aria-labelledby="idi21-tab"><pre class="md-code md-code-``` "><code class="">
+</code></pre><H4 class="md-title-2">Installation</H4><ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi20-tab" data-toggle="tab" href="#idi20" role="tab" aria-controls="idi20" aria-selected="false">windows</a></li><li class="nav-item" role="presentation"><a class="nav-link active" id="idi21-tab" data-toggle="tab" href="#idi21" role="tab" aria-controls="idi21" aria-selected="true">linux</a></li><li class="nav-item" role="presentation"><a class="nav-link " id="idi22-tab" data-toggle="tab" href="#idi22" role="tab" aria-controls="idi22" aria-selected="false">macos</a></li></ul><div class="tab-content my-3"><div class="tab-pane fade show " id="idi20" role="tabpanel" aria-labelledby="idi20-tab"><p class="md-phrase">download <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar" class="md-link">nuts-app-0.8.7.jar</a></p><pre class="md-code md-code-``` "><code class="">
+java -jar nuts-app-0.8.7.jar  -Zy
+</code></pre>On Windows systems, first launch will create a new <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.- <b class="md-bold">nuts-cmd-0.8.7</b> : this shortcut will open a configured command terminal. <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> command will be available as well as several nuts companion tools installed by <b class="md-bold">nadmin</b> by default- <b class="md-bold">nuts-cmd</b>       : this shortcut will point to the last installed <b class="md-bold">nuts</b> version, here 0.8.7 Any of these shortcuts will launch a nuts-aware terminal.Supported Windows systems include Window 7 and later.<div class="alert alert-success mb-4">Any of the created shortcuts for windows is a nuts-aware terminal.</div></div><div class="tab-pane fade show active" id="idi21" role="tabpanel" aria-labelledby="idi21-tab"><pre class="md-code md-code-``` "><code class="">
 $ curl -s https://thevpc.net/nuts/install-stable.sh | bash
 $ exit
 </code></pre>Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that <b class="md-bold">nuts</b> and other companion tool commands will be available in any future terminal instances. Note that shells are also supported and the relative <mark class="md-code md-code-` ">rcfiles</mark> are also updated (including <mark class="md-code md-code-` ">zsh</mark>, <mark class="md-code md-code-` ">fish</mark> etc) Using <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> on unix-like system should be seamless. A simple bash terminal (Gnome Terminal, KDE Konsole,...) is already a nuts-aware terminal.All Linux versions and distributions should work with or without X Window (or equivalent). Graphical system is required only if you plan to run a gui application using <b class="md-bold">nuts</b>. All tests where performed on OpenSuse Tumbleweed.<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.</div></div><div class="tab-pane fade show " id="idi22" role="tabpanel" aria-labelledby="idi22-tab"><pre class="md-code md-code-``` "><code class="">
@@ -587,7 +587,7 @@ $ exit
 </code></pre>MacOS Systems installation is based on <b class="md-bold">zsh</b> shell. First launch will configure "~/.zshrc" so that <b class="md-bold">nuts</b> and other companion tool commands will be available in any future terminal instances. Using <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.</div></div></div>Yous should then see some log like the following :<p><img src="assets/images/console/install-log-example.png" class="md-img img-fluid border" alt="install-log-example"></img></p><p class="md-phrase">As you can see, installation upon first launch, will also trigger installation of other optional programs called "companion tools". The main recommended helpful is <b class="md-bold">nsh</b>  (stands for <b class="md-bold">Nuts Shell</b>), is a bash compatible shell implementation application that will run equally on linux and windows systems.</p><div class="alert alert-success mb-4">After installation, you need to restart the terminal application for the configuration to take effect.</div><H4 class="md-title-2">Test Installation</H4>To test installation the simplest way is to open a nuts-aware terminal and type : <pre class="md-code md-code-``` "><code class="">
 nuts --version
 </code></pre>It should show a result in the format : nuts-api-version/nuts-impl-version<pre class="md-code md-code-``` "><code class="">
-0.8.6/0.8.6.0
+0.8.7/0.8.7.0
 </code></pre><H4 class="md-title-2">Run a command</H4><p class="md-phrase">To run a command using <b class="md-bold">nuts</b> just type</p><pre class="md-code md-code-``` "><code class="">
 nuts &lt;command&gt;
 </code></pre>Several commands are available, and you can always manually run any java and non java application.
@@ -609,21 +609,21 @@ $&gt; nuts search
 
 $&gt; nuts search 'net.thevpc.nuts.toolbox:*' --anywhere
  
-        net.thevpc.nuts.toolbox:ndoc#0.8.7.0
-        net.thevpc.nuts.toolbox:ndexer#0.8.7.0
-        net.thevpc.nuts.toolbox:njob#0.8.7.0
-        net.thevpc.nuts.toolbox:nmvn#0.8.7.0
-        net.thevpc.nuts.toolbox:nwork#0.8.7.0
-        net.thevpc.nsh:nsh#0.8.7.0
-        net.thevpc.nuts.toolbox:ntomcat#0.8.7.0
-        net.thevpc.nuts.toolbox:ntalk-agent#0.8.7.0
-        net.thevpc.nuts.toolbox:ndiff#0.8.7.0
-        net.thevpc.nuts.toolbox:nserver#0.8.7.0
-        net.thevpc.nuts.toolbox:ndb#0.8.7.0
-        net.thevpc.nuts.toolbox:nversion#0.8.7.0
-        net.thevpc.nuts.toolbox:ncode#0.8.7.0
-        net.thevpc.nuts.toolbox:ndocusaurus#0.8.7.0
-        net.thevpc.nuts.toolbox:noapi#0.8.7.0
+        net.thevpc.nuts.toolbox:ndoc#0.8.8.0
+        net.thevpc.nuts.toolbox:ndexer#0.8.8.0
+        net.thevpc.nuts.toolbox:njob#0.8.8.0
+        net.thevpc.nuts.toolbox:nmvn#0.8.8.0
+        net.thevpc.nuts.toolbox:nwork#0.8.8.0
+        net.thevpc.nsh:nsh#0.8.8.0
+        net.thevpc.nuts.toolbox:ntomcat#0.8.8.0
+        net.thevpc.nuts.toolbox:ntalk-agent#0.8.8.0
+        net.thevpc.nuts.toolbox:ndiff#0.8.8.0
+        net.thevpc.nuts.toolbox:nserver#0.8.8.0
+        net.thevpc.nuts.toolbox:ndb#0.8.8.0
+        net.thevpc.nuts.toolbox:nversion#0.8.8.0
+        net.thevpc.nuts.toolbox:ncode#0.8.8.0
+        net.thevpc.nuts.toolbox:ndocusaurus#0.8.8.0
+        net.thevpc.nuts.toolbox:noapi#0.8.8.0
 
 $&gt; nuts install org.jedit:jedit
 
@@ -653,8 +653,8 @@ $&gt; nuts netbeans-launcher
 docker run -it --rm openjdk:8 bash -c "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"
 </code></pre>Now that you are in a container<pre class="md-code md-code-``` bash"><code class="bash">
 nuts -y &lt;your-app&gt;...
-</code></pre><p class="md-phrase">As an example here where you can run <code class="md-code md-code-` ">net.thevpc.nuts.noapi:noapi#https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar</code> on your config file <code class="md-code md-code-` ">myrest-apis.json</code>.</p><p class="md-phrase"><mark class="md-code md-code-` ">noapi</mark> is actually an OpenAPI documentation tool that generates a pdf file based on a opn api definition in <mark class="md-code md-code-` ">JSON</mark>, <mark class="md-code md-code-` ">YAML</mark> or <mark class="md-code md-code-` ">TSON</mark> formats.</p><pre class="md-code md-code-``` bash"><code class="bash">
-nuts -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar myrest-apis.json
+</code></pre><p class="md-phrase">As an example here where you can run <code class="md-code md-code-` ">net.thevpc.nuts.noapi:noapi#https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar</code> on your config file <code class="md-code md-code-` ">myrest-apis.json</code>.</p><p class="md-phrase"><mark class="md-code md-code-` ">noapi</mark> is actually an OpenAPI documentation tool that generates a pdf file based on a opn api definition in <mark class="md-code md-code-` ">JSON</mark>, <mark class="md-code md-code-` ">YAML</mark> or <mark class="md-code md-code-` ">TSON</mark> formats.</p><pre class="md-code md-code-``` bash"><code class="bash">
+nuts -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar myrest-apis.json
 </code></pre><H4 class="md-title-2">Creating your app Dockerfile</H4><p class="md-phrase">If you are willing to deploy your application in a docker isolated environment you can use this example of <mark class="md-code md-code-` ">Dockerfile</mark> </p><pre class="md-code md-code-``` Dockerfile"><code class="Dockerfile">
 FROM openjdk:8
 RUN curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh | bash
@@ -662,7 +662,7 @@ RUN nuts -Zy install &lt;your application&gt;
 CMD nuts -y &lt;your application&gt;
 </code></pre><p class="md-phrase">This is a docker file to run <code class="md-code md-code-` ">net.thevpc.nuts.toolbox:noapi</code> an OpenAPI documentation tool.</p><pre class="md-code md-code-``` Dockerfile"><code class="Dockerfile">
 FROM openjdk:8
-RUN wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar -qO nuts.jar
+RUN wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar -qO nuts.jar
 RUN java -jar nuts.jar -Zy install net.thevpc.nuts.toolbox:noapi
 CMD java -jar nuts.jar -y net.thevpc.nuts.toolbox:noapi
 </code></pre>
@@ -710,25 +710,25 @@ java -jar nuts.jar
                                 <h3 class="main-section2"><a href="#U3A5516E30519F4EB31664277651DC2D38A3D6BD0">3.1 Aliases, Imports & Launchers</a></h3>
                                 <div class="text-card">
                                 Aliases, Imports and launchers, are three features in nuts where you can call artifacts with a simple word instead of using the full id. Indeed, usually, artifacts are uniquely identified by groupId, artifactId, version and classifier (whenever applicable). This is kind of cumbersome if most of the cases:<pre class="md-code md-code-``` bash"><code class="bash">
-nuts net.thevpc.nsh:nsh#0.8.7.0
+nuts net.thevpc.nsh:nsh#0.8.8.0
 </code></pre><H4 class="md-title-2">Imports</H4>Imports help you discard groupId and call/install artifacts using only artifactId. You can as an example import 'com.my-company' and as a result any artifact under 'com.mycompany' is resolved automatically. Actually 'com.my-company:my-app' and 'com.my-company.my-app:my-app' are<pre class="md-code md-code-``` bash"><code class="bash">
-nuts net.thevpc.nsh:nsh#0.8.7.0
+nuts net.thevpc.nsh:nsh#0.8.8.0
 # becomes
 nuts settings add import net.thevpc.toolbox
 # now call it simply with
-nuts nsh#0.8.7.0
+nuts nsh#0.8.8.0
 # or even simpler with
 nuts nsh
 </code></pre>As a matter of fact, there is a default import defined 'net.thevpc'<H4 class="md-title-2">Aliases</H4><p class="md-phrase">Aliases help you define your own command by calling existing artifacts and defining some arguments as well. It's very similar to shell aliases where you define <mark class="md-code md-code-` ">ll</mark> as an alias to <code class="md-code md-code-` ">/bin/ls -l</code> for example.</p><pre class="md-code md-code-``` bash"><code class="bash">
-nuts net.thevpc.nsh:nsh#0.8.7.0
+nuts net.thevpc.nsh:nsh#0.8.8.0
 # becomes
-nuts settings add alias ll='net.thevpc.nsh:nsh#0.8.7.0 -c ls -l'
+nuts settings add alias ll='net.thevpc.nsh:nsh#0.8.8.0 -c ls -l'
 # now call it simply with
 nuts ll
 </code></pre><H4 class="md-title-2">Launchers</H4>Launchers help you define your own system command by calling nuts with existing artifacts and even creating Desktop Environment Shortcuts and Icons (whenever GUI is applicable). <pre class="md-code md-code-``` bash"><code class="bash">
-nuts net.thevpc.nsh:nsh#0.8.7.0
+nuts net.thevpc.nsh:nsh#0.8.8.0
 # becomes
-nuts settings add launcher --menu --desktop 'net.thevpc.nsh:nsh#0.8.7.0'
+nuts settings add launcher --menu --desktop 'net.thevpc.nsh:nsh#0.8.8.0'
 # now call it simply click on the desktop icon or open via system menu
 </code></pre>
                                 </div>
@@ -2524,10 +2524,10 @@ show workspace information and exit
                                 <p class="md-phrase"><b class="md-bold">info</b> command is a more verbose command than version. It shows a lot of other <b class="md-bold">nuts</b> properties that describe the booted workspace, such as the workspace name, the store locations (artifacts, caches, ....)</p><pre class="md-code md-code-``` "><code class="">
 me@linux:~&gt; nuts info
 name                     = default-workspace
-nuts-api-version         = 0.8.7
-nuts-api-id              = net.thevpc.app.nuts:nuts#0.8.7
+nuts-api-version         = 0.8.8
+nuts-api-id              = net.thevpc.app.nuts:nuts#0.8.8
 nuts-runtime-id          = net.thevpc.app.nuts:nuts-core#
-nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core//nuts-core-.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/0.8.7/nuts-0.8.7.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
+nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core//nuts-core-.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/0.8.8/nuts-0.8.8.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
 nuts-workspace-id        = 99b73002-804d-4e4c-9a13-f57ac1f40b3d
 nuts-store-layout        = linux
 nuts-store-strategy      = exploded
@@ -2557,7 +2557,7 @@ java-version             = 1.8.0_222
 platform                 = java#1.8.0_222
 java-home                = /usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre
 java-executable          = /usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre/bin/java
-java-classpath           = ~/.m2/repository/net/vpc/app/nuts/nuts/0.8.7/nuts-0.8.7.jar
+java-classpath           = ~/.m2/repository/net/vpc/app/nuts/nuts/0.8.8/nuts-0.8.8.jar
 java-library-path        = /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
 os-name                  = linux#4.12.14-lp151.28.13-default
 os-family                = linux
@@ -2587,8 +2587,8 @@ repositories-count       = 5
                                 <div class="text-card">
                                 This command will show <b class="md-bold">nuts</b> version. It's helpful to note that <b class="md-bold">nuts</b> has a couple of components : api and impl. api is the <b class="md-bold">nuts</b> bootstrap jar (actually nuts-<b class="md-bold">.jar, ~500Ko of size) that contains only the minimum code to use nuts and to download the full implementation (3Mo of size) : impl component. Usually, the implementation version starts with the api version but this should be no rule.</b><pre class="md-code md-code-``` "><code class="">
 me@linux:~&gt; nuts version
-0.8.7/
-</code></pre><p class="md-phrase">Here the <b class="md-bold">version</b> command show api version (0.8.7) and the impl version ()</p>
+0.8.8/
+</code></pre><p class="md-phrase">Here the <b class="md-bold">version</b> command show api version (0.8.8) and the impl version ()</p>
                                 </div>
                                 
                             </section>
@@ -2755,7 +2755,7 @@ show license info and exit
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-11-07-110514
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-11-17-003934
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
