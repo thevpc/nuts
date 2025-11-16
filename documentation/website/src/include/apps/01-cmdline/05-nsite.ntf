@@ -4,7 +4,7 @@ title: nsite
 subTitle: Static Site Generator
 category: Productivity / Static Site Generator
 hmi: Commandline
-website: https://thevpc.github.com/nuts
+website: https://thevpc.github.io/nuts
 installCommand: nuts install nsite
 exampleCommand: nuts nsite --src <sources-folder> --resources <resources-folder> --to <target-folder>
 ---
