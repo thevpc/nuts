@@ -4,7 +4,7 @@ title: njob
 subTitle: A Commandline Task Manager
 category: Productivity / Task Manager
 hmi: Commandline
-website: https://thevpc.github.com/nuts
+website: https://thevpc.github.io/nuts
 installCommand: nuts install njob
 exampleCommand: nuts njob tasks add 'I will buy milk' --on afternoon
 ---
