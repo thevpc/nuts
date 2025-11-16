@@ -4,7 +4,7 @@ title: ncode
 subTitle: Commandline code search tool
 category: Settings / Package Manager
 hmi: Commandline
-website: https://thevpc.github.com/nuts
+website: https://thevpc.github.io/nuts
 installCommand: nuts install ncode
 exampleCommand: ncode -t String . foo.zip
 ---
