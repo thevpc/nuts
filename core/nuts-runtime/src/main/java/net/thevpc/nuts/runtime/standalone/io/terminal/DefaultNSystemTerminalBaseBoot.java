@@ -6,6 +6,9 @@ import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NNonClosableInputStream;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NNonClosableOutputStream;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NNonClosablePrintStream;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTerminalCmd;
@@ -15,6 +18,7 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NScorableContext;
 
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.Scanner;
 
 @NComponentScope(NScopeType.PROTOTYPE)
@@ -32,9 +36,9 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
         super();
         NBootOptions bo = bootModel.getBootUserOptions();
         NWorkspaceTerminalOptions bootStdFd = new NWorkspaceTerminalOptions(
-                bo.getStdin().orElse(System.in),
-                bo.getStdout().orElse(System.out),
-                bo.getStderr().orElse(System.err),
+                new NNonClosableInputStream(bo.getStdin().orElse(System.in)),
+                new NNonClosablePrintStream(bo.getStdout().orElse(System.out)),
+                new NNonClosablePrintStream(bo.getStderr().orElse(System.err)),
                 bootModel.getBootTerminal().getFlags().toArray(new String[0])
         );
         NTerminalMode terminalMode = bootModel.getBootUserOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT);
