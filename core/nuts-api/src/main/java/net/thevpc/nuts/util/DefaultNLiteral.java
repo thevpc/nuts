@@ -349,10 +349,10 @@ public class DefaultNLiteral implements NLiteral {
             //
         }
 
-        if (isLong()) {
+        if (asLong().isPresent()) {
             try {
                 try {
-                    return NOptional.of(Instant.ofEpochMilli(((Number) value).longValue()));
+                    return NOptional.of(Instant.ofEpochMilli(asLong().get()));
                 } catch (Exception any) {
                     //
                 }
@@ -1237,7 +1237,7 @@ public class DefaultNLiteral implements NLiteral {
             if (NBlankable.isBlank(value)) {
                 return NOptional.ofEmpty();
             }
-            if (isInt()) {
+            if (asInt().isPresent()) {
                 ET[] enumConstants = type.getEnumConstants();
                 Integer ordinal = asInt().get();
                 if (ordinal >= 0 && ordinal <= enumConstants.length) {
