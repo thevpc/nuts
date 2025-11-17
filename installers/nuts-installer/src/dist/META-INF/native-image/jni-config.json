@@ -1,5 +1,8 @@
 [
 {
+  "name":"[Lsun.font.FontConfigManager$FontConfigFont;"
+},
+{
   "name":"[Lsun.java2d.loops.GraphicsPrimitive;"
 },
 {
@@ -171,6 +174,19 @@
 {
   "name":"sun.font.Font2D",
   "methods":[{"name":"canDisplay","parameterTypes":["char"] }, {"name":"charToGlyph","parameterTypes":["int"] }, {"name":"charToVariationGlyph","parameterTypes":["int","int"] }, {"name":"getMapper","parameterTypes":[] }, {"name":"getTableBytes","parameterTypes":["int"] }]
+},
+{
+  "name":"sun.font.FontConfigManager$FcCompFont",
+  "fields":[{"name":"allFonts"}, {"name":"fcName"}, {"name":"firstFont"}]
+},
+{
+  "name":"sun.font.FontConfigManager$FontConfigFont",
+  "fields":[{"name":"familyName"}, {"name":"fontFile"}, {"name":"fullName"}, {"name":"styleStr"}],
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.font.FontConfigManager$FontConfigInfo",
+  "fields":[{"name":"cacheDirs"}, {"name":"fcVersion"}]
 },
 {
   "name":"sun.font.FontStrike",

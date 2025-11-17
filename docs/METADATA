@@ -1,27 +1,27 @@
-buildTime=2025-11-07-110514
+buildTime=2025-11-17-015846
 
 stableApiId=
-stableApiVersion=0.8.6
-stableAppId=net.thevpc.nuts:nuts-app#0.8.6
-stableAppVersion=0.8.6
-stableRuntimeId=net.thevpc.nuts:nuts-runtime#0.8.6.0
-stableRuntimeVersion=0.8.6.0
-stableJarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar
+stableApiVersion=0.8.7
+stableAppId=net.thevpc.nuts:nuts-app#0.8.7
+stableAppVersion=0.8.7
+stableRuntimeId=net.thevpc.nuts:nuts-runtime#0.8.7.0
+stableRuntimeVersion=0.8.7.0
+stableJarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar
 
-latestApiId=net.thevpc.nuts:nuts#0.8.7
-latestApiVersion=0.8.7
-latestAppId=net.thevpc.nuts:nuts-app#0.8.7
-latestAppVersion=0.8.7
-latestRuntimeId=net.thevpc.nuts:nuts-runtime#0.8.7.0
-latestRuntimeVersion=0.8.7.0
-latestJarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar
+latestApiId=net.thevpc.nuts:nuts#0.8.8
+latestApiVersion=0.8.8
+latestAppId=net.thevpc.nuts:nuts-app#0.8.8
+latestAppVersion=0.8.8
+latestRuntimeId=net.thevpc.nuts:nuts-runtime#0.8.8.0
+latestRuntimeVersion=0.8.8.0
+latestJarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar
 
 
-apiId=net.thevpc.nuts:nuts#0.8.7
-apiVersion=0.8.7
-appId=net.thevpc.nuts:nuts-app#0.8.7
-appVersion=0.8.7
-runtimeId=net.thevpc.nuts:nuts-runtime#0.8.7.0
-runtimeVersion=0.8.7.0
-jarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar
+apiId=net.thevpc.nuts:nuts#0.8.8
+apiVersion=0.8.8
+appId=net.thevpc.nuts:nuts-app#0.8.8
+appVersion=0.8.8
+runtimeId=net.thevpc.nuts:nuts-runtime#0.8.8.0
+runtimeVersion=0.8.8.0
+jarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar
 

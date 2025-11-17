@@ -307,11 +307,11 @@
   "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
 },
 {
-  "name":"net.thevpc.nuts.swing.AnsiTermPane",
+  "name":"net.thevpc.nuts.installer.util.swing.AnsiTermPane",
   "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
 },
 {
-  "name":"net.thevpc.nuts.swing.WizardPageBase",
+  "name":"net.thevpc.nuts.installer.util.swing.WizardPageBase",
   "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
 },
 {

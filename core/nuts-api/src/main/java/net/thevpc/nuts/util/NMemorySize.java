@@ -49,38 +49,9 @@ public class NMemorySize implements Serializable, NImmutable {
         }
         this.largestUnit = largestUnit;
         applyUnits();
+        checkMe();
     }
 
-    private int rebuildSizeBits() {
-        return (int) (this.values[NMemoryUnit.BIT.ordinal()] % 8);
-    }
-
-    public NMemorySize(long[] values, NMemoryUnit smallestUnit, NMemoryUnit largestUnit, boolean iec) {
-        this.iec = iec;
-        this.KB = iec ? 1000 : 1024;
-        for (int i = 0; i < this.values.length; i++) {
-            this.values[i] = values[i];
-        }
-        this.bytes = rebuildSizeBytes();
-        this.bits = rebuildSizeBits();
-        this.smallestUnit = smallestUnit == null ? detectSmallestUnit() : smallestUnit;
-        largestUnit = largestUnit == null ? detectLargestUnit() : largestUnit;
-        if (largestUnit.ordinal() < this.smallestUnit.ordinal()) {
-            largestUnit = this.smallestUnit;
-        }
-        this.largestUnit = largestUnit;
-        applyUnits();
-    }
-
-    private long rebuildSizeBytes() {
-        return values[NMemoryUnit.BYTE.ordinal()]
-                + values[NMemoryUnit.KILO_BYTE.ordinal()] * KB
-                + values[NMemoryUnit.MEGA_BYTE.ordinal()] * KB * KB
-                + values[NMemoryUnit.GIGA_BYTE.ordinal()] * KB * KB * KB
-                + values[NMemoryUnit.TERA_BYTE.ordinal()] * KB * KB * KB * KB
-                + values[NMemoryUnit.PETA_BYTE.ordinal()] * KB * KB * KB * KB * KB
-                + values[NMemoryUnit.ZETA_BYTE.ordinal()] * KB * KB * KB * KB * KB * KB;
-    }
 
     public NMemorySize(long memBytes, int memBits, boolean iec) {
         this.iec = iec;
@@ -105,6 +76,7 @@ public class NMemorySize implements Serializable, NImmutable {
         values[NMemoryUnit.BYTE.ordinal()] = memBytes;
         this.smallestUnit = detectSmallestUnit();
         this.largestUnit = detectLargestUnit();
+        checkMe();
     }
 
     public NMemorySize(long memBytes, int memBits, NMemoryUnit smallestUnit, NMemoryUnit largestUnit, boolean iec) {
@@ -209,7 +181,51 @@ public class NMemorySize implements Serializable, NImmutable {
             this.largestUnit = largestUnit;
             applyUnits();
         }
+        checkMe();
     }
+
+    public NMemorySize(long[] values, NMemoryUnit smallestUnit, NMemoryUnit largestUnit, boolean iec) {
+        this.iec = iec;
+        this.KB = iec ? 1000 : 1024;
+        for (int i = 0; i < this.values.length; i++) {
+            this.values[i] = values[i];
+        }
+        this.smallestUnit = smallestUnit == null ? detectSmallestUnit() : smallestUnit;
+        largestUnit = largestUnit == null ? detectLargestUnit() : largestUnit;
+        if (largestUnit.ordinal() < this.smallestUnit.ordinal()) {
+            largestUnit = this.smallestUnit;
+        }
+        this.largestUnit = largestUnit;
+        applyUnits();
+        this.bytes = rebuildSizeBytes();
+        this.bits = rebuildSizeBits();
+    }
+
+    private void checkMe() {
+        //active only in debug mode!
+        if(false) {
+            long t = rebuildSizeBytes();
+            if (t != bytes) {
+                throw NExceptions.ofSafeAssertException(NMsg.ofC("why"));
+            }
+        }
+    }
+
+
+    private int rebuildSizeBits() {
+        return (int) (this.values[NMemoryUnit.BIT.ordinal()] % 8);
+    }
+
+    private long rebuildSizeBytes() {
+        return values[NMemoryUnit.BYTE.ordinal()]
+                + values[NMemoryUnit.KILO_BYTE.ordinal()] * KB
+                + values[NMemoryUnit.MEGA_BYTE.ordinal()] * KB * KB
+                + values[NMemoryUnit.GIGA_BYTE.ordinal()] * KB * KB * KB
+                + values[NMemoryUnit.TERA_BYTE.ordinal()] * KB * KB * KB * KB
+                + values[NMemoryUnit.PETA_BYTE.ordinal()] * KB * KB * KB * KB * KB
+                + values[NMemoryUnit.ZETA_BYTE.ordinal()] * KB * KB * KB * KB * KB * KB;
+    }
+
 
     private void applyUnits() {
         int uo = this.smallestUnit.ordinal();

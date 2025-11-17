@@ -26,6 +26,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&display=swap" rel="stylesheet">
 
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2SH2Y1383S"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-2SH2Y1383S');
+    </script>
+
 </head>
 
 <body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
@@ -59,7 +70,7 @@
             <a class="logo ml-md-3" href="index.html" title="Nuts Package Manager"> <img
                     src="assets/images/nuts-icon.png" alt="Nuts Package Manager" width="32px"/> </a>
             <span class="text-4 ml-2" style="font-family: ZeroesTwo;"><strong><a href="naf.html">Nuts Application Framework</a></strong></span>
-            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.7.0</span></span>
+            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.8.0</span></span>
             <!-- Logo End -->
 
             <!-- Navbar Toggler -->
@@ -129,6 +140,11 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item"><a class="nav-link" href="#UE1DA83F7ADEF997558E2BA966C3A4FA154D756FC">1.1 Hello World</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#U6204609A6215A8500E34AA1DBF480748B28602A0">1.2 Version matrix</a>
                             
                             
                         </li>
@@ -504,9 +520,9 @@
                             <section id="UE1DA83F7ADEF997558E2BA966C3A4FA154D756FC" >
                                 <h3 class="main-section2"><a href="#UB3E3BCD2CBEB8025F027CE4249EBAD5BD32EA817">1.1 Hello World</a></h3>
                                 <div class="text-card">
-                                <p class="md-phrase">To make use of <mark class="md-code md-code-` ">NAF</mark>  you need add the dependency  <code class="md-code md-code-``` net">.thevpc.nuts#nuts:0.8.7</code> and provide a hint to maven to point to the right repository <code class="md-code md-code-``` "> https://maven.thevpc.net</code></p><H4 class="md-title-2">Configure your pom.xml</H4><pre class="md-code md-code-``` xml"><code class="xml">
+                                <p class="md-phrase">To make use of <mark class="md-code md-code-` ">NAF</mark>  you need add the dependency  <code class="md-code md-code-``` net">.thevpc.nuts#nuts:0.8.8</code> and provide a hint to maven to point to the right repository <code class="md-code md-code-``` "> https://maven.thevpc.net</code></p><H4 class="md-title-2">Configure your pom.xml</H4><pre class="md-code md-code-``` xml"><code class="xml">
     &lt;dependencies&gt;
-        &lt;dependency&gt;&lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;&lt;artifactId&gt;nuts&lt;/artifactId&gt;&lt;version&gt;0.8.7&lt;/version&gt;&lt;/dependency&gt;
+        &lt;dependency&gt;&lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;&lt;artifactId&gt;nuts&lt;/artifactId&gt;&lt;version&gt;0.8.8&lt;/version&gt;&lt;/dependency&gt;
     &lt;/dependencies&gt;
     &lt;repositories&gt;
         &lt;repository&gt;&lt;id&gt;thevpc&lt;/id&gt;&lt;url&gt;https://maven.thevpc.net&lt;/url&gt;&lt;/repository&gt;
@@ -532,6 +548,16 @@
         }
     }
 </code></pre>
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
+                            <section id="U6204609A6215A8500E34AA1DBF480748B28602A0" >
+                                <h3 class="main-section2"><a href="#UB3E3BCD2CBEB8025F027CE4249EBAD5BD32EA817">1.2 Version matrix</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase"><mark class="md-code md-code-` ">NAF</mark>  version compatibility and changes matrix can be found <a href="https://thevpc.github.io/nuts/compat.html" class="md-link">here</a></p>
                                 </div>
                                 
                             </section>
@@ -1939,7 +1965,7 @@ Nout.println("Is locked? " + lock.isLocked());
         Nout.println("Held by current thread? " + lock.isHeldByCurrentThread());
 
 </code></pre><p class="md-phrase"><mark class="md-code md-code-` ">NLock</mark> also supports locks tied to workspace resources or IDs, allowing inter-process synchronization. You can execute tasks immediately, with a timeout, or safely retrieve results using <mark class="md-code md-code-` ">callWith</mark>.</p><pre class="md-code md-code-``` java"><code class="java">
-NId resourceId = NId.of("net.thevpc.nuts:nuts#0.8.6");
+NId resourceId = NId.of("net.thevpc.nuts:nuts#0.8.8");
 // Lock tied to workspace resource
 NLock idLock = NLock.ofIdPath(resourceId);
 
@@ -2470,7 +2496,7 @@ nuts -y com my-app-1.0.0-SNAPSHOT.jar
         &lt;dependency&gt;
             &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
             &lt;artifactId&gt;nuts&lt;/artifactId&gt;
-            &lt;version&gt;0.8.7.0&lt;/version&gt;
+            &lt;version&gt;0.8.8.0&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;jexcelapi&lt;/groupId&gt;
@@ -2672,7 +2698,7 @@ Automatic-Module-Name: yourgroupid.yourartifactid.YourClass
     &lt;dependency&gt;
         &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
         &lt;artifactId&gt;nuts-spring-boot&lt;/artifactId&gt;
-        &lt;version&gt;0.8.7.0&lt;/version&gt;
+        &lt;version&gt;0.8.8.0&lt;/version&gt;
     &lt;/dependency&gt;
 </code></pre><p class="md-phrase">Add @NAppDefinition in your <mark class="md-code md-code-` ">SpringBootApplication</mark> top class.</p><pre class="md-code md-code-``` java"><code class="java">
 @NAppDefinition
@@ -2742,7 +2768,7 @@ NBeanRef.of("nonExistentBean").as(SomeInterface.class).someMethod(); // ← Erro
 &lt;dependency&gt;
     &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
     &lt;artifactId&gt;nuts-nuts-slf4j&lt;/artifactId&gt;
-    &lt;version&gt;0.8.7.0&lt;/version&gt;
+    &lt;version&gt;0.8.8.0&lt;/version&gt;
 &lt;/dependency&gt;
 </code></pre><H4 class="md-title-2">Why SLF4J Integration?</H4>SLF4J is the de facto standard logging facade in the Java ecosystem. By integrating Nuts with SLF4J, you get:<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Unified logging:</b> Use <mark class="md-code md-code-` ">NLog</mark> alongside your existing SLF4J loggers without conflicts</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Flexible backend support:</b> Route logs to Logback, Log4j2, or any SLF4J-compatible backend</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Structured logging:</b> Leverage Nuts' <mark class="md-code md-code-` ">NLog</mark> for rich, semantically meaningful logs with <mark class="md-code md-code-` ">NMsg</mark></p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Backward compatibility:</b> Existing SLF4J code continues to work without modification</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Context propagation:</b> MDC (Mapped Diagnostic Context) values flow seamlessly between Nuts and SLF4J</p></li></ul><H4 class="md-title-2">Basic Usage</H4><p class="md-phrase">Once the dependency is added, <mark class="md-code md-code-` ">NLog</mark> automatically delegates to SLF4J:</p><pre class="md-code md-code-``` java"><code class="java">
 import net.thevpc.nuts.NLog;
@@ -3062,7 +3088,7 @@ session.addListener(new NWorkspaceListener() {
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2025 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-11-07-110514
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-11-17-015846
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>

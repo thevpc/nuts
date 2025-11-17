@@ -5416,7 +5416,7 @@ nuts nderby start
 
 As you can see, simple commands are all you need to download, install, configure and run tomcat or derby or any application that is deployed in the maven repository.
 
-So please visit `nuts` [website](https://thevpc.github.com/nuts) or [github repository](https://github.com/thevpc/nuts) for more information.
+So please visit `nuts` [website](https://thevpc.github.io/nuts) or [github repository](https://github.com/thevpc/nuts) for more information.
 === License
 
 
