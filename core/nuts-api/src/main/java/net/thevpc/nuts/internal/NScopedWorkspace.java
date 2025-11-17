@@ -20,17 +20,17 @@ public class NScopedWorkspace {
     }
 
     public static NWorkspace setSharedWorkspaceInstance(NWorkspace sharedWorkspace) {
-        NWorkspace wold = threadSharedWorkspaceInstanceScopes.get();
+//        NWorkspace wold = threadSharedWorkspaceInstanceScopes.get();
         NWorkspace old = NScopedWorkspace.defaultSharedWorkspaceInstance;
         NScopedWorkspace.defaultSharedWorkspaceInstance = sharedWorkspace;
-        threadSharedWorkspaceInstanceScopes.set(sharedWorkspace);
-        if(old==sharedWorkspace && wold==sharedWorkspace){
+//        threadSharedWorkspaceInstanceScopes.set(sharedWorkspace);
+        if(old==sharedWorkspace/* && wold==sharedWorkspace*/){
             return null;
         }
-        if(old!=sharedWorkspace) {
+//        if(old!=sharedWorkspace) {
             return old;
-        }
-        return wold;
+//        }
+//        return wold;
     }
 
     public static NOptional<NWorkspace> currentWorkspace() {
