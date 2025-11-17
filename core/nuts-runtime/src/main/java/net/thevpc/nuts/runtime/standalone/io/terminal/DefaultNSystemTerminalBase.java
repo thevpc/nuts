@@ -9,6 +9,8 @@ import net.thevpc.nuts.core.NBootOptions;
 
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NNonClosableInputStream;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NNonClosablePrintStream;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
@@ -62,11 +64,11 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
             termCursor = NCachedValue.of(() -> (Cursor) null).setExpiry(EXPIRY_30S);
             termSize = NCachedValue.of(() -> (Size) null).setExpiry(EXPIRY_30S);
         }
-        this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFd.getFlags().contains("ansi"),
+        this.out = new NPrintStreamSystem(new NNonClosablePrintStream(bootStdFd.getOut()), null, null, bootStdFd.getFlags().contains("ansi"),
                  this).setTerminalMode(terminalMode);
-        this.err = new NPrintStreamSystem(bootStdFd.getErr(), null, null, bootStdFd.getFlags().contains("ansi"),
+        this.err = new NPrintStreamSystem(new NNonClosablePrintStream(bootStdFd.getErr()), null, null, bootStdFd.getFlags().contains("ansi"),
                  this).setTerminalMode(terminalMode);
-        this.in = bootStdFd.getIn();
+        this.in = new NNonClosableInputStream(bootStdFd.getIn());
         this.scanner = new Scanner(this.in);
         return DEFAULT_SCORE;
     }
