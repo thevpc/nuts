@@ -1,8 +1,10 @@
 package net.thevpc.nuts.ext.ssh;
 
 import com.jcraft.jsch.*;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
 import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
@@ -20,23 +22,24 @@ public class SShConnection implements AutoCloseable {
     private PrintStream out = new PrintStream(new NonClosableOutputStream(System.out));
     private PrintStream err = new PrintStream(new NonClosableOutputStream(System.err));
     private InputStream in;
+    private NConnexionString connexionString;
     private List<SshListener> listeners = new ArrayList<>();
+    private NOsFamily osFamily;
+    private NId osId;
+    private NOsFamily shellFamily;
+    private NId shellId;
 
     public SShConnection(String address, InputStream in, OutputStream out, OutputStream err) {
         this(NConnexionString.of(address), in, out, err);
     }
 
-    public SShConnection(NConnexionString address, InputStream in, OutputStream out, OutputStream err) {
-        init(address.getUserName(), address.getHost(),
-                NLiteral.of(address.getPort()).asInt().orElse(-1),
-                NStringMapFormat.URL_FORMAT.parse(address.getQueryString())
-                        .orElse(Collections.emptyMap()).get("key-file"),
-                address.getPassword(), in, out, err);
+    public SShConnection(NConnexionString connexionString, InputStream in, OutputStream out, OutputStream err) {
+        init(connexionString,in, out, err);
     }
 
-    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword, InputStream in, OutputStream out, OutputStream err) {
-        init(user, host, port, keyFilePath, keyPassword, in, out, err);
-    }
+//    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword, InputStream in, OutputStream out, OutputStream err) {
+//        init(user, host, port, keyFilePath, keyPassword, in, out, err);
+//    }
 
     public boolean isRedirectErrorStream() {
         return redirectErrorStream;
@@ -73,7 +76,13 @@ public class SShConnection implements AutoCloseable {
         return this;
     }
 
-    private void init(String user, String host, int port, String keyFilePath, String keyPassword, InputStream in0, OutputStream out0, OutputStream err0) {
+    private void init(NConnexionString connexionString, InputStream in0, OutputStream out0, OutputStream err0) {
+        String user=connexionString.getHost();
+        String host=connexionString.getUserName();
+        int port=NLiteral.of(connexionString.getPort()).asInt().orElse(-1);
+        String keyFilePath=NStringMapFormat.URL_FORMAT.parse(connexionString.getQueryString())
+                .orElse(Collections.emptyMap()).get("key-file");
+        String keyPassword=connexionString.getPassword();
         this.out = new PrintStream(new NonClosableOutputStream(out0));
         this.err = new PrintStream(new NonClosableOutputStream(err0));
         this.in = in0;
