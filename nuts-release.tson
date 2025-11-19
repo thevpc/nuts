@@ -29,10 +29,10 @@ build-bin:false
 build-installer:false
 
 // generate version compatibility html file, requires 'japi-compliance-checker' to be installed
-build-compat:true
+build-compat:false
 
 // publish (push) binaries to production server (thevpc.net)
-publish:true
+publish:false
 
 update-version:false
 keep-stamp:false
