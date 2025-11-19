@@ -1,12 +1,12 @@
-stableApiVersion="0.8.7";
-stableRuntimeVersion="0.8.7.0";
-stableJarLocation="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.0.jar";
+stableApiVersion="0.8.8";
+stableRuntimeVersion="0.8.8.0";
+stableJarLocation="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.0.jar";
 
-latestApiVersion="0.8.8";
-latestRuntimeVersion="0.8.8.0";
-latestJarLocation="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.0.jar";
-apiVersion="0.8.8";
-runtimeVersion="0.8.8.0";
-jarLocation="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.0.jar";
+latestApiVersion="0.8.9";
+latestRuntimeVersion="0.8.9.0";
+latestJarLocation="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.0.jar";
+apiVersion="0.8.9";
+runtimeVersion="0.8.9.0";
+jarLocation="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.0.jar";
 
 buildTime="2024-04-23-161642";
