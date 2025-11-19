@@ -4,7 +4,7 @@
   <groupId>net.thevpc.nuts</groupId>
   <artifactId>nuts-app</artifactId>
   <name>Nuts Community App</name>
-  <version>0.8.8</version>
+  <version>0.8.9</version>
   <description>Nuts Package Manager Bootstrap</description>
   <url>https://github.com/thevpc/nuts</url>
   <developers>
@@ -171,7 +171,7 @@
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.8</version>
+            <version>0.8.9</version>
             <executions>
               <execution>
                 <goals>
@@ -272,7 +272,7 @@
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.8</version>
+            <version>0.8.9</version>
             <executions>
               <execution>
                 <goals>
