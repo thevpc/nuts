@@ -37,11 +37,7 @@ public class RemoteConnexionStringInfo {
     private String nutsJar;
     private long lastChecked;
     private long timoutMS = 1000;
-    private String rootName = "root";
-    private String userName;
-    private String userHome;
-    private String osType;
-    private String envPath;
+    //    private String envPath;
     private String workspaceName = "default-workspace";
     private NElement workspaceJson;
     private String storeLocationLib;
@@ -70,6 +66,9 @@ public class RemoteConnexionStringInfo {
         return k;
     }
 
+    public OsProbeInfo getProbedOs() {
+        return OsProbeInfoCache.of().get(target);
+    }
 
     public RemoteConnexionStringInfo(String target) {
         this.target = target;
@@ -169,33 +168,35 @@ public class RemoteConnexionStringInfo {
     }
 
     public String getRootName(NExecCmdExtension commExec) {
-        return rootName;
+        OsProbeInfo o = getProbedOs();
+        synchronized (o){
+            o.setCommExec(commExec);
+            return o.rootUserName();
+        }
     }
 
     public String getUserName(NExecCmdExtension commExec) {
-        getUserHome(commExec);
-        return userName;
+        OsProbeInfo o = getProbedOs();
+        synchronized (o){
+            o.setCommExec(commExec);
+            return o.userName();
+        }
     }
 
     public String getUserHome(NExecCmdExtension commExec) {
-        if (isUpdatable(loadedUserHome)) {
-            loadedUserHome = System.currentTimeMillis();
-            // echo -e "$USER\\n$HOME\n$OSTYPE\n$PATH"
-            LOG().log(NMsg.ofC("[%s] resolve remote env", target).asFiner().withIntent(NMsgIntent.START));
-            String[] echoes = NStringUtils.trim(runOnceSystemGrab(
-                    commExec, target,
-                    "echo", "-e", "$USER\\\\n$HOME\\\\n$OSTYPE\\\\n$PATH")).split("\n");
-            userName = echoes[0];
-            userHome = echoes[1];
-            osType = echoes[2];
-            envPath = echoes[3];
+        OsProbeInfo o = getProbedOs();
+        synchronized (o){
+            o.setCommExec(commExec);
+            return o.userHome();
         }
-        return userHome;
     }
 
-    public String getOsType(NExecCmdExtension commExec) {
-        getUserHome(commExec);
-        return osType;
+    public NOsFamily getOsFamily(NExecCmdExtension commExec) {
+        OsProbeInfo o = getProbedOs();
+        synchronized (o){
+            o.setCommExec(commExec);
+            return o.osFamily();
+        }
     }
 
     public String getWorkspaceName(NExecCmdExtension commExec) {
@@ -241,7 +242,7 @@ public class RemoteConnexionStringInfo {
             NConnexionStringBuilder targetConnexion = DefaultNConnexionStringBuilder.of(target).get()
                     .setQueryString(null)
                     .setPath(null);
-            NPlatformHome pHome = NPlatformHome.ofPortable(NOsFamily.LINUX, false, null, p -> {
+            NPlatformHome pHome = NPlatformHome.ofPortable(getOsFamily(commExec), false, null, p -> {
                 switch (p) {
                     case "user.name": {
                         return getUserName(commExec);
@@ -255,7 +256,7 @@ public class RemoteConnexionStringInfo {
             try {
                 workspaceJson = null;
                 NPath rpath = NPath.of(targetConnexion.copy()
-                        .setPath(pHome.getHome() + "/ws/" + workspaceName + "/"+ NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)
+                        .setPath(pHome.getHome() + "/ws/" + workspaceName + "/" + NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)
                         .toString());
                 if (rpath.isRegularFile()) {
                     workspaceJson = NElementParser.ofJson()
@@ -284,7 +285,7 @@ public class RemoteConnexionStringInfo {
             storeLocationCacheRepo = NPath.of(targetConnexion.copy()
                     .setPath(storeLocationCache)
                     .toString()).resolve(NConstants.Folders.ID);
-            NId appId = NApp.of().getId().orElseGet(()-> NWorkspace.of().getApiId());
+            NId appId = NApp.of().getId().orElseGet(() -> NWorkspace.of().getApiId());
             storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(appId.getMavenFolder()).resolve("repo");
             NPath e = storeLocationCacheRepoSSH.resolve(".nuts-repository");
             if (!e.isRegularFile()) {
@@ -292,11 +293,6 @@ public class RemoteConnexionStringInfo {
             }
         }
         return workspaceJson;
-    }
-
-    public String getEnvPath(NExecCmdExtension commExec) {
-        getUserHome(commExec);
-        return envPath;
     }
 
     public String getSuPath(NExecCmdExtension commExec) {
@@ -338,7 +334,7 @@ public class RemoteConnexionStringInfo {
     }
 
 
-    private static class MyNExecCmdExtensionContext implements NExecCmdExtensionContext, AutoCloseable {
+    public static class MyNExecCmdExtensionContext implements NExecCmdExtensionContext, AutoCloseable {
         NExecCmdExtension commExec;
         String target;
         String[] cmd;
