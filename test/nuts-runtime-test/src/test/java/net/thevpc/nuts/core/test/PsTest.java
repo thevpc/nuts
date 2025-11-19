@@ -6,7 +6,7 @@ import net.thevpc.nuts.io.NPs;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.ps.LinuxPsParser;
 import net.thevpc.nuts.runtime.standalone.xtra.ps.UnixPsParser;
-import net.thevpc.nuts.runtime.standalone.xtra.ps.WindowsPsParser;
+import net.thevpc.nuts.runtime.standalone.xtra.ps.WindowsPs1Parser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +50,7 @@ public class PsTest {
     @Test
     public void test03() {
         try (Reader r = new InputStreamReader(PsTest.class.getClassLoader().getResourceAsStream("net/thevpc/nuts/core/test/windows-ps-result.txt"), Charset.forName("windows-1252"))) {
-            WindowsPsParser p = new WindowsPsParser();
+            WindowsPs1Parser p = new WindowsPs1Parser();
             List<NPsInfo> parsed = p.parse(r).toList();
             for (NPsInfo nPsInfo : parsed) {
                 NOut.println(nPsInfo);
@@ -63,7 +63,7 @@ public class PsTest {
     @Test
     public void test05() {
         try (Reader r = new InputStreamReader(PsTest.class.getClassLoader().getResourceAsStream("net/thevpc/nuts/core/test/windows-ps-result-10.txt"), Charset.forName("windows-1252"))) {
-            WindowsPsParser p = new WindowsPsParser();
+            WindowsPs1Parser p = new WindowsPs1Parser();
             List<NPsInfo> parsed = p.parse(r).toList();
             for (NPsInfo nPsInfo : parsed) {
                 NOut.println(nPsInfo);
@@ -83,6 +83,13 @@ public class PsTest {
     @Test
     public void test07() {
         for (NPsInfo nPsInfo : NPs.of().at("ssh://vpc@thevpc.net").getResultList()) {
+            NOut.println(nPsInfo);
+        }
+    }
+
+    @Test
+    public void test08() {
+        for (NPsInfo nPsInfo : NPs.of().at("ssh://Administrateur@fvm.veoni.tn").getResultList()) {
             NOut.println(nPsInfo);
         }
     }
