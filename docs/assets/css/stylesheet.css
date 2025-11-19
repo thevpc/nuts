@@ -3084,3 +3084,44 @@ time {
   background: url(https://i.ibb.co/Qjt7TJn/milad-fakurian-E8-Ufcyxz514-unsplash-1.jpg) center / cover no-repeat fixed !important;;
 }
 
+/*********************************************/
+
+.nuts-compat-matrix table {
+    border-collapse: collapse;
+    width: 80%;
+    margin: 20px auto;
+}
+
+.nuts-compat-matrix th,
+.nuts-compat-matrix td {
+    border: 1px solid #333;
+    padding: 8px;
+    text-align: center;
+}
+
+.nuts-compat-matrix th {
+    background: #555;
+    color: #fff;
+}
+
+.nuts-compat-matrix td a {
+    text-decoration: none;
+    color: #0066cc;
+}
+
+.nuts-compat-matrix td.compatible {
+    background: #cfc;
+}
+
+.nuts-compat-matrix td.incompatible {
+    background: #fcc;
+}
+
+.nuts-compat-matrix td.na {
+    background: #ccc;
+}
+
+.nuts-compat-matrix td.disabled a {
+    color: transparent;
+    text-decoration: none;
+}
