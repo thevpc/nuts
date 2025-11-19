@@ -33,6 +33,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
             executionType = NExecutionType.SPAWN;
         }
 
+
         ArrayList<String> cmd = new ArrayList<>();
         switch (executionType) {
             case OPEN: {
