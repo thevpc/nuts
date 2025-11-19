@@ -8,6 +8,7 @@ title: Nuts Archive
 
 | version | Info | Download                                                                                                                                  |
 |---------|------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| 0.8.9   |      | ```bash curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar -o nuts.jar && java -jar nuts.jar -Zy ```     |
 | 0.8.8   |      | ```bash curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar -o nuts.jar && java -jar nuts.jar -Zy ```     |
 | 0.8.7   |      | ```bash curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar -o nuts.jar && java -jar nuts.jar -Zy ```     |
 | 0.8.6   |      | ```bash curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar && java -jar nuts.jar -Zy ```     |
