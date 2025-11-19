@@ -150,14 +150,50 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         NAssert.requireNonBlank(z, "target");
         NLog log = NLog.of(SshNExecCmdExtension.class);
         log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
-        String[] command = resolveNutsExecutableCommand(context);
-        try (SShConnection c = new SShConnection(
-                target,
-                context.in(),
-                context.out(),
-                context.err()
-        )) {
-            return c.execStringCommand(NCmdLine.of(command).toString());
+        boolean userWorkspace=false;
+        boolean customCommand=true;
+        if(userWorkspace){
+            String[] command = resolveNutsExecutableCommand(context);
+            try (SShConnection c = new SShConnection(
+                    target,
+                    context.in(),
+                    context.out(),
+                    context.err()
+            )) {
+                return c.execStringCommand(NCmdLine.of(command).toString());
+            }
+        }else{
+            if(context.getCommand().length==1){
+                String[] command = resolveNutsExecutableCommand(context);
+                if(customCommand){
+                    try (SShConnection c = new SShConnection(
+                            target,
+                            context.in(),
+                            context.out(),
+                            context.err()
+                    )) {
+                        return c.execStringCommand(command[0]);
+                    }
+                }else{
+                    try (SShConnection c = new SShConnection(
+                            target,
+                            context.in(),
+                            context.out(),
+                            context.err()
+                    )) {
+                        return c.execStringCommand(NCmdLine.of(command).toString());
+                    }
+                }
+            }else{
+                try (SShConnection c = new SShConnection(
+                        target,
+                        context.in(),
+                        context.out(),
+                        context.err()
+                )) {
+                    return c.execStringCommand(NCmdLine.of(context.getCommand()).toString());
+                }
+            }
         }
     }
 
