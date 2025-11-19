@@ -112,6 +112,7 @@ More details at [https://thevpc.github.io/nuts/doc-nuts.html](https://thevpc.git
 | nuts install com.github.anuken:mindustry-desktop                                           | install & run game mindustry                                                  |
 | nuts install com.github.anuken:mindustry-server                                            | install & run game mindustry server                                           |
 | nuts org.jmeld:jmeld                                                                       | install & run a folder diff tool                                              |
+| nuts com.jgoodies:jdiskreport                                                              | install & run JDiskReport a tool to analyze disk space usage                  |
 | nuts org.jd:jd-gui                                                                         | install & run a java decompiler tool                                          |
 | nuts jpass:jpass                                                                           | install & run JPass a Password Manager                                        |
 | nuts org.jedit:jedit                                                                       | install & run JEdit text editor tool                                          |
@@ -120,7 +121,6 @@ More details at [https://thevpc.github.io/nuts/doc-nuts.html](https://thevpc.git
 | nuts pnote                                                                                 | install & run a pnote taking tool                                             |
 | nuts nops  --gui                                                                           | install & run a nops DevOps tool                                              |
 | nuts ntexup show                                                                           | install & run a Latex like Presentation Tool                                  |
-| nuts com.jgoodies:jdiskreport                                                              | install & run JDiskReport Disk Tool                                           |
 | nuts com.github.todense:omnigraph                                                          | install & run Omnigraph Tool                                                  |
 | nuts org.springframework.boot:spring-boot-cli  init --dependencies=web,data-jpa my-project | install & run spring boot client and create new project using spring-boot-cli |
 | nuts com.google.tsunami:tsunami-main --ip-v4-target=127.0.0.1                              | install & run google tsunami a network security scanner tool                  |
