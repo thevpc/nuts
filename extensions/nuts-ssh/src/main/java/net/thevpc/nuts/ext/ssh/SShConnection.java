@@ -5,7 +5,6 @@ import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
 import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.core.NSession;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ public class SShConnection implements AutoCloseable {
                 address.getPassword(), in, out, err);
     }
 
-    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword, InputStream in, OutputStream out, OutputStream err, NSession sshSession) {
+    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword, InputStream in, OutputStream out, OutputStream err) {
         init(user, host, port, keyFilePath, keyPassword, in, out, err);
     }
 
@@ -82,7 +81,13 @@ public class SShConnection implements AutoCloseable {
             JSch jsch = new JSch();
 
             if (keyFilePath == null && keyPassword == null) {
-                keyFilePath = new File(System.getProperty("user.home"), ".ssh/id_rsa").getPath();
+                for (String name : new String[]{"id_rsa","id_ecdsa","id_ecdsa_sk","id_ed25519","id_ed25519_sk","id_dsa"}) {
+                    File f = new File(System.getProperty("user.home"), ".ssh/"+name);
+                    if (f.isFile()) {
+                        keyFilePath = f.getPath();
+                        break;
+                    }
+                }
             }
             if (keyFilePath != null) {
                 if (keyPassword != null) {
@@ -240,7 +245,7 @@ public class SShConnection implements AutoCloseable {
             new Thread(() -> {
                 byte[] tmp = new byte[1024];
                 try {
-                    while(true) {
+                    while (true) {
                         while (this.in.available() > 0) {
                             int i = this.in.read(tmp, 0, tmp.length);
                             if (i < 0) {
