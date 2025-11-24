@@ -37,7 +37,7 @@ public class SshFileOutputStream2 extends OutputStream {
     public void close() throws IOException {
         tempOS.close();
         NSession session = NSession.of();
-        try (SShConnection connection = new SShConnection(path
+        try (SShConnection connection = SShConnection.ofProbedSShConnection(path
                 , session.in()
                 , session.out().asOutputStream()
                 , session.err().asOutputStream()
