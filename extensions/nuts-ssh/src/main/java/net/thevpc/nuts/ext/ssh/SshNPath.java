@@ -25,6 +25,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 class SshNPath implements NPathSPI {
 
@@ -57,23 +58,11 @@ class SshNPath implements NPathSPI {
     @Override
     public NStream<NPath> list(NPath basePath) {
         try (SShConnection c = prepareSshConnexionGrab()) {
-            int i = c.execStringCommand("ls " + path.getPath());
-            if (i == 0) {
-                String[] s = c.getOutputString().split("[\n|\r]");
-                return NStream.ofArray(s).map(
-                        NFunction.of(
-                                x -> {
-                                    String cc = path.getPath();
-                                    if (!cc.endsWith("/")) {
-                                        cc += "/";
-                                    }
-                                    cc += x;
-                                    return NPath.of(path.builder().setPath(cc).build().toString());
-                                }
-
-                        ).redescribe(NElementDescribables.ofDesc("NPath::of"))
-                );
-            }
+            return NStream.ofStream(c.list(path.getPath())
+                    .stream()).map(
+                    NFunction.of((String cc) -> NPath.of(path.builder().setPath(cc).build().toString()))
+                            .redescribe(NElementDescribables.ofDesc("NPath::of"))
+            );
         } catch (Exception e) {
             //return false;
         }
@@ -82,22 +71,23 @@ class SshNPath implements NPathSPI {
 
     private SShConnection prepareSshConnexion() {
         NSession session = NSession.of();
-        return new SShConnection(path
-                , session.in()
-                , NOut.asOutputStream()
-                , session.err().asOutputStream()
-        )
+        return SShConnection.ofProbedSShConnection(path
+                        , session.in()
+                        , NOut.asOutputStream()
+                        , session.err().asOutputStream()
+                )
                 .addListener(listener);
     }
 
     private SShConnection prepareSshConnexionGrab() {
         NSession session = NSession.of();
-        return new SShConnection(path
-                , session.in()
-                , NOut.asOutputStream()
-                , NIO.ofNullRawOutputStream()
-        ).grabOutputString()
-                .addListener(listener);
+        return SShConnection.ofProbedSShConnection(path
+                        , session.in()
+                        , NOut.asOutputStream()
+                        , NIO.ofNullRawOutputStream()
+                ).grabOutputString()
+                .addListener(listener)
+                ;
     }
 
     @Override
@@ -263,28 +253,7 @@ class SshNPath implements NPathSPI {
 
     public NPathType type(NPath basePath) {
         try (SShConnection c = prepareSshConnexionGrab()) {
-            int i = c.execStringCommand("file -b -E " + path.getPath());
-            if (i > 0) {
-                return null;
-            }
-            String s = c.getOutputString();
-            s = s.trim();
-            if (s.startsWith("directory")) {
-                return NPathType.DIRECTORY;
-            }
-            if (s.startsWith("fifo (named pipe)")) {
-                return NPathType.NAMED_PIPE;
-            }
-            if (s.startsWith("character special")) {
-                return NPathType.CHARACTER;
-            }
-            if (s.startsWith("symbolic link")) {
-                return NPathType.SYMBOLIC_LINK;
-            }
-            if (s.startsWith("block special")) {
-                return NPathType.BLOCK;
-            }
-            return NPathType.FILE;
+            return c.type(path.getPath());
         } catch (Exception e) {
             return NPathType.NOT_FOUND;
         }
@@ -299,19 +268,7 @@ class SshNPath implements NPathSPI {
     public long contentLength(NPath basePath) {
         try (SShConnection c = prepareSshConnexionGrab()) {
             c.grabOutputString();
-            int i = c.execStringCommand("ls -l " + path.getPath());
-            if (i != 0) {
-                return -1;
-            }
-            String outputString = c.getOutputString();
-            String[] r = NStringUtils.trim(outputString).split(" ");
-            if (r.length > 4) {
-                NOptional<Long> size = NLiteral.of(r[4]).asLong();
-                if (size.isPresent()) {
-                    return size.get();
-                }
-            }
-            return -1;
+            return c.contentLength(path.getPath());
         } catch (Exception e) {
             return -1;
         }
@@ -321,17 +278,7 @@ class SshNPath implements NPathSPI {
     public String getContentEncoding(NPath basePath) {
         try (SShConnection c = prepareSshConnexion()) {
             c.grabOutputString();
-            int i = c.execStringCommand("file -bi " + path.getPath());
-            if (i != 0) {
-                return null;
-            }
-            String outputString = NStringUtils.trim(c.getOutputString());
-            Pattern p = Pattern.compile(".*charset=(?<cs>\\S*).*");
-            Matcher m = p.matcher(outputString);
-            if (m.find()) {
-                return m.group("cs");
-            }
-            return null;
+            return c.getContentEncoding(path.getPath());
         } catch (Exception e) {
             return null;
         }
@@ -341,16 +288,7 @@ class SshNPath implements NPathSPI {
     public String getContentType(NPath basePath) {
         try (SShConnection c = prepareSshConnexion()) {
             c.grabOutputString();
-            int i = c.execStringCommand("file -bi " + path.getPath());
-            if (i != 0) {
-                return null;
-            }
-            String outputString = c.getOutputString();
-            String[] r = Arrays.stream(NStringUtils.trim(outputString).split("[ ;]")).map(String::trim).filter(x -> x.length() > 0).toArray(String[]::new);
-            if (r.length > 0) {
-                return NStringUtils.trim(r[0]);
-            }
-            return null;
+            return c.getContentType(path.getPath());
         } catch (Exception e) {
             return null;
         }
@@ -360,20 +298,7 @@ class SshNPath implements NPathSPI {
     public String getCharset(NPath basePath) {
         try (SShConnection c = prepareSshConnexion()) {
             c.grabOutputString();
-            int i = c.execStringCommand("file -bi " + path.getPath());
-            if (i != 0) {
-                return null;
-            }
-            String outputString = c.getOutputString();
-            String[] r = Arrays.stream(NStringUtils.trim(outputString).split("[ ;]")).map(String::trim).filter(x -> x.length() > 0).toArray(String[]::new);
-            if (r.length > 1) {
-                String v = NStringUtils.trim(r[1]);
-                if (v.startsWith("charset=")) {
-                    v = v.substring("charset=".length()).trim();
-                }
-                return v;
-            }
-            return null;
+            return c.getCharset(path.getPath());
         } catch (Exception e) {
             return null;
         }
@@ -519,34 +444,15 @@ class SshNPath implements NPathSPI {
         EnumSet<NPathOption> optionsSet = EnumSet.noneOf(NPathOption.class);
         optionsSet.addAll(Arrays.asList(options));
         try (SShConnection c = prepareSshConnexionGrab()) {
-            StringBuilder cmd = new StringBuilder();
-            cmd.append("ls");
-            if (optionsSet.contains(NPathOption.FOLLOW_LINKS)) {
-                //all
-            } else {
-                cmd.append(" -type d,f");
-            }
-            if (maxDepth > 0 && maxDepth != Integer.MAX_VALUE) {
-                cmd.append(" -maxdepth ").append(maxDepth);
-            }
-            cmd.append(" ").append(path.getPath());
-            int i = c.execStringCommand(cmd.toString());
-            if (i == 0) {
-                String[] s = c.getOutputString().split("[\n|\r]");
-                return NStream.ofArray(s).map(
-                        NFunction.of(
-                                x -> {
-                                    String cc = path.getPath();
-                                    if (!cc.endsWith("/")) {
-                                        cc += "/";
-                                    }
-                                    cc += x;
-                                    return NPath.of(path.builder().setPath(cc).build().toString());
-                                }
+            List<String> ss=c.walk(path.getPath(),true,maxDepth);
+            return NStream.ofIterable(ss).map(
+                    NFunction.of(
+                            (String x) -> {
+                                return NPath.of(path.builder().setPath(x).build().toString());
+                            }
 
-                        ).redescribe(NElementDescribables.ofDesc("NPath::of"))
-                );
-            }
+                    ).redescribe(NElementDescribables.ofDesc("NPath::of"))
+            );
         } catch (Exception e) {
             //return false;
         }
@@ -573,7 +479,7 @@ class SshNPath implements NPathSPI {
             ) {
                 int r = -1;
                 try (SShConnection c = prepareSshConnexionGrab()) {
-                    r = c.execStringCommand("mv " + path.getPath() + " " + sp);
+                    r = c.mv(path.getPath(), sp.getPath());
                 }
                 if (r != 0) {
                     throw new NIOException(NMsg.ofC("unable to move %s", this));
@@ -598,7 +504,7 @@ class SshNPath implements NPathSPI {
                 if (ssh1.path.withPath("/").equals(ssh2.path.withPath("/"))) {
                     // same filesystem
                     try (SShConnection session = prepareSshConnexion()) {
-                        session.exec("cp", "-r", ssh1.path.getPath(), ssh2.path.getPath());
+                        session.cp(ssh1.path.getPath(), ssh2.path.getPath(),true);
                         return true;
                     }
                 }
@@ -660,17 +566,8 @@ class SshNPath implements NPathSPI {
 
     public byte[] getDigestWithCommand(String cmd, NPath basePath, String algo) {
         try (SShConnection c = prepareSshConnexionGrab()) {
-            int r = c.execStringCommand(cmd + " " + path.getPath());
-            if (r == 0) {
-                String z = NStringUtils.trim(c.getOutputString());
-                int i = z.indexOf(' ');
-                if (i > 0) {
-                    z = z.substring(0, i);
-                    return NHex.toBytes(z);
-                }
-            }
+            return c.getDigestWithCommand(cmd, path.getPath(), algo);
         }
-        return null;
     }
 
     private boolean isAbsolutePathString(String a) {
