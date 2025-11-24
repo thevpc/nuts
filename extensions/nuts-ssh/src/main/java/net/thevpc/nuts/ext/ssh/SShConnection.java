@@ -1,18 +1,24 @@
 package net.thevpc.nuts.ext.ssh;
 
 import com.jcraft.jsch.*;
-import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathOption;
+import net.thevpc.nuts.io.NPathType;
 import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
 import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SShConnection implements AutoCloseable {
 
@@ -24,22 +30,49 @@ public class SShConnection implements AutoCloseable {
     private InputStream in;
     private NConnexionString connexionString;
     private List<SshListener> listeners = new ArrayList<>();
-    private NOsFamily osFamily;
-    private NId osId;
-    private NOsFamily shellFamily;
-    private NId shellId;
+    private OsProbeInfo osProbeInfo;
 
     public SShConnection(String address, InputStream in, OutputStream out, OutputStream err) {
         this(NConnexionString.of(address), in, out, err);
     }
 
+    public static SShConnection ofProbedSShConnection(String connexionString, InputStream in, OutputStream out, OutputStream err) {
+        OsProbeInfo osProbeInfo = OsProbeInfoCache.of().get(connexionString);
+        osProbeInfo.tryUpdate();
+        return new SShConnection(connexionString
+                , in
+                , out
+                , err
+        ).setOsProbeInfo(osProbeInfo);
+    }
+
+    public static SShConnection ofProbedSShConnection(NConnexionString connexionString, InputStream in, OutputStream out, OutputStream err) {
+        OsProbeInfo osProbeInfo = OsProbeInfoCache.of().get(connexionString);
+        osProbeInfo.tryUpdate();
+        return new SShConnection(connexionString
+                , in
+                , out
+                , err
+        ).setOsProbeInfo(osProbeInfo);
+    }
+
     public SShConnection(NConnexionString connexionString, InputStream in, OutputStream out, OutputStream err) {
-        init(connexionString,in, out, err);
+        init(connexionString, in, out, err);
     }
 
 //    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword, InputStream in, OutputStream out, OutputStream err) {
 //        init(user, host, port, keyFilePath, keyPassword, in, out, err);
 //    }
+
+
+    public OsProbeInfo getOsProbeInfo() {
+        return osProbeInfo;
+    }
+
+    public SShConnection setOsProbeInfo(OsProbeInfo osProbeInfo) {
+        this.osProbeInfo = osProbeInfo;
+        return this;
+    }
 
     public boolean isRedirectErrorStream() {
         return redirectErrorStream;
@@ -77,12 +110,12 @@ public class SShConnection implements AutoCloseable {
     }
 
     private void init(NConnexionString connexionString, InputStream in0, OutputStream out0, OutputStream err0) {
-        String user=connexionString.getHost();
-        String host=connexionString.getUserName();
-        int port=NLiteral.of(connexionString.getPort()).asInt().orElse(-1);
-        String keyFilePath=NStringMapFormat.URL_FORMAT.parse(connexionString.getQueryString())
+        String user = connexionString.getUserName();
+        String host = connexionString.getHost();
+        int port = NLiteral.of(connexionString.getPort()).asInt().orElse(-1);
+        String keyFilePath = NStringMapFormat.URL_FORMAT.parse(connexionString.getQueryString())
                 .orElse(Collections.emptyMap()).get("key-file");
-        String keyPassword=connexionString.getPassword();
+        String keyPassword = connexionString.getPassword();
         this.out = new PrintStream(new NonClosableOutputStream(out0));
         this.err = new PrintStream(new NonClosableOutputStream(err0));
         this.in = in0;
@@ -90,8 +123,8 @@ public class SShConnection implements AutoCloseable {
             JSch jsch = new JSch();
 
             if (keyFilePath == null && keyPassword == null) {
-                for (String name : new String[]{"id_rsa","id_ecdsa","id_ecdsa_sk","id_ed25519","id_ed25519_sk","id_dsa"}) {
-                    File f = new File(System.getProperty("user.home"), ".ssh/"+name);
+                for (String name : new String[]{"id_rsa", "id_ecdsa", "id_ecdsa_sk", "id_ed25519", "id_ed25519_sk", "id_dsa"}) {
+                    File f = new File(System.getProperty("user.home"), ".ssh/" + name);
                     if (f.isFile()) {
                         keyFilePath = f.getPath();
                         break;
@@ -223,6 +256,10 @@ public class SShConnection implements AutoCloseable {
         return execStringCommand(sb.toString());
     }
 
+    public int mv(String from, String to) {
+        return execStringCommand("mv " + from + " " + to);
+    }
+
     public int execStringCommand(String command) {
         int status = 205;
         for (SshListener listener : listeners) {
@@ -311,11 +348,111 @@ public class SShConnection implements AutoCloseable {
     }
 
     public void rm(String from, boolean R) {
+        NOsFamily nOsFamily = resolveOsFamily();
+        switch (nOsFamily) {
+            case WINDOWS: {
+
+            }
+        }
         execStringCommand("rm " + (R ? "-R" : "") + " " + from);
     }
 
+    public NPathType type(String path) {
+        NOsFamily nOsFamily = resolveOsFamily();
+        if (nOsFamily.isWindow()) {
+            //TODO
+            return NPathType.NOT_FOUND;
+        } else {
+            int i = exec("file", "-b", "-E", path);
+            if (i > 0) {
+                return null;
+            }
+            String s = getOutputString();
+            s = s.trim();
+            if (s.startsWith("directory")) {
+                return NPathType.DIRECTORY;
+            }
+            if (s.startsWith("fifo (named pipe)")) {
+                return NPathType.NAMED_PIPE;
+            }
+            if (s.startsWith("character special")) {
+                return NPathType.CHARACTER;
+            }
+            if (s.startsWith("symbolic link")) {
+                return NPathType.SYMBOLIC_LINK;
+            }
+            if (s.startsWith("block special")) {
+                return NPathType.BLOCK;
+            }
+            return NPathType.FILE;
+        }
+    }
+
+
     public void mkdir(String from, boolean p) {
-        execStringCommand("mkdir " + (p ? "-p" : "") + " " + from);
+        NOsFamily nOsFamily = resolveOsFamily();
+        switch (resolveShellFamily()) {
+            case WIN_CMD: {
+                exec("mkdir", ensureWindowPath(from));
+                break;
+            }
+            case WIN_POWER_SHELL: {
+                if (p) {
+                    exec("mkdir", "-p", ensureWindowPath(from));
+                } else {
+                    exec("mkdir", ensureWindowPath(from));
+                }
+            }
+            default: {
+                if (p) {
+                    exec("mkdir", "-p", from);
+                } else {
+                    exec("mkdir", from);
+                }
+            }
+        }
+    }
+
+    private String ensureWindowPath(String from) {
+        return from;
+    }
+
+    private NShellFamily resolveShellFamily() {
+        NOsFamily os = resolveOsFamily();
+        NShellFamily shellFamily = NShellFamily.WIN_POWER_SHELL;
+        switch (os) {
+            case WINDOWS: {
+                shellFamily = NShellFamily.WIN_POWER_SHELL;
+                break;
+            }
+            case LINUX: {
+                shellFamily = NShellFamily.BASH;
+                break;
+            }
+            case MACOS: {
+                shellFamily = NShellFamily.ZSH;
+                break;
+            }
+            case UNIX: {
+                shellFamily = NShellFamily.SH;
+                break;
+            }
+            default: {
+                shellFamily = NShellFamily.BASH;
+            }
+        }
+        if (osProbeInfo != null) {
+            shellFamily = osProbeInfo.shellFamily();
+        }
+        return shellFamily;
+    }
+
+    private NOsFamily resolveOsFamily() {
+        NOsFamily nOsFamily = NOsFamily.LINUX;
+        if (osProbeInfo != null) {
+            nOsFamily = osProbeInfo.osFamily();
+        }
+        return nOsFamily;
     }
 
     public byte[] readRemoteFile(String from) {
@@ -685,6 +822,181 @@ public class SShConnection implements AutoCloseable {
         return this;
     }
 
+    public List<String> list(String path) {
+        ensureGrabbed();
+        switch (resolveShellFamily()) {
+            case WIN_CMD:
+            case WIN_POWER_SHELL: {
+                int i = exec("powershell", "-c", "Get-ChildItem '" + ensureWindowPath(path) + "'");
+                if (i == 0) {
+                    //continue parsing
+                    String[] s = getOutputString().split("[\n|\r]");
+                    return NStream.ofArray(s).map(
+                            x -> {
+                                String cc = path;
+                                if (!cc.endsWith("/")) {
+                                    cc += "/";
+                                }
+                                cc += x;
+                                return cc;
+                            }
+                    ).collect(Collectors.toList());
+                }
+                break;
+            }
+            case SH:
+            case BASH:
+            case ZSH:
+            case FISH:
+            case KSH:
+            case CSH: {
+                int i = exec("ls", path);
+                if (i == 0) {
+                    String[] s = getOutputString().split("[\n|\r]");
+                    return NStream.ofArray(s).map(
+                            x -> {
+                                String cc = path;
+                                if (!cc.endsWith("/")) {
+                                    cc += "/";
+                                }
+                                cc += x;
+                                return cc;
+                            }
+                    ).collect(Collectors.toList());
+
+                }
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    private void ensureGrabbed() {
+        if (!(out instanceof SPrintStream)) {
+            throw new IllegalArgumentException("Grab Output is not enabled. See grabOutputString()");
+        }
+    }
+
+    public long contentLength(String basePath) {
+        ensureGrabbed();
+        int i = execStringCommand("ls -l " + basePath);
+        if (i != 0) {
+            return -1;
+        }
+        String outputString = getOutputString();
+        String[] r = NStringUtils.trim(outputString).split(" ");
+        if (r.length > 4) {
+            NOptional<Long> size = NLiteral.of(r[4]).asLong();
+            if (size.isPresent()) {
+                return size.get();
+            }
+        }
+        return -1;
+    }
+
+    public String getContentEncoding(String basePath) {
+        ensureGrabbed();
+        int i = execStringCommand("file -bi " + basePath);
+        if (i != 0) {
+            return null;
+        }
+        String outputString = NStringUtils.trim(getOutputString());
+        Pattern p = Pattern.compile(".*charset=(?<cs>\\S*).*");
+        Matcher m = p.matcher(outputString);
+        if (m.find()) {
+            return m.group("cs");
+        }
+        return null;
+    }
+
+    public String getContentType(String basePath) {
+        ensureGrabbed();
+        int i = execStringCommand("file -bi " + basePath);
+        if (i != 0) {
+            return null;
+        }
+        String outputString = getOutputString();
+        String[] r = Arrays.stream(NStringUtils.trim(outputString).split("[ ;]")).map(String::trim).filter(x -> x.length() > 0).toArray(String[]::new);
+        if (r.length > 0) {
+            return NStringUtils.trim(r[0]);
+        }
+        return null;
+    }
+
+    public String getCharset(String basePath) {
+        ensureGrabbed();
+        int i = execStringCommand("file -bi " + basePath);
+        if (i != 0) {
+            return null;
+        }
+        String outputString = getOutputString();
+        String[] r = Arrays.stream(NStringUtils.trim(outputString).split("[ ;]")).map(String::trim).filter(x -> x.length() > 0).toArray(String[]::new);
+        if (r.length > 1) {
+            String v = NStringUtils.trim(r[1]);
+            if (v.startsWith("charset=")) {
+                v = v.substring("charset=".length()).trim();
+            }
+            return v;
+        }
+        return null;
+    }
+
+    public void cp(String path, String path1, boolean b) {
+        if (b) {
+            exec("cp", path, path1);
+        } else {
+            exec("cp", "-r", path, path1);
+        }
+    }
+
+    public List<String> walk(String path, boolean followLinks, int maxDepth) {
+
+
+        ensureGrabbed();
+        switch (resolveShellFamily()) {
+            case WIN_CMD:
+            case WIN_POWER_SHELL: {
+                // Get-ChildItem -Path C:\ -Depth 2 -Force | ForEach-Object { $_.FullName }
+                // TODO
+                break;
+            }
+            case SH:
+            case BASH:
+            case ZSH:
+            case FISH:
+            case KSH:
+            case CSH: {
+                StringBuilder cmd = new StringBuilder();
+                cmd.append("find");
+                cmd.append(" ").append(path);
+                if (followLinks) {
+                    //all
+                } else {
+                    cmd.append(" -type d,f");
+                }
+                if (maxDepth > 0 && maxDepth != Integer.MAX_VALUE) {
+                    cmd.append(" -maxdepth ").append(maxDepth);
+                }
+                int i = execStringCommand(cmd.toString());
+                if (i == 0) {
+                    String[] s = getOutputString().split("[\n|\r]");
+                    return Stream.of(s).map(
+                            x -> {
+                                String cc = path;
+                                if (!cc.endsWith("/")) {
+                                    cc += "/";
+                                }
+                                cc += x;
+                                return cc;
+                            }
+                    ).collect(Collectors.toList());
+                }
+                break;
+            }
+        }
+        return new ArrayList<>();
+    }
+
+
     private static class SPrintStream extends PrintStream {
 
         private ByteArrayOutputStream out;
@@ -702,6 +1014,11 @@ public class SShConnection implements AutoCloseable {
             flush();
             return new String(out.toByteArray());
         }
+
+        @Override
+        public String toString() {
+            return getStringBuffer();
+        }
     }
 
     public InputStream prepareStream(File file) throws FileNotFoundException {
@@ -715,4 +1032,19 @@ public class SShConnection implements AutoCloseable {
         }
         return in;
     }
+
+    public byte[] getDigestWithCommand(String cmd, String basePath, String algo) {
+        ensureGrabbed();
+        int r = execStringCommand(cmd + " " + basePath);
+        if (r == 0) {
+            String z = NStringUtils.trim(getOutputString());
+            int i = z.indexOf(' ');
+            if (i > 0) {
+                z = z.substring(0, i);
+                return NHex.toBytes(z);
+            }
+        }
+        return null;
+    }
+
 }
