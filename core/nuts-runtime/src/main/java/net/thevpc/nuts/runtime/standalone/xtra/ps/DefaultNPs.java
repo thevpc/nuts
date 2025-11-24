@@ -10,6 +10,7 @@ import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.net.NConnexionStringBuilder;
 import net.thevpc.nuts.platform.NPlatformLocation;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -191,6 +192,8 @@ public class DefaultNPs implements NPs {
             }
             return new NStreamEmpty<>("process-" + processType.id());
         } else {
+            NConnexionStringBuilder b = NConnexionString.of(connexionString).builder();
+            Map<String, List<String>> m = b.getQueryMap().orElse(new LinkedHashMap<String,List<String>>());
             String str = NExecCmd.of("ps", "--json", "aux")
                     .at(connexionString)
                     .failFast()
