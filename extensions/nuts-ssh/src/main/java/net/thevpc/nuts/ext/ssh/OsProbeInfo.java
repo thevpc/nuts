@@ -5,6 +5,9 @@ import net.thevpc.nuts.command.NExecCmdExtension;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NShellFamily;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 public interface OsProbeInfo {
     void setCommExec(NExecCmdExtension commExec);
     NOsFamily osFamily();
@@ -14,4 +17,5 @@ public interface OsProbeInfo {
     String userName();
     String rootUserName();
     String userHome();
+    boolean tryUpdate();
 }
