@@ -1,6 +1,7 @@
 package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.util.NLiteral;
 
 import java.util.Map;
@@ -24,6 +25,10 @@ public class OsProbeInfoCache {
     }
 
     private Map<String, OsProbeInfo> cache = new ConcurrentHashMap<>();
+
+    public OsProbeInfo get(NConnexionString id) {
+        return get(id.toString());
+    }
 
     public OsProbeInfo get(String id) {
         return cache.computeIfAbsent(id, s -> new OsProbeInfoImpl(id, null));
