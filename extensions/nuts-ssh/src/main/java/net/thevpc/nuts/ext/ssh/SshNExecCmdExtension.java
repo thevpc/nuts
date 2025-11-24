@@ -155,7 +155,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         boolean customCommand=true;
         if(userWorkspace){
             String[] command = resolveNutsExecutableCommand(context);
-            try (SShConnection c = new SShConnection(
+            try (SShConnection c = SShConnection.ofProbedSShConnection(
                     target,
                     context.in(),
                     context.out(),
@@ -167,7 +167,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
             if(context.getCommand().length==1){
                 String[] command = resolveNutsExecutableCommand(context);
                 if(customCommand){
-                    try (SShConnection c = new SShConnection(
+                    try (SShConnection c = SShConnection.ofProbedSShConnection(
                             target,
                             context.in(),
                             context.out(),
@@ -176,7 +176,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                         return c.execStringCommand(command[0]);
                     }
                 }else{
-                    try (SShConnection c = new SShConnection(
+                    try (SShConnection c = SShConnection.ofProbedSShConnection(
                             target,
                             context.in(),
                             context.out(),
@@ -186,7 +186,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                     }
                 }
             }else{
-                try (SShConnection c = new SShConnection(
+                try (SShConnection c = SShConnection.ofProbedSShConnection(
                         target,
                         context.in(),
                         context.out(),
@@ -205,7 +205,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         NAssert.requireNonBlank(z, "target");
         NLog log = NLog.of(SshNExecCmdExtension.class);
         log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
-        try (SShConnection c = new SShConnection(
+        try (SShConnection c = SShConnection.ofProbedSShConnection(
                 target,
                 context.in(),
                 context.out(),
