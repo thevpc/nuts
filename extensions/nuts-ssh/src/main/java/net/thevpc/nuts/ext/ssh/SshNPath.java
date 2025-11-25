@@ -1,7 +1,6 @@
 package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
@@ -23,9 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 class SshNPath implements NPathSPI {
 
@@ -57,7 +53,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public NStream<NPath> list(NPath basePath) {
-        try (SShConnection c = prepareSshConnexionGrab()) {
+        try (SShConnection c = prepareSshConnexion()) {
             return NStream.ofStream(c.list(path.getPath())
                     .stream()).map(
                     NFunction.of((String cc) -> NPath.of(path.builder().setPath(cc).build().toString()))
@@ -70,25 +66,10 @@ class SshNPath implements NPathSPI {
     }
 
     private SShConnection prepareSshConnexion() {
-        NSession session = NSession.of();
-        return SShConnection.ofProbedSShConnection(path
-                        , session.in()
-                        , NOut.asOutputStream()
-                        , session.err().asOutputStream()
-                )
+        return SShConnection.ofProbedSShConnection(path)
                 .addListener(listener);
     }
 
-    private SShConnection prepareSshConnexionGrab() {
-        NSession session = NSession.of();
-        return SShConnection.ofProbedSShConnection(path
-                        , session.in()
-                        , NOut.asOutputStream()
-                        , NIO.ofNullRawOutputStream()
-                ).grabOutputString()
-                .addListener(listener)
-                ;
-    }
 
     @Override
     public NFormatSPI formatter(NPath basePath) {
@@ -252,7 +233,7 @@ class SshNPath implements NPathSPI {
     }
 
     public NPathType type(NPath basePath) {
-        try (SShConnection c = prepareSshConnexionGrab()) {
+        try (SShConnection c = prepareSshConnexion()) {
             return c.type(path.getPath());
         } catch (Exception e) {
             return NPathType.NOT_FOUND;
@@ -266,8 +247,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public long contentLength(NPath basePath) {
-        try (SShConnection c = prepareSshConnexionGrab()) {
-            c.grabOutputString();
+        try (SShConnection c = prepareSshConnexion()) {
             return c.contentLength(path.getPath());
         } catch (Exception e) {
             return -1;
@@ -277,7 +257,6 @@ class SshNPath implements NPathSPI {
     @Override
     public String getContentEncoding(NPath basePath) {
         try (SShConnection c = prepareSshConnexion()) {
-            c.grabOutputString();
             return c.getContentEncoding(path.getPath());
         } catch (Exception e) {
             return null;
@@ -287,7 +266,6 @@ class SshNPath implements NPathSPI {
     @Override
     public String getContentType(NPath basePath) {
         try (SShConnection c = prepareSshConnexion()) {
-            c.grabOutputString();
             return c.getContentType(path.getPath());
         } catch (Exception e) {
             return null;
@@ -297,7 +275,6 @@ class SshNPath implements NPathSPI {
     @Override
     public String getCharset(NPath basePath) {
         try (SShConnection c = prepareSshConnexion()) {
-            c.grabOutputString();
             return c.getCharset(path.getPath());
         } catch (Exception e) {
             return null;
@@ -443,7 +420,7 @@ class SshNPath implements NPathSPI {
     public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
         EnumSet<NPathOption> optionsSet = EnumSet.noneOf(NPathOption.class);
         optionsSet.addAll(Arrays.asList(options));
-        try (SShConnection c = prepareSshConnexionGrab()) {
+        try (SShConnection c = prepareSshConnexion()) {
             List<String> ss=c.walk(path.getPath(),true,maxDepth);
             return NStream.ofIterable(ss).map(
                     NFunction.of(
@@ -478,7 +455,7 @@ class SshNPath implements NPathSPI {
                             && Objects.equals(sp.getUserName(), path.getUserName())
             ) {
                 int r = -1;
-                try (SShConnection c = prepareSshConnexionGrab()) {
+                try (SShConnection c = prepareSshConnexion()) {
                     r = c.mv(path.getPath(), sp.getPath());
                 }
                 if (r != 0) {
@@ -544,29 +521,8 @@ class SshNPath implements NPathSPI {
 
     @Override
     public byte[] getDigest(NPath basePath, String algo) {
-        switch (algo) {
-            case "SHA-1": {
-                return getDigestWithCommand("sha1sum", basePath, algo);
-            }
-            case "SHA-256": {
-                return getDigestWithCommand("sha256sum", basePath, algo);
-            }
-            case "SHA-224": {
-                return getDigestWithCommand("sha224sum", basePath, algo);
-            }
-            case "SHA-512": {
-                return getDigestWithCommand("sha512sum", basePath, algo);
-            }
-            case "MD5": {
-                return getDigestWithCommand("md5sum", basePath, algo);
-            }
-        }
-        return null;
-    }
-
-    public byte[] getDigestWithCommand(String cmd, NPath basePath, String algo) {
-        try (SShConnection c = prepareSshConnexionGrab()) {
-            return c.getDigestWithCommand(cmd, path.getPath(), algo);
+        try (SShConnection c = prepareSshConnexion()) {
+            return c.getDigestWithCommand(algo, path.getPath());
         }
     }
 
