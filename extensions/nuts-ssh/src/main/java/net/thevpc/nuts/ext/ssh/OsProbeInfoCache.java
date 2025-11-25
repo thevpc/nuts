@@ -31,6 +31,6 @@ public class OsProbeInfoCache {
     }
 
     public OsProbeInfo get(String id) {
-        return cache.computeIfAbsent(id, s -> new OsProbeInfoImpl(id, null));
+        return cache.computeIfAbsent(id, s -> new OsProbeInfoImpl(id));
     }
 }
