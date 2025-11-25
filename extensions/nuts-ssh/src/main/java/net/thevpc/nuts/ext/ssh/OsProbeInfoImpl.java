@@ -1,27 +1,17 @@
 package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NExecCmd;
 import net.thevpc.nuts.command.NExecCmdExtension;
-import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.io.NIO;
-import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NShellFamily;
-import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class OsProbeInfoImpl implements OsProbeInfo {
     private String target;
-    private NExecCmdExtension commExec;
     private NOsFamily osFamily;
     private NShellFamily shellFamily;
     private NId osId;
@@ -30,13 +20,8 @@ public class OsProbeInfoImpl implements OsProbeInfo {
     private String rootUserName;
     private String userHome;
 
-    public OsProbeInfoImpl(String target, NExecCmdExtension commExec) {
+    public OsProbeInfoImpl(String target) {
         this.target = target;
-        this.commExec = commExec;
-    }
-
-    public void setCommExec(NExecCmdExtension commExec) {
-        this.commExec = commExec;
     }
 
     @Override
@@ -131,7 +116,7 @@ public class OsProbeInfoImpl implements OsProbeInfo {
                         "powershell -NoProfile -Command \"& {$os='Windows'; $osver=[System.Environment]::OSVersion.Version.ToString(); $user=$env:USERNAME; $homedir=$env:USERPROFILE; $shell=(Get-Command pwsh -ErrorAction SilentlyContinue).Name; $shellver=$PSVersionTable.PSVersion.ToString(); Write-Output ($os+'|'+$osver+'|'+$user+'|'+$homedir+'|'+$shell+'|'+$shellver)}\"";
                 String result = runOnceSystemGrab(cmd);
                 if (!NBlankable.isBlank(result)) {
-                    List<String> cols = NStringUtils.split(result, "|", false, false);
+                    List<String> cols = NStringUtils.split(result, "|", true, false);
                     if (cols.size() >= 6) {
                         String luname = cols.get(0).toLowerCase();
                         osId = NId.of(null, cols.get(0), cols.get(1));
@@ -146,12 +131,17 @@ public class OsProbeInfoImpl implements OsProbeInfo {
                                         || luname.startsWith("openbsd")
                                         || luname.startsWith("netbsd")
                         ) {
-                            osFamily = NOsFamily.UNIX;
+                        } else if (
+                                luname.contains("windows")
+                        ) {
+                            osFamily = NOsFamily.WINDOWS;
+                        }else{
+                            osFamily = NOsFamily.WINDOWS;
                         }
                         userName = cols.get(2);
                         userHome = cols.get(3);
                         shellId = NId.of(null, cols.get(4), cols.get(5));
-                        shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.SH);
+                        shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.WIN_POWER_SHELL);
                         rootUserName = "Administrator";
                         ok = true;
                     }
@@ -181,11 +171,17 @@ public class OsProbeInfoImpl implements OsProbeInfo {
                                         || luname.startsWith("netbsd")
                         ) {
                             osFamily = NOsFamily.UNIX;
+                        } else if (
+                                luname.contains("windows")
+                        ) {
+                            osFamily = NOsFamily.WINDOWS;
+                        }else{
+                            osFamily = NOsFamily.WINDOWS;
                         }
                         userName = cols.get(2);
                         userHome = cols.get(3);
                         shellId = NId.of(null, cols.get(4), cols.get(5));
-                        shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.SH);
+                        shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.WIN_CMD);
                         rootUserName = "Administrator";
                         ok = true;
                     }
@@ -207,34 +203,9 @@ public class OsProbeInfoImpl implements OsProbeInfo {
     }
 
     public String runOnceSystemGrab(String cmd) {
-
-        try (SShConnection sshc = new SShConnection(target
-                , NSession.of().in()
-                , NOut.asOutputStream()
-                , NIO.ofNullRawOutputStream()
-        ).grabOutputString()) {
-            int r = sshc.exec(cmd);
-            return sshc.getOut().toString();
+        try (SShConnection sshc = new SShConnection(target)) {
+            return sshc.execStringCommandGrabbed(cmd).outString();
         }
-//
-//
-//        OutputStream out = new ByteArrayOutputStream();
-//        OutputStream err = new ByteArrayOutputStream();
-//        int e;
-//        NSession session = NSession.of();
-//        try (RemoteConnexionStringInfo.MyNExecCmdExtensionContext d = new RemoteConnexionStringInfo.MyNExecCmdExtensionContext(
-//                NExecCmd.of().setConnexionString(target).system(),
-//                commExec, target, cmd, out, err)) {
-//            e = commExec.exec(d);
-//        } catch (RuntimeException ex) {
-//            throw new NExecutionException(NMsg.ofC("command failed :%s", ex), ex);
-//        }
-//        if (e != NExecutionException.SUCCESS) {
-//            session.err().println(out.toString());
-//            session.err().println(err.toString());
-//            throw new NExecutionException(NMsg.ofC("command exit with code :%s", e), e);
-//        }
-//        return out.toString();
     }
 
     @Override
