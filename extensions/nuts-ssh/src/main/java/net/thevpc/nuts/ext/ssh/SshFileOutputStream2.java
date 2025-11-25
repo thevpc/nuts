@@ -36,13 +36,7 @@ public class SshFileOutputStream2 extends OutputStream {
     @Override
     public void close() throws IOException {
         tempOS.close();
-        NSession session = NSession.of();
-        try (SShConnection connection = SShConnection.ofProbedSShConnection(path
-                , session.in()
-                , session.out().asOutputStream()
-                , session.err().asOutputStream()
-
-        )) {
+        try (SShConnection connection = SShConnection.ofProbedSShConnection(path)) {
             connection.copyLocalToRemote(temp.toString(), path.getPath(), mkdirs);
         } finally {
             this.temp.delete();
