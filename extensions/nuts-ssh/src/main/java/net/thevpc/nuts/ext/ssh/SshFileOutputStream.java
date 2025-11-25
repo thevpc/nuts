@@ -27,11 +27,7 @@ public class SshFileOutputStream extends OutputStream {
     public SshFileOutputStream(NConnexionString path, boolean mkdirs, boolean failFast, long filesize) {
         super();
         NSession session = NSession.of();
-        this.connection = SShConnection.ofProbedSShConnection(path
-                , session.in()
-                ,session.out().asOutputStream()
-                ,session.err().asOutputStream()
-        );
+        this.connection = SShConnection.ofProbedSShConnection(path);
         this.mkdirs = mkdirs;
         this.to = path.getPath();
         this.failFast = failFast;
