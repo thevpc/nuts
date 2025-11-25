@@ -27,13 +27,7 @@ public class SshFileInputStream extends DynamicInputStream {
         filesize = 0L;
         buf = new byte[1024];
         this.closeConnection = true;
-        NSession session = NSession.of();
-        SShConnection connection = SShConnection.ofProbedSShConnection(path
-                ,session.in()
-                ,session.out().asOutputStream()
-                ,session.err().asOutputStream()
-        );
-        this.connection = connection;
+        this.connection = SShConnection.ofProbedSShConnection(path);
     }
 
     SshFileInputStream(SShConnection connection, String path, boolean closeConnection) {
