@@ -156,43 +156,31 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         if(userWorkspace){
             String[] command = resolveNutsExecutableCommand(context);
             try (SShConnection c = SShConnection.ofProbedSShConnection(
-                    target,
-                    context.in(),
-                    context.out(),
-                    context.err()
+                    target
             )) {
-                return c.execStringCommand(NCmdLine.of(command).toString());
+                return c.execArrayCommand(command,new IOBindings(context.in(),context.out(),context.err()));
             }
         }else{
             if(context.getCommand().length==1){
                 String[] command = resolveNutsExecutableCommand(context);
                 if(customCommand){
                     try (SShConnection c = SShConnection.ofProbedSShConnection(
-                            target,
-                            context.in(),
-                            context.out(),
-                            context.err()
+                            target
                     )) {
-                        return c.execStringCommand(command[0]);
+                        return c.execStringCommand(command[0],new IOBindings(context.in(),context.out(),context.err()));
                     }
                 }else{
                     try (SShConnection c = SShConnection.ofProbedSShConnection(
-                            target,
-                            context.in(),
-                            context.out(),
-                            context.err()
+                            target
                     )) {
-                        return c.execStringCommand(NCmdLine.of(command).toString());
+                        return c.execArrayCommand(command,new IOBindings(context.in(),context.out(),context.err()));
                     }
                 }
             }else{
                 try (SShConnection c = SShConnection.ofProbedSShConnection(
-                        target,
-                        context.in(),
-                        context.out(),
-                        context.err()
+                        target
                 )) {
-                    return c.execStringCommand(NCmdLine.of(context.getCommand()).toString());
+                    return c.execArrayCommand(context.getCommand(),new IOBindings(context.in(),context.out(),context.err()));
                 }
             }
         }
@@ -205,14 +193,9 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         NAssert.requireNonBlank(z, "target");
         NLog log = NLog.of(SshNExecCmdExtension.class);
         log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
-        try (SShConnection c = SShConnection.ofProbedSShConnection(
-                target,
-                context.in(),
-                context.out(),
-                context.err()
-        )) {
+        try (SShConnection c = SShConnection.ofProbedSShConnection(target)) {
             String[] command = context.getCommand();
-            return c.execStringCommand(NCmdLine.of(command).toString());
+            return c.execArrayCommand(command,new IOBindings(context.in(),context.out(),context.err()));
         }
     }
 
