@@ -9,7 +9,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface OsProbeInfo {
-    void setCommExec(NExecCmdExtension commExec);
     NOsFamily osFamily();
     NId osId();
     NId shellId();
