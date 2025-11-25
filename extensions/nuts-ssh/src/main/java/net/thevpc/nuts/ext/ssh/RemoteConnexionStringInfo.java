@@ -170,7 +170,6 @@ public class RemoteConnexionStringInfo {
     public String getRootName(NExecCmdExtension commExec) {
         OsProbeInfo o = getProbedOs();
         synchronized (o){
-            o.setCommExec(commExec);
             return o.rootUserName();
         }
     }
@@ -178,7 +177,6 @@ public class RemoteConnexionStringInfo {
     public String getUserName(NExecCmdExtension commExec) {
         OsProbeInfo o = getProbedOs();
         synchronized (o){
-            o.setCommExec(commExec);
             return o.userName();
         }
     }
@@ -186,7 +184,6 @@ public class RemoteConnexionStringInfo {
     public String getUserHome(NExecCmdExtension commExec) {
         OsProbeInfo o = getProbedOs();
         synchronized (o){
-            o.setCommExec(commExec);
             return o.userHome();
         }
     }
@@ -194,7 +191,6 @@ public class RemoteConnexionStringInfo {
     public NOsFamily getOsFamily(NExecCmdExtension commExec) {
         OsProbeInfo o = getProbedOs();
         synchronized (o){
-            o.setCommExec(commExec);
             return o.osFamily();
         }
     }
