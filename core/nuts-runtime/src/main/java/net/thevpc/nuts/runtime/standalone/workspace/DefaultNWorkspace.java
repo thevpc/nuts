@@ -1705,6 +1705,14 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     @Override
+    public <T> NOptional<T> getProperty(Class<T> propertyTypeAndName) {
+        if(propertyTypeAndName==null){
+            return NOptional.ofNamedEmpty("<empty-type>");
+        }
+        return getProperty(propertyTypeAndName.getName()).map(x->x.asObject().orNull()).instanceOf(propertyTypeAndName);
+    }
+
+    @Override
     public NWorkspace setProperty(String property, Object value) {
         getEnvModel().setProperty(property, value);
         return this;
