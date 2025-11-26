@@ -64,6 +64,11 @@ public final class NMsgIntent {
     public static final NMsgIntent INIT = of("INIT");
 
     /**
+     * @since 0.8.9
+     */
+    public static final NMsgIntent DISPOSE = of("DISPOSE");
+
+    /**
      * Log verb used for tracing the failure to run an operation
      */
     public static final NMsgIntent FAIL = of("FAIL");
