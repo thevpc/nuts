@@ -50,6 +50,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     protected Boolean bot;
     private long sleepMillis = 1000;
     private String target;
+    private boolean rawCommand;
 
     public AbstractNExecCmd() {
         super("exec");
@@ -516,6 +517,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
         setConnexionString(other.getConnexionString());
         setDry(other.getDry());
         setBot(other.getBot());
+        setRawCommand(other.isRawCommand());
         return this;
     }
 
@@ -844,5 +846,16 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     @Override
     public NExecCmd redirectErr() {
         return setErr(NExecOutput.ofRedirect());
+    }
+
+    @Override
+    public boolean isRawCommand() {
+        return rawCommand;
+    }
+
+    @Override
+    public NExecCmd setRawCommand(boolean rawCommand) {
+        this.rawCommand = rawCommand;
+        return this;
     }
 }
