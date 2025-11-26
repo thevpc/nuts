@@ -35,8 +35,8 @@ public class ISShConnexionAdapter implements ISShConnexion {
     }
 
     @Override
-    public int exec(List<String> command, IOBindings io) {
-        return getConnection().exec(command, io);
+    public int execListCommand(List<String> command, IOBindings io) {
+        return getConnection().execListCommand(command, io);
     }
 
     @Override
