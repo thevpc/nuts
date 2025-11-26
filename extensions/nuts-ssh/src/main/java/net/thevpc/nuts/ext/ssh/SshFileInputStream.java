@@ -1,9 +1,7 @@
 package net.thevpc.nuts.ext.ssh;
 
 import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
-import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.net.NConnexionString;
 
 import java.io.IOException;
@@ -19,7 +17,7 @@ public class SshFileInputStream extends DynamicInputStream {
     private OutputStream out;
     private InputStream in;
     private boolean closeConnection;
-    private SShConnection connection;
+    private ISShConnexion connection;
     public SshFileInputStream(NConnexionString path) {
         super(4096);
         this.from = path.getPath();
@@ -27,7 +25,7 @@ public class SshFileInputStream extends DynamicInputStream {
         filesize = 0L;
         buf = new byte[1024];
         this.closeConnection = true;
-        this.connection = SShConnection.ofProbedSShConnection(path);
+        this.connection = SshConnexionPool.of().acquire(path);
     }
 
     SshFileInputStream(SShConnection connection, String path, boolean closeConnection) {
@@ -46,12 +44,7 @@ public class SshFileInputStream extends DynamicInputStream {
             init = true;
             // exec 'scp -f rfile' remotely
             String command = "scp -f " + from;
-            try {
-                channel = connection.sshSession.openChannel("exec");
-            } catch (JSchException e) {
-                throw new IOException(e);
-            }
-            ((ChannelExec) channel).setCommand(command);
+            channel = connection.openExecChannel(command);
 
             // get I/O streams for remote scp
             out = channel.getOutputStream();
