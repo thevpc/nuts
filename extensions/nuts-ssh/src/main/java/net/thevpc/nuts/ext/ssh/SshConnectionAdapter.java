@@ -6,10 +6,10 @@ import net.thevpc.nuts.io.NPathType;
 import java.io.InputStream;
 import java.util.List;
 
-public class ISShConnexionAdapter implements ISShConnexion {
-    protected ISShConnexion connection;
+public class SshConnectionAdapter implements SshConnection {
+    protected SshConnection connection;
 
-    public ISShConnexionAdapter(ISShConnexion connection) {
+    public SshConnectionAdapter(SshConnection connection) {
         this.connection = connection;
     }
 
@@ -18,18 +18,18 @@ public class ISShConnexionAdapter implements ISShConnexion {
         getConnection().reset();
     }
 
-    protected ISShConnexion getConnection() {
+    protected SshConnection getConnection() {
         return connection;
     }
 
     @Override
-    public ISShConnexion addListener(SshListener listener) {
+    public SshConnection addListener(SshListener listener) {
         getConnection().addListener(listener);
         return this;
     }
 
     @Override
-    public ISShConnexion removeListener(SshListener listener) {
+    public SshConnection removeListener(SshListener listener) {
         getConnection().removeListener(listener);
         return this;
     }

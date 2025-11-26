@@ -11,7 +11,7 @@ import java.io.*;
 
 @NUnused
 public class SshFileOutputStream extends OutputStream {
-    private ISShConnexion connection;
+    private SshConnection connection;
     private String to;
     private boolean mkdirs;
     private boolean failFast;
@@ -26,7 +26,7 @@ public class SshFileOutputStream extends OutputStream {
     public SshFileOutputStream(NConnexionString path, boolean mkdirs, boolean failFast, long filesize) {
         super();
         NSession session = NSession.of();
-        this.connection = SshConnexionPool.of().acquire(path);
+        this.connection = SshConnectionPool.of().acquire(path);
         this.mkdirs = mkdirs;
         this.to = path.getPath();
         this.failFast = failFast;
@@ -86,7 +86,7 @@ public class SshFileOutputStream extends OutputStream {
 
         channel.connect();
 
-        if (SShConnection.checkAck(in) != 0) {
+        if (JCshSShConnection.checkAck(in) != 0) {
             ended = true;
             connection.close();
             return true;
@@ -101,7 +101,7 @@ public class SshFileOutputStream extends OutputStream {
             command += (" " + (lastModified / 1000) + " 0\n");
             out.write(command.getBytes());
             out.flush();
-            if (SShConnection.checkAck(in) != 0) {
+            if (JCshSShConnection.checkAck(in) != 0) {
                 ended = true;
                 connection.close();
                 return true;
@@ -116,7 +116,7 @@ public class SshFileOutputStream extends OutputStream {
         out.write(command.getBytes());
         out.flush();
 
-        if (SShConnection.checkAck(in) != 0) {
+        if (JCshSShConnection.checkAck(in) != 0) {
             ended = true;
             connection.close();
             return true;
@@ -131,7 +131,7 @@ public class SshFileOutputStream extends OutputStream {
         out.write(buf, 0, 1);
         out.flush();
 
-        if (SShConnection.checkAck(in) != 0) {
+        if (JCshSShConnection.checkAck(in) != 0) {
             return;
         }
         out.close();

@@ -6,14 +6,14 @@ import net.thevpc.nuts.io.NPathType;
 import java.io.InputStream;
 import java.util.List;
 
-public interface ISShConnexion extends AutoCloseable {
+public interface SshConnection extends AutoCloseable {
     void reset();
 
     void close();
 
-    ISShConnexion addListener(SshListener listener);
+    SshConnection addListener(SshListener listener);
 
-    ISShConnexion removeListener(SshListener listener);
+    SshConnection removeListener(SshListener listener);
 
     int execListCommand(List<String> command, IOBindings io);
 

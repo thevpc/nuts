@@ -218,7 +218,7 @@ public class OsProbeInfoImpl implements OsProbeInfo {
     }
 
     public String runOnceSystemGrab(String cmd) {
-        try (SShConnection sshc = new SShConnection(target)) {
+        try (JCshSShConnection sshc = new JCshSShConnection(target)) {
             return sshc.execStringCommandGrabbed(cmd).outString();
         }
     }

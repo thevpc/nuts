@@ -35,7 +35,7 @@ public class SshFileOutputStream2 extends OutputStream {
     @Override
     public void close() throws IOException {
         tempOS.close();
-        try (ISShConnexion connection = SshConnexionPool.of().acquire(path)) {
+        try (SshConnection connection = SshConnectionPool.of().acquire(path)) {
             connection.copyLocalToRemote(temp.toString(), path.getPath(), mkdirs);
         } finally {
             this.temp.delete();
