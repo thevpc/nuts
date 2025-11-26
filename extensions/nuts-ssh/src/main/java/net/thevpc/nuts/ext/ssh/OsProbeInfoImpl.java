@@ -1,8 +1,7 @@
 package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NExecCmdExtension;
-import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.util.NBlankable;
@@ -11,7 +10,7 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.util.List;
 
 public class OsProbeInfoImpl implements OsProbeInfo {
-    private String target;
+    private NConnexionString target;
     private NOsFamily osFamily;
     private NShellFamily shellFamily;
     private NId osId;
@@ -20,7 +19,7 @@ public class OsProbeInfoImpl implements OsProbeInfo {
     private String rootUserName;
     private String userHome;
 
-    public OsProbeInfoImpl(String target) {
+    public OsProbeInfoImpl(NConnexionString target) {
         this.target = target;
     }
 
@@ -70,8 +69,6 @@ public class OsProbeInfoImpl implements OsProbeInfo {
 
     private synchronized void update() {
         //test for posix
-
-        NSession session = NSession.of();
         boolean ok = false;
         try {
             String cmd =
@@ -101,8 +98,8 @@ public class OsProbeInfoImpl implements OsProbeInfo {
                     }
                     userName = cols.get(2);
                     userHome = cols.get(3);
-                    shellId = NId.of(null, cols.get(4), cols.get(5));
                     shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.SH);
+                    shellId = NId.of(null,NStringUtils.firstNonBlank(cols.get(4),shellFamily.id()), cols.get(5));
                     rootUserName = "root";
                     ok = true;
                 }
@@ -120,29 +117,12 @@ public class OsProbeInfoImpl implements OsProbeInfo {
                     if (cols.size() >= 6) {
                         String luname = cols.get(0).toLowerCase();
                         osId = NId.of(null, cols.get(0), cols.get(1));
-                        if (luname.startsWith("linux")) {
-                            osFamily = NOsFamily.LINUX;
-                        } else if (luname.startsWith("darwin")) {
-                            osFamily = NOsFamily.MACOS;
-                        } else if (luname.startsWith("sunos")) {
-                            osFamily = NOsFamily.UNIX;
-                        } else if (
-                                luname.startsWith("freebsd")
-                                        || luname.startsWith("openbsd")
-                                        || luname.startsWith("netbsd")
-                        ) {
-                        } else if (
-                                luname.contains("windows")
-                        ) {
-                            osFamily = NOsFamily.WINDOWS;
-                        }else{
-                            osFamily = NOsFamily.WINDOWS;
-                        }
+                        resolveWindowsOfFamilyFromOsId(luname);
                         userName = cols.get(2);
                         userHome = cols.get(3);
-                        shellId = NId.of(null, cols.get(4), cols.get(5));
                         shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.WIN_POWER_SHELL);
-                        rootUserName = "Administrator";
+                        shellId = NId.of(null,NStringUtils.firstNonBlank(cols.get(4),shellFamily.id()), cols.get(5));
+                        resolveWindowAdminName();
                         ok = true;
                     }
                 }
@@ -159,30 +139,12 @@ public class OsProbeInfoImpl implements OsProbeInfo {
                     if (cols.size() >= 6) {
                         String luname = cols.get(0).toLowerCase();
                         osId = NId.of(null, cols.get(0), cols.get(1));
-                        if (luname.startsWith("linux")) {
-                            osFamily = NOsFamily.LINUX;
-                        } else if (luname.startsWith("darwin")) {
-                            osFamily = NOsFamily.MACOS;
-                        } else if (luname.startsWith("sunos")) {
-                            osFamily = NOsFamily.UNIX;
-                        } else if (
-                                luname.startsWith("freebsd")
-                                        || luname.startsWith("openbsd")
-                                        || luname.startsWith("netbsd")
-                        ) {
-                            osFamily = NOsFamily.UNIX;
-                        } else if (
-                                luname.contains("windows")
-                        ) {
-                            osFamily = NOsFamily.WINDOWS;
-                        }else{
-                            osFamily = NOsFamily.WINDOWS;
-                        }
+                        resolveWindowsOfFamilyFromOsId(luname);
                         userName = cols.get(2);
                         userHome = cols.get(3);
-                        shellId = NId.of(null, cols.get(4), cols.get(5));
                         shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.WIN_CMD);
-                        rootUserName = "Administrator";
+                        shellId = NId.of(null,NStringUtils.firstNonBlank(cols.get(4),shellFamily.id()), cols.get(5));
+                        resolveWindowAdminName();
                         ok = true;
                     }
                 }
@@ -200,6 +162,59 @@ public class OsProbeInfoImpl implements OsProbeInfo {
             rootUserName = "root";
         }
 
+    }
+
+    private void resolveWindowsOfFamilyFromOsId(String luname) {
+        if (luname.startsWith("linux")) {
+            osFamily = NOsFamily.LINUX;
+        } else if (luname.startsWith("darwin")) {
+            osFamily = NOsFamily.MACOS;
+        } else if (luname.startsWith("sunos")) {
+            osFamily = NOsFamily.UNIX;
+        } else if (
+                luname.startsWith("freebsd")
+                        || luname.startsWith("openbsd")
+                        || luname.startsWith("netbsd")
+        ) {
+        } else if (
+                luname.contains("windows")
+        ) {
+            osFamily = NOsFamily.WINDOWS;
+        } else {
+            osFamily = NOsFamily.WINDOWS;
+        }
+    }
+
+    private void resolveWindowAdminName() {
+        switch (NStringUtils.trim(target.getUserName()).toLowerCase()) {
+            case "adminitrateur": {
+                rootUserName = "Administrateur";
+                break;
+            }
+            case "administrador": {
+                rootUserName = "Administrador";
+                break;
+            }
+            case "administratör": {
+                rootUserName = "Administratör";
+                break;
+            }
+            case "järjestelmänvalvoja": {
+                rootUserName = "Järjestelmänvalvoja";
+                break;
+            }
+            case "rendszergazda": {
+                rootUserName = "Rendszergazda";
+                break;
+            }
+            case "администратор": {
+                rootUserName = "Администратор";
+                break;
+            }
+            default: {
+                rootUserName = "Administrator";
+            }
+        }
     }
 
     public String runOnceSystemGrab(String cmd) {
