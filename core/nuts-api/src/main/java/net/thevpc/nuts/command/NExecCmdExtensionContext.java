@@ -8,6 +8,8 @@ public interface NExecCmdExtensionContext  {
 
     String[] getCommand();
 
+    boolean isRawCommand();
+
     InputStream in();
 
     OutputStream out();
