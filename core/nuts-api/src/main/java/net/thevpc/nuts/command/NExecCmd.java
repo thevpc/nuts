@@ -503,4 +503,12 @@ public interface NExecCmd extends NWorkspaceCmd {
     NExecCmd setConnexionString(NConnexionString host);
 
     NExecCmd redirectErr();
+
+    /**
+     * return true if this is a raw command (flag armed)
+     * @since 0.8.9
+     */
+    boolean isRawCommand();
+
+    NExecCmd setRawCommand(boolean rawCommand);
 }
