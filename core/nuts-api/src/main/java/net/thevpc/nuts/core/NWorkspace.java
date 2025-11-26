@@ -233,6 +233,15 @@ public interface NWorkspace extends NWorkspaceBase, NEnvContext, NComponent, Clo
     NOptional<NLiteral> getProperty(String property);
 
     /**
+     *
+     * @param propertyTypeAndName
+     * @return
+     * @param <T> Type
+     * @since 0.8.9
+     */
+    <T> NOptional<T> getProperty(Class<T> propertyTypeAndName);
+
+    /**
      * @param property property
      * @param value    value
      * @return {@code this} instance
