@@ -15,7 +15,7 @@ public interface ISShConnexion extends AutoCloseable {
 
     ISShConnexion removeListener(SshListener listener);
 
-    int exec(List<String> command, IOBindings io);
+    int execListCommand(List<String> command, IOBindings io);
 
     int execArrayCommand(String[] command, IOBindings io);
 
