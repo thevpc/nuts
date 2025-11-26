@@ -17,11 +17,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SShConnection implements ISShConnexion {
+public class SShConnection extends SShConnexionBase {
 
     Session sshSession;
     private boolean failFast;
-    private List<SshListener> listeners = new ArrayList<>();
 
     private OsProbeInfo probedInfo;
     private boolean closed;
@@ -40,22 +39,6 @@ public class SShConnection implements ISShConnexion {
     @Override
     public void reset() {
         failFast = false;
-    }
-
-    @Override
-    public SShConnection addListener(SshListener listener) {
-        if (listener != null) {
-            listeners.add(listener);
-        }
-        return this;
-    }
-
-    @Override
-    public SShConnection removeListener(SshListener listener) {
-        if (listener != null) {
-            listeners.remove(listener);
-        }
-        return this;
     }
 
     private void init(NConnexionString connexionString) {
@@ -182,89 +165,7 @@ public class SShConnection implements ISShConnexion {
         return b;
     }
 
-    @Override
-    public int exec(List<String> command, IOBindings io) {
-        return execArrayCommand(command.toArray(new String[0]), io);
-    }
 
-    @Override
-    public int execArrayCommand(String[] command, IOBindings io) {
-        String sb = cmdArrayToString(command);
-        return execStringCommand(sb, io);
-    }
-
-    private String cmdArrayToString(String[] command) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < command.length; i++) {
-            if (sb.length() > 0) {
-                sb.append(" ");
-            }
-            String s = command[i];
-            sb.append(doEscape(s));
-        }
-        return sb.toString();
-    }
-
-    private String doEscape(String str) {
-        if (str.isEmpty()) {
-            return "\"\"";
-        }
-        StringBuilder notEscaped = new StringBuilder();
-        StringBuilder escaped = new StringBuilder();
-        boolean escape = false;
-        for (char c : str.toCharArray()) {
-            if (escape) {
-                switch (c) {
-                    case '\\':
-                    case '\"': {
-                        escaped.append("\\");
-                        escaped.append(c);
-                        break;
-                    }
-                    default: {
-                        escaped.append(c);
-                        break;
-                    }
-                }
-            } else {
-                if (Character.isWhitespace(c)) {
-                    escape = true;
-                    escaped.append(notEscaped);
-                    escaped.append(c);
-                    notEscaped.delete(0, notEscaped.length());
-                } else {
-                    switch (c) {
-                        case '\\':
-                        case '\"': {
-                            escape = true;
-                            escaped.append(notEscaped);
-                            escaped.append("\\");
-                            escaped.append(c);
-                            notEscaped.delete(0, notEscaped.length());
-                            break;
-                        }
-                        case '\'': {
-                            escape = true;
-                            escaped.append(notEscaped);
-                            escaped.append(c);
-                            notEscaped.delete(0, notEscaped.length());
-                            break;
-                        }
-                        default: {
-                            notEscaped.append(c);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        if (escape) {
-            escaped.append("\"");
-            return escaped.toString();
-        } else {
-            return notEscaped.toString();
-        }
-    }
 
     @Override
     public int mv(String from, String to) {
