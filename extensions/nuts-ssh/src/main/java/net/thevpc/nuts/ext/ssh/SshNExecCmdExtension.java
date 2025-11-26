@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SshNExecCmdExtension implements NExecCmdExtension {
-    private String[] resolveNutsExecutableCommand(NExecCmdExtensionContext context) {
+    private CmdStr resolveNutsExecutableCommand(NExecCmdExtensionContext context) {
         NSession session = NSession.of();
         NExecCmd execCommand = context.getExecCommand();
         NDefinition def = execCommand.getCommandDefinition();
@@ -131,11 +131,14 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                 //wil not call context.getCommand() because we already added def!
                 cmd.addAll(execCommand.getCommand());
 
-                return k.buildEffectiveCommand(cmd.toArray(new String[0]), execCommand.getRunAs(), executorOptions, this);
+                return new CmdStr(
+                        k.buildEffectiveCommand(cmd.toArray(new String[0]), execCommand.getRunAs(), executorOptions, this),
+                        false
+                );
             }
             case SYSTEM: {
                 //effective command including def which should be null!
-                return context.getCommand();
+                return new CmdStr(context.getCommand(), context.isRawCommand() && context.getCommand().length == 1);
             }
             default: {
                 throw new NUnsupportedEnumException(executionType);
@@ -151,38 +154,39 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         NAssert.requireNonBlank(z, "target");
         NLog log = NLog.of(SshNExecCmdExtension.class);
         log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
-        boolean userWorkspace=false;
-        boolean customCommand=true;
-        if(userWorkspace){
-            String[] command = resolveNutsExecutableCommand(context);
-            try (SShConnection c = SShConnection.ofProbedSShConnection(
-                    target
-            )) {
-                return c.execArrayCommand(command,new IOBindings(context.in(),context.out(),context.err()));
-            }
-        }else{
-            if(context.getCommand().length==1){
-                String[] command = resolveNutsExecutableCommand(context);
-                if(customCommand){
-                    try (SShConnection c = SShConnection.ofProbedSShConnection(
-                            target
-                    )) {
-                        return c.execStringCommand(command[0],new IOBindings(context.in(),context.out(),context.err()));
-                    }
-                }else{
-                    try (SShConnection c = SShConnection.ofProbedSShConnection(
-                            target
-                    )) {
-                        return c.execArrayCommand(command,new IOBindings(context.in(),context.out(),context.err()));
-                    }
-                }
-            }else{
-                try (SShConnection c = SShConnection.ofProbedSShConnection(
-                        target
-                )) {
-                    return c.execArrayCommand(context.getCommand(),new IOBindings(context.in(),context.out(),context.err()));
+        NExecutionType executionType = context.getExecCommand().getExecutionType();
+        if (executionType == null) {
+            executionType = NExecutionType.SPAWN;
+        }
+        boolean userWorkspace = executionType != NExecutionType.SYSTEM;
+        if (userWorkspace) {
+            CmdStr command = resolveNutsExecutableCommand(context);
+            try (ISShConnexion c = SshConnexionPool.of().acquire(target)) {
+                if (command.rawCommand) {
+                    return c.execStringCommand(command.command[0], new IOBindings(context.in(), context.out(), context.err()));
+                } else {
+                    return c.execArrayCommand(command.command, new IOBindings(context.in(), context.out(), context.err()));
                 }
             }
+        } else {
+            try (ISShConnexion c = SshConnexionPool.of().acquire(target)) {
+                CmdStr command = new CmdStr(context.getCommand(), context.isRawCommand() && context.getCommand().length == 1);
+                if (command.rawCommand) {
+                    return c.execStringCommand(command.command[0], new IOBindings(context.in(), context.out(), context.err()));
+                } else {
+                    return c.execArrayCommand(command.command, new IOBindings(context.in(), context.out(), context.err()));
+                }
+            }
+        }
+    }
+
+    private static class CmdStr {
+        String[] command;
+        boolean rawCommand;
+
+        public CmdStr(String[] command, boolean rawCommand) {
+            this.command = command;
+            this.rawCommand = rawCommand;
         }
     }
 
@@ -193,9 +197,9 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         NAssert.requireNonBlank(z, "target");
         NLog log = NLog.of(SshNExecCmdExtension.class);
         log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
-        try (SShConnection c = SShConnection.ofProbedSShConnection(target)) {
+        try (ISShConnexion c = SshConnexionPool.of().acquire(target)) {
             String[] command = context.getCommand();
-            return c.execArrayCommand(command,new IOBindings(context.in(),context.out(),context.err()));
+            return c.execArrayCommand(command, new IOBindings(context.in(), context.out(), context.err()));
         }
     }
 
