@@ -1,7 +1,6 @@
 package net.thevpc.nuts.ext.ssh;
 
 import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPath;
@@ -12,7 +11,7 @@ import java.io.*;
 
 @NUnused
 public class SshFileOutputStream extends OutputStream {
-    private SShConnection connection;
+    private ISShConnexion connection;
     private String to;
     private boolean mkdirs;
     private boolean failFast;
@@ -27,7 +26,7 @@ public class SshFileOutputStream extends OutputStream {
     public SshFileOutputStream(NConnexionString path, boolean mkdirs, boolean failFast, long filesize) {
         super();
         NSession session = NSession.of();
-        this.connection = SShConnection.ofProbedSShConnection(path);
+        this.connection = SshConnexionPool.of().acquire(path);
         this.mkdirs = mkdirs;
         this.to = path.getPath();
         this.failFast = failFast;
@@ -79,8 +78,7 @@ public class SshFileOutputStream extends OutputStream {
 
         // exec 'scp -t rfile' remotely
         String command = "scp " + (ptimestamp ? "-p" : "") + " -t " + to;
-        channel = connection.sshSession.openChannel("exec");
-        ((ChannelExec) channel).setCommand(command);
+        channel = connection.openExecChannel(command);
 
         // get I/O streams for remote scp
         out = channel.getOutputStream();
@@ -88,7 +86,7 @@ public class SshFileOutputStream extends OutputStream {
 
         channel.connect();
 
-        if (connection.checkAck(in) != 0) {
+        if (SShConnection.checkAck(in) != 0) {
             ended = true;
             connection.close();
             return true;
@@ -103,7 +101,7 @@ public class SshFileOutputStream extends OutputStream {
             command += (" " + (lastModified / 1000) + " 0\n");
             out.write(command.getBytes());
             out.flush();
-            if (connection.checkAck(in) != 0) {
+            if (SShConnection.checkAck(in) != 0) {
                 ended = true;
                 connection.close();
                 return true;
@@ -118,7 +116,7 @@ public class SshFileOutputStream extends OutputStream {
         out.write(command.getBytes());
         out.flush();
 
-        if (connection.checkAck(in) != 0) {
+        if (SShConnection.checkAck(in) != 0) {
             ended = true;
             connection.close();
             return true;
@@ -133,7 +131,7 @@ public class SshFileOutputStream extends OutputStream {
         out.write(buf, 0, 1);
         out.flush();
 
-        if (connection.checkAck(in) != 0) {
+        if (SShConnection.checkAck(in) != 0) {
             return;
         }
         out.close();
