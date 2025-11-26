@@ -37,7 +37,6 @@ public class RemoteConnexionStringInfo {
     private String nutsJar;
     private long lastChecked;
     private long timoutMS = 1000;
-    //    private String envPath;
     private String workspaceName = "default-workspace";
     private NElement workspaceJson;
     private String storeLocationLib;
@@ -169,28 +168,28 @@ public class RemoteConnexionStringInfo {
 
     public String getRootName(NExecCmdExtension commExec) {
         OsProbeInfo o = getProbedOs();
-        synchronized (o){
+        synchronized (o) {
             return o.rootUserName();
         }
     }
 
     public String getUserName(NExecCmdExtension commExec) {
         OsProbeInfo o = getProbedOs();
-        synchronized (o){
+        synchronized (o) {
             return o.userName();
         }
     }
 
     public String getUserHome(NExecCmdExtension commExec) {
         OsProbeInfo o = getProbedOs();
-        synchronized (o){
+        synchronized (o) {
             return o.userHome();
         }
     }
 
     public NOsFamily getOsFamily(NExecCmdExtension commExec) {
         OsProbeInfo o = getProbedOs();
-        synchronized (o){
+        synchronized (o) {
             return o.osFamily();
         }
     }
@@ -338,6 +337,7 @@ public class RemoteConnexionStringInfo {
         OutputStream err;
         InputStream nullInput;
         NExecCmd ec;
+        boolean rawCommand;
 
         public MyNExecCmdExtensionContext(NExecCmd ec, NExecCmdExtension commExec, String target, String[] cmd, OutputStream out, OutputStream err) {
             this.ec = ec;
@@ -347,6 +347,12 @@ public class RemoteConnexionStringInfo {
             this.out = out;
             this.err = err;
             nullInput = NIO.ofNullRawInputStream();
+            this.rawCommand = ec.isRawCommand();
+        }
+
+        @Override
+        public boolean isRawCommand() {
+            return rawCommand;
         }
 
         @Override
