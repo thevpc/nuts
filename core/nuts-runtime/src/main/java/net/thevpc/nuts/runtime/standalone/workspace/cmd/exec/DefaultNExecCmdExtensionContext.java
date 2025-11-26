@@ -17,6 +17,7 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
     private OutHolder hout;
     private OutHolder herr;
     private NExecCmd execCommand;
+    private boolean rawCommand;
 
     public DefaultNExecCmdExtensionContext(String target, String[] command, NExecInput in, NExecOutput out, NExecOutput err, NExecCmd execCommand) {
         this.target = target;
@@ -25,6 +26,7 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
         this.xout = out;
         this.xerr = err;
         this.execCommand = execCommand;
+        this.rawCommand = execCommand.isRawCommand();
         NSession session = NSession.of();
         switch (in.getType()) {
             case NULL: {
@@ -128,6 +130,11 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
                 };
             }
         }
+    }
+
+    @Override
+    public boolean isRawCommand() {
+        return rawCommand;
     }
 
     @Override
