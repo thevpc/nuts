@@ -161,7 +161,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         boolean userWorkspace = executionType != NExecutionType.SYSTEM;
         if (userWorkspace) {
             CmdStr command = resolveNutsExecutableCommand(context);
-            try (ISShConnexion c = SshConnexionPool.of().acquire(target)) {
+            try (SshConnection c = SshConnectionPool.of().acquire(target)) {
                 if (command.rawCommand) {
                     return c.execStringCommand(command.command[0], new IOBindings(context.in(), context.out(), context.err()));
                 } else {
@@ -169,7 +169,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                 }
             }
         } else {
-            try (ISShConnexion c = SshConnexionPool.of().acquire(target)) {
+            try (SshConnection c = SshConnectionPool.of().acquire(target)) {
                 CmdStr command = new CmdStr(context.getCommand(), context.isRawCommand() && context.getCommand().length == 1);
                 if (command.rawCommand) {
                     return c.execStringCommand(command.command[0], new IOBindings(context.in(), context.out(), context.err()));
@@ -197,7 +197,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         NAssert.requireNonBlank(z, "target");
         NLog log = NLog.of(SshNExecCmdExtension.class);
         log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
-        try (ISShConnexion c = SshConnexionPool.of().acquire(target)) {
+        try (SshConnection c = SshConnectionPool.of().acquire(target)) {
             String[] command = context.getCommand();
             return c.execArrayCommand(command, new IOBindings(context.in(), context.out(), context.err()));
         }

@@ -3,7 +3,6 @@ package net.thevpc.nuts.ext.ssh;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSchException;
 import net.thevpc.nuts.net.NConnexionString;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,7 +16,7 @@ public class SshFileInputStream extends DynamicInputStream {
     private OutputStream out;
     private InputStream in;
     private boolean closeConnection;
-    private ISShConnexion connection;
+    private SshConnection connection;
     public SshFileInputStream(NConnexionString path) {
         super(4096);
         this.from = path.getPath();
@@ -25,10 +24,10 @@ public class SshFileInputStream extends DynamicInputStream {
         filesize = 0L;
         buf = new byte[1024];
         this.closeConnection = true;
-        this.connection = SshConnexionPool.of().acquire(path);
+        this.connection = SshConnectionPool.of().acquire(path);
     }
 
-    SshFileInputStream(SShConnection connection, String path, boolean closeConnection) {
+    SshFileInputStream(JCshSShConnection connection, String path, boolean closeConnection) {
         super(4096);
         this.from = path;
         init = false;
@@ -61,7 +60,7 @@ public class SshFileInputStream extends DynamicInputStream {
             buf[0] = 0;
             out.write(buf, 0, 1);
             out.flush();
-            int c = SShConnection.checkAck(in);
+            int c = JCshSShConnection.checkAck(in);
             if (c != 'C') {
                 return false;
             }
@@ -113,7 +112,7 @@ public class SshFileInputStream extends DynamicInputStream {
 
     @Override
     public void close() throws IOException {
-        if (SShConnection.checkAck(in) != 0) {
+        if (JCshSShConnection.checkAck(in) != 0) {
             //System.exit(0);
             if (closeConnection) {
                 connection.close();
