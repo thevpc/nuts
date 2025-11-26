@@ -168,9 +168,9 @@ public class NIdFormatHelper {
         if (h != null) {
             return h;
         }
-        FormatHelperResetListener h2 = (FormatHelperResetListener) workspace
-                .getProperty(FormatHelperResetListener.class.getName())
-                .flatMap(NLiteral::asObject).orNull()
+        FormatHelperResetListener h2 = workspace
+                .getProperty(FormatHelperResetListener.class)
+                .orNull()
                 ;
         if (h2 == null) {
             h2 = new FormatHelperResetListener();
