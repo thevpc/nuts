@@ -53,7 +53,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public NStream<NPath> list(NPath basePath) {
-        try (SShConnection c = prepareSshConnexion()) {
+        try (ISShConnexion c = prepareSshConnexion()) {
             return NStream.ofStream(c.list(path.getPath())
                     .stream()).map(
                     NFunction.of((String cc) -> NPath.of(path.builder().setPath(cc).build().toString()))
@@ -65,8 +65,8 @@ class SshNPath implements NPathSPI {
         return NStream.ofEmpty();
     }
 
-    private SShConnection prepareSshConnexion() {
-        return SShConnection.ofProbedSShConnection(path)
+    private ISShConnexion prepareSshConnexion() {
+        return SshConnexionPool.of().acquire(path)
                 .addListener(listener);
     }
 
@@ -233,7 +233,7 @@ class SshNPath implements NPathSPI {
     }
 
     public NPathType type(NPath basePath) {
-        try (SShConnection c = prepareSshConnexion()) {
+        try (ISShConnexion c = prepareSshConnexion()) {
             return c.type(path.getPath());
         } catch (Exception e) {
             return NPathType.NOT_FOUND;
@@ -247,7 +247,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public long contentLength(NPath basePath) {
-        try (SShConnection c = prepareSshConnexion()) {
+        try (ISShConnexion c = prepareSshConnexion()) {
             return c.contentLength(path.getPath());
         } catch (Exception e) {
             return -1;
@@ -256,7 +256,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public String getContentEncoding(NPath basePath) {
-        try (SShConnection c = prepareSshConnexion()) {
+        try (ISShConnexion c = prepareSshConnexion()) {
             return c.getContentEncoding(path.getPath());
         } catch (Exception e) {
             return null;
@@ -265,7 +265,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public String getContentType(NPath basePath) {
-        try (SShConnection c = prepareSshConnexion()) {
+        try (ISShConnexion c = prepareSshConnexion()) {
             return c.getContentType(path.getPath());
         } catch (Exception e) {
             return null;
@@ -274,7 +274,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public String getCharset(NPath basePath) {
-        try (SShConnection c = prepareSshConnexion()) {
+        try (ISShConnexion c = prepareSshConnexion()) {
             return c.getCharset(path.getPath());
         } catch (Exception e) {
             return null;
@@ -305,13 +305,13 @@ class SshNPath implements NPathSPI {
     }
 
     public void delete(NPath basePath, boolean recurse) {
-        try (SShConnection session = prepareSshConnexion()) {
+        try (ISShConnexion session = prepareSshConnexion()) {
             session.rm(path.getPath(), recurse);
         }
     }
 
     public void mkdir(boolean parents, NPath basePath) {
-        try (SShConnection c = prepareSshConnexion()) {
+        try (ISShConnexion c = prepareSshConnexion()) {
             c.mkdir(path.getPath(), parents);
         }
     }
@@ -420,7 +420,7 @@ class SshNPath implements NPathSPI {
     public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
         EnumSet<NPathOption> optionsSet = EnumSet.noneOf(NPathOption.class);
         optionsSet.addAll(Arrays.asList(options));
-        try (SShConnection c = prepareSshConnexion()) {
+        try (ISShConnexion c = prepareSshConnexion()) {
             List<String> ss=c.walk(path.getPath(),true,maxDepth);
             return NStream.ofIterable(ss).map(
                     NFunction.of(
@@ -455,7 +455,7 @@ class SshNPath implements NPathSPI {
                             && Objects.equals(sp.getUserName(), path.getUserName())
             ) {
                 int r = -1;
-                try (SShConnection c = prepareSshConnexion()) {
+                try (ISShConnexion c = prepareSshConnexion()) {
                     r = c.mv(path.getPath(), sp.getPath());
                 }
                 if (r != 0) {
@@ -480,7 +480,7 @@ class SshNPath implements NPathSPI {
                 SshNPath ssh2 = (SshNPath) spi2;
                 if (ssh1.path.withPath("/").equals(ssh2.path.withPath("/"))) {
                     // same filesystem
-                    try (SShConnection session = prepareSshConnexion()) {
+                    try (ISShConnexion session = prepareSshConnexion()) {
                         session.cp(ssh1.path.getPath(), ssh2.path.getPath(),true);
                         return true;
                     }
@@ -521,7 +521,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public byte[] getDigest(NPath basePath, String algo) {
-        try (SShConnection c = prepareSshConnexion()) {
+        try (ISShConnexion c = prepareSshConnexion()) {
             return c.getDigestWithCommand(algo, path.getPath());
         }
     }
