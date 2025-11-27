@@ -1,7 +1,7 @@
 package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.util.NBlankable;
@@ -10,7 +10,7 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.util.List;
 
 public class OsProbeInfoImpl implements OsProbeInfo {
-    private NConnexionString target;
+    private NConnectionString target;
     private NOsFamily osFamily;
     private NShellFamily shellFamily;
     private NId osId;
@@ -19,7 +19,7 @@ public class OsProbeInfoImpl implements OsProbeInfo {
     private String rootUserName;
     private String userHome;
 
-    public OsProbeInfoImpl(NConnexionString target) {
+    public OsProbeInfoImpl(NConnectionString target) {
         this.target = target;
     }
 

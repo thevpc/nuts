@@ -29,7 +29,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.internal.util.NBootPlatformHome;
 import net.thevpc.nuts.core.NLocationKey;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.text.NMsg;
@@ -49,72 +49,274 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * this interface describes any local or remote resource path. It includes
- * simple file path (ex. '/home/here' and 'c:\\here') as well as urls and uri
- * ('ssh://here'), etc.
+ * Represents a unified abstraction of a resource location.
+ * <p>
+ * An {@code NPath} models both local and remote paths in a uniform, protocol-aware
+ * way. It can represent:
+ * </p>
+ * <ul>
+ *     <li>Standard filesystem paths (e.g., {@code "/home/user"} or {@code "C:\\temp"})</li>
+ *     <li>Classloader resources</li>
+ *     <li>Network paths and URLs/URIs (e.g., {@code "ssh://host/path"}, {@code "http://..."} )</li>
+ *     <li>Nuts-specific virtual locations, including workspace stores, repositories,
+ *         temporary folders, and ID-based storage</li>
+ * </ul>
+ *
+ * <p>
+ * {@code NPath} exposes a high-level API that:
+ * </p>
+ * <ul>
+ *     <li>Allows reading and writing in multiple forms (bytes, strings, streams).</li>
+ *     <li>Supports automatic parent creation, deletion, walking, normalization and
+ *         conversion to {@link java.nio.file.Path}, {@link java.io.File}, or {@link java.net.URL}
+ *         when possible.</li>
+ *     <li>Recognizes protocols, permissions, symbolic links, and remote/local semantics.</li>
+ *     <li>Provides Nuts-aware utilities: temporary resources, repository storage,
+ *         ID-based paths, user/system store access, and content metadata.</li>
+ * </ul>
+ *
+ * <p>
+ * All factory methods delegate to {@link NIO#of()}, which selects the correct internal
+ * provider based on the given input. Providers handle path resolution, permissions,
+ * streaming, and protocol behavior.
+ * </p>
+ *
+ * <h3>Key Characteristics</h3>
+ * <p>
+ * An {@code NPath} is:
+ * </p>
+ * <ul>
+ *     <li><strong>Immutable:</strong> Operations such as {@code resolve}, {@code normalize},
+ *         or {@code toAbsolute} return new path instances.</li>
+ *     <li><strong>Protocol-aware:</strong> It preserves the original scheme
+ *         (e.g., {@code file}, {@code ssh}, {@code http}, or {@code ""} for local filesystem).</li>
+ *     <li><strong>Compatible with NInputSource/NOutputTarget:</strong> This makes paths
+ *         first-class citizens in the Nuts IO architecture, suitable for streaming,
+ *         formatting, piping, and writing structured formats.</li>
+ * </ul>
+ *
+ * <h3>Usage Examples</h3>
+ *
+ * <pre>
+ * // Create from a local file
+ * NPath p = NPath.of("/home/user/data.txt");
+ * String content = p.readString();
+ *
+ * // Create from an URL
+ * NPath remote = NPath.of(new URL("https://example.com/data.json"));
+ *
+ * // Resolve children
+ * NPath logs = NPath.ofUserHome().resolve("logs/app.log");
+ *
+ * // Temporary workspace file
+ * NPath tmp = NPath.ofTempFile("buffer.bin");
+ *
+ * // Repository-scoped temp folder
+ * NPath repTmp = NPath.ofTempRepositoryFolder(repository);
+ *
+ * // Convert to standard Java types when possible
+ * Optional<Path> nioPath = p.toPath().asOptional();
+ *
+ * // Walk a directory tree
+ * p.walk(5, NPathOption.NONE)
+ *  .filter(NPath::isRegularFile)
+ *  .forEach(System.out::println);
+ * </pre>
+ *
+ * <h3>Comparison and Ordering</h3>
+ * <p>
+ * {@code NPath} implements {@link Comparable}, using a provider-defined stable ordering
+ * that typically compares normalized textual forms. This does not imply any filesystem
+ * hierarchy ordering semantics.
+ * </p>
+ *
+ * <h3>Error Handling</h3>
+ * <p>
+ * Most read/write methods throw unchecked Nuts exceptions wrapping I/O failures.
+ * Path manipulation methods never throw for normal logical operations
+ * (resolve, normalize, toAbsolute), and instead delegate failures to provider semantics.
+ * </p>
  *
  * @app.category Input Output
  */
 public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
+    /**
+     * Creates an {@code NPath} from the given URL.
+     * <p>
+     * The underlying {@link NIO} provider determines how the URL is interpreted.
+     * Supported schemes typically include {@code file:}, {@code http:}, {@code https:},
+     * {@code jar:}, and provider-specific protocols.
+     * </p>
+     *
+     * @param path the URL to convert; may be {@code null}
+     * @return a new {@code NPath} instance representing the URL
+     */
     static NPath of(URL path) {
         return NIO.of().createPath(path);
     }
 
-    static NPath of(NConnexionString path) {
+    /**
+     * Creates an {@code NPath} from a connection string.
+     * <p>
+     * The {@link NConnectionString} is first converted to its canonical string
+     * representation, then interpreted by the underlying {@link NIO} provider.
+     * </p>
+     *
+     * @param path the connection string to convert; may be {@code null}
+     * @return a new {@code NPath} instance representing the connection string
+     */
+    static NPath of(NConnectionString path) {
         return NIO.of().createPath(path == null ? null : path.toString());
     }
 
+    /**
+     * Creates an {@code NPath} from a textual location using the given class loader
+     * to resolve classpath-based paths when applicable.
+     *
+     * @param path         the textual location (file, URL, classpath resource)
+     * @param classLoader  optional class loader for resource resolution
+     * @return a new {@code NPath} instance
+     */
     static NPath of(String path, ClassLoader classLoader) {
         return NIO.of().createPath(path, classLoader);
     }
 
+    /**
+     * Creates an {@code NPath} from a {@link File}.
+     * The resulting path represents the local filesystem entry.
+     *
+     * @param path the file system path; may not exist
+     * @return an {@code NPath} instance pointing to the file
+     */
     static NPath of(File path) {
         return NIO.of().createPath(path);
     }
 
+    /**
+     * Creates an {@code NPath} from a {@link java.nio.file.Path}.
+     *
+     * @param path the NIO file system path
+     * @return an {@code NPath} instance representing the underlying path
+     */
     static NPath of(Path path) {
         return NIO.of().createPath(path);
     }
 
+    /**
+     * Creates an {@code NPath} from a string location.
+     * <p>
+     * The location may refer to a filesystem path, an URL, a Nuts-specific
+     * protocol, or a classpath resource. The interpretation is delegated
+     * to the active {@link NIO} provider.
+     * </p>
+     *
+     * @param path the raw location
+     * @return an {@code NPath} for the location
+     */
     static NPath of(String path) {
         return NIO.of().createPath(path);
     }
 
+    /**
+     * Wraps a low-level provider implementation into an {@code NPath}.
+     *
+     * @param path an existing {@link NPathSPI} instance
+     * @return the public {@code NPath} wrapper
+     */
     static NPath of(NPathSPI path) {
         return NIO.of().createPath(path);
     }
 
     /**
-     * return user home path
+     * Returns the user's home directory as an {@code NPath}.
      *
-     * @return user home path
+     * @return the platform home directory
      */
     static NPath ofUserHome() {
         return NPath.of(Paths.get(System.getProperty("user.home")));
     }
 
+    /**
+     * Resolves a path to a standard store location specific to the given application identifier (GAV)
+     * and store type. This method provides a convenient way to access predefined directories
+     * for application-related resources such as binaries, configuration, data, logs, temporary
+     * files, caches, libraries, or runtime objects.
+     * <p>
+     * The {@link NId} represents the unique GAV (Group, Artifact, Version) identifier of the
+     * application, while {@link NStoreType} specifies the type of store:
+     * <ul>
+     *     <li>{@link NStoreType#BIN} – Application binaries/executables.</li>
+     *     <li>{@link NStoreType#CONF} – Configuration files, equivalent to $XDG_CONFIG_HOME on Linux.</li>
+     *     <li>{@link NStoreType#VAR} – Variable/modifiable data files, equivalent to $XDG_DATA_HOME on Linux.</li>
+     *     <li>{@link NStoreType#LOG} – Log files, equivalent to $XDG_LOG_HOME on Linux.</li>
+     *     <li>{@link NStoreType#TEMP} – Temporary files.</li>
+     *     <li>{@link NStoreType#CACHE} – Cached non-essential data, libraries, or packages.</li>
+     *     <li>{@link NStoreType#LIB} – Non-executable libraries or packages.</li>
+     *     <li>{@link NStoreType#RUN} – Temporary runtime files, sockets, or named pipes, equivalent to $XDG_RUNTIME_DIR on Linux.</li>
+     * </ul>
+     * </p>
+     * <p>
+     * This method guarantees that the returned {@link NPath} points to a location that is consistent
+     * across executions and platforms, enabling applications to store or retrieve files in a
+     * standard, predictable manner based on their GAV.
+     * </p>
+     *
+     * @param id the application identifier (GAV) to associate with the store
+     * @param storeType the type of store specifying the nature of resources to access
+     * @return a non-null {@link NPath} pointing to the standard store location for the given GAV and store type
+     * @throws NullPointerException if {@code id} or {@code storeType} is null or blank
+     * @see NStoreType
+     */
     static NPath ofIdStore(NId id, NStoreType storeType) {
         NAssert.requireNonBlank(id, "id");
         NAssert.requireNonBlank(storeType, "storeType");
         return NWorkspace.of().getStoreLocation(id, storeType);
     }
 
+    /**
+     * Returns a workspace-level store path for the given store type.
+     *
+     * @param storeType type of store
+     * @return the workspace’s store path
+     */
     static NPath ofWorkspaceStore(NStoreType storeType) {
         NAssert.requireNonBlank(storeType, "storeType");
         return NWorkspace.of().getStoreLocation(storeType);
     }
 
+    /**
+     * Returns the resolved store path corresponding to the given location key.
+     *
+     * @param locationKey store identification key
+     * @return the resolved store directory
+     */
     static NPath ofStore(NLocationKey locationKey) {
         NAssert.requireNonBlank(locationKey, "locationKey");
         return NWorkspace.of().getStoreLocation(locationKey);
     }
 
+    /**
+     * Returns the user-level Nuts store directory for the given store type.
+     * <p>
+     * This does not depend on the workspace; it uses platform-wide user
+     * configuration (e.g., {@code ~/.config/nuts/...}).
+     * </p>
+     *
+     * @param storeType store type
+     * @return user store path
+     */
     static NPath ofUserStore(NStoreType storeType) {
         NAssert.requireNonBlank(storeType, "storeType");
         return NPath.of(NBootPlatformHome.of(null).getStore(storeType.id()));
     }
 
+    /**
+     * Returns the system-level Nuts store directory for the given store type.
+     *
+     * @param storeType store type
+     * @return system store path
+     */
     static NPath ofSystemStore(NStoreType storeType) {
         NAssert.requireNonBlank(storeType, "storeType");
         return NPath.of(NBootPlatformHome.ofSystem(null).getStore(storeType.id()));
@@ -270,7 +472,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     NPath setUserTemporary(boolean temporary);
 
-    public NPath resolveSibling(NPathRenameOptions renameOptions);
+    NPath resolveSibling(NPathRenameOptions renameOptions);
 
 
     /**

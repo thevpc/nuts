@@ -9,7 +9,7 @@ import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
@@ -147,7 +147,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             case OPEN: {
                 NAssert.requireNonNull(getCommandDefinition(), "artifact definition");
                 NAssert.requireNonBlank(command, "command");
-                String target = getConnexionString();
+                String target = getConnectionString();
                 if (!NBlankable.isBlank(target)) {
                     throw new NIllegalArgumentException(NMsg.ofC("cannot run %s command remotely", executionType));
                 }
@@ -389,7 +389,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
 //                            .findFirst().get();
                     return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, null,
                             !ts.isEmpty() ? ts.get(0) : "",
-                            (!NBlankable.isBlank(getConnexionString()) && ts.size() == 1) ? ts.get(0) : NCmdLine.of(ts).toString(),
+                            (!NBlankable.isBlank(getConnectionString()) && ts.size() == 1) ? ts.get(0) : NCmdLine.of(ts).toString(),
                             ts.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
                 } else {
                     CharacterizedExecFile c = null;
@@ -1043,19 +1043,19 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     private RemoteInfo0 resolveRemoteInfo0() {
-        String target = getConnexionString();
+        String target = getConnectionString();
         if (!NBlankable.isBlank(target)) {
-            NConnexionString connexionString = NConnexionString.of(target);
-            if ("ssh".equals(connexionString.getProtocol())) {
+            NConnectionString connectionString = NConnectionString.of(target);
+            if ("ssh".equals(connectionString.getProtocol())) {
                 NExtensions.of()
                         .loadExtension(NId.get("net.thevpc.nuts:nuts-ssh").get());
             }
-            if ("nagent".equals(connexionString.getProtocol())) {
+            if ("nagent".equals(connectionString.getProtocol())) {
                 NExtensions.of()
                         .loadExtension(NId.get("com.cts.nuts.enterprise:next-agent").get());
             }
             RemoteInfo0 ii = new RemoteInfo0();
-            ii.commExec = NExtensions.of().createComponent(NExecCmdExtension.class, connexionString)
+            ii.commExec = NExtensions.of().createComponent(NExecCmdExtension.class, connectionString)
                     .orElseThrow(() -> new NIllegalArgumentException(NMsg.ofC("invalid execution target string : %s", target)));
             ii.in0 = CoreIOUtils.validateIn(in);
             ii.out0 = CoreIOUtils.validateOut(out);

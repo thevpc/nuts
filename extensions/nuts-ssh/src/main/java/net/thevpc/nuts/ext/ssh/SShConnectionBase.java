@@ -2,7 +2,7 @@ package net.thevpc.nuts.ext.ssh;
 
 
 import net.thevpc.nuts.io.NPathType;
-import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.util.*;
@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 public abstract class SShConnectionBase implements SshConnection {
     protected List<SshListener> listeners = new ArrayList<>();
-    protected NConnexionString connexionString;
+    protected NConnectionString connectionString;
     private OsProbeInfo probedInfo;
 
     public SShConnectionBase() {
@@ -392,7 +392,7 @@ public abstract class SShConnectionBase implements SshConnection {
 
     private OsProbeInfo getProbedInfo() {
         if (probedInfo == null) {
-            OsProbeInfo osProbeInfo = OsProbeInfoCache.of().get(connexionString);
+            OsProbeInfo osProbeInfo = OsProbeInfoCache.of().get(connectionString);
             osProbeInfo.tryUpdate();
             probedInfo = osProbeInfo;
         }

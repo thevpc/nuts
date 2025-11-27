@@ -33,7 +33,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Collection;
@@ -479,28 +479,28 @@ public interface NExecCmd extends NWorkspaceCmd {
     NExecCmd setSleepMillis(long sleepMillis);
 
     /**
-     * return host connexion string. when host is not blank, this connexion
+     * return host connection string. when host is not blank, this connection
      * string will be used to connect to a remote host for execution
      *
      * @return host
      * @since 0.8.4
      */
-    String getConnexionString();
+    String getConnectionString();
 
     /**
-     * update host connexion string. when host is not blank, this connexion
+     * update host connection string. when host is not blank, this connection
      * string will be used to connect to a remote host for execution
      *
      * @param host host
      * @return {@code this} instance
      */
-    NExecCmd setConnexionString(String host);
+    NExecCmd setConnectionString(String host);
 
     NExecCmd at(String host);
 
-    NExecCmd at(NConnexionString host);
+    NExecCmd at(NConnectionString host);
 
-    NExecCmd setConnexionString(NConnexionString host);
+    NExecCmd setConnectionString(NConnectionString host);
 
     NExecCmd redirectErr();
 

@@ -4,8 +4,6 @@ import net.thevpc.nuts.ext.ssh.SShConnectionBase;
 import net.thevpc.nuts.ext.ssh.SshConnection;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathType;
-import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
-import net.thevpc.nuts.net.NConnexionStringBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.util.List;

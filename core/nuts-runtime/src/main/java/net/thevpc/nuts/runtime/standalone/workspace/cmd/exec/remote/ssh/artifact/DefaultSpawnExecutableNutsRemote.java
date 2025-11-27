@@ -18,7 +18,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
-import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmdExtensionContext;
@@ -41,7 +41,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
     // effective cmd (incudes def)
     String[] ecmd;
     List<String> executorOptions;
-    NConnexionString connexionString;
+    NConnectionString connectionString;
     private boolean showCommand = false;
     private NExecCmdExtension commExec;
     NExecInput in;
@@ -104,7 +104,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
 
     private int runOnce(String[] cmd) {
         try (DefaultNExecCmdExtensionContext d = new DefaultNExecCmdExtensionContext(
-                getExecCommand().getConnexionString(),
+                getExecCommand().getConnectionString(),
                 cmd,
                 in,
                 out,

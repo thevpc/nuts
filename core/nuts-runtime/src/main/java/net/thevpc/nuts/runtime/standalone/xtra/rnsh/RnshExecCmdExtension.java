@@ -4,9 +4,9 @@ import net.thevpc.nuts.command.NExecCmdExtension;
 import net.thevpc.nuts.command.NExecCmdExtensionContext;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
-import net.thevpc.nuts.net.NConnexionString;
-import net.thevpc.nuts.net.NConnexionStringBuilder;
+import net.thevpc.nuts.net.DefaultNConnectionStringBuilder;
+import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.util.*;
 
 public class RnshExecCmdExtension implements NExecCmdExtension {
-    private Map<NConnexionString, RnshHttpClient> clients = new HashMap<>();
+    private Map<NConnectionString, RnshHttpClient> clients = new HashMap<>();
 
     @Override
     public int exec(NExecCmdExtensionContext context) {
@@ -64,7 +64,7 @@ public class RnshExecCmdExtension implements NExecCmdExtension {
     }
 
     private RnshHttpClient resolveRnshHttpClient(String cnx) {
-        NConnexionStringBuilder cb = NConnexionString.of(cnx).builder();
+        NConnectionStringBuilder cb = NConnectionString.of(cnx).builder();
         String v = NStringUtils.trimToNull(cb.getPath());
         Map<String, List<String>> qm = cb.getQueryMap().orElse(new HashMap<>());
         String context = NOptional.ofFirst(qm.get("context")).orElse(null);
@@ -79,10 +79,10 @@ public class RnshExecCmdExtension implements NExecCmdExtension {
             cb.setQueryMap(qm2);
             cb.setPath("/");
         }
-        NConnexionString c00 = cb.build();
+        NConnectionString c00 = cb.build();
         RnshHttpClient client = clients.get(c00);
         if (client == null) {
-            client = new RnshHttpClient().setConnexionString(c00);
+            client = new RnshHttpClient().setConnectionString(c00);
             clients.put(c00, client);
         }
         return client;
@@ -93,19 +93,19 @@ public class RnshExecCmdExtension implements NExecCmdExtension {
         Object c = context.getCriteria();
 
         if (c instanceof String) {
-            NConnexionStringBuilder z = DefaultNConnexionStringBuilder.of((String) c).orNull();
+            NConnectionStringBuilder z = DefaultNConnectionStringBuilder.of((String) c).orNull();
             if (z != null && isSupportedProtocol(z.getProtocol())) {
                 return DEFAULT_SCORE;
             }
         }
-        if (c instanceof NConnexionStringBuilder) {
-            NConnexionStringBuilder z = (NConnexionStringBuilder) c;
+        if (c instanceof NConnectionStringBuilder) {
+            NConnectionStringBuilder z = (NConnectionStringBuilder) c;
             if (isSupportedProtocol(z.getProtocol())) {
                 return DEFAULT_SCORE;
             }
         }
-        if (c instanceof NConnexionString) {
-            NConnexionString z = (NConnexionString) c;
+        if (c instanceof NConnectionString) {
+            NConnectionString z = (NConnectionString) c;
             if (isSupportedProtocol(z.getProtocol())) {
                 return DEFAULT_SCORE;
             }

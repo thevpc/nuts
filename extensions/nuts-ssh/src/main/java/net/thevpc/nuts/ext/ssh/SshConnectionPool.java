@@ -3,7 +3,7 @@ package net.thevpc.nuts.ext.ssh;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NChronometer;
 
@@ -15,8 +15,8 @@ import java.util.function.Function;
 public class SshConnectionPool {
     private final int maxSize;
     private long idleTimeout = 60000;
-    private final Map<NConnexionString, BlockingQueue<SShPooledConnection>> idleMap;
-    private final Function<NConnexionString, JCshSShConnection> factory;
+    private final Map<NConnectionString, BlockingQueue<SShPooledConnection>> idleMap;
+    private final Function<NConnectionString, JCshSShConnection> factory;
     private Timer timer;
 
 
@@ -37,13 +37,13 @@ public class SshConnectionPool {
         this(maxSize, idleTimeout, JCshSShConnection::new);
     }
 
-    public SshConnectionPool(int maxSize, long idleTimeout, Function<NConnexionString, JCshSShConnection> factory) {
+    public SshConnectionPool(int maxSize, long idleTimeout, Function<NConnectionString, JCshSShConnection> factory) {
         this.maxSize = maxSize;
         this.idleTimeout = idleTimeout <= 0 ? 60000 : idleTimeout;
         this.factory = factory;
         this.idleMap = new HashMap<>();
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
+        this.timer = new Timer();
+        this.timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 disposeOld(SshConnectionPool.this.idleTimeout);
@@ -51,12 +51,12 @@ public class SshConnectionPool {
         }, idleTimeout);
     }
 
-    public SshConnection acquire(String connexionString) {
-        return acquire(NConnexionString.of(connexionString));
+    public SshConnection acquire(String connectionString) {
+        return acquire(NConnectionString.of(connectionString));
     }
 
-    public SshConnection acquire(NConnexionString connexionString) {
-        BlockingQueue<SShPooledConnection> idle = getIdle(connexionString);
+    public SshConnection acquire(NConnectionString connectionString) {
+        BlockingQueue<SShPooledConnection> idle = getIdle(connectionString);
         SShPooledConnection conn = idle.poll();
         if (conn != null && conn.isAlive()) {
             return conn;
@@ -66,30 +66,30 @@ public class SshConnectionPool {
         synchronized (this) {
             if (idle.size() < maxSize) {
                 NChronometer s = NChronometer.startNow();
-                SShPooledConnection newConn = new SShPooledConnection(connexionString, factory.apply(connexionString));
-                NLog.of(SshConnectionPool.class).log(NMsg.ofC("create ssh connexion %s in %s", connexionString, s).withIntent(NMsgIntent.ADD).asDebug());
+                SShPooledConnection newConn = new SShPooledConnection(connectionString, factory.apply(connectionString));
+                NLog.of(SshConnectionPool.class).log(NMsg.ofC("create ssh connection %s in %s", connectionString, s).withIntent(NMsgIntent.ADD).asDebug());
                 return newConn;
             }
         }
         // Pool full: wait for someone to return one
         try {
             SShPooledConnection take = idle.take();
-            NLog.of(SshConnectionPool.class).log(NMsg.ofC("acquire ssh connexion %s", connexionString).withIntent(NMsgIntent.REMOVE).asDebug());
+            NLog.of(SshConnectionPool.class).log(NMsg.ofC("acquire ssh connection %s", connectionString).withIntent(NMsgIntent.REMOVE).asDebug());
             return take;
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private synchronized BlockingQueue<SShPooledConnection> getIdle(NConnexionString connexionString) {
-        return idleMap.computeIfAbsent(connexionString, r -> new ArrayBlockingQueue<>(maxSize));
+    private synchronized BlockingQueue<SShPooledConnection> getIdle(NConnectionString connectionString) {
+        return idleMap.computeIfAbsent(connectionString, r -> new ArrayBlockingQueue<>(maxSize));
     }
 
 
     public synchronized void disposeOld(long timeoutMs) {
         long now = System.currentTimeMillis();
-        for (Iterator<Map.Entry<NConnexionString, BlockingQueue<SShPooledConnection>>> iterator = idleMap.entrySet().iterator(); iterator.hasNext(); ) {
-            Map.Entry<NConnexionString, BlockingQueue<SShPooledConnection>> e = iterator.next();
+        for (Iterator<Map.Entry<NConnectionString, BlockingQueue<SShPooledConnection>>> iterator = idleMap.entrySet().iterator(); iterator.hasNext(); ) {
+            Map.Entry<NConnectionString, BlockingQueue<SShPooledConnection>> e = iterator.next();
             BlockingQueue<SShPooledConnection> idle = e.getValue();
             for (Iterator<SShPooledConnection> iter = idle.iterator(); iter.hasNext(); ) {
                 SShPooledConnection conn = iter.next();
@@ -105,7 +105,7 @@ public class SshConnectionPool {
     }
 
     private void silentDispose(SShPooledConnection conn) {
-        NLog.of(SshConnectionPool.class).log(NMsg.ofC("dispose ssh connexion %s", conn.connexionString).withIntent(NMsgIntent.DISPOSE).asDebug());
+        NLog.of(SshConnectionPool.class).log(NMsg.ofC("dispose ssh connection %s", conn.connectionString).withIntent(NMsgIntent.DISPOSE).asDebug());
         try {
             conn.dispose();
         } catch (Exception ignored) {
@@ -115,7 +115,7 @@ public class SshConnectionPool {
 
     public synchronized void close() {
         timer.cancel();
-        for (Map.Entry<NConnexionString, BlockingQueue<SShPooledConnection>> e : idleMap.entrySet()) {
+        for (Map.Entry<NConnectionString, BlockingQueue<SShPooledConnection>> e : idleMap.entrySet()) {
             BlockingQueue<SShPooledConnection> idle = e.getValue();
             for (SShPooledConnection conn : idle) {
                 silentDispose(conn);
@@ -127,11 +127,11 @@ public class SshConnectionPool {
 
     private class SShPooledConnection extends SshConnectionAdapter {
         private long lastUsed;
-        NConnexionString connexionString;
+        NConnectionString connectionString;
 
-        public SShPooledConnection(NConnexionString connexionString, SshConnection connection) {
+        public SShPooledConnection(NConnectionString connectionString, SshConnection connection) {
             super(connection);
-            this.connexionString = connexionString;
+            this.connectionString = connectionString;
             lastUsed = System.currentTimeMillis();
         }
 
@@ -148,10 +148,10 @@ public class SshConnectionPool {
                 return;
             }
             reset();
-            if (!getIdle(connexionString).offer(this)) {
+            if (!getIdle(connectionString).offer(this)) {
                 silentDispose(this);
             } else {
-                NLog.of(SshConnectionPool.class).log(NMsg.ofC("close ssh connexion %s", connexionString).withIntent(NMsgIntent.ADD).asDebug());
+                NLog.of(SshConnectionPool.class).log(NMsg.ofC("close ssh connection %s", connectionString).withIntent(NMsgIntent.ADD).asDebug());
             }
         }
 

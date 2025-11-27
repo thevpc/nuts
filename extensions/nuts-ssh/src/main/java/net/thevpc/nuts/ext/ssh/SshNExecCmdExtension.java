@@ -11,9 +11,9 @@ import net.thevpc.nuts.command.NExecCmdExtension;
 import net.thevpc.nuts.command.NExecCmdExtensionContext;
 import net.thevpc.nuts.command.NExecutionType;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
-import net.thevpc.nuts.net.NConnexionString;
-import net.thevpc.nuts.net.NConnexionStringBuilder;
+import net.thevpc.nuts.net.DefaultNConnectionStringBuilder;
+import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
@@ -65,7 +65,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                 wOptions.setOutputFormatOptions(session.getOutputFormatOptions());
 
                 String[] executorOptions = execCommand.getExecutorOptions().toArray(new String[0]);
-                RemoteConnexionStringInfo k = RemoteConnexionStringInfo.of(execCommand.getConnexionString());
+                RemoteConnectionStringInfo k = RemoteConnectionStringInfo.of(execCommand.getConnectionString());
                 wOptions.setWorkspace(k.getWorkspaceName(this));
                 cmd.add(k.getJavaCommand(this));
                 cmd.add("-jar");
@@ -150,7 +150,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
     public int exec(NExecCmdExtensionContext context) {
         String target = context.getTarget();
         NAssert.requireNonBlank(target, "target");
-        NConnexionStringBuilder z = DefaultNConnexionStringBuilder.of(target).orNull();
+        NConnectionStringBuilder z = DefaultNConnectionStringBuilder.of(target).orNull();
         NAssert.requireNonBlank(z, "target");
         NLog log = NLog.of(SshNExecCmdExtension.class);
         log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
@@ -193,7 +193,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
     public int exec0(NExecCmdExtensionContext context) {
         String target = context.getTarget();
         NAssert.requireNonBlank(target, "target");
-        NConnexionStringBuilder z = DefaultNConnexionStringBuilder.of(target).orNull();
+        NConnectionStringBuilder z = DefaultNConnectionStringBuilder.of(target).orNull();
         NAssert.requireNonBlank(z, "target");
         NLog log = NLog.of(SshNExecCmdExtension.class);
         log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
@@ -207,19 +207,19 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
     public int getScore(NScorableContext context) {
         Object c = context.getCriteria();
         if (c instanceof String) {
-            NConnexionStringBuilder z = DefaultNConnexionStringBuilder.of((String) c).orNull();
+            NConnectionStringBuilder z = DefaultNConnectionStringBuilder.of((String) c).orNull();
             if (z != null && isSupportedProtocol(z.getProtocol())) {
                 return DEFAULT_SCORE;
             }
         }
-        if (c instanceof NConnexionStringBuilder) {
-            NConnexionStringBuilder z = (NConnexionStringBuilder) c;
+        if (c instanceof NConnectionStringBuilder) {
+            NConnectionStringBuilder z = (NConnectionStringBuilder) c;
             if (isSupportedProtocol(z.getProtocol())) {
                 return DEFAULT_SCORE;
             }
         }
-        if (c instanceof NConnexionString) {
-            NConnexionString z = (NConnexionString) c;
+        if (c instanceof NConnectionString) {
+            NConnectionString z = (NConnectionString) c;
             if (isSupportedProtocol(z.getProtocol())) {
                 return DEFAULT_SCORE;
             }

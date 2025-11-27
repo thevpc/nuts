@@ -9,7 +9,7 @@ import net.thevpc.nuts.command.NExecutionType;
 import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
@@ -49,7 +49,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     protected boolean failFast;
     protected Boolean bot;
     private long sleepMillis = 1000;
-    private String target;
+    private String connectionString;
     private boolean rawCommand;
 
     public AbstractNExecCmd() {
@@ -514,7 +514,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
         setFailFast(other.isFailFast());
         setExecutionType(other.getExecutionType());
         setRunAs(other.getRunAs());
-        setConnexionString(other.getConnexionString());
+        setConnectionString(other.getConnectionString());
         setDry(other.getDry());
         setBot(other.getBot());
         setRawCommand(other.isRawCommand());
@@ -670,7 +670,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
                 return cmdLine.matcher().matchFlag((v) -> setDry(v.booleanValue())).anyMatch();
             }
             case "--target": {
-                return cmdLine.matcher().matchEntry((v) -> this.setConnexionString(v.stringValue())).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> this.setConnectionString(v.stringValue())).anyMatch();
             }
             case "--rerun": {
                 return cmdLine.matcher().matchFlag((v) -> this.multipleRuns = v.booleanValue()).anyMatch();
@@ -814,31 +814,31 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
         return getCommandString();
     }
 
-    public String getConnexionString() {
-        return target;
+    public String getConnectionString() {
+        return connectionString;
     }
 
-    public NExecCmd setConnexionString(String host) {
-        this.target = host;
+    public NExecCmd setConnectionString(String host) {
+        this.connectionString = host;
         return this;
     }
 
     @Override
     public NExecCmd at(String host) {
-        return setConnexionString(host);
+        return setConnectionString(host);
     }
 
     @Override
-    public NExecCmd at(NConnexionString host) {
-        return setConnexionString(host);
+    public NExecCmd at(NConnectionString host) {
+        return setConnectionString(host);
     }
 
     @Override
-    public NExecCmd setConnexionString(NConnexionString target) {
+    public NExecCmd setConnectionString(NConnectionString target) {
         if (!NBlankable.isBlank(target.getHost())) {
-            this.target = target.toString();
+            this.connectionString = target.toString();
         } else {
-            this.target = null;
+            this.connectionString = null;
         }
         return this;
     }

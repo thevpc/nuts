@@ -11,6 +11,8 @@
   }, {
     "pattern":"\\QMETA-INF/services/java.time.zone.ZoneRulesProvider\\E"
   }, {
+    "pattern":"\\QMETA-INF/services/javax.xml.parsers.DocumentBuilderFactory\\E"
+  }, {
     "pattern":"\\QMETA-INF/services/net.thevpc.nuts.boot.NBootWorkspaceFactory\\E"
   }, {
     "pattern":"\\QMETA-INF/services/net.thevpc.nuts.spi.NComponent\\E"
@@ -18,6 +20,10 @@
     "pattern":"\\QMETA-INF/services/net.thevpc.nuts.spi.NPathFactorySPI\\E"
   }, {
     "pattern":"\\QMETA-INF/services/org/jline/terminal/provider/jansi\\E"
+  }, {
+    "pattern":"\\Qnet/thevpc/nuts/adjectives.txt\\E"
+  }, {
+    "pattern":"\\Qnet/thevpc/nuts/names.txt\\E"
   }, {
     "pattern":"\\Qnet/thevpc/nuts/runtime/highlighter-mappings.ini\\E"
   }, {
@@ -48,6 +54,8 @@
     "pattern":"java.desktop:\\Qsun/awt/resources/awt_en.properties\\E"
   }, {
     "pattern":"java.desktop:\\Qsun/awt/resources/awt_en_US.properties\\E"
+  }, {
+    "pattern":"java.xml:\\Qjdk/xml/internal/jdkcatalog/JDKCatalog.xml\\E"
   }, {
     "pattern":"jdk.internal.le:\\Qjdk/internal/org/jline/utils/capabilities.txt\\E"
   }, {
