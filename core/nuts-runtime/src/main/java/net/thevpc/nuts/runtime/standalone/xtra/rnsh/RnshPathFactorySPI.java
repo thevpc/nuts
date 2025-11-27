@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.rnsh;
 
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.NTempOutputStreamImpl;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
@@ -37,7 +37,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
                         || path.startsWith("rnsh-https:")
                         || path.startsWith("rnshs:")
         ) {
-            NConnexionString cnx = NConnexionString.get(path).orNull();
+            NConnectionString cnx = NConnectionString.get(path).orNull();
             if (cnx != null) {
                 return NScoredCallable.of(3, () -> new NServerPathSPI(cnx));
             }
@@ -60,20 +60,20 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
     }
 
     public static class NServerPathSPI implements NPathSPI {
-        final NConnexionString cnx;
+        final NConnectionString cnx;
         final RnshHttpClient client;
         final String remotePath;
 
-        private NServerPathSPI(NConnexionString cnx, String remotePath, RnshHttpClient client) {
+        private NServerPathSPI(NConnectionString cnx, String remotePath, RnshHttpClient client) {
             this.cnx = cnx;
             this.client = client;
             this.remotePath = remotePath;
         }
 
-        public NServerPathSPI(NConnexionString cnx) {
+        public NServerPathSPI(NConnectionString cnx) {
             this.cnx = cnx;
             this.client = new RnshHttpClient();
-            this.client.setConnexionString(cnx);
+            this.client.setConnectionString(cnx);
             this.remotePath = NStringUtils.firstNonBlank(cnx.getPath(), "/");
         }
 
