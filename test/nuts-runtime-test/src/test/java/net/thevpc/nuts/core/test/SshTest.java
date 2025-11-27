@@ -1,11 +1,11 @@
 package net.thevpc.nuts.core.test;
-
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.ext.ssh.SShConnectionBase;
+import net.thevpc.nuts.ext.ssh.SshConnection;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
 
 public class SshTest {
@@ -22,7 +22,7 @@ public class SshTest {
 
     @Test
     public void test02() {
-        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/toDeleteFolder")
+        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/test.txt")
                 .delete();
     }
 
@@ -36,7 +36,7 @@ public class SshTest {
     @Test
     public void test04() {
         NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/")
-                .walk().forEach(x->{
+                .walk().forEach(x -> {
                     TestUtils.println(x);
                 });
     }
@@ -44,10 +44,10 @@ public class SshTest {
     @Test
     public void test05() {
         TestUtils.println(NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/").type());
-        Assertions.assertEquals(NPathType.DIRECTORY,NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/").type());
+        Assertions.assertEquals(NPathType.DIRECTORY, NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/").type());
 
         TestUtils.println(NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/FolderNotFound").type());
-        Assertions.assertEquals(NPathType.FILE,NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/FolderNotFound").type());
+        Assertions.assertEquals(NPathType.FILE, NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/FolderNotFound").type());
 
         TestUtils.println(NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Programs").type());
         TestUtils.println(NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/tmp.txt").type());
@@ -60,24 +60,37 @@ public class SshTest {
 
     @Test
     public void test07() {
-        long l = NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp.txt").contentLength();
-        String en = NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp.txt").contentEncoding();
-        String ct = NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp.txt").getContentType();
-        String cs = NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp.txt").getCharset();
+        long l = NPath.of("ssh://Administrateur@fvm.veoni.tn/test.txt").contentLength();
+//        String en = NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp.txt").contentEncoding();
+//        String ct = NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp.txt").getContentType();
+//        String cs = NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp.txt").getCharset();
+        System.out.println(l);
     }
 
     @Test
     public void test08() {
-        NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp.txt")
-                .copyTo(NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp2.txt"))
-                ;
-        NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp2.txt").moveTo(
-                NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp3.txt")
-        );
-        NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp3.txt").delete();
+//        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/test")
+//                .copyTo(NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/meriem/"))
+//        ;
+        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/meriem").moveTo(
+               NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/test/")
+       );
+        //NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp3.txt").delete();
     }
 
+    @Test
+    public void test09() {
+        NPathType result = NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/test.txt")
+                .type();
+        System.out.println(result);
+    }
 
-
-
+    @Test
+    public void test10() {
+        NPath remotePath = NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/test.txt");
+        byte[] digest = remotePath.getDigest("SHA-256");
+        for (byte b : digest) {
+            System.out.print(b + " ");
+        }
+    }
 }

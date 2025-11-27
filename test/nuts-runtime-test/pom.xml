@@ -55,6 +55,12 @@
         <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>0.8.9</version></dependency>
         <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-runtime</artifactId><version>0.8.9.0</version></dependency>
         <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>5.8.2</version><scope>test</scope></dependency>
+        <dependency>
+            <groupId>net.thevpc.nuts</groupId>
+            <artifactId>nuts-ssh</artifactId>
+            <version>0.8.9.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <distributionManagement>
         <snapshotRepository>
