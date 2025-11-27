@@ -1,21 +1,14 @@
 package net.thevpc.nuts.ext.ssh;
 
 import com.jcraft.jsch.*;
-import net.thevpc.nuts.io.NPathType;
 import net.thevpc.nuts.io.NullOutputStream;
-import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
-import net.thevpc.nuts.net.NConnexionString;
-import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.platform.NShellFamily;
+import net.thevpc.nuts.net.DefaultNConnectionStringBuilder;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class JCshSShConnection extends SShConnectionBase {
 
@@ -23,13 +16,14 @@ public class JCshSShConnection extends SShConnectionBase {
     private boolean failFast;
 
     private boolean closed;
+    private boolean useFtp = true;
 
     public JCshSShConnection(String address) {
-        init(NConnexionString.of(address));
+        init(NConnectionString.of(address));
     }
 
-    public JCshSShConnection(NConnexionString connexionString) {
-        init(connexionString);
+    public JCshSShConnection(NConnectionString connectionString) {
+        init(connectionString);
     }
 
 
@@ -38,14 +32,14 @@ public class JCshSShConnection extends SShConnectionBase {
         failFast = false;
     }
 
-    private void init(NConnexionString connexionString) {
-        this.connexionString = connexionString;
-        String user = connexionString.getUserName();
-        String host = connexionString.getHost();
-        int port = NLiteral.of(connexionString.getPort()).asInt().orElse(-1);
-        String keyFilePath = NStringMapFormat.URL_FORMAT.parse(connexionString.getQueryString())
+    private void init(NConnectionString connectionString) {
+        this.connectionString = connectionString;
+        String user = connectionString.getUserName();
+        String host = connectionString.getHost();
+        int port = NLiteral.of(connectionString.getPort()).asInt().orElse(-1);
+        String keyFilePath = NStringMapFormat.URL_FORMAT.parse(connectionString.getQueryString())
                 .orElse(Collections.emptyMap()).get("key-file");
-        String keyPassword = connexionString.getPassword();
+        String keyPassword = connectionString.getPassword();
         try {
             JSch jsch = new JSch();
 
@@ -83,7 +77,7 @@ public class JCshSShConnection extends SShConnectionBase {
         } catch (JSchException e) {
             //
             throw new UncheckedIOException(new IOException(e.getMessage() + " (" +
-                    new DefaultNConnexionStringBuilder().setUserName(user).setHost(host).setPort(String.valueOf(port)).setPassword(keyPassword).setQueryString(
+                    new DefaultNConnectionStringBuilder().setUserName(user).setHost(host).setPort(String.valueOf(port)).setPassword(keyPassword).setQueryString(
                             keyFilePath == null ? null : NStringMapFormat.URL_FORMAT
                                     .format(
                                             NMaps.of("key-file", keyFilePath)
@@ -131,38 +125,6 @@ public class JCshSShConnection extends SShConnectionBase {
 //        }
 //        return this;
 //    }
-
-    public static int checkAck(InputStream in) throws IOException {
-        int b = in.read();
-        // b may be 0 for success,
-        //          1 for error,
-        //          2 for fatal error,
-        //         -1
-        if (b == 0) {
-            return b;
-        }
-        if (b == -1) {
-            return b;
-        }
-
-        if (b == 1 || b == 2) {
-            StringBuffer sb = new StringBuffer();
-            int c;
-            do {
-                c = in.read();
-                sb.append((char) c);
-            } while (c != '\n');
-            if (b == 1) { // error
-                //err.print(sb.toString());
-            }
-            if (b == 2) { // fatal error
-                //err.print(sb.toString());
-            }
-        }
-        return b;
-    }
-
-
 
 
 
@@ -258,6 +220,28 @@ public class JCshSShConnection extends SShConnectionBase {
 
     @Override
     public byte[] readRemoteFile(String from) {
+        if (useFtp) {
+            return readRemoteFileSftp(from);
+        }
+        return readRemoteFileScp(from);
+    }
+
+    protected byte[] readRemoteFileSftp(String from) {
+        try {
+            ChannelSftp sftp = (ChannelSftp) sshSession.openChannel("sftp");
+            sftp.connect();
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            sftp.get(from, output);
+            sftp.disconnect();
+            return output.toByteArray();
+        } catch (SftpException ex2) {
+            throw new UncheckedIOException(new IOException(ex2));
+        } catch (JSchException ex) {
+            throw new UncheckedIOException(new IOException(ex));
+        }
+    }
+
+    protected byte[] readRemoteFileScp(String from) {
         try {
 //            for (SshListener listener : listeners) {
 //                listener.onGet(from, to, mkdir);
@@ -286,7 +270,7 @@ public class JCshSShConnection extends SShConnectionBase {
 
             ByteArrayOutputStream fos = new ByteArrayOutputStream();
             while (true) {
-                int c = checkAck(in);
+                int c = SshUtils.checkAck(in);
                 if (c != 'C') {
                     break;
                 }
@@ -341,7 +325,7 @@ public class JCshSShConnection extends SShConnectionBase {
                     }
                 }
 
-                if (checkAck(in) != 0) {
+                if (SshUtils.checkAck(in) != 0) {
                     return fos.toByteArray();
                 }
 
@@ -370,6 +354,54 @@ public class JCshSShConnection extends SShConnectionBase {
 
     @Override
     public void copyRemoteToLocal(String from, String to, boolean mkdir) {
+        if(useFtp){
+            copyRemoteToLocalSftp(from,to,mkdir);
+        }else{
+            copyRemoteToLocalScp(from,to,mkdir);
+        }
+    }
+
+    protected void copyRemoteToLocalSftp(String from, String to, boolean mkdir) {
+        try {
+            for (SshListener listener : listeners) {
+                listener.onGet(from, to, mkdir);
+            }
+
+            // Ensure parent directories exist locally if requested
+            if (mkdir) {
+                File parent = new File(to).getParentFile();
+                if (parent != null && !parent.exists()) {
+                    if (!parent.mkdirs()) {
+                        throw new IOException("Failed to create directories: " + parent);
+                    }
+                }
+            }
+
+            ChannelSftp sftp = (ChannelSftp) sshSession.openChannel("sftp");
+            sftp.connect();
+
+            // If 'to' is a directory, append the filename
+            File localFile = new File(to);
+            if (localFile.isDirectory()) {
+                String filename = new File(from).getName();
+                localFile = new File(localFile, filename);
+            }
+
+            try (FileOutputStream fos = new FileOutputStream(localFile)) {
+                sftp.get(from, fos);
+            }
+
+            sftp.disconnect();
+        } catch (JSchException e) {
+            throw new UncheckedIOException(new IOException("SSH error", e));
+        } catch (SftpException e) {
+            throw new UncheckedIOException(new IOException("SFTP error", e));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    protected void copyRemoteToLocalScp(String from, String to, boolean mkdir) {
         try {
             for (SshListener listener : listeners) {
                 listener.onGet(from, to, mkdir);
@@ -406,7 +438,7 @@ public class JCshSShConnection extends SShConnectionBase {
             out.flush();
 
             while (true) {
-                int c = checkAck(in);
+                int c = SshUtils.checkAck(in);
                 if (c != 'C') {
                     break;
                 }
@@ -462,7 +494,7 @@ public class JCshSShConnection extends SShConnectionBase {
                     }
                 }
 
-                if (checkAck(in) != 0) {
+                if (SshUtils.checkAck(in) != 0) {
                     return;
                 }
 
@@ -536,7 +568,7 @@ public class JCshSShConnection extends SShConnectionBase {
 
             channel.connect();
 
-            if (checkAck(in) != 0) {
+            if (SshUtils.checkAck(in) != 0) {
                 return;
             }
 
@@ -549,7 +581,7 @@ public class JCshSShConnection extends SShConnectionBase {
                 command += (" " + (_lfile.lastModified() / 1000) + " 0\n");
                 out.write(command.getBytes());
                 out.flush();
-                if (checkAck(in) != 0) {
+                if (SshUtils.checkAck(in) != 0) {
                     return;
                 }
             }
@@ -567,7 +599,7 @@ public class JCshSShConnection extends SShConnectionBase {
             out.write(command.getBytes());
             out.flush();
 
-            if (checkAck(in) != 0) {
+            if (SshUtils.checkAck(in) != 0) {
                 return;
             }
 
@@ -587,7 +619,7 @@ public class JCshSShConnection extends SShConnectionBase {
             out.write(buf, 0, 1);
             out.flush();
 
-            if (checkAck(in) != 0) {
+            if (SshUtils.checkAck(in) != 0) {
                 return;
             }
             out.close();
