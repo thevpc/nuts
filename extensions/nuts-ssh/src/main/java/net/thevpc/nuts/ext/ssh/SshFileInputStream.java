@@ -2,7 +2,7 @@ package net.thevpc.nuts.ext.ssh;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSchException;
-import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.net.NConnectionString;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,7 +17,7 @@ public class SshFileInputStream extends DynamicInputStream {
     private InputStream in;
     private boolean closeConnection;
     private SshConnection connection;
-    public SshFileInputStream(NConnexionString path) {
+    public SshFileInputStream(NConnectionString path) {
         super(4096);
         this.from = path.getPath();
         init = false;
@@ -60,7 +60,7 @@ public class SshFileInputStream extends DynamicInputStream {
             buf[0] = 0;
             out.write(buf, 0, 1);
             out.flush();
-            int c = JCshSShConnection.checkAck(in);
+            int c = SshUtils.checkAck(in);
             if (c != 'C') {
                 return false;
             }
@@ -112,7 +112,7 @@ public class SshFileInputStream extends DynamicInputStream {
 
     @Override
     public void close() throws IOException {
-        if (JCshSShConnection.checkAck(in) != 0) {
+        if (SshUtils.checkAck(in) != 0) {
             //System.exit(0);
             if (closeConnection) {
                 connection.close();
