@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class NutsInstaller extends WizardBase {
-    private final static String VERSION = "0.8.7.0";
+    private final static String VERSION = "0.8.9.0";
     private final LoadingPanel loading = new LoadingPanel();
 
     public NutsInstaller() {
