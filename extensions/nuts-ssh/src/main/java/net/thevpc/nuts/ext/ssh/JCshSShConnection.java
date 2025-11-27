@@ -218,13 +218,13 @@ public class JCshSShConnection extends SShConnectionBase {
         return status;
     }
 
-    @Override
-    public byte[] readRemoteFile(String from) {
-        if (useFtp) {
-            return readRemoteFileSftp(from);
-        }
-        return readRemoteFileScp(from);
-    }
+//    @Override
+//    public byte[] readRemoteFile(String from) {
+//        if (useFtp) {
+//            return readRemoteFileSftp(from);
+//        }
+//        return readRemoteFileScp(from);
+//    }
 
     protected byte[] readRemoteFileSftp(String from) {
         try {
@@ -522,12 +522,19 @@ public class JCshSShConnection extends SShConnectionBase {
 
     @Override
     public InputStream getInputStream(String from) {
-        return getInputStream(from, false);
+        if(useFtp){
+            return new SshFileInputStreamSftp(connectionString.withPath(from));
+        }else {
+            return new SshFileInputStreamScp(connectionString.withPath(from));
+        }
     }
 
     @Override
-    public InputStream getInputStream(String from, boolean closeConnection) {
-        return new SshFileInputStream(this, from, closeConnection);
+    public OutputStream getOutputStream(String from) {
+        if(useFtp){
+            return new SshFileOutputStreamSftp(connectionString.withPath(from),false,true);
+        }
+        return new SshFileOutputStreamScp(connectionString.withPath(from),false);
     }
 
     @Override
