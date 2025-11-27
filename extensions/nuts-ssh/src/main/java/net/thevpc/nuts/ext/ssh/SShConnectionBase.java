@@ -1,12 +1,13 @@
 package net.thevpc.nuts.ext.ssh;
 
-//import jdk.internal.foreign.abi.aarch64.linux.LinuxAArch64Linker;
+
 import net.thevpc.nuts.io.NPathType;
 import net.thevpc.nuts.net.NConnexionString;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.util.*;
 
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.text.BreakIterator;
 import java.util.ArrayList;
@@ -127,9 +128,26 @@ public abstract class SShConnectionBase implements SshConnection {
 
     @Override
     public int mv(String from, String to) {
-        return execArrayCommandGrabbed("mv", from, to).code();
-    }
+        switch(resolveOsFamily()){
+            case WINDOWS:
+                String source = from;
+                String  destination = to ;
+                if (source.startsWith("/") && source.length() > 2) {
+                    source = source.substring(1);
+                }
+                if (destination.startsWith("/") && to.length() > 2) {
+                    destination = destination.substring(1);
+                }
+                source = ensureWindowPath(source);
+                destination = ensureWindowPath(destination);
+                return execArrayCommandGrabbed("powershell", "-Command" , "Move-Item", source, destination, "-Verbose").code();
 
+            case LINUX:
+                return execArrayCommandGrabbed("mv", from, to).code();
+            default:
+                return -1 ;
+    }
+}
     @Override
     public IOResult execArrayCommandGrabbed(String... command) {
         String sb = cmdArrayToString(command);
@@ -559,7 +577,6 @@ public abstract class SShConnectionBase implements SshConnection {
     }
 
     public void cp(String path, String path1, boolean recursive) {
-
         switch (resolveOsFamily()) {
             case WINDOWS: {
                 String from = path;
@@ -700,7 +717,7 @@ public abstract class SShConnectionBase implements SshConnection {
                 String psCmd = "(Get-FileHash -Path '" + basePath + "' -Algorithm " + psAlgo + ").Hash" ;
                 IOResult r = execArrayCommandGrabbed("powershell", "-Command", psCmd);
                 if (r.code() == 0) {
-                    String z = NStringUtils.trim(r.outString());
+                    String z = r.outString();
                     return NHex.toBytes(z);
                 } else {
                     return null;

@@ -8,7 +8,6 @@ import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
 import net.thevpc.nuts.net.NConnexionStringBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
 
 public class SshTest {
@@ -72,12 +71,12 @@ public class SshTest {
 
     @Test
     public void test08() {
-        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/test")
-                .copyTo(NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/meriem/"))
-        ;
-//        NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp2.txt").moveTo(
-//                NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp3.txt")
-//        );
+//        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/test")
+//                .copyTo(NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/meriem/"))
+//        ;
+        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/meriem").moveTo(
+               NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/test/")
+       );
         //NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp3.txt").delete();
     }
 
@@ -92,6 +91,8 @@ public class SshTest {
     public void test10() {
         NPath remotePath = NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/test.txt");
         byte[] digest = remotePath.getDigest("SHA-256");
-        TestUtils.println(digest);
+        for (byte b : digest) {
+            System.out.print(b + " ");
+        }
     }
 }
