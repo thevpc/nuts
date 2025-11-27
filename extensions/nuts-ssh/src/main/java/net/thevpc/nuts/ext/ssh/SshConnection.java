@@ -4,6 +4,7 @@ import com.jcraft.jsch.Channel;
 import net.thevpc.nuts.io.NPathType;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 public interface SshConnection extends AutoCloseable {
@@ -33,15 +34,15 @@ public interface SshConnection extends AutoCloseable {
 
     void mkdir(String from, boolean p);
 
-    byte[] readRemoteFile(String from);
+//    byte[] readRemoteFile(String from);
 
-    void copyRemoteToLocal(String from, String to, boolean mkdir);
+//    void copyRemoteToLocal(String from, String to, boolean mkdir);
 
     InputStream getInputStream(String from);
 
-    InputStream getInputStream(String from, boolean closeConnection);
+    OutputStream getOutputStream(String from);
 
-    void copyLocalToRemote(String from, String to, boolean mkdirs);
+//    void copyLocalToRemote(String from, String to, boolean mkdirs);
 
     boolean isAlive();
 
