@@ -288,20 +288,16 @@ class SshNPath implements NPathSPI {
 
     @Override
     public InputStream getInputStream(NPath basePath, NPathOption... options) {
-        NPathType ft = type(basePath);
-        if (ft == NPathType.NOT_FOUND) {
-            throw new NIOException(NMsg.ofC("path not found %s", basePath));
+        try (SshConnection session = prepareSshConnection()) {
+            return session.getInputStream(path.getPath());
         }
-        if (ft == NPathType.DIRECTORY) {
-            throw new NIOException(NMsg.ofC("cannot open directory %s", basePath));
-        }
-
-        return new SshFileInputStream(path);
     }
 
     @Override
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
-        return new SshFileOutputStream2(path, false);
+        try (SshConnection session = prepareSshConnection()) {
+            return session.getOutputStream(path.getPath());
+        }
     }
 
     public void delete(NPath basePath, boolean recurse) {
@@ -421,7 +417,7 @@ class SshNPath implements NPathSPI {
         EnumSet<NPathOption> optionsSet = EnumSet.noneOf(NPathOption.class);
         optionsSet.addAll(Arrays.asList(options));
         try (SshConnection c = prepareSshConnection()) {
-            List<String> ss=c.walk(path.getPath(),true,maxDepth);
+            List<String> ss = c.walk(path.getPath(), true, maxDepth);
             return NStream.ofIterable(ss).map(
                     NFunction.of(
                             (String x) -> {
@@ -481,7 +477,7 @@ class SshNPath implements NPathSPI {
                 if (ssh1.path.withPath("/").equals(ssh2.path.withPath("/"))) {
                     // same filesystem
                     try (SshConnection session = prepareSshConnection()) {
-                        session.cp(ssh1.path.getPath(), ssh2.path.getPath(),true);
+                        session.cp(ssh1.path.getPath(), ssh2.path.getPath(), true);
                         return true;
                     }
                 }
