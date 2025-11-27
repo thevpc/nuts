@@ -4,6 +4,7 @@ import com.jcraft.jsch.Channel;
 import net.thevpc.nuts.io.NPathType;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 public class SshConnectionAdapter implements SshConnection {
@@ -79,15 +80,15 @@ public class SshConnectionAdapter implements SshConnection {
         getConnection().mkdir(from, p);
     }
 
-    @Override
-    public byte[] readRemoteFile(String from) {
-        return getConnection().readRemoteFile(from);
-    }
+//    @Override
+//    public byte[] readRemoteFile(String from) {
+//        return getConnection().readRemoteFile(from);
+//    }
 
-    @Override
-    public void copyRemoteToLocal(String from, String to, boolean mkdir) {
-        getConnection().copyRemoteToLocal(from, to, mkdir);
-    }
+//    @Override
+//    public void copyRemoteToLocal(String from, String to, boolean mkdir) {
+//        getConnection().copyRemoteToLocal(from, to, mkdir);
+//    }
 
     @Override
     public InputStream getInputStream(String from) {
@@ -95,13 +96,8 @@ public class SshConnectionAdapter implements SshConnection {
     }
 
     @Override
-    public InputStream getInputStream(String from, boolean closeConnection) {
-        return getConnection().getInputStream(from, closeConnection);
-    }
-
-    @Override
-    public void copyLocalToRemote(String from, String to, boolean mkdirs) {
-        getConnection().copyLocalToRemote(from, to, mkdirs);
+    public OutputStream getOutputStream(String from) {
+        return getConnection().getOutputStream(from);
     }
 
     @Override
