@@ -1532,7 +1532,7 @@ public class NMsg implements NBlankable {
                     if (content.containsKey(e)) {
                         throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("duplicate key %s", e));
                     }
-                    content.put(e, new ConstSupplier<>(param.getValue()));
+                    content.put(e, param.getValue());
                 }
             }
         }
