@@ -1,15 +1,17 @@
 package net.thevpc.nuts.ext.ssh;
 
 
+import net.thevpc.nuts.elem.NElementNotFoundException;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathType;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NShellFamily;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -128,26 +130,19 @@ public abstract class SShConnectionBase implements SshConnection {
 
     @Override
     public int mv(String from, String to) {
-        switch(resolveOsFamily()){
+        switch (resolveOsFamily()) {
             case WINDOWS:
-                String source = from;
-                String  destination = to ;
-                if (source.startsWith("/") && source.length() > 2) {
-                    source = source.substring(1);
-                }
-                if (destination.startsWith("/") && to.length() > 2) {
-                    destination = destination.substring(1);
-                }
-                source = ensureWindowPath(source);
-                destination = ensureWindowPath(destination);
-                return execArrayCommandGrabbed("powershell", "-Command" , "Move-Item", source, destination, "-Verbose").code();
+                String source = ensureWindowPath(from);
+                String destination = ensureWindowPath(to);
+                return execArrayCommandGrabbed("powershell", "-Command", "Move-Item", source, destination, "-Verbose").code();
 
             case LINUX:
                 return execArrayCommandGrabbed("mv", from, to).code();
             default:
-                return -1 ;
+                return -1;
+        }
     }
-}
+
     @Override
     public IOResult execArrayCommandGrabbed(String... command) {
         String sb = cmdArrayToString(command);
@@ -173,42 +168,10 @@ public abstract class SShConnectionBase implements SshConnection {
     public void rm(String from, boolean R) {
         NOsFamily nOsFamily = resolveOsFamily();
         if (nOsFamily.isWindow()) {
-//            NPathType pathType = type(from);
-//            switch (pathType) {
-//                case DIRECTORY:
-//                    switch (resolveShellFamily()) {
-//                        case WIN_CMD:
-//                            String cmd = "rmdir " + (R ? "/s " : "") + "/q \"" + from + "\"";
-//                            execArrayCommandGrabbed(cmd);
-//                            break;
-//                        case WIN_POWER_SHELL:
-//                            String psCmd = "powershell -Command \"Remove-Item -Force " +
-//                                    (R ? "-Recurse " : "") + "'" + from + "'\"";
-//                            execArrayCommandGrabbed(psCmd);
-//                            break;
-//                    }
-//                    break;
-//                case FILE:
-//                    switch (resolveShellFamily()) {
-//                        case WIN_CMD:
-//                            execArrayCommandGrabbed("del /q /f \"" + from + "\"");
-//                            break;
-//                        case WIN_POWER_SHELL:
-//                            execArrayCommandGrabbed("powershell -Command \"Remove-Item -Force '" + from + "'\"");
-//                            break;
-//                    }
-//                    break;
-//                case NOT_FOUND:
-//                    System.out.println("-1");
-//                    break;
-//            }
-            if (from.startsWith("/") && from.length() > 2) {
-                from = from.substring(1);
-            }
             from = ensureWindowPath(from);
             NPathType pathType = type(from);
             switch (pathType) {
-                case DIRECTORY:
+                case DIRECTORY: {
                     switch (resolveShellFamily()) {
                         case WIN_CMD:
                             IOResult result = execArrayCommandGrabbed(
@@ -229,7 +192,8 @@ public abstract class SShConnectionBase implements SshConnection {
                             break;
                     }
                     break;
-                case FILE:
+                }
+                case FILE: {
                     switch (resolveShellFamily()) {
                         case WIN_CMD:
                             IOResult fileResult = execArrayCommandGrabbed(
@@ -249,8 +213,10 @@ public abstract class SShConnectionBase implements SshConnection {
                             break;
                     }
                     break;
-                case NOT_FOUND:
-                    System.out.println("Path not found: " + from);
+                }
+                case NOT_FOUND: {
+                    throw new NElementNotFoundException(NMsg.ofC("Path not found: %s", from));
+                }
             }
         } else {
             execArrayCommandGrabbed("rm " + (R ? "-R " : "") + from);
@@ -261,26 +227,6 @@ public abstract class SShConnectionBase implements SshConnection {
     public NPathType type(String path) {
         NOsFamily nOsFamily = resolveOsFamily();
         if (nOsFamily.isWindow()) {
-//            if (path.startsWith("/") && path.length() > 2 && path.charAt(2) == ':') {
-//                path = path.substring(1);
-//            }
-//            path = ensureWindowPath(path);
-//            String cmd = "powershell -Command \"if (Test-Path '" + path+ "') { if ((Get-Item '" +path + "').PSIsContainer) { 'Directory' } else { 'File' } } else { 'NotExist' }\"";
-//            IOResult i = execArrayCommandGrabbed(cmd);
-//            if (i.code() != 0) {
-//                return null;
-//            }
-//            String s = i.outString().trim();
-//            if (s.equals("Directory")) {
-//                return NPathType.DIRECTORY;
-//            } else if (s.equals("File")) {
-//                return NPathType.FILE;
-//            } else {
-//                return NPathType.NOT_FOUND;
-
-            if (path.startsWith("/") && path.length() > 2) {
-                path = path.substring(1);
-            }
             path = ensureWindowPath(path);
             String psCommand = "if (Test-Path '" + path + "') { if ((Get-Item '" + path + "').PSIsContainer) { 'Directory' } else { 'File' } } else { 'NotExist' }";
             IOResult i = execArrayCommandGrabbed(
@@ -329,9 +275,21 @@ public abstract class SShConnectionBase implements SshConnection {
 
     @Override
     public void mkdir(String from, boolean p) {
-        NOsFamily nOsFamily = resolveOsFamily();
         switch (resolveShellFamily()) {
             case WIN_CMD: {
+                if(!p) {
+                    NPath parent = NPath.of(from).getParent();
+                    if (parent != null) {
+                        NPathType d = type(parent.toString());
+                        if (d != NPathType.DIRECTORY) {
+                            if (d == NPathType.NOT_FOUND) {
+                                throw new NElementNotFoundException(NMsg.ofC("Path not found: %s", parent));
+                            } else {
+                                throw new NElementNotFoundException(NMsg.ofC("Path not a directory : %s", parent));
+                            }
+                        }
+                    }
+                }
                 execArrayCommandGrabbed("mkdir", ensureWindowPath(from));
                 break;
             }
@@ -339,8 +297,20 @@ public abstract class SShConnectionBase implements SshConnection {
                 if (p) {
                     execArrayCommandGrabbed("mkdir", "-p", ensureWindowPath(from));
                 } else {
+                    NPath parent = NPath.of(from).getParent();
+                    if (parent != null) {
+                        NPathType d = type(parent.toString());
+                        if (d != NPathType.DIRECTORY) {
+                            if (d == NPathType.NOT_FOUND) {
+                                throw new NElementNotFoundException(NMsg.ofC("Path not found: %s", parent));
+                            } else {
+                                throw new NElementNotFoundException(NMsg.ofC("Path not a directory : %s", parent));
+                            }
+                        }
+                    }
                     execArrayCommandGrabbed("mkdir", ensureWindowPath(from));
                 }
+                break;
             }
             default: {
                 if (p) {
@@ -469,23 +439,10 @@ public abstract class SShConnectionBase implements SshConnection {
     @Override
     public long contentLength(String basePath) {
         switch (resolveOsFamily()) {
-            case WINDOWS:
-//                IOResult i = execStringCommandGrabbed("powershell -command (Get-Item " + basePath + ").Length");
-//                if (i.code() != 0) {
-//                    return -1;
-//                }
-//                String outputString_w = i.outString();
-//                NOptional<Long> size_windows = NLiteral.of(outputString_w.trim()).asLong();
-//                if (size_windows.isPresent()) {
-//                    return size_windows.get();
-//                }
-//                return -1;
-                if (basePath.startsWith("/") && basePath.length() > 2) {
-                    basePath = basePath.substring(1);
-                }
+            case WINDOWS: {
                 basePath = ensureWindowPath(basePath);
 
-                String psCmd = "(Get-Item -LiteralPath '" + basePath + "').Length";
+                String psCmd = "$ErrorActionPreference='Stop';(Get-Item -LiteralPath '" + basePath + "').Length";
                 IOResult i = execArrayCommandGrabbed(
                         "powershell", "-Command", psCmd
                 );
@@ -500,7 +457,8 @@ public abstract class SShConnectionBase implements SshConnection {
                     return size_windows.get();
                 }
                 return -1;
-            case LINUX:
+            }
+            case LINUX: {
                 IOResult j = execStringCommandGrabbed("ls -l " + basePath);
                 if (j.code() != 0) {
                     return -1;
@@ -514,8 +472,10 @@ public abstract class SShConnectionBase implements SshConnection {
                     }
                 }
                 return -1;
-            default:
+            }
+            default: {
                 return -1;
+            }
         }
     }
 
@@ -714,7 +674,7 @@ public abstract class SShConnectionBase implements SshConnection {
                     default:
                         return null;
                 }
-                String psCmd = "(Get-FileHash -Path '" + basePath + "' -Algorithm " + psAlgo + ").Hash" ;
+                String psCmd = "(Get-FileHash -Path '" + basePath + "' -Algorithm " + psAlgo + ").Hash";
                 IOResult r = execArrayCommandGrabbed("powershell", "-Command", psCmd);
                 if (r.code() == 0) {
                     String z = r.outString();
@@ -759,7 +719,7 @@ public abstract class SShConnectionBase implements SshConnection {
                 }
                 return null;
             default:
-                 return null;
+                return null;
         }
     }
 }
