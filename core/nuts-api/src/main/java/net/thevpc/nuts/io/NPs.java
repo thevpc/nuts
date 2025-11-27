@@ -27,7 +27,7 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.platform.NPlatformFamily;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.spi.NComponent;
 
@@ -103,26 +103,48 @@ public interface NPs extends NComponent {
     NPs failFast();
 
     /**
-     * return host connexion string. when host is not blank, this connexion
+     * return host connection string. when host is not blank, this connection
      * string will be used to connect to a remote host for execution
      *
      * @return host
      * @since 0.8.4
      */
-    String getConnexionString();
+    String getConnectionString();
 
     /**
-     * update host connexion string. when host is not blank, this connexion
+     * update host connection string. when host is not blank, this connection
      * string will be used to connect to a remote host for execution
      *
      * @param host host
      * @return {@code this} instance
      */
-    NPs setConnexionString(String host);
-    NPs setConnexionString(NConnexionString host);
+    NPs setConnectionString(String host);
 
+    /**
+     * update host connection string. when host is not blank, this connection
+     * string will be used to connect to a remote host for execution
+     *
+     * @param host host as connection string
+     * @return {@code this} instance
+     */
+    NPs setConnectionString(NConnectionString host);
+
+    /**
+     * update host connection string. when host is not blank, this connection
+     * string will be used to connect to a remote host for execution
+     *
+     * @param host host as connection string
+     * @return {@code this} instance
+     */
     NPs at(String host);
 
-    NPs at(NConnexionString host);
+    /**
+     * update host connection string. when host is not blank, this connection
+     * string will be used to connect to a remote host for execution
+     *
+     * @param host host as connection string
+     * @return {@code this} instance
+     */
+    NPs at(NConnectionString host);
 
 }
