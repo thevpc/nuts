@@ -15,17 +15,17 @@ import java.util.stream.Collectors;
 
 public class RnshHttpClient {
     public static final String CONTEXT_PATH_PARAM = "context";
-    private NConnexionString connexionString;
+    private NConnectionString connectionString;
     private LoginResult loginResult;
     private int accessTokenSafePeriod = 5000;
     private int refreshTokenSafePeriod = 30000;
 
-    public NConnexionString getConnexionString() {
-        return connexionString;
+    public NConnectionString getConnectionString() {
+        return connectionString;
     }
 
-    public RnshHttpClient setConnexionString(NConnexionString connexionString) {
-        this.connexionString = connexionString;
+    public RnshHttpClient setConnectionString(NConnectionString connectionString) {
+        this.connectionString = connectionString;
         return this;
     }
 
@@ -182,7 +182,7 @@ public class RnshHttpClient {
             }
         }
         try {
-            login(connexionString.getUserName(), connexionString.getPassword());
+            login(connectionString.getUserName(), connectionString.getPassword());
             return true;
         } catch (Exception e) {
             return false;
@@ -209,15 +209,15 @@ public class RnshHttpClient {
                 //
             }
         }
-        login(connexionString.getUserName(), connexionString.getPassword());
+        login(connectionString.getUserName(), connectionString.getPassword());
         return this;
     }
 
-    private NConnexionString toSafeConnexionString(NConnexionString connexionString) {
-        if (connexionString == null) {
-            return new DefaultNConnexionString();
+    private NConnectionString toSafeConnectionString(NConnectionString connectionString) {
+        if (connectionString == null) {
+            return new DefaultNConnectionString();
         }
-        return connexionString.builder().setPassword("***").build();
+        return connectionString.builder().setPassword("***").build();
     }
 
     public static class LoginResult {
@@ -286,9 +286,9 @@ public class RnshHttpClient {
                 }
             }
         } else {
-            throw new NIllegalArgumentException(NMsg.ofC("unable to login to %s", toSafeConnexionString(resolveConnexionString())));
+            throw new NIllegalArgumentException(NMsg.ofC("unable to login to %s", toSafeConnectionString(resolveConnectionString())));
         }
-        throw new NIllegalArgumentException(NMsg.ofC("unable to login to %s", toSafeConnexionString(resolveConnexionString())));
+        throw new NIllegalArgumentException(NMsg.ofC("unable to login to %s", toSafeConnectionString(resolveConnectionString())));
     }
 
     private void refreshToken() {
@@ -318,9 +318,9 @@ public class RnshHttpClient {
                 }
             }
         } else {
-            throw new NIllegalArgumentException(NMsg.ofC("unable to login to %s", toSafeConnexionString(resolveConnexionString())));
+            throw new NIllegalArgumentException(NMsg.ofC("unable to login to %s", toSafeConnectionString(resolveConnectionString())));
         }
-        throw new NIllegalArgumentException(NMsg.ofC("unable to login to %s", toSafeConnexionString(resolveConnexionString())));
+        throw new NIllegalArgumentException(NMsg.ofC("unable to login to %s", toSafeConnectionString(resolveConnectionString())));
     }
 
     private void prepareSecurity(NWebRequest r) {
@@ -331,8 +331,8 @@ public class RnshHttpClient {
         }
     }
 
-    private NConnexionString resolveConnexionString() {
-        NConnexionStringBuilder c = connexionString == null ? new DefaultNConnexionStringBuilder() : connexionString.builder();
+    private NConnectionString resolveConnectionString() {
+        NConnectionStringBuilder c = connectionString == null ? new DefaultNConnectionStringBuilder() : connectionString.builder();
         if (NBlankable.isBlank(c.getHost())) {
             c.setHost("localhost");
         }
@@ -351,8 +351,8 @@ public class RnshHttpClient {
     }
 
     private String resolveUrl(String extra) {
-        NConnexionString c = resolveConnexionString();
-        DefaultNConnexionStringBuilder c2 = new DefaultNConnexionStringBuilder();
+        NConnectionString c = resolveConnectionString();
+        DefaultNConnectionStringBuilder c2 = new DefaultNConnectionStringBuilder();
         String context = NOptional.ofFirst(c.getQueryMap().orElse(new HashMap<>()).get(CONTEXT_PATH_PARAM)).orElse("/");
         c2.setProtocol("https");
         switch (c.getProtocol()) {
