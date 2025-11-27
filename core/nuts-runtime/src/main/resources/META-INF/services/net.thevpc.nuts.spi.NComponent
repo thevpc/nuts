@@ -158,7 +158,7 @@ net.thevpc.nuts.runtime.standalone.xtra.compress.NUncompressGzip
 
 
 net.thevpc.nuts.runtime.standalone.xtra.rnsh.RnshExecCmdExtension
-net.thevpc.nuts.runtime.standalone.util.DefaultNConnexionStringBuilderFactory
+net.thevpc.nuts.runtime.standalone.util.DefaultNConnectionStringBuilderFactory
 
 net.thevpc.nuts.runtime.standalone.definition.NDefinitionFactoryImpl
 net.thevpc.nuts.runtime.standalone.text.art.NTextArtImpl
