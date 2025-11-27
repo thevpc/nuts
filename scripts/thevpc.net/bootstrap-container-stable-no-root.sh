@@ -2,7 +2,7 @@
 set -e
 
 # --- Environment variables with defaults ---
-NUTS_VERSION=${NUTS_VERSION:-0.8.7}
+NUTS_VERSION=${NUTS_VERSION:-0.8.8}
 NUTS_USERNAME=${NUTS_USERNAME:-nuts}
 NUTS_ARGS=("$@")
 
