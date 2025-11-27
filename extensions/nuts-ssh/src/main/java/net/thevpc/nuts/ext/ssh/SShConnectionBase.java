@@ -677,6 +677,10 @@ public abstract class SShConnectionBase implements SshConnection {
         switch (resolveOsFamily()) {
             case WINDOWS:
                 String psAlgo;
+                if (basePath.startsWith("/") && basePath.length() > 2) {
+                    basePath = basePath.substring(1);
+                }
+                basePath = ensureWindowPath(basePath);
                 switch (algo.toUpperCase()) {
                     case "SHA-1":
                         psAlgo = "SHA1";
@@ -693,7 +697,7 @@ public abstract class SShConnectionBase implements SshConnection {
                     default:
                         return null;
                 }
-                String psCmd = "Get-FileHash -Path '" + basePath + "' -Algorithm " + psAlgo ;
+                String psCmd = "(Get-FileHash -Path '" + basePath + "' -Algorithm " + psAlgo + ").Hash" ;
                 IOResult r = execArrayCommandGrabbed("powershell", "-Command", psCmd);
                 if (r.code() == 0) {
                     String z = NStringUtils.trim(r.outString());
@@ -701,7 +705,6 @@ public abstract class SShConnectionBase implements SshConnection {
                 } else {
                     return null;
                 }
-
             case LINUX:
                 String cmdsum = null;
                 switch (algo) {

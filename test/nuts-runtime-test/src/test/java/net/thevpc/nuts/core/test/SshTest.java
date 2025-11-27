@@ -1,5 +1,6 @@
 package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.ext.ssh.SShConnectionBase;
 import net.thevpc.nuts.ext.ssh.SshConnection;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathType;
@@ -87,13 +88,10 @@ public class SshTest {
         System.out.println(result);
     }
 
-
-//    @Test
-//    public void  test10() {
-//
-//    }
-
+    @Test
+    public void test10() {
+        NPath remotePath = NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/test.txt");
+        byte[] digest = remotePath.getDigest("SHA-256");
+        TestUtils.println(digest);
+    }
 }
-
-
-// walk move getDigestWithCommand mkdirs
