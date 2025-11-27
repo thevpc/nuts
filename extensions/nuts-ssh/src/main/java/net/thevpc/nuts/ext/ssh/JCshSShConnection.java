@@ -352,7 +352,6 @@ public class JCshSShConnection extends SShConnectionBase {
         }
     }
 
-    @Override
     public void copyRemoteToLocal(String from, String to, boolean mkdir) {
         if(useFtp){
             copyRemoteToLocalSftp(from,to,mkdir);
@@ -537,7 +536,6 @@ public class JCshSShConnection extends SShConnectionBase {
         return new SshFileOutputStreamScp(connectionString.withPath(from),false);
     }
 
-    @Override
     public void copyLocalToRemote(String from, String to, boolean mkdirs) {
         try {
             if (from == null || from.trim().isEmpty()) {
