@@ -3,8 +3,6 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathType;
-import net.thevpc.nuts.net.DefaultNConnexionStringBuilder;
-import net.thevpc.nuts.net.NConnexionStringBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
