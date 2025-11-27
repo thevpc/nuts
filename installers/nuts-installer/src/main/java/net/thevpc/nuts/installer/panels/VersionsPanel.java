@@ -33,7 +33,7 @@ public class VersionsPanel extends WizardPageBase {
     Color redBg = new Color(255, 100, 101);
     ButtonInfo ltsButtonInfo = new ButtonInfo("LTS", "LTS", greenBg, greenFg, UiHelper2.getCheckedImageIcon(false), UiHelper2.getCheckedImageIcon(true));
     ButtonInfo standardButtonInfo = new ButtonInfo("Standard", "Standard", orangeBg, orangeFg, UiHelper2.getCheckedImageIcon(false), UiHelper2.getCheckedImageIcon(true));
-    ButtonInfo errorButtonInfo = new ButtonInfo("Not Available", "<html><body>Unable to resolve stable version. Please Check your internet connexion</body></html>", redBg, redFg, UiHelper2.getStopImageIcon(false), UiHelper2.getStopImageIcon(true));
+    ButtonInfo errorButtonInfo = new ButtonInfo("Not Available", "<html><body>Unable to resolve stable version. Please Check your internet connection</body></html>", redBg, redFg, UiHelper2.getStopImageIcon(false), UiHelper2.getStopImageIcon(true));
 
     public VersionsPanel() {
         super(new BorderLayout());
