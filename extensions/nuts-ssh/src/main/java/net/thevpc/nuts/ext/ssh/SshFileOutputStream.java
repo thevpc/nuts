@@ -4,7 +4,7 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSchException;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.util.NUnused;
 
 import java.io.*;
@@ -23,7 +23,7 @@ public class SshFileOutputStream extends OutputStream {
     private InputStream in;
     private Channel channel;
 
-    public SshFileOutputStream(NConnexionString path, boolean mkdirs, boolean failFast, long filesize) {
+    public SshFileOutputStream(NConnectionString path, boolean mkdirs, boolean failFast, long filesize) {
         super();
         NSession session = NSession.of();
         this.connection = SshConnectionPool.of().acquire(path);
@@ -86,7 +86,7 @@ public class SshFileOutputStream extends OutputStream {
 
         channel.connect();
 
-        if (JCshSShConnection.checkAck(in) != 0) {
+        if (SshUtils.checkAck(in) != 0) {
             ended = true;
             connection.close();
             return true;
@@ -101,7 +101,7 @@ public class SshFileOutputStream extends OutputStream {
             command += (" " + (lastModified / 1000) + " 0\n");
             out.write(command.getBytes());
             out.flush();
-            if (JCshSShConnection.checkAck(in) != 0) {
+            if (SshUtils.checkAck(in) != 0) {
                 ended = true;
                 connection.close();
                 return true;
@@ -116,7 +116,7 @@ public class SshFileOutputStream extends OutputStream {
         out.write(command.getBytes());
         out.flush();
 
-        if (JCshSShConnection.checkAck(in) != 0) {
+        if (SshUtils.checkAck(in) != 0) {
             ended = true;
             connection.close();
             return true;
@@ -131,7 +131,7 @@ public class SshFileOutputStream extends OutputStream {
         out.write(buf, 0, 1);
         out.flush();
 
-        if (JCshSShConnection.checkAck(in) != 0) {
+        if (SshUtils.checkAck(in) != 0) {
             return;
         }
         out.close();
