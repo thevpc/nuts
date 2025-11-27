@@ -9,8 +9,8 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.io.NExecInput;
-import net.thevpc.nuts.net.NConnexionString;
-import net.thevpc.nuts.net.NConnexionStringBuilder;
+import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.platform.NPlatformLocation;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -35,7 +35,7 @@ import net.thevpc.nuts.util.*;
 public class DefaultNPs implements NPs {
 
     private NPlatformFamily platformFamily;
-    private String connexionString;
+    private String connectionString;
     private boolean failFast;
 
     public DefaultNPs() {
@@ -52,30 +52,30 @@ public class DefaultNPs implements NPs {
     }
 
     @Override
-    public String getConnexionString() {
-        return connexionString;
+    public String getConnectionString() {
+        return connectionString;
     }
 
     @Override
-    public NPs setConnexionString(String host) {
-        this.connexionString = host;
+    public NPs setConnectionString(String host) {
+        this.connectionString = host;
         return this;
     }
 
     @Override
     public NPs at(String host) {
-        return setConnexionString(host);
+        return setConnectionString(host);
     }
 
     @Override
-    public NPs setConnexionString(NConnexionString host) {
-        this.connexionString = host == null ? "" : host.toString();
+    public NPs setConnectionString(NConnectionString host) {
+        this.connectionString = host == null ? "" : host.toString();
         return this;
     }
 
     @Override
-    public NPs at(NConnexionString host) {
-        return setConnexionString(host);
+    public NPs at(NConnectionString host) {
+        return setConnectionString(host);
     }
 
     @Override
@@ -179,7 +179,7 @@ public class DefaultNPs implements NPs {
 
     @Override
     public NStream<NPsInfo> getResultList() {
-        if (NBlankable.isBlank(connexionString)) {
+        if (NBlankable.isBlank(connectionString)) {
             NPlatformFamily processType = NUtils.firstNonNull(platformFamily, NPlatformFamily.OS);
             switch (processType) {
                 case JAVA:
@@ -192,10 +192,10 @@ public class DefaultNPs implements NPs {
             }
             return new NStreamEmpty<>("process-" + processType.id());
         } else {
-            NConnexionStringBuilder b = NConnexionString.of(connexionString).builder();
+            NConnectionStringBuilder b = NConnectionString.of(connectionString).builder();
             Map<String, List<String>> m = b.getQueryMap().orElse(new LinkedHashMap<String,List<String>>());
             String str = NExecCmd.of("ps", "--json", "aux")
-                    .at(connexionString)
+                    .at(connectionString)
                     .failFast()
                     .getGrabbedOutOnlyString();
             DefaultNPsInfoBuilder[] arr = NElementParser.ofJson().parse(str, DefaultNPsInfoBuilder[].class);
