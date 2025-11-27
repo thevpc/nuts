@@ -5,7 +5,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.net.NConnexionString;
+import net.thevpc.nuts.net.NConnectionString;
 
 public class SshPathFactory implements NPathFactorySPI {
     NWorkspace workspace;
@@ -18,7 +18,7 @@ public class SshPathFactory implements NPathFactorySPI {
     public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
         try{
             if(path.startsWith("ssh:")){
-                NConnexionString a= NConnexionString.get(path).orNull();
+                NConnectionString a= NConnectionString.get(path).orNull();
                 if(a!=null) {
                     return NScoredCallable.of(3, () -> new SshNPath(a));
                 }
