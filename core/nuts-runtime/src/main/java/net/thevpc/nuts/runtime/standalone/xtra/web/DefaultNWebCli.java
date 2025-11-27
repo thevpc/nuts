@@ -470,7 +470,7 @@ public class DefaultNWebCli implements NWebCli {
                                 HttpURLConnection uc2 = finalUc;
                                 try {
                                     bytes = NInputSourceBuilder.of(finalUc.getInputStream()).setCloseAction(() -> {
-                                                // close connexion when fully read!
+                                                // close connection when fully read!
                                                 if (uc2 != null) {
                                                     try {
                                                         uc2.disconnect();
@@ -503,7 +503,7 @@ public class DefaultNWebCli implements NWebCli {
                 return httpResponse;
             } finally {
                 if (r.isOneWay()) {
-                    // just close any connexion
+                    // just close any connection
                     if (uc != null) {
                         try {
                             uc.disconnect();
