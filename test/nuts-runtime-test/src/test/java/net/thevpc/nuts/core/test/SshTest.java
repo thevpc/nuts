@@ -35,7 +35,8 @@ public class SshTest {
 
     @Test
     public void test04() {
-        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/")
+        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/");
+        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/")
                 .walk().forEach(x -> {
                     TestUtils.println(x);
                 });
