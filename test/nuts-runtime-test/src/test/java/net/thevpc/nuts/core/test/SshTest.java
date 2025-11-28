@@ -35,12 +35,11 @@ public class SshTest {
 
     @Test
     public void test04() {
-        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/")
+        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/")
                 .walk().forEach(x -> {
                     TestUtils.println(x);
                 });
     }
-
     @Test
     public void test05() {
         TestUtils.println(NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/").type());

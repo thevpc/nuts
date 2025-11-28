@@ -1,12 +1,9 @@
 package net.thevpc.nuts.ext.ssh;
-
-
 import net.thevpc.nuts.io.NPathType;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.util.*;
-
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.text.BreakIterator;
@@ -642,14 +639,31 @@ public abstract class SShConnectionBase implements SshConnection {
                 System.out.println("-1");
         }
     }
-
     @Override
     public List<String> walk(String path, boolean followLinks, int maxDepth) {
         switch (resolveShellFamily()) {
             case WIN_CMD:
             case WIN_POWER_SHELL: {
-                // Get-ChildItem -Path C:\ -Depth 2 -Force | ForEach-Object { $_.FullName }
-                // TODO
+                String remote_path = ensureWindowPath(path);
+                StringBuilder cmd = new StringBuilder();
+                cmd.append("powershell -Command \"Get-ChildItem -Path '")
+                        .append(remote_path.replace("'", "''"))
+                        .append("' -Recurse -Force -ErrorAction SilentlyContinue");
+                if (maxDepth > 0 && maxDepth != Integer.MAX_VALUE) {
+                    cmd.append(" -Depth ").append(maxDepth - 1);
+                }
+                cmd.append(" | ForEach-Object { $_.FullName }\"");
+                IOResult result = execStringCommandGrabbed(cmd.toString());
+                if (result.code() == 0) {
+                    String output = result.outString();
+                    if (output == null || output.isEmpty()) {
+                        return new ArrayList<>();
+                    }
+                    String[] lines = output.split("[\\r\\n]+");
+                    return Arrays.stream(lines)
+                            .filter(l -> l != null && !l.trim().isEmpty())
+                            .collect(Collectors.toList());
+                }
                 break;
             }
             case SH:
@@ -659,36 +673,25 @@ public abstract class SShConnectionBase implements SshConnection {
             case KSH:
             case CSH: {
                 StringBuilder cmd = new StringBuilder();
-                cmd.append("find");
-                cmd.append(" ").append(path);
-                if (followLinks) {
-                    //all
-                } else {
-                    cmd.append(" -type d,f");
-                }
+                cmd.append("find '").append(path).append("'");
                 if (maxDepth > 0 && maxDepth != Integer.MAX_VALUE) {
                     cmd.append(" -maxdepth ").append(maxDepth);
                 }
+                if (!followLinks) {
+                    cmd.append(" ! -type l");
+                }
                 IOResult i = execStringCommandGrabbed(cmd.toString());
                 if (i.code() == 0) {
-                    String[] s = i.outString().split("[\n|\r]");
-                    return Stream.of(s).map(
-                            x -> {
-                                String cc = path;
-                                if (!cc.endsWith("/")) {
-                                    cc += "/";
-                                }
-                                cc += x;
-                                return cc;
-                            }
-                    ).collect(Collectors.toList());
+                    String[] s = i.outString().split("[\n\r]+");
+                    return Arrays.stream(s)
+                            .filter(line -> !line.isEmpty())
+                            .collect(Collectors.toList());
                 }
                 break;
             }
         }
         return new ArrayList<>();
     }
-
 
     public byte[] getDigestWithCommand(String algo, String basePath) {
         switch (resolveOsFamily()) {
