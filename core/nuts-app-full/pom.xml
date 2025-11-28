@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-app-full</artifactId>
-    <version>0.8.9</version>
+    <version>0.8.9.0</version>
     <packaging>jar</packaging><!-- small changes, do not require version change, didn't updated the version-->
     <name>Nuts Community App Full</name>
     <url>https://github.com/thevpc/nuts</url>
