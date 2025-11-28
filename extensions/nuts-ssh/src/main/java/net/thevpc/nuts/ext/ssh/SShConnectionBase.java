@@ -235,7 +235,7 @@ public abstract class SShConnectionBase implements SshConnection {
                     psCommand
             );
             if (i.code() != 0) {
-                return null;
+                return NPathType.NOT_FOUND;
             }
             String s = i.outString().trim();
             if (s.equals("Directory")) {
@@ -249,7 +249,7 @@ public abstract class SShConnectionBase implements SshConnection {
             IOResult ii = execArrayCommandGrabbed("file", "-b", "-E", path);
             int i = ii.code();
             if (i > 0) {
-                return null;
+                return NPathType.NOT_FOUND;
             }
             String s = ii.outString();
             s = s.trim();
