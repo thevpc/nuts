@@ -34,15 +34,9 @@ public interface SshConnection extends AutoCloseable {
 
     void mkdir(String from, boolean p);
 
-//    byte[] readRemoteFile(String from);
-
-//    void copyRemoteToLocal(String from, String to, boolean mkdir);
-
     InputStream getInputStream(String from);
 
     OutputStream getOutputStream(String from);
-
-//    void copyLocalToRemote(String from, String to, boolean mkdirs);
 
     boolean isAlive();
 
