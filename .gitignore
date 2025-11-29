@@ -263,3 +263,5 @@ core/nuts-app-full/target
 /documentation/website/src/resources/download/*.jar
 /core/nuts-app-full/src/dist/*.jar
 /libraries/nuts-slf4j/target
+/installers/dist/
+/docs/download/
