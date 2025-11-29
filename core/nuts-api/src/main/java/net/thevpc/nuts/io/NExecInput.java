@@ -4,6 +4,18 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * Represents the input for a command execution.
+ *
+ * <p>Supports multiple sources:
+ * <ul>
+ *     <li>{@link NRedirectType#STREAM} - read from an InputStream</li>
+ *     <li>{@link NRedirectType#PATH} - read from a file path</li>
+ *     <li>{@link NRedirectType#PIPE} - input from another process</li>
+ *     <li>{@link NRedirectType#INHERIT} - inherit parent's input</li>
+ *     <li>{@link NRedirectType#NULL} - no input</li>
+ * </ul>
+ */
 public class NExecInput {
     private NRedirectType type;
     private InputStream stream;
