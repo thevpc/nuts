@@ -4,7 +4,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NCommandConfig;
 import net.thevpc.nuts.command.NCommandFactoryConfig;
 import net.thevpc.nuts.command.NCustomCmd;
-import net.thevpc.nuts.command.NExecCmdExtension;
+import net.thevpc.nuts.spi.NExecTargetSPI;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceCmdFactory;
@@ -361,7 +361,7 @@ public class DefaultCustomCommandsModel {
         return internalCommands;
     }
 
-    public NOptional<NExecCmdExtension> getExecCmdExtension(String target) {
-        return workspace.extensions().createComponent(NExecCmdExtension.class, target);
+    public NOptional<NExecTargetSPI> getExecCmdExtension(String target) {
+        return workspace.extensions().createComponent(NExecTargetSPI.class, target);
     }
 }
