@@ -2,15 +2,13 @@ package net.thevpc.nuts.net;
 
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DefaultNConnectionString implements NConnectionString {
@@ -37,6 +35,61 @@ public class DefaultNConnectionString implements NConnectionString {
         this.path = path;
         this.queryString = queryString;
         this.queryMap = queryMap;
+    }
+
+    @Override
+    public NConnectionString normalize() {
+        TreeMap<String, List<String>> queryMap2 = null;
+        boolean someChanges = false;
+        if (queryMap != null) {
+            for (Map.Entry<String, List<String>> q : queryMap.entrySet()) {
+                List<String> list = q.getValue();
+                if (queryMap2 == null) {
+                    queryMap2 = new TreeMap<>();
+                }
+                queryMap2.put(q.getKey(), list);
+            }
+        }
+        if (!someChanges && !Objects.equals(this.queryMap, queryMap2)) {
+            someChanges = true;
+        }
+        String queryString2 = null;
+        if (queryMap2 != null) {
+            queryString2 = NStringMapFormat.URL_FORMAT.formatDuplicates(queryMap2);
+        }
+        if (!someChanges && !Objects.equals(this.queryString, queryString2)) {
+            someChanges = true;
+        }
+
+        String protocol2 = NStringUtils.trimToNull(protocol);
+        if (!someChanges && !Objects.equals(this.protocol, protocol2)) {
+            someChanges = true;
+        }
+
+        String userName2 = NStringUtils.trimToNull(userName);
+        if (!someChanges && !Objects.equals(this.userName, userName2)) {
+            someChanges = true;
+        }
+
+        String host2 = NStringUtils.trimToNull(host);
+        if (!someChanges && !Objects.equals(this.host, host2)) {
+            someChanges = true;
+        }
+
+        String port2 = NStringUtils.trimToNull(port);
+        if (!someChanges && !Objects.equals(this.port, port2)) {
+            someChanges = true;
+        }
+
+        String path2 = NStringUtils.trimToNull(path);
+        if (!someChanges && !Objects.equals(this.path, path2)) {
+            someChanges = true;
+        }
+
+        if (!someChanges) {
+            return this;
+        }
+        return new DefaultNConnectionString(protocol2, userName2, password, host2, port2, path2, queryString2, queryMap2);
     }
 
     @Override
