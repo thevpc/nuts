@@ -27,7 +27,7 @@ public class SshFileInputStreamScp extends DynamicInputStream {
         this.connection = SshConnectionPool.of().acquire(path);
     }
 
-    SshFileInputStreamScp(JCshSShConnection connection, String path, boolean closeConnection) {
+    SshFileInputStreamScp(JCshSshConnection connection, String path, boolean closeConnection) {
         super(4096);
         this.from = path;
         init = false;
