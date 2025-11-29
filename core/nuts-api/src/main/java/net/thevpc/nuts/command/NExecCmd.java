@@ -41,8 +41,50 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Execute command. This class helps executing all types of executables :
- * internal, external, alias and system
+ * Represents a command execution within the Nuts workspace.
+ * <p>
+ * {@code NExecCmd} provides a unified API to execute all types of executables:
+ * <ul>
+ *     <li>Internal commands managed by Nuts</li>
+ *     <li>External executables on the local machine</li>
+ *     <li>System commands using the underlying OS shell</li>
+ *     <li>Remote commands via networked connections (SSH, RSH, etc.)</li>
+ * </ul>
+ * <p>
+ * The command can be configured with:
+ * <ul>
+ *     <li>Command arguments and executable paths</li>
+ *     <li>Environment variables</li>
+ *     <li>Executor options</li>
+ *     <li>Workspace options (affecting subprocess or embedded execution)</li>
+ *     <li>Standard input/output/error redirection and capturing</li>
+ *     <li>Run-as context (current user, root, sudo)</li>
+ *     <li>Bot mode for clean, machine-readable output</li>
+ *     <li>Remote connection targeting via {@link #at(String)} or {@link #at(NConnectionString)}</li>
+ * </ul>
+ * <p>
+ * Commands can be executed in different modes:
+ * <ul>
+ *     <li>Embedded execution within the current JVM</li>
+ *     <li>Spawned as a separate process</li>
+ *     <li>System execution using the OS shell</li>
+ *     <li>Opening files or URLs with the associated OS handler</li>
+ * </ul>
+ * <p>
+ * {@code NExecCmd} supports output grabbing, error redirection, dry-run mode,
+ * and execution target probing (local or remote) through {@link #probeTarget()}.
+ * <p>
+ * The API is fluent, allowing chaining of configuration calls before execution.
+ * <p>
+ * Example usage:
+ * <pre>{@code
+ * NExecCmd.of("ls", "-l")
+ *         .setBot(true)
+ *         .at("ssh://remote-server")
+ *         .grabOut()
+ *         .run();
+ * String output = cmd.getGrabbedOutString();
+ * }</pre>
  *
  * @author thevpc
  * @app.category Commands
@@ -50,14 +92,36 @@ import java.util.Map;
  */
 public interface NExecCmd extends NWorkspaceCmd {
 
+    /**
+     * Returns a new instance of {@link NExecCmd} using the default extension.
+     * The returned instance can be further configured before execution.
+     *
+     * @return a new {@code NExecCmd} instance
+     */
     static NExecCmd of() {
         return NExtensions.of(NExecCmd.class);
     }
 
+    /**
+     * Returns a new instance of {@link NExecCmd} initialized with the given command arguments.
+     * The arguments are appended to the command line and the instance can be further configured
+     * before execution.
+     *
+     * @param cmd the command and its arguments
+     * @return a new {@code NExecCmd} instance with the specified command
+     */
     static NExecCmd of(String... cmd) {
         return of().addCommand(cmd);
     }
 
+    /**
+     * Returns a new instance of {@link NExecCmd} initialized with the given command arguments
+     * and configured to run as a system command.
+     * This is equivalent to {@code of(cmd).system()}.
+     *
+     * @param cmd the command and its arguments
+     * @return a new {@code NExecCmd} instance configured for system execution
+     */
     static NExecCmd ofSystem(String... cmd) {
         return of().addCommand(cmd).system();
     }
@@ -89,13 +153,23 @@ public interface NExecCmd extends NWorkspaceCmd {
     NExecCmd failFast();
 
     /**
-     * runin bot mode
+     * Enables or disables "bot mode" for this command.
+     * When bot mode is enabled, all user-oriented printing, interactive prompts,
+     * traces, and logging are suppressed to make the command output clean
+     * and machine-readable, suitable for automated parsing.
      *
-     * @param bot bot
-     * @return {@code this} instance
+     * @param bot {@code true} to enable bot mode, {@code false} to disable
+     * @return this instance for fluent API usage
      */
     NExecCmd setBot(Boolean bot);
 
+    /**
+     * Returns whether "bot mode" is enabled for this command.
+     * In bot mode, user-oriented printing, interactive prompts, traces,
+     * and logging are suppressed to produce clean, machine-readable output.
+     *
+     * @return {@code true} if bot mode is enabled, {@code false} otherwise
+     */
     Boolean getBot();
 
     /**
@@ -131,16 +205,33 @@ public interface NExecCmd extends NWorkspaceCmd {
      */
     NExecCmd setCommandDefinition(NDefinition definition);
 
+    /**
+     * Returns the artifact definition associated with this command.
+     * The definition may include the executable content, dependencies,
+     * effective descriptor, and installation information.
+     *
+     * @return the command's artifact definition
+     */
     NDefinition getCommandDefinition();
 
     /**
-     * append command arguments
+     * Appends one or more arguments to the command to be executed.
+     * These arguments are added to the existing command line and will be passed
+     * to the underlying process or embedded executor as-is.
      *
-     * @param command command
-     * @return {@code this} instance
+     * @param command one or more command arguments to append
+     * @return this instance for fluent API usage
      */
     NExecCmd addCommand(String... command);
 
+    /**
+     * Appends a path to the command to be executed.
+     * The path is converted to a string representation and added to the command line.
+     * This is useful for passing executable files or file arguments.
+     *
+     * @param path the path to append to the command
+     * @return this instance for fluent API usage
+     */
     NExecCmd addCommand(NPath path);
 
     /**
@@ -175,13 +266,23 @@ public interface NExecCmd extends NWorkspaceCmd {
     NExecCmd addExecutorOptions(String... executorOptions);
 
     /**
-     * append executor options
+     * Sets the executor options for this command, replacing any existing options.
+     * Executor options are passed to the underlying process executor (or embedded runtime)
+     * and can affect how the command is launched or executed.
      *
-     * @param executorOptions executor options
-     * @return {@code this} instance
+     * @param executorOptions a collection of executor-specific options
+     * @return this instance for fluent API usage
      */
     NExecCmd setExecutorOptions(Collection<String> executorOptions);
 
+    /**
+     * Appends executor options to the current set of options.
+     * These options are passed to the underlying process executor (or embedded runtime)
+     * in addition to any existing options.
+     *
+     * @param executorOptions a collection of executor-specific options to add
+     * @return this instance for fluent API usage
+     */
     NExecCmd addExecutorOptions(Collection<String> executorOptions);
 
     /**
@@ -191,12 +292,44 @@ public interface NExecCmd extends NWorkspaceCmd {
      */
     NExecCmd clearExecutorOptions();
 
+    /**
+     * Returns the list of workspace-specific options applied to this command.
+     * These options are used to configure the subprocess or embedded process according
+     * to the current Nuts workspace environment. For example, they can enable bot mode,
+     * select workspace-specific directories, or influence other workspace-level execution settings.
+     *
+     * @return a list of workspace options as strings
+     */
     List<String> getWorkspaceOptions();
 
+    /**
+     * Removes a specific workspace option from this command.
+     * The option is removed from the subprocess or embedded process configuration.
+     * If the specified option is not present, the command is unchanged.
+     *
+     * @param workspaceOptions the workspace option to remove
+     * @return this instance for fluent API usage
+     */
     NExecCmd clearWorkspaceOptions(String workspaceOptions);
 
+    /**
+     * Adds a workspace option to this command.
+     * The option is applied to configure the subprocess or embedded process
+     * according to the Nuts workspace environment.
+     *
+     * @param workspaceOptions the workspace option to add
+     * @return this instance for fluent API usage
+     */
     NExecCmd addWorkspaceOptions(NWorkspaceOptions workspaceOptions);
 
+    /**
+     * Adds a workspace option to this command using a string representation.
+     * The option is applied to configure the subprocess or embedded process
+     * according to the Nuts workspace environment.
+     *
+     * @param workspaceOptions the workspace option to add as a string
+     * @return this instance for fluent API usage
+     */
     NExecCmd addWorkspaceOptions(String workspaceOptions);
 
     /**
@@ -287,7 +420,7 @@ public interface NExecCmd extends NWorkspaceCmd {
      * grub output stream while redirecting error stream to the grabbed output
      * stream. equivalent to <code>grabOut().redirectErr()</code>
      *
-     * @return
+     * @return this instance
      */
     NExecCmd grabAll();
 
@@ -295,7 +428,7 @@ public interface NExecCmd extends NWorkspaceCmd {
      * grub output stream to be retrieved later using
      * <code>getGrabbedOutString</code>.
      *
-     * @return
+     * @return this instance
      */
     NExecCmd grabOut();
 
@@ -310,7 +443,7 @@ public interface NExecCmd extends NWorkspaceCmd {
      * grub error stream to be retrieved later using
      * <code>getGrabbedErrString</code>.
      *
-     * @return
+     * @return this instance
      */
     NExecCmd grabErr();
 
@@ -379,26 +512,101 @@ public interface NExecCmd extends NWorkspaceCmd {
      */
     NExecCmd setExecutionType(NExecutionType executionType);
 
+    /**
+     * Configures the command to be executed as a system command.
+     * Typically, this means the command is executed using the underlying OS shell
+     * without additional wrapping or embedding.
+     *
+     * @return this instance for fluent API usage
+     */
     NExecCmd system();
 
+    /**
+     * Configures the command to be executed in embedded mode.
+     * Embedded execution may mean running the command within the current process
+     * context or using a controlled runtime, depending on the executor implementation.
+     *
+     * @return this instance for fluent API usage
+     */
     NExecCmd embedded();
 
+    /**
+     * Configures the command to be executed as a new spawned process.
+     * This is typically used to isolate execution from the current process,
+     * ensuring separate input/output streams and lifecycle.
+     *
+     * @return this instance for fluent API usage
+     */
     NExecCmd spawn();
 
+    /**
+     * Configures the command to be executed in "open" mode.
+     * Open mode may allow the command to interact with the environment directly,
+     * possibly opening resources such as files or URLs as part of its execution.
+     *
+     * @return this instance for fluent API usage
+     */
     NExecCmd open();
 
+    /**
+     * Returns the user context under which the command will be executed.
+     * This allows controlling the effective permissions, user name, and home directory
+     * used during execution.
+     *
+     * @return the current run-as configuration
+     */
     NRunAs getRunAs();
 
+    /**
+     * Sets the user context under which the command will be executed.
+     * This determines the effective permissions, user name, and home directory
+     * used for the command.
+     *
+     * @param runAs user context to apply to command execution
+     * @return this instance for fluent API usage
+     */
     NExecCmd setRunAs(NRunAs runAs);
 
+    /**
+     * Returns whether the command is in "dry-run" mode.
+     * When true, the command will not actually execute but may simulate or log the intended actions.
+     *
+     * @return {@code true} if dry-run is enabled, {@code false} otherwise
+     */
     Boolean getDry();
 
-    public NExecCmd setDry(Boolean dry);
+    /**
+     * Sets the "dry-run" mode for this command.
+     * When enabled, the command does not execute but may perform validation or logging
+     * to indicate what would have happened.
+     *
+     * @param dry {@code true} to enable dry-run mode, {@code false} otherwise
+     * @return this instance for fluent API usage
+     */
+    NExecCmd setDry(Boolean dry);
 
+    /**
+     * Configures the command to execute with elevated privileges using sudo.
+     * Effective only if the underlying platform supports sudo or similar privilege escalation.
+     *
+     * @return this instance for fluent API usage
+     */
     NExecCmd sudo();
 
+    /**
+     * Configures the command to execute as the root user.
+     * Typically equivalent to using sudo or switching to the root account before execution.
+     *
+     * @return this instance for fluent API usage
+     */
     NExecCmd root();
 
+    /**
+     * Configures the command to execute as the current user.
+     * This ensures the command runs with the same permissions and environment as the invoking process.
+     *
+     * @return this instance for fluent API usage
+     */
     NExecCmd currentUser();
 
     /**
@@ -445,14 +653,6 @@ public interface NExecCmd extends NWorkspaceCmd {
     NOptional<NExecutionException> getResultException();
 
 
-//    /**
-//     * copy session
-//     *
-//     * @return {@code this} instance
-//     */
-//    @Override
-//    NExecCmd copySession();
-
     /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...)
@@ -474,41 +674,111 @@ public interface NExecCmd extends NWorkspaceCmd {
     @Override
     NExecCmd run();
 
+    /**
+     * Returns the duration in milliseconds to wait after the command completes.
+     * This delay ensures that any output from the command, especially from
+     * fast-running processes, is fully captured before continuing.
+     *
+     * <p>Even if the command finishes very quickly, the thread will pause for
+     * the specified duration to allow reading the complete stdout/stderr streams.
+     *
+     * @return post-execution wait duration in milliseconds
+     */
     long getSleepMillis();
 
+    /**
+     * Sets the duration in milliseconds to wait after the command completes.
+     * This can help ensure that output from fast-running processes is fully
+     * captured by the Java caller before proceeding.
+     *
+     * <p>The command executes normally, and after it finishes, the calling
+     * thread waits for the specified duration.
+     *
+     * @param sleepMillis post-execution wait duration in milliseconds
+     * @return this instance for fluent API usage
+     */
     NExecCmd setSleepMillis(long sleepMillis);
 
     /**
-     * return host connection string. when host is not blank, this connection
-     * string will be used to connect to a remote host for execution
+     * Returns the connection string representing the target host for execution.
+     * When non-blank, this connection string will be used to connect to a remote host.
      *
-     * @return host
+     * @return the target host connection string
      * @since 0.8.4
      */
-    String getConnectionString();
+    NConnectionString getConnectionString();
 
     /**
-     * update host connection string. when host is not blank, this connection
-     * string will be used to connect to a remote host for execution
+     * Updates the target host connection string.
+     * When non-blank, the connection string will be used to connect to a remote host.
      *
-     * @param host host
-     * @return {@code this} instance
+     * @param connectionString target host connection string
+     * @return this instance for fluent API usage
      */
-    NExecCmd setConnectionString(String host);
+    NExecCmd setConnectionString(String connectionString);
 
-    NExecCmd at(String host);
+    /**
+     * Shortcut to set the connection string for execution.
+     *
+     * @param connectionString target host connection string
+     * @return this instance for fluent API usage
+     */
+    NExecCmd at(String connectionString);
 
-    NExecCmd at(NConnectionString host);
+    /**
+     * Shortcut to set the connection string for execution using a typed object.
+     *
+     * @param connectionString target host connection object
+     * @return this instance for fluent API usage
+     */
+    NExecCmd at(NConnectionString connectionString);
 
-    NExecCmd setConnectionString(NConnectionString host);
 
+    /**
+     * Sets the connection string for execution using a typed object.
+     *
+     * @param connectionString target host connection object
+     * @return this instance for fluent API usage
+     */
+    NExecCmd setConnectionString(NConnectionString connectionString);
+
+    /**
+     * Redirects the standard error stream to the standard output stream.
+     * This is useful when capturing all output of the command into a single stream.
+     *
+     * @return this instance for fluent API usage
+     */
     NExecCmd redirectErr();
 
     /**
-     * return true if this is a raw command (flag armed)
+     * Returns true if this command is considered "raw".
+     * A raw command will be passed as-is to the underlying executor without further parsing or modification.
+     *
+     * @return {@code true} if the command is raw, {@code false} otherwise
      * @since 0.8.9
      */
     boolean isRawCommand();
 
+    /**
+     * Sets the raw command flag.
+     * When {@code true} and the command consists of a single string, it will be passed as-is
+     * to the underlying executor without splitting or additional processing.
+     *
+     * @param rawCommand {@code true} to treat the command as raw, {@code false} otherwise
+     * @return this instance for fluent API usage
+     * @since 0.8.9
+     */
     NExecCmd setRawCommand(boolean rawCommand);
+
+    /**
+     * Probes the execution target environment and returns a snapshot of the target info.
+     * This may include operating system family, shell family, user information, and home directory.
+     * <p>
+     * Note: This method may trigger network operations if the target is remote.
+     * Results are cached at the workspace level to avoid repeated network calls.
+     *
+     * @return a snapshot of the execution target environment
+     * @since 0.8.9
+     */
+    NExecTargetInfo probeTarget();
 }
