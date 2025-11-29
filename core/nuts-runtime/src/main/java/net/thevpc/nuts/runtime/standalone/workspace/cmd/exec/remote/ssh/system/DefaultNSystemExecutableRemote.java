@@ -10,7 +10,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.command.NExecCmd;
-import net.thevpc.nuts.command.NExecCmdExtension;
+import net.thevpc.nuts.spi.NExecTargetSPI;
 import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.NWorkspace;
@@ -19,7 +19,7 @@ import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmdExtensionContext;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecTargetCommandContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NMsg;
@@ -35,12 +35,12 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
     String[] cmd;
     List<String> executorOptions;
     private boolean showCommand = false;
-    private NExecCmdExtension commExec;
+    private NExecTargetSPI commExec;
     private NExecInput in;
     private NExecOutput out;
     private NExecOutput err;
 
-    public DefaultNSystemExecutableRemote(NExecCmdExtension commExec, String[] cmd,
+    public DefaultNSystemExecutableRemote(NExecTargetSPI commExec, String[] cmd,
                                           List<String> executorOptions,
                                           NExecCmd execCommand,
                                           NExecInput in,
@@ -99,7 +99,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
             @Override
             public int exec() {
                 NExecCmd execCommand = getExecCommand();
-                try(DefaultNExecCmdExtensionContext d=new DefaultNExecCmdExtensionContext(
+                try(DefaultNExecTargetCommandContext d=new DefaultNExecTargetCommandContext(
                         execCommand.getConnectionString(),
                         cmd,
                         in,
