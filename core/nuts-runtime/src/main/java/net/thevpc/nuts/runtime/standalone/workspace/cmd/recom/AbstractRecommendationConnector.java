@@ -5,6 +5,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NCliInfo;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.net.NWebCli;
 
@@ -42,7 +43,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
     public void validateRequest(RequestQueryInfo ri) {
         NSession session = NSession.of();
         NWorkspace workspace = NWorkspace.of();
-        String endPointURL = workspace.getProperty("nuts-endpoint-url").flatMap(x->x.asString()).orNull();
+        String endPointURL = workspace.getProperty("nuts-endpoint-url").flatMap(x-> NLiteral.of(x).asString()).orNull();
         if (NBlankable.isBlank(ri.server)) {
             if (NBlankable.isBlank(endPointURL)) {
                 String defaultURL = resolveDefaultEndpointURL();
