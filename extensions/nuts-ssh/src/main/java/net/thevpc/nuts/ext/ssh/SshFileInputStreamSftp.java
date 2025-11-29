@@ -2,7 +2,6 @@ package net.thevpc.nuts.ext.ssh;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 import net.thevpc.nuts.net.NConnectionString;
 
@@ -43,7 +42,7 @@ public class SshFileInputStreamSftp extends DynamicInputStream {
                 init = true;
 
                 // open SFTP
-                JCshSShConnection baseConnection = (JCshSShConnection) ((SshConnectionAdapter) connection).connection;
+                JCshSshConnection baseConnection = (JCshSshConnection) ((SshConnectionAdapter) connection).connection;
                 sftp = (ChannelSftp) baseConnection.sshSession.openChannel("sftp");
                 sftp.connect();
                 // open file handle
