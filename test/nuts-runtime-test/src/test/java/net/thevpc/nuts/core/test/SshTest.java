@@ -1,7 +1,5 @@
 package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.ext.ssh.SShConnectionBase;
-import net.thevpc.nuts.ext.ssh.SshConnection;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathType;
 import net.thevpc.nuts.util.NHex;
@@ -14,14 +12,16 @@ public class SshTest {
         TestUtils.openNewTestWorkspace();
     }
 
-    @Test
+    // disable test before commit
+    //@Test
     public void test01() {
         List<NPath> list = NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/")
                 .list();
         TestUtils.println(list);
     }
 
-    @Test
+    // disable test before commit
+    //@Test
     public void test02() {
         NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/test.txt")
                 .delete();
@@ -34,7 +34,8 @@ public class SshTest {
     }
 
 
-    @Test
+    // disable test before commit
+    //@Test
     public void test04() {
         NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/");
         NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/")
@@ -42,7 +43,9 @@ public class SshTest {
                     TestUtils.println(x);
                 });
     }
-    @Test
+
+    // disable test before commit
+    //@Test
     public void test05() {
         TestUtils.println(NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/").type());
         Assertions.assertEquals(NPathType.DIRECTORY, NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/").type());
@@ -54,12 +57,14 @@ public class SshTest {
         TestUtils.println(NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/tmp.txt").type());
     }
 
-    @Test
+    // disable test before commit
+    //@Test
     public void test06() {
         NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Folder/To/Create").mkdir();
     }
 
-    @Test
+    // disable test before commit
+    //@Test
     public void test07() {
         long l = NPath.of("ssh://Administrateur@fvm.veoni.tn/test.txt").contentLength();
 //        String en = NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp.txt").contentEncoding();
@@ -68,7 +73,8 @@ public class SshTest {
         System.out.println(l);
     }
 
-    @Test
+    // disable test before commit
+    //@Test
     public void test08() {
 //        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/test")
 //                .copyTo(NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/meriem/"))
@@ -79,14 +85,16 @@ public class SshTest {
         //NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp3.txt").delete();
     }
 
-    @Test
+    // disable test before commit
+    //@Test
     public void test09() {
         NPathType result = NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/test.txt")
                 .type();
         TestUtils.println(result);
     }
 
-    @Test
+    // disable test before commit
+    //@Test
     public void test10() {
         NPath remotePath = NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/test.txt");
         byte[] digest = remotePath.getDigest("SHA-256");
