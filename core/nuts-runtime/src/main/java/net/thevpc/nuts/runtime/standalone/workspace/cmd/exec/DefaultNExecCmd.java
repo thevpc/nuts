@@ -17,6 +17,7 @@ import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.NInternalCommand;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.spi.NExecTargetSPI;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
@@ -147,8 +148,8 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             case OPEN: {
                 NAssert.requireNonNull(getCommandDefinition(), "artifact definition");
                 NAssert.requireNonBlank(command, "command");
-                String target = getConnectionString();
-                if (!NBlankable.isBlank(target)) {
+                NConnectionString connectionString = getConnectionString();
+                if (!NBlankable.isBlank(connectionString)) {
                     throw new NIllegalArgumentException(NMsg.ofC("cannot run %s command remotely", executionType));
                 }
                 String[] ts = command.toArray(new String[0]);
@@ -1043,9 +1044,8 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     private RemoteInfo0 resolveRemoteInfo0() {
-        String target = getConnectionString();
-        if (!NBlankable.isBlank(target)) {
-            NConnectionString connectionString = NConnectionString.of(target);
+        NConnectionString connectionString = getConnectionString();
+        if (!NBlankable.isBlank(connectionString)) {
             if ("ssh".equals(connectionString.getProtocol())) {
                 NExtensions.of()
                         .loadExtension(NId.get("net.thevpc.nuts:nuts-ssh").get());
@@ -1055,8 +1055,8 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         .loadExtension(NId.get("com.cts.nuts.enterprise:next-agent").get());
             }
             RemoteInfo0 ii = new RemoteInfo0();
-            ii.commExec = NExtensions.of().createComponent(NExecCmdExtension.class, connectionString)
-                    .orElseThrow(() -> new NIllegalArgumentException(NMsg.ofC("invalid execution target string : %s", target)));
+            ii.commExec = NExtensions.of().createComponent(NExecTargetSPI.class, connectionString)
+                    .orElseThrow(() -> new NIllegalArgumentException(NMsg.ofC("invalid execution target string : %s", connectionString)));
             ii.in0 = CoreIOUtils.validateIn(in);
             ii.out0 = CoreIOUtils.validateOut(out);
             ii.err0 = CoreIOUtils.validateOut(err);
@@ -1067,7 +1067,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
 
     private static class RemoteInfo0 {
 
-        NExecCmdExtension commExec;
+        NExecTargetSPI commExec;
         NExecInput in0;
         NExecOutput out0;
         NExecOutput err0;
