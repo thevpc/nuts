@@ -6,6 +6,8 @@ import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -16,7 +18,7 @@ public class SshConnectionPool {
     private final int maxSize;
     private long idleTimeout = 60000;
     private final Map<NConnectionString, BlockingQueue<SShPooledConnection>> idleMap;
-    private final Function<NConnectionString, JCshSShConnection> factory;
+    private final Function<NConnectionString, JCshSshConnection> factory;
     private Timer timer;
 
 
@@ -34,10 +36,38 @@ public class SshConnectionPool {
     }
 
     public SshConnectionPool(int maxSize, long idleTimeout) {
-        this(maxSize, idleTimeout, JCshSShConnection::new);
+        this(maxSize, idleTimeout, connectionString -> {
+            switch (NWorkspace.of().getOsFamily()){
+                case LINUX:{
+                    Map<String, List<String>> queryMap = connectionString.getQueryMap().orNull();
+                    if(queryMap!=null){
+                        List<String> use = queryMap.get("use");
+                        if(use!=null&&use.size()>0){
+                            for (String s : use) {
+                                switch (NStringUtils.trim(s).toLowerCase()) {
+                                    case "bin":{
+                                        break;
+                                    }
+                                    case "portable":
+                                    case "jcsh":
+                                    {
+                                        return new JCshSshConnection(connectionString);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // it should be able to select native ssh command too
+                    return new JCshSshConnection(connectionString);
+                }
+                default:{
+                    return new JCshSshConnection(connectionString);
+                }
+            }
+        });
     }
 
-    public SshConnectionPool(int maxSize, long idleTimeout, Function<NConnectionString, JCshSShConnection> factory) {
+    public SshConnectionPool(int maxSize, long idleTimeout, Function<NConnectionString, JCshSshConnection> factory) {
         this.maxSize = maxSize;
         this.idleTimeout = idleTimeout <= 0 ? 60000 : idleTimeout;
         this.factory = factory;
