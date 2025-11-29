@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Created by vpc on 1/5/17.
@@ -230,13 +231,13 @@ public interface NWorkspace extends NWorkspaceBase, NEnvContext, NComponent, Clo
      * @return property raw value
      * @since 0.8.1
      */
-    NOptional<NLiteral> getProperty(String property);
+    NOptional<Object> getProperty(String property);
 
     /**
      *
      * @param propertyTypeAndName
+     * @param <T>                 Type
      * @return
-     * @param <T> Type
      * @since 0.8.9
      */
     <T> NOptional<T> getProperty(Class<T> propertyTypeAndName);
@@ -248,6 +249,12 @@ public interface NWorkspace extends NWorkspaceBase, NEnvContext, NComponent, Clo
      * @since 0.8.1
      */
     NWorkspace setProperty(String property, Object value);
+
+
+    public <T> T getOrComputeProperty(Class<T> property, Supplier<T> supplier);
+
+    public <T> T getOrComputeProperty(String property, Supplier<T> supplier);
+
 
     String getHostName();
 
