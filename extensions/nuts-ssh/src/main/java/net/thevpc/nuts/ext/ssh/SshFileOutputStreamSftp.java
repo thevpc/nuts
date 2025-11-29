@@ -50,7 +50,7 @@ public class SshFileOutputStreamSftp extends OutputStream {
         try {
             started = true;
 
-            JCshSShConnection base = (JCshSShConnection) ((SshConnectionAdapter) connection).connection;
+            JCshSshConnection base = (JCshSshConnection) ((SshConnectionAdapter) connection).connection;
             sftp = (ChannelSftp) base.sshSession.openChannel("sftp");
             sftp.connect();
 
