@@ -46,7 +46,7 @@ public enum NExecutableType implements NEnum {
 
     /**
      * workspace configured command using
-     * {@link NEnvs#addCommand(NCommandConfig)}
+     * {@link net.thevpc.nuts.core.NWorkspace#addCommand(NCommandConfig)}
      */
     ALIAS,
 
