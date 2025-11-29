@@ -1,2 +1,2 @@
-net.thevpc.nuts.ext.ssh.SshNExecCmdExtension
+net.thevpc.nuts.ext.ssh.SshNExecTargetSPI
 net.thevpc.nuts.ext.ssh.SshPathFactory
