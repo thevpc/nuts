@@ -93,8 +93,8 @@ public class DefaultNWorkspaceEnvManagerModel {
     }
 
     public String getPid() {
-        if(pid==null){
-            String fallback="";
+        if (pid == null) {
+            String fallback = "";
             // Note: may fail in some JVM implementations
             // therefore fallback has to be provided
 
@@ -103,15 +103,15 @@ public class DefaultNWorkspaceEnvManagerModel {
             final int index = jvmName.indexOf('@');
             if (index < 1) {
                 // part before '@' empty (index = 0) / '@' not found (index = -1)
-                return pid=fallback;
+                return pid = fallback;
             }
 
             try {
-                return pid=String.valueOf(Long.toString(Long.parseLong(jvmName.substring(0, index))));
+                return pid = String.valueOf(Long.toString(Long.parseLong(jvmName.substring(0, index))));
             } catch (NumberFormatException e) {
                 // ignore
             }
-            return pid=fallback;
+            return pid = fallback;
         }
         return pid;
     }
@@ -392,31 +392,28 @@ public class DefaultNWorkspaceEnvManagerModel {
         return userProperties;
     }
 
-    public NOptional<NLiteral> getProperty(String property) {
+    public NOptional<Object> getProperty(String property) {
         Object v = userProperties.get(property);
-        return NOptional.of(
-                v == null ? null : NLiteral.of(v)
-        );
+        return NOptional.ofNamed(v, property);
     }
 
-    public NElement getPropertyElement(String property) {
-        return NElements.of()
-                .toElement(getProperty(property));
-    }
+//    public NElement getPropertyElement(String property) {
+//        return NElements.of()
+//                .toElement(getProperty(property));
+//    }
 
     public <T> T getOrCreateProperty(Class<T> property, Supplier<T> supplier) {
         return getOrCreateProperty(property.getName(), supplier);
     }
 
-    public <T> T getOrCreateProperty(String property, Supplier<T> supplier) {
-        NElement a = getPropertyElement(property);
-        T o = a.isCustom() ? (T) a.asCustom().get().value() : (T) a.asPrimitive().get().asLiteral().asObject().orNull();
+    public synchronized <T> T getOrCreateProperty(String property, Supplier<T> supplier) {
+        Object o = getProperty(property);
         if (o != null) {
-            return o;
+            return (T) o;
         }
         o = supplier.get();
         setProperty(property, o);
-        return o;
+        return (T) o;
     }
 
     public void setProperty(String property, Object value) {
