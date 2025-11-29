@@ -27,7 +27,7 @@ public class WindowsPs1Caller {
                     .setFailFast(failFast);
             String grabbedOutString = u.getGrabbedOutString();
             try(StringReader br = new StringReader(grabbedOutString)) {
-                return new WindowsPs1Parser().parse(new StringReader(grabbedOutString));
+                return new WindowsPs1Parser().parse(br);
             }
         } finally {
             if (tempPath != null && tempPath.isRegularFile()) {

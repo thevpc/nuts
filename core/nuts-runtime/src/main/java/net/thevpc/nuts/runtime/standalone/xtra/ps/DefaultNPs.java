@@ -92,29 +92,40 @@ public class DefaultNPs implements NPs {
 
     @Override
     public boolean killProcess(String processId) {
-        switch (NWorkspace.of().getOsFamily()) {
-            case LINUX:
-            case MACOS:
-            case UNIX: {
-                return NExecCmd.ofSystem("kill", "-9", processId)
-                        .setFailFast(isFailFast())
-                        .getResultCode() == 0;
-            }
-            case WINDOWS: {
-                String taskkill = NWorkspace.of().findSysCommand("taskkill").orNull();
-                if (taskkill != null) {
-                    return NExecCmd.ofSystem(taskkill, "/PID", processId, "/F")
+        if (NBlankable.isBlank(connectionString)) {
+            switch (NWorkspace.of().getOsFamily()) {
+                case LINUX:
+                case MACOS:
+                case UNIX: {
+                    return NExecCmd.ofSystem("kill", "-9", processId)
                             .setFailFast(isFailFast())
                             .getResultCode() == 0;
                 }
-                throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NWorkspace.of().getOsFamily().id()));
+                case WINDOWS: {
+                    String taskkill = NWorkspace.of().findSysCommand("taskkill").orNull();
+                    if (taskkill != null) {
+                        return NExecCmd.ofSystem(taskkill, "/PID", processId, "/F")
+                                .setFailFast(isFailFast())
+                                .getResultCode() == 0;
+                    }
+                    throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NWorkspace.of().getOsFamily().id()));
+                }
             }
+            if (isFailFast()) {
+                throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NWorkspace.of().getOsFamily().id()));
+            } else {
+                return false;
+            }
+        }else{
+
+            String str = NExecCmd.of("ps", "--json", "aux")
+                    .at(connectionString)
+                    .failFast()
+                    .getGrabbedOutOnlyString();
+
         }
-        if (isFailFast()) {
-            throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NWorkspace.of().getOsFamily().id()));
-        } else {
-            return false;
-        }
+
+
     }
 
     @Override
@@ -193,7 +204,7 @@ public class DefaultNPs implements NPs {
             return new NStreamEmpty<>("process-" + processType.id());
         } else {
             NConnectionStringBuilder b = NConnectionString.of(connectionString).builder();
-            Map<String, List<String>> m = b.getQueryMap().orElse(new LinkedHashMap<String,List<String>>());
+            Map<String, List<String>> m = b.getQueryMap().orElse(new LinkedHashMap<String, List<String>>());
             String str = NExecCmd.of("ps", "--json", "aux")
                     .at(connectionString)
                     .failFast()
@@ -205,11 +216,11 @@ public class DefaultNPs implements NPs {
 
         }
     }
-
     private NStream<NPsInfo> getResultListOS() {
         switch (NWorkspace.of().getOsFamily()) {
             case LINUX: {
                 NExecCmd u = NExecCmd.of()
+                        .at(connectionString)
                         .setIn(NExecInput.ofNull())
                         .addCommand("ps", "-eo", "user,pid,%cpu,%mem,vsz,rss,tty,stat,lstart,time,command")
                         .grabErr()
@@ -229,14 +240,14 @@ public class DefaultNPs implements NPs {
                 return new UnixPsParser().parse(new StringReader(u.getGrabbedOutString()));
             }
             case WINDOWS: {
-                final int IMPL_WmiObject_Win32_Process_Csv=1;
-                final int IMPL_WmiObject_Win32_Process_NoFile=2;
-                int mode=IMPL_WmiObject_Win32_Process_Csv;
-                switch (mode){
-                    case IMPL_WmiObject_Win32_Process_Csv:{
+                final int IMPL_WmiObject_Win32_Process_Csv = 1;
+                final int IMPL_WmiObject_Win32_Process_NoFile = 2;
+                int mode = IMPL_WmiObject_Win32_Process_Csv;
+                switch (mode) {
+                    case IMPL_WmiObject_Win32_Process_Csv: {
                         return new WindowsPsCsvCaller().call(isFailFast());
                     }
-                    case IMPL_WmiObject_Win32_Process_NoFile:{
+                    case IMPL_WmiObject_Win32_Process_NoFile: {
                         return new WindowsPs1Caller().call(isFailFast());
                     }
                 }
@@ -249,6 +260,7 @@ public class DefaultNPs implements NPs {
     }
 
     private NStream<NPsInfo> getResultListJava() {
+        NExecCmd.of().at(connectionString).osProbe()
         NIterator<NPsInfo> it = NIteratorBuilder.ofSupplier(() -> {
             String cmd = "jps";
             NExecCmd b = null;
@@ -260,6 +272,7 @@ public class DefaultNPs implements NPs {
             }
             b = NExecCmd.of()
                     .system()
+                    .at(connectionString)
                     .addCommand(cmd)
                     .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))
                     .grabAll()
@@ -304,7 +317,6 @@ public class DefaultNPs implements NPs {
                         return procFile.readString().split("\0");
                     }
                 } catch (Exception ex) {
-
                 }
                 break;
             }
