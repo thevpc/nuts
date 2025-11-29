@@ -45,4 +45,6 @@ public interface NConnectionString extends NImmutable {
     NConnectionStringBuilder builder();
 
     NConnectionString withPath(String path);
+
+    NConnectionString normalize();
 }
