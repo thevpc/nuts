@@ -3,14 +3,17 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NExecCmd;
-import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.command.NExecutionType;
+import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.NRunAs;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceOptions;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
+import net.thevpc.nuts.spi.NExecTargetInfoContext;
+import net.thevpc.nuts.spi.NExecTargetInfoRunner;
+import net.thevpc.nuts.spi.NExecTargetSPI;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
@@ -18,6 +21,7 @@ import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.time.NDuration;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * type: Command Class
@@ -49,7 +53,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     protected boolean failFast;
     protected Boolean bot;
     private long sleepMillis = 1000;
-    private String connectionString;
+    private NConnectionString connectionString;
     private boolean rawCommand;
 
     public AbstractNExecCmd() {
@@ -814,29 +818,29 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
         return getCommandString();
     }
 
-    public String getConnectionString() {
+    public NConnectionString getConnectionString() {
         return connectionString;
     }
 
-    public NExecCmd setConnectionString(String host) {
-        this.connectionString = host;
+    public NExecCmd setConnectionString(String connectionString) {
+        this.connectionString = NBlankable.isBlank(connectionString)?null:NConnectionString.of(connectionString);
         return this;
     }
 
     @Override
-    public NExecCmd at(String host) {
-        return setConnectionString(host);
+    public NExecCmd at(String connectionString) {
+        return setConnectionString(connectionString);
     }
 
     @Override
-    public NExecCmd at(NConnectionString host) {
-        return setConnectionString(host);
+    public NExecCmd at(NConnectionString connectionString) {
+        return setConnectionString(connectionString);
     }
 
     @Override
-    public NExecCmd setConnectionString(NConnectionString target) {
-        if (!NBlankable.isBlank(target.getHost())) {
-            this.connectionString = target.toString();
+    public NExecCmd setConnectionString(NConnectionString connectionString) {
+        if (!NBlankable.isBlank(connectionString)) {
+            this.connectionString = connectionString;
         } else {
             this.connectionString = null;
         }
@@ -857,5 +861,46 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     public NExecCmd setRawCommand(boolean rawCommand) {
         this.rawCommand = rawCommand;
         return this;
+    }
+
+    @Override
+    public NExecTargetInfo probeTarget() {
+        if (NBlankable.isBlank(connectionString)) {
+            return LocalNExecTargetInfo.INSTANCE;
+        }
+        NWorkspace ws = NWorkspace.of();
+        NConnectionString normalizedConnectionString = connectionString.normalize();
+        Map<NConnectionString, NExecTargetInfo> cache = ws.getOrComputeProperty(NExecCmd.class + "::osProbe", () -> (Map<NConnectionString, NExecTargetInfo>) new ConcurrentHashMap<NConnectionString, NExecTargetInfo>());
+        NExecTargetInfo found = cache.computeIfAbsent(normalizedConnectionString, kk -> {
+            NExecTargetSPI u = NExtensions.of().createComponent(NExecTargetSPI.class, normalizedConnectionString)
+                    .orElseThrow(() -> new NIllegalArgumentException(NMsg.ofC("invalid execution target string : %s", normalizedConnectionString)));
+            return u.getTargetInfo(new MyNExecTargetInfoContext(this, normalizedConnectionString));
+        });
+        return found;
+    }
+
+    private class MyNExecTargetInfoContext implements NExecTargetInfoContext {
+        private final NConnectionString normalizedConnectionString;
+        private final AbstractNExecCmd abstractNExecCmd;
+
+        public MyNExecTargetInfoContext(AbstractNExecCmd abstractNExecCmd, NConnectionString normalizedConnectionString) {
+            this.abstractNExecCmd = abstractNExecCmd;
+            this.normalizedConnectionString = normalizedConnectionString;
+        }
+
+        @Override
+        public NConnectionString getConnectionString() {
+            return normalizedConnectionString;
+        }
+
+        @Override
+        public NExecCmd getExecCommand() {
+            return abstractNExecCmd;
+        }
+
+        @Override
+        public NExecTargetInfo createDefaultTargetInfo(NExecTargetInfoRunner runner) {
+            return new NExecTargetInfoImpl(normalizedConnectionString, runner);
+        }
     }
 }
