@@ -29,7 +29,6 @@ import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.logging.Level;
@@ -238,7 +237,7 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
-    public NPathType type(NPath basePath) {
+    public NPathType getType(NPath basePath) {
         if (toString().endsWith("/")) {
             //if (exists(basePath)) {
             return NPathType.DIRECTORY;
@@ -305,13 +304,13 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
-    public long contentLength(NPath basePath) {
+    public long getContentLength(NPath basePath) {
         if (url == null) {
             return -1;
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.contentLength();
+            return f.getContentLength();
         }
         try {
             CacheInfo a = cachedHeader().get();
@@ -446,7 +445,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.lastModifiedInstant();
+            return f.getLastModifiedInstant();
         }
         try {
             CacheInfo a = cachedHeader().get();
@@ -462,7 +461,7 @@ public class URLPath implements NPathSPI {
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
         NPath f = asFilePath(basePath);
-        return (f != null) ? f.lastAccessInstant() : null;
+        return (f != null) ? f.getLastAccessInstant() : null;
     }
 
     @Override
@@ -520,13 +519,13 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
-    public String owner(NPath basePath) {
+    public String getOwner(NPath basePath) {
         NPath f = asFilePath(basePath);
         return (f != null) ? f.owner() : null;
     }
 
     @Override
-    public String group(NPath basePath) {
+    public String getGroup(NPath basePath) {
         NPath f = asFilePath(basePath);
         return (f != null) ? f.group() : null;
     }
