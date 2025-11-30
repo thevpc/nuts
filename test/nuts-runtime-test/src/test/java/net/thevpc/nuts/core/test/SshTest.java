@@ -66,7 +66,7 @@ public class SshTest {
     // disable test before commit
     //@Test
     public void test07() {
-        long l = NPath.of("ssh://Administrateur@fvm.veoni.tn/test.txt").contentLength();
+        long l = NPath.of("ssh://Administrateur@fvm.veoni.tn/test.txt").getContentLength();
 //        String en = NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp.txt").contentEncoding();
 //        String ct = NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp.txt").getContentType();
 //        String cs = NPath.of("ssh://Administrateur@fvm.veoni.tn/tmp.txt").getCharset();
