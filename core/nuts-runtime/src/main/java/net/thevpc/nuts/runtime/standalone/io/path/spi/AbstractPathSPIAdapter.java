@@ -96,7 +96,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     @Override
-    public NPathType type(NPath basePath) {
+    public NPathType getType(NPath basePath) {
         return ref.type();
     }
 
@@ -106,8 +106,8 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     @Override
-    public long contentLength(NPath basePath) {
-        return ref.contentLength();
+    public long getContentLength(NPath basePath) {
+        return ref.getContentLength();
     }
 
     public String getContentEncoding(NPath basePath) {
@@ -147,12 +147,12 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
     @Override
     public Instant getLastModifiedInstant(NPath basePath) {
-        return ref.lastModifiedInstant();
+        return ref.getLastModifiedInstant();
     }
 
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
-        return ref.lastAccessInstant();
+        return ref.getLastAccessInstant();
     }
 
     @Override
@@ -184,12 +184,12 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     @Override
-    public String owner(NPath basePath) {
+    public String getOwner(NPath basePath) {
         return ref.owner();
     }
 
     @Override
-    public String group(NPath basePath) {
+    public String getGroup(NPath basePath) {
         return ref.group();
     }
 
