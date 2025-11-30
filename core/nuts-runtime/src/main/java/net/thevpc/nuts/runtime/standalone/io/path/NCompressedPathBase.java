@@ -285,18 +285,18 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public long contentLength() {
-        return base.contentLength();
+    public long getContentLength() {
+        return base.getContentLength();
     }
 
     @Override
-    public Instant lastModifiedInstant() {
-        return base.lastModifiedInstant();
+    public Instant getLastModifiedInstant() {
+        return base.getLastModifiedInstant();
     }
 
     @Override
-    public Instant lastAccessInstant() {
-        return base.lastAccessInstant();
+    public Instant getLastAccessInstant() {
+        return base.getLastAccessInstant();
     }
 
     @Override
@@ -511,5 +511,15 @@ public class NCompressedPathBase extends NPathBase {
     @Override
     public List<NPathChildStringDigestInfo> listStringDigestInfo(String algo) {
         return getBase().listStringDigestInfo(algo);
+    }
+
+    @Override
+    public NPathInfo getInfo() {
+        return getBase().getInfo();
+    }
+
+    @Override
+    public List<NPathInfo> listInfos() {
+        return getBase().listInfos();
     }
 }
