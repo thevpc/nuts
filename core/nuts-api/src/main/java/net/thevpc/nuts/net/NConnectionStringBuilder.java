@@ -58,6 +58,52 @@ public interface NConnectionStringBuilder extends NComponent {
 
     NConnectionStringBuilder setQueryString(String queryString);
 
+    /**
+     * @since 0.8.9
+     */
+    NConnectionStringBuilder setQueryParam(String param, String value);
+
+    /**
+     * @since 0.8.9
+     */
+    NConnectionStringBuilder addQueryParam(String param, String value);
+
+    /**
+     *
+     * @since  0.8.9
+     */
+    NConnectionStringBuilder addUniqueQueryParam(String param, String value);
+
+    /**
+     * @since 0.8.9
+     */
+    NConnectionStringBuilder clearQueryParam(String param);
+
+    /**
+     *
+     * @since  0.8.9
+     */
+    NOptional<String> getQueryParamValue(String param);
+
+    /**
+     *
+     * @since  0.8.9
+     */
+    List<String> getQueryParamValues(String param);
+
+
+    /**
+     *
+     * @since  0.8.9
+     */
+    NConnectionStringBuilder setNormalized(boolean normalized);
+
+    /**
+     *
+     * @since  0.8.9
+     */
+    boolean isNormalized();
+
     NConnectionStringBuilder copy();
 
     List<String> getNames();
@@ -65,4 +111,5 @@ public interface NConnectionStringBuilder extends NComponent {
     NConnectionStringBuilder resolve(String child);
 
     NConnectionString build();
+
 }
