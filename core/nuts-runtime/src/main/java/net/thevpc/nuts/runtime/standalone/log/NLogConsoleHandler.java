@@ -94,14 +94,16 @@ public class NLogConsoleHandler implements NLogSPI {
     }
 
     private void log0(Rec rec) {
-        NErr.resetLine();
+        synchronized (NSession.of().err()) {
+            NErr.resetLine();
 
-        NErr.println(NMsg.ofC("%s [%-6s] [%-7s] %s%s", rec.instant, rec.msg.getLevel(), rec.msg.getIntent(), rec.msg,
-                rec.msg.getDurationNanos() <= 0 ? ""
-                        : NMsg.ofC(" (duration: %s)", NDuration.ofNanos(rec.msg.getDurationNanos()))
-        ));
-        if (rec.msg.getThrowable() != null) {
-            NErr.println(NStringUtils.stacktrace(rec.msg.getThrowable()));
+            NErr.println(NMsg.ofC("%s [%-6s] [%-7s] %s%s", rec.instant, rec.msg.getLevel(), rec.msg.getIntent(), rec.msg,
+                    rec.msg.getDurationNanos() <= 0 ? ""
+                            : NMsg.ofC(" (duration: %s)", NDuration.ofNanos(rec.msg.getDurationNanos()))
+            ));
+            if (rec.msg.getThrowable() != null) {
+                NErr.println(NStringUtils.stacktrace(rec.msg.getThrowable()));
+            }
         }
     }
 }
