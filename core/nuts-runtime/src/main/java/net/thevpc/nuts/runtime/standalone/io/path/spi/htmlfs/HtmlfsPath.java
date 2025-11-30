@@ -110,7 +110,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
 
     @Override
-    public NPathType type(NPath basePath) {
+    public NPathType getType(NPath basePath) {
         if (NBlankable.isBlank(basePath.getLocation()) || basePath.getLocation().endsWith("/")
                 || this.url.endsWith("/")
         ) {
