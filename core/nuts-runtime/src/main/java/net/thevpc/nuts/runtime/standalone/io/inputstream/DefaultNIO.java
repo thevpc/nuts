@@ -40,11 +40,6 @@ public class DefaultNIO implements NIO {
     }
 
     @Override
-    public boolean isStdin(InputStream in) {
-        return in == stdin();
-    }
-
-    @Override
     public InputStream stdin() {
         return getBootModel().getSystemTerminal().in();
     }
@@ -58,6 +53,49 @@ public class DefaultNIO implements NIO {
         return NWorkspaceExt.of().getModel().bootModel;
     }
 
+
+    public OutputStream unwrapOutputStream(OutputStream out) {
+        while (out != null) {
+            if (out instanceof OutputStreamDelegate) {
+                out = ((OutputStreamDelegate) out).getDelegateOutputStream();
+            } else {
+                break;
+            }
+        }
+        return out;
+    }
+
+    public InputStream unwrapInputStream(InputStream in) {
+        while (in != null) {
+            if (in instanceof InputStreamDelegate) {
+                in = ((InputStreamDelegate) in).getDelegateInputStream();
+            } else {
+                break;
+            }
+        }
+        return in;
+    }
+
+    @Override
+    public boolean isStdin(InputStream in) {
+        InputStream sysin = unwrapInputStream(getBootModel().getSystemTerminal().in());
+        in = unwrapInputStream(in);
+        return in==sysin;
+    }
+
+    @Override
+    public boolean isStdout(OutputStream out) {
+        OutputStream sysout = unwrapOutputStream(getBootModel().getSystemTerminal().out().asOutputStream());
+        out=unwrapOutputStream(out);
+        return out==sysout;
+    }
+
+    @Override
+    public boolean isStderr(OutputStream err) {
+        OutputStream syserr = unwrapOutputStream(getBootModel().getSystemTerminal().err().asOutputStream());
+        err=unwrapOutputStream(err);
+        return err==syserr;
+    }
 
     @Override
     public boolean isStdout(NPrintStream out) {
@@ -385,8 +423,8 @@ public class DefaultNIO implements NIO {
     public String probeContentType(NPath path) {
         List<NContentTypeResolver> allSupported = NExtensions.of()
                 .createComponents(NContentTypeResolver.class, path);
-        NScoredCallable<String> best=NScorable.<NScoredCallable<String>>query()
-                .fromStream(allSupported.stream().map(x->x.probeContentType(path)))
+        NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
+                .fromStream(allSupported.stream().map(x -> x.probeContentType(path)))
                 .getBest().orNull();
         if (best == null) {
             return null;
@@ -432,8 +470,8 @@ public class DefaultNIO implements NIO {
     public String probeContentType(byte[] bytes) {
         List<NContentTypeResolver> allSupported = NExtensions.of()
                 .createComponents(NContentTypeResolver.class, bytes);
-        NScoredCallable<String> best=NScorable.<NScoredCallable<String>>query()
-                .fromStream(allSupported.stream().map(x->x.probeContentType(bytes)))
+        NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
+                .fromStream(allSupported.stream().map(x -> x.probeContentType(bytes)))
                 .getBest().orNull();
         if (best == null) {
             return null;
@@ -460,8 +498,8 @@ public class DefaultNIO implements NIO {
     public String probeCharset(NPath path) {
         List<NCharsetResolver> allSupported = NExtensions.of()
                 .createComponents(NCharsetResolver.class, path);
-        NScoredCallable<String> best=NScorable.<NScoredCallable<String>>query()
-                .fromStream(allSupported.stream().map(x->x.probeCharset(path)))
+        NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
+                .fromStream(allSupported.stream().map(x -> x.probeCharset(path)))
                 .getBest().orNull();
         if (best == null) {
             return null;
@@ -479,8 +517,8 @@ public class DefaultNIO implements NIO {
     public String probeCharset(byte[] bytes) {
         List<NCharsetResolver> allSupported = NExtensions.of()
                 .createComponents(NCharsetResolver.class, bytes);
-        NScoredCallable<String> best=NScorable.<NScoredCallable<String>>query()
-                .fromStream(allSupported.stream().map(x->x.probeCharset(bytes)))
+        NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
+                .fromStream(allSupported.stream().map(x -> x.probeCharset(bytes)))
                 .getBest().orNull();
         if (best == null) {
             return null;
