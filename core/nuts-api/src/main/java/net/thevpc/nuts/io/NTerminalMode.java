@@ -84,11 +84,27 @@ public enum NTerminalMode implements NEnum {
                 case "S":
                 case "AUTO":
                 case "D":
+                case "DEFAULT":
                     return NOptional.of(DEFAULT);
+                case "INHERITED":
                 case "H":
                     return NOptional.of(INHERITED);
                 case "A":
+                case "ANSI":
                     return NOptional.of(ANSI);
+                case "TRUE":
+                case "YES":
+                case "Y":
+                case "SUPPORTED":
+                case "ALWAYS":
+                case "FORMATTED":
+                    return NOptional.of(FORMATTED);
+                case "NO":
+                case "FALSE":
+                case "NEVER":
+                case "UNSUPPORTED":
+                case "FILTERED":
+                    return NOptional.of(FILTERED);
                 default:{
                     Boolean b = NLiteral.of(normalizedValue).asBoolean().orNull();
                     if(b!=null){
