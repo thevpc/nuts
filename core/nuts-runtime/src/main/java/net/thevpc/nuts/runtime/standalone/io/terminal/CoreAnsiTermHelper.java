@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
@@ -62,6 +63,7 @@ public class CoreAnsiTermHelper {
         try {
             String s= NExecCmd.of()
                     .system()
+                    .setIn(NExecInput.ofNull())
                     .addCommand(cmd)
                     .failFast()
                     .getGrabbedOutOnlyString()
