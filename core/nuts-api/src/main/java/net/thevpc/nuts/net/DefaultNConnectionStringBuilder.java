@@ -1,5 +1,6 @@
 package net.thevpc.nuts.net;
 
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.*;
 
@@ -27,7 +28,8 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
     private String host;
     private String port;
     private String path;
-    private String queryString;
+    private boolean normalized;
+    private Map<String, List<String>> queryMap;
 
     public DefaultNConnectionStringBuilder() {
     }
@@ -40,13 +42,23 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
             this.host = other.getHost();
             this.port = other.getPort();
             this.path = other.getPath();
-            this.queryString = other.getQueryString();
+            this.queryMap = prepareQueryMap(other.getQueryMap().orNull(), false);
         }
     }
 
     @Override
     public NConnectionString build() {
-        return new DefaultNConnectionString(protocol, userName, password, host, port, path, queryString, getQueryMap().orNull());
+        if (normalized) {
+            Map<String, List<String>> queryMap2 = DefaultNConnectionStringBuilder.prepareQueryMap(queryMap, true);
+            String protocol2 = NStringUtils.trimToNull(protocol);
+            String userName2 = NStringUtils.trimToNull(userName);
+            String host2 = NStringUtils.trimToNull(host);
+            String port2 = NStringUtils.trimToNull(port);
+            String path2 = NStringUtils.trimToNull(path);
+            return new DefaultNConnectionString(protocol2, userName2, password, host2, port2, path2, queryMap2);
+        } else {
+            return new DefaultNConnectionString(protocol, userName, password, host, port, path, queryMap);
+        }
     }
 
     public static NOptional<NConnectionStringBuilder> of(String value) {
@@ -180,73 +192,71 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        boolean fileProtocol = "file".equals(protocol);
-        if (!NBlankable.isBlank(protocol)) {
-            sb.append(safeUrlEncode(NStringUtils.trim(protocol))).append(":");
-            if (!fileProtocol) {
-                sb.append("//");
-                if (!NBlankable.isBlank(userName)) {
-                    sb.append(safeUrlEncode(NStringUtils.trim(userName)));
-                    if (!NBlankable.isBlank(safeUrlEncode(password))) {
-                        sb.append(':');
-                        sb.append(safeUrlEncode(password));
-                    }
-                    sb.append('@');
-                }
-                if (NBlankable.isBlank(host)) {
-                    sb.append("localhost");
-                } else {
-                    sb.append(NStringUtils.trim(host));
-                }
-                if (!NBlankable.isBlank(port)) {
-                    sb.append(":");
-                    sb.append(safeUrlEncode(port));
-                }
-            }
-        } else {
-            if (!NBlankable.isBlank(userName)) {
-                sb.append(safeUrlEncode(NStringUtils.trim(userName)));
-                if (!NBlankable.isBlank(password)) {
-                    sb.append(':');
-                    sb.append(safeUrlEncode(password));
-                }
-                if (!NBlankable.isBlank(host) || !NBlankable.isBlank(port)) {
-                    sb.append('@');
-                }
-            }
-            if (!NBlankable.isBlank(host) || !NBlankable.isBlank(port)) {
-                if (NBlankable.isBlank(host)) {
-                    sb.append("localhost");
-                } else {
-                    sb.append(safeUrlEncode(NStringUtils.trim(host)));
-                }
-                if (!NBlankable.isBlank(port)) {
-                    sb.append(":");
-                    sb.append(safeUrlEncode(port));
-                }
-            }
-        }
-
-        if (!NBlankable.isBlank(path)) {
-            if (!fileProtocol) {
-                if (
-                        (sb.length() == 0 || sb.charAt(sb.length() - 1) != '/')
-                                && (path.charAt(0) != '/')
-                ) {
-                    sb.append('/');
-                }
-            }
-            sb.append(path);
-        }
-        if (!NBlankable.isBlank(queryString)) {
-            sb.append("?").append(queryString);
-        }
-        return sb.toString();
+        return build().toString();
     }
 
     @Override
     public NConnectionStringBuilder setQueryMap(Map<String, List<String>> queryMap) {
+        this.queryMap = prepareQueryMap(queryMap, false);
+        return this;
+    }
+
+    static Map<String, List<String>> prepareQueryMap(Map<String, List<String>> queryMap, boolean normalize) {
+        if (queryMap == null) {
+            return null;
+        }
+        if (normalize) {
+            TreeMap<String, List<String>> queryMap2 = null;
+            for (Map.Entry<String, List<String>> q : queryMap.entrySet()) {
+                List<String> list = q.getValue();
+                if (list != null) {
+                    list = list.stream().filter(x -> x != null).collect(Collectors.toList());
+                    if (!list.isEmpty()) {
+                        if (queryMap2 == null) {
+                            queryMap2 = new TreeMap<>();
+                        }
+                        queryMap2.put(q.getKey(), list);
+                    }
+                }
+            }
+            return queryMap2;
+        } else {
+            LinkedHashMap<String, List<String>> queryMap2 = null;
+            for (Map.Entry<String, List<String>> q : queryMap.entrySet()) {
+                List<String> list = q.getValue();
+                if (list != null) {
+                    list = list.stream().filter(x -> x != null).collect(Collectors.toList());
+                    if (!list.isEmpty()) {
+                        if (queryMap2 == null) {
+                            queryMap2 = new LinkedHashMap<>();
+                        }
+                        queryMap2.put(q.getKey(), list);
+                    }
+                }
+            }
+            return queryMap2;
+        }
+    }
+
+    static Map<String, List<String>> deserializeQueryMap(String queryString) {
+        if (NBlankable.isBlank(queryString)) {
+            return null;
+        }
+        NOptional<Map<String, List<String>>> qq = NStringMapFormat.URL_FORMAT.parseDuplicates(queryString);
+        return qq.map(
+                x -> {
+                    Map<String, List<String>> r = new LinkedHashMap<>();
+                    for (Map.Entry<String, List<String>> ee : x.entrySet()) {
+                        r.put(safeUrlDecode(ee.getKey()),
+                                Collections.unmodifiableList(ee.getValue().stream().map(DefaultNConnectionStringBuilder::safeUrlDecode).collect(Collectors.toList()))
+                        );
+                    }
+                    return Collections.unmodifiableMap(r);
+                }
+        ).orElse(null);
+    }
+
+    static String serializeQueryMap(Map<String, List<String>> queryMap) {
         if (queryMap != null) {
             NStringBuilder sb = new NStringBuilder();
             for (Map.Entry<String, List<String>> e : queryMap.entrySet()) {
@@ -272,46 +282,30 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
                 }
             }
             if (!sb.isEmpty()) {
-                this.queryString = sb.toString();
+                return sb.toString();
             } else {
-                this.queryString = "";
+                return "";
             }
         } else {
-            this.queryString = null;
+            return null;
         }
-        return this;
     }
 
     @Override
     public NOptional<Map<String, List<String>>> getQueryMap() {
-        if (NBlankable.isBlank(queryString)) {
-            return NOptional.ofNamedEmpty("queryMap");
-        }
-        NOptional<Map<String, List<String>>> qq = NStringMapFormat.URL_FORMAT.parseDuplicates(queryString == null ? "" : queryString);
-        return qq.map(
-                x -> {
-                    Map<String, List<String>> r = new LinkedHashMap<>();
-                    for (Map.Entry<String, List<String>> ee : x.entrySet()) {
-                        r.put(safeUrlDecode(ee.getKey()),
-                                Collections.unmodifiableList(ee.getValue().stream().map(DefaultNConnectionStringBuilder::safeUrlDecode).collect(Collectors.toList()))
-                        );
-                    }
-                    return Collections.unmodifiableMap(r);
-                }
-        );
+        return NOptional.ofNamed(queryMap, "queryMap");
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNConnectionStringBuilder that = (DefaultNConnectionStringBuilder) o;
-        return Objects.equals(protocol, that.protocol) && Objects.equals(userName, that.userName) && Objects.equals(password, that.password) && Objects.equals(host, that.host) && Objects.equals(port, that.port) && Objects.equals(path, that.path);
+        return Objects.equals(protocol, that.protocol) && Objects.equals(userName, that.userName) && Objects.equals(password, that.password) && Objects.equals(host, that.host) && Objects.equals(port, that.port) && Objects.equals(path, that.path) && Objects.equals(queryMap, that.queryMap);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(protocol, userName, password, host, port, path);
+        return Objects.hash(protocol, userName, password, host, port, path, queryMap);
     }
 
     @Override
@@ -338,19 +332,140 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
 
     @Override
     public String getQueryString() {
-        return queryString;
+        return serializeQueryMap(queryMap);
     }
 
     @Override
     public NConnectionStringBuilder setQueryString(String queryString) {
-        this.queryString = queryString;
+        this.queryMap = deserializeQueryMap(queryString);
         return this;
+    }
+
+    @Override
+    public NConnectionStringBuilder setQueryParam(String param, String value) {
+        if (param == null) {
+            param = "";
+        }
+        if (value == null) {
+            if (queryMap != null) {
+                queryMap.remove(param);
+            }
+        } else {
+            if (queryMap == null) {
+                queryMap = new LinkedHashMap<>();
+                List<String> a = new ArrayList<>();
+                a.add(value);
+                queryMap.put(param, a);
+            } else {
+                List<String> a = queryMap.computeIfAbsent(param, n -> new ArrayList<>());
+                if (a.size() == 1 && Objects.equals(value, a.get(0))) {
+                    //do nothing
+                } else if (a.isEmpty()) {
+                    a.add(value);
+                } else {
+                    a.clear();
+                    a.add(value);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NConnectionStringBuilder addQueryParam(String param, String value) {
+        if (param == null) {
+            param = "";
+        }
+        if (value == null) {
+            return this;
+        } else {
+            if (queryMap == null) {
+                queryMap = new LinkedHashMap<>();
+                List<String> a = new ArrayList<>();
+                a.add(value);
+                queryMap.put(param, a);
+            } else {
+                List<String> a = queryMap.computeIfAbsent(param, n -> new ArrayList<>());
+                a.add(value);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NConnectionStringBuilder addUniqueQueryParam(String param, String value) {
+        if (param == null) {
+            param = "";
+        }
+        if (value == null) {
+            return this;
+        } else {
+            if (queryMap == null) {
+                queryMap = new LinkedHashMap<>();
+                List<String> a = new ArrayList<>();
+                a.add(value);
+                queryMap.put(param, a);
+            } else {
+                List<String> a = queryMap.computeIfAbsent(param, n -> new ArrayList<>());
+                if (!a.contains(value)) {
+                    a.add(value);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NConnectionStringBuilder clearQueryParam(String param) {
+        if (param == null) {
+            param = "";
+        }
+        if (queryMap != null) {
+            queryMap.remove(param);
+        }
+        return this;
+    }
+
+    @Override
+    public NOptional<String> getQueryParamValue(String param) {
+        if (param == null) {
+            param = "";
+        }
+        String finalParam = param;
+        return NOptional.ofFirst(getQueryParamValues(param), () -> NMsg.ofC("missing '%s'", finalParam));
+    }
+
+    @Override
+    public List<String> getQueryParamValues(String param) {
+        if (queryMap != null) {
+            if (param == null) {
+                param = "";
+            }
+            List<String> all = queryMap.get(param);
+            if (all != null) {
+                return new ArrayList<>(all);
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public NConnectionStringBuilder setNormalized(boolean normalized) {
+        this.normalized = normalized;
+        return this;
+    }
+
+    @Override
+    public boolean isNormalized() {
+        return normalized;
     }
 
     @Override
     public DefaultNConnectionStringBuilder copy() {
         try {
-            return (DefaultNConnectionStringBuilder) clone();
+            DefaultNConnectionStringBuilder c = (DefaultNConnectionStringBuilder) clone();
+            c.queryMap = prepareQueryMap(queryMap, false);
+            return c;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
