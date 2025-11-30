@@ -316,7 +316,7 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
     }
 
     @Override
-    public long contentLength() {
+    public long getContentLength() {
         return contentLength;
     }
 
