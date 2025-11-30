@@ -10,6 +10,7 @@ import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
 import net.thevpc.nuts.spi.NExecTargetInfoContext;
 import net.thevpc.nuts.spi.NExecTargetInfoRunner;
@@ -869,12 +870,21 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
             return LocalNExecTargetInfo.INSTANCE;
         }
         NWorkspace ws = NWorkspace.of();
-        NConnectionString normalizedConnectionString = connectionString.normalize();
+        NConnectionStringBuilder connectionStringBuilder = connectionString.builder()
+                //remove 'path' query param because target is independent of path
+                .setPath(null)
+                ;
+
+        NConnectionString normalizedConnectionStringWithUse = connectionString.normalize();
+        NConnectionString normalizedConnectionStringWithoutUse = connectionStringBuilder
+                //remove 'use' query param because target is independent of transport
+                .setQueryParam("use",null)
+                .build();
         Map<NConnectionString, NExecTargetInfo> cache = ws.getOrComputeProperty(NExecCmd.class + "::osProbe", () -> (Map<NConnectionString, NExecTargetInfo>) new ConcurrentHashMap<NConnectionString, NExecTargetInfo>());
-        NExecTargetInfo found = cache.computeIfAbsent(normalizedConnectionString, kk -> {
-            NExecTargetSPI u = NExtensions.of().createComponent(NExecTargetSPI.class, normalizedConnectionString)
-                    .orElseThrow(() -> new NIllegalArgumentException(NMsg.ofC("invalid execution target string : %s", normalizedConnectionString)));
-            return u.getTargetInfo(new MyNExecTargetInfoContext(this, normalizedConnectionString));
+        NExecTargetInfo found = cache.computeIfAbsent(normalizedConnectionStringWithoutUse, kk -> {
+            NExecTargetSPI u = NExtensions.of().createComponent(NExecTargetSPI.class, normalizedConnectionStringWithUse)
+                    .orElseThrow(() -> new NIllegalArgumentException(NMsg.ofC("invalid execution target string : %s", normalizedConnectionStringWithUse)));
+            return u.getTargetInfo(new MyNExecTargetInfoContext(this, normalizedConnectionStringWithUse));
         });
         return found;
     }
