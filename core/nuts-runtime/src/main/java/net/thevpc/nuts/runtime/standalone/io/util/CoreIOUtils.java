@@ -384,8 +384,8 @@ public class CoreIOUtils {
         }
 
         NPath header = NPath.of(path);
-        long size = header.contentLength();
-        Instant lastModifiedInstant = header.lastModifiedInstant();
+        long size = header.getContentLength();
+        Instant lastModifiedInstant = header.getLastModifiedInstant();
         long lastModified = lastModifiedInstant == null ? 0 : lastModifiedInstant.toEpochMilli();
 
         //when sha1 was not resolved check size and last modification
@@ -417,7 +417,7 @@ public class CoreIOUtils {
                         ccu.url = path;
                         ccu.path = s;
                         ccu.sha1 = NDigestUtils.evalSHA1Hex(outPath);
-                        long newSize = outPath.contentLength();
+                        long newSize = outPath.getContentLength();
                         ccu.size = newSize;
                         ccu.lastModified = finalLastModified;
                         NPath newLocalPath = urlContent.resolve(s);
@@ -503,7 +503,7 @@ public class CoreIOUtils {
 
     public static boolean isObsoletePath(NPath path) {
         try {
-            Instant i = path.lastModifiedInstant();
+            Instant i = path.getLastModifiedInstant();
             if (i == null) {
                 return false;
             }
@@ -804,8 +804,8 @@ public class CoreIOUtils {
                 err = NExecOutput.ofStream(session.err());
             }
         } else if (err.getType() == NRedirectType.STREAM) {
-            if (NIO.of().isStderr(session.err())) {
-                err = NExecOutput.ofStream(session.err());
+            if (NIO.of().isStderr(err.getStream())) {
+                err = NExecOutput.ofStream(err.getStream());
             }
         }
         return err;
@@ -877,8 +877,8 @@ public class CoreIOUtils {
                 out = NExecOutput.ofStream(session.out());
             }
         } else if (out.getType() == NRedirectType.STREAM) {
-            if (NIO.of().isStdout(session.out())) {
-                out = NExecOutput.ofStream(session.out());
+            if (NIO.of().isStdout(out.getStream())) {
+                out = NExecOutput.ofStream(out.getStream());
             }
         }
         return out;
