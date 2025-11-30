@@ -17,10 +17,10 @@ build-native:true
 build-site:true
 
 // build nuts-public repo index
-build-repo-nuts-public:false
+build-repo-nuts-public:true
 
 // build nuts-preview repo index
-build-repo-nuts-preview:false
+build-repo-nuts-preview:true
 
 // build nuts-app-full binaries and native executables
 build-bin:true
@@ -32,7 +32,7 @@ build-installer:true
 build-compat:true
 
 // publish (push) binaries to production server (thevpc.net)
-publish:false
+publish:true
 
 update-version:false
 keep-stamp:false
