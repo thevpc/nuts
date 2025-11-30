@@ -407,7 +407,7 @@ public class DefaultNWorkspaceEnvManagerModel {
     }
 
     public synchronized <T> T getOrCreateProperty(String property, Supplier<T> supplier) {
-        Object o = getProperty(property);
+        Object o = getProperty(property).orNull();
         if (o != null) {
             return (T) o;
         }
