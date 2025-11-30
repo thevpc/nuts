@@ -109,7 +109,7 @@ public interface NPs extends NComponent {
      * @return host
      * @since 0.8.4
      */
-    String getConnectionString();
+    NConnectionString getConnectionString();
 
     /**
      * update host connection string. when host is not blank, this connection
