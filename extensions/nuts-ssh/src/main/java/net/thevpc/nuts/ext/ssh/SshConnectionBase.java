@@ -3,8 +3,9 @@ package net.thevpc.nuts.ext.ssh;
 import net.thevpc.nuts.command.NExecCmd;
 import net.thevpc.nuts.command.NExecTargetInfo;
 import net.thevpc.nuts.elem.NElementNotFoundException;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPathType;
+import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NShellFamily;
@@ -12,9 +13,10 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.*;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -24,8 +26,14 @@ public abstract class SshConnectionBase implements SshConnection {
     protected List<SshListener> listeners = new ArrayList<>();
     protected NConnectionString connectionString;
     private NExecTargetInfo probedInfo;
+    private boolean failFast;
 
     public SshConnectionBase() {
+    }
+
+    @Override
+    public void reset() {
+        failFast = false;
     }
 
     @Override
@@ -33,6 +41,23 @@ public abstract class SshConnectionBase implements SshConnection {
         if (listener != null) {
             listeners.add(listener);
         }
+        return this;
+    }
+
+    public boolean isFailFast() {
+        return failFast;
+    }
+
+    public SshConnection failFast() {
+        return setFailFast(true);
+    }
+
+    public SshConnection sailFast(boolean failFast) {
+        return setFailFast(failFast);
+    }
+
+    public SshConnection setFailFast(boolean failFast) {
+        this.failFast = failFast;
         return this;
     }
 
@@ -151,6 +176,12 @@ public abstract class SshConnectionBase implements SshConnection {
 
     @Override
     public IOResult execStringCommandGrabbed(String command) {
+        NLog.of(SshConnectionBase.class)
+                .log(
+                        NMsg.ofC("[%s] grab ssh command : %s", connectionString, command)
+                                .withLevel(Level.FINER)
+                                .withIntent(NMsgIntent.START)
+                );
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ByteArrayOutputStream berr = new ByteArrayOutputStream();
         int r = execStringCommand(command, new IOBindings(
@@ -260,13 +291,13 @@ public abstract class SshConnectionBase implements SshConnection {
                 return NPathType.NAMED_PIPE;
             }
             if (s.startsWith("character special")) {
-                return NPathType.CHARACTER;
+                return NPathType.CHARACTER_DEVICE;
             }
             if (s.startsWith("symbolic link")) {
                 return NPathType.SYMBOLIC_LINK;
             }
             if (s.startsWith("block special")) {
-                return NPathType.BLOCK;
+                return NPathType.BLOCK_DEVICE;
             }
             return NPathType.FILE;
         }
@@ -277,7 +308,7 @@ public abstract class SshConnectionBase implements SshConnection {
     public void mkdir(String from, boolean p) {
         switch (resolveShellFamily()) {
             case WIN_CMD: {
-                if(!p) {
+                if (!p) {
                     NPath parent = NPath.of(from).getParent();
                     if (parent != null) {
                         NPathType d = type(parent.toString());
@@ -435,7 +466,7 @@ public abstract class SshConnectionBase implements SshConnection {
     }
 
     @Override
-    public long contentLength(String basePath) {
+    public long getContentLength(String basePath) {
         switch (resolveOsFamily()) {
             case WINDOWS: {
                 basePath = ensureWindowPath(basePath);
@@ -600,6 +631,7 @@ public abstract class SshConnectionBase implements SshConnection {
                 System.out.println("-1");
         }
     }
+
     @Override
     public List<String> walk(String path, boolean followLinks, int maxDepth) {
         switch (resolveShellFamily()) {
@@ -736,5 +768,304 @@ public abstract class SshConnectionBase implements SshConnection {
             default:
                 return null;
         }
+    }
+
+    @Override
+    public List<NPathInfo> listInfos(String path) {
+        switch (resolveOsFamily()) {
+            case WINDOWS: {
+                String script = "Get-ChildItem -LiteralPath '" + ensureWindowPath(path) + "' | ForEach-Object {\n" +
+                        "    $t = if ($_.PSIsContainer) {'directory'}\n" +
+                        "         elseif ($_.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {'symlink'}\n" +
+                        "         else {'file'}\n" +
+                        "    $target = if ($_.Attributes -band [System.IO.FileAttributes]::ReparsePoint) { $_.Target } else { '' }\n" +
+                        "    $perms = if (($_.Attributes -band [System.IO.FileAttributes]::ReadOnly) -ne 0) {'readonly'} else {''}\n" +
+                        "    $owner = (Get-Acl $_.FullName).Owner\n" +
+                        "    $group = '' # placeholder\n" +
+                        "    \"$($_.FullName);$t;$($_.Length);$($_.LastWriteTimeUtc.ToFileTimeUtc());$($_.LastAccessTimeUtc.ToFileTimeUtc());$($_.CreationTimeUtc.ToFileTimeUtc());$perms;$owner;$group;$target\"\n" +
+                        "}";
+                // Convert to UTF-16LE bytes
+                byte[] utf16leBytes = script.getBytes(StandardCharsets.UTF_16LE);
+                String base64 = Base64.getEncoder().encodeToString(utf16leBytes);
+                IOResult stat = execArrayCommandGrabbed("powershell", "-NoProfile","-EncodedCommand", base64);
+                List<NPathInfo> found = new ArrayList<>();
+                if (stat.code() == 0) {
+                    for (String line : NStringUtils.splitLines(stat.outString())) {
+                        if (!NBlankable.isBlank(line)) {
+                            NPathInfo nPathInfo = parseWindowsStatLine(line);
+                            found.add(nPathInfo);
+                        }
+                    }
+                }
+                return found;
+            }
+            default: {
+                IOResult stat = execArrayCommandGrabbed("stat", "--printf=%n;%F;%s;%Y;%X;%W;%A;%U;%G;%N\\n", path);
+                if (stat.code() == 0) {
+                    List<NPathInfo> found = new ArrayList<>();
+                    Map<String,NPathInfo> lazy = new LinkedHashMap<>();
+                    for (String line : NStringUtils.splitLines(stat.outString())) {
+                        if (!NBlankable.isBlank(line)) {
+                            NPathInfo nPathInfo = parseStatLine(line);
+                            if(nPathInfo.isSymbolicLink()){
+                                lazy.put(nPathInfo.getPath(), nPathInfo);
+                            }else {
+                                found.add(nPathInfo);
+                            }
+                        }
+                    }
+                    if(lazy.size()>0){
+                        List<String> cmd=new ArrayList<>(
+                                Arrays.asList(
+                                        "stat","-L", "--printf=%n;%F;%s;%Y;%X;%W;%A;%U;%G;%N\\n"
+                                )
+                        );
+                        cmd.addAll(lazy.keySet());
+                        stat = execArrayCommandGrabbed(cmd.toArray(new String[0]));
+                        if (stat.code() == 0) {
+                            for (String line : NStringUtils.splitLines(stat.outString())) {
+                                if (!NBlankable.isBlank(line)) {
+                                    NPathInfo nPathInfo = parseStatLine(line);
+                                    NPathInfo o = lazy.get(nPathInfo.getPath());
+                                    found.add(
+                                            new  DefaultNPathInfo(
+                                                    o.getPath(), o.getType(), nPathInfo.getType(), o.getTargetPath(), o.getContentLength(), o.isSymbolicLink(), o.getLastModifiedInstant(), o.getLastAccessInstant(), o.getCreationInstant(), o.getPermissions(), o.getOwner(), o.getGroup()
+                                            )
+                                    );
+                                }
+                            }
+                        }
+                    }
+                    return found;
+                }
+                return Collections.emptyList();
+            }
+        }
+    }
+
+    private NPathInfo parseWindowsStatLine(String line) {
+        // Expected format: FullName;type;Length;LastWriteTimeUtc;CreationTimeUtc;perms;owner;group;target
+        // Example:
+        // C:\Users;directory;4096;132465132465132465;132465132465132465;;Administrator;;
+
+        String[] parts = line.split(";", 11); // 9 fields expected
+        if (parts.length < 11) {
+            throw new IllegalArgumentException("Invalid stat line: " + line);
+        }
+
+        String pathStr = parts[0];
+        String fType = parts[1];
+        long size = 0;
+        try {
+            size = Long.parseLong(parts[2]);
+        } catch (NumberFormatException ignored) {}
+
+        long lastModifiedEpoch = 0;
+        try {
+            lastModifiedEpoch = Long.parseLong(parts[3]);
+        } catch (NumberFormatException ignored) {}
+
+        long lastAccessEpoch = 0;
+        try {
+            lastAccessEpoch = Long.parseLong(parts[4]);
+        } catch (NumberFormatException ignored) {}
+
+        long creationEpoch = 0;
+        try {
+            creationEpoch = Long.parseLong(parts[5]);
+        } catch (NumberFormatException ignored) {}
+
+        String permsStr = parts[6];
+        String owner = parts[4];
+        String group = parts[8];
+        String targetPathStr = parts[9];
+
+        // Map type string to NPathType
+        NPathType type;
+        boolean isSymlink = false;
+        switch (fType.toLowerCase()) {
+            case "directory": type = NPathType.DIRECTORY; break;
+            case "symlink":
+                type = NPathType.SYMBOLIC_LINK;
+                isSymlink = true;
+                break;
+            case "file": type = NPathType.FILE; break;
+            default: type = NPathType.OTHER;
+        }
+
+        // Parse permissions
+        Set<NPathPermission> perms = new LinkedHashSet<>();
+        if ("readonly".equalsIgnoreCase(permsStr)) {
+            perms.add(NPathPermission.CAN_READ);
+            perms.add(NPathPermission.OWNER_READ);
+        } else {
+            perms.add(NPathPermission.CAN_READ);
+            perms.add(NPathPermission.CAN_WRITE);
+            perms.add(NPathPermission.OWNER_READ);
+            perms.add(NPathPermission.OWNER_WRITE);
+        }
+
+        return new DefaultNPathInfo(
+                pathStr,
+                type,
+                null,               // targetType unknown on Windows for now
+                targetPathStr.isEmpty() ? null : targetPathStr,
+                size,
+                isSymlink,
+                lastModifiedEpoch > 0 ? Instant.ofEpochSecond(lastModifiedEpoch) : null,
+                lastAccessEpoch > 0 ? Instant.ofEpochSecond(lastAccessEpoch) : null,
+                creationEpoch > 0 ? Instant.ofEpochSecond(creationEpoch) : null,
+                perms,
+                owner,
+                group
+        );
+    }
+
+    private NPathInfo parseStatLine(String line) {
+// Expected format: %n;%F;%s;%Y;%W;%A;%U;%G;%N
+        // Example:
+        // /bin;symbolic link;7;1624338419;1640892655;lrwxrwxrwx;root;root;'/bin' -> 'usr/bin'
+
+        String[] parts = line.split(";", 9); // 9 fields expected
+        if (parts.length < 9) {
+            throw new IllegalArgumentException("Invalid stat line: " + line);
+        }
+
+        String pathStr = parts[0];
+        String fType = parts[1];
+        long size = Long.parseLong(parts[2]);
+        long lastModifiedEpoch = Long.parseLong(parts[3]);
+        long lastAccessEpoch = Long.parseLong(parts[4]);
+        long creationEpoch = Long.parseLong(parts[5]);
+        String permissionsStr = parts[6];
+        String owner = parts[7];
+        String group = parts[8];
+        String nField = parts[9];
+
+        // Determine type
+        NPathType type = mapStatType(fType);
+
+        // Symlink handling
+        boolean isSymlink = "symbolic link".equals(fType);
+        String targetPathStr = null;
+        if (isSymlink) {
+            // Parse the 'link' -> 'target' format
+            int arrowIndex = nField.indexOf("->");
+            if (arrowIndex >= 0) {
+                String targetPart = nField.substring(arrowIndex + 2).trim();
+                targetPart = targetPart.replaceAll("^'+|'+$", ""); // remove quotes
+                targetPathStr = targetPart;
+            }
+            if (targetPathStr != null) {
+                String parent = pathStr.substring(0, pathStr.lastIndexOf('/'));
+                if (!targetPathStr.startsWith("/")) { // relative target
+                    targetPathStr = parent + "/" + targetPathStr;
+                    // normalize .. and .
+                    Deque<String> stack = new ArrayDeque<>();
+                    for (String part : targetPathStr.split("/")) {
+                        if (part.isEmpty() || part.equals(".")) continue;
+                        if (part.equals("..")) {
+                            if (!stack.isEmpty()) stack.removeLast();
+                        } else {
+                            stack.addLast(part);
+                        }
+                    }
+                    targetPathStr = "/" + String.join("/", stack);
+                }
+                // if targetPathStr starts with /, already absolute → keep as-is
+            }
+        }
+        final NPathType targetType = null;
+        Set<NPathPermission> perms = new LinkedHashSet<>();
+
+        if (permissionsStr.length() == 10) {
+            if (permissionsStr.charAt(1) == 'r') perms.add(NPathPermission.OWNER_READ);
+            if (permissionsStr.charAt(2) == 'w') perms.add(NPathPermission.OWNER_WRITE);
+            if (permissionsStr.charAt(3) == 'x') perms.add(NPathPermission.OWNER_EXECUTE);
+            if (permissionsStr.charAt(4) == 'r') perms.add(NPathPermission.GROUP_READ);
+            if (permissionsStr.charAt(5) == 'w') perms.add(NPathPermission.GROUP_WRITE);
+            if (permissionsStr.charAt(6) == 'x') perms.add(NPathPermission.GROUP_EXECUTE);
+            if (permissionsStr.charAt(7) == 'r') perms.add(NPathPermission.OTHERS_READ);
+            if (permissionsStr.charAt(8) == 'w') perms.add(NPathPermission.OTHERS_WRITE);
+            if (permissionsStr.charAt(9) == 'x') perms.add(NPathPermission.OTHERS_EXECUTE);
+
+            // convenience flags
+            if (permissionsStr.charAt(1) == 'r' || permissionsStr.charAt(4) == 'r' || permissionsStr.charAt(7) == 'r') perms.add(NPathPermission.CAN_READ);
+            if (permissionsStr.charAt(2) == 'w' || permissionsStr.charAt(5) == 'w' || permissionsStr.charAt(8) == 'w') perms.add(NPathPermission.CAN_WRITE);
+            if (permissionsStr.charAt(3) == 'x' || permissionsStr.charAt(6) == 'x' || permissionsStr.charAt(9) == 'x') perms.add(NPathPermission.CAN_EXECUTE);
+        }
+        return new DefaultNPathInfo(pathStr, type, targetType, targetPathStr, size, isSymlink,
+                Instant.ofEpochSecond(lastModifiedEpoch),
+                lastAccessEpoch > 0 ? Instant.ofEpochSecond(lastAccessEpoch) : null,
+                creationEpoch > 0 ? Instant.ofEpochSecond(creationEpoch) : null,
+                perms,
+                owner,group
+        );
+    }
+
+    // Helper to map stat %F strings to NPathType
+    private NPathType mapStatType(String fType) {
+        switch (fType) {
+            case "regular file": return NPathType.FILE;
+            case "directory": return NPathType.DIRECTORY;
+            case "symbolic link": return NPathType.SYMBOLIC_LINK;
+            case "block special file": return NPathType.BLOCK_DEVICE;
+            case "character special file": return NPathType.CHARACTER_DEVICE;
+            case "fifo": return NPathType.NAMED_PIPE;
+            case "socket": return NPathType.SOCKET;
+            default: return NPathType.OTHER;
+        }
+    }
+
+    @Override
+    public NPathInfo getInfo(String path) {
+        switch (resolveOsFamily()) {
+            case WINDOWS: {
+                String script = "Get-Item -LiteralPath '" + ensureWindowPath(path) + "' | ForEach-Object {\n" +
+                        "    $t = if ($_.PSIsContainer) {'directory'}\n" +
+                        "         elseif ($_.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {'symlink'}\n" +
+                        "         else {'file'}\n" +
+                        "    $target = if ($_.Attributes -band [System.IO.FileAttributes]::ReparsePoint) { $_.Target } else { '' }\n" +
+                        "    $perms = if (($_.Attributes -band [System.IO.FileAttributes]::ReadOnly) -ne 0) {'readonly'} else {''}\n" +
+                        "    $owner = (Get-Acl $_.FullName).Owner\n" +
+                        "    $group = '' # Windows doesn't have a native 'group'\n" +
+                        "    \"$($_.FullName);$t;$($_.Length);$($_.LastWriteTimeUtc.ToFileTimeUtc());$($_.CreationTimeUtc.ToFileTimeUtc());$perms;$owner;$group;$target\"\n" +
+                        "}";
+
+                // Encode script to Base64 UTF-16LE for PowerShell
+                byte[] utf16leBytes = script.getBytes(StandardCharsets.UTF_16LE);
+                String base64 = Base64.getEncoder().encodeToString(utf16leBytes);
+
+                IOResult result = execArrayCommandGrabbed(
+                        "powershell", "-NoProfile", "-EncodedCommand", base64
+                );
+
+                if (result.code() == 0) {
+                    List<String> lines = NStringUtils.splitLines(result.outString());
+                    if (!lines.isEmpty() && !NBlankable.isBlank(lines.get(0))) {
+                        return parseWindowsStatLine(lines.get(0));
+                    }
+                }
+
+                // Fallback: not found
+                return DefaultNPathInfo.ofNotFound(path);
+            }
+            default: {
+                IOResult stat = execStringCommandGrabbed("stat '--printf=%n;%F;%s;%Y;%X;%W;%A;%U;%G;%N\\n' "+doEscapeArg(path)+" ; stat -L '--printf=%n;%F;%s;%Y;%X;%W;%A;%U;%G;%N\\n' "+doEscapeArg(path)+" ; ");
+                if (stat.code() == 0) {
+                    List<String> lines = NStringUtils.splitLines(stat.outString());
+                    NPathInfo o = parseStatLine(lines.get(0));
+                    if(o.isSymbolicLink()){
+                        NPathInfo line2 = parseStatLine(lines.get(1));
+                        return new  DefaultNPathInfo(
+                                o.getPath(), o.getType(), line2.getTargetType(), o.getTargetPath(), o.getContentLength(), o.isSymbolicLink(), o.getLastModifiedInstant(), o.getCreationInstant(), o.getLastAccessInstant(), o.getPermissions(), o.getOwner(), o.getGroup()
+                        );
+                    }
+                    return o;
+                }
+                break;
+            }
+        }
+        return DefaultNPathInfo.ofNotFound(path);
     }
 }
