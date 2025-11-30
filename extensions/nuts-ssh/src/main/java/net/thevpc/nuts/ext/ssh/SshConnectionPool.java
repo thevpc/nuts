@@ -6,8 +6,6 @@ import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NChronometer;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -15,12 +13,46 @@ import java.util.concurrent.BlockingQueue;
 import java.util.function.Function;
 
 public class SshConnectionPool {
+    public static final int DEFAULT_SESSION_TIMEOUT = 60000;
+    public static final int DEFAULT_POOL_MAX_SIZE = 200;
     private final int maxSize;
     private long idleTimeout = 60000;
-    private final Map<NConnectionString, BlockingQueue<SShPooledConnection>> idleMap;
-    private final Function<NConnectionString, JCshSshConnection> factory;
+    private final Map<NConnectionString, ConnectionQueue> idleMap;
+    private final Function<NConnectionString, SshConnection> factory;
     private Timer timer;
 
+    private static class ConnectionQueue {
+        NConnectionString connectionString;
+        BlockingQueue<SShPooledConnection> available;
+        List<SShPooledConnection> running;
+
+        public ConnectionQueue(NConnectionString connectionString, int maxSize) {
+            this.connectionString = connectionString;
+            this.available = new ArrayBlockingQueue<>(maxSize);
+            this.running = new ArrayList<>();
+        }
+
+        public synchronized void disposeOld(long timeoutMs, long now) {
+            for (Iterator<SShPooledConnection> iter = available.iterator(); iter.hasNext(); ) {
+                SShPooledConnection conn = iter.next();
+                if (conn.lastUsed + timeoutMs >= now || !conn.isAlive()) {
+                    silentDispose(conn);
+                    iter.remove();
+                }
+            }
+        }
+
+        boolean isEmpty() {
+            return available.isEmpty() && running.isEmpty();
+        }
+
+        public void close() {
+            for (SShPooledConnection conn : available) {
+                silentDispose(conn);
+            }
+            available.clear();
+        }
+    }
 
     public static SshConnectionPool of() {
         NWorkspace ws = NWorkspace.of();
@@ -29,7 +61,7 @@ public class SshConnectionPool {
             if (u != null) {
                 return u;
             }
-            SshConnectionPool r = new SshConnectionPool(200, 60000);
+            SshConnectionPool r = new SshConnectionPool(DEFAULT_POOL_MAX_SIZE, DEFAULT_SESSION_TIMEOUT);
             ws.setProperty(SshConnectionPool.class.getName(), r);
             return r;
         }
@@ -37,48 +69,24 @@ public class SshConnectionPool {
 
     public SshConnectionPool(int maxSize, long idleTimeout) {
         this(maxSize, idleTimeout, connectionString -> {
-            switch (NWorkspace.of().getOsFamily()){
-                case LINUX:{
-                    Map<String, List<String>> queryMap = connectionString.getQueryMap().orNull();
-                    if(queryMap!=null){
-                        List<String> use = queryMap.get("use");
-                        if(use!=null&&use.size()>0){
-                            for (String s : use) {
-                                switch (NStringUtils.trim(s).toLowerCase()) {
-                                    case "bin":{
-                                        break;
-                                    }
-                                    case "portable":
-                                    case "jcsh":
-                                    {
-                                        return new JCshSshConnection(connectionString);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    // it should be able to select native ssh command too
-                    return new JCshSshConnection(connectionString);
-                }
-                default:{
-                    return new JCshSshConnection(connectionString);
-                }
-            }
+            return ScoredConnectionFactory.resolveBinSshConnectionPool(connectionString).call();
         });
     }
 
-    public SshConnectionPool(int maxSize, long idleTimeout, Function<NConnectionString, JCshSshConnection> factory) {
+
+    public SshConnectionPool(int maxSize, long idleTimeout, Function<NConnectionString, SshConnection> factory) {
         this.maxSize = maxSize;
-        this.idleTimeout = idleTimeout <= 0 ? 60000 : idleTimeout;
+        this.idleTimeout = idleTimeout <= 0 ? DEFAULT_SESSION_TIMEOUT : idleTimeout;
         this.factory = factory;
         this.idleMap = new HashMap<>();
-        this.timer = new Timer();
+        this.timer = new Timer("SshConnectionPoolGarbleCollector",true);
+        long period = Math.max(this.idleTimeout / 10,1000);
         this.timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 disposeOld(SshConnectionPool.this.idleTimeout);
             }
-        }, idleTimeout);
+        }, period,period);
     }
 
     public SshConnection acquire(String connectionString) {
@@ -86,24 +94,25 @@ public class SshConnectionPool {
     }
 
     public SshConnection acquire(NConnectionString connectionString) {
-        BlockingQueue<SShPooledConnection> idle = getIdle(connectionString);
-        SShPooledConnection conn = idle.poll();
+        ConnectionQueue idle = getIdle(connectionString);
+        SShPooledConnection conn = idle.available.poll();
         if (conn != null && conn.isAlive()) {
             return conn;
         }
 
         // If the pool isn't full yet, create a new one
         synchronized (this) {
-            if (idle.size() < maxSize) {
+            if (idle.available.size() < maxSize) {
                 NChronometer s = NChronometer.startNow();
                 SShPooledConnection newConn = new SShPooledConnection(connectionString, factory.apply(connectionString));
                 NLog.of(SshConnectionPool.class).log(NMsg.ofC("create ssh connection %s in %s", connectionString, s).withIntent(NMsgIntent.ADD).asDebug());
+                idle.running.add(newConn);
                 return newConn;
             }
         }
         // Pool full: wait for someone to return one
         try {
-            SShPooledConnection take = idle.take();
+            SShPooledConnection take = idle.available.take();
             NLog.of(SshConnectionPool.class).log(NMsg.ofC("acquire ssh connection %s", connectionString).withIntent(NMsgIntent.REMOVE).asDebug());
             return take;
         } catch (InterruptedException e) {
@@ -111,30 +120,25 @@ public class SshConnectionPool {
         }
     }
 
-    private synchronized BlockingQueue<SShPooledConnection> getIdle(NConnectionString connectionString) {
-        return idleMap.computeIfAbsent(connectionString, r -> new ArrayBlockingQueue<>(maxSize));
+    private synchronized ConnectionQueue getIdle(NConnectionString connectionString) {
+        NConnectionString normalized = connectionString.builder().setPath(null).setNormalized(true).build();
+        return idleMap.computeIfAbsent(normalized, r -> new ConnectionQueue(r,maxSize));
     }
 
 
     public synchronized void disposeOld(long timeoutMs) {
         long now = System.currentTimeMillis();
-        for (Iterator<Map.Entry<NConnectionString, BlockingQueue<SShPooledConnection>>> iterator = idleMap.entrySet().iterator(); iterator.hasNext(); ) {
-            Map.Entry<NConnectionString, BlockingQueue<SShPooledConnection>> e = iterator.next();
-            BlockingQueue<SShPooledConnection> idle = e.getValue();
-            for (Iterator<SShPooledConnection> iter = idle.iterator(); iter.hasNext(); ) {
-                SShPooledConnection conn = iter.next();
-                if (conn.lastUsed + timeoutMs >= now || !conn.isAlive()) {
-                    silentDispose(conn);
-                    iter.remove();
-                }
-            }
+        for (Iterator<Map.Entry<NConnectionString, ConnectionQueue>> iterator = idleMap.entrySet().iterator(); iterator.hasNext(); ) {
+            Map.Entry<NConnectionString, ConnectionQueue> e = iterator.next();
+            ConnectionQueue idle = e.getValue();
+            idle.disposeOld(timeoutMs, now);
             if (idle.isEmpty()) {
                 iterator.remove();
             }
         }
     }
 
-    private void silentDispose(SShPooledConnection conn) {
+    private static void silentDispose(SShPooledConnection conn) {
         NLog.of(SshConnectionPool.class).log(NMsg.ofC("dispose ssh connection %s", conn.connectionString).withIntent(NMsgIntent.DISPOSE).asDebug());
         try {
             conn.dispose();
@@ -145,12 +149,9 @@ public class SshConnectionPool {
 
     public synchronized void close() {
         timer.cancel();
-        for (Map.Entry<NConnectionString, BlockingQueue<SShPooledConnection>> e : idleMap.entrySet()) {
-            BlockingQueue<SShPooledConnection> idle = e.getValue();
-            for (SShPooledConnection conn : idle) {
-                silentDispose(conn);
-            }
-            idle.clear();
+        for (Map.Entry<NConnectionString, ConnectionQueue> e : idleMap.entrySet()) {
+            ConnectionQueue idle = e.getValue();
+            idle.close();
         }
         idleMap.clear();
     }
@@ -166,7 +167,7 @@ public class SshConnectionPool {
         }
 
         @Override
-        protected SshConnection getConnection() {
+        public SshConnection getConnection() {
             lastUsed = System.currentTimeMillis();
             return super.getConnection();
         }
@@ -178,7 +179,10 @@ public class SshConnectionPool {
                 return;
             }
             reset();
-            if (!getIdle(connectionString).offer(this)) {
+
+            ConnectionQueue cq = getIdle(connectionString);
+            cq.running.remove(this);
+            if (!cq.available.offer(this)) {
                 silentDispose(this);
             } else {
                 NLog.of(SshConnectionPool.class).log(NMsg.ofC("close ssh connection %s", connectionString).withIntent(NMsgIntent.ADD).asDebug());
