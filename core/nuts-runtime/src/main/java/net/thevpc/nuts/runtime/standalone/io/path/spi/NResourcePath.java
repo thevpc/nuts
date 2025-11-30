@@ -198,7 +198,7 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public NPathType type(NPath basePath) {
+    public NPathType getType(NPath basePath) {
         NPath u = toURLPath();
         if(u!=null){
             return u.type();
@@ -221,12 +221,12 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public long contentLength(NPath basePath) {
+    public long getContentLength(NPath basePath) {
         NPath up = toURLPath();
         if (up == null) {
             return -1;
         }
-        return up.contentLength();
+        return up.getContentLength();
     }
 
     @Override
@@ -305,13 +305,13 @@ public class NResourcePath implements NPathSPI {
         if (up == null) {
             return null;
         }
-        return up.lastModifiedInstant();
+        return up.getLastModifiedInstant();
     }
 
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
         NPath up = toURLPath();
-        return up != null ? up.lastAccessInstant() : null;
+        return up != null ? up.getLastAccessInstant() : null;
     }
 
     @Override
@@ -345,13 +345,13 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public String owner(NPath basePath) {
+    public String getOwner(NPath basePath) {
         NPath up = toURLPath();
         return up != null ? up.owner() : null;
     }
 
     @Override
-    public String group(NPath basePath) {
+    public String getGroup(NPath basePath) {
         NPath up = toURLPath();
         return up != null ? up.group() : null;
     }
