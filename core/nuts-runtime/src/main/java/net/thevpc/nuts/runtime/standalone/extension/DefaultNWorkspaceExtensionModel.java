@@ -476,9 +476,9 @@ public class DefaultNWorkspaceExtensionModel {
                     //and the add to classpath
                     loadedExtensionIds.add(extension);
                     _LOG()
-                            .log(NMsg.ofC("extension %s loaded", def.getId()
-                            )
+                            .log(NMsg.ofC("extension %s loaded", def.getId())
                                     .withIntent(NMsgIntent.SUCCESS)
+                                    .withLevel(Level.CONFIG)
                             );
                     someUpdates = true;
                 }
