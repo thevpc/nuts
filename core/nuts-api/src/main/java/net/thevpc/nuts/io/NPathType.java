@@ -8,10 +8,11 @@ import net.thevpc.nuts.util.NOptional;
 public enum NPathType implements NEnum {
     DIRECTORY,
     NAMED_PIPE,
-    CHARACTER,
+    CHARACTER_DEVICE,
     SYMBOLIC_LINK,
-    BLOCK,
+    BLOCK_DEVICE,
     FILE,
+    SOCKET,
     OTHER,
     NOT_FOUND
     ;
