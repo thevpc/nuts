@@ -7,6 +7,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.*;
+import net.thevpc.nuts.ext.ssh.jcsh.JCshConnection;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.DefaultNConnectionStringBuilder;
 import net.thevpc.nuts.net.NConnectionString;
@@ -152,7 +153,7 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
     }
 
     private String runOnceSystemGrab(String cmd, NConnectionString connectionString) {
-        try (JCshSshConnection sshc = new JCshSshConnection(connectionString)) {
+        try (SshConnection sshc = SshConnectionPool.of().acquire(connectionString)) {
             return sshc.execStringCommandGrabbed(cmd).outString();
         }
     }
