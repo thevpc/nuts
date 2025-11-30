@@ -21,7 +21,6 @@ public interface NConnectionString extends NImmutable {
 
     String getPassword();
 
-
     String getHost();
 
     NConnectionString getRoot();
