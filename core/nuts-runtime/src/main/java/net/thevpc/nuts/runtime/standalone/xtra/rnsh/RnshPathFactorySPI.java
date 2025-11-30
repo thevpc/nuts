@@ -133,7 +133,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
         }
 
         @Override
-        public NPathType type(NPath basePath) {
+        public NPathType getType(NPath basePath) {
             if (!client.ensureConnectedSafely()) {
                 return NPathType.NOT_FOUND;
             }
@@ -154,11 +154,11 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
             if (!client.ensureConnectedSafely()) {
                 return false;
             }
-            return type(basePath) != NPathType.NOT_FOUND;
+            return getType(basePath) != NPathType.NOT_FOUND;
         }
 
         @Override
-        public long contentLength(NPath basePath) {
+        public long getContentLength(NPath basePath) {
             if (!client.ensureConnectedSafely()) {
                 return -1;
             }
