@@ -98,8 +98,8 @@ public class RemoteConnectionStringInfo {
     public boolean copy(NPath local, NPath remote) {
         NLog log = LOG();
         log.log(NMsg.ofC("try copy %s %s", local, remote).asFiner().withIntent(NMsgIntent.START));
-        long localContentLength = local.contentLength();
-        long remoteContentLength = remote.contentLength();
+        long localContentLength = local.getContentLength();
+        long remoteContentLength = remote.getContentLength();
         if (remoteContentLength >= 0) {
             if (localContentLength == remoteContentLength) {
                 String ld = local.getDigestString();
