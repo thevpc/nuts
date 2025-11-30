@@ -168,6 +168,6 @@ public class NPrintStreamSystem extends NPrintStreamBase {
 
     @Override
     public OutputStream getOutputStream() {
-        return asOutputStream();
+        return out;
     }
 }
