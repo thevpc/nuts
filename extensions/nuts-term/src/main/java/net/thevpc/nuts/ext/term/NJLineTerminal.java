@@ -29,6 +29,7 @@ import java.awt.Color;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.*;
@@ -199,18 +200,22 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             //Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
             throw new UncheckedIOException(new IOException("unable to create JLine system terminal: " + ex.getMessage(), ex));
         }
+        NSession session = NSession.of();
         reader = LineReaderBuilder.builder()
                 .completer(new NJLineCompleter(this))
                 .highlighter(new Highlighter() {
                     @Override
                     public AttributedString highlight(LineReader reader, String buffer) {
-                        NTexts text = NTexts.of();
-                        String ct = getCommandHighlighter();
-                        if (NBlankable.isBlank(ct)) {
-                            ct = "system";
-                        }
-                        NText n = NText.ofCode(ct, buffer).highlight();
-                        return toAttributedString(n, NTextStyles.PLAIN);
+                        //session is not inherited here so pass it manually
+                        return session.callWith(()->{
+                            NTexts text = NTexts.of();
+                            String ct = getCommandHighlighter();
+                            if (NBlankable.isBlank(ct)) {
+                                ct = "system";
+                            }
+                            NText n = NText.ofCode(ct, buffer).highlight();
+                            return toAttributedString(n, NTextStyles.PLAIN);
+                        });
                     }
 
                     @Override
