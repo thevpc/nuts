@@ -26,7 +26,18 @@ public class DefaultNConnectionString implements NConnectionString {
         this.queryMap = Collections.emptyMap();
     }
 
-    public DefaultNConnectionString(String protocol, String userName, String password, String host, String port, String path, String queryString, Map<String, List<String>> queryMap) {
+    public DefaultNConnectionString(String protocol, String userName, String password, String host, String port, String path, Map<String, List<String>> queryMap) {
+        this.protocol = protocol;
+        this.userName = userName;
+        this.password = password;
+        this.host = host;
+        this.port = port;
+        this.path = path;
+        this.queryMap = DefaultNConnectionStringBuilder.prepareQueryMap(queryMap, false);
+        this.queryString = DefaultNConnectionStringBuilder.serializeQueryMap(this.queryMap);
+    }
+
+    public DefaultNConnectionString(String protocol, String userName, String password, String host, String port, String path, String queryString) {
         this.protocol = protocol;
         this.userName = userName;
         this.password = password;
@@ -34,77 +45,25 @@ public class DefaultNConnectionString implements NConnectionString {
         this.port = port;
         this.path = path;
         this.queryString = queryString;
-        this.queryMap = queryMap;
+        this.queryMap = DefaultNConnectionStringBuilder.deserializeQueryMap(queryString);
     }
 
     @Override
     public NConnectionString normalize() {
-        TreeMap<String, List<String>> queryMap2 = null;
-        boolean someChanges = false;
-        if (queryMap != null) {
-            for (Map.Entry<String, List<String>> q : queryMap.entrySet()) {
-                List<String> list = q.getValue();
-                if (queryMap2 == null) {
-                    queryMap2 = new TreeMap<>();
-                }
-                queryMap2.put(q.getKey(), list);
-            }
-        }
-        if (!someChanges && !Objects.equals(this.queryMap, queryMap2)) {
-            someChanges = true;
-        }
-        String queryString2 = null;
-        if (queryMap2 != null) {
-            queryString2 = NStringMapFormat.URL_FORMAT.formatDuplicates(queryMap2);
-        }
-        if (!someChanges && !Objects.equals(this.queryString, queryString2)) {
-            someChanges = true;
-        }
-
-        String protocol2 = NStringUtils.trimToNull(protocol);
-        if (!someChanges && !Objects.equals(this.protocol, protocol2)) {
-            someChanges = true;
-        }
-
-        String userName2 = NStringUtils.trimToNull(userName);
-        if (!someChanges && !Objects.equals(this.userName, userName2)) {
-            someChanges = true;
-        }
-
-        String host2 = NStringUtils.trimToNull(host);
-        if (!someChanges && !Objects.equals(this.host, host2)) {
-            someChanges = true;
-        }
-
-        String port2 = NStringUtils.trimToNull(port);
-        if (!someChanges && !Objects.equals(this.port, port2)) {
-            someChanges = true;
-        }
-
-        String path2 = NStringUtils.trimToNull(path);
-        if (!someChanges && !Objects.equals(this.path, path2)) {
-            someChanges = true;
-        }
-
-        if (!someChanges) {
-            return this;
-        }
-        return new DefaultNConnectionString(protocol2, userName2, password, host2, port2, path2, queryString2, queryMap2);
+        return builder().setNormalized(true).build();
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNConnectionString that = (DefaultNConnectionString) o;
-        return Objects.equals(protocol, that.protocol) && Objects.equals(userName, that.userName) && Objects.equals(password, that.password) && Objects.equals(host, that.host) && Objects.equals(port, that.port) && Objects.equals(path, that.path);
+        return Objects.equals(protocol, that.protocol) && Objects.equals(userName, that.userName) && Objects.equals(password, that.password) && Objects.equals(host, that.host) && Objects.equals(port, that.port) && Objects.equals(path, that.path) && Objects.equals(queryString, that.queryString) && Objects.equals(queryMap, that.queryMap);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(protocol, userName, password, host, port, path);
+        return Objects.hash(protocol, userName, password, host, port, path, queryString, queryMap);
     }
-
 
     @Override
     public NConnectionStringBuilder builder() {
