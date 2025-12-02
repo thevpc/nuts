@@ -73,7 +73,7 @@ public class BinSshFileOutputStreamScp extends OutputStream {
 
     private void uploadTempFile() throws IOException {
         NConnectionStringBuilder cbuilder = remotePath.builder();
-        String identityFile = cbuilder.getQueryParamValue(SshConnection.IDENTITY_FILE).orNull();
+        String identityFile = cbuilder.getQueryParam(SshConnection.IDENTITY_FILE).orNull();
         NExecCmd scp = NExecCmd.ofSystem("scp", "-q", temp.toString(),
                 cbuilder.setPort(null).setQueryMap(null).toString());
         int port = NLiteral.of(remotePath.getPort()).asInt().orElse(-1);
