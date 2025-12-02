@@ -25,8 +25,8 @@ public class NConcurrentImpl implements NConcurrent {
 
     private final NCachedValueFactory memoryCachedValueFactory = new NCachedValueFactoryImpl(new NCachedValueStoreMemory());
     private NCachedValueFactory cachedValueFactory;
-    private final NStableValueFactory memoryStableValueFactory = new NStableValueFactoryImpl(new NStableValueStoreMemory());
-    private NStableValueFactory stableValueFactory;
+    private final NOnceValueFactory memoryStableValueFactory = new NOnceValueFactoryImpl(new NOnceValueStoreMemory());
+    private NOnceValueFactory stableValueFactory;
 
     private final NRetryCallFactory memoryRetryValueFactory = new NRetryCallFactoryImpl(new NRetryCallStoreMemory());
     private NRetryCallFactory retryValueFactory;
@@ -90,23 +90,23 @@ public class NConcurrentImpl implements NConcurrent {
 
 
     @Override
-    public NConcurrent setStableValueFactory(NStableValueFactory stableValueFactory) {
+    public NConcurrent setStableValueFactory(NOnceValueFactory stableValueFactory) {
         this.stableValueFactory = stableValueFactory;
         return this;
     }
 
     @Override
-    public NStableValueFactory memoryStableValueFactory() {
+    public NOnceValueFactory memoryStableValueFactory() {
         return memoryStableValueFactory;
     }
 
     @Override
-    public NStableValueFactory defaultStableValueFactory() {
+    public NOnceValueFactory defaultStableValueFactory() {
         return memoryStableValueFactory();
     }
 
     @Override
-    public NStableValueFactory stableValueFactory() {
+    public NOnceValueFactory stableValueFactory() {
         return stableValueFactory == null ? defaultStableValueFactory() : stableValueFactory;
     }
 
@@ -155,7 +155,7 @@ public class NConcurrentImpl implements NConcurrent {
     }
 
     @Override
-    public <T> NStableValue<T> stableValue(Supplier<T> supplier) {
+    public <T> NOnceValue<T> stableValue(Supplier<T> supplier) {
         return stableValueFactory().of(supplier);
     }
 
@@ -165,7 +165,7 @@ public class NConcurrentImpl implements NConcurrent {
     }
 
     @Override
-    public <T> NStableValue<T> stableValue(String id, Supplier<T> supplier) {
+    public <T> NOnceValue<T> stableValue(String id, Supplier<T> supplier) {
         return stableValueFactory().of(id, supplier);
     }
 
