@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.definition;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetchCmd;
-import net.thevpc.nuts.concurrent.NStableValue;
+import net.thevpc.nuts.concurrent.NOnceValue;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -99,13 +99,13 @@ public class NDefinitionHelper {
 
     private static class DefinitionForIdAndLazyDescriptor extends NDefinitionDelegate {
         private final NId id;
-        private final NStableValue<NDescriptor> descriptor;
+        private final NOnceValue<NDescriptor> descriptor;
         private final String caller;
 
         public DefinitionForIdAndLazyDescriptor(NId id, Supplier<NDescriptor> descriptor, String caller) {
             this.id = id;
             this.caller = caller;
-            this.descriptor = NStableValue.of(descriptor);
+            this.descriptor = NOnceValue.ofSupplier(descriptor);
         }
 
         @Override
