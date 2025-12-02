@@ -36,7 +36,7 @@ public class BinSshConnection extends SshConnectionBase {
         String user = connectionString.getUserName();
         String host = connectionString.getHost();
         int port = NLiteral.of(connectionString.getPort()).asInt().orElse(-1);
-        String keyFilePath = connectionString.builder().getQueryParamValue(SshConnection.IDENTITY_FILE).orNull();
+        String keyFilePath = connectionString.builder().getQueryParam(SshConnection.IDENTITY_FILE).orNull();
         String keyPassword = connectionString.getPassword();
         if (port <= 0) {
             port = 22;
@@ -97,7 +97,7 @@ public class BinSshConnection extends SshConnectionBase {
     @Override
     public InputStream getInputStream(String from) {
         NConnectionStringBuilder cbuilder = connectionString.builder();
-        String identityFile = cbuilder.getQueryParamValue(SshConnection.IDENTITY_FILE).orNull();
+        String identityFile = cbuilder.getQueryParam(SshConnection.IDENTITY_FILE).orNull();
         int port = NLiteral.of(connectionString.getPort()).asInt().orElse(-1);
         if (port <= 0) {
             port = 22;
