@@ -1,5 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.util.NAssert;
+
 import java.util.function.Supplier;
 
 /**
@@ -23,8 +25,34 @@ public class NScopedValue<T> {
      *
      * @param defaultSupplier the supplier used to provide a default value
      */
+    public static <T> NScopedValue<T> ofSupplier(Supplier<T> defaultSupplier){
+        NAssert.requireNonNull(defaultSupplier, "supplier supplier");
+        return new NScopedValue<T>(defaultSupplier) ;
+    }
+
+    /**
+     * Creates a new {@code NScopedValue} with a default value.
+     *
+     * @param value the value used
+     */
+    public static <T> NScopedValue<T> of(T value){
+        return new NScopedValue<T>(value==null?null:()->value) ;
+    }
+    /**
+     * Creates a new {@code NScopedValue} with a default value supplier.
+     *
+     * @param defaultSupplier the supplier used to provide a default value
+     */
     public NScopedValue(Supplier<T> defaultSupplier) {
         this.defaultSupplier = defaultSupplier;
+    }
+
+    /**
+     * Creates a new {@code NScopedValue} without a default supplier.
+     *
+     */
+    public static <T> NScopedValue<T> of() {
+        return new NScopedValue<>();
     }
 
     /**
