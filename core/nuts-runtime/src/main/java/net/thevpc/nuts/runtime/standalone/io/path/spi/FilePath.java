@@ -126,7 +126,7 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public NPathType type(NPath basePath) {
+    public NPathType getType(NPath basePath) {
         if (Files.isDirectory(value)) {
             return NPathType.DIRECTORY;
         }
@@ -155,7 +155,7 @@ public class FilePath implements NPathSPI {
         return Files.exists(value);
     }
 
-    public long contentLength(NPath basePath) {
+    public long getContentLength(NPath basePath) {
         try {
             return Files.size(value);
         } catch (IOException e) {
@@ -371,7 +371,7 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public String owner(NPath basePath) {
+    public String getOwner(NPath basePath) {
         PosixFileAttributes a = getUattr();
         if (a != null) {
             UserPrincipal o = a.owner();
@@ -381,7 +381,7 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public String group(NPath basePath) {
+    public String getGroup(NPath basePath) {
         PosixFileAttributes a = getUattr();
         if (a != null) {
             GroupPrincipal o = a.group();
@@ -390,11 +390,15 @@ public class FilePath implements NPathSPI {
         return null;
     }
 
-    @Override
-    public Set<NPathPermission> getPermissions(NPath basePath) {
+    private static Set<NPathPermission> perms(Path path) {
         Set<NPathPermission> p = new LinkedHashSet<>();
-        PosixFileAttributes a = getUattr();
-        File file = value.toFile();
+        Set<PosixFilePermission> a = null;
+        try {
+            a = Files.getPosixFilePermissions(path, LinkOption.NOFOLLOW_LINKS);
+        } catch (IOException e) {
+            //
+        }
+        File file = path.toFile();
         if (file.canRead()) {
             p.add(NPathPermission.CAN_READ);
         }
@@ -405,7 +409,7 @@ public class FilePath implements NPathSPI {
             p.add(NPathPermission.CAN_EXECUTE);
         }
         if (a != null) {
-            for (PosixFilePermission permission : a.permissions()) {
+            for (PosixFilePermission permission : a) {
                 switch (permission) {
                     case OWNER_READ: {
                         p.add(NPathPermission.OWNER_READ);
@@ -438,6 +442,11 @@ public class FilePath implements NPathSPI {
             }
         }
         return Collections.unmodifiableSet(p);
+    }
+
+    @Override
+    public Set<NPathPermission> getPermissions(NPath basePath) {
+        return perms(value);
     }
 
     @Override
@@ -528,6 +537,72 @@ public class FilePath implements NPathSPI {
             }
         }
         return NStream.ofEmpty();
+    }
+
+    @Override
+    public NPathInfo getInfo(NPath basePath) {
+        return fetchInfo(value);
+    }
+
+    @Override
+    public List<NPathInfo> listInfos(NPath basePath) {
+        return null;
+    }
+
+    // Helper to fetch metadata once
+    private static NPathInfo fetchInfo(Path path) {
+        try {
+            // read basic attributes
+            BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+
+            boolean isSymlink = attrs.isSymbolicLink();
+            Path target = isSymlink ? Files.readSymbolicLink(path) : null;
+
+            NPathType type = determineType(attrs);
+
+            // resolved target type
+            NPathType targetType;
+            if (isSymlink && Files.exists(path.toRealPath())) {
+                BasicFileAttributes targetAttrs = Files.readAttributes(path.toRealPath(), BasicFileAttributes.class);
+                targetType = determineType(targetAttrs);
+            } else {
+                targetType = null;
+            }
+            String targetPath = target != null ? path.getParent().resolve(target).toString() : null;
+            Instant lastModified = attrs.lastModifiedTime().toInstant();
+            Instant lastAccess = attrs.lastAccessTime().toInstant();
+            Set<NPathPermission> perms = perms(path);
+            Instant creationTime = attrs.creationTime().toInstant();
+
+            String owner = null;
+            try {
+                owner = Files.getOwner(path, LinkOption.NOFOLLOW_LINKS).getName();
+            } catch (IOException e) {
+                //
+            }
+
+            String group = null;
+            try {
+                PosixFileAttributes posix = Files.readAttributes(path, PosixFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+                group = posix.group().getName();
+            } catch (UnsupportedOperationException e) {
+                group = ""; // Windows or non-POSIX FS
+            }
+
+            return new DefaultNPathInfo(
+                    path.toString(),type,targetType,targetPath,attrs.size(),isSymlink,lastModified,lastAccess,creationTime,perms,owner,
+                    group
+            ) ;
+        } catch (IOException e) {
+            return DefaultNPathInfo.ofNotFound(path.toString());
+        }
+    }
+
+    private static NPathType determineType(BasicFileAttributes attrs) {
+        if (attrs.isRegularFile()) return NPathType.FILE;
+        if (attrs.isDirectory()) return NPathType.DIRECTORY;
+        if (attrs.isSymbolicLink()) return NPathType.SYMBOLIC_LINK;
+        return NPathType.OTHER;
     }
 
     @Override
@@ -770,14 +845,14 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public NStream<String> reversedLines(Charset charset) {
+    public NStream<String> reversedLines(NPath basePath, Charset charset) {
         File file = value == null ? null : value.toFile();
         if (file == null || !file.isFile()) {
             throw new NIOException(new FileNotFoundException(String.valueOf(value)));
         }
 
         Charset actualCharset = (charset != null) ? charset : Charset.defaultCharset();
-        return NStream.ofIterator(new ReverseLineReaderIterator(file, actualCharset, 4096*10 /*max line length*/));
+        return NStream.ofIterator(new ReverseLineReaderIterator(file, actualCharset, 4096 * 10 /*max line length*/));
     }
 
     private static class MyPathFormat implements NFormatSPI {
@@ -824,7 +899,7 @@ public class FilePath implements NPathSPI {
                     path = path.substring(1);
                 }
                 Path value = Paths.get(path);
-                if(path.matches("^([a-zA-Z][a-zA-Z0-9]+)([+]([a-zA-Z][a-zA-Z0-9]+))*:.*")){
+                if (path.matches("^([a-zA-Z][a-zA-Z0-9]+)([+]([a-zA-Z][a-zA-Z0-9]+))*:.*")) {
                     return NScoredCallable.of(5, () -> new FilePath(value));
                 }
                 return NScoredCallable.of(10, () -> new FilePath(value));

@@ -44,11 +44,11 @@ public interface NPathSPI {
 
     NStream<NPath> list(NPath basePath);
 
-    NPathType type(NPath basePath);
+    NPathType getType(NPath basePath);
 
     boolean exists(NPath basePath);
 
-    long contentLength(NPath basePath);
+    long getContentLength(NPath basePath);
 
     String toString();
 
@@ -163,11 +163,11 @@ public interface NPathSPI {
         return null;
     }
 
-    default String owner(NPath basePath) {
+    default String getOwner(NPath basePath) {
         return null;
     }
 
-    default String group(NPath basePath) {
+    default String getGroup(NPath basePath) {
         return null;
     }
 
@@ -278,7 +278,21 @@ public interface NPathSPI {
         return null;
     }
 
-    default NStream<String> reversedLines(Charset charset) {
+    default NStream<String> reversedLines(NPath basePath,Charset charset) {
+        return null;
+    }
+
+    /**
+     * @since 0.8.9
+     */
+    default NPathInfo getInfo(NPath basePath) {
+        return null;
+    }
+
+    /**
+     * @since 0.8.9
+     */
+    default List<NPathInfo> listInfos(NPath basePath) {
         return null;
     }
 }

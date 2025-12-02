@@ -1,6 +1,7 @@
 package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.concurrent.NCachedValue;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.DefaultNConnectionStringBuilder;
@@ -13,6 +14,7 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
 
 import java.io.InputStream;
@@ -27,6 +29,7 @@ class SshNPath implements NPathSPI {
 
     private final NConnectionString path;
     private SshListener listener;
+    private NCachedValue<NPathType> cachedType;
 
     public SshNPath(NConnectionString path) {
         this.path = path;
@@ -93,8 +96,7 @@ class SshNPath implements NPathSPI {
                 int port = NLiteral.of(path.getPort()).asInt().orElse(-1);
                 String path0 = path.getPath();
                 String password = path.getPassword();
-                String keyFile = NStringMapFormat.URL_FORMAT.parse(path.getQueryString())
-                        .orElse(Collections.emptyMap()).get("key-file");
+                String keyFile = path.builder().getQueryParamValue(SshConnection.IDENTITY_FILE).orNull();
 
                 sb.append(text.ofStyled("ssh://", _sep));
                 if (!NBlankable.isBlank(user)) {
@@ -125,7 +127,7 @@ class SshNPath implements NPathSPI {
                             sb.append(text.ofStyled(",", _sep));
                         }
                         sb
-                                .append("key-file")
+                                .append(SshConnection.IDENTITY_FILE)
                                 .append(text.ofStyled("=", _sep))
                                 .append(keyFile);
                     }
@@ -143,7 +145,12 @@ class SshNPath implements NPathSPI {
     @Override
     public String getName(NPath basePath) {
         String loc = getLocation(basePath);
-        return loc == null ? "" : Paths.get(loc).getFileName().toString();
+        if (loc == null) {
+            return "";
+        } else {
+            Path fileName = Paths.get(loc).getFileName();
+            return fileName == null ? "" : fileName.toString();
+        }
     }
 
     @Override
@@ -232,23 +239,28 @@ class SshNPath implements NPathSPI {
         return false;
     }
 
-    public NPathType type(NPath basePath) {
-        try (SshConnection c = prepareSshConnection()) {
-            return c.type(path.getPath());
-        } catch (Exception e) {
-            return NPathType.NOT_FOUND;
+    public NPathType getType(NPath basePath) {
+        if (cachedType == null) {
+            cachedType = NCachedValue.of(() -> {
+                try (SshConnection c = prepareSshConnection()) {
+                    return c.type(path.getPath());
+                } catch (Exception e) {
+                    return NPathType.NOT_FOUND;
+                }
+            }).setExpiry(NDuration.ofSeconds(60));
         }
+        return cachedType.get();
     }
 
     @Override
     public boolean exists(NPath basePath) {
-        return type(basePath) != NPathType.NOT_FOUND;
+        return getType(basePath) != NPathType.NOT_FOUND;
     }
 
     @Override
-    public long contentLength(NPath basePath) {
+    public long getContentLength(NPath basePath) {
         try (SshConnection c = prepareSshConnection()) {
-            return c.contentLength(path.getPath());
+            return c.getContentLength(path.getPath());
         } catch (Exception e) {
             return -1;
         }
@@ -352,12 +364,12 @@ class SshNPath implements NPathSPI {
     }
 
     @Override
-    public String owner(NPath basePath) {
+    public String getOwner(NPath basePath) {
         return null;
     }
 
     @Override
-    public String group(NPath basePath) {
+    public String getGroup(NPath basePath) {
         return null;
     }
 
@@ -551,4 +563,21 @@ class SshNPath implements NPathSPI {
         return "/" + String.join("/", a);
     }
 
+    @Override
+    public NPathInfo getInfo(NPath basePath) {
+        try (SshConnection c = prepareSshConnection()) {
+            return c.getInfo(path.getPath());
+        } catch (Exception e) {
+            return DefaultNPathInfo.ofNotFound(path.getPath());
+        }
+    }
+
+    @Override
+    public List<NPathInfo> listInfos(NPath basePath) {
+        try (SshConnection c = prepareSshConnection()) {
+            return c.listInfos(path.getPath());
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+    }
 }

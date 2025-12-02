@@ -2,6 +2,7 @@ package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.spi.NDefaultScorableContext;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.util.NScorableContext;
@@ -20,7 +21,8 @@ public class SshPathFactory implements NPathFactorySPI {
             if(path.startsWith("ssh:")){
                 NConnectionString a= NConnectionString.get(path).orNull();
                 if(a!=null) {
-                    return NScoredCallable.of(3, () -> new SshNPath(a));
+                    NScoredCallable<SshConnection> s = ScoredConnectionFactory.resolveBinSshConnectionPool(a);
+                    return NScoredCallable.of(s.getScore(new NDefaultScorableContext()), () -> new SshNPath(a));
                 }
             }
         }catch (Exception ex){

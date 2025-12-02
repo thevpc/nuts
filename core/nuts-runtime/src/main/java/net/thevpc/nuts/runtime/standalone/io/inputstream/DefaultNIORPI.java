@@ -204,8 +204,8 @@ public class DefaultNIORPI implements NIORPI {
                 }
 
                 @Override
-                public long contentLength() {
-                    return o.contentLength();
+                public long getContentLength() {
+                    return o.getContentLength();
                 }
 
                 @Override
@@ -248,8 +248,8 @@ public class DefaultNIORPI implements NIORPI {
                 }
 
                 @Override
-                public long contentLength() {
-                    return o.contentLength();
+                public long getContentLength() {
+                    return o.getContentLength();
                 }
 
                 @Override
@@ -475,7 +475,7 @@ public class DefaultNIORPI implements NIORPI {
         }
 
         @Override
-        public long contentLength() {
+        public long getContentLength() {
             return -1;
         }
 
@@ -510,7 +510,7 @@ public class DefaultNIORPI implements NIORPI {
         }
 
         @Override
-        public long contentLength() {
+        public long getContentLength() {
             return -1;
         }
 

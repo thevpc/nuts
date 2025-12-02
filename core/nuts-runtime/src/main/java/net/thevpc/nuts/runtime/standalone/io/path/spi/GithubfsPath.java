@@ -105,7 +105,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public long contentLength(NPath basePath) {
+    public long getContentLength(NPath basePath) {
         Info o = _fileInfo();
         if (o != null) {
             return o.size;
@@ -142,13 +142,13 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     @Override
     public Instant getLastModifiedInstant(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.lastModifiedInstant();
+        return p == null ? null : p.getLastModifiedInstant();
     }
 
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.lastAccessInstant();
+        return p == null ? null : p.getLastAccessInstant();
     }
 
     @Override
@@ -256,7 +256,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public NPathType type(NPath basePath) {
+    public NPathType getType(NPath basePath) {
         switch (_type()){
             case "dir":return NPathType.DIRECTORY;
             case "file":return NPathType.FILE;

@@ -2,15 +2,13 @@ package net.thevpc.nuts.net;
 
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DefaultNConnectionString implements NConnectionString {
@@ -28,7 +26,18 @@ public class DefaultNConnectionString implements NConnectionString {
         this.queryMap = Collections.emptyMap();
     }
 
-    public DefaultNConnectionString(String protocol, String userName, String password, String host, String port, String path, String queryString, Map<String, List<String>> queryMap) {
+    public DefaultNConnectionString(String protocol, String userName, String password, String host, String port, String path, Map<String, List<String>> queryMap) {
+        this.protocol = protocol;
+        this.userName = userName;
+        this.password = password;
+        this.host = host;
+        this.port = port;
+        this.path = path;
+        this.queryMap = DefaultNConnectionStringBuilder.prepareQueryMap(queryMap, false);
+        this.queryString = DefaultNConnectionStringBuilder.serializeQueryMap(this.queryMap);
+    }
+
+    public DefaultNConnectionString(String protocol, String userName, String password, String host, String port, String path, String queryString) {
         this.protocol = protocol;
         this.userName = userName;
         this.password = password;
@@ -36,22 +45,25 @@ public class DefaultNConnectionString implements NConnectionString {
         this.port = port;
         this.path = path;
         this.queryString = queryString;
-        this.queryMap = queryMap;
+        this.queryMap = DefaultNConnectionStringBuilder.deserializeQueryMap(queryString);
+    }
+
+    @Override
+    public NConnectionString normalize() {
+        return builder().setNormalized(true).build();
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNConnectionString that = (DefaultNConnectionString) o;
-        return Objects.equals(protocol, that.protocol) && Objects.equals(userName, that.userName) && Objects.equals(password, that.password) && Objects.equals(host, that.host) && Objects.equals(port, that.port) && Objects.equals(path, that.path);
+        return Objects.equals(protocol, that.protocol) && Objects.equals(userName, that.userName) && Objects.equals(password, that.password) && Objects.equals(host, that.host) && Objects.equals(port, that.port) && Objects.equals(path, that.path) && Objects.equals(queryString, that.queryString) && Objects.equals(queryMap, that.queryMap);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(protocol, userName, password, host, port, path);
+        return Objects.hash(protocol, userName, password, host, port, path, queryString, queryMap);
     }
-
 
     @Override
     public NConnectionStringBuilder builder() {

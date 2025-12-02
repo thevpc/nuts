@@ -33,7 +33,25 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * Execution entry is a class that can be executed.
+ * Represents an executable entry in a Nuts application or descriptor.
+ * <p>
+ * An execution entry can be a Java class, main entry point, or any
+ * runnable component that the Nuts runtime can recognize and execute.
+ * This interface provides metadata about the entry and allows
+ * parsing from various sources.
+ * </p>
+ *
+ * <p>
+ * Typical usage:
+ * <pre>{@code
+ * List<NExecutionEntry> entries = NExecutionEntry.parse(pathToDescriptor);
+ * for (NExecutionEntry entry : entries) {
+ *     if (entry.isApp()) {
+ *         // execute or inspect
+ *     }
+ * }
+ * }</pre>
+ * </p>
  *
  * @author thevpc
  * @app.category Descriptor
@@ -41,33 +59,59 @@ import java.util.List;
  */
 public interface NExecutionEntry extends Comparable<NExecutionEntry> {
 
+    /**
+     * Parses execution entries from the given file path.
+     * <p>
+     * The file is expected to contain execution entry metadata recognized
+     * by the Nuts runtime.
+     *
+     * @param path the path to parse entries from
+     * @return list of parsed execution entries
+     * @throws NullPointerException if {@code path} is null
+     */
     static List<NExecutionEntry> parse(NPath path) {
         NAssert.requireNonNull(path, "path");
         return NIORPI.of().parseExecutionEntries(path);
     }
 
+
+    /**
+     * Parses execution entries from the given input stream.
+     *
+     * @param inputStream the input stream containing execution entry data
+     * @param type the type/format of the stream (e.g., XML, JSON, TSON)
+     * @param sourceName the logical name of the source (used in error messages)
+     * @return list of parsed execution entries
+     * @throws NullPointerException if {@code inputStream} is null
+     */
     static List<NExecutionEntry> parse(InputStream inputStream, String type, String sourceName) {
         return NIORPI.of().parseExecutionEntries(inputStream, type, sourceName);
     }
 
     /**
-     * true if the entry resolved to a valid nuts application
+     * Returns {@code true} if the entry resolved to a valid Nuts application.
+     * <p>
+     * An entry may exist in metadata but not actually correspond to a valid executable class.
      *
-     * @return true if the entry resolved to a valid nuts application
+     * @return {@code true} if this entry represents a valid Nuts application
      */
     boolean isApp();
 
+
     /**
-     * class name
+     * Returns the class name of this execution entry.
      *
-     * @return class name
+     * @return the fully qualified class name
      */
     String getName();
 
     /**
-     * true if the class if registered as main class in META-INF
+     * Returns {@code true} if this class is registered as the default main
+     * entry in META-INF.
+     * <p>
+     * Default entries are typically executed when no explicit entry is specified.
      *
-     * @return true if the class if registered as main class in META-INF
+     * @return {@code true} if this is a default entry
      */
     boolean isDefaultEntry();
 

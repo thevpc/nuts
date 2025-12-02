@@ -1,6 +1,6 @@
 package net.thevpc.nuts.ext.ssh;
 
-import com.jcraft.jsch.Channel;
+import net.thevpc.nuts.io.NPathInfo;
 import net.thevpc.nuts.io.NPathType;
 
 import java.io.InputStream;
@@ -8,18 +8,19 @@ import java.io.OutputStream;
 import java.util.List;
 
 public class SshConnectionAdapter implements SshConnection {
-    protected SshConnection connection;
+    SshConnection connection;
 
     public SshConnectionAdapter(SshConnection connection) {
         this.connection = connection;
     }
+
 
     @Override
     public void reset() {
         getConnection().reset();
     }
 
-    protected SshConnection getConnection() {
+    public SshConnection getConnection() {
         return connection;
     }
 
@@ -116,8 +117,8 @@ public class SshConnectionAdapter implements SshConnection {
     }
 
     @Override
-    public long contentLength(String basePath) {
-        return getConnection().contentLength(basePath);
+    public long getContentLength(String basePath) {
+        return getConnection().getContentLength(basePath);
     }
 
     @Override
@@ -151,12 +152,17 @@ public class SshConnectionAdapter implements SshConnection {
     }
 
     @Override
-    public Channel openExecChannel(String cmd) {
-        return getConnection().openExecChannel(cmd);
+    public byte[] getDigestWithCommand(String algo, String path) {
+        return getConnection().getDigestWithCommand(algo, path);
     }
 
     @Override
-    public byte[] getDigestWithCommand(String algo, String path) {
-        return getConnection().getDigestWithCommand(algo, path);
+    public NPathInfo getInfo(String path) {
+        return getConnection().getInfo(path);
+    }
+
+    @Override
+    public List<NPathInfo> listInfos(String path) {
+        return getConnection().listInfos(path);
     }
 }

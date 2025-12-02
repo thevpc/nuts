@@ -115,7 +115,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
 
     @Override
-    public NPathType type(NPath basePath) {
+    public NPathType getType(NPath basePath) {
         if (NBlankable.isBlank(basePath.getLocation()) || basePath.getLocation().endsWith("/")) {
             return NPathType.DIRECTORY;
         }

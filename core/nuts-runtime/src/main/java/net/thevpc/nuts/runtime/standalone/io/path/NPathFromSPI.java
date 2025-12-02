@@ -43,7 +43,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NStream<String> reversedLines(Charset cs) {
-        NStream<String> rl = spi().reversedLines(cs);
+        NStream<String> rl = spi().reversedLines(this, cs);
         if (rl == null) {
             return super.reversedLines(cs);
         }
@@ -185,7 +185,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public byte[] readBytes(NPathOption... options) {
-        long len = this.contentLength();
+        long len = this.getContentLength();
         int readSize = 1024;
         if (len < 0) {
             //unknown size!
@@ -394,22 +394,22 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public boolean isOther() {
-        return base.type(this) == NPathType.OTHER;
+        return base.getType(this) == NPathType.OTHER;
     }
 
     @Override
     public boolean isSymbolicLink() {
-        return base.type(this) == NPathType.SYMBOLIC_LINK;
+        return base.getType(this) == NPathType.SYMBOLIC_LINK;
     }
 
     @Override
     public boolean isDirectory() {
-        return base.type(this) == NPathType.DIRECTORY;
+        return base.getType(this) == NPathType.DIRECTORY;
     }
 
     @Override
     public boolean isRegularFile() {
-        return base.type(this) == NPathType.FILE;
+        return base.getType(this) == NPathType.FILE;
     }
 
     @Override
@@ -428,17 +428,17 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public long contentLength() {
-        return base.contentLength(this);
+    public long getContentLength() {
+        return base.getContentLength(this);
     }
 
     @Override
-    public Instant lastModifiedInstant() {
+    public Instant getLastModifiedInstant() {
         return base.getLastModifiedInstant(this);
     }
 
     @Override
-    public Instant lastAccessInstant() {
+    public Instant getLastAccessInstant() {
         return base.getLastAccessInstant(this);
     }
 
@@ -518,12 +518,12 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public String owner() {
-        return base.owner(this);
+        return base.getOwner(this);
     }
 
     @Override
     public String group() {
-        return base.group(this);
+        return base.getGroup(this);
     }
 
     @Override
@@ -834,7 +834,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NPathType type() {
-        return base.type(this);
+        return base.getType(this);
     }
 
     @Override
@@ -871,6 +871,36 @@ public class NPathFromSPI extends NPathBase {
     @Override
     public boolean startsWith(String other) {
         return toRelative(NPath.of(other)).orNull() != null;
+    }
+
+    @Override
+    public NPathInfo getInfo() {
+        NPathInfo i = base.getInfo(this);
+        if (i != null) {
+            return i;
+        }
+        NPathType type = NPathFromSPI.this.type();
+        return new DefaultNPathInfo(
+                getLocation(),
+                type,
+                null,null, this.getContentLength(),
+                type==NPathType.SYMBOLIC_LINK,
+                getLastModifiedInstant(),
+                getLastAccessInstant(),
+                getCreationInstant(),
+                getPermissions(),
+                owner(),
+                group()
+        );
+    }
+
+    @Override
+    public List<NPathInfo> listInfos() {
+        List<NPathInfo> r = getBase().listInfos(this);
+        if (r != null) {
+            return r;
+        }
+        return list().stream().map(x -> x.getInfo()).collect(Collectors.toList());
     }
 
 }

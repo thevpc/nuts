@@ -121,7 +121,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
 
     boolean isKnownContentLength();
 
-    long contentLength();
+    long getContentLength();
 
     NStream<String> lines(Charset cs);
 

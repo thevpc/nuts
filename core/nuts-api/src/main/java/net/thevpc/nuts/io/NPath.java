@@ -614,6 +614,8 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     List<NPath> list();
 
+    List<NPathInfo> listInfos();
+
     InputStream getInputStream(NPathOption... options);
 
     PrintStream getPrintStream();
@@ -701,11 +703,11 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     boolean exists();
 
-    long contentLength();
+    long getContentLength();
 
-    Instant lastModifiedInstant();
+    Instant getLastModifiedInstant();
 
-    Instant lastAccessInstant();
+    Instant getLastAccessInstant();
 
     Instant getCreationInstant();
 
@@ -869,4 +871,9 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     List<NPathChildStringDigestInfo> listStringDigestInfo(String algo);
 
+    /**
+     *
+     * @since 0.8.9
+     */
+    NPathInfo getInfo();
 }

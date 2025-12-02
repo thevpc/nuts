@@ -1,6 +1,6 @@
 package net.thevpc.nuts.ext.ssh;
 
-import com.jcraft.jsch.Channel;
+import net.thevpc.nuts.io.NPathInfo;
 import net.thevpc.nuts.io.NPathType;
 
 import java.io.InputStream;
@@ -8,6 +8,8 @@ import java.io.OutputStream;
 import java.util.List;
 
 public interface SshConnection extends AutoCloseable {
+    String IDENTITY_FILE = "identity-file";
+
     void reset();
 
     void close();
@@ -34,15 +36,9 @@ public interface SshConnection extends AutoCloseable {
 
     void mkdir(String from, boolean p);
 
-//    byte[] readRemoteFile(String from);
-
-//    void copyRemoteToLocal(String from, String to, boolean mkdir);
-
     InputStream getInputStream(String from);
 
     OutputStream getOutputStream(String from);
-
-//    void copyLocalToRemote(String from, String to, boolean mkdirs);
 
     boolean isAlive();
 
@@ -50,7 +46,7 @@ public interface SshConnection extends AutoCloseable {
 
     List<String> list(String path);
 
-    long contentLength(String basePath);
+    long getContentLength(String basePath);
 
     String getContentEncoding(String basePath);
 
@@ -62,7 +58,9 @@ public interface SshConnection extends AutoCloseable {
 
     List<String> walk(String path, boolean followLinks, int maxDepth);
 
-    Channel openExecChannel(String cmd);
-
     byte[] getDigestWithCommand(String algo, String path);
+
+    NPathInfo getInfo(String path);
+
+    List<NPathInfo> listInfos(String path);
 }

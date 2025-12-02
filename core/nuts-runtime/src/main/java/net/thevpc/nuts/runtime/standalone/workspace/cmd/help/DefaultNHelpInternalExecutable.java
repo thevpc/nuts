@@ -48,7 +48,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
             NArg a = cmdLine.peek().get();
             if (a.isOption()) {
                 switch (a.key()) {
-                    case "--colors":
+                    case "--color":
                     case "--ntf": {
                         NArg c = cmdLine.nextFlag().get();
                         if (c.isUncommented()) {

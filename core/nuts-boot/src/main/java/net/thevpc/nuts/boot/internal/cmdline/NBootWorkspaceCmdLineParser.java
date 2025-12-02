@@ -2051,10 +2051,12 @@ public final class NBootWorkspaceCmdLineParser {
             case "YES":
             case "Y":
             case "SUPPORTED":
+            case "ALWAYS":
             case "FORMATTED":
                 return "FORMATTED";
             case "NO":
             case "FALSE":
+            case "NEVER":
             case "UNSUPPORTED":
             case "FILTERED":
                 return "FILTERED";

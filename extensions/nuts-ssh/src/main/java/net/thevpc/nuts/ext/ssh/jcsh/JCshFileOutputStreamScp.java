@@ -1,0 +1,48 @@
+package net.thevpc.nuts.ext.ssh.jcsh;
+
+import net.thevpc.nuts.ext.ssh.SshConnection;
+import net.thevpc.nuts.ext.ssh.SshConnectionAdapter;
+import net.thevpc.nuts.ext.ssh.SshConnectionPool;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.net.NConnectionString;
+
+import java.io.IOException;
+import java.io.OutputStream;
+
+public class JCshFileOutputStreamScp extends OutputStream {
+    private NPath temp;
+    private NConnectionString path;
+    private boolean mkdirs;
+    private OutputStream tempOS;
+
+    public JCshFileOutputStreamScp(NConnectionString path, boolean mkdirs) {
+        super();
+        this.path = path;
+        this.mkdirs = mkdirs;
+        this.temp = NPath.ofTempFile();
+        this.tempOS = this.temp.getOutputStream();
+    }
+
+    @Override
+    public void write(int b) throws IOException {
+        byte[] buf = new byte[1];
+        buf[0] = (byte) b;
+        this.write(buf, 0, 1);
+    }
+
+    @Override
+    public void write(byte[] buffer, int offset, int length) throws IOException {
+        tempOS.write(buffer, offset, length);
+    }
+
+    @Override
+    public void close() throws IOException {
+        tempOS.close();
+        try (SshConnection connection = SshConnectionPool.of().acquire(path)) {
+            JCshConnection c = JCshConnection.unwrap(connection);
+            c.copyLocalToRemote(temp.toString(), path.getPath(), mkdirs);
+        } finally {
+            this.temp.delete();
+        }
+    }
+}

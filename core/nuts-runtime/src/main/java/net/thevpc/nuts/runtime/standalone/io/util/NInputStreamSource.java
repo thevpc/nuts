@@ -18,7 +18,7 @@ public class NInputStreamSource extends AbstractSingleReadNInputSource {
     }
 
     @Override
-    public long contentLength() {
+    public long getContentLength() {
         return this.md.getContentLength().orElse(-1L);
     }
 

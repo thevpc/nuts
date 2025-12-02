@@ -108,7 +108,7 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
     <td class="na">-</td>
   <td style="background:#b08550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.7/compat_report.html" target="_blank">0.8.6→0.8.7 (44.90%)</a></td>
   <td style="background:#b08550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.8/compat_report.html" target="_blank">0.8.6→0.8.8 (44.90%)</a></td>
-  <td style="background:#b08550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.9/compat_report.html" target="_blank">0.8.6→0.8.9 (44.90%)</a></td>
+  <td style="background:#b18550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.9/compat_report.html" target="_blank">0.8.6→0.8.9 (44.50%)</a></td>
   </tr>
   <tr>
     <th>0.8.7</th>
@@ -121,7 +121,7 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
     <td class="na">-</td>
     <td class="na">-</td>
   <td style="background:#50c750;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_0.8.8/compat_report.html" target="_blank">0.8.7→0.8.8 (99.50%)</a></td>
-  <td style="background:#53c550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_0.8.9/compat_report.html" target="_blank">0.8.7→0.8.9 (97.90%)</a></td>
+  <td style="background:#59c150;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_0.8.9/compat_report.html" target="_blank">0.8.7→0.8.9 (94.60%)</a></td>
   </tr>
   <tr>
     <th>0.8.8</th>
@@ -134,7 +134,7 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
     <td class="na">-</td>
     <td class="na">-</td>
     <td class="na">-</td>
-  <td style="background:#52c650;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.8_to_0.8.9/compat_report.html" target="_blank">0.8.8→0.8.9 (98.40%)</a></td>
+  <td style="background:#58c250;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.8_to_0.8.9/compat_report.html" target="_blank">0.8.8→0.8.9 (95.10%)</a></td>
   </tr>
   <tr>
     <th>0.8.9</th>

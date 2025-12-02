@@ -27,7 +27,7 @@ fi
 ## Please update this path to point to your valid java 8 home, but
 ## DO NOT commit your changes to GIT for this file !!
 #NUTS_JAVA_HOME='';
-NUTS_JAVA_HOME=/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0
+NUTS_JAVA_HOME=${JAVA8_HOME}
 
 base=$(dirname $0)
 

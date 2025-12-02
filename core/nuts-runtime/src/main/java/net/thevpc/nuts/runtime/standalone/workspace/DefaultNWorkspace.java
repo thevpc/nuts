@@ -25,7 +25,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.install.InstallIdInfo;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.artifact.*;
@@ -42,7 +41,6 @@ import net.thevpc.nuts.elem.NElementFactory;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.text.NDescriptorFormat;
@@ -76,10 +74,8 @@ import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.event.*;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNWorkspaceExtensionModel;
-import net.thevpc.nuts.runtime.standalone.extension.NExtensionListHelper;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.installer.CommandForIdNInstallerComponent;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
@@ -107,6 +103,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1700,7 +1697,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     @Override
-    public NOptional<NLiteral> getProperty(String property) {
+    public NOptional<Object> getProperty(String property) {
         return getEnvModel().getProperty(property);
     }
 
@@ -1709,7 +1706,15 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         if(propertyTypeAndName==null){
             return NOptional.ofNamedEmpty("<empty-type>");
         }
-        return getProperty(propertyTypeAndName.getName()).map(x->x.asObject().orNull()).instanceOf(propertyTypeAndName);
+        return getProperty(propertyTypeAndName.getName()).instanceOf(propertyTypeAndName);
+    }
+
+    public <T> T getOrComputeProperty(Class<T> property, Supplier<T> supplier) {
+        return getOrComputeProperty(property.getName(), supplier);
+    }
+
+    public <T> T getOrComputeProperty(String property, Supplier<T> supplier) {
+        return getEnvModel().getOrCreateProperty(property, supplier);
     }
 
     @Override

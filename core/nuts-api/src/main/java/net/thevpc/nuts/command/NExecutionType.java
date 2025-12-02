@@ -31,7 +31,28 @@ import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NOptional;
 
 /**
- * Command execution type.
+ * Specifies the type of command execution.
+ * <p>
+ * This enum defines how a command or executable is resolved and run
+ * by the Nuts framework. Each type determines the execution strategy,
+ * whether running in-process, via the OS, or as a document opener.
+ * </p>
+ *
+ * <ul>
+ *     <li>{@link #SPAWN} – Resolves the command as an external artifact or executable.
+ *         Nuts selects the appropriate executor to run it.</li>
+ *     <li>{@link #SYSTEM} – Executes a native command using the underlying
+ *         operating system, typically via {@link ProcessBuilder}.</li>
+ *     <li>{@link #EMBEDDED} – Executes a Java class in the current JVM
+ *         using classloading, without spawning a new process.</li>
+ *     <li>{@link #OPEN} – Opens documents or files using the system's default
+ *         application for the given file type.</li>
+ * </ul>
+ *
+ * <p>
+ * Use the appropriate type to control how commands are executed and how
+ * Nuts resolves their environment and dependencies.
+ * </p>
  *
  * @author thevpc
  * @app.category Commands
@@ -39,27 +60,27 @@ import net.thevpc.nuts.util.NOptional;
  */
 public enum NExecutionType implements NEnum {
     /**
-     * command will be resolved as an external command/artifact. Nuts will resolve
-     * relevant executor to run it
+     * Command will be resolved as an external artifact or executable.
+     * Nuts will determine the appropriate executor to run it.
      */
     SPAWN,
 
     /**
-     * command will be resolved as an external native command. Nuts will
-     * delegate running to underlining operating system using standard
-     * ProcessBuilder
+     * Command will be executed as a native system command.
+     * Nuts delegates execution to the operating system using standard
+     * {@link ProcessBuilder}.
      */
     SYSTEM,
 
     /**
-     * command will be resolved as a class to run within the current Virtual
-     * Machine by means of classloading
+     * Command will be executed as a Java class within the current JVM.
+     * Execution happens via classloading, without spawning a separate process.
      */
     EMBEDDED,
 
     /**
-     * command will be resolved as a list of documents to open using
-     * system mapping
+     * Command will be treated as a file or document to open.
+     * The system's default application mapping will be used.
      */
     OPEN,
     ;

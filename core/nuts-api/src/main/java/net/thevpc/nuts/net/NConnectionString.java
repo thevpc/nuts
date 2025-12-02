@@ -21,7 +21,6 @@ public interface NConnectionString extends NImmutable {
 
     String getPassword();
 
-
     String getHost();
 
     NConnectionString getRoot();
@@ -45,4 +44,6 @@ public interface NConnectionString extends NImmutable {
     NConnectionStringBuilder builder();
 
     NConnectionString withPath(String path);
+
+    NConnectionString normalize();
 }

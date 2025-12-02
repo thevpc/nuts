@@ -122,7 +122,7 @@ public class GenericFilePath implements NPathSPI {
     }
 
     @Override
-    public NPathType type(NPath basePath) {
+    public NPathType getType(NPath basePath) {
         return NPathType.NOT_FOUND;
     }
 
@@ -130,7 +130,7 @@ public class GenericFilePath implements NPathSPI {
         return false;
     }
 
-    public long contentLength(NPath basePath) {
+    public long getContentLength(NPath basePath) {
         return -1;
     }
 
@@ -298,12 +298,12 @@ public class GenericFilePath implements NPathSPI {
     }
 
     @Override
-    public String owner(NPath basePath) {
+    public String getOwner(NPath basePath) {
         return null;
     }
 
     @Override
-    public String group(NPath basePath) {
+    public String getGroup(NPath basePath) {
         return null;
     }
 

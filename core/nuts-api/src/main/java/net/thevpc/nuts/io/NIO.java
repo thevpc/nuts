@@ -13,13 +13,13 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
@@ -46,11 +46,11 @@ public interface NIO extends NComponent {
         return NExtensions.of(NIO.class);
     }
 
-    static InputStream ofNullRawInputStream(){
+    static InputStream ofNullRawInputStream() {
         return NullInputStream.INSTANCE;
     }
 
-    static OutputStream ofNullRawOutputStream(){
+    static OutputStream ofNullRawOutputStream() {
         return NullOutputStream.INSTANCE;
     }
 
@@ -59,7 +59,31 @@ public interface NIO extends NComponent {
     InputStream stdin();
 
 
+    /**
+     *
+     * @since 0.8.9
+     */
+    OutputStream unwrapOutputStream(OutputStream out);
+
+    /**
+     *
+     * @since 0.8.9
+     */
+    InputStream unwrapInputStream(InputStream in);
+
+    /**
+     *
+     * @since 0.8.9
+     */
+    boolean isStdout(OutputStream out);
+
     boolean isStdout(NPrintStream out);
+
+    /**
+     *
+     * @since 0.8.9
+     */
+    boolean isStderr(OutputStream out);
 
     boolean isStderr(NPrintStream out);
 
@@ -214,6 +238,7 @@ public interface NIO extends NComponent {
     String probeCharset(byte[] stream);
 
     List<String> findExtensionsByContentType(String contentType);
+
     List<String> findContentTypesByExtension(String extension);
 
     /**
