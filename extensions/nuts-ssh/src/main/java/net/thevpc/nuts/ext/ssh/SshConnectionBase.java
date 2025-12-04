@@ -691,7 +691,6 @@ public abstract class SshConnectionBase implements SshConnection {
                     ).collect(Collectors.toList());
                 }
                 break;
-
             }
         }
         return new ArrayList<>();

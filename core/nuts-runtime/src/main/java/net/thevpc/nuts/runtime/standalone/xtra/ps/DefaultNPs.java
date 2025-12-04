@@ -200,6 +200,7 @@ public class DefaultNPs implements NPs {
             case LINUX: {
                 NExecCmd u = NExecCmd.of()
                         .setIn(NExecInput.ofNull())
+                        .at(connectionString)
                         .addCommand("ps", "-eo", "user,pid,%cpu,%mem,vsz,rss,tty,stat,lstart,time,command")
                         .grabErr()
                         .setFailFast(isFailFast())
@@ -211,6 +212,7 @@ public class DefaultNPs implements NPs {
             case MACOS: {
                 NExecCmd u = NExecCmd.of()
                         .setIn(NExecInput.ofNull())
+                        .at(connectionString)
                         .addCommand("ps", "aux")
                         .grabErr()
                         .setFailFast(isFailFast())
@@ -259,12 +261,16 @@ public class DefaultNPs implements NPs {
             NExecCmd b = null;
             boolean mainArgs = true;
             boolean vmArgs = true;
-            String jdkHome = getJpsJavaHome2("");
+            String jdkHome = null;
+            if (!remote) {
+                jdkHome = getJpsJavaHome2("");
+            }
             if (jdkHome != null) {
-                cmd = jdkHome + File.separator + "bin" + File.separator + cmd;
+                cmd = jdkHome + separator + "bin" + separator + cmd;
             }
             b = NExecCmd.of()
                     .system()
+                    .at(connectionString)
                     .addCommand(cmd)
                     .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))
                     .grabAll()
