@@ -476,11 +476,23 @@ public interface NExecCmd extends NWorkspaceCmd {
     String getGrabbedOutString();
 
     /**
+     *
+     * @since 0.8.9
+     */
+    byte[] getGrabbedOutBytes();
+
+    /**
      * return grabbed error after command execution
      *
      * @return grabbed error after command execution
      */
     String getGrabbedErrString();
+
+    /**
+     *
+     * @since 0.8.9
+     */
+    byte[] getGrabbedErrBytes();
 
     /**
      * return new command error stream (standard error destination)
