@@ -167,6 +167,9 @@ public class WindowsPs1Parser {
                                     break;
                                 }
                                 line = unsafeLine[0];
+                                if (line.matches("TIME\\s*:\\s*[0-9]+,[0-9]+")) {
+                                    break;
+                                }
                                 if(NBlankable.isBlank(line) ){
                                     break;
                                 }else{
