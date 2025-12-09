@@ -13,8 +13,8 @@ public class SshTest {
     }
 
     // disable test before commit
-    //@Test
-    public void test01() {
+    @Test
+    public void test01(){
         List<NPath> list = NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/")
                 .list();
         TestUtils.println(list);
@@ -35,11 +35,10 @@ public class SshTest {
 
 
     // disable test before commit
-    //@Test
+    @Test
     public void test04() {
-        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Users/Administrateur/");
-        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/")
-                .walk().forEach(x -> {
+        NPath.of("ssh://Administrateur@fvm.veoni.tn/C:/Deployments/History")
+                .walk(2).forEach(x -> {
                     TestUtils.println(x);
                 });
     }
