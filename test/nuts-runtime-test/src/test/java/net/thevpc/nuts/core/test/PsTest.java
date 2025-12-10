@@ -82,14 +82,14 @@ public class PsTest {
 
     @Test
     public void test07() {
-        for (NPsInfo nPsInfo : NPs.of().at("ssh://vpc@thevpc.net").getResultList()) {
+        for (NPsInfo nPsInfo : NPs.of().at("ssh://"+TestUtils.LINUX_TEST_SERVER).getResultList()) {
             NOut.println(nPsInfo);
         }
     }
 
     @Test
     public void test08() {
-        for (NPsInfo nPsInfo : NPs.of().at("ssh://Administrateur@fvm.veoni.tn").getResultList()) {
+        for (NPsInfo nPsInfo : NPs.of().at("ssh://"+TestUtils.WINDOWS_TEST_SERVER+"").getResultList()) {
             NOut.println(nPsInfo);
         }
     }
