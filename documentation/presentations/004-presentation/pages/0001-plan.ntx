@@ -1,0 +1,11 @@
+agenda-slide(title:"Agenda"){
+    body {
+        ol{
+            ¶ Genesis
+            ¶ The Good : Unix and POSIX
+            ¶ The Bad : Linux
+            ¶ The Ugly : Exotics
+            ¶ The Matrix : The AI tics
+        }
+    }
+}
