@@ -88,6 +88,10 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
 
     NOptional<String> getStringValue();
 
+    /**
+     * equivalent to <code>getStringValue().get()</code>
+     * @return non null string value, or error
+     */
     String stringValue();
 
     /**
