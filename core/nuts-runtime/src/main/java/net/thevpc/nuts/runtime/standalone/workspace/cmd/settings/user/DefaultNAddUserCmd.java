@@ -44,8 +44,8 @@ import net.thevpc.nuts.text.NMsg;
  */
 public class DefaultNAddUserCmd extends AbstractNAddUserCmd {
 
-    public DefaultNAddUserCmd(NWorkspace workspace) {
-        super(workspace);
+    public DefaultNAddUserCmd() {
+        super();
     }
 
     @Override
