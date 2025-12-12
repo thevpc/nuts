@@ -46,6 +46,7 @@ import net.thevpc.nuts.core.NRepositoryConfig;
 import net.thevpc.nuts.core.NRepositoryRef;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
+import net.thevpc.nuts.runtime.standalone.extension.NExtensionUtils;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.runtime.standalone.xtra.rnsh.RnshPathFactorySPI;
 import net.thevpc.nuts.security.NUserConfig;
@@ -57,7 +58,6 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.NCollections;
-import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
@@ -138,11 +138,7 @@ public class DefaultNWorkspaceConfigModel {
     //    private NutsRepositorySelector[] parsedBootRepositoriesArr;
     private ExecutorService executorService;
     private NTerminal terminal;
-    private Map<String, NId> protocolToExtensionMap = new HashMap<>(
-            NMaps.of(
-                    "ssh", NId.get("net.thevpc.nuts:nuts-ssh").get()
-            )
-    );
+
 
     public NScopedValue<Map<String, String>> currentEnv = NScopedValue.ofSupplier(this::rootEnv);
 
@@ -1490,10 +1486,7 @@ public class DefaultNWorkspaceConfigModel {
         final String protocol;
         if (m.find()) {
             protocol = m.group("protocol");
-            NId eid = protocolToExtensionMap.get(protocol);
-            if (eid != null) {
-                NExtensions.of().loadExtension(eid);
-            }
+            NExtensionUtils.ensureExtensionLoadedForProtocol(protocol);
         } else {
             protocol = null;
         }
