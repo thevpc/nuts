@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<!DOCTYPE MODE SYSTEM "xmode.dtd">
+<MODE>
+    <PROPS>
+        <PROPERTY NAME="commentStart" VALUE="" />
+        <PROPERTY NAME="commentEnd" VALUE="" />
+        <PROPERTY NAME="lineComment" VALUE="" />
+        <PROPERTY NAME="file" VALUE="*.ntf" />
+        <PROPERTY NAME="firstlineGlob" VALUE="" />
+    </PROPS>
+
+    <RULES IGNORE_CASE="FALSE" HIGHLIGHT_DIGITS="FALSE">
+
+        <!-- Verbatim/Code blocks with syntax highlighting -->
+        <SPAN TYPE="LITERAL2" ESCAPE="\">
+            <BEGIN>```xml</BEGIN>
+            <END>```</END>
+        </SPAN>
+        <SPAN TYPE="LITERAL2" ESCAPE="\">
+            <BEGIN>```json</BEGIN>
+            <END>```</END>
+        </SPAN>
+        <SPAN TYPE="LITERAL2" ESCAPE="\">
+            <BEGIN>```java</BEGIN>
+            <END>```</END>
+        </SPAN>
+        <SPAN TYPE="LITERAL2" ESCAPE="\">
+            <BEGIN>```sh</BEGIN>
+            <END>```</END>
+        </SPAN>
+        <SPAN TYPE="LITERAL2" ESCAPE="\">
+            <BEGIN>```bash</BEGIN>
+            <END>```</END>
+        </SPAN>
+        <SPAN TYPE="LITERAL2" ESCAPE="\">
+            <BEGIN>```js</BEGIN>
+            <END>```</END>
+        </SPAN>
+        <SPAN TYPE="LITERAL2" ESCAPE="\">
+            <BEGIN>```sql</BEGIN>
+            <END>```</END>
+        </SPAN>
+        <SPAN TYPE="LITERAL2" ESCAPE="\">
+            <BEGIN>```python</BEGIN>
+            <END>```</END>
+        </SPAN>
+        <SPAN TYPE="LITERAL2" ESCAPE="\">
+            <BEGIN>```c</BEGIN>
+            <END>```</END>
+        </SPAN>
+        <SPAN TYPE="LITERAL2" ESCAPE="\">
+            <BEGIN>```cpp</BEGIN>
+            <END>```</END>
+        </SPAN>
+
+        <!-- Plain verbatim text -->
+        <SPAN TYPE="LITERAL1" ESCAPE="\">
+            <BEGIN>```</BEGIN>
+            <END>```</END>
+        </SPAN>
+
+        <!-- Color styles ##:color:Text## -->
+        <SPAN TYPE="KEYWORD2" ESCAPE="\">
+            <BEGIN>##:</BEGIN>
+            <END>##</END>
+        </SPAN>
+
+        <!-- Hash styles ##Text## to ##########Text########## -->
+        <SPAN TYPE="KEYWORD1" ESCAPE="\">
+            <BEGIN>##########</BEGIN>
+            <END>##########</END>
+        </SPAN>
+        <SPAN TYPE="KEYWORD1" ESCAPE="\">
+            <BEGIN>#########</BEGIN>
+            <END>#########</END>
+        </SPAN>
+        <SPAN TYPE="KEYWORD1" ESCAPE="\">
+            <BEGIN>########</BEGIN>
+            <END>########</END>
+        </SPAN>
+        <SPAN TYPE="KEYWORD1" ESCAPE="\">
+            <BEGIN>#######</BEGIN>
+            <END>#######</END>
+        </SPAN>
+        <SPAN TYPE="KEYWORD1" ESCAPE="\">
+            <BEGIN>######</BEGIN>
+            <END>######</END>
+        </SPAN>
+        <SPAN TYPE="KEYWORD1" ESCAPE="\">
+            <BEGIN>#####</BEGIN>
+            <END>#####</END>
+        </SPAN>
+        <SPAN TYPE="KEYWORD1" ESCAPE="\">
+            <BEGIN>####</BEGIN>
+            <END>####</END>
+        </SPAN>
+        <SPAN TYPE="KEYWORD1" ESCAPE="\">
+            <BEGIN>###</BEGIN>
+            <END>###</END>
+        </SPAN>
+        <SPAN TYPE="KEYWORD1" ESCAPE="\">
+            <BEGIN>##</BEGIN>
+            <END>##</END>
+        </SPAN>
+
+        <!-- Title markers at start of line -->
+        <SEQ_REGEXP HASH_CHAR="#" AT_LINE_START="TRUE" TYPE="LABEL">^#########\)</SEQ_REGEXP>
+        <SEQ_REGEXP HASH_CHAR="#" AT_LINE_START="TRUE" TYPE="LABEL">^########\)</SEQ_REGEXP>
+        <SEQ_REGEXP HASH_CHAR="#" AT_LINE_START="TRUE" TYPE="LABEL">^#######\)</SEQ_REGEXP>
+        <SEQ_REGEXP HASH_CHAR="#" AT_LINE_START="TRUE" TYPE="LABEL">^######\)</SEQ_REGEXP>
+        <SEQ_REGEXP HASH_CHAR="#" AT_LINE_START="TRUE" TYPE="LABEL">^#####\)</SEQ_REGEXP>
+        <SEQ_REGEXP HASH_CHAR="#" AT_LINE_START="TRUE" TYPE="LABEL">^####\)</SEQ_REGEXP>
+        <SEQ_REGEXP HASH_CHAR="#" AT_LINE_START="TRUE" TYPE="LABEL">^###\)</SEQ_REGEXP>
+        <SEQ_REGEXP HASH_CHAR="#" AT_LINE_START="TRUE" TYPE="LABEL">^##\)</SEQ_REGEXP>
+        <SEQ_REGEXP HASH_CHAR="#" AT_LINE_START="TRUE" TYPE="LABEL">^#\)</SEQ_REGEXP>
+
+        <!-- Escape sequences -->
+        <SEQ TYPE="NULL">\\#</SEQ>
+        <SEQ TYPE="NULL">\\</SEQ>
+        <SEQ TYPE="NULL">\\`</SEQ>
+        <SEQ TYPE="NULL">\\{</SEQ>
+        <SEQ TYPE="NULL">\\}</SEQ>
+        <SEQ TYPE="NULL">\\:</SEQ>
+
+        <!-- Keywords for style names (used inside ##:style:##) -->
+        <KEYWORDS>
+            <!-- Style keywords -->
+            <KEYWORD3>underlined</KEYWORD3>
+            <KEYWORD3>italic</KEYWORD3>
+            <KEYWORD3>striked</KEYWORD3>
+            <KEYWORD3>reversed</KEYWORD3>
+            <KEYWORD3>bold</KEYWORD3>
+
+            <!-- Token type styles -->
+            <KEYWORD3>error</KEYWORD3>
+            <KEYWORD3>warn</KEYWORD3>
+            <KEYWORD3>info</KEYWORD3>
+            <KEYWORD3>config</KEYWORD3>
+            <KEYWORD3>comments</KEYWORD3>
+            <KEYWORD3>string</KEYWORD3>
+            <KEYWORD3>number</KEYWORD3>
+            <KEYWORD3>boolean</KEYWORD3>
+            <KEYWORD3>keyword</KEYWORD3>
+            <KEYWORD3>option</KEYWORD3>
+            <KEYWORD3>input</KEYWORD3>
+            <KEYWORD3>operator</KEYWORD3>
+            <KEYWORD3>separator</KEYWORD3>
+            <KEYWORD3>success</KEYWORD3>
+            <KEYWORD3>danger</KEYWORD3>
+            <KEYWORD3>fail</KEYWORD3>
+            <KEYWORD3>var</KEYWORD3>
+            <KEYWORD3>pale</KEYWORD3>
+
+            <!-- Color keywords -->
+            <KEYWORD4>primary</KEYWORD4>
+            <KEYWORD4>secondary</KEYWORD4>
+            <KEYWORD4>foreground</KEYWORD4>
+            <KEYWORD4>background</KEYWORD4>
+        </KEYWORDS>
+    </RULES>
+</MODE>
