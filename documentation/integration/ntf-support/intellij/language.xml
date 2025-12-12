@@ -1,0 +1,30 @@
+<filetype binary="false" default_extension="ntf" description="Nuts Text Format" name="NTF">
+    <highlighting>
+        <options>
+            <option name="LINE_COMMENT" value="" />
+            <option name="COMMENT_START" value="" />
+            <option name="COMMENT_END" value="" />
+            <option name="HEX_PREFIX" value="" />
+            <option name="NUM_POSTFIXES" value="" />
+            <option name="HAS_BRACES" value="true" />
+            <option name="HAS_BRACKETS" value="false" />
+            <option name="HAS_PARENS" value="true" />
+        </options>
+
+        <!-- Code block languages -->
+        <keywords keywords="xml;json;java;sh;bash;js;javascript;sql;python;c;cpp;cs;csharp;nsh" ignore_case="false" />
+
+        <!-- Title markers at line start -->
+        <keywords2 keywords="#########);########);#######);######);#####);####);###);##);#)" />
+
+        <!-- Named styles inside ##:style:## -->
+        <keywords3 keywords="underlined;italic;striked;reversed;bold;error;warn;info;config;comments;string;number;boolean;keyword;option;input;operator;separator;success;danger;fail;var;pale" />
+
+        <!-- Color keywords -->
+        <keywords4 keywords="primary;secondary;foreground;background" />
+    </highlighting>
+
+    <extensionMap>
+        <mapping ext="ntf" />
+    </extensionMap>
+</filetype>
