@@ -18,7 +18,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettin
  * @author thevpc
  */
 public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
-    public NSettingsImportSubCommand(NWorkspace workspace) {
+    public NSettingsImportSubCommand() {
         super();
     }
 
