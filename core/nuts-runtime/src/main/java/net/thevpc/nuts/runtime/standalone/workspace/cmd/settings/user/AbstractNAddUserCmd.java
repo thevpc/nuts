@@ -49,7 +49,7 @@ public abstract class AbstractNAddUserCmd extends NWorkspaceCmdBaseRepo<NAddUser
     protected final Set<String> permissions = new HashSet<>();
     protected final Set<String> groups = new HashSet<>();
 
-    public AbstractNAddUserCmd(NWorkspace workspace) {
+    public AbstractNAddUserCmd() {
         super("add-user");
     }
 
