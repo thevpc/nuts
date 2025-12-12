@@ -86,7 +86,11 @@ public final class NMsgIntent {
      * Log verb used for tracing cache related operations
      */
     public static final NMsgIntent CACHE = of("CACHE");
+
     public static final NMsgIntent PROGRESS = of("PROGRESS");
+    public static final NMsgIntent RUN = of("RUN");
+    public static final NMsgIntent SETTINGS = of("SETTINGS");
+    public static final NMsgIntent PARSING = of("PARSING");
 
     private final String name;
 
