@@ -85,13 +85,17 @@ public class DefaultNPs implements NPs {
 
     @Override
     public boolean isSupportedKillProcess() {
-        NOsFamily f = NWorkspace.of().getOsFamily();
-        return f == NOsFamily.LINUX || f == NOsFamily.MACOS || f == NOsFamily.UNIX;
+        NExecTargetInfo target = NBlankable.isBlank(connectionString) ? null : NExecCmd.ofSystem().at(connectionString).probeTarget();
+        NOsFamily f = target == null ? NWorkspace.of().getOsFamily() : target.getOsFamily();
+
+        return f == NOsFamily.LINUX || f == NOsFamily.MACOS || f == NOsFamily.UNIX || f == NOsFamily.WINDOWS;
     }
 
     @Override
     public boolean killProcess(String processId) {
-        switch (NWorkspace.of().getOsFamily()) {
+        NExecTargetInfo target = NBlankable.isBlank(connectionString) ? null : NExecCmd.ofSystem().at(connectionString).probeTarget();
+        NOsFamily f = target == null ? NWorkspace.of().getOsFamily() : target.getOsFamily();
+        switch (f) {
             case LINUX:
             case MACOS:
             case UNIX: {
@@ -101,14 +105,21 @@ public class DefaultNPs implements NPs {
                         .getResultCode() == 0;
             }
             case WINDOWS: {
-                String taskkill = NWorkspace.of().findSysCommand("taskkill").orNull();
-                if (taskkill != null) {
-                    return NExecCmd.ofSystem(taskkill, "/PID", processId, "/F")
+                if(NBlankable.isBlank(connectionString)) {
+                    String taskkill = NWorkspace.of().findSysCommand("taskkill").orNull();
+                    if (taskkill != null) {
+                        return NExecCmd.ofSystem(taskkill, "/PID", processId, "/F")
+                                .at(connectionString)
+                                .setFailFast(isFailFast())
+                                .getResultCode() == 0;
+                    }
+                    throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NWorkspace.of().getOsFamily().id()));
+                }else{
+                    return NExecCmd.ofSystem("taskkill", "/PID", processId, "/F")
                             .at(connectionString)
                             .setFailFast(isFailFast())
                             .getResultCode() == 0;
                 }
-                throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NWorkspace.of().getOsFamily().id()));
             }
         }
         if (isFailFast()) {
@@ -181,13 +192,13 @@ public class DefaultNPs implements NPs {
     @Override
     public NStream<NPsInfo> getResultList() {
         NExecTargetInfo target = NBlankable.isBlank(connectionString) ? null : NExecCmd.ofSystem().at(connectionString).probeTarget();
-        NOsFamily cmdOsFamily=target==null?NWorkspace.of().getOsFamily():target.getOsFamily();
+        NOsFamily cmdOsFamily = target == null ? NWorkspace.of().getOsFamily() : target.getOsFamily();
         NPlatformFamily processType = NUtils.firstNonNull(platformFamily, NPlatformFamily.OS);
         switch (processType) {
             case JAVA:
                 return getResultListJava(target, cmdOsFamily);
             case OS:
-                return getResultListOS(target,cmdOsFamily);
+                return getResultListOS(target, cmdOsFamily);
         }
         if (isFailFast()) {
             throw new NIllegalArgumentException(NMsg.ofC("unsupported list processes of type : %s", processType));
@@ -195,7 +206,7 @@ public class DefaultNPs implements NPs {
         return new NStreamEmpty<>("process-" + processType.id());
     }
 
-    private NStream<NPsInfo> getResultListOS(NExecTargetInfo target,NOsFamily cmdOsFamily) {
+    private NStream<NPsInfo> getResultListOS(NExecTargetInfo target, NOsFamily cmdOsFamily) {
         switch (cmdOsFamily) {
             case LINUX: {
                 NExecCmd u = NExecCmd.of()
@@ -240,7 +251,7 @@ public class DefaultNPs implements NPs {
     }
 
 
-    private NStream<NPsInfo> getResultListJava(NExecTargetInfo target,NOsFamily cmdOsFamily) {
+    private NStream<NPsInfo> getResultListJava(NExecTargetInfo target, NOsFamily cmdOsFamily) {
         boolean remote = !NBlankable.isBlank(connectionString);
         String separator;
         if (remote) {
@@ -292,7 +303,7 @@ public class DefaultNPs implements NPs {
                             String cls = line.substring(s1 + 1, s2 < 0 ? line.length() : s2).trim();
                             String cmdLineString = s2 >= 0 ? line.substring(s2 + 1).trim() : "";
                             String[] parsedCmdLine = null;
-                            parsedCmdLine = betterArgs(pid,target);
+                            parsedCmdLine = betterArgs(pid, target);
                             if (parsedCmdLine == null) {
                                 parsedCmdLine = NCmdLine.of(cmdLineString, null).toStringArray();
                             }
@@ -306,7 +317,7 @@ public class DefaultNPs implements NPs {
     }
 
     private String[] betterArgs(String pid, NExecTargetInfo target) {
-        switch (target==null?NWorkspace.of().getOsFamily():target.getOsFamily()) {
+        switch (target == null ? NWorkspace.of().getOsFamily() : target.getOsFamily()) {
             case LINUX:
             case UNIX:
             case MACOS: {

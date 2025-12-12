@@ -379,6 +379,11 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
 
     @Override
     public String getGrabbedOutString() {
+        return new String(getGrabbedOutBytes());
+    }
+
+    @Override
+    public byte[] getGrabbedOutBytes() {
         if (!executed) {
             if (out.getType() != NRedirectType.GRAB_STREAM) {
                 grabOut();
@@ -395,11 +400,11 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
                 }
             }
         }
-        return getOut().getResultString();
+        return getOut().getResultBytes();
     }
 
     @Override
-    public String getGrabbedErrString() {
+    public byte[] getGrabbedErrBytes() {
         if (!executed) {
             if (err.getType() != NRedirectType.GRAB_STREAM) {
                 grabErr();
@@ -410,7 +415,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
             throw new NIllegalArgumentException(NMsg.ofPlain("no buffer was configured; should call grabErr"));
         }
         if (getErr().getType() == NRedirectType.REDIRECT) {
-            return getGrabbedOutString();
+            return getGrabbedOutBytes();
         }
         if (getErr().getResultSource().isNotPresent()) {
             if (getErr().getType() == NRedirectType.GRAB_FILE || getErr().getType() == NRedirectType.GRAB_STREAM) {
@@ -419,7 +424,12 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
                 }
             }
         }
-        return getErr().getResultString();
+        return getErr().getResultBytes();
+    }
+
+    @Override
+    public String getGrabbedErrString() {
+        return new String(getGrabbedErrBytes());
     }
 
     @Override

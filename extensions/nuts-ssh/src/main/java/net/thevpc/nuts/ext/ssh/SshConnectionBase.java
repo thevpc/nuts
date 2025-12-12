@@ -415,7 +415,7 @@ public abstract class SshConnectionBase implements SshConnection {
                 if (i.code() == 0) {
                     //continue parsing
                     String[] s = i.outString().split("[\n|\r]");
-                    Pattern compiled = Pattern.compile("(?<f>[a-z-]{6})[ \t]*(?<d>[0-9-/]{8,10})[ \t]*(?<t>[0-9]{2}:[0-9]{2})[ \t]*(?<p>.*)");
+                    Pattern compiled = Pattern.compile("(?<f>[a-z-]{6})[ \t]*(?<d>[0-9-/]{8,10})[ \t]*(?<t>[0-9]{2}:[0-9]{2})([ \t]*(?<s>[0-9]+))?[ \t]*(?<p>.*)");
                     return NStream.ofArray(s).map(
                             x -> {
                                 x = x.trim();
