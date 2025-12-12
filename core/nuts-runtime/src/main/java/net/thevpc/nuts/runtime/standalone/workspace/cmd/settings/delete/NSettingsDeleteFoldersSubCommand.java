@@ -29,7 +29,7 @@ import java.util.Set;
  * @author thevpc
  */
 public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubCommand {
-    public NSettingsDeleteFoldersSubCommand(NWorkspace workspace) {
+    public NSettingsDeleteFoldersSubCommand() {
         super();
     }
 
