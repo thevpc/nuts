@@ -150,6 +150,7 @@ net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.connect.NSettingsConne
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias.NSettingsAliasSubCommand
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NSettingsNdiSubCommand
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NCliInfoSubCommand
+net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.installeditorsyntax.NSettingsInstallEditorSyntaxSubCommand
 
 
 net.thevpc.nuts.runtime.standalone.xtra.compress.NCompressZip
