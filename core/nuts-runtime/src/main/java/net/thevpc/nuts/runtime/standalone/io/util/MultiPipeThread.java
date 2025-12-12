@@ -27,7 +27,11 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.io.NNonBlockingInputStream;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
+import net.thevpc.nuts.text.NMsg;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -78,7 +82,7 @@ public class MultiPipeThread extends Thread implements StopMonitor {
                 try {
                     lock.wait();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    NLog.of(MultiPipeThread.class).log(NMsg.ofC("interrupted").asDebug().asError(e).withIntent(NMsgIntent.INIT));
                 }
             }
         }
@@ -118,7 +122,7 @@ public class MultiPipeThread extends Thread implements StopMonitor {
                 NWorkspaceProfilerImpl.sleep(500,"MultiPipeThread::run");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            NLog.of(MultiPipeThread.class).log(NMsg.ofC("error in run : %s",e).asDebug().asError(e).withIntent(NMsgIntent.INIT));
         }
         stopped = true;
         synchronized (lock) {
