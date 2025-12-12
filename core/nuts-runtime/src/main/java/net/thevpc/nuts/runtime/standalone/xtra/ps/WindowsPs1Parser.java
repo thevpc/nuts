@@ -26,11 +26,24 @@ public class WindowsPs1Parser {
         BufferedReader br = new BufferedReader(reader);
         return NStream.ofIterator(new Iterator<NPsInfo>() {
             NPsInfo last = null;
+            boolean closed = false;
 
             @Override
             public boolean hasNext() {
+                if (closed) {
+                    return false;
+                }
                 last = readNext(br);
-                return last != null;
+                if (last == null) {
+                    closed = false;
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                        //
+                    }
+                    return false;
+                }
+                return true;
             }
 
             @Override
@@ -45,7 +58,8 @@ public class WindowsPs1Parser {
         try {
             line = r.readLine();
         } catch (IOException e) {
-            throw new NIOException(e);
+            return null;
+            //throw new NIOException(e);
         }
         if (line == null) {
             return null;
@@ -67,7 +81,7 @@ public class WindowsPs1Parser {
                 break;
             }
             line = unsafeLine[0];
-            if(NBlankable.isBlank(line) && !empty){
+            if (NBlankable.isBlank(line) && !empty) {
                 return _build(v);
             }
             int x = line.indexOf(":");
@@ -170,9 +184,9 @@ public class WindowsPs1Parser {
                                 if (line.matches("TIME\\s*:\\s*[0-9]+,[0-9]+")) {
                                     break;
                                 }
-                                if(NBlankable.isBlank(line) ){
+                                if (NBlankable.isBlank(line)) {
                                     break;
-                                }else{
+                                } else {
                                     sb.append(line);
                                 }
                             }
@@ -180,7 +194,7 @@ public class WindowsPs1Parser {
                             empty = false;
                             break;
                         }
-                        default:{
+                        default: {
                         }
 
                     }
