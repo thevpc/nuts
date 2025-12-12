@@ -7,11 +7,11 @@ import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceOptions;
-import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
+import net.thevpc.nuts.runtime.standalone.extension.NExtensionUtils;
 import net.thevpc.nuts.spi.NExecTargetInfoContext;
 import net.thevpc.nuts.spi.NExecTargetInfoRunner;
 import net.thevpc.nuts.spi.NExecTargetSPI;
@@ -834,7 +834,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     }
 
     public NExecCmd setConnectionString(String connectionString) {
-        this.connectionString = NBlankable.isBlank(connectionString)?null:NConnectionString.of(connectionString);
+        this.connectionString = NBlankable.isBlank(connectionString) ? null : NConnectionString.of(connectionString);
         return this;
     }
 
@@ -882,18 +882,16 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
         NWorkspace ws = NWorkspace.of();
         NConnectionStringBuilder connectionStringBuilder = connectionString.builder()
                 //remove 'path' query param because target is independent of path
-                .setPath(null)
-                ;
+                .setPath(null);
 
         NConnectionString normalizedConnectionStringWithUse = connectionString.normalize();
         NConnectionString normalizedConnectionStringWithoutUse = connectionStringBuilder
                 //remove 'use' query param because target is independent of transport
-                .setQueryParam("use",null)
+                .setQueryParam("use", null)
                 .build();
         Map<NConnectionString, NExecTargetInfo> cache = ws.getOrComputeProperty(NExecCmd.class + "::osProbe", () -> (Map<NConnectionString, NExecTargetInfo>) new ConcurrentHashMap<NConnectionString, NExecTargetInfo>());
         NExecTargetInfo found = cache.computeIfAbsent(normalizedConnectionStringWithoutUse, kk -> {
-            NExecTargetSPI u = NExtensions.of().createComponent(NExecTargetSPI.class, normalizedConnectionStringWithUse)
-                    .orElseThrow(() -> new NIllegalArgumentException(NMsg.ofC("invalid execution target string : %s", normalizedConnectionStringWithUse)));
+            NExecTargetSPI u = NExtensionUtils.createNExecTargetSPI(normalizedConnectionStringWithUse);
             return u.getTargetInfo(new MyNExecTargetInfoContext(this, normalizedConnectionStringWithUse));
         });
         return found;
