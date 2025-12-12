@@ -208,10 +208,10 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
     }
 
     private Info prepareSource(NPath source) {
-        if (source.isDirectory()) {
+        if (!source.getName().toLowerCase().endsWith(".zip")) {
             Info info = new Info();
             info.repoFolder = source;
-            NPath s = source.resolve("sys-editor-support");
+            NPath s = source.resolve("sys-editor-support.tson");
             if (s.isRegularFile()) {
                 NObjectElement sObj = NElementParser.ofTson().parse(s).asObject().get();
                 for (NElement child : sObj.children()) {
@@ -339,7 +339,6 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
         return info;
     }
 
-
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
         return false;
@@ -431,7 +430,6 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             }
             NPath remote = info.getRepoFolder().resolve("/kate/language.xml");
             remote.copyTo(local.mkParentDirs());
-            NTrace.println(NMsg.ofC("%s %s syntax highlighting installed successfully to %s", styledLangId, app, local));
             if (doForce) {
                 NTrace.println(NMsg.ofC("%s %s syntax highlighting re-installed successfully to %s. You might need to restart %s", styledLangId, app, local, app));
             } else {
@@ -487,11 +485,10 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
         NMsg styledLangId = NMsg.ofStyledKeyword(info.getLanguageId());
         NMsg app = NMsg.ofStyledDate("Visual Studio Code");
         String publisher = NStringUtils.firstNonBlank(info.getLanguageGroupId(), "thevpc");
-        String langVersion = "1.0.0";
-
+        String langVersion = NStringUtils.firstNonBlank(info.getLanguageVersion(), "1.0.0");
         String pluginName = info.getLanguageId() + "-syntax";
         if (NWorkspace.of().getOsFamily().isPosix()) {
-            NPath local = NPath.ofUserHome().resolve(".vscode/extensions/" + publisher + "." + pluginName + "-");
+            NPath local = NPath.ofUserHome().resolve(".vscode/extensions/" + publisher + "." + pluginName + "-"+langVersion);
             boolean doForce = false;
             if (
                     !local.isDirectory()
