@@ -9,11 +9,13 @@ import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
+import net.thevpc.nuts.runtime.standalone.extension.NExtensionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.NInternalCommand;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
@@ -411,7 +413,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                                 //ignore
                                 _LOG()
                                         .log(NMsg.ofC("executable artifact descriptor found, but one of its parents or dependencies is not: %s : missing %s", descriptor.getId(),
-                                                ex.getId())
+                                                        ex.getId())
                                                 .asWarningAlert()
                                         );
                                 throw ex;
@@ -431,8 +433,8 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                             resolver
                                     .setRepositoryFilter(null)
                                     .setDependencyFilter(ff.byScope(NDependencyScopePattern.RUN)
-                                    //                            .and(ff.byOptional(getOptional())
-                                    //                            ).and(getDependencyFilter())
+                                            //                            .and(ff.byOptional(getOptional())
+                                            //                            ).and(getDependencyFilter())
                                     );
                             for (NDependency dependency : descriptor.getDependencies()) {
                                 resolver.add(dependency);
@@ -784,7 +786,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     protected NExecutableInformationExt ws_execId(NId goodId, String commandName, String[] appArgs, List<String> executorOptions,
-            List<String> workspaceOptions, NExecutionType executionType, NRunAs runAs) {
+                                                  List<String> workspaceOptions, NExecutionType executionType, NRunAs runAs) {
         NDefinition def = null;
         try {
             def = NFetchCmd.of(goodId)
@@ -809,13 +811,13 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     public int ws_execId(NDefinition def, String commandName, String[] appArgs,
-            List<String> executorOptions,
-            List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, boolean temporary,
-            NExecInput in,
-            NExecOutput out,
-            NExecOutput err,
-            NExecutionType executionType,
-            NRunAs runAs
+                         List<String> executorOptions,
+                         List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, boolean temporary,
+                         NExecInput in,
+                         NExecOutput out,
+                         NExecOutput err,
+                         NExecutionType executionType,
+                         NRunAs runAs
     ) {
         NExecutorComponentAndContext e = ws_execId2(def, commandName, appArgs,
                 executorOptions,
@@ -848,13 +850,13 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     public NExecutorComponentAndContext ws_execId2(NDefinition def, String commandName, String[] appArgs,
-            List<String> executorOptions,
-            List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, boolean temporary,
-            NExecInput in,
-            NExecOutput out,
-            NExecOutput err,
-            NExecutionType executionType,
-            NRunAs runAs
+                                                   List<String> executorOptions,
+                                                   List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, boolean temporary,
+                                                   NExecInput in,
+                                                   NExecOutput out,
+                                                   NExecOutput err,
+                                                   NExecutionType executionType,
+                                                   NRunAs runAs
     ) {
         //TODO ! one of the sessions needs to be removed!
         NSession session = NSession.of();
@@ -1046,17 +1048,8 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     private RemoteInfo0 resolveRemoteInfo0() {
         NConnectionString connectionString = getConnectionString();
         if (!NBlankable.isBlank(connectionString)) {
-            if ("ssh".equals(connectionString.getProtocol())) {
-                NExtensions.of()
-                        .loadExtension(NId.get("net.thevpc.nuts:nuts-ssh").get());
-            }
-            if ("nagent".equals(connectionString.getProtocol())) {
-                NExtensions.of()
-                        .loadExtension(NId.get("com.cts.nuts.enterprise:next-agent").get());
-            }
             RemoteInfo0 ii = new RemoteInfo0();
-            ii.commExec = NExtensions.of().createComponent(NExecTargetSPI.class, connectionString)
-                    .orElseThrow(() -> new NIllegalArgumentException(NMsg.ofC("invalid execution target string : %s", connectionString)));
+            ii.commExec = NExtensionUtils.createNExecTargetSPI(connectionString);
             ii.in0 = CoreIOUtils.validateIn(in);
             ii.out0 = CoreIOUtils.validateOut(out);
             ii.err0 = CoreIOUtils.validateOut(err);
