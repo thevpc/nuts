@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language>
+<language name="NTF" section="Markup" version="1" kateversion="5.79" extensions="*.ntf" mimetype="text/x-ntf" priority="5">
+    <highlighting>
+        <list name="code_languages">
+            <item>xml</item>
+            <item>json</item>
+            <item>java</item>
+            <item>sh</item>
+            <item>bash</item>
+            <item>js</item>
+            <item>javascript</item>
+            <item>sql</item>
+            <item>python</item>
+            <item>c</item>
+            <item>cpp</item>
+            <item>cs</item>
+            <item>csharp</item>
+            <item>nsh</item>
+        </list>
+        <list name="style_names">
+            <item>underlined</item>
+            <item>italic</item>
+            <item>striked</item>
+            <item>reversed</item>
+            <item>bold</item>
+            <item>error</item>
+            <item>warn</item>
+            <item>info</item>
+            <item>config</item>
+            <item>comments</item>
+            <item>string</item>
+            <item>number</item>
+            <item>boolean</item>
+            <item>keyword</item>
+            <item>option</item>
+            <item>input</item>
+            <item>operator</item>
+            <item>separator</item>
+            <item>success</item>
+            <item>danger</item>
+            <item>fail</item>
+            <item>var</item>
+            <item>pale</item>
+        </list>
+        <list name="color_prefixes">
+            <item>primary</item>
+            <item>secondary</item>
+            <item>foreground</item>
+            <item>background</item>
+        </list>
+        <contexts>
+            <context name="Normal" attribute="Normal Text" lineEndContext="#stay">
+                <DetectSpaces/>
+
+                <!-- Titles at line start -->
+                <RegExpr attribute="Title1" context="#stay" String="^#########\)" firstNonSpace="true"/>
+                <RegExpr attribute="Title2" context="#stay" String="^########\)" firstNonSpace="true"/>
+                <RegExpr attribute="Title3" context="#stay" String="^#######\)" firstNonSpace="true"/>
+                <RegExpr attribute="Title4" context="#stay" String="^######\)" firstNonSpace="true"/>
+                <RegExpr attribute="Title5" context="#stay" String="^#####\)" firstNonSpace="true"/>
+                <RegExpr attribute="Title6" context="#stay" String="^####\)" firstNonSpace="true"/>
+                <RegExpr attribute="Title7" context="#stay" String="^###\)" firstNonSpace="true"/>
+                <RegExpr attribute="Title8" context="#stay" String="^##\)" firstNonSpace="true"/>
+                <RegExpr attribute="Title9" context="#stay" String="^#\)" firstNonSpace="true"/>
+
+                <!-- Code blocks with language -->
+                <StringDetect attribute="Code Block Delimiter" context="CodeBlock" String="```"/>
+
+                <!-- Color styles ##:color:Text## -->
+                <StringDetect attribute="Style Delimiter" context="ColorStyle" String="##:"/>
+
+                <!-- Hash styles ##Text## to ##########Text########## -->
+                <RegExpr attribute="Primary Style" context="HashStyle10" String="##########(?!#)"/>
+                <RegExpr attribute="Primary Style" context="HashStyle9" String="#########(?!#)"/>
+                <RegExpr attribute="Primary Style" context="HashStyle8" String="########(?!#)"/>
+                <RegExpr attribute="Primary Style" context="HashStyle7" String="#######(?!#)"/>
+                <RegExpr attribute="Primary Style" context="HashStyle6" String="######(?!#)"/>
+                <RegExpr attribute="Primary Style" context="HashStyle5" String="#####(?!#)"/>
+                <RegExpr attribute="Primary Style" context="HashStyle4" String="####(?!#)"/>
+                <RegExpr attribute="Primary Style" context="HashStyle3" String="###(?!#)"/>
+                <RegExpr attribute="Primary Style" context="HashStyle2" String="##(?!#)"/>
+
+                <!-- Escape sequences -->
+                <RegExpr attribute="Escape" context="#stay" String="\\[#\\`\{\}:u]"/>
+
+                <!-- NOP character (non-printable separator) -->
+                <DetectChar attribute="Special Char" context="#stay" char="&#x001E;"/>
+            </context>
+
+            <!-- Code block context -->
+            <context name="CodeBlock" attribute="Code Block Content" lineEndContext="#stay">
+                <StringDetect attribute="Code Block Delimiter" context="#pop" String="```"/>
+                <keyword attribute="Code Language" context="#stay" String="code_languages"/>
+            </context>
+
+            <!-- Color style context ##:style:Text## -->
+            <context name="ColorStyle" attribute="Style Content" lineEndContext="#stay">
+                <DetectChar attribute="Style Delimiter" context="#stay" char=":"/>
+                <DetectChar attribute="Style Delimiter" context="#stay" char="{"/>
+                <DetectChar attribute="Style Delimiter" context="#stay" char="}"/>
+                <StringDetect attribute="Style Delimiter" context="#pop" String="##"/>
+                <keyword attribute="Style Name" context="#stay" String="style_names"/>
+                <keyword attribute="Color Name" context="#stay" String="color_prefixes"/>
+                <!-- Color codes: p, s, f, b followed by numbers -->
+                <RegExpr attribute="Color Code" context="#stay" String="[psfb]x?[0-9]+"/>
+                <RegExpr attribute="Color Code" context="#stay" String="[psfb]x[0-9A-Fa-f]{6}"/>
+                <!-- Special style shortcuts -->
+                <AnyChar attribute="Style Name" context="#stay" String="/_:%!+-"/>
+                <!-- NOP character -->
+                <DetectChar attribute="Special Char" context="#stay" char="&#x001E;"/>
+            </context>
+
+            <!-- Hash style contexts for different levels -->
+            <context name="HashStyle10" attribute="Primary10" lineEndContext="#stay">
+                <StringDetect attribute="Primary Style" context="#pop" String="##########"/>
+            </context>
+            <context name="HashStyle9" attribute="Primary9" lineEndContext="#stay">
+                <StringDetect attribute="Primary Style" context="#pop" String="#########"/>
+            </context>
+            <context name="HashStyle8" attribute="Primary8" lineEndContext="#stay">
+                <StringDetect attribute="Primary Style" context="#pop" String="########"/>
+            </context>
+            <context name="HashStyle7" attribute="Primary7" lineEndContext="#stay">
+                <StringDetect attribute="Primary Style" context="#pop" String="#######"/>
+            </context>
+            <context name="HashStyle6" attribute="Primary6" lineEndContext="#stay">
+                <StringDetect attribute="Primary Style" context="#pop" String="######"/>
+            </context>
+            <context name="HashStyle5" attribute="Primary5" lineEndContext="#stay">
+                <StringDetect attribute="Primary Style" context="#pop" String="#####"/>
+            </context>
+            <context name="HashStyle4" attribute="Primary4" lineEndContext="#stay">
+                <StringDetect attribute="Primary Style" context="#pop" String="####"/>
+            </context>
+            <context name="HashStyle3" attribute="Primary3" lineEndContext="#stay">
+                <StringDetect attribute="Primary Style" context="#pop" String="###"/>
+            </context>
+            <context name="HashStyle2" attribute="Primary2" lineEndContext="#stay">
+                <StringDetect attribute="Primary Style" context="#pop" String="##"/>
+            </context>
+
+        </contexts>
+        <itemDatas>
+            <itemData name="Normal Text" defStyleNum="dsNormal"/>
+
+            <!-- Titles -->
+            <itemData name="Title1" defStyleNum="dsFunction" bold="1"/>
+            <itemData name="Title2" defStyleNum="dsFunction" bold="1"/>
+            <itemData name="Title3" defStyleNum="dsFunction" bold="1"/>
+            <itemData name="Title4" defStyleNum="dsFunction"/>
+            <itemData name="Title5" defStyleNum="dsFunction"/>
+            <itemData name="Title6" defStyleNum="dsFunction"/>
+            <itemData name="Title7" defStyleNum="dsFunction"/>
+            <itemData name="Title8" defStyleNum="dsFunction"/>
+            <itemData name="Title9" defStyleNum="dsFunction"/>
+
+            <!-- Code blocks -->
+            <itemData name="Code Block Delimiter" defStyleNum="dsOperator" spellChecking="false"/>
+            <itemData name="Code Block Content" defStyleNum="dsString" spellChecking="false"/>
+            <itemData name="Code Language" defStyleNum="dsKeyword" spellChecking="false"/>
+
+            <!-- Primary styles -->
+            <itemData name="Primary Style" defStyleNum="dsOperator" spellChecking="false"/>
+            <itemData name="Primary2" defStyleNum="dsVariable" bold="1"/>
+            <itemData name="Primary3" defStyleNum="dsVariable" bold="1"/>
+            <itemData name="Primary4" defStyleNum="dsVariable"/>
+            <itemData name="Primary5" defStyleNum="dsVariable"/>
+            <itemData name="Primary6" defStyleNum="dsVariable"/>
+            <itemData name="Primary7" defStyleNum="dsVariable"/>
+            <itemData name="Primary8" defStyleNum="dsVariable"/>
+            <itemData name="Primary9" defStyleNum="dsVariable"/>
+            <itemData name="Primary10" defStyleNum="dsVariable"/>
+
+            <!-- Color/Style markup -->
+            <itemData name="Style Delimiter" defStyleNum="dsOperator" spellChecking="false"/>
+            <itemData name="Style Content" defStyleNum="dsNormal"/>
+            <itemData name="Style Name" defStyleNum="dsKeyword" spellChecking="false"/>
+            <itemData name="Color Name" defStyleNum="dsDataType" spellChecking="false"/>
+            <itemData name="Color Code" defStyleNum="dsDecVal" spellChecking="false"/>
+
+            <!-- Special -->
+            <itemData name="Escape" defStyleNum="dsSpecialChar" spellChecking="false"/>
+            <itemData name="Special Char" defStyleNum="dsSpecialChar" spellChecking="false"/>
+        </itemDatas>
+    </highlighting>
+    <general>
+        <comments/>
+        <keywords casesensitive="1" additionalDeliminator="#:`{}" weakDeliminator=""/>
+    </general>
+</language>
+        <!-- kate: replace-tabs on; tab-width 4; indent-width 4; -->
