@@ -24,7 +24,7 @@ public abstract class AbstractNUpdateStatsCmd extends NWorkspaceCmdBase<NUpdateS
     private LinkedHashSet<Path> paths = new LinkedHashSet<>();
     private LinkedHashSet<String> repositories = new LinkedHashSet<>();
 
-    public AbstractNUpdateStatsCmd(NWorkspace workspace) {
+    public AbstractNUpdateStatsCmd() {
         super("update-statistics");
     }
 
