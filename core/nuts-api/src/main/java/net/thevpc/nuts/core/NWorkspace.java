@@ -251,9 +251,9 @@ public interface NWorkspace extends NWorkspaceBase, NEnvContext, NComponent, Clo
     NWorkspace setProperty(String property, Object value);
 
 
-    public <T> T getOrComputeProperty(Class<T> property, Supplier<T> supplier);
+    <T> T getOrComputeProperty(Class<T> property, Supplier<T> supplier);
 
-    public <T> T getOrComputeProperty(String property, Supplier<T> supplier);
+    <T> T getOrComputeProperty(String property, Supplier<T> supplier);
 
 
     String getHostName();

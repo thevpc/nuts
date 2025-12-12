@@ -83,13 +83,13 @@ public interface NConnectionStringBuilder extends NComponent {
      *
      * @since  0.8.9
      */
-    NOptional<String> getQueryParamValue(String param);
+    NOptional<String> getQueryParam(String param);
 
     /**
      *
      * @since  0.8.9
      */
-    List<String> getQueryParamValues(String param);
+    List<String> getQueryParams(String param);
 
 
     /**

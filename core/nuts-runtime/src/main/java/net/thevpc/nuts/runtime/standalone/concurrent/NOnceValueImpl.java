@@ -9,15 +9,15 @@ import net.thevpc.nuts.util.NAssert;
 
 import java.util.function.Supplier;
 
-public final class NStableValueImpl<T> implements NStableValue<T> {
+public final class NOnceValueImpl<T> implements NOnceValue<T> {
 
-    private final NStableValueStore store;
-    private NStableValueModel model;
+    private final NOnceValueStore store;
+    private NOnceValueModel model;
 
-    NStableValueImpl(String id, Supplier<T> supplier, NStableValueStore store) {
+    NOnceValueImpl(String id, Supplier<T> supplier, NOnceValueStore store) {
         NAssert.requireNonNull(supplier, "supplier");
         this.store = store;
-        this.model = new NStableValueModel(NAssert.requireNonNull(id, "id"), supplier);
+        this.model = new NOnceValueModel(NAssert.requireNonNull(id, "id"), supplier);
         reload();
     }
 
@@ -26,9 +26,9 @@ public final class NStableValueImpl<T> implements NStableValue<T> {
         synchronized (this) {
             String id = model.getId();
             NBeanContainer.scopedStack().runWith(NBeanContainer.current(), () -> {
-                NStableValueModel m = store.load(id);
+                NOnceValueModel m = store.load(id);
                 if (m == null) {
-                    m = new NStableValueModel(id, model.getSupplier());
+                    m = new NOnceValueModel(id, model.getSupplier());
                     _save(m);
                 } else {
                     if (model.getSupplier() != null) {
@@ -41,7 +41,7 @@ public final class NStableValueImpl<T> implements NStableValue<T> {
         }
     }
 
-    private void _save(NStableValueModel model) {
+    private void _save(NOnceValueModel model) {
         this.model = model;
         NBeanContainer.scopedStack().runWith(NBeanContainer.current(), () -> {
             store.save(model);
@@ -92,7 +92,7 @@ public final class NStableValueImpl<T> implements NStableValue<T> {
     }
 
     @Override
-    public boolean computeAndSetIfAbsent(Supplier<T> supplier) {
+    public boolean trySupply(Supplier<T> supplier) {
         synchronized (this) {
             Boolean errorState = model.getErrorState();
             if (errorState != null) {
@@ -103,8 +103,26 @@ public final class NStableValueImpl<T> implements NStableValue<T> {
         return false;
     }
 
-    public boolean setIfAbsent(T value) {
-        return computeAndSetIfAbsent(() -> value);
+    @Override
+    public T orElseSet(Supplier<T> value) {
+        trySupply(value);
+        return get();
+    }
+
+
+    @Override
+    public T orElse(T value) {
+        synchronized (this) {
+            Boolean errorState = model.getErrorState();
+            if (errorState != null && !errorState) {
+                return value;
+            }
+            return get();
+        }
+    }
+
+    public boolean trySet(T value) {
+        return trySupply(() -> value);
     }
 
     @Override

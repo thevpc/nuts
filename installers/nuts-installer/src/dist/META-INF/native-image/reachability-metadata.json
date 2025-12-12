@@ -1,106 +1,10 @@
 {
   "reflection": [
     {
-      "type": "[B"
-    },
-    {
-      "type": "[C"
-    },
-    {
       "type": "[Ljava.awt.event.MouseMotionListener;"
     },
     {
       "type": "com.formdev.flatlaf.icons.FlatCheckBoxIcon",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.icons.FlatFileChooserDetailsViewIcon",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.icons.FlatFileChooserHomeFolderIcon",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.icons.FlatFileChooserListViewIcon",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.icons.FlatFileChooserNewFolderIcon",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.icons.FlatFileChooserUpFolderIcon",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.icons.FlatFileViewComputerIcon",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.icons.FlatFileViewDirectoryIcon",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.icons.FlatFileViewFileIcon",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.icons.FlatFileViewFloppyDriveIcon",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.icons.FlatFileViewHardDriveIcon",
       "methods": [
         {
           "name": "<init>",
@@ -170,23 +74,6 @@
       ]
     },
     {
-      "type": "com.formdev.flatlaf.ui.FlatComboBoxUI",
-      "methods": [
-        {
-          "name": "createUI",
-          "parameterTypes": [
-            "javax.swing.JComponent"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.ui.FlatComboBoxUI$FlatComboBoxButton"
-    },
-    {
-      "type": "com.formdev.flatlaf.ui.FlatComboBoxUI$FlatComboPopup"
-    },
-    {
       "type": "com.formdev.flatlaf.ui.FlatEditorPaneUI",
       "methods": [
         {
@@ -207,56 +94,7 @@
       ]
     },
     {
-      "type": "com.formdev.flatlaf.ui.FlatFileChooserUI",
-      "methods": [
-        {
-          "name": "createUI",
-          "parameterTypes": [
-            "javax.swing.JComponent"
-          ]
-        }
-      ]
-    },
-    {
       "type": "com.formdev.flatlaf.ui.FlatLabelUI",
-      "methods": [
-        {
-          "name": "createUI",
-          "parameterTypes": [
-            "javax.swing.JComponent"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.ui.FlatListCellBorder$Default",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.ui.FlatListCellBorder$Focused",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.ui.FlatListCellBorder$Selected",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.ui.FlatListUI",
       "methods": [
         {
           "name": "createUI",
@@ -277,26 +115,6 @@
     },
     {
       "type": "com.formdev.flatlaf.ui.FlatPanelUI",
-      "methods": [
-        {
-          "name": "createUI",
-          "parameterTypes": [
-            "javax.swing.JComponent"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.ui.FlatPopupMenuBorder",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.ui.FlatPopupMenuUI",
       "methods": [
         {
           "name": "createUI",
@@ -336,15 +154,6 @@
           "parameterTypes": [
             "javax.swing.JComponent"
           ]
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.ui.FlatRoundBorder",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
         }
       ]
     },
@@ -428,17 +237,6 @@
     },
     {
       "type": "com.formdev.flatlaf.ui.FlatToggleButtonUI",
-      "methods": [
-        {
-          "name": "createUI",
-          "parameterTypes": [
-            "javax.swing.JComponent"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "com.formdev.flatlaf.ui.FlatToolTipUI",
       "methods": [
         {
           "name": "createUI",
@@ -550,9 +348,6 @@
       ]
     },
     {
-      "type": "java.awt.Image"
-    },
-    {
       "type": "java.awt.SequencedEvent"
     },
     {
@@ -592,16 +387,7 @@
           "name": "VK_ENTER"
         },
         {
-          "name": "VK_ESCAPE"
-        },
-        {
           "name": "VK_F10"
-        },
-        {
-          "name": "VK_F2"
-        },
-        {
-          "name": "VK_F5"
         },
         {
           "name": "VK_H"
@@ -646,9 +432,6 @@
           "name": "VK_RIGHT"
         },
         {
-          "name": "VK_SLASH"
-        },
-        {
           "name": "VK_SPACE"
         },
         {
@@ -669,27 +452,12 @@
       ]
     },
     {
-      "type": "java.io.InputStream"
-    },
-    {
-      "type": "java.io.Reader"
-    },
-    {
-      "type": "java.lang.String"
-    },
-    {
       "type": "java.lang.reflect.AccessibleObject",
       "fields": [
         {
           "name": "override"
         }
       ]
-    },
-    {
-      "type": "java.nio.ByteBuffer"
-    },
-    {
-      "type": "java.nio.CharBuffer"
     },
     {
       "type": "java.security.AlgorithmParametersSpi"
@@ -713,25 +481,7 @@
       "type": "java.sql.Date"
     },
     {
-      "type": "java.util.List"
-    },
-    {
       "type": "java.util.Map"
-    },
-    {
-      "type": "javax.swing.PopupFactory",
-      "methods": [
-        {
-          "name": "getPopup",
-          "parameterTypes": [
-            "java.awt.Component",
-            "java.awt.Component",
-            "int",
-            "int",
-            "boolean"
-          ]
-        }
-      ]
     },
     {
       "type": "javax.swing.plaf.basic.BasicGraphicsUtils",
@@ -745,17 +495,6 @@
             "int",
             "float",
             "float"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "javax.swing.plaf.basic.BasicRootPaneUI",
-      "methods": [
-        {
-          "name": "loadActionMap",
-          "parameterTypes": [
-            "javax.swing.plaf.basic.LazyActionMap"
           ]
         }
       ]
@@ -815,15 +554,6 @@
     },
     {
       "type": "net.thevpc.nuts.installer.util.swing.WizardPageBase"
-    },
-    {
-      "type": "sun.awt.shell.ShellFolderManager",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
     },
     {
       "type": "sun.java2d.marlin.DMarlinRenderingEngine",
@@ -1282,14 +1012,6 @@
     {
       "module": "java.base",
       "glob": "sun/text/resources/LineBreakIteratorData"
-    },
-    {
-      "module": "java.base",
-      "glob": "sun/text/resources/WordBreakIteratorData"
-    },
-    {
-      "module": "java.datatransfer",
-      "glob": "sun/datatransfer/resources/flavormap.properties"
     },
     {
       "module": "java.desktop",
@@ -1861,9 +1583,6 @@
       "type": "sun.awt.X11.XContentWindow"
     },
     {
-      "type": "sun.awt.X11.XDialogPeer"
-    },
-    {
       "type": "sun.awt.X11.XErrorHandlerUtil",
       "methods": [
         {
@@ -1908,9 +1627,6 @@
           "name": "target"
         }
       ]
-    },
-    {
-      "type": "sun.awt.X11.XWindowPeer"
     },
     {
       "type": "sun.awt.X11GraphicsConfig",

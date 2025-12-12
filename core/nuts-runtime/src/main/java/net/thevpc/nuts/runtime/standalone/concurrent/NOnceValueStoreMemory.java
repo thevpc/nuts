@@ -1,21 +1,21 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
-import net.thevpc.nuts.concurrent.NStableValueModel;
-import net.thevpc.nuts.concurrent.NStableValueStore;
+import net.thevpc.nuts.concurrent.NOnceValueModel;
+import net.thevpc.nuts.concurrent.NOnceValueStore;
 
 import java.util.HashMap;
 import java.util.Map;
 
-class NStableValueStoreMemory implements NStableValueStore {
-    Map<String, NStableValueModel> values = new HashMap<>();
+class NOnceValueStoreMemory implements NOnceValueStore {
+    Map<String, NOnceValueModel> values = new HashMap<>();
 
     @Override
-    public NStableValueModel load(String id) {
+    public NOnceValueModel load(String id) {
         return values.get(id);
     }
 
     @Override
-    public void save(NStableValueModel value) {
+    public void save(NOnceValueModel value) {
         if (value.getValue() != null) {
             values.put(value.getId(), value);
         } else {

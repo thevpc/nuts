@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  *
  * @since 0.8.6
  */
-public class NStableValueModel implements Cloneable, NCopiable {
+public class NOnceValueModel implements Cloneable, NCopiable {
 
     /**
      * Unique identifier for this stable value.
@@ -37,7 +37,7 @@ public class NStableValueModel implements Cloneable, NCopiable {
      */
     private Supplier<?> supplier;
 
-    public NStableValueModel() {
+    public NOnceValueModel() {
     }
 
     /**
@@ -46,7 +46,7 @@ public class NStableValueModel implements Cloneable, NCopiable {
      * @param id       unique identifier
      * @param supplier supplier to compute the value
      */
-    public NStableValueModel(String id,Supplier<?> supplier) {
+    public NOnceValueModel(String id, Supplier<?> supplier) {
         this.id = id;
         this.supplier = supplier;
     }
@@ -55,7 +55,7 @@ public class NStableValueModel implements Cloneable, NCopiable {
         return supplier;
     }
 
-    public NStableValueModel setSupplier(Supplier<?> supplier) {
+    public NOnceValueModel setSupplier(Supplier<?> supplier) {
         this.supplier = supplier;
         return this;
     }
@@ -64,7 +64,7 @@ public class NStableValueModel implements Cloneable, NCopiable {
         return id;
     }
 
-    public NStableValueModel setId(String id) {
+    public NOnceValueModel setId(String id) {
         this.id = id;
         return this;
     }
@@ -73,7 +73,7 @@ public class NStableValueModel implements Cloneable, NCopiable {
         return value;
     }
 
-    public NStableValueModel setValue(Object value) {
+    public NOnceValueModel setValue(Object value) {
         this.value = value;
         return this;
     }
@@ -82,7 +82,7 @@ public class NStableValueModel implements Cloneable, NCopiable {
         return throwable;
     }
 
-    public NStableValueModel setThrowable(Throwable throwable) {
+    public NOnceValueModel setThrowable(Throwable throwable) {
         this.throwable = throwable;
         return this;
     }
@@ -91,7 +91,7 @@ public class NStableValueModel implements Cloneable, NCopiable {
         return errorState;
     }
 
-    public NStableValueModel setErrorState(Boolean errorState) {
+    public NOnceValueModel setErrorState(Boolean errorState) {
         this.errorState = errorState;
         return this;
     }
@@ -101,13 +101,13 @@ public class NStableValueModel implements Cloneable, NCopiable {
      *
      * @return a cloned instance
      */
-    public NStableValueModel copy(){
+    public NOnceValueModel copy(){
         return clone();
     }
 
-    protected NStableValueModel clone(){
+    protected NOnceValueModel clone(){
         try {
-            return (NStableValueModel) super.clone();
+            return (NOnceValueModel) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }

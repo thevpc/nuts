@@ -96,7 +96,7 @@ class SshNPath implements NPathSPI {
                 int port = NLiteral.of(path.getPort()).asInt().orElse(-1);
                 String path0 = path.getPath();
                 String password = path.getPassword();
-                String keyFile = path.builder().getQueryParamValue(SshConnection.IDENTITY_FILE).orNull();
+                String keyFile = path.builder().getQueryParam(SshConnection.IDENTITY_FILE).orNull();
 
                 sb.append(text.ofStyled("ssh://", _sep));
                 if (!NBlankable.isBlank(user)) {

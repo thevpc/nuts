@@ -1,0 +1,9 @@
+conclusion-slide(title:"Conclusion"){
+    body {
+        ul{
+            ¶ Linux is not so bad
+            ¶ General Purpose vs Specific OSes war
+            ¶ AI is yet to come
+        }
+    }
+}

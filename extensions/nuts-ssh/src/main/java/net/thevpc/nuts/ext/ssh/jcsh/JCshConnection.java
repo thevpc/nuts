@@ -40,7 +40,7 @@ public class JCshConnection extends SshConnectionBase {
         String user = connectionString.getUserName();
         String host = connectionString.getHost();
         int port = NLiteral.of(connectionString.getPort()).asInt().orElse(-1);
-        String keyFilePath = connectionString.builder().getQueryParamValue(SshConnection.IDENTITY_FILE).orNull();
+        String keyFilePath = connectionString.builder().getQueryParam(SshConnection.IDENTITY_FILE).orNull();
         String keyPassword = connectionString.getPassword();
         try {
             JSch jsch = new JSch();

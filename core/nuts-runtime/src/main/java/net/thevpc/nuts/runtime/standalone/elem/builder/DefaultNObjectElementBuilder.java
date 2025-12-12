@@ -48,11 +48,13 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     public DefaultNObjectElementBuilder() {
     }
+
     @Override
     public NObjectElementBuilder removeAnnotation(NElementAnnotation annotation) {
         super.removeAnnotation(annotation);
         return this;
     }
+
     @Override
     public NObjectElementBuilder copyFrom(NElementBuilder other) {
         copyFrom(other, NMapStrategy.ANY);
@@ -291,7 +293,7 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     @Override
     public NObjectElementBuilder setChildren(List<NElement> params) {
         this.values.clear();
-        if(params!=null){
+        if (params != null) {
             this.values.addAll(params.stream().filter(x -> x != null).collect(Collectors.toList()));
         }
         return this;
@@ -437,17 +439,17 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NObjectElementBuilder remove(NElement name) {
-        name = denull(name);
+    public NObjectElementBuilder removeAt(int index) {
+        values.remove(index);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder remove(NElement child) {
+        child = denull(child);
         for (int i = 0; i < values.size(); i++) {
             NElement nElement = values.get(i);
-            if (nElement instanceof NPairElement) {
-                NElement k = ((NPairElement) nElement).key();
-                if (Objects.equals(k, name)) {
-                    values.remove(i);
-                    return this;
-                }
-            } else if (Objects.equals(nElement, name)) {
+            if (Objects.equals(nElement, child)) {
                 values.remove(i);
                 return this;
             }
@@ -456,7 +458,38 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NObjectElementBuilder removeAll(NElement name) {
+    public NObjectElementBuilder removeEntry(NElement entryKey) {
+        entryKey = denull(entryKey);
+        for (int i = 0; i < values.size(); i++) {
+            NElement nElement = values.get(i);
+            if (nElement instanceof NPairElement) {
+                NElement k = ((NPairElement) nElement).key();
+                if (Objects.equals(k, entryKey)) {
+                    values.remove(i);
+                    return this;
+                }
+            } else if (Objects.equals(nElement, entryKey)) {
+                values.remove(i);
+                return this;
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder removeAll(NElement child) {
+        child = denull(child);
+        for (int i = values.size() - 1; i >= 0; i--) {
+            NElement nElement = values.get(i);
+            if (Objects.equals(nElement, child)) {
+                values.remove(i);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder removeEntries(NElement name) {
         name = denull(name);
         for (int i = values.size() - 1; i >= 0; i--) {
             NElement nElement = values.get(i);
@@ -473,12 +506,12 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NObjectElementBuilder remove(String name) {
-        return remove(NElement.ofString(name));
+    public NObjectElementBuilder removeEntry(String name) {
+        return removeEntry(NElement.ofString(name));
     }
 
     @Override
-    public NObjectElementBuilder removeAll(String name) {
+    public NObjectElementBuilder removeEntries(String name) {
         return removeAll(NElement.ofString(name));
     }
 
@@ -565,6 +598,25 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     public NObjectElementBuilder add(NElement entry) {
         if (entry != null) {
             values.add(entry);
+        }
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addAt(int index, NElement item) {
+        if (item != null) {
+            if (index >= 0 && index < values.size()) {
+                values.add(index, item);
+            } else if (index >= values.size()) {
+                values.add(item);
+            } else if (index < 0) {
+                int i2 = values.size() - index;
+                if (i2 >= 0 && i2 < values.size()) {
+                    values.add(i2, item);
+                }else if(i2<0){
+                    values.add(0, item);
+                }
+            }
         }
         return this;
     }

@@ -173,3 +173,5 @@ net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl
 net.thevpc.nuts.runtime.standalone.concurrent.DefaultNLockBuilder
 net.thevpc.nuts.runtime.standalone.reflect.NReflectImpl
 net.thevpc.nuts.runtime.standalone.util.NUtilSPIImpl
+
+net.thevpc.nuts.runtime.standalone.workspace.cmd.editorsyntax.NSysEditorSupportCmdImpl

@@ -112,9 +112,9 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @param name property name
      * @return this {@code this} instance
      */
-    NObjectElementBuilder remove(String name);
+    NObjectElementBuilder removeEntry(String name);
 
-    NObjectElementBuilder removeAll(String name);
+    NObjectElementBuilder removeEntries(String name);
 
     /**
      * return value for name or null.
@@ -171,9 +171,35 @@ public interface NObjectElementBuilder extends NElementBuilder {
      */
     NObjectElement build();
 
-    NObjectElementBuilder remove(NElement name);
+    /**
+     * remove child at index
+     * @param index element index
+     * @return this builder
+     * @since 0.8.9
+     */
+    NObjectElementBuilder removeAt(int index);
 
-    NObjectElementBuilder removeAll(NElement name);
+    /**
+     * remove child pair when its key is the given name
+     * @param name entry key
+     * @return this builder
+     * @since 0.8.9
+     */
+    NObjectElementBuilder removeEntry(NElement name);
+
+    /**
+     * @param index index to add to, may be negative
+     * @param item item to add
+     * @return this builder
+     * @since 0.8.9
+     */
+    NObjectElementBuilder addAt(int index, NElement item);
+
+    NObjectElementBuilder removeEntries(NElement name);
+
+    NObjectElementBuilder remove(NElement child);
+
+    NObjectElementBuilder removeAll(NElement child);
 
 
     NObjectElementBuilder set(NElement name, NElement value);
