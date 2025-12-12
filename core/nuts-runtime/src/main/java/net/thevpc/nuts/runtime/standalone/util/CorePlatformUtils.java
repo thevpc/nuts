@@ -31,6 +31,7 @@ import net.thevpc.nuts.artifact.NIdBuilder;
 import net.thevpc.nuts.command.NExecCmd;
 import net.thevpc.nuts.io.NErr;
 import net.thevpc.nuts.io.NTerminal;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
@@ -179,7 +180,7 @@ public class CorePlatformUtils {
                                 .getGrabbedAllString()
                 );
             } catch (Exception e) {
-                e.printStackTrace();
+                NLog.of(CorePlatformUtils.class).log(NMsg.ofC("failed to run \"uname -a\" : %s", e).asFinestFail(e));
             }
         }
 //prints all the version-related files
