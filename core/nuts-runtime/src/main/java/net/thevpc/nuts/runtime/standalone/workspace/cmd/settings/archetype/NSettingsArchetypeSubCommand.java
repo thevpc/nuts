@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettin
  * @author thevpc
  */
 public class NSettingsArchetypeSubCommand extends AbstractNSettingsSubCommand {
-    public NSettingsArchetypeSubCommand(NWorkspace workspace) {
+    public NSettingsArchetypeSubCommand() {
         super();
     }
 
