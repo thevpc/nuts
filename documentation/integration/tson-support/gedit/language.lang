@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language id="tson" _name="TSON" version="1.0"
+          _section="Sources" _mimetypes="text/x-ntx"
+          globs="*.tson">
+
+    <metadata>
+        <property name="comment" value="//"/>
+    </metadata>
+
+    <!-- Comments -->
+    <definitions>
+        <comment start="//" end="\n"/>
+        <comment start="/*" end="*/"/>
+
+        <!-- Strings -->
+        <string>
+            <start>"</start>
+            <end>"</end>
+            <escape>\</escape>
+        </string>
+        <string>
+            <start>'</start>
+            <end>'</end>
+            <escape>\</escape>
+        </string>
+
+        <!-- Numbers -->
+        <number>
+            \b\d+(\.\d+)?([eE][+-]?\d+)?\b
+        </number>
+
+        <!-- Keywords category 1 -->
+        <keyword-list id="keywords1">
+        </keyword-list>
+
+        <!-- Keywords category 2: shapes / drawing primitives -->
+        <keyword-list id="keywords2">
+        </keyword-list>
+
+        <!-- Keywords category 3: attributes -->
+        <keyword-list id="keywords3">
+        </keyword-list>
+
+        <!-- Keywords category 4: document metadata -->
+        <keyword-list id="keywords4">
+        </keyword-list>
+
+    </definitions>
+
+    <styles>
+        <style name="comment"       foreground="#008000" />
+        <style name="string"        foreground="#B22222" />
+        <style name="number"        foreground="#0000FF" />
+        <style name="keyword1"      foreground="#0000FF" weight="bold" />
+        <style name="keyword2"      foreground="#2E8B57" weight="bold" />
+        <style name="keyword3"      foreground="#8B008B" />
+        <style name="keyword4"      foreground="#FF4500" />
+    </styles>
+
+    <contexts>
+        <context id="main">
+            <include ref="comment"/>
+            <include ref="string"/>
+            <include ref="number"/>
+            <keyword ref="keywords1" style="keyword1"/>
+            <keyword ref="keywords2" style="keyword2"/>
+            <keyword ref="keywords3" style="keyword3"/>
+            <keyword ref="keywords4" style="keyword4"/>
+        </context>
+    </contexts>
+</language>
