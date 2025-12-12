@@ -27,8 +27,7 @@ import java.util.List;
  * @author thevpc
  */
 public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
-    public NSettingsUserSubCommand(NWorkspace workspace) {
-        super();
+    public NSettingsUserSubCommand() {
     }
 
     @Override
