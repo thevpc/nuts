@@ -10,6 +10,7 @@ import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
@@ -988,8 +989,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                                     NPath.of(ub.resolveSibling(NWorkspace.of().getDefaultIdFilename(c.getDescriptor().getId())).toURL()),
                                     c.getTemps(), true));
                         } catch (Exception ex) {
-                            //TODO FIX ME
-                            ex.printStackTrace();
+                            NLog.of(DefaultNExecCmd.class).log(NMsg.ofC("unable to set content file : %s",ex).asError(ex).withIntent(NMsgIntent.INIT));
                         }
                     }
                     if (c.getContentFile() == null) {
@@ -1002,7 +1002,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                                                 NPath.of(CoreIOUtils.urlOf(location)),
                                                 c.getTemps(), true));
                                     } catch (Exception ex) {
-                                        ex.printStackTrace();
+                                        NLog.of(DefaultNExecCmd.class).log(NMsg.ofC("unable to set content file : %s",ex).asFinestFail(ex));
                                     }
                                 } else {
                                     URLBuilder ub = new URLBuilder(((NPath) c.getStreamOrPath()).toURL().toString());
@@ -1011,8 +1011,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                                                 NPath.of(ub.resolveSibling(NWorkspace.of().getDefaultIdFilename(c.getDescriptor().getId())).toURL()),
                                                 c.getTemps(), true));
                                     } catch (Exception ex) {
-                                        //TODO add log here
-                                        ex.printStackTrace();
+                                        NLog.of(DefaultNExecCmd.class).log(NMsg.ofC("unable to set content file : %s",ex).asFinestFail(ex));
                                     }
                                 }
                                 if (c.getContentFile() == null) {
