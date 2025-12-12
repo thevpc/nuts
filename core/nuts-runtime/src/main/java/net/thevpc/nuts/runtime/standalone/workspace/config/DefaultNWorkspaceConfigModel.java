@@ -144,7 +144,7 @@ public class DefaultNWorkspaceConfigModel {
             )
     );
 
-    public NScopedValue<Map<String, String>> currentEnv = new NScopedValue<>(this::rootEnv);
+    public NScopedValue<Map<String, String>> currentEnv = NScopedValue.ofSupplier(this::rootEnv);
 
     public DefaultNWorkspaceConfigModel(final DefaultNWorkspace workspace) {
         this.workspace = workspace;

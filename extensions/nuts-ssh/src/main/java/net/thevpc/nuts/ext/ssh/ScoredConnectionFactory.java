@@ -11,15 +11,15 @@ import net.thevpc.nuts.util.NLiteral;
 
 public class ScoredConnectionFactory {
     public static NScoredCallable<SshConnection> resolveBinSshConnectionPool(NConnectionString connectionString) {
-        boolean usePortable = NLiteral.of(connectionString.builder().getQueryParamValue("portable"))
+        boolean usePortable = NLiteral.of(connectionString.builder().getQueryParam("portable"))
                 .asBoolean().orElse(false);
-        boolean useJcsh = NLiteral.of(connectionString.builder().getQueryParamValue("jcsh"))
+        boolean useJcsh = NLiteral.of(connectionString.builder().getQueryParam("jcsh"))
                 .asBoolean().orElse(false);
-        boolean useSftp = NLiteral.of(connectionString.builder().getQueryParamValue("sftp"))
+        boolean useSftp = NLiteral.of(connectionString.builder().getQueryParam("sftp"))
                 .asBoolean().orElse(false);
-        boolean useScp = NLiteral.of(connectionString.builder().getQueryParamValue("scp"))
+        boolean useScp = NLiteral.of(connectionString.builder().getQueryParam("scp"))
                 .asBoolean().orElse(false);
-        boolean useBin = NLiteral.of(connectionString.builder().getQueryParamValue("bin"))
+        boolean useBin = NLiteral.of(connectionString.builder().getQueryParam("bin"))
                 .asBoolean().orElse(false);
         int score = 1;
         if (useJcsh) {

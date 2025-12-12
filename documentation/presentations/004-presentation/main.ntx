@@ -1,0 +1,26 @@
+// ********************************
+// *  My Presentation
+// *  last updated : 2025-10-10
+// *  author       : @your-id-here
+// ********************************
+
+//---------------------------------------------
+// PREPARE ENV
+//---------------------------------------------
+documentTitle="Nuts"
+documentSubtitle="Java Package Manager"
+documentSubsubtitle=""
+documentAuthor="Dr. Eng. Taha BEN SALAH"
+documentAuthorEmail="taha.bensalah@gmail.com"
+documentAuthorAffiliation=""
+documentChapter="Chapter 1"
+documentDate="2025-10-14"
+documentVersion="1.0"
+documentColorAccent=3
+//---------------------------------------------
+
+include("/home/vpc/xprojects/nuts-world/nuts-productivity/ntexup-templates/classic/v1.0/theme")
+cover-slide(){
+}
+include("pages")
+thankyou-slide()

@@ -103,7 +103,7 @@ public interface NConcurrent extends NComponent {
      * @param supplier the supplier to produce the value
      * @return stable value instance
      */
-    <T> NStableValue<T> stableValue(Supplier<T> supplier);
+    <T> NOnceValue<T> stableValue(Supplier<T> supplier);
 
     /**
      * Creates a stable value with the given identifier and supplier.
@@ -113,7 +113,7 @@ public interface NConcurrent extends NComponent {
      * @param supplier the supplier to produce the value
      * @return stable value instance
      */
-    <T> NStableValue<T> stableValue(String id, Supplier<T> supplier);
+    <T> NOnceValue<T> stableValue(String id, Supplier<T> supplier);
 
     /**
      * Sets the stable value factory used by this component.
@@ -121,28 +121,28 @@ public interface NConcurrent extends NComponent {
      * @param stableValueFactory the factory to set
      * @return this instance
      */
-    NConcurrent setStableValueFactory(NStableValueFactory stableValueFactory);
+    NConcurrent setStableValueFactory(NOnceValueFactory stableValueFactory);
 
     /**
      * Returns a memory-only stable value factory.
      *
      * @return memory stable value factory
      */
-    NStableValueFactory memoryStableValueFactory();
+    NOnceValueFactory memoryStableValueFactory();
 
     /**
      * Returns the default stable value factory.
      *
      * @return default stable value factory
      */
-    NStableValueFactory defaultStableValueFactory();
+    NOnceValueFactory defaultStableValueFactory();
 
     /**
      * Returns the currently configured stable value factory.
      *
      * @return stable value factory
      */
-    NStableValueFactory stableValueFactory();
+    NOnceValueFactory stableValueFactory();
 
 
     // --------------------

@@ -7,13 +7,13 @@ import java.util.function.Supplier;
 /**
  * Represents a stable, lazily-evaluated value that can be computed once and then reused.
  * <p>
- * A {@code NStableValue} may hold a computed value, indicate whether it has been evaluated,
+ * A {@code NOnceValue} may hold a computed value, indicate whether it has been evaluated,
  * and track its validity or error state. It extends {@link Supplier} to provide standard
  * access to the value and {@link NElementDescribable} for descriptive capabilities.
  *
  * @param <T> the type of the value
  */
-public interface NStableValue<T> extends Supplier<T>, NElementDescribable {
+public interface NOnceValue<T> extends Supplier<T>, NElementDescribable {
 
     /**
      * Creates a stable value from a supplier.
@@ -21,10 +21,10 @@ public interface NStableValue<T> extends Supplier<T>, NElementDescribable {
      * The supplied value will be computed lazily and cached internally.
      *
      * @param supplier the supplier that provides the value
-     * @param <T> the type of the value
-     * @return a new {@code NStableValue} wrapping the given supplier
+     * @param <T>      the type of the value
+     * @return a new {@code NOnceValue} wrapping the given supplier
      */
-    static <T> NStableValue<T> of(Supplier<T> supplier) {
+    static <T> NOnceValue<T> ofSupplier(Supplier<T> supplier) {
         return NConcurrent.of().stableValue(supplier);
     }
 
@@ -67,7 +67,7 @@ public interface NStableValue<T> extends Supplier<T>, NElementDescribable {
      * @param value the value to set
      * @return {@code true} if the value was successfully set, {@code false} if a value was already present
      */
-    boolean setIfAbsent(T value);
+    boolean trySet(T value);
 
     /**
      * Computes the value using the given supplier and sets it if it has not already been set.
@@ -75,5 +75,10 @@ public interface NStableValue<T> extends Supplier<T>, NElementDescribable {
      * @param value the supplier providing the value
      * @return {@code true} if the value was successfully computed and set, {@code false} if a value was already present
      */
-    boolean computeAndSetIfAbsent(Supplier<T> value);
+    boolean trySupply(Supplier<T> value);
+
+    T orElseSet(Supplier<T> value);
+
+    T orElse(T value);
+
 }

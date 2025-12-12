@@ -26,7 +26,8 @@ import net.thevpc.nuts.io.NIOUtils;
  * @author thevpc
  */
 public class TestUtils {
-
+    public static final String WINDOWS_TEST_SERVER ="Administrateur@nowhere.com";
+    public static final String LINUX_TEST_SERVER ="vpc@nowhere.com";
     public static final String LINUX_LOG = new File(System.getProperty("user.home") + "/.local/log/nuts").getPath();
     public static final String LINUX_APPS = new File(System.getProperty("user.home") + "/.local/share/nuts/apps").getPath();
     public static final String LINUX_CONFIG = new File(System.getProperty("user.home") + "/.config/nuts").getPath();

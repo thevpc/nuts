@@ -427,16 +427,16 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
     }
 
     @Override
-    public NOptional<String> getQueryParamValue(String param) {
+    public NOptional<String> getQueryParam(String param) {
         if (param == null) {
             param = "";
         }
         String finalParam = param;
-        return NOptional.ofFirst(getQueryParamValues(param), () -> NMsg.ofC("missing '%s'", finalParam));
+        return NOptional.ofFirst(getQueryParams(param), () -> NMsg.ofC("missing '%s'", finalParam));
     }
 
     @Override
-    public List<String> getQueryParamValues(String param) {
+    public List<String> getQueryParams(String param) {
         if (queryMap != null) {
             if (param == null) {
                 param = "";

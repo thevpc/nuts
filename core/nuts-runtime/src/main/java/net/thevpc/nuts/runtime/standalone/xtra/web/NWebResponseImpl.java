@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.web;
 
-import net.thevpc.nuts.concurrent.NStableValue;
+import net.thevpc.nuts.concurrent.NOnceValue;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NInputSource;
@@ -24,14 +24,14 @@ public class NWebResponseImpl implements NWebResponse {
     private NHttpCode httpCode;
     private NMsg msg;
     private DefaultNWebHeaders headers = new DefaultNWebHeaders();
-    private NStableValue<NInputSource> content;
+    private NOnceValue<NInputSource> content;
     private NMsgCode msgCode;
 
     public NWebResponseImpl(NHttpCode code, NMsg msg, Map<String, List<String>> headers, Supplier<NInputSource> content) {
         this.httpCode = code;
         this.msg = msg;
         this.headers.addHeadersMulti(headers, DefaultNWebHeaders.Mode.ALWAYS);
-        this.content = NStableValue.of(content);
+        this.content = NOnceValue.ofSupplier(content);
     }
 
     @Override

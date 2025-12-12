@@ -81,7 +81,7 @@ public class BinSshFileOutputStreamSftp extends OutputStream {
 
         try {
             NConnectionStringBuilder cbuilder = remotePath.builder();
-            String identityFile = cbuilder.getQueryParamValue(SshConnection.IDENTITY_FILE).orNull();
+            String identityFile = cbuilder.getQueryParam(SshConnection.IDENTITY_FILE).orNull();
             int port = NLiteral.of(remotePath.getPort()).asInt().orElse(-1);
             NExecCmd sftp = NExecCmd.ofSystem("sftp");
             if (port > 0 && port != 22) {

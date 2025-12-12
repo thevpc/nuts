@@ -2,7 +2,6 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPs;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.ps.LinuxPsParser;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -84,23 +82,16 @@ public class PsTest {
 
     @Test
     public void test07() {
-        for (NPsInfo nPsInfo : NPs.of().at("ssh://vpc@thevpc.net").getResultList()) {
+        for (NPsInfo nPsInfo : NPs.of().at("ssh://"+TestUtils.LINUX_TEST_SERVER).getResultList()) {
             NOut.println(nPsInfo);
         }
     }
 
     @Test
     public void test08() {
-        byte[] bytes = NPath.of("/home/meryem/aaa.bin").readBytes();
-        try (StringReader br = new StringReader(new String(bytes, Charset.forName("utf-8")))) {
-            for (NPsInfo nPsInfo : new WindowsPs1Parser().parse(br).toList()) {
-                System.out.println(nPsInfo);
-            }
+        for (NPsInfo nPsInfo : NPs.of().at("ssh://"+TestUtils.WINDOWS_TEST_SERVER+"").getResultList()) {
+            NOut.println(nPsInfo);
         }
-
-//        for (NPsInfo nPsInfo : NPs.of().at("ssh://Administrateur@fvm.veoni.tn").getResultList()) {
-//            NOut.println(nPsInfo);
-//        }
     }
 
 }
