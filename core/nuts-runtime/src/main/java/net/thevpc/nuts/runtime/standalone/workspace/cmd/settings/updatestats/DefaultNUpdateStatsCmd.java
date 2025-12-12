@@ -30,8 +30,8 @@ import net.thevpc.nuts.text.NMsg;
  */
 public class DefaultNUpdateStatsCmd extends AbstractNUpdateStatsCmd {
 
-    public DefaultNUpdateStatsCmd(NWorkspace workspace) {
-        super(workspace);
+    public DefaultNUpdateStatsCmd() {
+        super();
     }
 
     @Override
