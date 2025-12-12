@@ -31,7 +31,7 @@ import java.util.List;
  * @author thevpc
  */
 public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
-    public NSettingsBackupSubCommand(NWorkspace workspace) {
+    public NSettingsBackupSubCommand() {
         super();
     }
 
