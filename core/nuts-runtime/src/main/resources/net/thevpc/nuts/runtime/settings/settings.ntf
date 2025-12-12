@@ -31,7 +31,7 @@ nuts settings remove alias <name> ...
 ```
         : remove one or multiple command aliases or aliases
 
-##) IMPORT COMMANDS:
+###) IMPORT COMMANDS:
 ```sh
 nuts settings import <group> ...
 ```
@@ -54,7 +54,7 @@ nuts settings clear imports
         remove all imported groups
 
 
-##) REPOSITORY COMMANDS:
+###) REPOSITORY COMMANDS:
 
 ```sh
 nuts settings list archetypes
@@ -86,7 +86,7 @@ nuts settings update stats <repo-folder-path> ...
 ```
         update local repo statistics
 
-###) SECURITY COMMANDS:
+####) SECURITY COMMANDS:
 ```sh
 nuts settings list users
 ```
@@ -122,12 +122,12 @@ nuts settings unsecure
 ```
         switch to un-secure mode
 
-###) DESKTOP INTEGRATION COMMANDS:
+####) DESKTOP INTEGRATION COMMANDS:
 
 desktop integration is a portable desktop integration sub command that helps creation of scripts and shortcut on
 the host operating system to facilitate usage of nuts command line tool.
 
-###) SYNOPSIS
+#####) SYNOPSIS
 ```sh
 nuts settings add launcher <-options> <command> ...
 ```
@@ -151,7 +151,7 @@ nuts settings add link <-options> ...
     create a new launcher to link to an existing nuts workspace and/or version.
     the link created will run 'nuts' against the selected workspace and/or version.
 
-####) OPTIONS:
+######) OPTIONS:
 ```sh
 nuts settings add launcher <-options> <command> ...
 ```
@@ -202,7 +202,7 @@ nuts settings switch <-options> [<workspace>] [<api>]
 ```sh --api | -a ```
     nuts api version
 
-###) EXAMPLES:
+#####) EXAMPLES:
 ```sh nuts settings add launcher nuts ```
     creates a nuts shortcut (named nuts) for nuts
 
@@ -228,3 +228,13 @@ nuts settings set loglevel verbose|fine|finer|finest|error|severe|config|all|non
 nuts settings connect <username@server:port> [--password <password>]
 ```
         connect to remote nuts server . default port is 8898
+
+```sh
+nuts settings install-tson-editor-syntax [--force|-f] all|gedit|intellij|jedit|kate|notepad++|vim|vscode...
+```
+        install TSON editor syntax highlighting for the given editors.
+
+```sh
+nuts settings install-ntf-editor-syntax [--force|-f] all|gedit|intellij|jedit|kate|notepad++|vim|vscode...
+```
+        install NTF editor syntax highlighting for the given editors.
