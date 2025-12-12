@@ -27,13 +27,12 @@ import java.util.logging.Logger;
  * @author thevpc
  */
 public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
-    public NSettingsLogSubCommand(NWorkspace workspace) {
+    public NSettingsLogSubCommand() {
         super();
     }
 
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
-        NSession session = NSession.of();
         if (cmdLine.next("set log level", "sll").isPresent()) {
 //            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
             if (cmdLine.next("verbose", "finest").isPresent()) {
