@@ -1,0 +1,8 @@
+{
+    languageName:"TSON"
+    languageId:"tson"
+    languageVersion:"1.0.0"
+    languageGroupId:"thevpc"
+    fileName:"*.tson"
+    fileExtension:"tson"
+}
