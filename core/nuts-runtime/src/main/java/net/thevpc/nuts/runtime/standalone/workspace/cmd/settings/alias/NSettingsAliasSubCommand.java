@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @author thevpc
  */
 public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
-    public NSettingsAliasSubCommand(NWorkspace workspace) {
+    public NSettingsAliasSubCommand() {
         super();
     }
 
