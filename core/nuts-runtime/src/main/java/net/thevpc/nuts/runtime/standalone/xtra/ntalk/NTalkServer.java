@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.ntalk;
 
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NAssert;
 
 import java.io.*;
@@ -155,7 +157,7 @@ public class NTalkServer implements Closeable{
                                 }
                                 log("NEW_JOB: finish " + jobId);
                             } catch (Exception ex) {
-                                ex.printStackTrace();
+                                NLog.of(NTalkServer.class).log(NMsg.ofC("failed : %s", ex).asFinestFail(ex));
                             }
                         });
                         break;
@@ -175,8 +177,8 @@ public class NTalkServer implements Closeable{
             if (socket != null) {
                 try {
                     socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException ex) {
+                    NLog.of(NTalkServer.class).log(NMsg.ofC("failed : %s", ex).asFinestFail(ex));
                 }
                 socket = null;
             }
