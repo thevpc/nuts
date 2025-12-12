@@ -1,8 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.runtime.standalone.io.util.MultiPipeThread;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.PomIdFilter;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NIteratorBase;
 
 import javax.xml.stream.XMLEventReader;
@@ -154,7 +158,7 @@ public class ArchetypeCatalogParser {
                     try {
                         stream2.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        NLog.of(MultiPipeThread.class).log(NMsg.ofC("error in autoCloseStream : %s",e).asFinestFail(e));
                     }
                     stream2 = null;
                 }
