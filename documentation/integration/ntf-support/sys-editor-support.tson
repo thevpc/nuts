@@ -1,0 +1,8 @@
+{
+    languageName:"NutsTextFormat"
+    languageId:"ntf"
+    languageVersion:"1.0.0"
+    languageGroupId:"thevpc"
+    fileName:"*.ntf"
+    fileExtension:"ntf"
+}
