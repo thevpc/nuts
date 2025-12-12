@@ -8,6 +8,8 @@ import net.thevpc.nuts.command.NFetchCmd;
 import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.command.NSearchCmd;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.runtime.standalone.io.util.MultiPipeThread;
 import net.thevpc.nuts.text.NMsg;
 
 public class MvnClient {
@@ -48,8 +50,7 @@ public class MvnClient {
                     }
                     status = Status.SUCCESS;
                 } catch (Exception ex) {
-                    LOG().log(NMsg.ofJ("failed to load {0} : {1}", NET_VPC_APP_NUTS_MVN, ex).asFinestFail(ex));
-                    ex.printStackTrace();
+                    LOG().log(NMsg.ofC("failed to load %s : %s", NET_VPC_APP_NUTS_MVN, ex).asFinestFail(ex));
                     status = Status.FAIL;
                     return false;
                 }
