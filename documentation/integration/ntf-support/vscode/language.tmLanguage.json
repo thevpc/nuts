@@ -1,0 +1,312 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "NTF",
+  "scopeName": "source.ntf",
+  "patterns": [
+    {
+      "include": "#titles"
+    },
+    {
+      "include": "#code-blocks"
+    },
+    {
+      "include": "#color-styles"
+    },
+    {
+      "include": "#hash-styles"
+    },
+    {
+      "include": "#escapes"
+    }
+  ],
+  "repository": {
+    "titles": {
+      "patterns": [
+        {
+          "name": "markup.heading.1.ntf",
+          "match": "^#\\).*$"
+        },
+        {
+          "name": "markup.heading.2.ntf",
+          "match": "^##\\).*$"
+        },
+        {
+          "name": "markup.heading.3.ntf",
+          "match": "^###\\).*$"
+        },
+        {
+          "name": "markup.heading.4.ntf",
+          "match": "^####\\).*$"
+        },
+        {
+          "name": "markup.heading.5.ntf",
+          "match": "^#####\\).*$"
+        },
+        {
+          "name": "markup.heading.6.ntf",
+          "match": "^######\\).*$"
+        },
+        {
+          "name": "markup.heading.7.ntf",
+          "match": "^#######\\).*$"
+        },
+        {
+          "name": "markup.heading.8.ntf",
+          "match": "^########\\).*$"
+        },
+        {
+          "name": "markup.heading.9.ntf",
+          "match": "^#########\\).*$"
+        }
+      ]
+    },
+    "code-blocks": {
+      "patterns": [
+        {
+          "name": "markup.fenced_code.block.ntf",
+          "begin": "```(xml|json|java|sh|bash|js|javascript|sql|python|c|cpp|cs|csharp|nsh)?",
+          "end": "```",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.ntf"
+            }
+          },
+          "patterns": [
+            {
+              "name": "string.quoted.triple.ntf",
+              "match": ".*"
+            }
+          ]
+        }
+      ]
+    },
+    "color-styles": {
+      "patterns": [
+        {
+          "name": "meta.color-style.ntf",
+          "begin": "##:",
+          "end": "##",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.color-style.begin.ntf"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.color-style.end.ntf"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#style-keywords"
+            },
+            {
+              "include": "#color-keywords"
+            },
+            {
+              "include": "#color-codes"
+            },
+            {
+              "include": "#style-operators"
+            },
+            {
+              "name": "constant.character.nop.ntf",
+              "match": "\\u001E"
+            }
+          ]
+        }
+      ]
+    },
+    "style-keywords": {
+      "patterns": [
+        {
+          "name": "keyword.other.style.ntf",
+          "match": "\\b(underlined|italic|striked|reversed|bold|error|warn|info|config|comments|string|number|boolean|keyword|option|input|operator|separator|success|danger|fail|var|pale)\\b"
+        },
+        {
+          "name": "keyword.operator.style.ntf",
+          "match": "[/_:%!+\\-]"
+        }
+      ]
+    },
+    "color-keywords": {
+      "patterns": [
+        {
+          "name": "support.type.color.ntf",
+          "match": "\\b(primary|secondary|foreground|background)\\b"
+        }
+      ]
+    },
+    "color-codes": {
+      "patterns": [
+        {
+          "name": "constant.numeric.color.ntf",
+          "match": "\\b[psfb]x?\\d+\\b"
+        },
+        {
+          "name": "constant.numeric.color.hex.ntf",
+          "match": "\\b[psfb]x[0-9A-Fa-f]{6}\\b"
+        }
+      ]
+    },
+    "style-operators": {
+      "patterns": [
+        {
+          "name": "punctuation.separator.ntf",
+          "match": "[:{\\}]"
+        }
+      ]
+    },
+    "hash-styles": {
+      "patterns": [
+        {
+          "name": "markup.bold.primary10.ntf",
+          "begin": "##########(?!#)",
+          "end": "##########",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          }
+        },
+        {
+          "name": "markup.bold.primary9.ntf",
+          "begin": "#########(?!#)",
+          "end": "#########",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          }
+        },
+        {
+          "name": "markup.bold.primary8.ntf",
+          "begin": "########(?!#)",
+          "end": "########",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          }
+        },
+        {
+          "name": "markup.bold.primary7.ntf",
+          "begin": "#######(?!#)",
+          "end": "#######",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          }
+        },
+        {
+          "name": "markup.bold.primary6.ntf",
+          "begin": "######(?!#)",
+          "end": "######",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          }
+        },
+        {
+          "name": "markup.bold.primary5.ntf",
+          "begin": "#####(?!#)",
+          "end": "#####",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          }
+        },
+        {
+          "name": "markup.bold.primary4.ntf",
+          "begin": "####(?!#)",
+          "end": "####",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          }
+        },
+        {
+          "name": "markup.bold.primary3.ntf",
+          "begin": "###(?!#)",
+          "end": "###",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          }
+        },
+        {
+          "name": "markup.bold.primary2.ntf",
+          "begin": "##(?!#|:)",
+          "end": "##",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.hash-style.ntf"
+            }
+          }
+        }
+      ]
+    },
+    "escapes": {
+      "patterns": [
+        {
+          "name": "constant.character.escape.ntf",
+          "match": "\\\\[#\\\\`{}:u]"
+        },
+        {
+          "name": "constant.character.nop.ntf",
+          "match": "\\u001E"
+        }
+      ]
+    }
+  }
+}
