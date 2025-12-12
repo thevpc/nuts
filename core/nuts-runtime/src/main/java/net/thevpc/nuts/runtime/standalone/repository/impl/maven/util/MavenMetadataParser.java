@@ -1,8 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.format.xml.XmlUtils;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.runtime.standalone.io.util.MultiPipeThread;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
 import org.w3c.dom.Document;
@@ -165,7 +167,7 @@ public class MavenMetadataParser {
                 }
             }
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            NLog.of(MultiPipeThread.class).log(NMsg.ofC("error in xml parsing : %s",e).asFinestFail(e));
         }
         info.setGroupId(groupId.toString().trim());
         info.setArtifactId(artifactId.toString().trim());
