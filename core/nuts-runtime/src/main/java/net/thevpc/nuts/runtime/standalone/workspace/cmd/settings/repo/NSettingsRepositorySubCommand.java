@@ -35,7 +35,7 @@ import java.util.*;
  * @author thevpc
  */
 public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
-    public NSettingsRepositorySubCommand(NWorkspace workspace) {
+    public NSettingsRepositorySubCommand() {
         super();
     }
 
