@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.ps;
 import net.thevpc.nuts.command.NExecCmd;
 import net.thevpc.nuts.command.NExecTargetInfo;
 import net.thevpc.nuts.io.NExecInput;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.net.NConnectionString;
@@ -40,13 +41,23 @@ public class WindowsPs1Caller {
                 )
                 .setFailFast(failFast);
         byte[] resultBytes = u.getGrabbedOutBytes();
-        boolean doit = true;
-        if (doit) {
-            NPath.of("/home/meryem/aaa.bin")
-                    .writeBytes(resultBytes);
-        }
-        try (StringReader br = new StringReader(new String(resultBytes, StandardCharsets.UTF_8))) {
+//        boolean doit = true;
+//        if (doit) {
+//            NPath.of("/home/meryem/aaa.bin")
+//                    .writeBytes(resultBytes);
+//        }
+        // do not use try with resource because this will
+        // close the returned stream
+        StringReader br = new StringReader(new String(resultBytes, StandardCharsets.UTF_8));
+//        try {
             return new WindowsPs1Parser().parse(br);
-        }
+//        } catch (Exception ex) {
+//            NOut.println("wallah ca ne marche pas");
+//            ex.printStackTrace();
+//            NPath.of("/home/meryem/aaa.bin")
+//                    .writeBytes(resultBytes);
+//            throw ex;
+//        }
+
     }
 }
