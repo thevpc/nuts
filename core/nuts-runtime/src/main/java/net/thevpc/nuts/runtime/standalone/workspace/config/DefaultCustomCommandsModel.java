@@ -361,7 +361,4 @@ public class DefaultCustomCommandsModel {
         return internalCommands;
     }
 
-    public NOptional<NExecTargetSPI> getExecCmdExtension(String target) {
-        return workspace.extensions().createComponent(NExecTargetSPI.class, target);
-    }
 }
