@@ -1,5 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.ntalk;
 
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
+import net.thevpc.nuts.text.NMsg;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -70,7 +74,7 @@ public class NTalkAgent implements Closeable{
             } catch (SocketException ex) {
                 //ignore
             } catch (Exception ex) {
-                ex.printStackTrace();
+                NLog.of(NTalkAgent.class).log(NMsg.ofC("failed : %s", ex).asFinestFail(ex));
             }
         });
     }
@@ -85,7 +89,7 @@ public class NTalkAgent implements Closeable{
                     threadPool.submit(() -> process(s));
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                NLog.of(NTalkAgent.class).log(NMsg.ofC("failed : %s", ex).asFinestFail(ex));
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -191,7 +195,7 @@ public class NTalkAgent implements Closeable{
                 }
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            NLog.of(NTalkAgent.class).log(NMsg.ofC("failed : %s", ex).asFinestFail(ex));
         } finally {
             if (session != null) {
                 session.close();
@@ -285,7 +289,7 @@ public class NTalkAgent implements Closeable{
         } catch (SocketException ex) {
             //
         } catch (Exception ex) {
-            ex.printStackTrace();
+            NLog.of(NTalkAgent.class).log(NMsg.ofC("failed : %s", ex).asFinestFail(ex));
         } finally {
             synchronized (this) {
                 sessionsById.remove(clientSession.sessionId);
@@ -339,7 +343,7 @@ public class NTalkAgent implements Closeable{
         } catch (EOFException ex) {
             //Do noting...
         } catch (Exception ex) {
-            ex.printStackTrace();
+            NLog.of(NTalkAgent.class).log(NMsg.ofC("failed : %s", ex).asFinestFail(ex));
         } finally {
             synchronized (sessionsByService) {
                 sessionsByService.remove(serverSession.service);
@@ -363,8 +367,8 @@ public class NTalkAgent implements Closeable{
             }
             try {
                 serverSocket.close();
-            } catch (IOException e) {
-                //e.printStackTrace();
+            } catch (IOException ex) {
+                NLog.of(NTalkAgent.class).log(NMsg.ofC("failed : %s", ex).asFinestFail(ex));
             }
         }
     }
