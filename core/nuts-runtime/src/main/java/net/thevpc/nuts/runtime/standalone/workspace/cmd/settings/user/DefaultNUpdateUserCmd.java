@@ -48,8 +48,8 @@ import net.thevpc.nuts.text.NMsg;
  */
 public class DefaultNUpdateUserCmd extends AbstractNUpdateUserCmd {
 
-    public DefaultNUpdateUserCmd(NWorkspace workspace) {
-        super(workspace);
+    public DefaultNUpdateUserCmd() {
+        super();
     }
 
     @Override
