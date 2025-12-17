@@ -47,10 +47,10 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
             return DefaultNTreeFormat.this.getMultilineArray(key, value);
         }
 
-        @Override
-        public NText stringValue(Object o) {
-            return renderer.getNodeFormat().format((NTreeNode)o, -1);
-        }
+//        @Override
+//        public NText stringValue(Object o) {
+//            return renderer.getNodeFormat().format((NTreeNode)o, -1);
+//        }
 
     };
 
