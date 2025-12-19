@@ -220,7 +220,9 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         }
                         return (Collections.singletonList(a));
                     }
-                    case "--stacktrace": {
+                    case "-d":
+                    case "--stacktrace":
+                    {
                         a = cmdLine.nextFlag();
                         if (active && options != null) {
                             options.setShowStacktrace(a.getBooleanValue());
