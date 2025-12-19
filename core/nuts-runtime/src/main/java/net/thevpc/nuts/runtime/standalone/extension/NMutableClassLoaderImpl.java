@@ -73,7 +73,7 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
         return new ArrayList<>(dependencies);
     }
 
-    public boolean loadDependencies(NDependency... allDefinitions) {
+    public NId[] loadDependencies(NDependency... allDefinitions) {
         List<NDefinition> ok = new ArrayList<>();
         for (NDependency dep : allDefinitions) {
             NDependency id = dep;
@@ -97,7 +97,7 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
         return load(ok.toArray(new NDefinition[0]));
     }
 
-    private boolean load(NDefinition... allDefinitions) {
+    private NId[] load(NDefinition... allDefinitions) {
         List<NDefinition> ok = new ArrayList<>();
         List<URL> urls = new ArrayList<>();
         for (NDefinition id : allDefinitions) {
@@ -105,7 +105,7 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
                 continue;
             }
             if (isLoadedDependency(id.getId())) {
-                NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("dependency already loaded %s...", id.getId()).asWarning().withIntent(NMsgIntent.PROGRESS));
+                NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("dependency already loaded %s...", id.getId()).asFineAlert());
                 continue;
             }
             URL u = id.getContent().map(x -> x.toURL().orNull()).orNull();
@@ -113,14 +113,14 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
                 throw new NIllegalArgumentException(NMsg.ofC("unable to load %s", id.getId()).asError());
             }
             urls.add(u);
-            NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("loaded dependency %s...", id.getId()).asConfig().withIntent(NMsgIntent.PROGRESS));
+            NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("loaded dependency %s...", id.getId()).asFineAlert());
             ok.add(id);
         }
         dependencies.addAll(ok);
         for (URL a : urls) {
             super.addURL(a);
         }
-        return !ok.isEmpty();
+        return ok.stream().map(NDefinition::getId).toArray(NId[]::new);
     }
 
     public boolean isLoadedDependency(NId id) {
