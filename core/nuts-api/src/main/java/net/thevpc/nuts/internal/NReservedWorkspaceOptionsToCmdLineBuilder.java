@@ -542,7 +542,7 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
             fillOption("--reset-hard", null, options.getReset().orNull(), false, arguments, false);
         }
         if (isApiVersionOrAfter(V084)) {
-            fillOption("--stacktrace", null, options.getShowStacktrace().orNull(), false, arguments, false);
+            fillOption("--stacktrace", "-d", options.getShowStacktrace().orNull(), false, arguments, false);
         }
         if (isApiVersionOrAfter(V081)) {
             if (options.getCustomOptions() != null) {
