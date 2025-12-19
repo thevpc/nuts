@@ -689,6 +689,16 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public boolean isNamedListContainer() {
+        return isNamed() && isListContainer();
+    }
+
+    @Override
+    public boolean isNamedListContainer(String name) {
+        return isNamed(name) && isListContainer();
+    }
+
+    @Override
     public NOptional<NNamedElement> toNamed() {
         if (this instanceof NNamedElement) {
             return NOptional.of((NNamedElement) this);
