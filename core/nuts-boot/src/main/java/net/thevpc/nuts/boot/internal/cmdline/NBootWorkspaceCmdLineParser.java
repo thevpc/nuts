@@ -151,6 +151,7 @@ public final class NBootWorkspaceCmdLineParser {
             "--dry",
             "-D",
             "--stacktrace",
+            "-d",
             "--debug",
             "--verbose",
             "--log-verbose",
@@ -767,7 +768,9 @@ public final class NBootWorkspaceCmdLineParser {
                         return (Collections.singletonList(a));
                     }
 
-                    case "--stacktrace": {
+                    case "-d":
+                    case "--stacktrace":
+                    {
                         a = cmdLine.nextFlag();
                         if (active && options != null) {
                             options.setShowStacktrace(a.getBooleanValue());
@@ -1711,7 +1714,6 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-i":
                     case "-q":
                     case "-s":
-                    case "-d":
                     case "-l":
                     case "-m":
                     default: {
