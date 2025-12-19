@@ -526,7 +526,7 @@ public class NBootWorkspaceCmdLineFormatter {
             fillOption("--reset-hard", null, options.getResetHard(), false, arguments, false);
         }
         if (isApiVersionOrAfter(V084)) {
-            fillOption("--stacktrace", null, options.getShowStacktrace(), false, arguments, false);
+            fillOption("--stacktrace", "-d", options.getShowStacktrace(), false, arguments, false);
         }
         if (isApiVersionOrAfter(V081)) {
             if (options.getCustomOptions() != null) {
