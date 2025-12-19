@@ -746,6 +746,19 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     boolean isNamed();
 
+
+    /**
+     *
+     * @since 0.8.9
+     */
+    boolean isNamedListContainer();
+
+    /**
+     *
+     * @since 0.8.9
+     */
+    boolean isNamedListContainer(String name);
+
     boolean isNamed(Predicate<String> nameCondition);
 
     boolean isParametrized();
