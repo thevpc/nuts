@@ -539,7 +539,9 @@ public final class NWorkspaceCmdLineParser {
                         return NOptional.of(Collections.singletonList(a));
                     }
 
-                    case "--stacktrace": {
+                    case "--stacktrace":
+                    case "-d":
+                    {
                         a = cmdLine.nextFlag().get();
                         if (active && options != null) {
                             options.setShowStacktrace(a.getBooleanValue().get());
@@ -1494,7 +1496,6 @@ public final class NWorkspaceCmdLineParser {
                     case "-i":
                     case "-q":
                     case "-s":
-                    case "-d":
                     case "-l":
                     case "-m":
                     default: {
