@@ -10,11 +10,14 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 /**
  *
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSettingsArchetypeSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsArchetypeSubCommand() {
         super();
