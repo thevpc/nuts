@@ -27,14 +27,15 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NIdFormat;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.elem.NElementNotFoundException;
 
-import net.thevpc.nuts.ext.NFactoryException;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl;
-import net.thevpc.nuts.runtime.standalone.util.NScorableNScorableQueryImpl;
+import net.thevpc.nuts.runtime.standalone.extension.*;
+import net.thevpc.nuts.runtime.standalone.platform.NEnvLocal;
+import net.thevpc.nuts.runtime.standalone.util.FixedNScoredValue;
 import net.thevpc.nuts.runtime.standalone.util.NUtilSPIImpl;
 import net.thevpc.nuts.text.NFormats;
 import net.thevpc.nuts.text.NMsg;
@@ -57,16 +58,12 @@ import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
-import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.DefaultNExprs;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.stream.DefaultNCollectionsRPI;
 import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
-import net.thevpc.nuts.runtime.standalone.workspace.factorycache.CachedConstructor;
-import net.thevpc.nuts.runtime.standalone.workspace.factorycache.NBeanCache;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNLibPaths;
@@ -74,7 +71,6 @@ import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.net.NWebCli;
 
-import java.io.PrintStream;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
@@ -88,29 +84,30 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     private final NLog LOG;
     private final NListValueMap<Class<?>, Object> instances = new NListValueMap<>();
     private final Map<NId, IdCache> discoveredCacheById = new HashMap<>();
-    private final HashMap<String, String> _alreadyLogger = new HashMap<>();
     private final NWorkspace workspace;
-    private final NBeanCache cache;
+    private final NExtensionTypeInfoPool extensionTypeInfoPool;
+    private final NBeanCache beanCache;
 
     public DefaultNWorkspaceFactory(NWorkspace ws) {
         this.workspace = ws;
         LOG = ((DefaultNWorkspace) ws).getModel().LOG;
-        cache = new NBeanCache(LOG, CoreNUtils.isDevVerbose() ? System.err : null);
+        beanCache = NWorkspace.of().getOrComputeProperty(NBeanCache.class, () -> new NBeanCache(LOG));
+        extensionTypeInfoPool = new NExtensionTypeInfoPool(LOG,beanCache);
     }
 
     @Override
-    public Set<Class<? extends NComponent>> discoverTypes(NId id, URL url, ClassLoader bootClassLoader) {
+    public Set<Class<?>> discoverTypes(NId id, URL url, ClassLoader bootClassLoader) {
         return discoverTypes(id, url, bootClassLoader, new Class[]{NComponent.class});
     }
 
     @Override
-    public Set<Class<? extends NComponent>> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, Class<? extends NComponent>[] extensionPoints) {
+    public Set<Class<?>> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, Class<?>[] extensionPoints) {
         if (!discoveredCacheById.containsKey(id)) {
             IdCache value = new IdCache(id, url, bootClassLoader, LOG, extensionPoints, workspace);
             discoveredCacheById.put(id, value);
-            Set<Class<? extends NComponent>> all = new HashSet<>();
+            Set<Class<?>> all = new HashSet<>();
             for (NClassClassMap m : value.classes.values()) {
-                Collection<Class<? extends NComponent>> values = (Collection) m.values();
+                Collection<Class<?>> values = (Collection) m.values();
                 all.addAll(values);
             }
             return all;
@@ -119,7 +116,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
     @Override
-    public <T extends NComponent> NOptional<T> createComponent(Class<T> type, Object supportCriteria) {
+    public <T> NOptional<T> createComponent(Class<T> type, Object supportCriteria) {
         NSession session = workspace.currentSession();
         // should handle NApp specifically because It's the root for resolving scoped properties
         // TODO should it, or should it not??
@@ -129,125 +126,127 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 return NOptional.of((T) ((DefaultNSession) session).getPropertiesHolder().getOrComputeProperty(type.getName(), () -> new NAppImpl(), NScopeType.TRANSITIVE_SESSION));
             }
         }
-        List<T> all = createAll(type);
-        NOptional<T> s = new NScorableNScorableQueryImpl<T>(NScorableContext.of(supportCriteria))
-                .withName(NMsg.ofC("extensions component %s", type))
-                .fromIterable(all).getBest()
-        ;
-        if (!s.isPresent()) {
-            //fallback needed in bootstrap or if the extensions are broken!
-            switch (type.getName()) {
-                case "net.thevpc.nuts.log.NLogs": {
-                    DefaultNLogs p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNLogs());
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.text.NTexts": {
-                    DefaultNTexts p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNTexts());
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.text.NObjectFormat": {
-                    DefaultNObjectFormat p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNObjectFormat(workspace));
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.io.NIO": {
-                    DefaultNIO p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new DefaultNIO());
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.elem.NElements": {
-                    DefaultNElements p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElements());
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.elem.NElementWriter": {
-                    DefaultNElementWriter p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElementWriter());
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.elem.NElementParser": {
-                    DefaultNElementParser p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElementParser());
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.elem.NElementFactory": {
-                    DefaultNElementFactory p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElementFactory());
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.io.NLibPaths": {
-                    DefaultNLibPaths p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNLibPaths(workspace));
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.io.NDigest": {
-                    NDigest p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNDigest(workspace));
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.internal.rpi.NIORPI": {
-                    NIORPI p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNIORPI(workspace));
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.internal.rpi.NCollectionsRPI": {
-                    NCollectionsRPI p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNCollectionsRPI());
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.artifact.NIdFormat": {
-                    NIdFormat p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNIdFormat());
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.text.NVersionFormat": {
-                    NVersionFormat p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNVersionFormat(workspace));
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.command.NExecCmd": {
-                    NExecCmd p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNExecCmd(workspace));
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.net.NWebCli": {
-                    NWebCli p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNWebCli());
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.artifact.NIdBuilder": {
-                    return NOptional.of((T) new DefaultNIdBuilder());
-                }
-                case "net.thevpc.nuts.artifact.NDependencyBuilder": {
-                    return NOptional.of((T) new DefaultNDependencyBuilder());
-                }
-                case "net.thevpc.nuts.artifact.NEnvConditionBuilder": {
-                    return NOptional.of((T) new DefaultNEnvConditionBuilder());
-                }
-                case "net.thevpc.nuts.artifact.NDescriptorBuilder": {
-                    return NOptional.of((T) new DefaultNDescriptorBuilder());
-                }
-                case "net.thevpc.nuts.core.NBootOptionsBuilder": {
-                    return NOptional.of((T) new DefaultNBootOptionsBuilder());
-                }
-                case "net.thevpc.nuts.core.NWorkspaceOptionsBuilder": {
-                    return NOptional.of((T) new DefaultNWorkspaceOptionsBuilder());
-                }
-                case "net.thevpc.nuts.expr.NExprs": {
-                    return NOptional.of((T) new DefaultNExprs());
-                }
-                case "net.thevpc.nuts.text.NFormats": {
-                    NFormats p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new NFormatsImpl());
-                    return NOptional.of((T) p);
-                }
-                case "net.thevpc.nuts.app.NApp": {
-                    return NOptional.of((T) new NAppImpl());
-                }
-                case "net.thevpc.nuts.spi.NUtilSPI": {
-                    return NOptional.of((T) new NUtilSPIImpl());
-                }
-                case "net.thevpc.nuts.concurrent.NConcurrent": {
-                    return NOptional.of((T) new NConcurrentImpl());
-                }
-                default: {
-                    //wont use NLog because not yet initialized!
-                    //System.err.println("[Nuts] createComponent failed for :" + type.getName());
-                }
+        NScorableContext context = NScorableContext.of(supportCriteria);
+        List<NScoredValue<T>> all = createAllScored(type, context);
+        for (NScoredValue<T> a : all) {
+            try {
+                T y = a.value();
+                return NOptional.of(y);
+            } catch (Exception e) {
+                LOG.log(NMsg.ofJ("error while instantiating {0} for {1} : {2}", a, type, e).asError(e));
             }
-            if (all.isEmpty()) {
-                if (!session.isBot()) {
-                    System.err.println("[Nuts] unable to resolve " + type);
-                    Set<Class<? extends T>> extensionTypes = getExtensionTypes(type);
-                    System.err.println("[Nuts] extensionTypes =  " + extensionTypes);
-                    dump(type);
-                    new Throwable().printStackTrace();
+        }
+
+        //fallback needed in bootstrap or if the extensions are broken!
+        switch (type.getName()) {
+            case "net.thevpc.nuts.log.NLogs": {
+                DefaultNLogs p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNLogs());
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.text.NTexts": {
+                DefaultNTexts p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNTexts());
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.text.NObjectFormat": {
+                DefaultNObjectFormat p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNObjectFormat(workspace));
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.io.NIO": {
+                DefaultNIO p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new DefaultNIO());
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.elem.NElements": {
+                DefaultNElements p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElements());
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.elem.NElementWriter": {
+                DefaultNElementWriter p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElementWriter());
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.elem.NElementParser": {
+                DefaultNElementParser p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElementParser());
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.elem.NElementFactory": {
+                DefaultNElementFactory p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElementFactory());
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.io.NLibPaths": {
+                DefaultNLibPaths p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNLibPaths(workspace));
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.io.NDigest": {
+                NDigest p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNDigest(workspace));
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.internal.rpi.NIORPI": {
+                NIORPI p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNIORPI(workspace));
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.internal.rpi.NCollectionsRPI": {
+                NCollectionsRPI p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNCollectionsRPI());
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.artifact.NIdFormat": {
+                NIdFormat p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNIdFormat());
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.text.NVersionFormat": {
+                NVersionFormat p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNVersionFormat(workspace));
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.command.NExecCmd": {
+                NExec p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNExec(workspace));
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.net.NWebCli": {
+                NWebCli p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNWebCli());
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.artifact.NIdBuilder": {
+                return NOptional.of((T) new DefaultNIdBuilder());
+            }
+            case "net.thevpc.nuts.artifact.NDependencyBuilder": {
+                return NOptional.of((T) new DefaultNDependencyBuilder());
+            }
+            case "net.thevpc.nuts.artifact.NEnvConditionBuilder": {
+                return NOptional.of((T) new DefaultNEnvConditionBuilder());
+            }
+            case "net.thevpc.nuts.artifact.NDescriptorBuilder": {
+                return NOptional.of((T) new DefaultNDescriptorBuilder());
+            }
+            case "net.thevpc.nuts.core.NBootOptionsBuilder": {
+                return NOptional.of((T) new DefaultNBootOptionsBuilder());
+            }
+            case "net.thevpc.nuts.core.NWorkspaceOptionsBuilder": {
+                return NOptional.of((T) new DefaultNWorkspaceOptionsBuilder());
+            }
+            case "net.thevpc.nuts.expr.NExprs": {
+                return NOptional.of((T) new DefaultNExprs());
+            }
+            case "net.thevpc.nuts.text.NFormats": {
+                NFormats p = workspace.getOrComputeProperty("fallback::" + type.getName(), () -> new NFormatsImpl());
+                return NOptional.of((T) p);
+            }
+            case "net.thevpc.nuts.app.NApp": {
+                return NOptional.of((T) new NAppImpl());
+            }
+            case "net.thevpc.nuts.spi.NUtilSPI": {
+                return NOptional.of((T) new NUtilSPIImpl());
+            }
+            case "net.thevpc.nuts.concurrent.NConcurrent": {
+                return NOptional.of((T) new NConcurrentImpl());
+            }
+            case "net.thevpc.nuts.platform.NEnv": {
+                if (supportCriteria == null) {
+                    NEnv p = workspace.getOrComputeProperty("fallback::" + type.getName(), () -> new NEnvLocal());
+                    return NOptional.of((T) p);
                 }
+                break;
+            }
+            default: {
+                //wont use NLog because not yet initialized!
+                //System.err.println("[Nuts] createComponent failed for :" + type.getName());
             }
         }
         if (all.isEmpty()) {
@@ -259,19 +258,105 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 new Throwable().printStackTrace();
             }
         }
-        return s;
+
+        if (all.isEmpty()) {
+            if (!session.isBot()) {
+                System.err.println("[Nuts] unable to resolve " + type);
+                Set<Class<? extends T>> extensionTypes = getExtensionTypes(type);
+                System.err.println("[Nuts] extensionTypes =  " + extensionTypes);
+                dump(type);
+                new Throwable().printStackTrace();
+            }
+        }
+        return NOptional.ofNamedEmpty(NMsg.ofC("missing %s", type));
     }
 
     @Override
-    public <T extends NComponent> List<T> createComponents(Class<T> type, Object supportCriteria) {
-        List<T> list = createAll(type);
-        return new NScorableNScorableQueryImpl<T>(NScorableContext.of())
-                .fromIterable(list)
-                .getAll();
+    public <T> List<T> createComponents(Class<T> type, Object supportCriteria) {
+        NScorableContext context = NScorableContext.of(supportCriteria);
+        List<NScoredValue<T>> all = createAllScored(type, context);
+        List<T> ret = new ArrayList<>();
+        for (NScoredValue<T> a : all) {
+            try {
+                T y = a.value();
+                ret.add(y);
+            } catch (Exception e) {
+                LOG.log(NMsg.ofJ("error while instantiating {0} for {1} : {2}", a, type, e).asError(e));
+            }
+        }
+        return ret;
     }
 
     @Override
-    public <T extends NComponent> List<T> createAll(Class<T> type) {
+    public <T> NScoredValue<T> resolveTypeScore(Class<? extends T> implType, Class<T> apiType, NScorableContext scorableContext) {
+        if (implType == null || apiType == null || !apiType.isAssignableFrom(implType)) {
+            return FixedNScoredValue.UNSUPPORTED();
+        }
+        return extensionTypeInfoPool.get(implType, apiType).getTypeScoredInstance(scorableContext);
+    }
+
+    @Override
+    public <T> NScoredValue<T> resolveInstanceScore(T instance, Class<T> apiType, NScorableContext scorableContext) {
+        if (instance == null || apiType == null || !apiType.isInstance(instance)) {
+            return FixedNScoredValue.UNSUPPORTED();
+        }
+        if (!apiType.isAssignableFrom(instance.getClass())) {
+            return FixedNScoredValue.UNSUPPORTED();
+        }
+        if (instance instanceof NScorable) {
+            NScorable scorable = (NScorable) instance;
+            return new LazyNScoredValueImpl<>(
+                    ()->scorable,
+                    ()->instance,
+                    scorableContext
+            );
+        }
+        T o = (T) instance;
+        Class<? extends T> c = (Class<? extends T>) o.getClass();
+        return extensionTypeInfoPool.get(c, apiType).getTypeScoredInstance(scorableContext);
+    }
+
+    @Override
+    public <T> NOptional<NScorable> getTypeScorer(Class<? extends T> implType, Class<T> apiType) {
+        if (implType == null || apiType == null || !apiType.isAssignableFrom(implType)) {
+            return NOptional.ofNamedEmpty("type scorer");
+        }
+        return NOptional.of(extensionTypeInfoPool.get(implType, apiType).getTypeScorer());
+    }
+
+    @Override
+    public <T> NOptional<NScorable> getInstanceScorer(T instance, Class<T> apiType) {
+        if (instance == null || apiType == null || !apiType.isInstance(instance)) {
+            return NOptional.ofNamedEmpty("type scorer");
+        }
+        T o = (T) instance;
+        Class<? extends T> c = (Class<? extends T>) o.getClass();
+        return NOptional.of(extensionTypeInfoPool.get(c, apiType).getInstanceScorer(o));
+    }
+
+    @Override
+    public <T> List<NScoredValue<T>> createAllScored(Class<T> type, NScorableContext supportCriteria) {
+        List<NScoredValue<T>> all = new ArrayList<>();
+        for (Object obj : instances.getAll(type)) {
+            T o = (T) obj;
+            int s = getInstanceScorer(o, type).get().getScore(supportCriteria);
+            if (s > 0) {
+                all.add(new FixedNScoredValue<>(o, s));
+            }
+        }
+        for (Class<? extends T> c : getExtensionTypes(type)) {
+            NExtensionTypeInfo<T> tnExtensionType = extensionTypeInfoPool.get(c, type);
+            all.add(new LazyNScoredValueImpl<T>(
+                    () -> tnExtensionType.getTypeScorer(),
+                    () -> tnExtensionType.resolveInstance(new Class[0], new Object[0], new NBeanConstructorContextAsScorableContext(supportCriteria)),
+                    supportCriteria
+            ));
+        }
+        return all.stream().filter(x -> x.isValid()).sorted((a, b) -> Integer.compare(b.score(), a.score())).collect(Collectors.toList());
+    }
+
+    @Override
+    public <T> List<T> createAll(Class<T> type) {
         List<T> all = new ArrayList<T>();
         for (Object obj : instances.getAll(type)) {
             all.add((T) obj);
@@ -291,7 +376,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
     @Override
-    public <T extends NComponent> T createFirst(Class<T> type) {
+    public <T> T createFirst(Class<T> type) {
         for (Object obj : instances.getAll(type)) {
             return (T) obj;
         }
@@ -302,7 +387,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
     @Override
-    public <T extends NComponent> Set<Class<? extends T>> getExtensionTypes(Class<T> type) {
+    public <T> Set<Class<? extends T>> getExtensionTypes(Class<T> type) {
         LinkedHashSet<Class<? extends T>> all = new LinkedHashSet<>();
         for (IdCache v : discoveredCacheById.values()) {
             all.addAll(v.getExtensionTypes(type));
@@ -310,7 +395,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         return all;
     }
 
-    private <T extends NComponent> Set<Class<? extends T>> getExtensionTypesNoCache(Class<T> type) {
+    private <T> Set<Class<? extends T>> getExtensionTypesNoCache(Class<T> type) {
         LinkedHashSet<Class<? extends T>> all = new LinkedHashSet<>();
         for (IdCache v : discoveredCacheById.values()) {
             all.addAll(v.getExtensionTypesNoCache(type));
@@ -318,7 +403,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         return all;
     }
 
-    private <T extends NComponent> Set<Class<? extends T>> getExtensionTypesNoCache2(Class<T> type) {
+    private <T> Set<Class<? extends T>> getExtensionTypesNoCache2(Class<T> type) {
         LinkedHashSet<Class<? extends T>> all = new LinkedHashSet<>();
         for (IdCache v : discoveredCacheById.values()) {
             all.addAll(v.getExtensionTypesNoCache2(type));
@@ -327,22 +412,22 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
     @Override
-    public <T extends NComponent> List<T> getExtensionObjects(Class<T> extensionPoint) {
+    public <T> List<T> getExtensionObjects(Class<T> extensionPoint) {
         return new ArrayList<T>((List) instances.getAll(extensionPoint));
     }
 
     @Override
-    public <T extends NComponent> boolean isRegisteredType(Class<T> extensionPoint, String implementation) {
+    public <T> boolean isRegisteredType(Class<T> extensionPoint, String implementation) {
         return findRegisteredType(extensionPoint, implementation) != null;
     }
 
     @Override
-    public <T extends NComponent> boolean isRegisteredInstance(Class<T> extensionPoint, T implementation) {
+    public <T> boolean isRegisteredInstance(Class<T> extensionPoint, T implementation) {
         return instances.contains(extensionPoint, implementation);
     }
 
     @Override
-    public <T extends NComponent> void registerInstance(Class<T> extensionPoint, T implementation) {
+    public <T> void registerInstance(Class<T> extensionPoint, T implementation) {
         if (isRegisteredInstance(extensionPoint, implementation)) {
             throw new NIllegalArgumentException(NMsg.ofC("already registered Extension %s for %s", implementation, extensionPoint.getName()));
         }
@@ -357,7 +442,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
     @Override
-    public <T extends NComponent> void registerType(Class<T> extensionPoint, Class<? extends T> implementationType, NId source) {
+    public <T> void registerType(Class<T> extensionPoint, Class<? extends T> implementationType, NId source) {
         if (isRegisteredType(extensionPoint, implementationType.getName())) {
             throw new NIllegalArgumentException(NMsg.ofC("already registered Extension %s for %s", implementationType.getName(), extensionPoint.getName()));
         }
@@ -377,11 +462,11 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
     @Override
-    public <T extends NComponent> boolean isRegisteredType(Class<T> extensionPoint, Class<? extends T> implementationType) {
+    public <T> boolean isRegisteredType(Class<T> extensionPoint, Class<? extends T> implementationType) {
         return getExtensionTypes(extensionPoint).contains(implementationType);
     }
 
-    public <T extends NComponent> Class<? extends T> findRegisteredType(Class<T> extensionPoint, String implementation) {
+    public <T> Class<? extends T> findRegisteredType(Class<T> extensionPoint, String implementation) {
         for (Class<? extends T> cls : getExtensionTypes(extensionPoint)) {
             if (cls.getName().equals(implementation)) {
                 return cls;
@@ -390,237 +475,13 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         return null;
     }
 
-
-//    private Object resolveClassSource(Class implementation) {
-//        return null;
-//    }
-
-
-    public <T extends NComponent> T newInstance(Class<T> t, Class<? super T> apiType) {
-        return newInstance(t, new Class[0], new Object[0], apiType);
-    }
-
-    protected <T extends NComponent> T newInstanceAndLog(Class<? extends T> implementation, Class<?>[] argTypes, Object[] args, Class<T> apiType, NScopeType scope) {
-        T o = newInstance(implementation, apiType);
-//        if (LOG.isLoggable(Level.CONFIG)) {
-//            LOG.level(Level.FINEST).verb(NMsgIntent.READ)
-//                    .log(NMsg.ofJ("resolve {0} to  ```underlined {1}``` {2}",
-//                            NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST),
-//                            scope,
-//                            o.getClass().getName()));
-//        }
-
-        //skip logging this to avoid infinite recursion
-        if (isBootstrapLogType(apiType)) {
-            //
-        } else if (LOG.isLoggable(Level.CONFIG)) {
-            String old = _alreadyLogger.get(apiType.getName());
-            if (old == null || !old.equals(implementation.getName())) {
-                _alreadyLogger.put(apiType.getName(), implementation.getName());
-                LOG
-                        .log(NMsg.ofC("resolve %s to  %s %s",
-                                                NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST),
-                                                scope,
-                                                implementation.getName()
-                                        )
-                                        .withLevel(Level.FINEST).withIntent(NMsgIntent.READ)
-                        );
-            }
-        }
-
-        return o;
-    }
-
-    protected <T> T newInstance(Class<T> t, Class[] argTypes, Object[] args, Class apiType) {
-        T t1 = null;
-        NSession session = workspace.currentSession();
-        CachedConstructor<T> ctrl0 = cache.findConstructor(t, argTypes);
-        if (ctrl0 == null) {
-            if (isBootstrapLogType(apiType)) {
-                //do not use log. this is a bug that must be resolved fast!
-                safeLog(NMsg.ofC("error when instantiating %s as %s : no constructor found", apiType, t), null);
-            } else {
-                if (LOG.isLoggable(Level.FINEST)) {
-                    LOG.log(NMsg.ofC("error when instantiating %s as %s : no constructor found", apiType, t).asFinest().withIntent(NMsgIntent.FAIL));
-                }
-            }
-            NBeanCache cache2 = new NBeanCache(LOG, CoreNUtils.isDevVerbose() ? System.err : null);
-            cache2.findConstructor(t, argTypes);
-            throw new NFactoryException(NMsg.ofC("instantiate '%s' failed", t), new NoSuchElementException(
-                    NMsg.ofC("No constructor was found %s(%s). All %s available constructors are : %s",
-                            t.getName(),
-                            Arrays.stream(argTypes).map(Class::getSimpleName).collect(Collectors.joining(",")),
-                            t.getDeclaredConstructors().length,
-                            Arrays.stream(t.getDeclaredConstructors()).map(x -> toString()).collect(Collectors.joining(" ; "))
-                    ).toString()
-            ));
-        }
-        try {
-            t1 = ctrl0.newInstance(args, session);
-        } catch (Exception e) {
-            if (isBootstrapLogType(apiType)) {
-                //do not use log. this is a bug that must be resolved fast!
-                safeLog(NMsg.ofC("error when instantiating %s as %s : %s", apiType, t, e), e);
-            } else {
-
-                if (LOG.isLoggable(Level.FINEST)) {
-                    LOG.log(NMsg.ofC("error when instantiating %s as %s : %s", apiType, t, e).asFinestFail(e));
-                }
-            }
-            Throwable cause = e.getCause();
-            if (cause == null) {
-                cause = e;
-            }
-            if (cause instanceof RuntimeException) {
-                throw (RuntimeException) cause;
-            }
-            throw new NFactoryException(NMsg.ofC("error when instantiating %s as %s : %s", apiType, t, e), cause);
-        }
-        //initialize?
-        return t1;
-    }
-
-    protected <T extends NComponent> T resolveInstance(Class<? extends T> implType, Class<T> apiType) {
-        return resolveInstance(implType, apiType, new Class[0], new Object[0]);
-    }
-
-    private <T extends NComponent> NScopeType computeScope(Class<? extends T> implType, Class<T> apiType) {
-        NComponentScope apiScope = apiType.getAnnotation(NComponentScope.class);
-        NComponentScope implScope = implType.getAnnotation(NComponentScope.class);
-        NScopeType scope = NScopeType.PROTOTYPE;
-        if (apiScope != null || implScope != null) {
-            if (apiScope != null && implScope == null) {
-                scope = apiScope.value();
-            } else if (apiScope == null && implScope != null) {
-                scope = implScope.value();
-            } else {
-                if (apiScope.value() == implScope.value()) {
-                    scope = apiScope.value();
-                } else {
-                    //bo defined! stick with api!
-                    scope = apiScope.value();
-                    if (LOG.isLoggable(Level.CONFIG)) {
-                        switch (apiType.getName()) {
-                            //skip logging for NTexts to avoid infinite recursion
-                            case "net.thevpc.nuts.text.NTexts": {
-                                break;
-                            }
-                            default: {
-                                LOG
-                                        .log(NMsg.ofJ("invalid scope {0} ; expected {1} for  {2}",
-                                                                implScope.value(),
-                                                                apiScope.value(),
-                                                                implType.getName()
-                                                        )
-                                                        .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL)
-                                        );
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return scope;
-    }
-
-    public void safeLog(NMsg msg, Throwable any) {
-        //TODO: should we use boot stdio?
-        PrintStream err = NWorkspaceExt.of().getModel().bootModel.getBootTerminal().getErr();
-        if (err == null) {
-            err = System.err;
-        }
-        err.println(msg.toString() + ":");
-        any.printStackTrace();
-    }
-
-    public boolean isBootstrapLogType(Class apiType) {
-        switch (apiType.getName()) {
-            //skip logging this to avoid infinite recursion
-            case "net.thevpc.nuts.io.NPaths":
-            case "net.thevpc.nuts.text.NTexts":
-            case "net.thevpc.nuts.log.NLogs":
-            case "net.thevpc.nuts.log.NLog": {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected <T extends NComponent> T resolveInstance(Class<? extends T> implementation, Class<T> apiType, Class<?>[] argTypes, Object[] args) {
-        if (implementation == null) {
-            return null;
-        }
-        NScopeType scope = computeScope(implementation, apiType);
-        if (apiType.getAnnotation(NComponentScope.class) != null) {
-            scope = apiType.getAnnotation(NComponentScope.class).value();
-        }
-        if (scope == null) {
-            scope = NScopeType.PROTOTYPE;
-        }
-        NScopeType finalScope = scope;
-        if (scope == NScopeType.PROTOTYPE) {
-            return newInstanceAndLog(implementation, argTypes, args, apiType, finalScope);
-        }
-        NPropertiesHolder beans = resolveBeansHolder(scope);
-        return (T) beans.getOrComputeProperty(implementation.getName(), () -> {
-            return newInstanceAndLog(implementation, argTypes, args, apiType, finalScope);
-        }, finalScope);
-    }
-
-    private static NPropertiesHolder resolveBeansHolder(NScopeType scope) {
-        return NApp.of().getOrComputeProperty(NWorkspaceFactory.class.getName() + "::beans", scope, () -> new NPropertiesHolder());
-    }
-
-    //    @Override
-    public <T extends NComponent> T create(Class<T> type) {
-        Object one = instances.getOne(type);
-        if (one != null) {
-            //if static instance found, always return it!
-            if (LOG.isLoggable(Level.CONFIG)) {
-                LOG.log(NMsg.ofJ("resolve {0} to singleton {1}", NStringUtils.formatAlign(type.getSimpleName(), 40, NPositionType.FIRST), one.getClass().getName())
-                        .withLevel(Level.FINEST).withIntent(NMsgIntent.READ)
-                );
-            }
-            return (T) one;
-        }
-        Set<Class<? extends T>> extensionTypes = this.getExtensionTypes(type);
-        for (Class<? extends T> e : extensionTypes) {
-            return (T) resolveInstance(e, type);
-        }
-        for (Class<? extends T> t : extensionTypes) {
-            return newInstance(t, type);
-        }
-        throw new NElementNotFoundException(NMsg.ofC("type %s not found", type));
-    }
-
-    public <T extends NComponent> List<T> createAll(Class<T> type, Class<?>[] argTypes, Object[] args) {
-        List<T> all = new ArrayList<T>();
-        for (Class<? extends T> c : getExtensionTypes(type)) {
-            T obj = null;
-            try {
-                obj = (T) resolveInstance(c, type, argTypes, args);
-            } catch (Exception e) {
-                LOG.log(NMsg.ofC("error when instantiating %s : %s", type, e).asWarningFail(e));
-            }
-            if (obj != null) {
-                all.add(obj);
-            }
-        }
-        return all;
+    public <T> T newInstance(Class<T> t, Class<? super T> apiType) {
+        return extensionTypeInfoPool.get(t, apiType).newInstance();
     }
 
 
-    private final static class ClassExtension {
-
-        Class clazz;
-        Object source;
-        boolean enabled = true;
-
-        public ClassExtension(Class clazz, Object source, boolean enabled) {
-            this.clazz = clazz;
-            this.source = source;
-            this.enabled = enabled;
-        }
+    protected <T> T resolveInstance(Class<? extends T> implType, Class<T> apiType) {
+        return extensionTypeInfoPool.get(implType, apiType).resolveInstance(new Class[0], new Object[0],null);
     }
 
     public void dump(Class<?> type) {
@@ -669,5 +530,25 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         System.err.println("Finish Extensions Factory Dump");
     }
 
+    private static class NBeanConstructorContextAsScorableContext implements NBeanConstructorContext {
+        private final NScorableContext supportCriteria;
 
+        public NBeanConstructorContextAsScorableContext(NScorableContext supportCriteria) {
+            this.supportCriteria = supportCriteria;
+        }
+
+        @Override
+        public boolean isSupported(Class<?> paramType) {
+            switch (paramType.getName()){
+                case "net.thevpc.nuts.util.NScorableContext":
+                    return true;
+            }
+            return false;
+        }
+
+        @Override
+        public Object resolve(Class<?> paramType) {
+            return supportCriteria;
+        }
+    }
 }
