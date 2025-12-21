@@ -29,9 +29,7 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.internal.NReservedUtils;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NStringMapFormat;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -40,6 +38,7 @@ import java.util.Objects;
 /**
  * Created by vpc on 1/5/17.
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNIdBuilder implements NIdBuilder {
 
     private String groupId;
@@ -480,11 +479,6 @@ public class DefaultNIdBuilder implements NIdBuilder {
     @Override
     public boolean isBlank() {
         return build().isBlank();
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
 }
