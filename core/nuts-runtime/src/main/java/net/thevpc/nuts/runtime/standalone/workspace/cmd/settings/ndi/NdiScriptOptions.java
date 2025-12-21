@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NConstants;
 
 import net.thevpc.nuts.core.NWorkspace;
@@ -10,7 +11,6 @@ import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
-import net.thevpc.nuts.command.NSearchCmd;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
@@ -134,7 +134,7 @@ public class NdiScriptOptions implements Cloneable {
         if (nutsApiJarPath == null) {
             NId nid = resolveNutsApiId();
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
-                NDefinition apiDef = NSearchCmd.of()
+                NDefinition apiDef = NSearch.of()
                         .addId(nid).setDependencyFilter(NDependencyFilters.of().byRunnable()).setLatest(true).getResultDefinitions().findFirst().get();
                 nutsApiJarPath = apiDef.getContent().orNull();
             } else {
@@ -149,7 +149,7 @@ public class NdiScriptOptions implements Cloneable {
         if (nutsAppJarPath == null) {
             NId nid = resolveNutsAppId();
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
-                NDefinition appDef = NSearchCmd.of()
+                NDefinition appDef = NSearch.of()
                         .addId(nid).setDependencyFilter(NDependencyFilters.of().byRunnable()).setLatest(true).getResultDefinitions().findFirst().get();
                 nutsAppJarPath = appDef.getContent().get();
             } else {
@@ -185,7 +185,7 @@ public class NdiScriptOptions implements Cloneable {
     public NPath resolveNutsApiBinFolder() {
         NWorkspaceBootConfig bootConfig = null;
         NId apiId = NWorkspace.of().getApiId().builder().setVersion(nutsVersion).build();
-        apiId = NSearchCmd.of().addId(apiId).latest().failFast()
+        apiId = NSearch.of().addId(apiId).latest().failFast()
                 .distinct()
                 .getResultDefinitions()
                 .findSingleton().get().getId();
@@ -198,7 +198,7 @@ public class NdiScriptOptions implements Cloneable {
     }
 
     public NDefinition resolveNutsApiDef() {
-        return NSearchCmd.of(resolveNutsApiId())
+        return NSearch.of(resolveNutsApiId())
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .latest()
                 .failFast()
@@ -219,7 +219,7 @@ public class NdiScriptOptions implements Cloneable {
                 if (nutsVersion == null) {
                     nutsApiId = workspace.getApiId();
                 } else {
-                    nutsApiId = NSearchCmd.of().addId(
+                    nutsApiId = NSearch.of().addId(
                                     workspace.getApiId().builder().setVersion(nutsVersion).build()
                             ).setLatest(true)
                             .setDistinct(true)
