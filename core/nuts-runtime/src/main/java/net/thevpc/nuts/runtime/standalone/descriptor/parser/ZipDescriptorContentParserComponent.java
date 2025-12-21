@@ -32,6 +32,8 @@ import net.thevpc.nuts.artifact.NDescriptorParser;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -46,6 +48,7 @@ import java.util.Set;
  * Created by vpc on 1/15/17.
  */
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore
 public class ZipDescriptorContentParserComponent implements NDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_PATHS = new LinkedHashSet<>(Arrays.asList(
@@ -56,16 +59,15 @@ public class ZipDescriptorContentParserComponent implements NDescriptorContentPa
     ));
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("zip", "gzip", "gz","war","ear"));
 
-    @Override
-    public int getScore(NScorableContext criteria) {
+    public static int getScore(NScorableContext criteria) {
         NDescriptorContentParserContext constraints = criteria.getCriteria(NDescriptorContentParserContext.class);
         if(constraints!=null) {
             String e = NStringUtils.trim(constraints.getFileExtension());
             if (!POSSIBLE_EXT.contains(e)) {
-                return UNSUPPORTED_SCORE;
+                return NScorable.UNSUPPORTED_SCORE;
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
     @Override
