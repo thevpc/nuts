@@ -12,10 +12,8 @@ import net.thevpc.nuts.net.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +28,7 @@ import java.util.*;
 import java.util.function.Function;
 
 @NComponentScope(NScopeType.PROTOTYPE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNWebCli implements NWebCli {
 
     public static URLConnection prepareGlobalConnection(URLConnection c) {
@@ -566,10 +565,6 @@ public class DefaultNWebCli implements NWebCli {
     public NWebCli setConnectTimeout(Integer connectTimeout) {
         this.connectTimeout = connectTimeout;
         return this;
-    }
-
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     public static String UNIFORM_HEADER(String h) {
