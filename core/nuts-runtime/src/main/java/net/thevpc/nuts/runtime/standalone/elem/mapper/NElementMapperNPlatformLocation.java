@@ -2,33 +2,35 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.platform.NExecutionEngineLocation;
 
 import java.lang.reflect.Type;
 
-public class NElementMapperNPlatformLocation implements NElementMapper<NPlatformLocation> {
+public class NElementMapperNPlatformLocation implements NElementMapper<NExecutionEngineLocation> {
 
     @Override
-    public Object destruct(NPlatformLocation src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object destruct(NExecutionEngineLocation src, Type typeOfSrc, NElementFactoryContext context) {
         return context.defaultDestruct(src, null);
     }
 
     @Override
-    public NElement createElement(NPlatformLocation o, Type typeOfSrc, NElementFactoryContext context) {
+    public NElement createElement(NExecutionEngineLocation o, Type typeOfSrc, NElementFactoryContext context) {
         return context.defaultCreateElement(o, null);
     }
 
     @Override
-    public NPlatformLocation createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
+    public NExecutionEngineLocation createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NObjectElement obj = o.asObject().get();
         NId id = context.createObject(obj.get("id").orElse(NElement.ofString("")), NId.class);
         String product = context.createObject(obj.get("product").orElse(NElement.ofString("")), String.class);
+        String vendor = context.createObject(obj.get("vendor").orElse(NElement.ofString("")), String.class);
+        String variant = context.createObject(obj.get("variant").orElse(NElement.ofString("")), String.class);
         String name = context.createObject(obj.get("name").orElse(NElement.ofString("")), String.class);
         String path = context.createObject(obj.get("path").orElse(NElement.ofString("")), String.class);
         String version = context.createObject(obj.get("version").orElse(NElement.ofString("")), String.class);
         String packaging = context.createObject(obj.get("packaging").orElse(NElement.ofString("")), String.class);
         int priority = context.createObject(obj.get("priority").orElse(NElement.ofInt(0)), int.class);
-        return new NPlatformLocation(id, product, name, path, version, packaging, priority);
+        return new NExecutionEngineLocation(id, vendor, product, variant, name, path, version, packaging, priority);
     }
 
 }
