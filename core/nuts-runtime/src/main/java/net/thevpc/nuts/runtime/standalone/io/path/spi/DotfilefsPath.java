@@ -41,13 +41,13 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
             return null;
         }
 
-        @Override
-        public int getScore(NScorableContext context) {
+        @NScore
+        public static int getScore(NScorableContext context) {
             String path = context.getCriteria();
             if (path.startsWith(PREFIX)) {
-                return DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
             }
-            return UNSUPPORTED_SCORE;
+            return NScorable.UNSUPPORTED_SCORE;
         }
     }
 
