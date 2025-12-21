@@ -31,7 +31,7 @@ import java.util.*;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.command.NCommandFactoryConfig;
-import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.core.NRepositoryRef;
 import net.thevpc.nuts.security.NUserConfig;
@@ -129,7 +129,7 @@ public final class NWorkspaceConfigBoot502 implements Serializable {
     private List<NId> extensions;
     private List<NCommandFactoryConfig> commandFactories;
     private Properties env = new Properties();
-    private List<NPlatformLocation> sdk = new ArrayList<>();
+    private List<NExecutionEngineLocation> sdk = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
     private boolean secure = false;
     private String authenticationAgent;
@@ -177,7 +177,7 @@ public final class NWorkspaceConfigBoot502 implements Serializable {
 
     }
 
-    public void setSdk(List<NPlatformLocation> sdk) {
+    public void setSdk(List<NExecutionEngineLocation> sdk) {
         this.sdk = sdk;
 
     }
@@ -200,7 +200,7 @@ public final class NWorkspaceConfigBoot502 implements Serializable {
         return users;
     }
 
-    public List<NPlatformLocation> getSdk() {
+    public List<NExecutionEngineLocation> getSdk() {
         return sdk;
     }
 
