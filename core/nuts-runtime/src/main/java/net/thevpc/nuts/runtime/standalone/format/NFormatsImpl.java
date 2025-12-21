@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.io.NContentMetadataProviderFormatSPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
@@ -18,14 +18,13 @@ import net.thevpc.nuts.runtime.standalone.reflect.NUseDefaultUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.runtime.standalone.format.impl.NChronometerNFormatSPI;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NClassMap;
-import net.thevpc.nuts.util.NOptional;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NFormatsImpl implements NFormats {
     private NClassMap<NFormatMapper> mapper = new NClassMap<>(NFormatMapper.class);
 
@@ -61,7 +60,7 @@ public class NFormatsImpl implements NFormats {
     }
 
     private void registerDefaults() {
-        register(NExecCmd.class, (o, f) -> NExecCmdFormat.of().setValue((NExecCmd) o));
+        register(NExec.class, (o, f) -> NExecCmdFormat.of().setValue((NExec) o));
 
         register(NVersion.class, (o, f) -> NVersionFormat.of().setVersion((NVersion) o));
 
@@ -122,11 +121,6 @@ public class NFormatsImpl implements NFormats {
 
     private interface NFormatMapper {
         NFormat ofFormat(Object t, NFormats texts);
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
 }
