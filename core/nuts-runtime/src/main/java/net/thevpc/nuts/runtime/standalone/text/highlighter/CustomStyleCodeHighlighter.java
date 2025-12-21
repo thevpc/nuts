@@ -1,11 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.spi.NCodeHighlighter;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class CustomStyleCodeHighlighter implements NCodeHighlighter {
 
     private NTextStyle style;
@@ -29,9 +31,5 @@ public class CustomStyleCodeHighlighter implements NCodeHighlighter {
         return txt.ofPlain(text);
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 
 }
