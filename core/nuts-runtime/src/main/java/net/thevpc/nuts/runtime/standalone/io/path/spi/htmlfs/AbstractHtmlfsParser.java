@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
+import net.thevpc.nuts.io.NPathInfo;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 
