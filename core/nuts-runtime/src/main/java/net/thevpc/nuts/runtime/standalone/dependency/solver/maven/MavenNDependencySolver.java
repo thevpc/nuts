@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver.maven;
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.text.NMsgFormattable;
@@ -170,8 +170,8 @@ public class MavenNDependencySolver implements NDependencySolver {
         return def;
     }
 
-    private NSearchCmd search(NDependency dep) {
-        return NSearchCmd.of()
+    private NSearch search(NDependency dep) {
+        return NSearch.of()
                 .addIds(dep.toId())
                 .setDependencyFilter(getDependencyFilter())
                 .setRepositoryFilter(getRepositoryFilter())
