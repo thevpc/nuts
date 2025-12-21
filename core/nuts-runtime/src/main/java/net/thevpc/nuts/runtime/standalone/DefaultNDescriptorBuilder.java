@@ -30,7 +30,6 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.boot.NBootDescriptor;
 import net.thevpc.nuts.artifact.NIdLocation;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.util.*;
@@ -41,6 +40,7 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     private static final long serialVersionUID = 1L;
@@ -903,10 +903,6 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     @Override
     public List<NDescriptorContributor> getDevelopers() {
         return developers;
-    }
-
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     public boolean isNoContent() {
