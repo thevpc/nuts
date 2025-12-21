@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem.parser;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.expr.NParseException;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
@@ -21,6 +20,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNElementParser implements NElementParser {
 
     //    public static final NutsPrimitiveElement NULL = new DefaultNPrimitiveElement(NutsElementType.NULL, null);
@@ -345,11 +345,6 @@ public class DefaultNElementParser implements NElementParser {
 
     public Object elementToObject(NElement o, Type type) {
         return createFactoryContext().createObject(o, type);
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     @Override
