@@ -16,10 +16,8 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.idresolver.NMetaInfIdResolver;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +25,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNLibPaths implements NLibPaths {
     private final NWorkspace workspace;
 
@@ -66,11 +65,6 @@ public class DefaultNLibPaths implements NLibPaths {
             return u == null ? Collections.emptyList() : Arrays.asList(u);
         }
         return Collections.emptyList();
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     @Override
