@@ -25,21 +25,21 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.ext.NExtensions;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * Format used to format command line by {@link NExecCmd}
+ * Format used to format command line by {@link NExec}
  *
  * @author thevpc
  * @app.category Format
  * @since 0.5.4
  */
 public interface NExecCmdFormat extends NFormat {
-    static NExecCmdFormat of(NExecCmd execCmd) {
+    static NExecCmdFormat of(NExec execCmd) {
         return of().setValue(execCmd);
     }
 
@@ -97,7 +97,7 @@ public interface NExecCmdFormat extends NFormat {
      *
      * @return value to format
      */
-    NExecCmd getValue();
+    NExec getValue();
 
     /**
      * set value to format
@@ -105,7 +105,7 @@ public interface NExecCmdFormat extends NFormat {
      * @param value value to format
      * @return {@code this} instance
      */
-    NExecCmdFormat setValue(NExecCmd value);
+    NExecCmdFormat setValue(NExec value);
 
     /**
      * return argument filter
