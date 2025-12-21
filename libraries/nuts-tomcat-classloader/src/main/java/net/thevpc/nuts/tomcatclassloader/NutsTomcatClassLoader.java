@@ -2,7 +2,7 @@ package net.thevpc.nuts.tomcatclassloader;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NOpenMode;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceOptionsBuilder;
@@ -114,7 +114,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 String[] pathList = splitString(nutsPath, "; ,");
                 try {
                     resolveWorkspace().runWith(()->{
-                        nutsClassLoader = NSearchCmd.of().addIds(pathList).setInlineDependencies(true).getResultClassLoader();
+                        nutsClassLoader = NSearch.of().addIds(pathList).setInlineDependencies(true).getResultClassLoader();
                     });
                 } catch (Exception ex) {
                     ex.printStackTrace();
