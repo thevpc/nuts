@@ -28,10 +28,10 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBaseRepo;
 import net.thevpc.nuts.security.NUpdateUserCmd;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.*;
 
@@ -40,6 +40,7 @@ import java.util.*;
  * @author thevpc
  * @since 0.5.7
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public abstract class AbstractNUpdateUserCmd extends NWorkspaceCmdBaseRepo<NUpdateUserCmd> implements NUpdateUserCmd {
 
     protected String login;
@@ -56,11 +57,6 @@ public abstract class AbstractNUpdateUserCmd extends NWorkspaceCmdBaseRepo<NUpda
 
     public AbstractNUpdateUserCmd() {
         super("update-user");
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     @Override
