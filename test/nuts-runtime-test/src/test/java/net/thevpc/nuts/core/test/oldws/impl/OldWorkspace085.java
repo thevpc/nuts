@@ -1,6 +1,6 @@
 package net.thevpc.nuts.core.test.oldws.impl;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionType;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.oldws.OldWorkspace;
@@ -18,7 +18,7 @@ public class OldWorkspace085 extends OldWorkspace {
 
     public void upgrade() {
         NOut.println(NMsg.ofC("updating workspace %s in %s", version, ws));
-        NExecCmd.of().setExecutionType(NExecutionType.SYSTEM)
+        NExec.of().setExecutionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
                 .addCommand("--workspace=" + workspaceLocation)
                 .addCommand("--yes")
@@ -32,7 +32,7 @@ public class OldWorkspace085 extends OldWorkspace {
     public void installWs() {
         downloadNutsJar();
         NOut.println(NMsg.ofC("booting workspace %s in %s", version, ws));
-        NExecCmd.ofSystem()
+        NExec.ofSystem()
                 .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
                 .addCommand("--workspace=" + workspaceLocation)
                 .addCommand("--desktop-launcher=unsupported")
