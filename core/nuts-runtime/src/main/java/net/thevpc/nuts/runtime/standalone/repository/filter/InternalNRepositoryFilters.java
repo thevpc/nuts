@@ -10,12 +10,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NFilter;
-import net.thevpc.nuts.util.NIllegalArgumentException;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositoryFilter>
         implements NRepositoryFilters {
 
@@ -173,8 +171,4 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         return new NRepositoryFilterParser(expression).parse();
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
