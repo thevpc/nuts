@@ -4,7 +4,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.platform.NStoreType;
@@ -115,7 +115,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     public String buildString() {
         try {
             //Path script = getScriptFile(name);
-            NDefinition anyIdDef = NSearchCmd.of().addId(getAnyId()).setLatest(true)
+            NDefinition anyIdDef = NSearch.of().addId(getAnyId()).setLatest(true)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .setDistinct(true)
                     .getResultDefinitions()
