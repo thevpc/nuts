@@ -5,6 +5,8 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 
@@ -87,7 +89,7 @@ public class ClassLoaderPath extends URLPath {
         public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             try {
                 if (path.startsWith("classpath:")) {
-                    return NScoredCallable.of(DEFAULT_SCORE,()->new ClassLoaderPath(path, classLoader));
+                    return NScoredCallable.of(NScorable.DEFAULT_SCORE,()->new ClassLoaderPath(path, classLoader));
                 }
             } catch (Exception ex) {
                 //ignore
@@ -95,13 +97,13 @@ public class ClassLoaderPath extends URLPath {
             return null;
         }
 
-        @Override
-        public int getScore(NScorableContext context) {
+        @NScore
+        public static int getScore(NScorableContext context) {
             String path= context.getCriteria();
             if (path.startsWith("classpath:")) {
-                return DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
             }
-            return UNSUPPORTED_SCORE;
+            return NScorable.UNSUPPORTED_SCORE;
         }
     }
 }
