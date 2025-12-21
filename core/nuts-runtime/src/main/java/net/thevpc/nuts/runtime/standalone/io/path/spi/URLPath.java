@@ -391,7 +391,7 @@ public class URLPath implements NPathSPI {
             }
         }
         if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
-            NWebCli best = NExtensions.of().createComponent(NWebCli.class, url).get();
+            NWebCli best = NExtensions.of().createSupported(NWebCli.class, url).get();
             return best.req().GET().setUrl(url.toString()).run().getContent().getInputStream();
         }
         try {
@@ -785,8 +785,8 @@ public class URLPath implements NPathSPI {
             return null;
         }
 
-        @Override
-        public int getScore(NScorableContext context) {
+        @NScore(fixed = NScorable.DEFAULT_SCORE)
+        public static int getScore(NScorableContext context) {
             Object c = context.getCriteria();
             if (c instanceof String) {
                 String path = (String) c;
@@ -802,7 +802,7 @@ public class URLPath implements NPathSPI {
                     }
                 }
             }
-            return UNSUPPORTED_SCORE;
+            return NScorable.UNSUPPORTED_SCORE;
         }
     }
 
