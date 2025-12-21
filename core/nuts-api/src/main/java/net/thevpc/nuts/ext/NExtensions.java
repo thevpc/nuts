@@ -32,7 +32,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.*;
 
 import java.util.List;
 import java.util.Set;
@@ -42,26 +42,28 @@ import java.util.Set;
  * @app.category Extensions
  * @since 0.5.4
  */
-public interface NExtensions extends NComponent  {
+public interface NExtensions extends NComponent {
     static <T extends NComponent> T of(Class<T> type) {
         return of().createComponent(type).get();
     }
+
     static <T extends NComponent> NOptional<T> get(Class<T> type) {
-        return get().flatMap(x->x.createComponent(type));
+        return get().flatMap(x -> x.createComponent(type));
     }
 
     static NExtensions of() {
         return NWorkspace.of().extensions();
     }
+
     static NOptional<NExtensions> get() {
-        return NWorkspace.get().map(x->x.extensions());
+        return NWorkspace.get().map(x -> x.extensions());
     }
 
     Set<NId> getCompanionIds();
 
     <T extends NComponent> boolean installWorkspaceExtensionComponent(Class<T> extensionPointType, T extensionImpl);
 
-    Set<Class<? extends NComponent>> discoverTypes(NId id, ClassLoader classLoader);
+    Set<Class<?>> discoverTypes(NId id, ClassLoader classLoader);
 
     <T extends NComponent, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType);
 
@@ -70,11 +72,19 @@ public interface NExtensions extends NComponent  {
 
     NMutableClassLoader createMutableClassLoader(ClassLoader parentClassLoader);
 
+    <T extends NComponent> NScoredValue<T> getTypeScoredValue(Class<? extends T> implType, Class<T> apiType, NScorableContext scorableContext);
+
+    <T extends NComponent> NScoredValue<T> getInstanceScoredValue(T instance, Class<T> apiType, NScorableContext scorableContext);
+
+    <T extends NComponent> NOptional<NScorable> getTypeScorable(Class<? extends T> implType, Class<T> apiType);
+
+    <T extends NComponent> NOptional<NScorable> getInstanceScorable(T instance, Class<T> apiType);
+
     /**
      * create supported extension implementation or return null.
      *
-     * @param <T>             extension type class
-     * @param type            extension type
+     * @param <T>  extension type class
+     * @param type extension type
      * @return valid instance or null if no extension implementation was found
      */
     <T extends NComponent> NOptional<T> createComponent(Class<T> type);
@@ -88,9 +98,9 @@ public interface NExtensions extends NComponent  {
      * @param supportCriteria context
      * @return valid instance or null if no extension implementation was found
      */
-    <T extends NComponent, V> NOptional<T> createComponent(Class<T> type, V supportCriteria);
+    <T extends NComponent, V> NOptional<T> createSupported(Class<T> type, V supportCriteria);
 
-    <T extends NComponent, V> List<T> createComponents(Class<T> type, V supportCriteria);
+    <T extends NComponent, V> List<T> createAllSupported(Class<T> type, V supportCriteria);
 
     <T extends NComponent> List<T> createAll(Class<T> type);
 
