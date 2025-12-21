@@ -13,7 +13,6 @@ import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgressFactory;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.spi.NUncompressPackaging;
 import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.time.NProgressListener;
@@ -30,6 +29,7 @@ import java.util.logging.Level;
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNUncompress implements NUncompress {
 
     private NLog LOG;
@@ -47,11 +47,6 @@ public class DefaultNUncompress implements NUncompress {
     public DefaultNUncompress() {
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
-
     protected NLog _LOG() {
         if (LOG == null) {
             LOG = NLog.of(DefaultNUncompress.class);
@@ -66,7 +61,7 @@ public class DefaultNUncompress implements NUncompress {
 
     @Override
     public NUncompress setPackaging(String packaging) {
-        this.packagingImpl = NExtensions.of().createComponent(NUncompressPackaging.class, this).get();
+        this.packagingImpl = NExtensions.of().createSupported(NUncompressPackaging.class, this).get();
         return this;
     }
 
@@ -228,7 +223,7 @@ public class DefaultNUncompress implements NUncompress {
                 );
 
         if (packagingImpl == null) {
-            this.packagingImpl = NExtensions.of().createComponent(NUncompressPackaging.class, this).get();
+            this.packagingImpl = NExtensions.of().createSupported(NUncompressPackaging.class, this).get();
         }
         packagingImpl.uncompressPackage(this, _source);
         return this;
