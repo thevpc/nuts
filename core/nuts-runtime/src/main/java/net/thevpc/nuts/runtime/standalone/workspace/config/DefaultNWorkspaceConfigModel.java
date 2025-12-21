@@ -30,16 +30,13 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.boot.NBootDescriptor;
 import net.thevpc.nuts.command.NCommandFactoryConfig;
-import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.command.NInstallStatus;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElementWriter;
-import net.thevpc.nuts.platform.NHomeLocation;
-import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.platform.NPlatformLocation;
-import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfig;
@@ -48,7 +45,6 @@ import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.extension.NExtensionUtils;
 import net.thevpc.nuts.runtime.standalone.util.*;
-import net.thevpc.nuts.runtime.standalone.xtra.rnsh.RnshPathFactorySPI;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.text.NMsg;
@@ -147,7 +143,7 @@ public class DefaultNWorkspaceConfigModel {
         NBootOptions bOptions = NWorkspaceExt.of().getModel().bootModel.getBootEffectiveOptions();
         this.bootClassLoader = bOptions.getClassWorldLoader().orElseGet(() -> Thread.currentThread().getContextClassLoader());
         this.bootClassWorldURLs = NCollections.nonNullList(bOptions.getClassWorldURLs().orNull());
-        workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(workspace);
+        this.workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(workspace);
         this.bootModel = workspace.getModel().bootModel;
         addPathFactory(new FilePath.FilePathFactory());
         addPathFactory(new ClassLoaderPath.ClasspathFactory());
@@ -157,8 +153,7 @@ public class DefaultNWorkspaceConfigModel {
         addPathFactory(new DotfilefsPath.DotfilefsFactory());
         addPathFactory(new GithubfsPath.GithubfsFactory());
         addPathFactory(new GenericFilePath.GenericPathFactory());
-        addPathFactory(new RnshPathFactorySPI());
-        invalidPathFactory = new InvalidFilePathFactory();
+        this.invalidPathFactory = new InvalidFilePathFactory();
         //        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
     }
 
@@ -190,9 +185,9 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public Map<String, String> newSysEnvEmptyMap() {
-        switch (workspace.getEnvModel().getOsFamily()) {
+        switch (workspace.getModel().getEnv().getOsFamily()) {
             case WINDOWS: {
-                return new NCaseInsensitiveStringMap();
+                return new NCaseInsensitiveStringMap<>();
             }
         }
         return new HashMap<>();
@@ -276,8 +271,8 @@ public class DefaultNWorkspaceConfigModel {
         }
 
         if (force || storeModelMainChanged) {
-            List<NPlatformLocation> plainSdks = new ArrayList<>();
-            plainSdks.addAll(NWorkspace.of().findPlatforms().toList());
+            List<NExecutionEngineLocation> plainSdks = new ArrayList<>();
+            plainSdks.addAll(NExecutionEngines.of().findExecutionEngines().toList());
             storeModelMain.setPlatforms(plainSdks);
             storeModelMain.setRepositories(
                     workspace.getRepositories().stream().filter(x -> !x.config().isTemporary())
@@ -298,7 +293,7 @@ public class DefaultNWorkspaceConfigModel {
                 }
             }
             if (storeModelMain.getPlatforms() != null) {
-                for (NPlatformLocation item : storeModelMain.getPlatforms()) {
+                for (NExecutionEngineLocation item : storeModelMain.getPlatforms()) {
                     //inherited
                     item.setConfigVersion(null);
                 }
@@ -374,7 +369,7 @@ public class DefaultNWorkspaceConfigModel {
         if (NBlankable.isBlank(repositoryType)) {
             repositoryType = NConstants.RepoTypes.NUTS;
         }
-        return NExtensions.of().createComponents(NRepositoryFactoryComponent.class,
+        return NExtensions.of().createAllSupported(NRepositoryFactoryComponent.class,
                 new NRepositoryConfig().setLocation(
                         NRepositoryLocation.of(repositoryType + "@")
                 )).size() > 0;
@@ -401,7 +396,7 @@ public class DefaultNWorkspaceConfigModel {
         Set<String> set = new HashSet<>();
         set.add("default");
         for (NWorkspaceArchetypeComponent extension : NExtensions.of()
-                .createComponents(NWorkspaceArchetypeComponent.class, null)) {
+                .createAllSupported(NWorkspaceArchetypeComponent.class, null)) {
             set.add(extension.getName());
         }
         return set;
@@ -942,7 +937,7 @@ public class DefaultNWorkspaceConfigModel {
     private Map<String, NDependencySolverFactory> getSolversMap() {
         if (dependencySolvers == null) {
             dependencySolvers = new LinkedHashMap<>();
-            for (NDependencySolverFactory nutsDependencySolver : NExtensions.of().createComponents(NDependencySolverFactory.class, null)) {
+            for (NDependencySolverFactory nutsDependencySolver : NExtensions.of().createAllSupported(NDependencySolverFactory.class, null)) {
                 dependencySolvers.put(nutsDependencySolver.getName(), nutsDependencySolver);
             }
         }
@@ -989,9 +984,9 @@ public class DefaultNWorkspaceConfigModel {
         NAuthenticationAgent supported = null;
         NSession session = getWorkspace().currentSession();
         if (authenticationAgent.isEmpty()) {
-            supported = NExtensions.of().createComponent(NAuthenticationAgent.class, "").get();
+            supported = NExtensions.of().createSupported(NAuthenticationAgent.class, "").get();
         } else {
-            List<NAuthenticationAgent> agents = NExtensions.of().createComponents(NAuthenticationAgent.class, authenticationAgent);
+            List<NAuthenticationAgent> agents = NExtensions.of().createAllSupported(NAuthenticationAgent.class, authenticationAgent);
             for (NAuthenticationAgent agent : agents) {
                 if (agent.getId().equals(authenticationAgent)) {
                     supported = agent;
@@ -1067,7 +1062,7 @@ public class DefaultNWorkspaceConfigModel {
 
     private void setConfigMain(NWorkspaceConfigMain config, boolean fire) {
         this.storeModelMain = config == null ? new NWorkspaceConfigMain() : config;
-        workspace.getSdkModel().setPlatforms(this.storeModelMain.getPlatforms().toArray(new NPlatformLocation[0]));
+        workspace.getModel().sdkModel.setExecutionEngines(this.storeModelMain.getPlatforms().toArray(new NExecutionEngineLocation[0]));
         workspace.removeAllRepositories();
         List<NRepositoryRef> refsToLoad = this.storeModelMain.getRepositories();
         if (refsToLoad != null) {
@@ -1122,7 +1117,7 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public NBootDef fetchBootDef(NId id, boolean content) {
-        NDefinition nd = NFetchCmd.of(id)
+        NDefinition nd = NFetch.of(id)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .setFailFast(false).getResultDefinition();
         if (nd != null) {
@@ -1678,21 +1673,21 @@ public class DefaultNWorkspaceConfigModel {
 
     }
 
-    private class InvalidFilePathFactory implements NPathFactorySPI {
+    private static class InvalidFilePathFactory implements NPathFactorySPI {
         @Override
         public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             try {
-                return NScoredCallable.of(1, () -> new InvalidFilePath(path, workspace));
+                return NScoredCallable.of(1, () -> new InvalidFilePath(path));
             } catch (Exception ex) {
                 //ignore
             }
             return null;
         }
 
-        @Override
-        public int getScore(NScorableContext context) {
+        @NScore
+        public static int getScore(NScorableContext context) {
             String path = context.getCriteria();
-            return 1;
+            return NScorable.DEFAULT_SCORE;
         }
     }
 
