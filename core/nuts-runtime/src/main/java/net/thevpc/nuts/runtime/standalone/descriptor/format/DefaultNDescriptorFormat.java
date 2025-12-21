@@ -8,16 +8,14 @@ import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.text.NDescriptorFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextCode;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NUnsupportedOperationException;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorFormat> implements NDescriptorFormat {
 
     private boolean compact;
@@ -326,8 +324,4 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
         }
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
