@@ -29,10 +29,7 @@ import net.thevpc.nuts.boot.NBootDependency;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.internal.NReservedUtils;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NStringMapFormat;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,6 +37,7 @@ import java.util.stream.Collectors;
 /**
  * Created by vpc on 1/5/17.
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     private String repo;
@@ -508,7 +506,4 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
         return NReservedUtils.getIdLongName(groupId,artifactId, version, classifier);
     }
 
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
