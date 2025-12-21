@@ -35,7 +35,8 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.text.art.table.DefaultNTextArtTableRenderer;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnsupportedArgumentException;
@@ -52,6 +53,7 @@ import java.util.stream.Collectors;
 /**
  * Created by vpc on 2/17/17.
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implements NTableFormat {
 
     private Object model;
@@ -379,11 +381,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
 
     private NText formatObject(Object any) {
         return NTextUtils.stringValueFormatted(any, false);
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
 
