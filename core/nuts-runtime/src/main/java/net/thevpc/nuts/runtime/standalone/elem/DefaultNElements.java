@@ -10,10 +10,10 @@ import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathFilter;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNElements implements NElements {
 
     private final DefaultNTextManagerModel model;
@@ -113,11 +113,6 @@ public class DefaultNElements implements NElements {
 
     public Object elementToObject(NElement o, Type type) {
         return createFactoryContext().createObject(o, type);
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     public NElementType commonNumberType(NElementType aa, NElementType bb) {
