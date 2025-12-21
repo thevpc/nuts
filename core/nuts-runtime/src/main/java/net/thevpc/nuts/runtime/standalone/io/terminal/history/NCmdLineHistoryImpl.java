@@ -28,7 +28,8 @@ import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.cmdline.NCmdLineHistoryEntry;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NAssert;
 
 import java.io.*;
@@ -42,6 +43,7 @@ import java.util.ListIterator;
  *
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NCmdLineHistoryImpl implements NCmdLineHistory {
 
     private NPath path;
@@ -160,8 +162,4 @@ public class NCmdLineHistoryImpl implements NCmdLineHistory {
         entries.add(new NCmdLineHistoryEntryImpl(entries.size(), line, time));
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
