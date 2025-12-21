@@ -24,7 +24,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.reflect;
 
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.reflect.NReflectConfiguration;
 import net.thevpc.nuts.reflect.NReflectConfigurationBuilder;
 import net.thevpc.nuts.reflect.NReflectPropertyAccessStrategy;
@@ -36,6 +37,7 @@ import java.util.function.Function;
  *
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNReflectConfigurationBuilder implements NReflectConfigurationBuilder {
 
     private Function<Class, NReflectPropertyAccessStrategy> propertyAccessStrategy;
@@ -92,8 +94,4 @@ public class DefaultNReflectConfigurationBuilder implements NReflectConfiguratio
         return new DefaultNReflectConfiguration(propertyAccessStrategy, propertyDefaultValueStrategy);
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
