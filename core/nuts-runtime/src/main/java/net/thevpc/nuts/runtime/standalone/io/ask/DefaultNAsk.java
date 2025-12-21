@@ -3,10 +3,10 @@ package net.thevpc.nuts.runtime.standalone.io.ask;
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
@@ -101,7 +101,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                             + "You need to provide default response (-y|-n) for question : %s", os
             ), NExecutionException.ERROR_255);
         }
-        boolean gui = session.isGui() && NWorkspace.of().isGraphicalDesktopEnvironment();
+        boolean gui = session.isGui() && NEnv.of().isGraphicalDesktopEnvironment();
 
         NMsg message = this.getMessage();
 //        if (message.endsWith("\n")) {
@@ -333,7 +333,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
         NMsg title = NMsg.ofC("Nuts Package Manager - %s", session.getWorkspace().getApiId().getVersion());
         if (NApp.of().getId().orNull() != null) {
             try {
-                NDefinition def = NSearchCmd.of().setId(NApp.of().getId().get())
+                NDefinition def = NSearch.of().setId(NApp.of().getId().get())
                         .setLatest(true).getResultDefinitions()
                         .findFirst().orNull();
                 if (def != null) {
