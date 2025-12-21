@@ -4,18 +4,21 @@ import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NPrepareCmd;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
     public DefaultNPrepareCmd(NWorkspace workspace) {
         super(workspace);
@@ -51,12 +54,12 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
         pushId(apiId, null);
         Set<NId> deps = new HashSet<>();
         deps.add(workspace.getRuntimeId());
-        deps.addAll(NSearchCmd.of().addId("net.thevpc.nsh:nsh").setLatest(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
+        deps.addAll(NSearch.of().addId("net.thevpc.nsh:nsh").setLatest(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
 //                .setDependencies(true)
                 .getResultIds().toList());
         if(ids!=null){
             for (NId id : deps) {
-                deps.addAll(NSearchCmd.of().addId(id).setLatest(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
+                deps.addAll(NSearch.of().addId(id).setLatest(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
 //                        .setDependencies(true)
                         .getResultIds().toList());
             }
@@ -69,12 +72,12 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
     }
 
     private void pushId(NId pid, NVersion apiIdVersion) {
-        NDefinition def = NSearchCmd.of().addId(pid).setLatest(true).setTargetApiVersion(apiIdVersion).getResultDefinitions().findFirst().get();
+        NDefinition def = NSearch.of().addId(pid).setLatest(true).setTargetApiVersion(apiIdVersion).getResultDefinitions().findFirst().get();
         NPath apiJar = def.getContent().get();
         if (!runRemoteAsStringNoFail("ls " + remoteIdMavenJar(def.getApiId()))) {
             if (!isLocalhost()) {
                 String targetServer = getTargetServer();
-                NExecCmd.of().addCommand("scp")
+                NExec.of().addCommand("scp")
                         .addCommand(apiJar.toString()).addCommand(getValidUser() + "@" + targetServer + ":" + remoteIdMavenJar(def.getApiId()))
                         .failFast().getGrabbedAllString();
             } else {
@@ -148,7 +151,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
 
     private String runRemoteAsString(String... cmd) {
         String remoteUser = getValidUser();
-        NExecCmd e = NExecCmd.of();
+        NExec e = NExec.of();
 
         if (!isLocalhost()) {
             String targetServer = getTargetServer();
