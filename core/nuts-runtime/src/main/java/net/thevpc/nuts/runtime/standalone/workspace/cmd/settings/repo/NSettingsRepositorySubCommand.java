@@ -25,15 +25,18 @@ import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArt;
 import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NRef;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.*;
 
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
     public NSettingsRepositorySubCommand() {
         super();
