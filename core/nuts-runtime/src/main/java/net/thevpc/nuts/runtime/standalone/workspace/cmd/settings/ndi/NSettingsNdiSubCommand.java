@@ -6,13 +6,13 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NConfirmationMode;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
@@ -23,8 +23,10 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.win.Windows
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NSupportMode;
 
 import java.io.UncheckedIOException;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsNdiSubCommand() {
         super();
@@ -39,7 +42,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
 
     public static SystemNdi createNdi() {
         SystemNdi ndi = null;
-        switch (NWorkspace.of().getOsFamily()) {
+        switch (NEnv.of().getOsFamily()) {
             case LINUX:
             case UNIX: {
 
@@ -196,7 +199,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 case "--installed": {
                     cmdLine.matcher().matchTrueFlag((v) -> {
                         session.setConfirm(NConfirmationMode.YES);
-                        for (NId resultId : NSearchCmd.of()
+                        for (NId resultId : NSearch.of()
                                 .setDefinitionFilter(NDefinitionFilters.of().byInstalled(true)
                         ).getResultIds()) {
                             d.idsToInstall.add(resultId.getLongName());
@@ -210,7 +213,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     cmdLine.matcher().matchTrueFlag((v) -> {
                         session.setConfirm(NConfirmationMode.YES);
                         for (NId companion : NExtensions.of().getCompanionIds()) {
-                            d.idsToInstall.add(NSearchCmd.of().addId(companion).setLatest(true).getResultIds().findFirst().get().getLongName());
+                            d.idsToInstall.add(NSearch.of().addId(companion).setLatest(true).getResultIds().findFirst().get().getLongName());
                             d.missingAnyArgument = false;
                         }
                     }).anyMatch();
@@ -255,7 +258,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NWorkspace.of().getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NEnv.of().getOs()), NExecutionException.ERROR_2);
             }
             if (!d.idsToInstall.isEmpty()) {
                 printResults(ndi.addScript(d.options, d.idsToInstall.toArray(new String[0])));
@@ -320,7 +323,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NWorkspace.of().getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NEnv.of().getOs()), NExecutionException.ERROR_2);
             }
             boolean subTrace = session.isTrace();
             if (!session.isPlainTrace()) {
@@ -433,7 +436,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(NMsg.ofC("platform not supported : %s ", NWorkspace.of().getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s ", NEnv.of().getOs()), NExecutionException.ERROR_2);
             }
             if (d.switchWorkspaceLocation != null || d.switchWorkspaceApi != null) {
                 NdiScriptOptions oo = new NdiScriptOptions();
