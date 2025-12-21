@@ -9,7 +9,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NCmdExecOptions;
 import net.thevpc.nuts.command.NCustomCmd;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.text.NText;
@@ -24,7 +24,7 @@ public class DefaultNAliasExecutable extends AbstractNExecutableInformationExt {
     NCmdExecOptions o;
    String[] args;
 
-    public DefaultNAliasExecutable(NCustomCmd command, NCmdExecOptions o, String[] args, NExecCmd execCommand) {
+    public DefaultNAliasExecutable(NCustomCmd command, NCmdExecOptions o, String[] args, NExec execCommand) {
         super(command.getName(),
                 NCmdLine.of(command.getCommand()).toString(),
                 NExecutableType.ALIAS,execCommand);
