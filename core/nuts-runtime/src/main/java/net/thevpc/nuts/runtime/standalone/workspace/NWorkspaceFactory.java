@@ -26,8 +26,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.artifact.NId;
 
 import java.net.URL;
@@ -41,30 +40,42 @@ import java.util.Set;
  */
 public interface NWorkspaceFactory {
 
-    Set<Class<? extends NComponent>> discoverTypes(NId id, URL url, ClassLoader bootClassLoader);
+    Set<Class<?>> discoverTypes(NId id, URL url, ClassLoader bootClassLoader);
 
-    Set<Class<? extends NComponent>> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, Class<? extends NComponent>[] extensionPoints);
+    Set<Class<?>> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, Class<?>[] extensionPoints);
 
-    <T extends NComponent> NOptional<T> createComponent(Class<T> type, Object supportCriteria);
+    <T> NOptional<T> createComponent(Class<T> type, Object supportCriteria);
 
-    <T extends NComponent> List<T> createComponents(Class<T> type, Object supportCriteria);
+    <T> List<T> createComponents(Class<T> type, Object supportCriteria);
 
-    <T extends NComponent> List<T> createAll(Class<T> type);
+    <T> NScoredValue<T> resolveTypeScore(Class<? extends T> implType, Class<T> apiType, NScorableContext scorableContext);
 
-    <T extends NComponent> T createFirst(Class<T> type);
+    <T> NScoredValue<T> resolveInstanceScore(T instance, Class<T> apiType, NScorableContext scorableContext);
 
-    <T extends NComponent> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint);
+    <T> NOptional<NScorable> getTypeScorer(Class<? extends T> implType, Class<T> apiType) ;
 
-    <T extends NComponent> List<T> getExtensionObjects(Class<T> extensionPoint);
+    <T> NOptional<NScorable> getInstanceScorer(T instance, Class<T> apiType) ;
+    /**
+     * @since  0.8.9
+     */
+    <T> List<NScoredValue<T>> createAllScored(Class<T> type, NScorableContext supportCriteria);
 
-    <T extends NComponent> boolean isRegisteredType(Class<T> extensionPointType, String name);
+    <T> List<T> createAll(Class<T> type);
 
-    <T extends NComponent> boolean isRegisteredInstance(Class<T> extensionPointType, T extensionImpl);
+    <T> T createFirst(Class<T> type);
 
-    <T extends NComponent> void registerInstance(Class<T> extensionPoint, T implementation);
+    <T> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint);
 
-    <T extends NComponent> void registerType(Class<T> extensionPointType, Class<? extends T> implementationType, NId source);
+    <T> List<T> getExtensionObjects(Class<T> extensionPoint);
 
-    <T extends NComponent> boolean isRegisteredType(Class<T> extensionPointType, Class<? extends T> implementationType);
+    <T> boolean isRegisteredType(Class<T> extensionPointType, String name);
+
+    <T> boolean isRegisteredInstance(Class<T> extensionPointType, T extensionImpl);
+
+    <T> void registerInstance(Class<T> extensionPoint, T implementation);
+
+    <T> void registerType(Class<T> extensionPointType, Class<? extends T> implementationType, NId source);
+
+    <T> boolean isRegisteredType(Class<T> extensionPointType, Class<? extends T> implementationType);
 
 }
