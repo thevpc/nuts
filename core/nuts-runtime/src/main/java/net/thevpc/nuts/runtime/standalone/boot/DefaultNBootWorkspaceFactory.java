@@ -28,8 +28,8 @@ package net.thevpc.nuts.runtime.standalone.boot;
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.core.NBootOptions;
-import net.thevpc.nuts.command.NExecCmd;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLog;
 
@@ -84,7 +84,7 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
             NBootOptions info2=new DefaultNBootOptionsBuilder(options).build();
             NApp.of().setId(workspace.getApiId());
             NLog.of(NBootWorkspaceImpl.class).log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2)).asConfig().withIntent(NMsgIntent.SUCCESS));
-            NExecCmd execCmd = NExecCmd.of()
+            NExec execCmd = NExec.of()
                     .setExecutionType(info2.getExecutionType().orNull())
                     .setRunAs(info2.getRunAs().orNull())
                     .failFast();
