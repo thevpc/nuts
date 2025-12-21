@@ -4,15 +4,13 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NInstallSvcCmd;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NTrace;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsServiceType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -25,6 +23,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     private NOsServiceType systemServiceType;
     private NOsServiceType serviceType;
@@ -647,7 +646,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         }
         if (x == null) {
             try {
-                x = NWorkspace.of().getSysEnv(n).orNull();
+                x = NEnv.of().getEnv(n).orNull();
             } catch (Exception e) {
                 //
             }
@@ -666,11 +665,6 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         return x;
     }
 
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
