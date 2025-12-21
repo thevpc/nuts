@@ -6,7 +6,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.platform.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntry;
 
 import net.thevpc.nuts.util.NIllegalArgumentException;
