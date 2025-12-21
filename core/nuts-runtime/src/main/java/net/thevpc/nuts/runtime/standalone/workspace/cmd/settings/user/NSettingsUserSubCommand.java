@@ -19,6 +19,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettin
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.List;
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsUserSubCommand() {
     }
