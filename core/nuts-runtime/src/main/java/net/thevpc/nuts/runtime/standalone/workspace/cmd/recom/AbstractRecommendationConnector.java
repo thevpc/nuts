@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NCliInfo;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
@@ -62,23 +63,24 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         if (agent.getRuntimeId() == null) {
             agent.setRuntimeId(workspace.getRuntimeId().toString());
         }
+        NEnv environment = NEnv.of();
         if (agent.getArch() == null) {
-            agent.setArch(workspace.getArch().toString());
+            agent.setArch(environment.getArch().toString());
         }
         if (agent.getOs() == null) {
-            agent.setOs(workspace.getOs().toString());
+            agent.setOs(environment.getOs().toString());
         }
         if (agent.getOsDist() == null) {
-            agent.setOsDist(workspace.getOsDist().toString());
+            agent.setOsDist(environment.getOsDist().toString());
         }
         if (agent.getDesktop() == null) {
-            agent.setDesktop(workspace.getDesktopEnvironment().toString());
+            agent.setDesktop(environment.getDesktopEnvironment().toString());
         }
         if (agent.getPlatform() == null) {
-            agent.setPlatform(workspace.getPlatform().toString());
+            agent.setPlatform(environment.getJava().toString());
         }
         if (agent.getShell() == null) {
-            agent.setShell(workspace.getShellFamily().toString());
+            agent.setShell(environment.getShellFamily().toString());
         }
         if (agent.getUserDigest() == null) {
             agent.setUserDigest(getLocalUserUUID());
