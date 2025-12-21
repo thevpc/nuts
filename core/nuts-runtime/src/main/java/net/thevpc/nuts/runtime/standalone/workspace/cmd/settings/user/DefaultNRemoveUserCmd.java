@@ -8,11 +8,14 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 import net.thevpc.nuts.security.NRemoveUserCmd;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 /**
  *
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNRemoveUserCmd extends AbstractNRemoveUserCmd {
 
     public DefaultNRemoveUserCmd() {
