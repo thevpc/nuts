@@ -31,7 +31,9 @@ import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
+
 /**
  * Represents a callable value with an associated score.
  * <p>
@@ -51,7 +53,7 @@ public interface NScoredCallable<T> extends NScorable {
      *
      * @param score the score of the callable
      * @param value the value
-     * @param <T> the type of the value
+     * @param <T>   the type of the value
      * @return a new {@code NScoredCallable} instance
      */
     static <T> NScoredCallable<T> of(int score, T value) {
@@ -61,10 +63,10 @@ public interface NScoredCallable<T> extends NScorable {
     /**
      * Creates a scored callable with a score, value, and an optional empty message supplier.
      *
-     * @param score the score of the callable
-     * @param value the value
+     * @param score        the score of the callable
+     * @param value        the value
      * @param emptyMessage a supplier of a message if the value is empty or invalid
-     * @param <T> the type of the value
+     * @param <T>          the type of the value
      * @return a new {@code NScoredCallable} instance
      */
     static <T> NScoredCallable<T> of(int score, T value, Supplier<NMsg> emptyMessage) {
@@ -74,9 +76,9 @@ public interface NScoredCallable<T> extends NScorable {
     /**
      * Creates a scored callable from a supplier and a score.
      *
-     * @param score the score of the callable
+     * @param score    the score of the callable
      * @param supplier the supplier of the value
-     * @param <T> the type of the value
+     * @param <T>      the type of the value
      * @return a new {@code NScoredCallable} instance
      */
     static <T> NScoredCallable<T> of(int score, Supplier<T> supplier) {
@@ -86,10 +88,10 @@ public interface NScoredCallable<T> extends NScorable {
     /**
      * Creates a scored callable from a supplier, score, and optional empty message supplier.
      *
-     * @param score the score of the callable
-     * @param supplier the supplier of the value
+     * @param score        the score of the callable
+     * @param supplier     the supplier of the value
      * @param emptyMessage a supplier of a message if the value is empty or invalid
-     * @param <T> the type of the value
+     * @param <T>          the type of the value
      * @return a new {@code NScoredCallable} instance
      */
     static <T> NScoredCallable<T> of(int score, Supplier<T> supplier, Supplier<NMsg> emptyMessage) {
@@ -102,7 +104,7 @@ public interface NScoredCallable<T> extends NScorable {
      * Creates a valid scored callable using a default score.
      *
      * @param value the value
-     * @param <T> the type of the value
+     * @param <T>   the type of the value
      * @return a valid scored callable
      */
     static <T> NScoredCallable<T> ofValid(T value) {
@@ -113,7 +115,7 @@ public interface NScoredCallable<T> extends NScorable {
      * Creates a valid scored callable using a default score and a supplier.
      *
      * @param supplier the supplier of the value
-     * @param <T> the type of the value
+     * @param <T>      the type of the value
      * @return a valid scored callable
      */
     static <T> NScoredCallable<T> ofValid(Supplier<T> supplier) {
@@ -127,7 +129,7 @@ public interface NScoredCallable<T> extends NScorable {
      *
      * @param score the score
      * @param value the value
-     * @param <T> the type of the value
+     * @param <T>   the type of the value
      * @return a valid scored callable
      */
     static <T> NScoredCallable<T> ofValid(int score, T value) {
@@ -139,9 +141,9 @@ public interface NScoredCallable<T> extends NScorable {
      * <p>
      * If the score is zero or negative, the default score is used.
      *
-     * @param score the score
+     * @param score    the score
      * @param supplier the supplier of the value
-     * @param <T> the type of the value
+     * @param <T>      the type of the value
      * @return a valid scored callable
      */
     static <T> NScoredCallable<T> ofValid(int score, Supplier<T> supplier) {
@@ -152,7 +154,7 @@ public interface NScoredCallable<T> extends NScorable {
      * Creates an invalid scored callable with a supplier for the empty message.
      *
      * @param emptyMessage the supplier providing a message
-     * @param <T> the type of the value
+     * @param <T>          the type of the value
      * @return an invalid scored callable
      */
     @SuppressWarnings("unchecked")
@@ -164,7 +166,7 @@ public interface NScoredCallable<T> extends NScorable {
      * Creates an invalid scored callable with a fixed message.
      *
      * @param emptyMessage the message describing why the callable is invalid
-     * @param <T> the type of the value
+     * @param <T>          the type of the value
      * @return an invalid scored callable
      */
     @SuppressWarnings("unchecked")
@@ -186,5 +188,20 @@ public interface NScoredCallable<T> extends NScorable {
      * @return the score as an integer
      */
     int getScore(NScorableContext scorableContext);
+
+
+    default <R> NScoredCallable<R> map(Function<? super T, ? extends R> mapper) {
+        return new NScoredCallable<R>() {
+            @Override
+            public R call() {
+                return mapper.apply(NScoredCallable.this.call());
+            }
+
+            @Override
+            public int getScore(NScorableContext scorableContext) {
+                return NScoredCallable.this.getScore(scorableContext);
+            }
+        };
+    }
 
 }
