@@ -1,20 +1,22 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NExecCmdFormat;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNExecCmdFormat extends DefaultFormatBase<NExecCmdFormat> implements NExecCmdFormat {
     private Predicate<ArgEntry> argumentFilter;
 
@@ -26,7 +28,7 @@ public class DefaultNExecCmdFormat extends DefaultFormatBase<NExecCmdFormat> imp
     private boolean redirectInput=true;
     private boolean redirectOutput=true;
     private boolean redirectError=true;
-    private NExecCmd value;
+    private NExec value;
 
     public DefaultNExecCmdFormat(NWorkspace workspace) {
         super("exec-command");
@@ -66,12 +68,12 @@ public class DefaultNExecCmdFormat extends DefaultFormatBase<NExecCmdFormat> imp
     }
 
     @Override
-    public NExecCmd getValue() {
+    public NExec getValue() {
         return value;
     }
 
     @Override
-    public NExecCmdFormat setValue(NExecCmd value) {
+    public NExecCmdFormat setValue(NExec value) {
         this.value = value;
         return this;
     }
@@ -123,7 +125,7 @@ public class DefaultNExecCmdFormat extends DefaultFormatBase<NExecCmdFormat> imp
     @Override
     public void print(NPrintStream out) {
         StringBuilder sb = new StringBuilder();
-        NExecCmd ec = getValue();
+        NExec ec = getValue();
         NExecOutput _out = ec.getOut();
         NExecOutput err = ec.getErr();
         NExecInput in = ec.getIn();
@@ -257,8 +259,4 @@ public class DefaultNExecCmdFormat extends DefaultFormatBase<NExecCmdFormat> imp
         return false;
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
