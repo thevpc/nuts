@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 import net.thevpc.nuts.core.NBootOptions;
 
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.util.NScorableContext;
@@ -77,14 +78,13 @@ public class DefaultNTextManagerModel {
     private Map<String, NTextFormatTheme> cachedThemes = new HashMap<>();
     public NTexts defaultNTexts;
     public NFormats defaultNFormats;
-    public NLogs defaultNLogs;
 
     public DefaultNTextManagerModel(NWorkspace workspace) {
         this.workspace = workspace;
     }
 
     public void loadExtensions() {
-        List<NCodeHighlighter> all = NExtensions.of().createComponents(NCodeHighlighter.class, null);
+        List<NCodeHighlighter> all = NExtensions.of().createAllSupported(NCodeHighlighter.class, null);
         for (NCodeHighlighter h : all) {
             highlighters.put(h.getId().toLowerCase(), h);
         }
@@ -120,7 +120,7 @@ public class DefaultNTextManagerModel {
 
     public NTextFormatTheme getDefaultTheme() {
         if (defaultTheme == null) {
-            if (NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS) {
+            if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
                 //dark blue and red are very ugly under windows, replace them with green tones !
                 defaultTheme = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme("grass", null, workspace));
             } else {
@@ -202,7 +202,7 @@ public class DefaultNTextManagerModel {
         }
         int best = -1;
         for (NCodeHighlighter hh : highlighters.values()) {
-            int lvl = hh.getScore(NScorableContext.of(lc));
+            int lvl = NExtensions.of().getInstanceScorable(hh, NCodeHighlighter.class).get().getScore(NScorableContext.of(lc));
             if (lvl > 0 && best < lvl) {
                 best = lvl;
                 h = hh;
@@ -221,7 +221,7 @@ public class DefaultNTextManagerModel {
             }
         }
         if ("system".equals(lc)) {
-            NShellFamily shellFamily = NWorkspace.of().getShellFamily();
+            NShellFamily shellFamily = NEnv.of().getShellFamily();
             h = getCodeHighlighter(shellFamily.id());
             _cachedHighlighters.put(lc, h);
             return h;
@@ -282,21 +282,21 @@ public class DefaultNTextManagerModel {
     }
 
     public NElementStreamFormat getStreamFormat(NContentType contentType) {
-            switch (contentType) {
-                case JSON: {
-                    return getJsonMan();
-                }
-                case YAML: {
-                    return getYamlMan();
-                }
-                case XML: {
-                    return getXmlMan();
-                }
-                case TSON: {
-                    return getTsonMan();
-                }
+        switch (contentType) {
+            case JSON: {
+                return getJsonMan();
             }
-            throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
+            case YAML: {
+                return getYamlMan();
+            }
+            case XML: {
+                return getXmlMan();
+            }
+            case TSON: {
+                return getTsonMan();
+            }
+        }
+        throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     public NElementStreamFormat getJsonMan() {
@@ -319,6 +319,7 @@ public class DefaultNTextManagerModel {
         }
         return xmlMan;
     }
+
     public NElementStreamFormat getTsonMan() {
         if (tsonMan == null) {
             tsonMan = new DefaultTsonElementFormat();
