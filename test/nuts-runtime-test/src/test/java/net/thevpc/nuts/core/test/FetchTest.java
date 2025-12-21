@@ -3,7 +3,7 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NDependencyTreeNode;
-import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,7 @@ public class FetchTest {
     @Test
     public void test(){
         TestUtils.openNewTestWorkspace();
-        NDefinition resultDefinition = NFetchCmd.of("org.springframework.boot:spring-boot#2.4.1")
+        NDefinition resultDefinition = NFetch.of("org.springframework.boot:spring-boot#2.4.1")
                 .getResultDefinition();
         TestUtils.println("-----------------");
         for (NDependency dependency : resultDefinition.getDescriptor().getDependencies()) {
