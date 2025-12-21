@@ -5,7 +5,8 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
@@ -23,6 +24,7 @@ import java.io.*;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNElementWriter implements NElementWriter {
 
     private final DefaultNTextManagerModel model;
@@ -190,11 +192,6 @@ public class DefaultNElementWriter implements NElementWriter {
 
     public NElementFactoryService getElementFactoryService() {
         return model.getElementFactoryService();
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     @Override
