@@ -7,17 +7,16 @@ import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepositoryConfig;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.util.NMapWithAlias;
 import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.platform.NPlatformHome;
 
 import java.util.*;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNRepositoryDB implements NRepositoryDB {
     private final NMapWithAlias<String, NAddRepositoryOptions> optionByName = new NMapWithAlias<>();
     private final NMapWithAlias<String, NAddRepositoryOptions> optionByLocation = new NMapWithAlias<>();
@@ -201,8 +200,4 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
 
 
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
