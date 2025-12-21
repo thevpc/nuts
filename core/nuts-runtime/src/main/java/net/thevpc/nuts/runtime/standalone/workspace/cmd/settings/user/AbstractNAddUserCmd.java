@@ -28,10 +28,10 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBaseRepo;
 import net.thevpc.nuts.security.NAddUserCmd;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.*;
 
@@ -40,6 +40,7 @@ import java.util.*;
  * @author thevpc
  * @since 0.5.4
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public abstract class AbstractNAddUserCmd extends NWorkspaceCmdBaseRepo<NAddUserCmd> implements NAddUserCmd {
 
     protected String login;
@@ -51,11 +52,6 @@ public abstract class AbstractNAddUserCmd extends NWorkspaceCmdBaseRepo<NAddUser
 
     public AbstractNAddUserCmd() {
         super("add-user");
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     @Override
