@@ -2,13 +2,11 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NInstallStatus;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.util.NCopiable;
 
 import java.util.*;
 
@@ -76,7 +74,7 @@ public class InstallIdCacheItem {
 
     public NDefinition getDefinition() {
         if (definition == null) {
-            definition = NSearchCmd.of(id)
+            definition = NSearch.of(id)
                     .failFast()
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .latest()
@@ -97,7 +95,7 @@ public class InstallIdCacheItem {
         if(force){
             definition =NSession.of().copy()
                     .setCached(false) // disable cache
-                    .callWith(()-> NSearchCmd.of(id)
+                    .callWith(()-> NSearch.of(id)
                             .failFast()
                             .setRepositoryFilter(NRepositoryFilters.of().installedRepo().neg())
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
@@ -106,7 +104,7 @@ public class InstallIdCacheItem {
                             .findFirst().get());
 
         }else {
-            definition = NSearchCmd.of(id)
+            definition = NSearch.of(id)
                     .failFast()
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .latest()
