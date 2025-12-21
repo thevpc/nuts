@@ -1,0 +1,142 @@
+/**
+ * ====================================================================
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <br>
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . It's based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
+ * <br>
+ *
+ * Copyright [2020] [thevpc]  
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * you may  not use this file except in compliance with the License. You may obtain
+ * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an 
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * either express or implied. See the License for the specific language 
+ * governing permissions and limitations under the License.
+ * <br> ====================================================================
+ */
+package net.thevpc.nuts.runtime.standalone.workspace.cmd.push;
+
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NFetch;
+import net.thevpc.nuts.command.NFetchMode;
+import net.thevpc.nuts.command.NPush;
+import net.thevpc.nuts.command.NPushException;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
+
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+
+import net.thevpc.nuts.spi.NRepositorySPI;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.*;
+
+/**
+ *
+ * @author thevpc
+ */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
+public class DefaultNPush extends AbstractDefaultNPush {
+
+    public DefaultNPush(NWorkspace workspace) {
+        super(workspace);
+    }
+
+    @Override
+    public NPush run() {
+        NRepositoryFilter repositoryFilter = null;
+        Map<NId, NDefinition> toProcess = new LinkedHashMap<>();
+        for (NId id : this.getIds()) {
+            if (NStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
+                throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", id.getVersion()));
+            }
+            NDefinition file = NFetch.of(id)
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .setTransitive(false).getResultDefinition();
+            NAssert.requireNonNull(file, "content to push");
+            toProcess.put(id, file);
+        }
+        NWorkspaceExt dws = NWorkspaceExt.of();
+        NAssert.requireNonBlank(toProcess, "package tp push");
+        for (Map.Entry<NId, NDefinition> entry : toProcess.entrySet()) {
+            NId id = entry.getKey();
+            NDefinition file = entry.getValue();
+            NFetchMode fetchMode = this.isOffline() ? NFetchMode.LOCAL : NFetchMode.REMOTE;
+            NWorkspaceUtils wu = NWorkspaceUtils.of();
+            if (NBlankable.isBlank(this.getRepository())) {
+                Set<String> errors = new LinkedHashSet<>();
+                //TODO : CHECK ME, why offline?
+                boolean ok = false;
+                for (NRepository repo : wu.filterRepositoriesDeploy(file.getId(), repositoryFilter)) {
+                    NDescriptor descr = null;
+                    NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
+                    try {
+                        descr = repoSPI.fetchDescriptor().setFetchMode(fetchMode).setId(file.getId()).getResult();
+                    } catch (Exception e) {
+                        errors.add(CoreStringUtils.exceptionToString(e));
+                        //
+                    }
+                    if (descr != null && repo.config().isSupportedMirroring()) {
+                        NId id2 = CoreNIdUtils.createContentFaceId(dws.resolveEffectiveId(descr), descr);
+                        try {
+                            repoSPI.push().setId(id2)
+                                    .setOffline(offline)
+                                    .setRepository(getRepository())
+                                    .setArgs(args.toArray(new String[0]))
+                                    .run();
+                            ok = true;
+                            break;
+                        } catch (Exception e) {
+                            errors.add(CoreStringUtils.exceptionToString(e));
+                            //
+                        }
+                    }
+                }
+                if (!ok) {
+                    throw new NPushException(id, NMsg.ofC(
+                            "unable to push %s to repository %s : %s",
+                            id == null ? "<null>" : id,
+                            this.getRepository(),
+                            String.join("\n", errors)
+                            ));
+                }
+            } else {
+                NRepository repo = NWorkspace.of().findRepository(this.getRepository()).get();
+                if (!repo.config().isEnabled()) {
+                    throw new NIllegalArgumentException(NMsg.ofC("repository %s is disabled", repo.getName()));
+                }
+                NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.getDescriptor()) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
+                        ;
+                NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
+                repoSPI.deploy()
+                        .setId(effId)
+                        .setContent(file.getContent().orNull())
+                        .setDescriptor(file.getDescriptor())
+                        //                        .setFetchMode(fetchMode)
+                        //                        .setOffline(this.isOffline())
+                        //                        .setTransitive(true)
+                        .run();
+            }
+        }
+        return this;
+    }
+}
