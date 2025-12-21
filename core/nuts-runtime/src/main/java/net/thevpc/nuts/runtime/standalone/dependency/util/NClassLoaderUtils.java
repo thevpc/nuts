@@ -31,8 +31,8 @@ import java.net.URLClassLoader;
 import java.util.*;
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.command.NFetchCmd;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NFetch;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NClassLoaderNode;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepositoryFilter;
@@ -80,7 +80,7 @@ public final class NClassLoaderUtils {
         }
         NId id = d.toId();
         try {
-            cc = NSearchCmd.of(id)
+            cc = NSearch.of(id)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .setRepositoryFilter(repositoryFilter)
                     .latest()
@@ -119,7 +119,7 @@ public final class NClassLoaderUtils {
             }
         }
         try {
-            cc = NFetchCmd.of(d.getDependency().toId())
+            cc = NFetch.of(d.getDependency().toId())
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .setRepositoryFilter(repositoryFilter)
                     .getResultContent();
