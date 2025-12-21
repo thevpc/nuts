@@ -39,7 +39,6 @@ import java.util.logging.Level;
  * @app.category Logging
  */
 public interface NLog {
-//    NLog NULL = NullNLog.NULL;
 
     String getName();
 
