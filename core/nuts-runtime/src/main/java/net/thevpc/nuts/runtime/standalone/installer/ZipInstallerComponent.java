@@ -29,7 +29,7 @@ import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
@@ -39,6 +39,8 @@ import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NInstallerComponent;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 
 import java.io.IOException;
@@ -49,17 +51,17 @@ import java.io.IOException;
 @NComponentScope(NScopeType.WORKSPACE)
 public class ZipInstallerComponent implements NInstallerComponent {
 
-    @Override
-    public int getScore(NScorableContext ctx) {
+    @NScore
+    public static int getScore(NScorableContext ctx) {
         NDefinition def = ctx.getCriteria(NDefinition.class);
         if (def != null) {
             if (def.getDescriptor() != null) {
                 if ("zip".equals(def.getDescriptor().getPackaging())) {
-                    return DEFAULT_SCORE;
+                    return NScorable.DEFAULT_SCORE;
                 }
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
     @Override
@@ -86,7 +88,7 @@ public class ZipInstallerComponent implements NInstallerComponent {
         }
         //nutsDefinition.setInstallInformation(NWorkspaceExt.of().getInstalledRepository().getInstallInformation(nutsDefinition.getId()));
         if (!executionContext.getExecutorOptions().isEmpty()) {
-            NExecCmd.of()
+            NExec.of()
                     .addCommand(executionContext.getExecutorOptions())
                     .addExecutorOptions(executionContext.getExecutorOptions())
                     .setEnv(executionContext.getEnv())
