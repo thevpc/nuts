@@ -1,2 +1,3 @@
 net.thevpc.nuts.ext.ssh.SshNExecTargetSPI
 net.thevpc.nuts.ext.ssh.SshPathFactory
+net.thevpc.nuts.ext.ssh.NEnvSshImpl
