@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.util.NBlankable;
@@ -8,7 +8,7 @@ import net.thevpc.nuts.util.NLiteral;
 
 public class CoreAnsiTermHelper {
     public static String tput(String str,long timeout) {
-        return NExecCmd.of()
+        return NExec.of()
                 .system()
                 .addCommand("tput", str)
                 .failFast()
@@ -17,7 +17,7 @@ public class CoreAnsiTermHelper {
         ;
     }
     public static String stty(String str,long timeout) {
-        return NExecCmd.of()
+        return NExec.of()
                 .system()
                 .addCommand("stty", str)
                 .failFast()
@@ -61,7 +61,7 @@ public class CoreAnsiTermHelper {
 
     public static String evalCommand(String ...cmd) {
         try {
-            String s= NExecCmd.of()
+            String s= NExec.of()
                     .system()
                     .setIn(NExecInput.ofNull())
                     .addCommand(cmd)
@@ -73,7 +73,7 @@ public class CoreAnsiTermHelper {
                 return s.trim();
             }
             //add 500 of sleep time!
-            s= NExecCmd.of()
+            s= NExec.of()
                     .system()
                     .addCommand(cmd)
                     .failFast()
