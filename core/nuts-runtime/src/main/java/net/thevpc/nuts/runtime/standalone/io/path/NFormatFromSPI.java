@@ -1,12 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.text.NFormat;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NFormatSPI;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NFormatFromSPI extends DefaultFormatBase<NFormat> {
     private final NFormatSPI spi;
 
@@ -25,8 +27,4 @@ public class NFormatFromSPI extends DefaultFormatBase<NFormat> {
         return spi.configureFirst(cmdLine);
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
