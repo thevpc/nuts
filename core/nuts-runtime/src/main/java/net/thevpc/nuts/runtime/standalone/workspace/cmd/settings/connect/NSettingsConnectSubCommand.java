@@ -17,9 +17,7 @@ import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.executor.system.PipeRunnable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
 
 import java.io.PrintStream;
@@ -29,6 +27,7 @@ import java.net.Socket;
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
 
     public static final int DEFAULT_ADMIN_SERVER_PORT = 8898;
