@@ -22,11 +22,9 @@ import java.util.*;
 public class InvalidFilePath implements NPathSPI {
 
     private final String value;
-    private final NWorkspace workspace;
 
-    public InvalidFilePath(String value, NWorkspace workspace) {
+    public InvalidFilePath(String value) {
         this.value = value == null ? "" : value;
-        this.workspace = workspace;
     }
 
     @Override
@@ -58,9 +56,6 @@ public class InvalidFilePath implements NPathSPI {
         return "";
     }
 
-    public NWorkspace getWorkspace() {
-        return workspace;
-    }
 
     public NPath resolve(NPath basePath, String path) {
         String b = value;
