@@ -21,7 +21,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextTransformConfig;
@@ -42,6 +41,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @NComponentScope(NScopeType.SESSION)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NAppImpl implements NApp, Cloneable, NCopiable {
     private Class appClass;
     private final NPath[] folders = new NPath[NStoreType.values().length];
@@ -61,11 +61,6 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
      */
     private NVersion previousVersion;
     private List<String> modeArgs = new ArrayList<>();
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 
     @Override
     public NApp copy() {
