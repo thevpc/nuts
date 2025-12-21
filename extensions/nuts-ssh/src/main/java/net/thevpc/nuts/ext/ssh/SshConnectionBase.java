@@ -1,12 +1,11 @@
 package net.thevpc.nuts.ext.ssh;
 
-import net.thevpc.nuts.command.NExecCmd;
-import net.thevpc.nuts.command.NExecTargetInfo;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.text.NMsg;
@@ -25,7 +24,7 @@ import java.util.stream.Stream;
 public abstract class SshConnectionBase implements SshConnection {
     protected List<SshListener> listeners = new ArrayList<>();
     protected NConnectionString connectionString;
-    private NExecTargetInfo probedInfo;
+    private NEnv probedInfo;
     private boolean failFast;
 
     public SshConnectionBase() {
@@ -391,9 +390,9 @@ public abstract class SshConnectionBase implements SshConnection {
         return shellFamily;
     }
 
-    private NExecTargetInfo getProbedInfo() {
+    private NEnv getProbedInfo() {
         if (probedInfo == null) {
-            probedInfo = NExecCmd.of().at(connectionString).probeTarget();
+            probedInfo = NEnv.of(connectionString);
         }
         return probedInfo;
     }
@@ -829,6 +828,7 @@ public abstract class SshConnectionBase implements SshConnection {
                                     NPathInfo o = lazy.get(nPathInfo.getPath());
                                     found.add(
                                             new  DefaultNPathInfo(
+                                                    o.getName(),
                                                     o.getPath(), o.getType(), nPathInfo.getType(), o.getTargetPath(), o.getContentLength(), o.isSymbolicLink(), o.getLastModifiedInstant(), o.getLastAccessInstant(), o.getCreationInstant(), o.getPermissions(), o.getOwner(), o.getGroup()
                                             )
                                     );
@@ -904,8 +904,11 @@ public abstract class SshConnectionBase implements SshConnection {
             perms.add(NPathPermission.OWNER_READ);
             perms.add(NPathPermission.OWNER_WRITE);
         }
+        int u = NStringUtils.lastIndexOf(pathStr, new char[]{'/', '\\'});
+        String name=u<0?pathStr:pathStr.substring(u+1);
 
         return new DefaultNPathInfo(
+                name,
                 pathStr,
                 type,
                 null,               // targetType unknown on Windows for now
@@ -994,7 +997,9 @@ public abstract class SshConnectionBase implements SshConnection {
             if (permissionsStr.charAt(2) == 'w' || permissionsStr.charAt(5) == 'w' || permissionsStr.charAt(8) == 'w') perms.add(NPathPermission.CAN_WRITE);
             if (permissionsStr.charAt(3) == 'x' || permissionsStr.charAt(6) == 'x' || permissionsStr.charAt(9) == 'x') perms.add(NPathPermission.CAN_EXECUTE);
         }
-        return new DefaultNPathInfo(pathStr, type, targetType, targetPathStr, size, isSymlink,
+        int u = NStringUtils.lastIndexOf(pathStr, new char[]{'/', '\\'});
+        String name=u<0?pathStr:pathStr.substring(u+1);
+        return new DefaultNPathInfo(name,pathStr, type, targetType, targetPathStr, size, isSymlink,
                 Instant.ofEpochSecond(lastModifiedEpoch),
                 lastAccessEpoch > 0 ? Instant.ofEpochSecond(lastAccessEpoch) : null,
                 creationEpoch > 0 ? Instant.ofEpochSecond(creationEpoch) : null,
@@ -1058,6 +1063,7 @@ public abstract class SshConnectionBase implements SshConnection {
                     if(o.isSymbolicLink()){
                         NPathInfo line2 = parseStatLine(lines.get(1));
                         return new  DefaultNPathInfo(
+                                o.getName(),
                                 o.getPath(), o.getType(), line2.getTargetType(), o.getTargetPath(), o.getContentLength(), o.isSymbolicLink(), o.getLastModifiedInstant(), o.getCreationInstant(), o.getLastAccessInstant(), o.getPermissions(), o.getOwner(), o.getGroup()
                         );
                     }
