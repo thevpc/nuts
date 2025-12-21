@@ -6,7 +6,8 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.runtime.standalone.xtra.time.CProgressBar;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.spi.NSystemTerminalBaseImpl;
 import net.thevpc.nuts.text.NTerminalCmd;
@@ -16,6 +17,7 @@ import net.thevpc.nuts.text.NMsg;
 
 import java.io.InputStream;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseImpl implements NSystemTerminal {
 
     protected CProgressBar progressBar;
@@ -117,11 +119,6 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
             progressBar = CProgressBar.of();
         }
         return progressBar;
-    }
-
-    @Override
-    public int getScore(NScorableContext criteria) {
-        return DEFAULT_SCORE;
     }
 
     @Override
