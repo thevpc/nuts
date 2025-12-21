@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.ntalk;
 
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.text.NMsg;
 
 import java.io.*;
