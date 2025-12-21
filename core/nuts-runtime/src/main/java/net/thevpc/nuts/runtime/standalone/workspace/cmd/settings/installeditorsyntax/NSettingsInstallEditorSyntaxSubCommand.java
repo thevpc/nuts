@@ -5,15 +5,14 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.installeditorsyntax;
 
-import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NSysEditorFamily;
 import net.thevpc.nuts.command.NSysEditorSupportCmd;
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NBooleanRef;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -23,6 +22,7 @@ import java.util.Set;
  *
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSettingsInstallEditorSyntaxSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsInstallEditorSyntaxSubCommand() {
         super();
