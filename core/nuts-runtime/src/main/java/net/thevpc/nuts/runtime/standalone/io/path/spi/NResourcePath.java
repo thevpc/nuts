@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
@@ -114,7 +114,7 @@ public class NResourcePath implements NPathSPI {
             urlPathLookedUp = true;
             try {
                 String loc = location;
-                ClassLoader resultClassLoader = NSearchCmd.of().addIds(
+                ClassLoader resultClassLoader = NSearch.of().addIds(
                                 this.ids.toArray(new NId[0])
                         ).setLatest(true)
                         .setDependencyFilter(
@@ -534,7 +534,7 @@ public class NResourcePath implements NPathSPI {
         public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             try {
                 if (path.startsWith("resource:")) {
-                    return NScoredCallable.of(DEFAULT_SCORE, () -> new NResourcePath(path));
+                    return NScoredCallable.of(NScorable.DEFAULT_SCORE, () -> new NResourcePath(path));
                 }
             } catch (Exception ex) {
                 //ignore
@@ -542,13 +542,13 @@ public class NResourcePath implements NPathSPI {
             return null;
         }
 
-        @Override
-        public int getScore(NScorableContext context) {
+        @NScore(fixed = NScorable.DEFAULT_SCORE)
+        public static int getScore(NScorableContext context) {
             String path= context.getCriteria();
             if (path.startsWith("resource:")) {
-                return DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
             }
-            return UNSUPPORTED_SCORE;
+            return NScorable.UNSUPPORTED_SCORE;
         }
     }
 
