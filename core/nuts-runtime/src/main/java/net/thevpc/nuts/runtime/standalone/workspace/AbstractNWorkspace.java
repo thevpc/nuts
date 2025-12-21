@@ -28,7 +28,7 @@ import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootWorkspaceImpl;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NInstallListener;
 import net.thevpc.nuts.core.NBootOptions;
 import net.thevpc.nuts.core.NWorkspace;
@@ -66,11 +66,6 @@ public abstract class AbstractNWorkspace implements NWorkspace {
     @Override
     public <T> T callWith(NCallable<T> callable) {
         return NScopedWorkspace.callWith(this,callable);
-    }
-
-    @Override
-    public int getScore(NScorableContext criteria) {
-        return DEFAULT_SCORE;
     }
 
     @Override
@@ -186,7 +181,7 @@ public abstract class AbstractNWorkspace implements NWorkspace {
             LOG.log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2))
                     .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
             );
-            NExecCmd execCmd = NExecCmd.of()
+            NExec execCmd = NExec.of()
                     .setExecutionType(info2.getExecutionType().orNull())
                     .setRunAs(info2.getRunAs().orNull())
                     .failFast();
