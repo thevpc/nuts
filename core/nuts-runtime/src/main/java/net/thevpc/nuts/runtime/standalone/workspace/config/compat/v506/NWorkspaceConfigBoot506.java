@@ -32,7 +32,7 @@ import net.thevpc.nuts.core.NConfigItem;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NRepositoryRef;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigBoot;
@@ -101,7 +101,7 @@ public final class NWorkspaceConfigBoot506 extends NConfigItem {
     private String extensionDependencies = null;
     private List<NCommandFactoryConfig> commandFactories;
     private Properties env = new Properties();
-    private List<NPlatformLocation> sdk = new ArrayList<>();
+    private List<NExecutionEngineLocation> sdk = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
     private boolean secure = false;
     private String authenticationAgent;
@@ -160,7 +160,7 @@ public final class NWorkspaceConfigBoot506 extends NConfigItem {
         return this;
     }
 
-    public NWorkspaceConfigBoot506 setSdk(List<NPlatformLocation> sdk) {
+    public NWorkspaceConfigBoot506 setSdk(List<NExecutionEngineLocation> sdk) {
         this.sdk = sdk;
         return this;
     }
@@ -183,7 +183,7 @@ public final class NWorkspaceConfigBoot506 extends NConfigItem {
         return users;
     }
 
-    public List<NPlatformLocation> getSdk() {
+    public List<NExecutionEngineLocation> getSdk() {
         return sdk;
     }
 
