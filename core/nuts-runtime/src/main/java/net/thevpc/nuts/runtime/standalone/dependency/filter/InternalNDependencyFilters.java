@@ -2,14 +2,9 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.platform.NArchFamily;
-import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
-import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.platform.NPlatformFamily;
+import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NFilter;
+import net.thevpc.nuts.util.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class InternalNDependencyFilters extends InternalNTypedFilters<NDependencyFilter>
         implements NDependencyFilters {
 
@@ -188,16 +184,16 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
 
     @Override
     public NDependencyFilter byCurrentDesktop() {
-        return byDesktop(NWorkspace.of().getDesktopEnvironmentFamilies());
+        return byDesktop(NEnv.of().getDesktopEnvironmentFamilies());
     }
 
     public NDependencyFilter byCurrentArch() {
-        return byArch(NWorkspace.of().getArchFamily());
+        return byArch(NEnv.of().getArchFamily());
     }
 
     @Override
     public NDependencyFilter byCurrentOs() {
-        return byOs(NWorkspace.of().getOsFamily());
+        return byOs(NEnv.of().getOsFamily());
     }
 
     @Override
@@ -314,7 +310,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
     }
 
     @Override
-    public NDependencyFilter byPlatform(NPlatformFamily... pf) {
+    public NDependencyFilter byPlatform(NExecutionEngineFamily... pf) {
         if (pf == null || pf.length==0) {
             return always();
         }
@@ -332,8 +328,4 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         ).simplify();
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
