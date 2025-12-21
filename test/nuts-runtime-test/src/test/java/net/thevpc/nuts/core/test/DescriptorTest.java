@@ -7,8 +7,8 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependency;
-import net.thevpc.nuts.command.NFetchCmd;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NFetch;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.*;
 
@@ -25,7 +25,7 @@ public class DescriptorTest {
 
     @Test
     public void testSearchDescriptor() {
-        NDefinition u = NSearchCmd.of().addId("org.springframework.boot:spring-boot-cli#2.4.1")
+        NDefinition u = NSearch.of().addId("org.springframework.boot:spring-boot-cli#2.4.1")
                 .getResultDefinitions().findFirst().get();
         TestUtils.println(u.getDescriptor());
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
@@ -37,7 +37,7 @@ public class DescriptorTest {
     @Test
     public void testSearchDescriptor2() {
 
-        NDefinition u = NFetchCmd.of("org.openjfx:javafx-controls#17.0.0.1")
+        NDefinition u = NFetch.of("org.openjfx:javafx-controls#17.0.0.1")
                 .getResultDefinition();
         for (NDependency dependency : u.getDescriptor().getDependencies()) {
             System.out.println(dependency.toString());
@@ -52,7 +52,7 @@ public class DescriptorTest {
 
     @Test
     public void testSearchDescriptor3() {
-        NDefinition u = NFetchCmd.of("ch.qos.logback:logback-classic#1.2.11")
+        NDefinition u = NFetch.of("ch.qos.logback:logback-classic#1.2.11")
                 .getResultDefinition();
         for (NDependency dependency : u.getDescriptor().getDependencies()) {
             System.out.println(dependency.toString());
