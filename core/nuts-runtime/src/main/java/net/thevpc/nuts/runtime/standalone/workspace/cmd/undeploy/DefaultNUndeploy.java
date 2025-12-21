@@ -1,0 +1,62 @@
+package net.thevpc.nuts.runtime.standalone.workspace.cmd.undeploy;
+
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.command.NFetchStrategy;
+import net.thevpc.nuts.command.NSearch;
+import net.thevpc.nuts.command.NUndeploy;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.spi.NRepositorySPI;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
+
+@NScore(fixed = NScorable.DEFAULT_SCORE)
+public class DefaultNUndeploy extends AbstractNUndeploy {
+
+    public DefaultNUndeploy(NWorkspace workspace) {
+        super(workspace);
+    }
+
+    @Override
+    public NUndeploy run() {
+        NSession session= NSession.of();
+        NWorkspace workspace = NWorkspace.of();
+        NWorkspaceUtils.of(workspace).checkReadOnly();
+        if (ids.isEmpty()) {
+            throw new NExecutionException(NMsg.ofPlain("no package to undeploy"), NExecutionException.ERROR_1);
+        }
+        for (NId id : ids) {
+            NDefinition p = NSearch.of()
+                    .setFetchStrategy(isOffline() ? NFetchStrategy.OFFLINE : NFetchStrategy.ONLINE)
+                    .addIds(id)
+                    .addRepositoryFilter(NRepositoryFilters.of().byName(getRepository()))
+                    //skip 'installed' repository
+                    .setRepositoryFilter(
+                            NRepositoryFilters.of().installedRepo().neg()
+                    )
+                    .setDistinct(true)
+                    .failFast()
+                    .getResultDefinitions().findFirst().get();
+            NRepository repository1 = workspace
+                    .findRepository(p.getRepositoryUuid()).get();
+            NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).toRepositorySPI(repository1);
+            repoSPI.undeploy()
+                    .setId(p.getId())
+                    //                    .setFetchMode(NutsFetchMode.LOCAL)
+                    .run();
+            addResult(id);
+        }
+        if (session.isTrace()) {
+            NOut.println(result);
+        }
+        return this;
+    }
+
+}
