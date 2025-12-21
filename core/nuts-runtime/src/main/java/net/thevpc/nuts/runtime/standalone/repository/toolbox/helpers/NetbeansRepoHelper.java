@@ -2,11 +2,11 @@ package net.thevpc.nuts.runtime.standalone.repository.toolbox.helpers;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.util.SingleBaseIdFilterHelper;
@@ -73,7 +73,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                 .setExecutor(NArtifactCallBuilder.of()
                         .setId(NId.of("exec"))
                         .setArguments(
-                                NWorkspace.of().getOsFamily().isWindow()
+                                NEnv.of().getOsFamily().isWindow()
                                         ? "$nutsIdBinPath/app/bin/netbeans.exe"
                                         : "$nutsIdBinPath/app/bin/netbeans"
                         )
