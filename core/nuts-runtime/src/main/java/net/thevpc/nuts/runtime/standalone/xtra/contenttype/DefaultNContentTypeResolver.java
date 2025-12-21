@@ -27,9 +27,10 @@
 package net.thevpc.nuts.runtime.standalone.xtra.contenttype;
 
 import net.thevpc.nuts.app.NApp;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.io.NPathExtensionType;
 import net.thevpc.nuts.io.NPath;
@@ -38,11 +39,8 @@ import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NContentTypeResolver;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NRef;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -54,6 +52,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNContentTypeResolver implements NContentTypeResolver {
     Map<String, String> defaultExtensionToMimeType = new HashMap<>();
 
@@ -92,18 +91,18 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                 if (contentType == null || "text/plain".equals(contentType)) {
                     String e = NPath.of(Paths.get(name)).nameParts(NPathExtensionType.SHORT).getExtension();
                     if (e != null && e.equalsIgnoreCase("ntf")) {
-                        return NScoredCallable.of(DEFAULT_SCORE + 10, "text/x-nuts-text-format");
+                        return NScoredCallable.of(NScorable.DEFAULT_SCORE + 10, "text/x-nuts-text-format");
                     }
                 }
                 if (contentType == null || "text/plain".equals(contentType)) {
                     String e = NPath.of(Paths.get(name)).nameParts(NPathExtensionType.SHORT).getExtension();
                     if (e != null && e.equalsIgnoreCase("nuts")) {
-                        return NScoredCallable.of(DEFAULT_SCORE + 10, "application/json");
+                        return NScoredCallable.of(NScorable.DEFAULT_SCORE + 10, "application/json");
                     }
                 }
             }
             if (contentType != null) {
-                return NScoredCallable.of(DEFAULT_SCORE, contentType);
+                return NScoredCallable.of(NScorable.DEFAULT_SCORE, contentType);
             }
         }
 
@@ -135,10 +134,10 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             }
         }
         if (contentType == null) {
-            if (NWorkspace.of().getOsFamily().isPosix()) {
+            if (NEnv.of().getOsFamily().isPosix()) {
                 if (contentType == null) {
                     try {
-                        String c = NExecCmd.of("file", "--mime-type", file.toString())
+                        String c = NExec.of("file", "--mime-type", file.toString())
                                 .system()
                                 .failFast()
                                 .getGrabbedOutString();
@@ -154,7 +153,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                 }
                 if (contentType == null) {
                     try {
-                        String c = NExecCmd.of("xdg-mime", "query", "filetype", file.toString())
+                        String c = NExec.of("xdg-mime", "query", "filetype", file.toString())
                                 .system()
                                 .failFast()
                                 .getGrabbedOutString();
@@ -230,7 +229,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             }
         }
         if (contentType != null) {
-            return NScoredCallable.of(DEFAULT_SCORE, contentType);
+            return NScoredCallable.of(NScorable.DEFAULT_SCORE, contentType);
         }
         return NScoredCallable.ofInvalid(() -> NMsg.ofInvalidValue("content-type"));
     }
@@ -245,11 +244,6 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
     public List<String> findContentTypesByExtension(String extension) {
         Set<String> v = model().extensionsToContentType.get(extension);
         return v == null ? Collections.emptyList() : new ArrayList<>(v);
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     public DefaultNContentTypeResolverModel model() {
