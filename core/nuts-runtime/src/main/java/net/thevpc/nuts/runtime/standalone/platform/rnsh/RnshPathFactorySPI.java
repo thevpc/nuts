@@ -1,0 +1,257 @@
+package net.thevpc.nuts.runtime.standalone.platform.rnsh;
+
+import net.thevpc.nuts.concurrent.NScoredCallable;
+import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.runtime.standalone.io.inputstream.NTempOutputStreamImpl;
+import net.thevpc.nuts.spi.NPathFactorySPI;
+import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.spi.NPathSPIAware;
+import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.*;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class RnshPathFactorySPI implements NPathFactorySPI {
+    @Override
+    public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
+        //fail fast!
+        if (protocol != null) {
+            switch (protocol) {
+                case "rnsh-http":
+                case "rnsh":
+                case "rnsh-https":
+                case "rnshs":
+                    break;
+                default:
+                    return NScoredCallable.ofInvalid(NMsg.ofC("Invalid path: %s", path));
+            }
+        }
+        if (
+                path.startsWith("rnsh-http:")
+                        || path.startsWith("rnsh:")
+                        || path.startsWith("rnsh-https:")
+                        || path.startsWith("rnshs:")
+        ) {
+            NConnectionString cnx = NConnectionString.get(path).orNull();
+            if (cnx != null) {
+                return NScoredCallable.of(3, () -> new NServerPathSPI(cnx));
+            }
+        }
+        return NScoredCallable.ofInvalid(NMsg.ofC("Invalid path: %s", path));
+    }
+
+    @NScore
+    public static int getScore(NScorableContext context) {
+        String path = context.getCriteria();
+        if (
+                path.startsWith("rnsh-http:")
+                        || path.startsWith("rnsh:")
+                        || path.startsWith("rnsh-https:")
+                        || path.startsWith("rnshs:")
+        ) {
+            return NScorable.DEFAULT_SCORE;
+        }
+        return NScorable.UNSUPPORTED_SCORE;
+    }
+
+    public static class NServerPathSPI implements NPathSPI {
+        final NConnectionString cnx;
+        final RnshHttpClient client;
+        final String remotePath;
+
+        private NServerPathSPI(NConnectionString cnx, String remotePath, RnshHttpClient client) {
+            this.cnx = cnx;
+            this.client = client;
+            this.remotePath = remotePath;
+        }
+
+        public NServerPathSPI(NConnectionString cnx) {
+            this.cnx = cnx;
+            this.client = new RnshHttpClient();
+            this.client.setConnectionString(cnx);
+            this.remotePath = NStringUtils.firstNonBlank(cnx.getPath(), "/");
+        }
+
+        @Override
+        public byte[] getDigest(NPath basePath, String algo) {
+            client.ensureConnected();
+            String hash = client.digest(remotePath, algo);
+            return NHex.toBytes(hash);
+        }
+
+        @Override
+        public List<NPathChildDigestInfo> listDigestInfo(NPath basePath, String algo) {
+            client.ensureConnected();
+            List<NPathChildStringDigestInfo> nPathChildStringDigestInfos = client.directoryListDigest(remotePath, algo);
+            if (nPathChildStringDigestInfos == null) {
+                return new ArrayList<>();
+            }
+            return nPathChildStringDigestInfos
+                    .stream().map(x ->
+                            new NPathChildDigestInfo()
+                                    .setName(x.getName())
+                                    .setDigest(NHex.toBytes(x.getDigest()))
+                    )
+                    .collect(Collectors.toList());
+        }
+
+        @Override
+        public NStream<NPath> list(NPath basePath) {
+            if (!client.ensureConnectedSafely()) {
+                return NStream.ofEmpty();
+            }
+            return
+                    NStream.ofArray(client.listNames(remotePath))
+                            .map(x ->
+                                    NPath.of(cnx.resolve(x).toString())
+                            )
+                    ;
+        }
+
+        @Override
+        public boolean copyTo(NPath basePath, NPath other, NPathOption... options) {
+            //TODO check if the two files are on the same ssh filesystem ?
+            if (basePath instanceof NPathSPIAware && other instanceof NPathSPIAware) {
+                NPathSPI spi1 = ((NPathSPIAware) basePath).spi();
+                NPathSPI spi2 = ((NPathSPIAware) other).spi();
+                if (spi1 instanceof NServerPathSPI && spi2 instanceof NServerPathSPI) {
+                    NServerPathSPI ssh1 = (NServerPathSPI) spi1;
+                    NServerPathSPI ssh2 = (NServerPathSPI) spi2;
+                    if (ssh1.cnx.withPath("/").equals(ssh2.cnx.withPath("/"))) {
+                        // same filesystem
+                        client.exec("cp", "-r", ssh1.remotePath, ssh2.remotePath);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public NPathType getType(NPath basePath) {
+            if (!client.ensureConnectedSafely()) {
+                return NPathType.NOT_FOUND;
+            }
+            try {
+                client.ensureConnected();
+                RnshHttpClient.NFileInfo i = client.getFileInfo(remotePath);
+                if (i != null) {
+                    return i.getPathType();
+                }
+            } catch (Exception e) {
+                //
+            }
+            return NPathType.NOT_FOUND;
+        }
+
+        @Override
+        public boolean exists(NPath basePath) {
+            if (!client.ensureConnectedSafely()) {
+                return false;
+            }
+            return getType(basePath) != NPathType.NOT_FOUND;
+        }
+
+        @Override
+        public long getContentLength(NPath basePath) {
+            if (!client.ensureConnectedSafely()) {
+                return -1;
+            }
+            try {
+                RnshHttpClient.NFileInfo i = client.getFileInfo(remotePath);
+                return i.getContentLength();
+            } catch (Exception e) {
+                return -1;
+            }
+        }
+
+        @Override
+        public InputStream getInputStream(NPath basePath, NPathOption... options) {
+            return client.getFile(remotePath).getInputStream();
+        }
+
+        @Override
+        public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
+            String name = NPath.of(remotePath).getName();
+            NTempOutputStreamImpl nTempOutputStream = new NTempOutputStreamImpl();
+            nTempOutputStream.setOnCompleted(inputStream -> {
+                client.ensureConnected();
+                client.putFile(new NInputContentProvider() {
+                    @Override
+                    public String getName() {
+                        return name;
+                    }
+
+                    @Override
+                    public String getContentType() {
+                        return "application/octet-stream";
+                    }
+
+                    @Override
+                    public String getCharset() {
+                        return null;
+                    }
+
+                    @Override
+                    public InputStream getInputStream() {
+                        return inputStream;
+                    }
+                }, remotePath);
+            });
+            return nTempOutputStream;
+        }
+
+        @Override
+        public void delete(NPath basePath, boolean recurse) {
+            client.ensureConnected();
+            client.exec("rm", "-R", remotePath);
+        }
+
+        @Override
+        public void mkdir(boolean parents, NPath basePath) {
+            client.ensureConnected();
+            client.exec("mkdir", parents ? "-p" : null, remotePath);
+        }
+
+        @Override
+        public List<String> getNames(NPath basePath) {
+            return cnx.getNames();
+        }
+
+        @Override
+        public NPath getRoot(NPath basePath) {
+            if (isRoot(basePath)) {
+                return basePath;
+            }
+            return NPath.of(cnx.getRoot().toString());
+        }
+
+        @Override
+        public Boolean isRoot(NPath basePath) {
+            return "/".equals(String.valueOf(cnx.getPath()));
+        }
+
+        @Override
+        public NPath getParent(NPath basePath) {
+            if (isRoot(basePath)) {
+                return null;
+            }
+            return NPath.of(cnx.getParent().toString());
+        }
+
+        @Override
+        public String toString() {
+            return cnx.builder().setPath(remotePath).build().toString();
+        }
+
+        @Override
+        public String getLocation(NPath basePath) {
+            return remotePath;
+        }
+    }
+}
