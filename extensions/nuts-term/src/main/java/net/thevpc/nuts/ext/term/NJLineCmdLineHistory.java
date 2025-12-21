@@ -13,6 +13,8 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
@@ -27,7 +29,6 @@ import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 import static net.thevpc.nuts.ext.term.NJLineHistory.DEFAULT_HISTORY_FILE_SIZE;
@@ -92,8 +93,8 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
         return null;
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
+    @NScore
+    public static int getScore(NScorableContext context) {
         NSystemTerminal st = NIO.of().getSystemTerminal();
         boolean jline=false;
         NSystemTerminalBase b = st.getBase();
@@ -103,7 +104,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
             }
         }
         if(jline) {
-            return DEFAULT_SCORE + 10;
+            return NScorable.DEFAULT_SCORE + 10;
         }else{
             return -1;
         }
