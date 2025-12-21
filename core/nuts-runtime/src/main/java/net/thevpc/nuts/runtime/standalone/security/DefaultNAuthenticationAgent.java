@@ -3,12 +3,15 @@ package net.thevpc.nuts.runtime.standalone.security;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNAuthenticationAgent extends AbstractNAuthenticationAgent {
 
     public DefaultNAuthenticationAgent() {
-        super("default#1", DEFAULT_SCORE);
+        super("default#1");
     }
 
     @Override
