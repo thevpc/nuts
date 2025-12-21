@@ -14,13 +14,12 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.ObjectOutputFormatWriterHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
-import net.thevpc.nuts.util.NPropsTransformer;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NStringUtils;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesFormat> implements NPropertiesFormat {
 
     public static final String OPTION_MULTILINE_PROPERTY = "--multiline-property";
@@ -304,8 +303,4 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
         return this;
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
