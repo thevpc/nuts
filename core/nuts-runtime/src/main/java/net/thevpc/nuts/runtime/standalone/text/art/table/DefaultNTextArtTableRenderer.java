@@ -5,7 +5,7 @@ import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableCellFormat;
 import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableFormatBorders;
 import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableHeaderFormat;
 import net.thevpc.nuts.runtime.standalone.text.art.region.NTextRegion;
-import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.platform.CorePlatformUtils;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.text.NMsg;
 
