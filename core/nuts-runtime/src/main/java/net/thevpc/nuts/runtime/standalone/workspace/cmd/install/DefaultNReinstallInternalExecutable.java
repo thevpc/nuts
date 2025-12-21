@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.command.NInstallCmd;
+import net.thevpc.nuts.command.NInstall;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
@@ -18,7 +18,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNReinstallInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNReinstallInternalExecutable(String[] args, NExecCmd execCommand) {
+    public DefaultNReinstallInternalExecutable(String[] args, NExec execCommand) {
         super("reinstall", args, execCommand);
     }
 
@@ -33,7 +33,7 @@ public class DefaultNReinstallInternalExecutable extends DefaultInternalNExecuta
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NInstallCmd.of()
+        NInstall.of()
                 .configure(true,"--reinstall")
                 .configure(false, args).run();
         return NExecutionException.SUCCESS;
