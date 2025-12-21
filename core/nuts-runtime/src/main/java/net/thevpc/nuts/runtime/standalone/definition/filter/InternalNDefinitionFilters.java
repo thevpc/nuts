@@ -4,19 +4,14 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.platform.NArchFamily;
-import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
-import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.platform.NPlatformFamily;
+import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NFilter;
+import net.thevpc.nuts.util.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitionFilter>
         implements NDefinitionFilters {
 
@@ -142,7 +137,7 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
 
 
     @Override
-    public NDefinitionFilter byPlatformFamily(NPlatformFamily... values) {
+    public NDefinitionFilter byPlatformFamily(NExecutionEngineFamily... values) {
         if (values == null || values.length == 0) {
             return always();
         }
@@ -355,11 +350,6 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
     }
 
     @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
-
-    @Override
     public NDefinitionFilter byPackaging(Collection<String> values) {
         return byPackaging(values.toArray(new String[0]));
     }
@@ -411,16 +401,16 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
 
     @Override
     public NDefinitionFilter byCurrentDesktopEnvironmentFamily() {
-        return byDesktopEnvironmentFamily(NWorkspace.of().getDesktopEnvironmentFamilies().toArray(new NDesktopEnvironmentFamily[0]));
+        return byDesktopEnvironmentFamily(NEnv.of().getDesktopEnvironmentFamilies().toArray(new NDesktopEnvironmentFamily[0]));
     }
 
     public NDefinitionFilter byCurrentArch() {
-        return byArch(NWorkspace.of().getArchFamily());
+        return byArch(NEnv.of().getArchFamily());
     }
 
     @Override
     public NDefinitionFilter byCurrentOsFamily() {
-        return byOsFamily(NWorkspace.of().getOsFamily());
+        return byOsFamily(NEnv.of().getOsFamily());
     }
 
     public NDefinitionFilter byCurrentEnv() {
