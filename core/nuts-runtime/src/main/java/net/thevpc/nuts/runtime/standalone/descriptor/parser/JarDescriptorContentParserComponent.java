@@ -34,16 +34,13 @@ import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NRef;
+import net.thevpc.nuts.util.*;
 
 import java.util.*;
 
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Created by vpc on 1/15/17.
@@ -56,8 +53,8 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
     public JarDescriptorContentParserComponent() {
     }
 
-    @Override
-    public int getScore(NScorableContext criteria) {
+    @NScore
+    public static int getScore(NScorableContext criteria) {
         NDescriptorContentParserContext cons = criteria.getCriteria(NDescriptorContentParserContext.class);
         if (cons != null) {
             String e = NStringUtils.trim(cons.getFileExtension());
@@ -65,14 +62,14 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
                 case "jar":
                 case "war":
                 case "ear": {
-                    return DEFAULT_SCORE + 10;
+                    return NScorable.DEFAULT_SCORE + 10;
                 }
                 case "zip": {
-                    return DEFAULT_SCORE + 5;
+                    return NScorable.DEFAULT_SCORE + 5;
                 }
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
     @Override
