@@ -30,7 +30,8 @@ import net.thevpc.nuts.security.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.List;
 
@@ -39,6 +40,7 @@ import java.util.List;
  * @author thevpc
  */
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNWorkspaceSecurityManager implements NWorkspaceSecurityManager {
 
     public final DefaultNWorkspaceSecurityModel model;
@@ -48,11 +50,6 @@ public class DefaultNWorkspaceSecurityManager implements NWorkspaceSecurityManag
         this.workspace = workspace;
         NWorkspaceExt e = (NWorkspaceExt) workspace;
         this.model = e.getModel().securityModel;
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     @Override
