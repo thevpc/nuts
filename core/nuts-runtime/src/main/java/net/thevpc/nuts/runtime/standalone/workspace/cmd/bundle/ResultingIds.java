@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.bundle;
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.command.NFetchCmd;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NFetch;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
@@ -58,7 +58,7 @@ class ResultingIds {
             if (classPath.containsKey(id.getLongId())) {
                 return this;
             }
-            NDefinition imdef = NFetchCmd.of(id)
+            NDefinition imdef = NFetch.of(id)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable(false, true))
                     .getResultDefinition();
             if (!classPath.containsKey(imdef.getId().getLongId())) {
@@ -87,7 +87,7 @@ class ResultingIds {
             if (classPath.containsKey(id.getLongId())) {
                 return this;
             }
-            List<NDefinition> list = NSearchCmd.of(id)
+            List<NDefinition> list = NSearch.of(id)
                     .setLatest(true)
                     .setDistinct(true)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable(false, true))
