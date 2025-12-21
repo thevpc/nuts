@@ -30,7 +30,7 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDefinitionBuilder;
 import net.thevpc.nuts.artifact.NDescriptor;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.command.NExecutionType;
 import net.thevpc.nuts.core.NWorkspace;
@@ -40,7 +40,8 @@ import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.spi.NInstallerComponent;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ import java.util.List;
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class CommandForIdNInstallerComponent implements NInstallerComponent {
     NDefinition runnerId;
 
@@ -83,7 +85,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                                                 definition.getInstallInformation().get().getInstallStatus().withInstalled(true)
                                         )
                         );
-                NExecCmd cmd = NExecCmd.of()
+                NExec cmd = NExec.of()
                         .setCommandDefinition(def2.build())
                         .addCommand("--nuts-exec-mode=" + mode);
                 if (mode.equals("install")) {
@@ -112,7 +114,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                     eargs.add(evalString(a, mode, executionContext));
                 }
                 eargs.addAll(executionContext.getArguments());
-                NExecCmd.of()
+                NExec.of()
                         .setCommandDefinition(def2.build())
                         .addCommand(eargs)
                         .setExecutionType(NWorkspace.of().getBootOptions().getExecutionType().orNull())
@@ -125,12 +127,6 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
             }
         }
     }
-
-    @Override
-    public int getScore(NScorableContext criteria) {
-        return DEFAULT_SCORE;
-    }
-
 
     private String evalString(String s, String mode, NExecutionContext executionContext) {
         return StringPlaceHolderParser.replaceDollarPlaceHolders(s, executionContext,
