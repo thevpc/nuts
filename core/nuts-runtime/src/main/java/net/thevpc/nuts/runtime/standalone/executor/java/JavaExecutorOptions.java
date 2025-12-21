@@ -1,18 +1,19 @@
 package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NClassLoaderNode;
 import net.thevpc.nuts.core.NWorkspaceCmdLineParser;
 
 import net.thevpc.nuts.command.NExecutionEntry;
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.command.NSearchCmd;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.platform.NExecutionEngines;
+import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -223,7 +224,7 @@ public final class JavaExecutorOptions {
         appArgs.addAll(appendArgs);
 
         List<NDefinition> nDefinitions = new ArrayList<>();
-        NSearchCmd se = NSearchCmd.of();
+        NSearch se = NSearch.of();
         NDependencyFilters dependencyFilters = NDependencyFilters.of();
         NDependencyFilter defFilter = dependencyFilters.byScope(NDependencyScopePattern.RUN)
                 .and(dependencyFilters.byOptional(false));
@@ -264,15 +265,15 @@ public final class JavaExecutorOptions {
             javaVersion = explicitJavaVersion.toString();
         }
         NJavaSdkUtils nJavaSdkUtils = NJavaSdkUtils.of(NWorkspace.of());
-        NPlatformLocation nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion());
+        NExecutionEngineLocation nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion());
         if (nutsPlatformLocation == null) {
             NLog.of(JavaExecutorOptions.class).warn(NMsg.ofC("No JRE %s is configured in nuts. search of system installations.", javaVersion));
             Predicate<String> versionFilterPredicate = nJavaSdkUtils.createVersionFilterPredicate(getJavaVersion());
-            NPlatformLocation[] existing = Stream.of(nJavaSdkUtils.searchJdkLocations()).filter(
+            NExecutionEngineLocation[] existing = Stream.of(nJavaSdkUtils.searchJdkLocations()).filter(
                     aa -> {
                         return versionFilterPredicate.test(aa.getVersion());
                     }
-            ).toArray(NPlatformLocation[]::new);
+            ).toArray(NExecutionEngineLocation[]::new);
             if (existing.length > 0) {
                 if (NAsk.of().forBoolean(
                                 NMsg.ofC("No JRE %s is configured in nuts. However %s %s found. Would you like to auto-configure and use %s?", javaVersion, existing.length
@@ -281,8 +282,8 @@ public final class JavaExecutorOptions {
                                 )
                         ).setDefaultValue(true)
                         .getBooleanValue()) {
-                    for (NPlatformLocation p : existing) {
-                        NWorkspace.of().addPlatform(p);
+                    for (NExecutionEngineLocation p : existing) {
+                        NExecutionEngines.of().addExecutionEngine(p);
                     }
                     nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion());
                 }
@@ -645,7 +646,7 @@ public final class JavaExecutorOptions {
     }
 
     private void addNp(List<NClassLoaderNode> classPath, String value) {
-        NSearchCmd ns = NSearchCmd.of().setLatest(true);
+        NSearch ns = NSearch.of().setLatest(true);
         NRepositoryFilters nRepositoryFilters = NRepositoryFilters.of();
         for (String n : StringTokenizerUtils.splitDefault(value)) {
             if (!NBlankable.isBlank(n)) {
@@ -653,7 +654,7 @@ public final class JavaExecutorOptions {
             }
         }
         for (NId nutsId : ns.getResultIds()) {
-            NDefinition f = NSearchCmd.of().addId(nutsId)
+            NDefinition f = NSearch.of().addId(nutsId)
                     .setLatest(true).getResultDefinitions().findFirst().get();
             classPath.add(NClassLoaderUtils.definitionToClassLoaderNodeSafer(f, nRepositoryFilters.installedRepo()));
         }
