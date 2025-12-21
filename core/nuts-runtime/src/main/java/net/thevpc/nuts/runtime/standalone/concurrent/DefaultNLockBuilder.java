@@ -5,7 +5,8 @@ import net.thevpc.nuts.concurrent.NLockException;
 
 
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.text.NMsg;
 
 import java.io.File;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNLockBuilder extends AbstractNLockBuilder {
     Map<Object,DefaultMemLock> memLocks=new HashMap<>();
     public DefaultNLockBuilder() {
@@ -148,9 +150,5 @@ public class DefaultNLockBuilder extends AbstractNLockBuilder {
         return null;
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 
 }
