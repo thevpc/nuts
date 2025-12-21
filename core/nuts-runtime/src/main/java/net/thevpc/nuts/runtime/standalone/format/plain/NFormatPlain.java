@@ -11,7 +11,8 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NContentTypeFormat;
 import net.thevpc.nuts.text.NText;
@@ -23,6 +24,7 @@ import java.util.*;
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implements NContentTypeFormat {
 
     private final String rootName = "";
@@ -182,11 +184,6 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
         } else {
             flags.primitives = true;
         }
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     @Override
