@@ -10,7 +10,11 @@ import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.core.NIsolationLevel;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogs;
+import net.thevpc.nuts.platform.NExecutionEngineFamily;
+import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NBeanRef;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
@@ -19,12 +23,14 @@ import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.DefaultElement
 import net.thevpc.nuts.runtime.standalone.io.cache.CachedSupplier;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLog;
 import net.thevpc.nuts.runtime.standalone.log.NLogSPIJUL;
+import net.thevpc.nuts.runtime.standalone.platform.NEnvLocal;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreInMemory;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreOnDisk;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NProgressMonitor;
+import net.thevpc.nuts.util.NDefaultObservableMap;
 import net.thevpc.nuts.util.NLRUMap;
 import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilterModel;
@@ -37,13 +43,19 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalled
 import net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityModel;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SafeRecommendationConnector;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SimpleRecommendationConnector;
+import net.thevpc.nuts.util.NObservableMap;
 import net.thevpc.nuts.util.NOptional;
 
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class NWorkspaceModel {
     public NLog LOG;
+    public NLogs defaultNLogs;
     public NWorkspace workspace;
     public NScopedValue<NSession> sessionScopes = new NScopedValue<>();
     public NSession initSession;
@@ -65,7 +77,6 @@ public class NWorkspaceModel {
     public final NScopedStack<NBeanContainer> scopedBeanContainerStack = new NScopedStack<>(null);
     public final NBeanContainer scopedBeanContainer = new StackBasedNBeanContainer();
     public DefaultNLogModel logModel;
-    public DefaultNWorkspaceEnvManagerModel envModel;
     public DefaultNPlatformModel sdkModel;
     public DefaultNWorkspaceExtensionModel extensionModel;
     public DefaultCustomCommandsModel commandModel;
@@ -83,9 +94,14 @@ public class NWorkspaceModel {
     public NWorkspaceStore store;
     public DefaultElementMapperStore defaultElementMapperStore = new DefaultElementMapperStore();
     public NScopedValue<NProgressMonitor> currentProgressMonitors = new NScopedValue<>();
+    protected NObservableMap<String, Object> userProperties;
+    private String pid;
+    private NEnvLocal env;
+    private final Map<NExecutionEngineFamily, List<NExecutionEngineLocation>> configPlatforms = new LinkedHashMap<>();
 
     public NWorkspaceModel(NWorkspace workspace, NBootOptions initialBootOptions) {
         this.workspace = workspace;
+        this.userProperties = new NDefaultObservableMap<>();
         this.logModel = new DefaultNLogModel(workspace);
         this.LOG = new DefaultNLog(DefaultNWorkspace.class.getName(), new NLogSPIJUL(DefaultNWorkspace.class.getName()), logModel, false);
         if (initialBootOptions.getIsolationLevel().orNull() == NIsolationLevel.MEMORY) {
@@ -119,6 +135,83 @@ public class NWorkspaceModel {
                 NVersion.get(askedRuntimeId.getVersion().toString()).get()).get();
         this.logModel.init(this.bootModel.getBootEffectiveOptions(), initialBootOptions);
         this.bootModel.init();
+    }
+
+    public NEnvLocal getEnv() {
+        if(env==null){
+            env= NExtensions.of(NEnvLocal.class);
+        }
+        return env;
+    }
+
+    public String getPid() {
+        if (pid == null) {
+            String fallback = "";
+            // Note: may fail in some JVM implementations
+            // therefore fallback has to be provided
+
+            // something like '<pid>@<hostname>', at least in SUN / Oracle JVMs
+            final String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+            final int index = jvmName.indexOf('@');
+            if (index < 1) {
+                // part before '@' empty (index = 0) / '@' not found (index = -1)
+                return pid = fallback;
+            }
+
+            try {
+                return pid = String.valueOf(Long.toString(Long.parseLong(jvmName.substring(0, index))));
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+            return pid = fallback;
+        }
+        return pid;
+    }
+
+
+
+    public Map<String, Object> getProperties() {
+        return userProperties;
+    }
+
+    public NOptional<Object> getProperty(String property) {
+        Object v = userProperties.get(property);
+        return NOptional.ofNamed(v, property);
+    }
+
+//    public NElement getPropertyElement(String property) {
+//        return NElements.of()
+//                .toElement(getProperty(property));
+//    }
+
+    public <T> T getOrCreateProperty(Class<T> property, Supplier<T> supplier) {
+        return getOrCreateProperty(property.getName(), supplier);
+    }
+
+    public synchronized <T> T getOrCreateProperty(String property, Supplier<T> supplier) {
+        Object o = getProperty(property).orNull();
+        if (o != null) {
+            return (T) o;
+        }
+        o = supplier.get();
+        setProperty(property, o);
+        return (T) o;
+    }
+
+    public void setProperty(String property, Object value) {
+        if (value == null) {
+            userProperties.remove(property);
+        } else {
+            userProperties.put(property, value);
+        }
+    }
+
+    public NWorkspace getWorkspace() {
+        return workspace;
+    }
+
+    public Map<NExecutionEngineFamily, List<NExecutionEngineLocation>> getConfigPlatforms() {
+        return configPlatforms;
     }
 
     private class StackBasedNBeanContainer implements NBeanContainer {
