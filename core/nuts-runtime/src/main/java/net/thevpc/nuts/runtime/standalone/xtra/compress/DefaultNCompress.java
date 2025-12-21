@@ -11,13 +11,10 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.spi.NCompressPackaging;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NFunction;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.time.NProgressListener;
-import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
 
 import java.io.File;
@@ -33,6 +30,7 @@ import java.util.Set;
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNCompress implements NCompress {
 
     private final List<NInputSource> sources = new ArrayList<>();
@@ -48,11 +46,6 @@ public class DefaultNCompress implements NCompress {
 
     public DefaultNCompress(NWorkspace ws) {
         this.ws = ws;
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     protected NLog _LOG() {
@@ -83,7 +76,7 @@ public class DefaultNCompress implements NCompress {
             packaging = "zip";
         }
         this.packaging = packaging;
-        this.packagingImpl = NExtensions.of().createComponent(NCompressPackaging.class, this).get();
+        this.packagingImpl = NExtensions.of().createSupported(NCompressPackaging.class, this).get();
         return this;
     }
 
@@ -228,7 +221,7 @@ public class DefaultNCompress implements NCompress {
     @Override
     public NCompress run() {
         if (packagingImpl == null) {
-            this.packagingImpl = NExtensions.of().createComponent(NCompressPackaging.class, this).get();
+            this.packagingImpl = NExtensions.of().createSupported(NCompressPackaging.class, this).get();
         }
         packagingImpl.compressPackage(this);
         return this;
