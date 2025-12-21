@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.push;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.command.NPushCmd;
+import net.thevpc.nuts.command.NPush;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
@@ -18,7 +18,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNPushInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNPushInternalExecutable(String[] args, NExecCmd execCommand) {
+    public DefaultNPushInternalExecutable(String[] args, NExec execCommand) {
         super("push", args, execCommand);
     }
 
@@ -33,7 +33,7 @@ public class DefaultNPushInternalExecutable extends DefaultInternalNExecutableCo
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NPushCmd.of().configure(false, args).run();
+        NPush.of().configure(false, args).run();
         return NExecutionException.SUCCESS;
     }
 
