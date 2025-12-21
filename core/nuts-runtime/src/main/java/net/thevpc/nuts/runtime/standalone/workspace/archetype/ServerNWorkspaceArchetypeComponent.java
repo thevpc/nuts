@@ -30,18 +30,20 @@ import net.thevpc.nuts.core.NConstants;
 
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 /**
  * Created by vpc on 1/23/17.
  */
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeComponent {
     public ServerNWorkspaceArchetypeComponent() {
     }
@@ -99,7 +101,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
 //            NWorkspaceUtils.of().installCurrentJVM();
 //        }
         if (initializeScripts || initializeLaunchers || installCompanions) {
-            NId api = NFetchCmd.of()
+            NId api = NFetch.of()
                     .setId(workspace.getApiId()).setFailFast(false)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .getResultId();
@@ -117,8 +119,4 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
         }
     }
 
-    @Override
-    public int getScore(NScorableContext criteria) {
-        return DEFAULT_SCORE;
-    }
 }
