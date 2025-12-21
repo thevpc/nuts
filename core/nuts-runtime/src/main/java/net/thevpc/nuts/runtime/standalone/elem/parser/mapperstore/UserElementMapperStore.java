@@ -89,7 +89,7 @@ public class UserElementMapperStore implements NElementMapperStore {
 
     @Override
     public NElementMapperStore addIndestructibleTypesFilter(Predicate<Type> destructTypeFilter) {
-        if (destructTypeFilter != null && indestructibleTypesFilters.contains(destructTypeFilter)) {
+        if (destructTypeFilter != null && !indestructibleTypesFilters.contains(destructTypeFilter)) {
             indestructibleTypesFilters.add(destructTypeFilter);
         }
         return this;
