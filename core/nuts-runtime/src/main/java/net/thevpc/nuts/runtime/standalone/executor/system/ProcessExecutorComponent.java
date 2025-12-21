@@ -35,7 +35,8 @@ import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.*;
 
@@ -43,21 +44,14 @@ import java.util.*;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class ProcessExecutorComponent implements NExecutorComponent {
 
-    public static NId ID;
+    public static NId ID=NId.get("net.thevpc.nuts.exec:exec-native").get();
 
     @Override
     public NId getId() {
         return ID;
-    }
-
-    @Override
-    public int getScore(NScorableContext nutsDefinition) {
-        if(ID==null){
-            ID= NId.get("net.thevpc.nuts.exec:exec-native").get();
-        }
-        return DEFAULT_SCORE;
     }
 
     @Override
