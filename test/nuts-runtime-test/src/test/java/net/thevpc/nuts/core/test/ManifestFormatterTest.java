@@ -6,6 +6,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NDescriptorFormat;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder;
+import net.thevpc.nuts.util.NStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -58,9 +59,9 @@ public class ManifestFormatterTest {
         String manifest = baos.toString();
 
         TestUtils.println("Generated MANIFEST.MF:");
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
         TestUtils.println(manifest);
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
 
         // Basic validations
         Assertions.assertTrue(manifest.contains("Manifest-Version: 1.0"));
@@ -96,9 +97,9 @@ public class ManifestFormatterTest {
         String manifest = baos.toString();
 
         TestUtils.println("Generated minimal MANIFEST.MF:");
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
         TestUtils.println(manifest);
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
 
         // Basic validations
         Assertions.assertTrue(manifest.contains("Manifest-Version: 1.0"));
@@ -129,9 +130,9 @@ public class ManifestFormatterTest {
         String manifest = baos.toString();
 
         TestUtils.println("Generated MANIFEST.MF with line wrapping:");
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
         TestUtils.println(manifest);
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
 
         // Verify line wrapping - check that lines don't exceed 72 bytes (JAR spec)
         String[] lines = manifest.split("\n");
@@ -179,9 +180,9 @@ public class ManifestFormatterTest {
 
         String manifestContent = baos.toString();
         TestUtils.println("Generated MANIFEST.MF for round-trip test:");
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
         TestUtils.println(manifestContent);
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
 
         // Parse it back
         NDescriptorParser parser = NDescriptorParser.of()
@@ -257,9 +258,9 @@ public class ManifestFormatterTest {
         String manifest = baos.toString();
 
         TestUtils.println("Empty/Null values MANIFEST.MF:");
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
         TestUtils.println(manifest);
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
 
         // Should still have required fields
         Assertions.assertTrue(manifest.contains("Manifest-Version: 1.0"));
@@ -295,9 +296,9 @@ public class ManifestFormatterTest {
         String manifest = baos.toString();
 
         TestUtils.println("Special characters MANIFEST.MF:");
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
         TestUtils.println(manifest);
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
 
         // Verify special characters are preserved
         Assertions.assertTrue(manifest.contains(specialName));
@@ -332,9 +333,9 @@ public class ManifestFormatterTest {
         String manifest = baos.toString();
 
         TestUtils.println("Many dependencies MANIFEST.MF:");
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
         TestUtils.println(manifest);
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
 
         // Verify line wrapping for long dependencies line - check bytes not chars (JAR spec)
         String[] lines = manifest.split("\n");
@@ -382,9 +383,9 @@ public class ManifestFormatterTest {
         String manifest = baos.toString();
 
         TestUtils.println("Extremely long value MANIFEST.MF:");
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
         TestUtils.println(manifest);
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
 
         // Verify line wrapping - check bytes not chars (JAR spec)
         String[] lines = manifest.split("\n");
@@ -424,9 +425,9 @@ public class ManifestFormatterTest {
         String manifest = baos.toString();
 
         TestUtils.println("No version MANIFEST.MF:");
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
         TestUtils.println(manifest);
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
 
         Assertions.assertTrue(manifest.contains("Manifest-Version: 1.0"));
         // Should not have Implementation-Version if no version in ID
@@ -461,9 +462,9 @@ public class ManifestFormatterTest {
         String manifest = baos.toString();
 
         TestUtils.println("Multiple properties MANIFEST.MF:");
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
         TestUtils.println(manifest);
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
 
         // Verify properties are written as Nuts-Property-<name>
         Assertions.assertTrue(manifest.contains("Nuts-Property-author: thevpc"));
@@ -495,9 +496,9 @@ public class ManifestFormatterTest {
         String manifest = baos.toString();
 
         TestUtils.println("Multiple flags MANIFEST.MF:");
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
         TestUtils.println(manifest);
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
 
         // Verify all flags are present
         Assertions.assertTrue(manifest.contains("Nuts-Flags:"));
@@ -532,9 +533,9 @@ public class ManifestFormatterTest {
         String manifest1 = baos1.toString();
 
         TestUtils.println("Concatenated main class MANIFEST.MF:");
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
         TestUtils.println(manifest1);
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
 
         Assertions.assertTrue(manifest1.contains("Main-Class: com.example.ConcatenatedMain"));
         TestUtils.println("Concatenated --main-class=ClassName form works!");
@@ -572,9 +573,9 @@ public class ManifestFormatterTest {
         String manifest = baos.toString();
 
         TestUtils.println("UTF-8 byte counting MANIFEST.MF:");
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
         TestUtils.println(manifest);
-        TestUtils.println("=".repeat(60));
+        TestUtils.println(NStringUtils.repeat("=",60));
 
         // Verify that NO line exceeds 72 bytes
         String[] lines = manifest.split("\n");
