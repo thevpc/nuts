@@ -32,9 +32,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.NBootEnvCondition;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.internal.NReservedUtils;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.io.Serializable;
 import java.util.*;
@@ -46,6 +44,7 @@ import java.util.stream.Collectors;
  * @app.category Descriptor
  * @since 0.8.3
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionBuilder {
     private static final long serialVersionUID = 1L;
 
@@ -526,7 +525,4 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
         return NReservedUtils.toMap(build());
     }
 
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
