@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Set;
 
 public interface NPathInfo {
+    String getName();                // original name
     String getPath();                // original path
     NPathType getType();       // What the entry itself is
     NPathType getTargetType(); // What the resolved target is (or same if not a link)
