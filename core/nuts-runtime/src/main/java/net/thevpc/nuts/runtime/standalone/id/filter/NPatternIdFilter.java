@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.spi.base.AbstractIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
@@ -87,7 +87,7 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
         if (condition != null && !condition.isBlank()) {
             NEnvCondition otherCondition = null;
             try {
-                otherCondition = NFetchCmd.of(other)
+                otherCondition = NFetch.of(other)
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDescriptor().getCondition();
             } catch (Exception ex) {
