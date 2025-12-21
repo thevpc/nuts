@@ -93,8 +93,8 @@ public class JavaExecutorComponent implements NExecutorComponent {
     }
 
 
-    @Override
-    public int getScore(NScorableContext ctx) {
+    @NScore
+    public static int getScore(NScorableContext ctx) {
         if (ID == null) {
             ID = NId.get("net.thevpc.nuts.exec:java").get();
         }
@@ -103,16 +103,16 @@ public class JavaExecutorComponent implements NExecutorComponent {
             String shortName = def.getId().getShortName();
             //for executors
             if ("net.thevpc.nuts.exec:exec-java".equals(shortName)) {
-                return DEFAULT_SCORE + 10;
+                return NScorable.DEFAULT_SCORE + 10;
             }
             if ("java".equals(shortName)) {
-                return DEFAULT_SCORE + 10;
+                return NScorable.DEFAULT_SCORE + 10;
             }
             if ("jar".equals(def.getDescriptor().getPackaging())) {
-                return DEFAULT_SCORE + 10;
+                return NScorable.DEFAULT_SCORE + 10;
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
     public static NWorkspaceOptionsBuilder createChildOptions(NExecutionContext executionContext) {
