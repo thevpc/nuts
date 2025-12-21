@@ -30,22 +30,21 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStream;
 
 /**
  * @author vpc
  */
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NTextArtImpl implements NTextArt {
     private List<NTextArtRendererFactory> factories;
 
     public List<NTextArtRendererFactory> getFactories() {
         if (factories == null) {
-            factories = NExtensions.of().createComponents(NTextArtRendererFactory.class, null);
+            factories = NExtensions.of().createAllSupported(NTextArtRendererFactory.class, null);
         }
         return factories;
     }
@@ -176,9 +175,5 @@ public class NTextArtImpl implements NTextArt {
         return getTreeRenderer("tree:default");
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 
 }
