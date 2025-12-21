@@ -6,8 +6,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.log;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -15,8 +13,10 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstallLogRecord
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.logging.Level;
@@ -26,6 +26,7 @@ import java.util.logging.Logger;
  *
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsLogSubCommand() {
         super();
