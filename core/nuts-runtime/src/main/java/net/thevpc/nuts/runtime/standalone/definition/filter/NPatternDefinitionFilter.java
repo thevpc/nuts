@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.spi.base.AbstractNPredicate;
@@ -109,7 +109,7 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
         if (condition != null && !condition.isBlank()) {
             NEnvCondition otherCondition = null;
             try {
-                otherCondition = NFetchCmd.of(other)
+                otherCondition = NFetch.of(other)
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDescriptor().getCondition();
             } catch (Exception ex) {
