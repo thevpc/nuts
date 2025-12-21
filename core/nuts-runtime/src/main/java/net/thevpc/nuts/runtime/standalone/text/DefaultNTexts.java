@@ -39,6 +39,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 @NComponentScope(NScopeType.SESSION)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNTexts implements NTexts {
 
     private final DefaultNTextManagerModel shared;
@@ -689,11 +690,6 @@ public class DefaultNTexts implements NTexts {
     }
 
     @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
-
-    @Override
     public NNormalizedText normalize(NText text) {
         return normalize(text, null, null);
     }
@@ -1143,24 +1139,7 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public <T> NFormat createFormat(T object, NTextFormat<T> format) {
-        return new DefaultFormatBase<NFormat>("NTextFormat") {
-            @Override
-            public void print(NPrintStream out) {
-                NText u = format.toText(object);
-                out.print(u);
-            }
-
-            @Override
-            public boolean configureFirst(NCmdLine cmdLine) {
-                return false;
-            }
-
-            @Override
-            public int getScore(NScorableContext context) {
-                return DEFAULT_SCORE;
-            }
-
-        };
+        return new NFormatDefaultFormatBase<>(format, object);
     }
 
     @Override
@@ -1350,5 +1329,29 @@ public class DefaultNTexts implements NTexts {
 
     private interface NTextMapper {
         NText ofText(Object t, NTexts texts);
+    }
+
+    @NScore(fixed = NScorable.DEFAULT_SCORE)
+    private static class NFormatDefaultFormatBase<T> extends DefaultFormatBase<NFormat> {
+        private final NTextFormat<T> format;
+        private final T object;
+
+        public NFormatDefaultFormatBase(NTextFormat<T> format, T object) {
+            super("NTextFormat");
+            this.format = format;
+            this.object = object;
+        }
+
+        @Override
+        public void print(NPrintStream out) {
+            NText u = format.toText(object);
+            out.print(u);
+        }
+
+        @Override
+        public boolean configureFirst(NCmdLine cmdLine) {
+            return false;
+        }
+
     }
 }
