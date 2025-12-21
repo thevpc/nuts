@@ -38,6 +38,8 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.io.NAnsiTermHelper;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
@@ -263,16 +265,16 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         }
     }
 
-    @Override
-    public int getScore(NScorableContext criteria) {
+    @NScore
+    public static int getScore(NScorableContext criteria) {
         try {
-            prepare();
+            //prepare();
         } catch (Exception ex) {
             NLog.of(NJLineTerminal.class)
                     .log(NMsg.ofPlain("unable to create NutsJLineTerminal. ignored.").asFinestFail(ex));
-            return UNSUPPORTED_SCORE;
+            return NScorable.UNSUPPORTED_SCORE;
         }
-        return DEFAULT_SCORE + 1;
+        return NScorable.DEFAULT_SCORE + 1;
     }
 
     @Override
