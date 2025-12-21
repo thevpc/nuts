@@ -5,14 +5,16 @@ import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
 
-import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.option.*;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNCmdLines implements NCmdLines {
 
     private NShellFamily family = NShellFamily.getCurrent();
@@ -58,7 +60,7 @@ public class DefaultNCmdLines implements NCmdLines {
     private String[] parseCmdLineArr(String line) {
         NShellFamily f = getShellFamily();
         if (f == null) {
-            f = NWorkspace.of().getShellFamily();
+            f = NEnv.of().getShellFamily();
         }
         if (f == null) {
             f = NShellFamily.getCurrent();
@@ -123,8 +125,4 @@ public class DefaultNCmdLines implements NCmdLines {
         }
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
