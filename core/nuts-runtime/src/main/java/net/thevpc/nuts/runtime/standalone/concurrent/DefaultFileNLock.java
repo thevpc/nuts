@@ -9,6 +9,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NUpletElementBuilder;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
 import net.thevpc.nuts.text.NMsg;
@@ -290,7 +291,7 @@ public class DefaultFileNLock extends AbstractNLock {
             Files.createFile(path);
             LockInfo li = new LockInfo();
             NWorkspace ws = NWorkspace.of();
-            li.hostname = ws.getHostName();
+            li.hostname = NEnv.of().getHostName();
             li.instant = Instant.now();
             li.maxValidInstant = li.instant.plusSeconds(12 * 3600);
             li.pid = ws.getPid();
