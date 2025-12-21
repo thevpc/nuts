@@ -5,6 +5,8 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import java.util.*;
 
 import net.thevpc.nuts.spi.NCodeHighlighter;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.*;
 
@@ -24,23 +26,23 @@ public class JavaCodeHighlighter implements NCodeHighlighter {
     public NText tokenToText(String text, String nodeType, NTexts txt) {
         return txt.ofPlain(text);
     }
-    
 
-    @Override
-    public int getScore(NScorableContext context) {
+
+    @NScore
+    public static int getScore(NScorableContext context) {
         String s = context.getCriteria();
         if(s==null){
-            return DEFAULT_SCORE;
+            return NScorable.DEFAULT_SCORE;
         }
         switch (s){
             case "java":
             case "jav":
             case "text/x-java":
             {
-                return DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
     @Override
