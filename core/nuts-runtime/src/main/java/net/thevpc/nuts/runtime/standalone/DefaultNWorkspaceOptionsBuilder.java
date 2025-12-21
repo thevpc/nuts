@@ -37,7 +37,6 @@ import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.internal.NReservedLangUtils;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -61,6 +60,7 @@ import java.util.stream.Collectors;
  *
  * @since 0.5.4
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder {
 
     private static final long serialVersionUID = 1;
@@ -2211,8 +2211,4 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         return this;
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
