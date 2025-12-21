@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
@@ -396,6 +395,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         return Objects.equals(toString(), that.toString());
     }
 
+    @NScore(fixed = NScorable.DEFAULT_SCORE)
     public static class PathFormat extends DefaultFormatBase<NFormat> {
 
         private final NPathBase p;
@@ -415,10 +415,6 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
             return false;
         }
 
-        @Override
-        public int getScore(NScorableContext context) {
-            return DEFAULT_SCORE;
-        }
     }
 
     @Override
