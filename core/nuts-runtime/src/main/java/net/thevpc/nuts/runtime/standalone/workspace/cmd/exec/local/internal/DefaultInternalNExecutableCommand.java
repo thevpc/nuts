@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NPath;
@@ -27,11 +27,11 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
 
     protected String[] args;
     protected NInternalCommand impl;
-    public DefaultInternalNExecutableCommand(String name, String[] args, NExecCmd execCommand) {
+    public DefaultInternalNExecutableCommand(String name, String[] args, NExec execCommand) {
         super(name, name, NExecutableType.INTERNAL,execCommand);
         this.args = args;
     }
-    public DefaultInternalNExecutableCommand(NInternalCommand impl, String[] args, NExecCmd execCommand) {
+    public DefaultInternalNExecutableCommand(NInternalCommand impl, String[] args, NExec execCommand) {
         super(impl.getName(), impl.getName(), NExecutableType.INTERNAL,execCommand);
         this.args = args;
         this.impl = impl;
