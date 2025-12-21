@@ -327,7 +327,7 @@ public class WorkspaceTest {
             Assertions.assertNotNull(r);
         }
         {
-            NExecCmdFormat r = NExecCmdFormat.of();
+            NExecFormat r = NExecFormat.of();
             Assertions.assertNotNull(r);
         }
         {
