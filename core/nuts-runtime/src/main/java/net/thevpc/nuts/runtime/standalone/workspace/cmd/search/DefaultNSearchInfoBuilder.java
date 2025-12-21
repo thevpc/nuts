@@ -22,9 +22,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class DefaultNSearchInfoBuilder {
-    private DefaultNSearchCmd defaultNSearchCmd;
+    private DefaultNSearch defaultNSearchCmd;
 
-    public DefaultNSearchInfoBuilder(DefaultNSearchCmd defaultNSearchCmd) {
+    public DefaultNSearchInfoBuilder(DefaultNSearch defaultNSearchCmd) {
         this.defaultNSearchCmd = defaultNSearchCmd;
     }
 
