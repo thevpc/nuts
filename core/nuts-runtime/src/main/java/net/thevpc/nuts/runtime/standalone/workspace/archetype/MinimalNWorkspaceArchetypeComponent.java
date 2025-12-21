@@ -29,19 +29,21 @@ import net.thevpc.nuts.core.NConstants;
 
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.security.NUpdateUserCmd;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 /**
  * Created by vpc on 1/23/17.
  */
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore(fixed = NScorable.DEFAULT_SCORE + 1)
 public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeComponent {
     public MinimalNWorkspaceArchetypeComponent() {
     }
@@ -86,7 +88,7 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //            NWorkspaceUtils.of().installCurrentJVM();
 //        }
         if (initializeScripts || initializeLaunchers || installCompanions) {
-            NId api = NFetchCmd.of().setId(workspace.getApiId())
+            NId api = NFetch.of().setId(workspace.getApiId())
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .setFailFast(false).getResultId();
             if (api != null) {
@@ -101,10 +103,5 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
                 }
             }
         }
-    }
-
-    @Override
-    public int getScore(NScorableContext criteria) {
-        return DEFAULT_SCORE + 1;
     }
 }
