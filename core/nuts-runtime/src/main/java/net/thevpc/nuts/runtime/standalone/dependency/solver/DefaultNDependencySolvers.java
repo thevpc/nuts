@@ -4,10 +4,12 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NDependencySolvers;
 import net.thevpc.nuts.spi.NDependencySolver;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.List;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNDependencySolvers implements NDependencySolvers {
     public DefaultNDependencySolvers() {
     }
@@ -28,8 +30,4 @@ public class DefaultNDependencySolvers implements NDependencySolvers {
         return NWorkspaceExt.of().getDependencySolverNames();
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
