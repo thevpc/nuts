@@ -1,7 +1,6 @@
 package net.thevpc.nuts.net;
 
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.*;
 
 import java.io.UnsupportedEncodingException;
@@ -12,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionStringBuilder {
     private static Pattern CONNECTION_PATTERN = Pattern.compile(
             "((?<user>([a-zA-Z]([a-zA-Z0-9_-])*))(:(?<password>([^@]+)))?@)?" +
@@ -501,8 +501,4 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
         return this;
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
