@@ -32,13 +32,15 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NDefinitionFactory;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 /**
  *
  * @author vpc
  */
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NDefinitionFactoryImpl implements NDefinitionFactory {
 
     @Override
@@ -60,10 +62,4 @@ public class NDefinitionFactoryImpl implements NDefinitionFactory {
     public NDefinition byIdAndDescriptor(NId id, Supplier<NDescriptor> descriptor) {
         return NDefinitionHelper.ofDescriptorOnly(id, descriptor.get());
     }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
-
 }
