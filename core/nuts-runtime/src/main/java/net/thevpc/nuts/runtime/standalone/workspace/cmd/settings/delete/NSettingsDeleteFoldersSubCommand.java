@@ -21,6 +21,8 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,6 +30,7 @@ import java.util.Set;
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsDeleteFoldersSubCommand() {
         super();
