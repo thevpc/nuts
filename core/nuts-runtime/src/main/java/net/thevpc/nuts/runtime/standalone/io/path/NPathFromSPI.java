@@ -880,11 +880,13 @@ public class NPathFromSPI extends NPathBase {
             return i;
         }
         NPathType type = NPathFromSPI.this.type();
+
         return new DefaultNPathInfo(
+                getName(),
                 getLocation(),
                 type,
-                null,null, this.getContentLength(),
-                type==NPathType.SYMBOLIC_LINK,
+                null, null, this.getContentLength(),
+                type == NPathType.SYMBOLIC_LINK,
                 getLastModifiedInstant(),
                 getLastAccessInstant(),
                 getCreationInstant(),
