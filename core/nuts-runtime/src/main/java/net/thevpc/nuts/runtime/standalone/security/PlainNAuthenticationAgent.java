@@ -5,12 +5,14 @@ import net.thevpc.nuts.security.NSecurityException;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.Arrays;
 import java.util.Map;
 
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore(fixed = NScorable.DEFAULT_SCORE -1)
 public class PlainNAuthenticationAgent implements NAuthenticationAgent {
 
     @Override
@@ -60,10 +62,6 @@ public class PlainNAuthenticationAgent implements NAuthenticationAgent {
         }
     }
 
-    @Override
-    public int getScore(NScorableContext authenticationAgent) {
-        return DEFAULT_SCORE - 1;
-    }
 
     private char[] extractId(char[] a) {
         if (!(a == null || NBlankable.isBlank(new String(a)))) {
