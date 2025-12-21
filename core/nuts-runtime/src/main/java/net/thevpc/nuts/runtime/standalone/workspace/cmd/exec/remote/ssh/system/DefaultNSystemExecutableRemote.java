@@ -9,11 +9,11 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.spi.NExecTargetSPI;
 import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
@@ -42,7 +42,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
 
     public DefaultNSystemExecutableRemote(NExecTargetSPI commExec, String[] cmd,
                                           List<String> executorOptions,
-                                          NExecCmd execCommand,
+                                          NExec execCommand,
                                           NExecInput in,
                                           NExecOutput out,
                                           NExecOutput err
@@ -98,7 +98,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
         return new AbstractSyncIProcessExecHelper() {
             @Override
             public int exec() {
-                NExecCmd execCommand = getExecCommand();
+                NExec execCommand = getExecCommand();
                 try(DefaultNExecTargetCommandContext d=new DefaultNExecTargetCommandContext(
                         execCommand.getConnectionString(),
                         cmd,
@@ -123,7 +123,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
 
     @Override
     public NText getHelpText() {
-        switch (NWorkspace.of().getOsFamily()) {
+        switch (NEnv.of().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled(
                         "No help available. Try " + getName() + " /help",
