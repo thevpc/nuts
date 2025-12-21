@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.shell;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
@@ -66,7 +66,7 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
 
     public PathInfo build() {
         //Path script = getScriptFile(name);
-        NDefinition anyIdDef = NSearchCmd.of(anyId).setLatest(true).setDistinct(true)
+        NDefinition anyIdDef = NSearch.of(anyId).setLatest(true).setDistinct(true)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultDefinitions().findSingleton().get();
         NId anyId = anyIdDef.getId();
