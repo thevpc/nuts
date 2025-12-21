@@ -48,7 +48,6 @@ import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnsupportedEnumException;
 
@@ -602,7 +601,7 @@ public class NIdFormatHelper {
 
             try {
                 if (this.installStatus.isNonDeployed() || def == null) {
-                    this.defFetched = NFetchCmd.of(id)
+                    this.defFetched = NFetch.of(id)
                             .setFetchStrategy(NFetchStrategy.OFFLINE)
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .getResultDefinition();
