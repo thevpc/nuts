@@ -29,7 +29,7 @@ import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NMutableClassLoader;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -80,7 +80,7 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
             if (!NBlankable.isBlank(id.getGroupId())) {
                 NChronometer ch = NChronometer.startNow();
                 NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("searching dependency %s...", id).asConfig().withIntent(NMsgIntent.PROGRESS));
-                List<NDefinition> d = NSearchCmd.of(id.toId()).latest()
+                List<NDefinition> d = NSearch.of(id.toId()).latest()
                         .setInlineDependencies(true)
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDefinitions().toList();
