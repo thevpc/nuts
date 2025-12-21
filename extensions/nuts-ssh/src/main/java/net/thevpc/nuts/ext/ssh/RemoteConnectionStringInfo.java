@@ -12,10 +12,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.net.NConnectionString;
-import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
-import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.platform.NPlatformHome;
-import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.spi.NExecTargetCommandContext;
 import net.thevpc.nuts.spi.NExecTargetSPI;
 import net.thevpc.nuts.text.NDescriptorFormat;
@@ -54,7 +51,7 @@ public class RemoteConnectionStringInfo {
     private long loadedNutsJar;
     private long loadedSu;
     private long loadedSudo;
-    private NExecTargetInfo probed;
+    private NEnv probed;
 
 
     public static RemoteConnectionStringInfo of(NConnectionString target) {
@@ -66,9 +63,9 @@ public class RemoteConnectionStringInfo {
         return k;
     }
 
-    public NExecTargetInfo getProbedOs() {
+    public NEnv getProbedOs() {
         if(probed==null){
-            probed=NExecCmd.of().at(connectionString).probeTarget();
+            probed= NEnv.of(connectionString);
         }
         return probed;
     }
@@ -78,7 +75,7 @@ public class RemoteConnectionStringInfo {
     }
 
     public boolean copyId(NId id, NPath remoteRepo, NRef<NPath> remoteJar) {
-        NDefinition def = NFetchCmd.of(id)
+        NDefinition def = NFetch.of(id)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultDefinition();
         NPath apiLocalPath = def.getContent().get();
@@ -131,7 +128,7 @@ public class RemoteConnectionStringInfo {
         int e;
         NSession session = NSession.of();
         try (MyNExecTargetCommandContext d = new MyNExecTargetCommandContext(
-                NExecCmd.of().setConnectionString(target).system(),
+                NExec.of().setConnectionString(target).system(),
                 commExec, target, cmd, out, err)) {
             e = commExec.exec(d);
         } catch (RuntimeException ex) {
@@ -171,28 +168,28 @@ public class RemoteConnectionStringInfo {
     }
 
     public String getRootName(NExecTargetSPI commExec) {
-        NExecTargetInfo o = getProbedOs();
+        NEnv o = getProbedOs();
         synchronized (o) {
             return o.getRootUserName();
         }
     }
 
     public String getUserName(NExecTargetSPI commExec) {
-        NExecTargetInfo o = getProbedOs();
+        NEnv o = getProbedOs();
         synchronized (o) {
             return o.getUserName();
         }
     }
 
     public String getUserHome(NExecTargetSPI commExec) {
-        NExecTargetInfo o = getProbedOs();
+        NEnv o = getProbedOs();
         synchronized (o) {
             return o.getUserHome();
         }
     }
 
     public NOsFamily getOsFamily(NExecTargetSPI commExec) {
-        NExecTargetInfo o = getProbedOs();
+        NEnv o = getProbedOs();
         synchronized (o) {
             return o.getOsFamily();
         }
@@ -340,10 +337,10 @@ public class RemoteConnectionStringInfo {
         OutputStream out;
         OutputStream err;
         InputStream nullInput;
-        NExecCmd ec;
+        NExec ec;
         boolean rawCommand;
 
-        public MyNExecTargetCommandContext(NExecCmd ec, NExecTargetSPI commExec, NConnectionString target, String[] cmd, OutputStream out, OutputStream err) {
+        public MyNExecTargetCommandContext(NExec ec, NExecTargetSPI commExec, NConnectionString target, String[] cmd, OutputStream out, OutputStream err) {
             this.ec = ec;
             this.commExec = commExec;
             this.target = target;
@@ -385,7 +382,7 @@ public class RemoteConnectionStringInfo {
         }
 
         @Override
-        public NExecCmd getExecCommand() {
+        public NExec getExecCommand() {
             return ec;
         }
 
