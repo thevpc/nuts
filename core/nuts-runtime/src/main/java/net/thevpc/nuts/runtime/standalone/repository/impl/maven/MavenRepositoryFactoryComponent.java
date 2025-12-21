@@ -36,9 +36,7 @@ import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -107,24 +105,24 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
         return new MavenFolderRepository(options, parentRepository);
     }
 
-    @Override
-    public int getScore(NScorableContext criteria) {
+    @NScore
+    public static int getScore(NScorableContext criteria) {
         if (criteria == null) {
-            return UNSUPPORTED_SCORE;
+            return NScorable.UNSUPPORTED_SCORE;
         }
         NRepositoryConfig r = criteria.getCriteria(NRepositoryConfig.class);
         if (r != null) {
             String type = NRepositoryUtils.getRepoType(r);
             if (NBlankable.isBlank(type)) {
-                return UNSUPPORTED_SCORE;
+                return NScorable.UNSUPPORTED_SCORE;
             }
             if (NConstants.RepoTypes.MAVEN.equals(type)) {
-                return DEFAULT_SCORE + 10;
+                return NScorable.DEFAULT_SCORE + 10;
             }
             if (NBlankable.isBlank(type)) {
-                return DEFAULT_SCORE + 5;
+                return NScorable.DEFAULT_SCORE + 5;
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 }
