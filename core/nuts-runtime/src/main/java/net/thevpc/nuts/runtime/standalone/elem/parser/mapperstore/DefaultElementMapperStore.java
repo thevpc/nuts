@@ -7,7 +7,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
-import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.*;
 import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlDocument;
 import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlElement;
@@ -155,7 +155,7 @@ public class DefaultElementMapperStore {
         addCoreMapper(NDependency.class, F_NUTS_DEPENDENCY);
         addCoreMapper(NIdLocation.class, F_NUTS_ID_LOCATION);
         addCoreMapper(NArtifactCall.class, F_ARTIFACT_CALL);
-        addCoreMapper(NPlatformLocation.class, F_NUTS_SDK_LOCATION);
+        addCoreMapper(NExecutionEngineLocation.class, F_NUTS_SDK_LOCATION);
         addCoreMapper(NEnvCondition.class, F_NUTS_ENV_CONDITION);
         addCoreMapper(NEnvConditionBuilder.class, F_NUTS_ENV_CONDITION_BUILDER);
         addCoreMapper(NDescriptorProperty.class, F_DESCRIPTOR_PROPERTY);
