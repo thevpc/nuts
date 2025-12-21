@@ -6,12 +6,14 @@ import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.runtime.standalone.reflect.mapper.NReflectMapperContextImpl;
 import net.thevpc.nuts.runtime.standalone.reflect.mapper.TypeMapperRepositoryDef;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.lang.reflect.Type;
 import java.util.*;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NReflectMapperImpl implements NReflectMapper {
     public static final Converter IDENTITY_CONVERTER = new Converter() {
         @Override
@@ -121,15 +123,6 @@ public class NReflectMapperImpl implements NReflectMapper {
     }
 
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
-
-
-
-
-
     public <A, B> B mapToType(A a, Class<B> b) {
         return (B) createContext().mapToType(a, reflectRepository.getType(b));
     }
@@ -138,8 +131,6 @@ public class NReflectMapperImpl implements NReflectMapper {
     public NReflectMapperContext createContext() {
         return new NReflectMapperContextImpl(this,reflectRepository,new TypeMapperRepositoryDef(globalMapperRepositoryDef));
     }
-
-
 
     public Object mapToType(Object from, Type to) {
         return mapToType(from, reflectRepository.getType(to));
