@@ -2,9 +2,11 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.artifact.NFilters;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NFilter;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNFilters implements NFilters {
     public DefaultNFilterModel model;
     public DefaultNFilters() {
@@ -85,8 +87,4 @@ public class DefaultNFilters implements NFilters {
         return model.detectType(nFilter);
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
