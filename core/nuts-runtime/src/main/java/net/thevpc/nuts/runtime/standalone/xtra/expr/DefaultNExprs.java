@@ -2,9 +2,9 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.reflect.NPlatformArgsSignature;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.*;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNExprs implements NExprs {
 
     private final DefaultNExprsCommonOps defaultNExprsCommonOps = new DefaultNExprsCommonOps();
@@ -78,9 +78,5 @@ public class DefaultNExprs implements NExprs {
     }
 
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
 
