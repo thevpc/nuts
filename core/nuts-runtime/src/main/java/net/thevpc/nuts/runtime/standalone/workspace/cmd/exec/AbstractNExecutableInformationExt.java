@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutableInformationExt;
@@ -20,14 +20,14 @@ public abstract class AbstractNExecutableInformationExt implements NExecutableIn
     protected NExecutableType type;
     protected String name;
     protected String value;
-    private final NExecCmd execCommand;
-    public AbstractNExecutableInformationExt(String name, NExecutableType type, NExecCmd execCommand) {
+    private final NExec execCommand;
+    public AbstractNExecutableInformationExt(String name, NExecutableType type, NExec execCommand) {
         this.type = type;
         this.name = name;
         this.execCommand = execCommand;
     }
 
-    public AbstractNExecutableInformationExt(String name, String value, NExecutableType type, NExecCmd execCommand) {
+    public AbstractNExecutableInformationExt(String name, String value, NExecutableType type, NExec execCommand) {
         this.type = type;
         this.name = name;
         this.value = value;
@@ -38,7 +38,7 @@ public abstract class AbstractNExecutableInformationExt implements NExecutableIn
         return NLog.of(getClass());
     }
 
-    public NExecCmd getExecCommand() {
+    public NExec getExecCommand() {
         return execCommand;
     }
 
