@@ -4,10 +4,9 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NDigestName;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NNames;
+import net.thevpc.nuts.util.*;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNDigestName implements NDigestName {
     private Object source;
     private String sourceType;
@@ -79,8 +78,4 @@ public class DefaultNDigestName implements NDigestName {
         return getDigestNameInt(source.hashCode());
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
