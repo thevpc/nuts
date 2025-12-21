@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementRedescribable;
 import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
@@ -39,7 +39,7 @@ import java.util.stream.*;
  * @param <T> Result Type
  * @author thevpc
  * @app.category Base
- * @see NSearchCmd#getResultIds()
+ * @see NSearch#getResultIds()
  * @since 0.5.4
  */
 public interface NStream<T> extends Iterable<T>, NElementRedescribable<NStream<T>>, AutoCloseable {
