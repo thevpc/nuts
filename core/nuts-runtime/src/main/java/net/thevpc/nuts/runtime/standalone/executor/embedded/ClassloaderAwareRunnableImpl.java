@@ -4,7 +4,7 @@ import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.app.NAppInitInfo;
 import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspaceOptionsBuilder;
@@ -59,7 +59,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                 Object oldId = NApplications.getSharedMap().get("nuts.embedded.application.id");
                 NApplications.getSharedMap().put("nuts.embedded.application.id", id);
                 try {
-                    NExecCmd.of()
+                    NExec.of()
                             .addCommand(appArgs)
                             .addExecutorOptions(o.getExecutorOptions().orNull())
                             .setExecutionType(o.getExecutionType().orNull())
