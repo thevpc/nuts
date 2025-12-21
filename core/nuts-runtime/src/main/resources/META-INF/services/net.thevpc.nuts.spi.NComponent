@@ -68,7 +68,7 @@ net.thevpc.nuts.runtime.standalone.io.terminal.history.NCmdLineHistoryImpl
 net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLines
 
 net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLineFormat
-net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format.DefaultNExecCmdFormat
+net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format.DefaultNExecFormat
 net.thevpc.nuts.runtime.standalone.format.DefaultNObjectFormat
 net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat
 net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat
