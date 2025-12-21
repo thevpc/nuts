@@ -27,7 +27,8 @@ package net.thevpc.nuts.runtime.standalone.repository.toolbox;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +37,7 @@ import java.util.List;
  * Created by vpc on 1/15/17.
  */
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore(fixed = NScorable.UNSUPPORTED_SCORE)
 public class ToolboxRepositoryFactoryComponent implements NRepositoryFactoryComponent {
 
     public ToolboxRepositoryFactoryComponent() {
@@ -55,8 +57,4 @@ public class ToolboxRepositoryFactoryComponent implements NRepositoryFactoryComp
         return null;
     }
 
-    @Override
-    public int getScore(NScorableContext criteria) {
-        return UNSUPPORTED_SCORE;
-    }
 }
