@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
@@ -18,7 +18,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNSearchInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNSearchInternalExecutable(String[] args, NExecCmd execCommand) {
+    public DefaultNSearchInternalExecutable(String[] args, NExec execCommand) {
         super("search", args, execCommand);
     }
 
@@ -33,7 +33,7 @@ public class DefaultNSearchInternalExecutable extends DefaultInternalNExecutable
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NSearchCmd.of()
+        NSearch.of()
                 .configure(false, args).run();
         return NExecutionException.SUCCESS;
     }
