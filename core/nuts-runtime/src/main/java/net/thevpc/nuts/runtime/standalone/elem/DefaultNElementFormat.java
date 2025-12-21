@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NUnsupportedOperationException;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.*;
@@ -30,6 +31,7 @@ import net.thevpc.nuts.text.NMsg;
 import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> implements NElementFormat {
     private final DefaultNTextManagerModel model;
     private Object value;
@@ -205,11 +207,6 @@ public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> imp
 
     public NElementFactoryService getElementFactoryService() {
         return model.getElementFactoryService();
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     @Override
