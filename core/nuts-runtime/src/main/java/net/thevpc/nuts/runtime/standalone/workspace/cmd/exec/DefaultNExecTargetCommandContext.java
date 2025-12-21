@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.spi.NExecTargetCommandContext;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
@@ -17,10 +17,10 @@ public class DefaultNExecTargetCommandContext implements NExecTargetCommandConte
     private InHolder hin;
     private OutHolder hout;
     private OutHolder herr;
-    private NExecCmd execCommand;
+    private NExec execCommand;
     private boolean rawCommand;
 
-    public DefaultNExecTargetCommandContext(NConnectionString connectionString, String[] command, NExecInput in, NExecOutput out, NExecOutput err, NExecCmd execCommand) {
+    public DefaultNExecTargetCommandContext(NConnectionString connectionString, String[] command, NExecInput in, NExecOutput out, NExecOutput err, NExec execCommand) {
         this.connectionString = connectionString;
         this.command = command;
         this.xin = in;
@@ -246,7 +246,7 @@ public class DefaultNExecTargetCommandContext implements NExecTargetCommandConte
         }
     }
 
-    public NExecCmd getExecCommand() {
+    public NExec getExecCommand() {
         return execCommand;
     }
 }
