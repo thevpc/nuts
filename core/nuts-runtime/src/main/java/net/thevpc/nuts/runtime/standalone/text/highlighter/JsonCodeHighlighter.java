@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.thevpc.nuts.spi.NCodeHighlighter;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.*;
 
@@ -24,21 +26,21 @@ public class JsonCodeHighlighter implements NCodeHighlighter {
         return txt.ofPlain(text);
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
+    @NScore(fixed = NScorable.DEFAULT_SCORE)
+    public static int getScore(NScorableContext context) {
         String s = context.getCriteria();
         if(s==null){
-            return DEFAULT_SCORE;
+            return NScorable.DEFAULT_SCORE;
         }
         switch (s){
             case "json":
             case "application/json":
             case "text/json":
             {
-                return DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
     @Override
