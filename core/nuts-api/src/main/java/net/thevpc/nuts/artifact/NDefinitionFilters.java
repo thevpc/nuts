@@ -29,7 +29,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.platform.NArchFamily;
 import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.platform.NPlatformFamily;
+import net.thevpc.nuts.platform.NExecutionEngineFamily;
 
 import java.util.Collection;
 import java.util.Map;
@@ -176,7 +176,7 @@ public interface NDefinitionFilters extends NTypedFilters<NDefinitionFilter> {
 
     NDefinitionFilter byOs(NId... values);
 
-    NDefinitionFilter byPlatformFamily(NPlatformFamily... values);
+    NDefinitionFilter byPlatformFamily(NExecutionEngineFamily... values);
 
     NDefinitionFilter byPlatform(NId... values);
 
