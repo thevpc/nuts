@@ -109,8 +109,8 @@ More details at [https://thevpc.github.io/nuts/doc-nuts.html](https://thevpc.git
 | Command                                                                                    | Short Description                                                             |
 |--------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
 | nuts io.github.jiashunx:masker-flappybird                                                  | install & run game flappybird                                                 |
-| nuts install com.github.anuken:mindustry-desktop                                           | install & run game mindustry                                                  |
-| nuts install com.github.anuken:mindustry-server                                            | install & run game mindustry server                                           |
+| nuts com.github.anuken:mindustry-desktop                                                   | install & run game mindustry                                                  |
+| nuts com.github.anuken:mindustry-server                                                    | install & run game mindustry server                                           |
 | nuts org.jmeld:jmeld                                                                       | install & run a folder diff tool                                              |
 | nuts com.jgoodies:jdiskreport                                                              | install & run JDiskReport a tool to analyze disk space usage                  |
 | nuts org.jd:jd-gui                                                                         | install & run a java decompiler tool                                          |
