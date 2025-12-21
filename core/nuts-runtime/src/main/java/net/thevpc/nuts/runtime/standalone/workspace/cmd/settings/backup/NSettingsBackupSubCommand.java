@@ -19,6 +19,8 @@ import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.platform.NPlatformHome;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.io.File;
 import java.io.InputStream;
@@ -30,6 +32,7 @@ import java.util.List;
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsBackupSubCommand() {
         super();
