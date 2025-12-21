@@ -14,10 +14,12 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.text.NText;
 
 @NComponentScope(NScopeType.PROTOTYPE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyFormat> implements NDependencyFormat {
 
     private boolean omitRepository;
@@ -243,8 +245,4 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
         return false;
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
