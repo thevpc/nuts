@@ -11,7 +11,8 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NPrepareCmd;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd> implements NPrepareCmd {
     protected String targetServer;
     protected String userName;
@@ -30,11 +32,6 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
 
     public AbstractNPrepareCmd(NWorkspace workspace) {
         super("prepare");
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     @Override
