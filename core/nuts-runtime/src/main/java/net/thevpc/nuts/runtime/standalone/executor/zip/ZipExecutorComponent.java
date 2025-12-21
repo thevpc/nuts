@@ -34,10 +34,8 @@ import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NExecutorComponent;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
 
@@ -47,10 +45,9 @@ import java.util.*;
 @NComponentScope(NScopeType.WORKSPACE)
 public class ZipExecutorComponent implements NExecutorComponent {
 
-    public static NId ID;
+    public static NId ID=NId.get("net.thevpc.nuts.exec:zip").get();
 
     public ZipExecutorComponent() {
-        ID = NId.get("net.thevpc.nuts.exec:zip").get();
     }
 
     @Override
@@ -63,25 +60,25 @@ public class ZipExecutorComponent implements NExecutorComponent {
         return execHelper(executionContext).exec();
     }
 
-    @Override
-    public int getScore(NScorableContext ctx) {
+    @NScore
+    public static int getScore(NScorableContext ctx) {
         NDefinition def = ctx.getCriteria(NDefinition.class);
         if (def != null) {
             String shortName = def.getId().getShortName();
             //for executors
             if ("net.thevpc.nuts.exec:exec-zip".equals(shortName)) {
-                return DEFAULT_SCORE + 10;
+                return NScorable.DEFAULT_SCORE + 10;
             }
             if ("zip".equals(shortName)) {
-                return DEFAULT_SCORE + 10;
+                return NScorable.DEFAULT_SCORE + 10;
             }
             switch (NStringUtils.trim(def.getDescriptor().getPackaging())) {
                 case "zip": {
-                    return DEFAULT_SCORE + 10;
+                    return NScorable.DEFAULT_SCORE + 10;
                 }
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
     //@Override
