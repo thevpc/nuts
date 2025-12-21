@@ -9,7 +9,8 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NMutableClassLoader;
 import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NFormats;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.log.NLogs;
@@ -19,9 +20,7 @@ import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
 import java.net.URL;
 import java.util.*;
@@ -29,17 +28,13 @@ import java.util.*;
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNExtensions implements NExtensions {
 
     private NWorkspaceModel wsModel;
 
     public DefaultNExtensions(NWorkspaceModel wsModel) {
         this.wsModel = wsModel;
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     public DefaultNWorkspaceExtensionModel getModel() {
@@ -58,14 +53,10 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     @Override
-    public Set<Class<? extends NComponent>> discoverTypes(NId id, ClassLoader classLoader) {
+    public Set<Class<?>> discoverTypes(NId id, ClassLoader classLoader) {
         return wsModel.extensionModel.discoverTypes(id, classLoader);
     }
 
-    //    @Override
-//    public Set<Class> discoverTypes(ClassLoader classLoader) {
-//        return objectFactory.discoverTypes(classLoader);
-//    }
     @Override
     public <T extends NComponent, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType) {
         return wsModel.extensionModel.createServiceLoader(serviceType, criteriaType);
@@ -81,13 +72,44 @@ public class DefaultNExtensions implements NExtensions {
         return new NMutableClassLoaderImpl(parentClassLoader);
     }
 
-    @Override
-    public <T extends NComponent> NOptional<T> createComponent(Class<T> type) {
-        return createComponent(type, null);
+    public <T extends NComponent> NOptional<NScorable> getTypeScorable(Class<? extends T> implType, Class<T> apiType) {
+        return wsModel.extensionModel.getObjectFactory().getTypeScorer(implType, apiType);
     }
 
-    public <T extends NComponent, V> NOptional<T> createComponent(Class<T> serviceType, V criteriaType) {
-        if(wsModel.extensionModel==null){
+    public <T extends NComponent> NOptional<NScorable> getInstanceScorable(T instance, Class<T> apiType) {
+        return wsModel.extensionModel.getObjectFactory().getInstanceScorer(instance, apiType);
+    }
+
+    @Override
+    public <T extends NComponent> NScoredValue<T> getTypeScoredValue(Class<? extends T> implType, Class<T> apiType, NScorableContext scorableContext) {
+        return wsModel.extensionModel.getObjectFactory().resolveTypeScore(implType, apiType,scorableContext);
+    }
+
+    @Override
+    public <T extends NComponent> NScoredValue<T> getInstanceScoredValue(T instance, Class<T> apiType, NScorableContext scorableContext) {
+        return wsModel.extensionModel.getObjectFactory().resolveInstanceScore(instance, apiType,scorableContext);
+    }
+
+    @Override
+    public <T extends NComponent> NOptional<T> createComponent(Class<T> type) {
+        return createSupported(type, null);
+    }
+
+    public <T extends NComponent, V> NOptional<T> createSupported(Class<T> serviceType, V criteriaType) {
+        if (criteriaType instanceof NConnectionString) {
+            NExtensionUtils.ensureExtensionLoadedForProtocol((NConnectionString) criteriaType);
+        }
+        switch (serviceType.getName()) {
+            case "net.thevpc.nuts.log.NLogs": {
+                NLogs t = wsModel.defaultNLogs;
+                if (t == null) {
+                    t = new DefaultNLogs();
+                    wsModel.defaultNLogs = t;
+                }
+                return NOptional.of((T) t);
+            }
+        }
+        if (wsModel.extensionModel == null) {
             switch (serviceType.getName()) {
                 case "net.thevpc.nuts.text.NTexts": {
                     NTexts t = wsModel.textModel.defaultNTexts;
@@ -106,15 +128,15 @@ public class DefaultNExtensions implements NExtensions {
                     return NOptional.of((T) t);
                 }
                 case "net.thevpc.nuts.log.NLogs": {
-                    NLogs t = wsModel.textModel.defaultNLogs;
+                    NLogs t = wsModel.defaultNLogs;
                     if (t == null) {
                         t = new DefaultNLogs();
-                        wsModel.textModel.defaultNLogs = t;
+                        wsModel.defaultNLogs = t;
                     }
                     return NOptional.of((T) t);
                 }
-                default:{
-                    throw NExceptions.ofSafeUnexpectedException(NMsg.ofC("Workspace is still booting and component container is not yet available. but you asked for %s",serviceType.getName()));
+                default: {
+                    throw NExceptions.ofSafeUnexpectedException(NMsg.ofC("Workspace is still booting and component container is not yet available. but you asked for %s", serviceType.getName()));
                 }
             }
         }
@@ -122,7 +144,7 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     @Override
-    public <T extends NComponent, V> List<T> createComponents(Class<T> serviceType, V criteriaType) {
+    public <T extends NComponent, V> List<T> createAllSupported(Class<T> serviceType, V criteriaType) {
         return wsModel.extensionModel.createAllSupported(serviceType, criteriaType);
     }
 
