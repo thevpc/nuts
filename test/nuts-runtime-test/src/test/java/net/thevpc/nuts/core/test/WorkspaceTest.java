@@ -9,7 +9,7 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NInfoCmd;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.concurrent.NLockBuilder;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
@@ -455,11 +455,11 @@ public class WorkspaceTest {
         if (NDI_COMPANIONS > 0) {
             NId nshId = null;
             try {
-                nshId = NSearchCmd.of("nsh").setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
+                nshId = NSearch.of("nsh").setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
                         .setDistinct(true).getResultIds()
                         .findSingleton().get();
             } catch (Exception ex) {
-                nshId = NSearchCmd.of("nsh").setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
+                nshId = NSearch.of("nsh").setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
                         .setDistinct(true).getResultIds()
                         .findSingleton().get();
             }
