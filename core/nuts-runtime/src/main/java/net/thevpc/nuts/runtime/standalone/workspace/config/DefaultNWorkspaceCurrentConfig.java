@@ -10,10 +10,7 @@ import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.platform.NHomeLocation;
-import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.platform.NPlatformHome;
-import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.boot.NBootConfig;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
@@ -133,7 +130,7 @@ public final class DefaultNWorkspaceCurrentConfig {
             apiId = NId.getApi(Nuts.getVersion()).get();
         }
         if (storeLayout == null) {
-            storeLayout = NWorkspace.of().getOsFamily();
+            storeLayout = NEnv.of().getOsFamily();
         }
         return this;
     }
