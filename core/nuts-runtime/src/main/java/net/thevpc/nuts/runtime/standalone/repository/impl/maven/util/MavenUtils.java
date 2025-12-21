@@ -25,7 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.core.NSession;
@@ -546,7 +546,7 @@ public class MavenUtils {
                 if (parentId != null) {
                     if (!CoreNUtils.isEffectiveId(parentId)) {
                         try {
-                            parentDescriptor = NFetchCmd.of(parentId)
+                            parentDescriptor = NFetch.of(parentId)
                                     .setTransitive(true)
                                     .setFetchStrategy(
                                             fetchMode == NFetchMode.REMOTE ? NFetchStrategy.ONLINE
@@ -592,7 +592,7 @@ public class MavenUtils {
                         NDescriptor d = cache.get(pid);
                         if (d == null) {
                             try {
-                                d = NFetchCmd.of(pid)
+                                d = NFetch.of(pid)
                                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                                         .getResultDescriptor();
                             } catch (NException ex) {
