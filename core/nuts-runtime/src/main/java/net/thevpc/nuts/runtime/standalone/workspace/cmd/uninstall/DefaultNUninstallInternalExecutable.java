@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.command.NUninstallCmd;
+import net.thevpc.nuts.command.NUninstall;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
@@ -18,7 +18,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNUninstallInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNUninstallInternalExecutable(String[] args, NExecCmd execCommand) {
+    public DefaultNUninstallInternalExecutable(String[] args, NExec execCommand) {
         super("uninstall", args, execCommand);
     }
 
@@ -33,7 +33,7 @@ public class DefaultNUninstallInternalExecutable extends DefaultInternalNExecuta
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NUninstallCmd.of().configure(false, args).run();
+        NUninstall.of().configure(false, args).run();
         return NExecutionException.SUCCESS;
     }
 
