@@ -6,7 +6,7 @@
 package net.thevpc.nuts.core.test.special;
 
 import net.thevpc.nuts.artifact.NDependencyTreeNode;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.text.NVersionFormat;
@@ -35,7 +35,7 @@ public class TestSpecial_ExecURLTest {
 
     public void testNtf2() {
         TestUtils.println(NVersionFormat.of());
-        String result = NExecCmd.of()
+        String result = NExec.of()
                 .setConnectionString("ssh://vpc:a@192.168.1.36")
                 //.addCommand("ls","-l")
                 .addCommand("nuts","info")
