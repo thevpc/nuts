@@ -14,7 +14,7 @@ import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.text.NMsg;
@@ -36,18 +36,18 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
     List<String> workspaceOptions;
     NExecutionType executionType;
     NRunAs runAs;
-    DefaultNExecCmd execCommand;
+    DefaultNExec execCommand;
     NDefinition nutToRun;
     CharacterizedExecFile c;
     String tempFolder;
-    DefaultNExecCmd.NExecutorComponentAndContext executorComponentAndContext;
+    DefaultNExec.NExecutorComponentAndContext executorComponentAndContext;
 
     public DefaultNArtifactPathExecutable(String cmdName, String[] args, List<String> executorOptions, List<String> workspaceOptions,
-                                          NExecutionType executionType, NRunAs runAs, DefaultNExecCmd execCommand,
+                                          NExecutionType executionType, NRunAs runAs, DefaultNExec execCommand,
                                           NDefinition nutToRun,
                                           CharacterizedExecFile c,
                                           String tempFolder,
-                                          DefaultNExecCmd.NExecutorComponentAndContext executorComponentAndContext
+                                          DefaultNExec.NExecutorComponentAndContext executorComponentAndContext
     ) {
         super(cmdName,
                 NCmdLine.of(args).toString(),
