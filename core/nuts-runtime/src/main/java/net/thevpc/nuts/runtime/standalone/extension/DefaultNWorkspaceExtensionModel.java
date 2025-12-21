@@ -10,11 +10,11 @@ import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NIdType;
 import net.thevpc.nuts.boot.NBootWorkspaceFactory;
+import net.thevpc.nuts.command.NFetch;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.*;
 
 
-import net.thevpc.nuts.command.NFetchCmd;
-import net.thevpc.nuts.command.NSearchCmd;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -322,8 +322,8 @@ public class DefaultNWorkspaceExtensionModel {
 //            return old;
 //        }
 //    }
-    public Set<Class<? extends NComponent>> discoverTypes(NId id, ClassLoader classLoader) {
-        URL url = NFetchCmd.of(id)
+    public Set<Class<?>> discoverTypes(NId id, ClassLoader classLoader) {
+        URL url = NFetch.of(id)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultContent().toURL().get();
         return objectFactory.discoverTypes(id, url, classLoader);
@@ -338,7 +338,7 @@ public class DefaultNWorkspaceExtensionModel {
     }
 
     public <T extends NComponent, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
-        return new DefaultNServiceLoader<T, B>(workspace, serviceType, criteriaType, classLoader);
+        return new DefaultNServiceLoader<T, B>(serviceType, criteriaType, classLoader);
     }
 
     public <T extends NComponent, V> NOptional<T> createSupported(Class<T> type, V supportCriteria) {
@@ -455,7 +455,7 @@ public class DefaultNWorkspaceExtensionModel {
                     someUpdates = true;
                 } else {
                     //load extension
-                    NDefinition def = NSearchCmd.of()
+                    NDefinition def = NSearch.of()
                             .addId(extension).setTargetApiVersion(workspace.getApiVersion())
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .setLatest(true)
@@ -468,8 +468,8 @@ public class DefaultNWorkspaceExtensionModel {
                     }
 //                    ws.install().setSession(session).id(def.getId());
                     workspaceExtensionsClassLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(def, null));
-                    Set<Class<? extends NComponent>> classes = objectFactory.discoverTypes(def.getId(), def.getContent().flatMap(NPath::toURL).orNull(), workspaceExtensionsClassLoader);
-                    for (Class<? extends NComponent> aClass : classes) {
+                    Set<Class<?>> classes = objectFactory.discoverTypes(def.getId(), def.getContent().flatMap(NPath::toURL).orNull(), workspaceExtensionsClassLoader);
+                    for (Class<?> aClass : classes) {
                         ((NWorkspaceExt) workspace).getModel().configModel.onNewComponent(aClass);
                     }
                     //should check current classpath
@@ -491,7 +491,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     private void updateLoadedExtensionURLs() {
         loadedExtensionURLs.clear();
-        for (NDefinition def : NSearchCmd.of().addIds(loadedExtensionIds.toArray(new NId[0]))
+        for (NDefinition def : NSearch.of().addIds(loadedExtensionIds.toArray(new NId[0]))
                 .setTargetApiVersion(workspace.getApiVersion())
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .setLatest(true)
@@ -526,7 +526,7 @@ public class DefaultNWorkspaceExtensionModel {
         return extensions.values().toArray(new NWorkspaceExtension[0]);
     }
 
-    public NWorkspaceExtension wireExtension(NId id, NFetchCmd options) {
+    public NWorkspaceExtension wireExtension(NId id, NFetch options) {
         NSession session=workspace.currentSession();
         NAssert.requireNonNull(id, "extension id");
         NId wired = CoreNUtils.findNutsIdBySimpleName(id, extensions.keySet());
@@ -537,7 +537,7 @@ public class DefaultNWorkspaceExtensionModel {
         _LOG().log(NMsg.ofC("installing extension %s", id)
                 .withLevel(Level.FINE).withIntent(NMsgIntent.ADD)
         );
-        NDefinition nDefinitions = NSearchCmd.of()
+        NDefinition nDefinitions = NSearch.of()
                 .copyFrom(options)
                 .addId(id)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
@@ -549,7 +549,7 @@ public class DefaultNWorkspaceExtensionModel {
         }
         DefaultNWorkspaceExtension workspaceExtension = new DefaultNWorkspaceExtension(id, nDefinitions.getId(), this.workspaceExtensionsClassLoader);
         //now will iterate over Extension classes to wire them ...
-        Set<Class<? extends NComponent>> discoveredTypes = objectFactory.discoverTypes(nDefinitions.getId(), nDefinitions.getContent().flatMap(NPath::toURL).orNull(), workspaceExtension.getClassLoader());
+        Set<Class<?>> discoveredTypes = objectFactory.discoverTypes(nDefinitions.getId(), nDefinitions.getContent().flatMap(NPath::toURL).orNull(), workspaceExtension.getClassLoader());
 //        for (Class extensionImpl : getExtensionTypes(NutsComponent.class, session)) {
 //            for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
 //                if (registerType(extensionPointType, extensionImpl, session)) {
@@ -573,7 +573,7 @@ public class DefaultNWorkspaceExtensionModel {
                     );
             session.setTerminal(newTerminal);
         }
-        for (Class<? extends NComponent> discoveredType : discoveredTypes) {
+        for (Class<?> discoveredType : discoveredTypes) {
             if (NExtensionLifeCycle.class.isAssignableFrom(discoveredType)) {
                 workspaceExtension.getEvents().add(
                         (NExtensionLifeCycle) objectFactory.createComponent(discoveredType, null).get()
