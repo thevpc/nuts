@@ -38,15 +38,6 @@ public interface NCodeHighlighter extends NComponent {
 
     String getId();
 
-    /**
-     * evaluate support level (who much this instance should be considered convenient, acceptable)
-     * for the given arguments (provided in context).
-     *
-     * @param context evaluation context
-     * @return support level value
-     */
-    int getScore(NScorableContext context);
-
     NText stringToText(String text, NTexts txt);
 
     NText tokenToText(String text, String tokenType, NTexts txt);
