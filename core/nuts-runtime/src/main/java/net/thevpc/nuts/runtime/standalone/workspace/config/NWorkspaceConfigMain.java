@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.command.NCommandFactoryConfig;
 import net.thevpc.nuts.core.NConfigItem;
-import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.core.NRepositoryRef;
 import net.thevpc.nuts.runtime.NutsRuntimeConfigConstants;
 
@@ -50,7 +50,7 @@ public final class NWorkspaceConfigMain extends NConfigItem implements Cloneable
     private boolean enablePreviewRepositories= NutsRuntimeConfigConstants.ENABLE_PREVIEW_REPOSITORIES;
     private List<NCommandFactoryConfig> commandFactories;
     private Map<String,String> env = new LinkedHashMap<>();
-    private List<NPlatformLocation> platforms = new ArrayList<>();
+    private List<NExecutionEngineLocation> platforms = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
 
     public NWorkspaceConfigMain() {
@@ -87,7 +87,7 @@ public final class NWorkspaceConfigMain extends NConfigItem implements Cloneable
         return this;
     }
 
-    public NWorkspaceConfigMain setPlatforms(List<NPlatformLocation> platforms) {
+    public NWorkspaceConfigMain setPlatforms(List<NExecutionEngineLocation> platforms) {
         this.platforms = platforms;
         return this;
     }
@@ -101,7 +101,7 @@ public final class NWorkspaceConfigMain extends NConfigItem implements Cloneable
         return this;
     }
 
-    public List<NPlatformLocation> getPlatforms() {
+    public List<NExecutionEngineLocation> getPlatforms() {
         return platforms;
     }
 
