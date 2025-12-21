@@ -16,8 +16,4 @@ public abstract class AbstractNSettingsSubCommand implements NSettingsSubCommand
     public AbstractNSettingsSubCommand() {
     }
 
-    @Override
-    public int getScore(NScorableContext criteria) {
-        return DEFAULT_SCORE;
-    }
 }
