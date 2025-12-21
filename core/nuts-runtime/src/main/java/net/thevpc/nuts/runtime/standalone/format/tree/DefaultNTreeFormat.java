@@ -12,11 +12,10 @@ import net.thevpc.nuts.runtime.standalone.text.art.tree.XNodeFormatter;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NStringUtils;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implements NTreeFormat {
 
     private DefaultNTextArtTreeRenderer renderer = new DefaultNTextArtTreeRenderer("default");
@@ -144,8 +143,4 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     }
 
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
