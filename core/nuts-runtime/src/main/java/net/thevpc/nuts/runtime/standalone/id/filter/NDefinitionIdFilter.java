@@ -9,7 +9,7 @@ import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NIdFilter;
-import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionDelegate;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenRepositoryFolderHelper;
@@ -111,7 +111,7 @@ public class NDefinitionIdFilter extends AbstractIdFilter implements NIdFilter, 
                 loaded = true;
                 try {
 //                descriptor = repository.fetchDescriptor().setId(id).setSession(session).getResult();
-                    definition = NFetchCmd.of(id).getResultDefinition();
+                    definition = NFetch.of(id).getResultDefinition();
 
                 } catch (Exception ex) {
                     //suppose we cannot retrieve descriptor
