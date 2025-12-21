@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.id.util;
 
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NDescriptor;
@@ -7,7 +8,6 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.command.NFetchStrategy;
-import net.thevpc.nuts.command.NSearchCmd;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementParser;
@@ -150,7 +150,7 @@ public class CoreNIdUtils {
                 return c.getRuntimeId();
             }
         }
-        NId foundRT = NSearchCmd.of()
+        NId foundRT = NSearch.of()
                 .setFetchStrategy(NFetchStrategy.OFFLINE)
                 .addId(NId.getRuntime("").get())
                 .setLatest(true)
@@ -159,7 +159,7 @@ public class CoreNIdUtils {
                 findFirst().orNull();
         NSession session = workspace.currentSession();
         if (foundRT == null && session.getFetchStrategy().orDefault() != NFetchStrategy.OFFLINE) {
-            foundRT = NSearchCmd.of().addId(NId.getRuntime("").get())
+            foundRT = NSearch.of().addId(NId.getRuntime("").get())
                     .setLatest(true)
                     .setTargetApiVersion(NVersion.get(apiVersion).get())
                     .getResultIds().
