@@ -34,6 +34,8 @@ import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NExecutorComponent;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
@@ -44,20 +46,17 @@ import net.thevpc.nuts.util.NStringUtils;
 @NComponentScope(NScopeType.WORKSPACE)
 public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponent {
 
-    public static NId ID;
+    public static NId ID=NId.get("net.thevpc.nuts.exec:java-unsupported").get();
 
     @Override
     public NId getId() {
         return ID;
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        if(ID==null){
-            ID = NId.get("net.thevpc.nuts.exec:java-unsupported").get();
-        }
+    @NScore
+    public static int getScore(NScorableContext context) {
         if(true){
-            return UNSUPPORTED_SCORE;
+            return NScorable.UNSUPPORTED_SCORE;
         }
         NDefinition def = context.getCriteria(NDefinition.class);
         if (def != null) {
@@ -66,12 +65,12 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
                 case "war":
                 case "zip":
                 {
-                    return UNSUPPORTED_SCORE;
+                    return NScorable.UNSUPPORTED_SCORE;
                 }
             }
-            return DEFAULT_SCORE + 1;
+            return NScorable.DEFAULT_SCORE + 1;
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
     @Override
