@@ -13,11 +13,9 @@ import net.thevpc.nuts.text.NMsg;
 public abstract class AbstractNAuthenticationAgent implements NAuthenticationAgent {
 
     private final String name;
-    private int score;
 
-    public AbstractNAuthenticationAgent(String name, int score) {
+    public AbstractNAuthenticationAgent(String name) {
         this.name = name;
-        this.score = score;
     }
 
     @Override
@@ -29,11 +27,6 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
     public boolean removeCredentials(char[] credentialsId, Map<String, String> envProvider) {
         extractId(credentialsId);
         return true;
-    }
-
-    @Override
-    public int getScore(NScorableContext authenticationAgent) {
-        return score;
     }
 
     @Override
