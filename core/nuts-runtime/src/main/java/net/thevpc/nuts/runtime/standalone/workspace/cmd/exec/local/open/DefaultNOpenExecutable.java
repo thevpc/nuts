@@ -9,9 +9,9 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutableType;
-import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.text.NText;
@@ -35,7 +35,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
     private String[] effectiveOpenExecutable;
 
     public DefaultNOpenExecutable(String[] cmd,
-                                  String[] executorOptions, NExecCmd execCommand
+                                  String[] executorOptions, NExec execCommand
     ) {
         super(cmd[0],
                 NCmdLine.of(cmd).toString(),
@@ -55,7 +55,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
                 }
             }
         }
-        switch (NWorkspace.of().getOsFamily()) {
+        switch (NEnv.of().getOsFamily()) {
             case LINUX: {
                 Path execPath = NSysExecUtils.sysWhich("xdg-open");
                 if (execPath != null) {
@@ -93,11 +93,11 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
         return null;
     }
 
-    private NExecCmd resolveExecHelper() {
+    private NExec resolveExecHelper() {
         if (effectiveOpenExecutable == null) {
             throw new NIllegalArgumentException(NMsg.ofC("unable to resolve viewer for %s", cmd[0]));
         }
-        NExecCmd cc = getExecCommand().copy();
+        NExec cc = getExecCommand().copy();
         cc.system();
         List<String> ss = new ArrayList<>(Arrays.asList(effectiveOpenExecutable));
         ss.addAll(Arrays.asList(cmd));
@@ -112,7 +112,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
 
     @Override
     public NText getHelpText() {
-        switch (NWorkspace.of().getOsFamily()) {
+        switch (NEnv.of().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled("No help available. Try " + getName() + " /help", NTextStyle.error());
             }
