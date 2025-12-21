@@ -17,7 +17,6 @@ import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgres
 import net.thevpc.nuts.runtime.standalone.io.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NChronometer;
@@ -39,6 +38,7 @@ import java.util.logging.Level;
  * @author thevpc
  */
 @NComponentScope(NScopeType.PROTOTYPE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNCp implements NCp {
 
     private final NWorkspace workspace;
@@ -74,11 +74,6 @@ public class DefaultNCp implements NCp {
             return Paths.get(x);
         }
         throw new RuntimeException("Invalid path " + f);
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     protected NLog _LOG() {
