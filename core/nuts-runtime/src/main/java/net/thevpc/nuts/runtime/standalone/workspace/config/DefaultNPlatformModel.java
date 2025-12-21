@@ -5,9 +5,9 @@ import net.thevpc.nuts.artifact.NVersionFilter;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.platform.NPlatformFamily;
+import net.thevpc.nuts.platform.NExecutionEngineFamily;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -22,11 +22,10 @@ import java.util.function.Predicate;
 public class DefaultNPlatformModel {
 
     private NWorkspace workspace;
-    private DefaultNWorkspaceEnvManagerModel model;
+    private NWorkspaceModel wsModel;
 
-    public DefaultNPlatformModel(DefaultNWorkspaceEnvManagerModel model) {
-        this.workspace = model.getWorkspace();
-        this.model = model;
+    public DefaultNPlatformModel(NWorkspaceModel wsModel) {
+        this.wsModel = wsModel;
     }
 
     public NWorkspace getWorkspace() {
@@ -34,11 +33,11 @@ public class DefaultNPlatformModel {
     }
 
 
-    public boolean addPlatform(NPlatformLocation location) {
+    public boolean addPlatform(NExecutionEngineLocation location) {
         return add0(location, true);
     }
 
-    public boolean add0(NPlatformLocation location, boolean notify) {
+    public boolean add0(NExecutionEngineLocation location, boolean notify) {
 //        session = CoreNutsUtils.validate(session, workspace);
         NSession session=getWorkspace().currentSession();
         if (location != null) {
@@ -46,14 +45,14 @@ public class DefaultNPlatformModel {
             NAssert.requireNonBlank(location.getName(), "platform location product");
             NAssert.requireNonBlank(location.getVersion(), "platform location version");
             NAssert.requireNonBlank(location.getVersion(), "platform location path");
-            List<NPlatformLocation> list = getPlatforms().get(location.getPlatformType());
+            List<NExecutionEngineLocation> list = getPlatforms().get(location.getExecutionEngineFamily());
             if (list == null) {
                 list = new ArrayList<>();
-                model.getConfigPlatforms().put(location.getPlatformType(), list);
+                wsModel.getConfigPlatforms().put(location.getExecutionEngineFamily(), list);
             }
-            NPlatformLocation old = null;
-            for (NPlatformLocation nutsPlatformLocation : list) {
-                if (Objects.equals(nutsPlatformLocation.getPackaging(), location.getPackaging())
+            NExecutionEngineLocation old = null;
+            for (NExecutionEngineLocation nutsPlatformLocation : list) {
+                if (Objects.equals(nutsPlatformLocation.getProduct(), location.getProduct())
                         && Objects.equals(nutsPlatformLocation.getProduct(), location.getProduct())) {
                     if (nutsPlatformLocation.getName().equals(location.getName())
                             || nutsPlatformLocation.getPath().equals(location.getPath())) {
@@ -68,11 +67,12 @@ public class DefaultNPlatformModel {
             list.add(location);
             if (notify) {
                 if (session.isPlainTrace()) {
-                    NOut.resetLine().println(NMsg.ofC("%s %s %s (%s) %s at %s",
+                    NOut.resetLine().println(NMsg.ofC("%s %s %s %s (%s) %s at %s",
                             NText.ofStyledSuccess("install"),
                             location.getId().getShortName(),
-                            location.getPackaging(),
+                            location.getVendor(),
                             location.getProduct(),
+                            location.getVariant(),
                             NVersion.get(location.getVersion()).get(),
                             NPath.of(location.getPath())
                     ));
@@ -86,7 +86,7 @@ public class DefaultNPlatformModel {
         return false;
     }
 
-    public boolean updatePlatform(NPlatformLocation oldLocation, NPlatformLocation newLocation) {
+    public boolean updatePlatform(NExecutionEngineLocation oldLocation, NExecutionEngineLocation newLocation) {
         boolean updated = false;
         updated |= removePlatform(oldLocation);
         updated |= removePlatform(newLocation);
@@ -94,9 +94,9 @@ public class DefaultNPlatformModel {
         return updated;
     }
 
-    public boolean removePlatform(NPlatformLocation location) {
+    public boolean removePlatform(NExecutionEngineLocation location) {
         if (location != null) {
-            List<NPlatformLocation> list = getPlatforms().get(location.getPlatformType());
+            List<NExecutionEngineLocation> list = getPlatforms().get(location.getExecutionEngineFamily());
             if (list != null) {
                 if (list.remove(location)) {
                     NWorkspaceExt.of(workspace)
@@ -109,17 +109,17 @@ public class DefaultNPlatformModel {
         return false;
     }
 
-    public NOptional<NPlatformLocation> findPlatformByName(NPlatformFamily type, String locationName) {
-        return findOnePlatform(type, location -> location.getName().equals(locationName));
+    public NOptional<NExecutionEngineLocation> findPlatformByName(NExecutionEngineFamily type, String locationName) {
+        return findOneExecutionEngine(type, location -> location.getName().equals(locationName));
     }
 
-    public NOptional<NPlatformLocation> findPlatformByPath(NPlatformFamily type, NPath path) {
+    public NOptional<NExecutionEngineLocation> findPlatformByPath(NExecutionEngineFamily type, NPath path) {
         NAssert.requireNonNull(path,"path");
-        return findOnePlatform(type, location -> location.getPath() != null && location.getPath().equals(path.toString()));
+        return findOneExecutionEngine(type, location -> location.getPath() != null && location.getPath().equals(path.toString()));
     }
 
-    public NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily type, String version) {
-        return findOnePlatform(type, location -> location.getVersion().equals(version));
+    public NOptional<NExecutionEngineLocation> findPlatformByVersion(NExecutionEngineFamily type, String version) {
+        return findOneExecutionEngine(type, location -> location.getVersion().equals(version));
     }
 
     //    public void setRepositoryEnabled(String repoName, boolean enabled) {
@@ -129,15 +129,15 @@ public class DefaultNPlatformModel {
 //            fireConfigurationChanged();
 //        }
 //    }
-    public NOptional<NPlatformLocation> findPlatform(NPlatformLocation location) {
+    public NOptional<NExecutionEngineLocation> findPlatform(NExecutionEngineLocation location) {
         if (location == null) {
             return NOptional.ofNamedEmpty(NMsg.ofC("platform %s", location));
         }
         String type = location.getId().getArtifactId();
-        NPlatformFamily ftype = NPlatformFamily.parse(type).orElse(NPlatformFamily.JAVA);
-        List<NPlatformLocation> list = getPlatforms().get(ftype);
+        NExecutionEngineFamily ftype = NExecutionEngineFamily.parse(type).orElse(NExecutionEngineFamily.JAVA);
+        List<NExecutionEngineLocation> list = getPlatforms().get(ftype);
         if (list != null) {
-            for (NPlatformLocation location2 : list) {
+            for (NExecutionEngineLocation location2 : list) {
                 if (location2.equals(location)) {
                     return NOptional.of(location2);
                 }
@@ -146,8 +146,8 @@ public class DefaultNPlatformModel {
         return NOptional.ofNamedEmpty(NMsg.ofC("platform %s", location));
     }
 
-    public NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily type, NVersionFilter versionFilter) {
-        return findOnePlatform(type,
+    public NOptional<NExecutionEngineLocation> findPlatformByVersion(NExecutionEngineFamily executionEngineType, NVersionFilter versionFilter) {
+        return findOneExecutionEngine(executionEngineType,
                 location -> {
 
                     if (versionFilter == null) {
@@ -159,7 +159,7 @@ public class DefaultNPlatformModel {
                         return true;
                     }
                     // replace 1.6 by 6, and 1.8 by 8
-                    if (type == NPlatformFamily.JAVA || location.getPlatformType() == NPlatformFamily.JAVA) {
+                    if (executionEngineType == NExecutionEngineFamily.JAVA || location.getExecutionEngineFamily() == NExecutionEngineFamily.JAVA) {
                         int a = sVersion.indexOf('.');
                         if (a > 0) {
                             NLiteral p = NLiteral.of(sVersion.substring(0, a));
@@ -177,8 +177,8 @@ public class DefaultNPlatformModel {
         );
     }
 
-    public NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformType) {
-        if (platformType == NPlatformFamily.JAVA) {
+    public NStream<NExecutionEngineLocation> searchSystemExecutionEngines(NExecutionEngineFamily executionEngineType) {
+        if (executionEngineType == NExecutionEngineFamily.JAVA) {
             try {
                 return NStream.ofArray(NJavaSdkUtils.of(workspace).searchJdkLocationsFuture().get());
             } catch (InterruptedException | ExecutionException e) {
@@ -188,50 +188,50 @@ public class DefaultNPlatformModel {
         return NStream.ofEmpty();
     }
 
-    public NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformType, NPath path) {
-        if (platformType == NPlatformFamily.JAVA) {
+    public NStream<NExecutionEngineLocation> searchSystemExecutionEngines(NExecutionEngineFamily executionEngineType, NPath path) {
+        if (executionEngineType == NExecutionEngineFamily.JAVA) {
             return NStream.ofArray(NJavaSdkUtils.of(workspace).searchJdkLocations(path));
         }
         return NStream.ofEmpty();
     }
 
-    public NOptional<NPlatformLocation> resolvePlatform(NPlatformFamily platformType, NPath path, String preferredName) {
-        if (platformType == NPlatformFamily.JAVA) {
-            NPlatformLocation z = NJavaSdkUtils.of(workspace).resolveJdkLocation(path, preferredName);
+    public NOptional<NExecutionEngineLocation> resolveExecutionEngine(NExecutionEngineFamily executionEngineType, NPath path, String preferredName) {
+        if (executionEngineType == NExecutionEngineFamily.JAVA) {
+            NExecutionEngineLocation z = NJavaSdkUtils.of(workspace).resolveJdkLocation(path, preferredName);
             if (z == null) {
-                return NOptional.ofNamedEmpty(NMsg.ofC("%s platform at %s", platformType.id(), path));
+                return NOptional.ofNamedEmpty(NMsg.ofC("%s platform at %s", executionEngineType.id(), path));
             }
             return NOptional.of(z);
         }
-        return NOptional.ofNamedEmpty(NMsg.ofC("%s platform at %s", platformType.id(), path));
+        return NOptional.ofNamedEmpty(NMsg.ofC("%s platform at %s", executionEngineType.id(), path));
     }
 
     //
-    public void setPlatforms(NPlatformLocation[] locations) {
-        model.getConfigPlatforms().clear();
-        for (NPlatformLocation platform : locations) {
+    public void setExecutionEngines(NExecutionEngineLocation[] locations) {
+        wsModel.getConfigPlatforms().clear();
+        for (NExecutionEngineLocation platform : locations) {
             add0(platform, false);
         }
     }
 
-    public NOptional<NPlatformLocation> findOnePlatform(NPlatformFamily type, Predicate<NPlatformLocation> filter) {
-        NPlatformLocation[] a = findPlatforms(type, filter).toArray(NPlatformLocation[]::new);
+    public NOptional<NExecutionEngineLocation> findOneExecutionEngine(NExecutionEngineFamily executionEngineType, Predicate<NExecutionEngineLocation> filter) {
+        NExecutionEngineLocation[] a = findPlatforms(executionEngineType, filter).toArray(NExecutionEngineLocation[]::new);
         if (a.length == 0) {
-            return NOptional.ofNamedEmpty(type.id() + " platform");
+            return NOptional.ofNamedEmpty(executionEngineType.id() + " platform");
         }
         if (a.length == 1) {
-            NPlatformLocation r = a[0];
+            NExecutionEngineLocation r = a[0];
             if (r == null) {
-                return NOptional.ofNamedEmpty(type.id() + " platform");
+                return NOptional.ofNamedEmpty(executionEngineType.id() + " platform");
             }
             return NOptional.of(r);
         }
         //find the best minimum version that is applicable!
-        NPlatformLocation best = a[0];
+        NExecutionEngineLocation best = a[0];
         for (int i = 1; i < a.length; i++) {
             NVersion v1 = NVersion.get(best.getVersion()).get();
             NVersion v2 = NVersion.get(a[i].getVersion()).get();
-            if (type == NPlatformFamily.JAVA) {
+            if (executionEngineType == NExecutionEngineFamily.JAVA) {
                 double d1 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersion(v1.getValue()));
                 double d2 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersion(v2.getValue()));
                 if (d1 == d2) {
@@ -252,40 +252,39 @@ public class DefaultNPlatformModel {
             }
         }
         if (best == null) {
-            return NOptional.ofNamedEmpty(type.id() + " platform");
+            return NOptional.ofNamedEmpty(executionEngineType.id() + " platform");
         }
         return NOptional.of(best);
     }
 
-    public NStream<NPlatformLocation> findPlatforms(NPlatformFamily type, Predicate<NPlatformLocation> filter) {
-        NSession session=getWorkspace().currentSession();
+    public NStream<NExecutionEngineLocation> findPlatforms(NExecutionEngineFamily type, Predicate<NExecutionEngineLocation> filter) {
         if (filter == null) {
             if (type == null) {
-                List<NPlatformLocation> all = new ArrayList<>();
-                for (List<NPlatformLocation> value : model.getConfigPlatforms().values()) {
+                List<NExecutionEngineLocation> all = new ArrayList<>();
+                for (List<NExecutionEngineLocation> value : wsModel.getConfigPlatforms().values()) {
                     all.addAll(value);
                 }
                 return NStream.ofIterable(all);
             }
-            List<NPlatformLocation> list = getPlatforms().get(type);
+            List<NExecutionEngineLocation> list = getPlatforms().get(type);
             if (list == null) {
                 return NStream.ofEmpty();
             }
             return NStream.ofIterable(list);
         }
-        List<NPlatformLocation> ret = new ArrayList<>();
+        List<NExecutionEngineLocation> ret = new ArrayList<>();
         if (type == null) {
-            for (List<NPlatformLocation> found : getPlatforms().values()) {
-                for (NPlatformLocation location : found) {
+            for (List<NExecutionEngineLocation> found : getPlatforms().values()) {
+                for (NExecutionEngineLocation location : found) {
                     if (filter.test(location)) {
                         ret.add(location);
                     }
                 }
             }
         } else {
-            List<NPlatformLocation> found = getPlatforms().get(type);
+            List<NExecutionEngineLocation> found = getPlatforms().get(type);
             if (found != null) {
-                for (NPlatformLocation location : found) {
+                for (NExecutionEngineLocation location : found) {
                     if (filter.test(location)) {
                         ret.add(location);
                     }
@@ -293,12 +292,12 @@ public class DefaultNPlatformModel {
             }
         }
         if (!ret.isEmpty()) {
-            ret.sort(new NPlatformLocationSelectComparator());
+            ret.sort(new NExecutionEngineLocationSelectComparator());
         }
         return NStream.ofIterable(ret);
     }
 
-    public Map<NPlatformFamily, List<NPlatformLocation>> getPlatforms() {
-        return model.getConfigPlatforms();
+    public Map<NExecutionEngineFamily, List<NExecutionEngineLocation>> getPlatforms() {
+        return wsModel.getConfigPlatforms();
     }
 }
