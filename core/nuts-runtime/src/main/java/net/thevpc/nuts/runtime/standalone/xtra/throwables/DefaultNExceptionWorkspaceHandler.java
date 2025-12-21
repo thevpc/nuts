@@ -7,7 +7,8 @@ import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElement;
 
 
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.platform.NEnv;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
@@ -17,14 +18,12 @@ import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.internal.NApiUtilsRPI;
 
-import net.thevpc.nuts.util.NExceptionWorkspaceHandler;
-import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.PrintStream;
 
 @NComponentScope(NScopeType.SESSION)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHandler {
 
     public DefaultNExceptionWorkspaceHandler() {
@@ -38,7 +37,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
         NSession session = NSession.of();
         NWorkspaceOptionsBuilder bo = null;
         bo = NWorkspace.of().getBootOptions().toWorkspaceOptions().builder();
-        if (!NWorkspace.of().isGraphicalDesktopEnvironment()) {
+        if (!NEnv.of().isGraphicalDesktopEnvironment()) {
             bo.setGui(false);
         }
 
@@ -152,8 +151,4 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
         return (errorCode);
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
