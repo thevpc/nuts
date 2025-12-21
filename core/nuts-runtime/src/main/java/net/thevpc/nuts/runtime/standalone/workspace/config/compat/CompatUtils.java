@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat;
 
 import net.thevpc.nuts.command.NCommandFactoryConfig;
-import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.core.NRepositoryRef;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.io.NIOException;
@@ -106,24 +106,16 @@ public class CompatUtils {
         return list;
     }
 
-    public static List<NPlatformLocation> copyNutsSdkLocationList(List<NPlatformLocation> refs) {
+    public static List<NExecutionEngineLocation> copyNutsSdkLocationList(List<NExecutionEngineLocation> refs) {
         if (refs == null) {
             return null;
         }
-        List<NPlatformLocation> list = new ArrayList<>();
-        for (NPlatformLocation r : refs) {
+        List<NExecutionEngineLocation> list = new ArrayList<>();
+        for (NExecutionEngineLocation r : refs) {
             if (r == null) {
                 list.add(null);
             } else {
-                NPlatformLocation r2 = new NPlatformLocation(
-                        r.getId(),
-                        r.getProduct(),
-                        r.getName(),
-                        r.getPath(),
-                        r.getVersion(),
-                        r.getPackaging(),
-                        r.getPriority()
-                );
+                NExecutionEngineLocation r2 = r.copy();
                 r2.setConfigVersion(r.getConfigVersion());
                 list.add(r2);
             }
