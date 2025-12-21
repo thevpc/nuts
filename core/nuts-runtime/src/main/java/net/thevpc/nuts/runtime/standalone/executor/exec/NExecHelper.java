@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.executor.exec;
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.concurrent.NConcurrent;
 
@@ -32,10 +32,10 @@ import java.util.logging.Level;
 
 public class NExecHelper extends AbstractSyncIProcessExecHelper {
 
-    NExecCmd pb;
+    NExec pb;
     NPrintStream out;
 
-    public NExecHelper(NExecCmd pb, NPrintStream out) {
+    public NExecHelper(NExec pb, NPrintStream out) {
         super();
         this.pb = pb;
         this.out = out;
@@ -47,7 +47,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                                      NExecOutput out,
                                      NExecOutput err,
                                      NRunAs runAs) {
-        NExecCmd pb = NExecCmd.of();
+        NExec pb = NExec.of();
         NCmdLineUtils.OptionsAndArgs optionsAndArgs = NCmdLineUtils.parseOptionsFirst(args);
         pb.setCommand(optionsAndArgs.getArgs())
                 .addExecutorOptions(optionsAndArgs.getOptions())
