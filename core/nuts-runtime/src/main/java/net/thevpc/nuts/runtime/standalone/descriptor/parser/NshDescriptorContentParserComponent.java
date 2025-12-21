@@ -34,6 +34,8 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.format.json.JsonStringBuffer;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -71,8 +73,8 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
         }
     }
 
-    @Override
-    public int getScore(NScorableContext criteria) {
+    @NScore
+    public static int getScore(NScorableContext criteria) {
         NDescriptorContentParserContext ctr=criteria.getCriteria(NDescriptorContentParserContext.class);
         if(ctr!=null) {
             String e = NStringUtils.trim(ctr.getFileExtension());
@@ -81,11 +83,11 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
                 case "sh":
                 case "nsh":
                 case "bash": {
-                    return DEFAULT_SCORE;
+                    return NScorable.DEFAULT_SCORE;
                 }
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
     private static String removeBashComment(String str) {
