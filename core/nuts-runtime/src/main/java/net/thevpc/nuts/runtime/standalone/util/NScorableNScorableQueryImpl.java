@@ -163,7 +163,7 @@ public class NScorableNScorableQueryImpl<T extends NScorable> implements NScorab
         return getResults().stream().map(x -> x.value()).collect(Collectors.toList());
     }
 
-    private NScorableResult<T> findBestFromIteratorOfSupplier(Iterator<Supplier<T>> srcOk, NScorableResult<T> track) {
+    private NScoredValue<T> findBestFromIteratorOfSupplier(Iterator<Supplier<T>> srcOk, NScoredValue<T> track) {
         NScorableContext context = this.context == null ? NScorableContext.of() : this.context;
         while (srcOk.hasNext()) {
             Supplier<T> ss = srcOk.next();
@@ -173,7 +173,7 @@ public class NScorableNScorableQueryImpl<T extends NScorable> implements NScorab
                     int score = s.getScore(context);
                     if (score > 0) {
                         if (track == null || (score > track.score())) {
-                            track = new NScorableResultImpl<T>(s, score, context);
+                            track = new FixedNScoredValue<T>(s, score);
                         }
                     }
                 }
@@ -182,7 +182,7 @@ public class NScorableNScorableQueryImpl<T extends NScorable> implements NScorab
         return track;
     }
 
-    private NScorableResult<T> findBestFromIterator(Iterator<T> srcOk, NScorableResult<T> track) {
+    private NScoredValue<T> findBestFromIterator(Iterator<T> srcOk, NScoredValue<T> track) {
         NScorableContext context = this.context == null ? NScorableContext.of() : this.context;
         while (srcOk.hasNext()) {
             T s = srcOk.next();
@@ -190,7 +190,7 @@ public class NScorableNScorableQueryImpl<T extends NScorable> implements NScorab
                 int score = s.getScore(context);
                 if (score > 0) {
                     if (track == null || (score > track.score())) {
-                        track = new NScorableResultImpl<T>(s, score, context);
+                        track = new FixedNScoredValue<T>(s, score);
                     }
                 }
             }
@@ -198,20 +198,20 @@ public class NScorableNScorableQueryImpl<T extends NScorable> implements NScorab
         return track;
     }
 
-    private void fillIterator(Iterator<T> srcOk, List<NScorableResult<T>> track) {
+    private void fillIterator(Iterator<T> srcOk, List<NScoredValue<T>> track) {
         NScorableContext context = this.context == null ? NScorableContext.of() : this.context;
         while (srcOk.hasNext()) {
             T s = srcOk.next();
             if (s != null) {
                 int score = s.getScore(context);
                 if (score > 0) {
-                    track.add(new NScorableResultImpl<T>(s, score, context));
+                    track.add(new FixedNScoredValue<T>(s, score));
                 }
             }
         }
     }
 
-    private void fillIteratorOfSupplier(Iterator<Supplier<T>> srcOk, List<NScorableResult<T>> track) {
+    private void fillIteratorOfSupplier(Iterator<Supplier<T>> srcOk, List<NScoredValue<T>> track) {
         NScorableContext context = this.context == null ? NScorableContext.of() : this.context;
         while (srcOk.hasNext()) {
             Supplier<T> ss = srcOk.next();
@@ -220,15 +220,15 @@ public class NScorableNScorableQueryImpl<T extends NScorable> implements NScorab
                 if (s != null) {
                     int score = s.getScore(context);
                     if (score > 0) {
-                        track.add(new NScorableResultImpl<T>(s, score, context));
+                        track.add(new FixedNScoredValue<T>(s, score));
                     }
                 }
             }
         }
     }
 
-    public List<NScorableResult<T>> getResults() {
-        List<NScorableResult<T>> track = new ArrayList<>();
+    public List<NScoredValue<T>> getResults() {
+        List<NScoredValue<T>> track = new ArrayList<>();
         for (Src source : all) {
             if (source != null) {
                 switch (source.type) {
@@ -280,8 +280,8 @@ public class NScorableNScorableQueryImpl<T extends NScorable> implements NScorab
     }
 
     @Override
-    public NOptional<NScorableResult<T>> getBestResult() {
-        NScorableResult<T> track = null;
+    public NOptional<NScoredValue<T>> getBestResult() {
+        NScoredValue<T> track = null;
         for (Src source : all) {
             if (source != null) {
                 switch (source.type) {
