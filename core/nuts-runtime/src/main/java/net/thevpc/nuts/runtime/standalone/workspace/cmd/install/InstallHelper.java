@@ -33,13 +33,13 @@ public class InstallHelper {
     protected NDefinition[] result;
     protected NId[] failed;
     protected List<String> args;
-    protected List<AbstractNInstallCmd.ConditionalArguments> conditionalArguments;
+    protected List<AbstractNInstall.ConditionalArguments> conditionalArguments;
     List<NDefinition> resultList = new ArrayList<>();
     List<NId> failedList = new ArrayList<>();
     protected final InstallIdList list;
     boolean updateMode;
 
-    public InstallHelper(DefaultNWorkspace ws, InstallIdList list, boolean updateMode, List<String> args, List<AbstractNInstallCmd.ConditionalArguments> conditionalArguments) {
+    public InstallHelper(DefaultNWorkspace ws, InstallIdList list, boolean updateMode, List<String> args, List<AbstractNInstall.ConditionalArguments> conditionalArguments) {
         this.ws = ws;
         this.cache = new InstallCache();
         this.list = list;
@@ -456,7 +456,7 @@ public class InstallHelper {
                 }
 
                 //now should reload definition from install repo
-                NFetchCmd fetch2 = NFetchCmd.of(executionContext.getDefinition().getId())
+                NFetch fetch2 = NFetch.of(executionContext.getDefinition().getId())
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
                         .failFast();
@@ -559,7 +559,7 @@ public class InstallHelper {
                         .save();
                 NDependencies nDependencies = null;
                 if (!def.getDependencies().isPresent()) {
-                    nDependencies = NFetchCmd.of(def.getId())
+                    nDependencies = NFetch.of(def.getId())
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .getResultDefinition().getDependencies().get();
                 } else {
@@ -684,7 +684,7 @@ public class InstallHelper {
     private List<String> buildArgs(InstallIdInfo info) {
         List<String> cmdArgs = new ArrayList<>();
         cmdArgs.addAll(args);
-        for (AbstractNInstallCmd.ConditionalArguments conditionalArgument : conditionalArguments) {
+        for (AbstractNInstall.ConditionalArguments conditionalArgument : conditionalArguments) {
             if (conditionalArgument.getPredicate().test(info.cacheItem.getDefinition())) {
                 cmdArgs.addAll(conditionalArgument.getArgs());
             }
@@ -698,21 +698,21 @@ public class InstallHelper {
         if (updateMode) {
             switch (def.getDescriptor().getIdType()) {
                 case API: {
-                    oldDef = NFetchCmd.of(NId.getApi(Nuts.getVersion()).get())
+                    oldDef = NFetch.of(NId.getApi(Nuts.getVersion()).get())
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .setFetchStrategy(NFetchStrategy.ONLINE)
                             .setFailFast(false).getResultDefinition();
                     break;
                 }
                 case RUNTIME: {
-                    oldDef = NFetchCmd.of(ws.getRuntimeId())
+                    oldDef = NFetch.of(ws.getRuntimeId())
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .setFetchStrategy(NFetchStrategy.ONLINE)
                             .setFailFast(false).getResultDefinition();
                     break;
                 }
                 default: {
-                    oldDef = NSearchCmd.of().addId(def.getId().getShortId())
+                    oldDef = NSearch.of().addId(def.getId().getShortId())
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
                             .setFailFast(false).getResultDefinitions()
