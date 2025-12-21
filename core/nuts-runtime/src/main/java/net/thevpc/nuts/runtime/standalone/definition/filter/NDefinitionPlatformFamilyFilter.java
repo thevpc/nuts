@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.definition.filter;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.artifact.NDefinitionFilters;
-import net.thevpc.nuts.platform.NPlatformFamily;
+import net.thevpc.nuts.platform.NExecutionEngineFamily;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.util.NCollections;
@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
 
 public class NDefinitionPlatformFamilyFilter extends AbstractDefinitionFilter {
 
-    private Set<NPlatformFamily> accepted = new HashSet<>();
+    private Set<NExecutionEngineFamily> accepted = new HashSet<>();
 
-    public NDefinitionPlatformFamilyFilter(Collection<NPlatformFamily> accepted) {
+    public NDefinitionPlatformFamilyFilter(Collection<NExecutionEngineFamily> accepted) {
         super(NFilterOp.CUSTOM);
-        LinkedHashSet<NPlatformFamily> s2 = new LinkedHashSet<>();
+        LinkedHashSet<NExecutionEngineFamily> s2 = new LinkedHashSet<>();
         NCollections.addAllNonNull(s2, accepted);
         this.accepted = new LinkedHashSet<>(s2);
     }
@@ -28,14 +28,14 @@ public class NDefinitionPlatformFamilyFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition def) {
-        List<NPlatformFamily> current = NStream.ofIterable(def.getDescriptor().getCondition().getPlatform()).filterNonBlank()
-                .map(x -> NPlatformFamily.parse(x).orNull())
+        List<NExecutionEngineFamily> current = NStream.ofIterable(def.getDescriptor().getCondition().getPlatform()).filterNonBlank()
+                .map(x -> NExecutionEngineFamily.parse(x).orNull())
                 .filterNonBlank()
                 .toList();
         if (current.isEmpty() || accepted.isEmpty()) {
             return true;
         }
-        for (NPlatformFamily osf : accepted) {
+        for (NExecutionEngineFamily osf : accepted) {
             if (CoreFilterUtils.matchesEnum(osf, current)) {
                 return true;
             }
