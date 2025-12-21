@@ -9,10 +9,10 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.util.NCollections;
@@ -35,7 +35,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
 
     public DefaultNSystemExecutable(String[] cmd,
                                     List<String> executorOptions,
-                                    NExecCmd execCommand) {
+                                    NExec execCommand) {
         super(cmd[0],
                 NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM, execCommand);
@@ -63,7 +63,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
 
     private ProcessExecHelper resolveExecHelper() {
         Map<String, String> e2 = null;
-        NExecCmd execCommand = getExecCommand();
+        NExec execCommand = getExecCommand();
         Map<String, String> env1 = execCommand.getEnv();
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);
@@ -91,7 +91,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
 
     @Override
     public NText getHelpText() {
-        switch (NWorkspace.of().getOsFamily()) {
+        switch (NEnv.of().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled(
                         "No help available. Try " + getName() + " /help",
