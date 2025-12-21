@@ -17,8 +17,10 @@ import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.text.NPropertiesFormat;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
+import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsAliasSubCommand() {
         super();
