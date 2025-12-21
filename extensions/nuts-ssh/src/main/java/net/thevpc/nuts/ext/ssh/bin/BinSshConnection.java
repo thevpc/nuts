@@ -1,6 +1,6 @@
 package net.thevpc.nuts.ext.ssh.bin;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.ext.ssh.IOBindings;
 import net.thevpc.nuts.ext.ssh.SshConnection;
 import net.thevpc.nuts.ext.ssh.SshConnectionBase;
@@ -83,7 +83,7 @@ public class BinSshConnection extends SshConnectionBase {
         for (SshListener listener : listeners) {
             listener.onExec(command);
         }
-        return NExecCmd.ofSystem(sshCommandPrefix.toArray(new String[0]))
+        return NExec.ofSystem(sshCommandPrefix.toArray(new String[0]))
                 .addCommand(command)
                 .failFast()
                 .setOut(NExecOutput.ofStream(out))
@@ -122,7 +122,7 @@ public class BinSshConnection extends SshConnectionBase {
                         .build()
                         .toString();
 
-                NExecCmd exec = NExecCmd.ofSystem("sftp");
+                NExec exec = NExec.ofSystem("sftp");
                 if (port != 22) {
                     exec.addCommand("-oPort", String.valueOf(port));
                 }
@@ -144,7 +144,7 @@ public class BinSshConnection extends SshConnectionBase {
                 throw new UncheckedIOException(e);
             }
         } else {
-            NExecCmd exec = NExecCmd.ofSystem();
+            NExec exec = NExec.ofSystem();
             exec.addCommand("scp");
             if (port != 22) {
                 exec.addCommand("-oPort", String.valueOf(port));
