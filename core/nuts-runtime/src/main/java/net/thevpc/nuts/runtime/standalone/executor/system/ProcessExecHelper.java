@@ -7,7 +7,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 
 
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.core.NSession;
@@ -110,7 +110,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         NPath storeFolder = nutMainFile.getInstallInformation().get().getInstallFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
-        NPath nutsJarFile = NFetchCmd.ofNutsApi()
+        NPath nutsJarFile = NFetch.ofNutsApi()
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultPath();
         if (nutsJarFile != null) {
@@ -166,7 +166,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                         || skey.equals(NConstants.Ids.NUTS_APP_ARTIFACT_ID)
                 ) {
                     NDefinition nDefinition;
-                    nDefinition = NFetchCmd.ofNutsApp()
+                    nDefinition = NFetch.ofNutsApp()
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .getResultDefinition();
                     if (nDefinition.getContent().isPresent()) {
