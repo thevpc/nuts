@@ -60,7 +60,7 @@ public class NFormatsImpl implements NFormats {
     }
 
     private void registerDefaults() {
-        register(NExec.class, (o, f) -> NExecCmdFormat.of().setValue((NExec) o));
+        register(NExec.class, (o, f) -> NExecFormat.of().setValue((NExec) o));
 
         register(NVersion.class, (o, f) -> NVersionFormat.of().setVersion((NVersion) o));
 
