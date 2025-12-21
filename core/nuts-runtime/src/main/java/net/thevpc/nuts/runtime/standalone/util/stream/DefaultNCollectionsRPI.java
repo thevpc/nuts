@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.util.stream;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
@@ -11,14 +10,10 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @NComponentScope(NScopeType.SESSION)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNCollectionsRPI implements NCollectionsRPI {
 
     public DefaultNCollectionsRPI() {
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     @Override
