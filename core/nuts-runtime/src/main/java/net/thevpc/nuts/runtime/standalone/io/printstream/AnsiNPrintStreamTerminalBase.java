@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
@@ -13,6 +14,7 @@ import net.thevpc.nuts.text.NTextStyles;
 
 import java.io.InputStream;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
     private NPrintStream out;
     private NCmdLineHistory history;
@@ -100,10 +102,6 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
             out.write(bytes, 0, bytes.length);
             out.flush();
         }
-    }
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
 }
