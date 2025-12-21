@@ -1,0 +1,65 @@
+package net.thevpc.nuts.runtime.remote;
+
+import net.thevpc.nuts.command.NExec;
+import net.thevpc.nuts.command.NExecutableInformation;
+import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExec;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
+
+@NScore(fixed = NScorable.UNSUPPORTED_SCORE)
+public class RemoteNExec extends AbstractNExec {
+
+    public RemoteNExec(NWorkspace workspace) {
+        super();
+    }
+
+    @Override
+    public NExecutableInformation which() {
+        RemoteNWorkspace ws=(RemoteNWorkspace)NWorkspace.get();
+        return ws.remoteCall(
+                ws.createCall("workspace.which",
+                        NElement.ofObjectBuilder()
+                                .build()
+                ),
+                NExecutableInformation.class
+        );
+    }
+
+    @Override
+    public NExec run() {
+        NSession session= NSession.of();
+        RemoteNWorkspace ws=(RemoteNWorkspace) NWorkspace.get();
+        try {
+            int r = ws.remoteCall(
+                    ws.createCall("workspace.exec",
+                            NElement.ofObjectBuilder()
+                                    .set("dry", session.isDry())
+                                    .set("failFast", failFast)
+                                    .build()
+                    ),
+                    Integer.class
+            );
+        } catch (NExecutionException ex) {
+            resultException = ex;
+        } catch (Exception ex) {
+            String p = getExtraErrorMessage();
+            if (p != null) {
+                resultException = new NExecutionException(
+                        NMsg.ofC("execution failed with code %d and message : %s", NExecutionException.ERROR_255, p),
+                        ex, NExecutionException.ERROR_255);
+            } else {
+                resultException = new NExecutionException(NMsg.ofPlain("remote command failed"), ex, NExecutionException.ERROR_255);
+            }
+        }
+        executed = true;
+        if (resultException != null && failFast) {
+            throw resultException;
+        }
+        return this;
+    }
+}
