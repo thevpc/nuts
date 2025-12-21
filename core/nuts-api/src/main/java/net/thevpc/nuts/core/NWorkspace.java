@@ -60,7 +60,7 @@ import java.util.function.Supplier;
  * @app.category Base
  * @since 0.5.4
  */
-public interface NWorkspace extends NWorkspaceBase, NEnvContext, NComponent, Closeable {
+public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     static NWorkspace of() {
         return get().get();
     }
@@ -256,39 +256,39 @@ public interface NWorkspace extends NWorkspaceBase, NEnvContext, NComponent, Clo
     <T> T getOrComputeProperty(String property, Supplier<T> supplier);
 
 
-    String getHostName();
+//    String getHostName();
 
     String getPid();
 
-    NOsFamily getOsFamily();
-
-    Set<NShellFamily> getShellFamilies();
-
-    NShellFamily getShellFamily();
-
-    NId getDesktopEnvironment();
-
-    Set<NId> getDesktopEnvironments();
-
-    NDesktopEnvironmentFamily getDesktopEnvironmentFamily();
-
-    Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies();
-
-    NId getPlatform();
-
-    NId getOs();
-
-    NId getOsDist();
-
-    NId getArch();
-
-    NArchFamily getArchFamily();
-
-    boolean isGraphicalDesktopEnvironment();
-
-    NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target);
-
-    Path getDesktopPath();
+//    NOsFamily getOsFamily();
+//
+//    Set<NShellFamily> getShellFamilies();
+//
+//    NShellFamily getShellFamily();
+//
+//    NId getDesktopEnvironment();
+//
+//    Set<NId> getDesktopEnvironments();
+//
+//    NDesktopEnvironmentFamily getDesktopEnvironmentFamily();
+//
+//    Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies();
+//
+//    NId getJava();
+//
+//    NId getOs();
+//
+//    NId getOsDist();
+//
+//    NId getArch();
+//
+//    NArchFamily getArchFamily();
+//
+//    boolean isGraphicalDesktopEnvironment();
+//
+//    NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target);
+//
+//    Path getDesktopPath();
 
     void addLauncher(NLauncherOptions launcher);
 
@@ -356,56 +356,7 @@ public interface NWorkspace extends NWorkspaceBase, NEnvContext, NComponent, Clo
 
     NWorkspace setHomeLocation(NHomeLocation homeType, String location);
 
-    boolean addPlatform(NPlatformLocation location);
-
-    boolean updatePlatform(NPlatformLocation oldLocation, NPlatformLocation newLocation);
-
-    boolean removePlatform(NPlatformLocation location);
-
-    NOptional<NPlatformLocation> findPlatformByName(NPlatformFamily platformType, String locationName);
-
-    NOptional<NPlatformLocation> findPlatformByPath(NPlatformFamily platformType, NPath path);
-
-    NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily platformType, String version);
-
-    NOptional<NPlatformLocation> findPlatform(NPlatformLocation location);
-
-    NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily platformType, NVersionFilter requestedVersion);
-
-
-    NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformFamily);
-
-    NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformFamily, NPath path);
-
-    /**
-     * verify if the path is a valid platform path and return null if not
-     *
-     * @param platformType  platform type
-     * @param path          platform path
-     * @param preferredName preferredName
-     * @return null if not a valid jdk path
-     */
-    NOptional<NPlatformLocation> resolvePlatform(NPlatformFamily platformType, NPath path, String preferredName);
-
-    NOptional<NPlatformLocation> findPlatform(NPlatformFamily type, Predicate<NPlatformLocation> filter);
-
-    NStream<NPlatformLocation> findPlatforms(NPlatformFamily type, Predicate<NPlatformLocation> filter);
-
-    NStream<NPlatformLocation> findPlatforms();
-
-    NStream<NPlatformLocation> findPlatforms(NPlatformFamily type);
-
-    NWorkspace addDefaultPlatforms(NPlatformFamily type);
-
-    NWorkspace addDefaultPlatform(NPlatformFamily type);
-
-    /// /
-
     NOptional<String> findSysCommand(String name);
-
-    NOptional<String> getSysEnv(String name);
-
-    Map<String, String> getSysEnv();
 
     NWorkspace addImports(String... importExpression);
 
