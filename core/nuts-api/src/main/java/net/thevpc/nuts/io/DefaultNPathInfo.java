@@ -1,11 +1,14 @@
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.util.NStringUtils;
+
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
 public class DefaultNPathInfo implements NPathInfo {
+    private String name;                // original path
     private String path;                // original path
     private NPathType type;       // What the entry itself is
     private NPathType targetType; // What the resolved target is (or same if not a link)
@@ -20,10 +23,13 @@ public class DefaultNPathInfo implements NPathInfo {
     private String group;
 
     public static DefaultNPathInfo ofNotFound(String path) {
-        return new DefaultNPathInfo(path,NPathType.NOT_FOUND,null,null,-1,false,null,null, null,Collections.emptySet(),null,null);
+        int u = NStringUtils.lastIndexOf(path, new char[]{'/', '\\'});
+        String name=u<0?path:path.substring(u+1);
+        return new DefaultNPathInfo(name,path,NPathType.NOT_FOUND,null,null,-1,false,null,null, null,Collections.emptySet(),null,null);
     }
 
-    public DefaultNPathInfo(String path, NPathType type, NPathType targetType, String targetPath, long size, boolean symbolicLink, Instant lastModified, Instant lastAccess, Instant creationTime, Set<NPathPermission> permissions, String owner, String group) {
+    public DefaultNPathInfo(String name,String path, NPathType type, NPathType targetType, String targetPath, long size, boolean symbolicLink, Instant lastModified, Instant lastAccess, Instant creationTime, Set<NPathPermission> permissions, String owner, String group) {
+        this.name = name;
         this.path = path;
         this.type = type;
         this.targetType = targetType;
@@ -36,6 +42,11 @@ public class DefaultNPathInfo implements NPathInfo {
         this.permissions = permissions;
         this.owner = owner;
         this.group = group;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     public Instant getLastAccessInstant() {
