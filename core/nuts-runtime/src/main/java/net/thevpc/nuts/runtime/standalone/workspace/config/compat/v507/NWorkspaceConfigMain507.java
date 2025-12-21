@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v507;
 
 import net.thevpc.nuts.command.NCommandFactoryConfig;
 import net.thevpc.nuts.core.NConfigItem;
-import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.core.NRepositoryRef;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public final class NWorkspaceConfigMain507 extends NConfigItem {
     private List<NRepositoryRef> repositories;
     private List<NCommandFactoryConfig> commandFactories;
     private Map<String,String> env = new LinkedHashMap<>();
-    private List<NPlatformLocation> sdk = new ArrayList<>();
+    private List<NExecutionEngineLocation> sdk = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
 
     public NWorkspaceConfigMain507() {
@@ -76,7 +76,7 @@ public final class NWorkspaceConfigMain507 extends NConfigItem {
         return this;
     }
 
-    public NWorkspaceConfigMain507 setSdk(List<NPlatformLocation> sdk) {
+    public NWorkspaceConfigMain507 setSdk(List<NExecutionEngineLocation> sdk) {
         this.sdk = sdk;
         return this;
     }
@@ -90,7 +90,7 @@ public final class NWorkspaceConfigMain507 extends NConfigItem {
         return this;
     }
 
-    public List<NPlatformLocation> getSdk() {
+    public List<NExecutionEngineLocation> getSdk() {
         return sdk;
     }
 
