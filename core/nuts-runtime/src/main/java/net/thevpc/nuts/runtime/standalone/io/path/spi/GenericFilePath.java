@@ -3,19 +3,17 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.concurrent.NScoredCallable;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
 import java.net.URL;
@@ -283,7 +281,7 @@ public class GenericFilePath implements NPathSPI {
             if (f.getSeparator().length() > 0) {
                 return true;
             }
-            if (NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS) {
+            if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
                 String n = f.getName();
                 //test if the name is a drive name
                 if (n.length() == 2 && n.charAt(1) == ':') {
@@ -482,15 +480,15 @@ public class GenericFilePath implements NPathSPI {
             return null;
         }
 
-        @Override
-        public int getScore(NScorableContext context) {
+        @NScore(fixed = NScorable.DEFAULT_SCORE)
+        public static int getScore(NScorableContext context) {
             String path = context.getCriteria();
             try {
                 if (path != null) {
                     if (path.trim().length() > 0) {
                         for (char c : path.toCharArray()) {
                             if (c < 32) {
-                                return UNSUPPORTED_SCORE;
+                                return NScorable.UNSUPPORTED_SCORE;
                             }
                         }
                         return 1;
@@ -499,7 +497,7 @@ public class GenericFilePath implements NPathSPI {
             } catch (Exception ex) {
                 //ignore
             }
-            return UNSUPPORTED_SCORE;
+            return NScorable.UNSUPPORTED_SCORE;
         }
 
     }
