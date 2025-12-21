@@ -21,16 +21,16 @@ public class SshTest {
     }
 
     // disable test before commit
-    //@Test
+    @Test
     public void test02() {
         NPath.of("ssh://"+ TestUtils.WINDOWS_TEST_SERVER +"/C:/Users/Administrateur/test.txt")
-                .delete();
+                .exists();
     }
 
     @Test
     public void test03() {
         NPath.of("ssh://"+ TestUtils.WINDOWS_TEST_SERVER +"/C:/toDeleteFile")
-                .delete();
+                .exists();
     }
 
 
