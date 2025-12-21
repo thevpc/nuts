@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -127,7 +127,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         Path a = NSysExecUtils.sysWhich(sysCmd);
         if (a != null) {
             cmdList.add(0, a.toString());
-            String outStr = NExecCmd.of()
+            String outStr = NExec.of()
                     .setCommand(cmdList)
                     .addCommand()
                     .system()
@@ -149,7 +149,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     }
 
     private String getDesktopEnvironment() {
-        return NWorkspace.of().getSysEnv("XDG_SESSION_DESKTOP").orNull();
+        return NEnv.of().getEnv("XDG_SESSION_DESKTOP").orNull();
     }
 
     private Element ensureXmlChild(Node parent, String name) {
