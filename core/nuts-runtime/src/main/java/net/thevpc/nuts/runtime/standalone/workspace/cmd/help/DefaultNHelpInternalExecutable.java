@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.help;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutableInformation;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.NSession;
@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNHelpInternalExecutable(String[] args, NExecCmd execCommand) {
+    public DefaultNHelpInternalExecutable(String[] args, NExec execCommand) {
         super("help", args, execCommand);
     }
 
@@ -98,7 +98,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
             } else {
                 try {
                     try {
-                        w = NExecCmd.of().addCommand(arg).which();
+                        w = NExec.of().addCommand(arg).which();
                     } catch (Exception ex) {
                         LOG().log(NMsg.ofC("failed to execute : %s", arg).asFine(ex));
                         //ignore
