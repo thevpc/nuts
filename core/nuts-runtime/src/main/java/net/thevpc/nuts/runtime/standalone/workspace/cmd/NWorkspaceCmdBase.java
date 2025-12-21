@@ -10,13 +10,15 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspaceCmd;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.log.NLog;
 
 /**
  * @param <T> Type
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public abstract class NWorkspaceCmdBase<T extends NWorkspaceCmd> implements NWorkspaceCmd {
 
     private final String commandName;
@@ -25,11 +27,6 @@ public abstract class NWorkspaceCmdBase<T extends NWorkspaceCmd> implements NWor
     public NWorkspaceCmdBase(String commandName) {
         this.commandName = commandName;
 //        LOG = ws.log().of(getClass());
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     protected NLog _LOG() {
