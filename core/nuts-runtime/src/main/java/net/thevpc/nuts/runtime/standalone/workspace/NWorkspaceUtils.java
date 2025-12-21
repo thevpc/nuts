@@ -17,10 +17,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.platform.NLauncherOptions;
-import net.thevpc.nuts.platform.NPlatformFamily;
-import net.thevpc.nuts.platform.NPlatformHome;
-import net.thevpc.nuts.platform.NPlatformLocation;
+import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.reflect.NReflectConfigurationBuilder;
 import net.thevpc.nuts.reflect.NReflectPropertyAccessStrategy;
 import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;
@@ -129,16 +126,17 @@ public class NWorkspaceUtils {
                 && qm.get(NConstants.IdProperties.PLATFORM) == null
                 && qm.get(NConstants.IdProperties.DESKTOP) == null
         ) {
-            qm.put(NConstants.IdProperties.ARCH, workspace.getArchFamily().id());
-            qm.put(NConstants.IdProperties.OS, workspace.getOs().toString());
-            if (workspace.getOsDist() != null) {
-                qm.put(NConstants.IdProperties.OS_DIST, workspace.getOsDist().toString());
+            NEnv environment = NEnv.of();
+            qm.put(NConstants.IdProperties.ARCH, environment.getArchFamily().id());
+            qm.put(NConstants.IdProperties.OS, environment.getOs().toString());
+            if (environment.getOsDist() != null) {
+                qm.put(NConstants.IdProperties.OS_DIST, environment.getOsDist().toString());
             }
-            if (workspace.getPlatform() != null) {
-                qm.put(NConstants.IdProperties.PLATFORM, workspace.getPlatform().toString());
+            if (environment.getJava() != null) {
+                qm.put(NConstants.IdProperties.PLATFORM, environment.getJava().toString());
             }
-            if (workspace.getDesktopEnvironment() != null) {
-                qm.put(NConstants.IdProperties.DESKTOP, workspace.getDesktopEnvironment().toString());
+            if (environment.getDesktopEnvironment() != null) {
+                qm.put(NConstants.IdProperties.DESKTOP, environment.getDesktopEnvironment().toString());
             }
             return id.builder().setProperties(qm).build();
         }
@@ -235,10 +233,11 @@ public class NWorkspaceUtils {
             if (session.isPlainTrace()) {
                 NOut.resetLine().println("looking for java installations in default locations...");
             }
-            List<NPlatformLocation> found = workspace.searchSystemPlatforms(NPlatformFamily.JAVA).toList();
+            NExecutionEngines pinstaller = NExecutionEngines.of();
+            List<NExecutionEngineLocation> found = pinstaller.searchHostExecutionEngines(NExecutionEngineFamily.JAVA).toList();
             int someAdded = 0;
-            for (NPlatformLocation java : found) {
-                if (workspace.addPlatform(java)) {
+            for (NExecutionEngineLocation java : found) {
+                if (pinstaller.addExecutionEngine(java)) {
                     someAdded++;
                 }
             }
@@ -274,11 +273,12 @@ public class NWorkspaceUtils {
             if (session.isPlainTrace()) {
                 NOut.resetLine().println("configuring current JVM...");
             }
-            NPlatformLocation found0 = workspace.resolvePlatform(NPlatformFamily.JAVA, NPath.of(System.getProperty("java.home")), null).orNull();
-            NPlatformLocation[] found = found0 == null ? new NPlatformLocation[0] : new NPlatformLocation[]{found0};
+            NExecutionEngines pinstaller = NExecutionEngines.of();
+            NExecutionEngineLocation found0 = pinstaller.resolveExecutionEngine(NExecutionEngineFamily.JAVA, NPath.of(System.getProperty("java.home")), null).orNull();
+            NExecutionEngineLocation[] found = found0 == null ? new NExecutionEngineLocation[0] : new NExecutionEngineLocation[]{found0};
             int someAdded = 0;
-            for (NPlatformLocation java : found) {
-                if (workspace.addPlatform(java)) {
+            for (NExecutionEngineLocation java : found) {
+                if (pinstaller.addExecutionEngine(java)) {
                     someAdded++;
                 }
             }
@@ -341,7 +341,7 @@ public class NWorkspaceUtils {
             );
         }
         try {
-            NInstallCmd.of().companions()
+            NInstall.of().companions()
                     .run();
         } catch (Exception ex) {
             _LOG()
