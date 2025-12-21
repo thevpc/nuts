@@ -7,8 +7,8 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.command.NDeployCmd;
-import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NDeploy;
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.text.NDescriptorFormat;
@@ -55,7 +55,7 @@ public class DefaultSourceControlHelper {
             String newVersion = NVersion.get(oldVersion).get().inc().getValue();
             NDefinition newVersionFound = null;
             try {
-                newVersionFound = NFetchCmd.of(d.getId().builder().setVersion(newVersion).build())
+                newVersionFound = NFetch.of(d.getId().builder().setVersion(newVersion).build())
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDefinition();
             } catch (NArtifactNotFoundException ex) {
@@ -68,7 +68,7 @@ public class DefaultSourceControlHelper {
             } else {
                 d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
             }
-            NId newId = NDeployCmd.of().setContent(folder).setDescriptor(d).getResult().get(0);
+            NId newId = NDeploy.of().setContent(folder).setDescriptor(d).getResult().get(0);
             NDescriptorFormat.of(d).print(file);
             NIOUtils.delete(folder);
             return newId;
@@ -85,7 +85,7 @@ public class DefaultSourceControlHelper {
     //    @Override
     public NDefinition checkout(NId id, Path folder) {
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "checkout");
-        NDefinition nutToInstall = NFetchCmd.of(id)
+        NDefinition nutToInstall = NFetch.of(id)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
