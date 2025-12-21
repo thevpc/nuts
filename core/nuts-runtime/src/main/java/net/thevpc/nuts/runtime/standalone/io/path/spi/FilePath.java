@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NScoredCallable;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
@@ -589,7 +589,9 @@ public class FilePath implements NPathSPI {
                 group = ""; // Windows or non-POSIX FS
             }
 
+            Path fileName = path.getFileName();
             return new DefaultNPathInfo(
+                    fileName==null?"":fileName.toString(),
                     path.toString(),type,targetType,targetPath,attrs.size(),isSymlink,lastModified,lastAccess,creationTime,perms,owner,
                     group
             ) ;
@@ -894,7 +896,7 @@ public class FilePath implements NPathSPI {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
                     return null;
                 }
-                if (NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS && path.matches("^[\\\\/][a-zA-Z]:([\\\\/].*)?")) {
+                if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS && path.matches("^[\\\\/][a-zA-Z]:([\\\\/].*)?")) {
                     //remove trailing slash
                     path = path.substring(1);
                 }
@@ -909,19 +911,19 @@ public class FilePath implements NPathSPI {
             return null;
         }
 
-        @Override
-        public int getScore(NScorableContext context) {
+        @NScore
+        public static int getScore(NScorableContext context) {
             String path = context.getCriteria();
             try {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
-                    return UNSUPPORTED_SCORE;
+                    return NScorable.UNSUPPORTED_SCORE;
                 }
                 Path value = Paths.get(path);
-                return DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
             } catch (Exception ex) {
                 //ignore
             }
-            return UNSUPPORTED_SCORE;
+            return NScorable.UNSUPPORTED_SCORE;
         }
 
     }
