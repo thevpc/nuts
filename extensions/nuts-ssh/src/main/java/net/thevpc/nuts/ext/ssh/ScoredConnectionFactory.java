@@ -1,12 +1,12 @@
 package net.thevpc.nuts.ext.ssh;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutableInformation;
 import net.thevpc.nuts.concurrent.NScoredCallable;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.ext.ssh.bin.BinSshConnection;
 import net.thevpc.nuts.ext.ssh.jcsh.JCshConnection;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.util.NLiteral;
 
 public class ScoredConnectionFactory {
@@ -40,7 +40,7 @@ public class ScoredConnectionFactory {
         NExecutableInformation scp = null;
         NExecutableInformation sftp = null;
         if (!usePortable && !useBin) {
-            switch (NWorkspace.of().getOsFamily()) {
+            switch (NEnv.of().getOsFamily()) {
                 case LINUX:
                 case UNIX:
                 case MACOS: {
@@ -64,12 +64,12 @@ public class ScoredConnectionFactory {
         if (useBin) {
             boolean sftpChecked = false;
             boolean scpChecked = false;
-            ssh = NExecCmd.ofSystem("ssh").which();
+            ssh = NExec.ofSystem("ssh").which();
             if (ssh == null) {
                 return NScoredCallable.of(score, () -> new JCshConnection(connectionString.builder().setQueryParam("use", "jcsh").build()));
             }
             if (useScp) {
-                scp = NExecCmd.ofSystem("scp").which();
+                scp = NExec.ofSystem("scp").which();
                 scpChecked = true;
                 if (scp != null) {
                     score += 25;
@@ -77,7 +77,7 @@ public class ScoredConnectionFactory {
                 }
             }
             if (useSftp) {
-                sftp = NExecCmd.ofSystem("sftp").which();
+                sftp = NExec.ofSystem("sftp").which();
                 sftpChecked = true;
                 if (sftp != null) {
                     score += 25;
@@ -85,14 +85,14 @@ public class ScoredConnectionFactory {
                 }
             }
             if (!scpChecked) {
-                scp = NExecCmd.ofSystem("scp").which();
+                scp = NExec.ofSystem("scp").which();
                 if (scp != null) {
                     score += 25;
                     return NScoredCallable.of(score, () -> new BinSshConnection(connectionString.builder().setQueryParam("use", "scp").build(), false));
                 }
             }
             if (sftpChecked) {
-                sftp = NExecCmd.ofSystem("sftp").which();
+                sftp = NExec.ofSystem("sftp").which();
                 if (sftp != null) {
                     score += 25;
                     return NScoredCallable.of(score, () -> new BinSshConnection(connectionString.builder().setQueryParam("use", "sftp").build(), true));
