@@ -40,7 +40,7 @@ import net.thevpc.nuts.io.NullNPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.*;
 import net.thevpc.nuts.io.NullOutputStream;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
-import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.platform.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NativeImageHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
@@ -245,7 +245,7 @@ public class DefaultNBootModel implements NBootModel {
 
     public NSystemTerminal createSystemTerminal(NTerminalSpec spec) {
         NSystemTerminalBase termb = NExtensions.of()
-                .createComponent(NSystemTerminalBase.class, spec).get();
+                .createSupported(NSystemTerminalBase.class, spec).get();
         return NutsSystemTerminal_of_NutsSystemTerminalBase(termb);
     }
 
@@ -295,7 +295,7 @@ public class DefaultNBootModel implements NBootModel {
             } catch (Exception ex) {
                 _LOG()
                         .log(NMsg.ofC("unable to create system terminal : %s", ex).asFinestAlert());
-                DefaultNSystemTerminalBase b = new DefaultNSystemTerminalBase(workspace);
+                DefaultNSystemTerminalBase b = new DefaultNSystemTerminalBase();
                 syst = new DefaultSystemTerminal(b);
                 //NSessionUtils.setSession(syst, session);
             }
