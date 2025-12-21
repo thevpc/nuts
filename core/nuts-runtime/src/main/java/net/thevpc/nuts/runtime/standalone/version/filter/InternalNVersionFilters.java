@@ -7,12 +7,10 @@ import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 
 import java.util.List;
 
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NFilter;
-import net.thevpc.nuts.util.NIllegalArgumentException;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilter> implements NVersionFilters {
 
 
@@ -106,8 +104,4 @@ public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilte
         return new NVersionFilterParser(expression, versionComparator).parse();
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
