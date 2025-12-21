@@ -9,14 +9,15 @@ import net.thevpc.nuts.artifact.NDependencies;
 import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NDependencyTreeNode;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NExecCmd;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NExec;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceOptionsBuilder;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 
 
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.text.NVersionFormat;
 import net.thevpc.nuts.io.*;
@@ -41,7 +42,7 @@ public class ExecTest {
     @Test
     public void execURL() {
         TestUtils.println(NVersionFormat.of());
-        NSearchCmd q = NSearchCmd.of()
+        NSearch q = NSearch.of()
                 .setId("net.thevpc.hl:hadra-build-tool#0.1.0")
 //                .setRepositoryFilter("maven-central")
 //                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
@@ -53,7 +54,7 @@ public class ExecTest {
                 .toList();
         NAssert.requireNonEmpty(nutsIds, "not found hadra-build-tool");
         TestUtils.println(nutsIds);
-        List<NDependencies> allDeps = NSearchCmd.of().addId("net.thevpc.hl:hl#0.1.0")
+        List<NDependencies> allDeps = NSearch.of().addId("net.thevpc.hl:hl#0.1.0")
 //                .setDependencies(true)
                 .getResultDependencies().toList();
         for (NDependencies ds : allDeps) {
@@ -68,7 +69,7 @@ public class ExecTest {
             }
         }
         if(false) {
-            String result = NExecCmd.of()
+            String result = NExec.of()
                     .addWorkspaceOptions(NWorkspaceOptionsBuilder.of()
                             .setBot(true)
                             .setWorkspace(NWorkspace.of().getWorkspaceLocation().resolve("temp-ws").toString())
@@ -97,7 +98,7 @@ public class ExecTest {
     @Test
     public void testEmbeddedInfo() {
         TestUtils.println(NVersionFormat.of());
-        String result = NExecCmd.of()
+        String result = NExec.of()
                 .addCommand("info")
                 .getGrabbedAllString();
         NOut.println(result);
@@ -108,7 +109,7 @@ public class ExecTest {
     //@Test
     public void execURL2() {
         TestUtils.println(NVersionFormat.of());
-        String result = NExecCmd.of()
+        String result = NExec.of()
                 //there are three classes and no main-class, so need to specify the one
                 .addExecutorOption("--main-class=Version")
 //                .addExecutorOption("--main-class=junit.runner.Version")
@@ -127,7 +128,7 @@ public class ExecTest {
     //@Test
     public void testNtf() {
         TestUtils.println(NVersionFormat.of());
-        String result = NExecCmd.of()
+        String result = NExec.of()
                 //.addExecutorOption()
                 .addCommand(NConstants.Ids.NSH, "-c", "ls")
                 .grabAll().failFast().getGrabbedOutString();
@@ -140,7 +141,7 @@ public class ExecTest {
     //@Test
     public void testCallSpecialId() {
         TestUtils.println(NVersionFormat.of());
-        String result = NExecCmd.of()
+        String result = NExec.of()
                 .addExecutorOptions("--bot")
                 //.setExecutionType(NExecutionType.EMBEDDED)
                 .addCommand("com.cts.nuts.enterprise.postgres:pgcli")
@@ -171,7 +172,7 @@ public class ExecTest {
 
     private void runUsingNuts(String... args) {
         NOut.println("================= runUsingNuts");
-        NExecCmd e = NExecCmd.of(args)
+        NExec e = NExec.of(args)
                 .setIn(NExecInput.ofNull())
                 .setErr(NExecOutput.ofGrabMem())
                 .setOut(NExecOutput.ofGrabMem())
@@ -206,7 +207,7 @@ public class ExecTest {
     @Test
     public void testExecOnWindows1() {
         TestUtils.println(NVersionFormat.of());
-        if (NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS) {
+        if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
             runUsingProcessBuilder2("cmd.exe", "dir", ".");
         }
     }
@@ -215,7 +216,7 @@ public class ExecTest {
     @Test
     public void testExecOnWindows2() {
         TestUtils.println(NVersionFormat.of());
-        if (NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS) {
+        if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
             runUsingRuntime("cmd.exe", "dir", ".");
         }
     }
@@ -223,7 +224,7 @@ public class ExecTest {
     @Test
     public void testExecOnWindows3() {
         TestUtils.println(NVersionFormat.of());
-        if (NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS) {
+        if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
             String[] args = {
                     "powershell.exe", "-Command",
                     "Get-WmiObject Win32_Process | ForEach-Object { $o = $_.GetOwner(); $user = if ($o) { $o.User } else { 'N/A' }; $mem = Get-WmiObject Win32_ComputerSystem; $state = if ($_.ExecutionState -eq 0) { 'Running' } elseif ($_.ExecutionState -eq 2) { 'Sleeping' } else { 'Suspended' }; $start = if ($_.CreationDate) { $_.CreationDate.Substring(0, 12) } else { 'N/A' }; New-Object PSObject -Property @{ USER=$user; PID=$_.ProcessId; CPU=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); MEM=([math]::Round($_.WorkingSetSize / $mem.TotalPhysicalMemory * 100, 2)); VSZ=[int]($_.VirtualSize / 1KB); RSS=[int]($_.WorkingSetSize / 1KB); TTY='N/A'; STAT=$state; START=$start; TIME=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); COMMAND=$_.CommandLine } }"
@@ -238,7 +239,7 @@ public class ExecTest {
     @Test
     public void testExecOnWindows4() {
         TestUtils.println(NVersionFormat.of());
-        if (NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS) {
+        if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
             String[] args = {
                     "powershell.exe", "-Command",
                     "$mem=(Get-WmiObject Win32_ComputerSystem).TotalPhysicalMemory; Get-WmiObject Win32_Process|ForEach-Object{ $o=$_.GetOwner();$user=if($o){$o.User}else{'N/A'};$state=if($_.ExecutionState -eq 0){'Running'}elseif($_.ExecutionState -eq 2){'Sleeping'}else{'Suspended'};$start=if($_.CreationDate){$_.CreationDate.Substring(0,12)}else{'N/A'};New-Object PSObject -Property @{USER=$user;PID=$_.ProcessId;CPU=[math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2);MEM=[math]::Round($_.WorkingSetSize/$mem*100,2);VSZ=[int]($_.VirtualSize/1KB);RSS=[int]($_.WorkingSetSize/1KB);TTY='N/A';STAT=$state;START=$start;TIME=[math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2);COMMAND=$_.CommandLine}}|ConvertTo-Csv -NoTypeInformation  | Out-String -Width 1000"
