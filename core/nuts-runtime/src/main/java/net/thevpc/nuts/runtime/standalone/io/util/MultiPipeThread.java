@@ -30,7 +30,6 @@ import net.thevpc.nuts.io.NNonBlockingInputStream;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
 import net.thevpc.nuts.text.NMsg;
 
 import java.io.IOException;
