@@ -5,7 +5,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.concurrent.NCallable;
 
 import java.time.Duration;
@@ -16,6 +17,7 @@ import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NConcurrentImpl implements NConcurrent {
     private final NRateLimitValueFactory memoryRateLimitValueFactory = new NRateLimitValueFactoryImpl(new NRateLimitValueStoreMemory(), null);
     private NRateLimitValueFactory rateLimitValueFactory;
@@ -39,11 +41,6 @@ public class NConcurrentImpl implements NConcurrent {
 
     private final NBulkheadCallFactory memoryBulkheadCallFactory = new NBulkheadCallFactoryImpl(new NBulkheadCallBackendAsSemaphore(),new NBulkheadCallStoreMemory());
     private NBulkheadCallFactory bulkheadCallFactory;
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 
     @Override
     public NConcurrent setCachedValueFactory(NCachedValueFactory cachedValueFactory) {
