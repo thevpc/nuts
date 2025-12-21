@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.definition;
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.concurrent.NOnceValue;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.core.NRepository;
@@ -148,7 +148,7 @@ public class NDefinitionHelper {
                 loaded = true;
                 try {
 //                descriptor = repository.fetchDescriptor().setId(id).setSession(session).getResult();
-                    definition = NFetchCmd.of(id)
+                    definition = NFetch.of(id)
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .getResultDefinition();
                 } catch (Exception ex) {
