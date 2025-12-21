@@ -29,7 +29,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.platform.NArchFamily;
 import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.platform.NPlatformFamily;
+import net.thevpc.nuts.platform.NExecutionEngineFamily;
 
 import java.util.Collection;
 
@@ -247,7 +247,7 @@ public interface NDependencyFilters extends NTypedFilters<NDependencyFilter> {
      * @param pf accepted Desktop Environment list
      * @return a filter that accepts only dependencies that match any of the given Platform
      */
-    NDependencyFilter byPlatform(NPlatformFamily... pf);
+    NDependencyFilter byPlatform(NExecutionEngineFamily... pf);
 
     /**
      * accept only dependencies that match any of the given Platform
