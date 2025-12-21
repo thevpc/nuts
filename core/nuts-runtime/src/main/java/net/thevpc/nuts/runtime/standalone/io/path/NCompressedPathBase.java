@@ -8,11 +8,9 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NPathSPIAware;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStream;
 
 import java.io.File;
 import java.io.InputStream;
@@ -469,6 +467,7 @@ public class NCompressedPathBase extends NPathBase {
         return base.compareTo(unwrapPath(other));
     }
 
+    @NScore(fixed = NScorable.DEFAULT_SCORE)
     public static class MyPathFormat extends DefaultFormatBase<NFormat> {
 
         private final NCompressedPathBase p;
@@ -492,10 +491,6 @@ public class NCompressedPathBase extends NPathBase {
             return false;
         }
 
-        @Override
-        public int getScore(NScorableContext context) {
-            return DEFAULT_SCORE;
-        }
     }
 
     @Override
