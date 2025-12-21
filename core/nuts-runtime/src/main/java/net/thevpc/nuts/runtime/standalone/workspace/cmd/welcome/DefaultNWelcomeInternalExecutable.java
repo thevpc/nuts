@@ -9,7 +9,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNWelcomeInternalExecutable(String[] args, NExecCmd execCommand) {
+    public DefaultNWelcomeInternalExecutable(String[] args, NExec execCommand) {
         super("welcome", args, execCommand);
     }
 
