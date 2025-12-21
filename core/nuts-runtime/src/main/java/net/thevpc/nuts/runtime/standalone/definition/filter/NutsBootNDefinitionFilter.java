@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.util.NFilterOp;
 
@@ -28,7 +28,7 @@ public class NutsBootNDefinitionFilter extends AbstractDefinitionFilter {
             }
         }
         // check now all transitive
-        List<NDependency> allDeps = NFetchCmd.of(definition.getId())
+        List<NDependency> allDeps = NFetch.of(definition.getId())
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultDefinition().getDependencies().get()
                 .transitive().toList();
