@@ -30,7 +30,8 @@ import net.thevpc.nuts.artifact.NArtifactCallBuilder;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.io.Serializable;
 import java.util.*;
@@ -41,6 +42,7 @@ import java.util.*;
  * @since 0.5.4
  */
 @NComponentScope(NScopeType.PROTOTYPE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -169,8 +171,4 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
         return new DefaultNArtifactCall(id, arguments, scriptName, scriptContent);
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
