@@ -5,6 +5,8 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import java.util.*;
 
 import net.thevpc.nuts.spi.NCodeHighlighter;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.*;
 
@@ -21,11 +23,11 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
         reservedWords.addAll(NCodeHighlighterHelper.loadNames("hadra.kw1",getClass()));
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
+    @NScore
+    public static int getScore(NScorableContext context) {
         String s = context.getCriteria();
         if(s==null){
-            return DEFAULT_SCORE;
+            return NScorable.DEFAULT_SCORE;
         }
         switch (s){
             case "hadra":
@@ -38,10 +40,10 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
             case "text/hadra":
             case "application/hadra":
             {
-                return DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
     @Override
