@@ -4,7 +4,6 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NCommandConfig;
 import net.thevpc.nuts.command.NCommandFactoryConfig;
 import net.thevpc.nuts.command.NCustomCmd;
-import net.thevpc.nuts.spi.NExecTargetSPI;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceCmdFactory;
@@ -355,7 +354,7 @@ public class DefaultCustomCommandsModel {
 
     public Map<String, NInternalCommand> getInternalCommands() {
         if (internalCommands == null) {
-            List<NInternalCommand> all = workspace.extensions().createComponents(NInternalCommand.class, null);
+            List<NInternalCommand> all = workspace.extensions().createAllSupported(NInternalCommand.class, null);
             internalCommands = all.stream().collect(Collectors.toMap(x -> x.getName(), x -> x));
         }
         return internalCommands;
