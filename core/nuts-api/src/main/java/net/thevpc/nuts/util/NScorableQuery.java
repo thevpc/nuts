@@ -172,7 +172,7 @@ public interface NScorableQuery<T extends NScorable> {
     /**
      * Returns the best scorable instance along with its score and the context used to evaluate it.
      *
-     * @return an {@link NOptional} wrapping the {@link NScorableResult} for the best instance, or empty if none are valid
+     * @return an {@link NOptional} wrapping the {@link NScoredValue} for the best instance, or empty if none are valid
      */
-    NOptional<NScorableResult<T>> getBestResult();
+    NOptional<NScoredValue<T>> getBestResult();
 }
