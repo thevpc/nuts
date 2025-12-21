@@ -40,7 +40,6 @@ import net.thevpc.nuts.util.NMemorySize;
 import net.thevpc.nuts.runtime.standalone.format.obj.RollingFileService;
 import net.thevpc.nuts.runtime.standalone.format.plain.NFormatPlain;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.*;
 
 import java.io.File;
@@ -55,6 +54,7 @@ import java.util.Map;
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> implements NObjectFormat {
 
     private Object value;
@@ -338,8 +338,4 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
         return getBase().configureFirst(cmdLine);
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
