@@ -3,14 +3,11 @@ package net.thevpc.nuts.runtime.standalone.xtra.compress;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.spi.NCompressPackaging;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.time.NChronometer;
-import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.io.NIOUtils;
-import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -202,8 +199,8 @@ public class NCompressZip implements NCompressPackaging {
     }
 
 
-    @Override
-    public int getScore(NScorableContext context) {
+    @NScore
+    public static int getScore(NScorableContext context) {
         NCompress c = context.getCriteria(NCompress.class);
         String z = NStringUtils.trim(c.getPackaging()).toLowerCase();
         if (z.isEmpty()
@@ -211,8 +208,8 @@ public class NCompressZip implements NCompressPackaging {
                 || z.equals("gzip")
                 || z.equals("gz")
         ) {
-            return DEFAULT_SCORE;
+            return NScorable.DEFAULT_SCORE;
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 }
