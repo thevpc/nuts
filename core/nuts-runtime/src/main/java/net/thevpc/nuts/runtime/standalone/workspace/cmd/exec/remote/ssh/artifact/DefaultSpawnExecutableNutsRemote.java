@@ -10,11 +10,11 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.spi.NExecTargetSPI;
 import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
@@ -50,7 +50,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
 
 
     public DefaultSpawnExecutableNutsRemote(NExecTargetSPI commExec, NDefinition def, String name, String value, String[] cmd,
-                                            List<String> executorOptions, NExecCmd execCommand,
+                                            List<String> executorOptions, NExec execCommand,
                                             NExecInput in,
                                             NExecOutput out,
                                             NExecOutput err
@@ -126,7 +126,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
 
     @Override
     public NText getHelpText() {
-        switch (NWorkspace.of().getOsFamily()) {
+        switch (NEnv.of().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled(
                         "No help available. Try " + getName() + " /help",
