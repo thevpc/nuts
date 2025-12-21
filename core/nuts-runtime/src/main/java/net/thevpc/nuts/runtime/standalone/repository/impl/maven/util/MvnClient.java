@@ -3,13 +3,11 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NExecCmd;
-import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NExec;
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.command.NFetchStrategy;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.runtime.standalone.io.util.MultiPipeThread;
 import net.thevpc.nuts.text.NMsg;
 
 public class MvnClient {
@@ -38,13 +36,13 @@ public class MvnClient {
             case INIT: {
                 status = Status.DIRTY;
                 try {
-                    NDefinition ff = NSearchCmd.of()
+                    NDefinition ff = NSearch.of()
                             .setFetchStrategy(NFetchStrategy.ONLINE)
                             .addId(NET_VPC_APP_NUTS_MVN)
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .setInlineDependencies(true).setLatest(true).getResultDefinitions().findFirst().get();
-                    for (NId nutsId : NSearchCmd.of().addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
-                        NFetchCmd.of(nutsId).setFetchStrategy(NFetchStrategy.ONLINE)
+                    for (NId nutsId : NSearch.of().addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
+                        NFetch.of(nutsId).setFetchStrategy(NFetchStrategy.ONLINE)
                                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                                 .getResultDefinition();
                     }
@@ -68,7 +66,7 @@ public class MvnClient {
             }
         }
         try {
-            NExecCmd b = NExecCmd.of()
+            NExec b = NExec.of()
                     .failFast()
                     .addCommand(
                             NET_VPC_APP_NUTS_MVN,
