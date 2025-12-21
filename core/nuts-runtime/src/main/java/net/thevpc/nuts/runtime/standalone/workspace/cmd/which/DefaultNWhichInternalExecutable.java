@@ -9,7 +9,7 @@ import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutableInformation;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.NSession;
@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNWhichInternalExecutable(String[] args, NExecCmd execCommand) {
+    public DefaultNWhichInternalExecutable(String[] args, NExec execCommand) {
         super("which", args, execCommand);
     }
 
