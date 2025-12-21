@@ -5,7 +5,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.time.NProgressRunner;
 import net.thevpc.nuts.text.NMsgTemplate;
 import net.thevpc.nuts.core.NSession;
@@ -19,6 +20,7 @@ import java.io.PrintStream;
 import java.util.logging.Logger;
 
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNProgressMonitors implements NProgressMonitors {
 
     public DefaultNProgressMonitors() {
@@ -183,12 +185,5 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
         }
         return monitor;
     }
-
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
-
 
 }
