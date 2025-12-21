@@ -1,6 +1,6 @@
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.net.NConnectionString;
 
 import java.io.InputStream;
@@ -19,5 +19,5 @@ public interface NExecTargetCommandContext {
 
     OutputStream err();
 
-    NExecCmd getExecCommand();
+    NExec getExecCommand();
 }
