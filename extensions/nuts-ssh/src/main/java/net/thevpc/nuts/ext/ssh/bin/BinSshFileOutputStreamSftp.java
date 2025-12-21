@@ -1,6 +1,6 @@
 package net.thevpc.nuts.ext.ssh.bin;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.ext.ssh.SshConnection;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
@@ -83,7 +83,7 @@ public class BinSshFileOutputStreamSftp extends OutputStream {
             NConnectionStringBuilder cbuilder = remotePath.builder();
             String identityFile = cbuilder.getQueryParam(SshConnection.IDENTITY_FILE).orNull();
             int port = NLiteral.of(remotePath.getPort()).asInt().orElse(-1);
-            NExecCmd sftp = NExecCmd.ofSystem("sftp");
+            NExec sftp = NExec.ofSystem("sftp");
             if (port > 0 && port != 22) {
                 sftp.addCommand("-oPort");
                 sftp.addCommand(String.valueOf(port));
