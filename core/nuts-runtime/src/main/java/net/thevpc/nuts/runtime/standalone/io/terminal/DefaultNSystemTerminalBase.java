@@ -19,12 +19,14 @@ import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.io.NAnsiTermHelper;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.io.*;
 import java.util.Scanner;
 
 @NComponentScope(NScopeType.PROTOTYPE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     public static final NDuration EXPIRY_30S = NDuration.ofSeconds(30);
     NCachedValue<Cursor> termCursor;
@@ -41,12 +43,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
     private Boolean preferConsole;
 
-    public DefaultNSystemTerminalBase(NWorkspace workspace) {
-        super();
-    }
-
-    @Override
-    public int getScore(NScorableContext criteria) {
+    public DefaultNSystemTerminalBase() {
         NBootOptions options = NWorkspace.of().getBootOptions();
         NTerminalMode terminalMode = options.getTerminalMode().orElse(NTerminalMode.DEFAULT);
         NWorkspaceTerminalOptions bootStdFd = NWorkspaceExt.of().getModel().bootModel.getBootTerminal();
@@ -65,12 +62,11 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
             termSize = NCachedValue.of(() -> (Size) null).setExpiry(EXPIRY_30S);
         }
         this.out = new NPrintStreamSystem(new NonClosablePrintStream(bootStdFd.getOut()), null, null, bootStdFd.getFlags().contains("ansi"),
-                 this).setTerminalMode(terminalMode);
+                this).setTerminalMode(terminalMode);
         this.err = new NPrintStreamSystem(new NonClosablePrintStream(bootStdFd.getErr()), null, null, bootStdFd.getFlags().contains("ansi"),
-                 this).setTerminalMode(terminalMode);
+                this).setTerminalMode(terminalMode);
         this.in = new NonClosableInputStream(bootStdFd.getIn());
         this.scanner = new Scanner(this.in);
-        return DEFAULT_SCORE;
     }
 
     @Override
