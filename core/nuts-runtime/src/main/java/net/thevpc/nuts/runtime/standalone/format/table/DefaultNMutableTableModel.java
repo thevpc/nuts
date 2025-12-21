@@ -10,13 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.thevpc.nuts.text.NTableCell;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.text.NText;
 
 /**
  *
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNMutableTableModel implements NMutableTableModel {
 
     private final Row header = new Row();
@@ -215,8 +217,4 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
         }
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
