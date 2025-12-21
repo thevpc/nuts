@@ -18,11 +18,11 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NInfoCmd;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.platform.NDesktopIntegrationItem;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
@@ -39,6 +39,7 @@ import net.thevpc.nuts.util.*;
  *
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInfoCmd {
 
     private final Map<String, String> extraProperties = new LinkedHashMap<>();
@@ -410,7 +411,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("sys-terminal-flags", () ->  NWorkspace.of().getBootTerminal().getFlags());
         props.put("sys-terminal-mode", () ->  NWorkspace.of().getBootOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT));
         props.put("java-version", () ->  NVersion.get(System.getProperty("java.version")).get());
-        props.put("platform", () ->  NWorkspace.of().getPlatform());
+        props.put("platform", () ->  NEnv.of().getJava());
         props.put("java-home", () ->  NPath.of(System.getProperty("java.home")));
         props.put("java-executable", () ->  NPath.of(NJavaSdkUtils.of(NWorkspace.of()).resolveJavaCommandByHome(null)));
         props.put("java-classpath",
@@ -427,21 +428,21 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
                                 .collect(Collectors.toList())
                 )
         );
-        props.put("os-name", () ->  NWorkspace.of().getOs());
-        props.put("os-family", () ->  NWorkspace.of().getOsFamily());
-        props.put("os-dist", () ->  NWorkspace.of().getOsDist());
-        props.put("os-arch", () ->  NWorkspace.of().getArch());
-        props.put("os-arch-family", () ->  NWorkspace.of().getArchFamily());
-        props.put("os-desktop", () ->  NWorkspace.of().getDesktopEnvironment());
-        props.put("os-desktops", () ->  NWorkspace.of().getDesktopEnvironments());
-        props.put("os-desktop-family", () ->  NWorkspace.of().getDesktopEnvironmentFamily());
-        props.put("os-desktop-families", () ->  NWorkspace.of().getDesktopEnvironmentFamilies());
-        props.put("os-desktop-path", () ->  NWorkspace.of().getDesktopPath());
-        props.put("os-desktop-launcher", () ->  NWorkspace.of().getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP));
-        props.put("os-menu-launcher", () ->  NWorkspace.of().getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU));
-        props.put("os-user-launcher", () ->  NWorkspace.of().getDesktopIntegrationSupport(NDesktopIntegrationItem.USER));
-        props.put("os-shell", () ->  NWorkspace.of().getShellFamily());
-        props.put("os-shells", () ->  NWorkspace.of().getShellFamilies());
+        props.put("os-name", () ->  NEnv.of().getOs());
+        props.put("os-family", () ->  NEnv.of().getOsFamily());
+        props.put("os-dist", () ->  NEnv.of().getOsDist());
+        props.put("os-arch", () ->  NEnv.of().getArch());
+        props.put("os-arch-family", () ->  NEnv.of().getArchFamily());
+        props.put("os-desktop", () ->  NEnv.of().getDesktopEnvironment());
+        props.put("os-desktops", () ->  NEnv.of().getDesktopEnvironments());
+        props.put("os-desktop-family", () ->  NEnv.of().getDesktopEnvironmentFamily());
+        props.put("os-desktop-families", () ->  NEnv.of().getDesktopEnvironmentFamilies());
+        props.put("os-desktop-path", () ->  NEnv.of().getDesktopPath());
+        props.put("os-desktop-launcher", () ->  NEnv.of().getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP));
+        props.put("os-menu-launcher", () ->  NEnv.of().getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU));
+        props.put("os-user-launcher", () ->  NEnv.of().getDesktopIntegrationSupport(NDesktopIntegrationItem.USER));
+        props.put("os-shell", () ->  NEnv.of().getShellFamily());
+        props.put("os-shells", () ->  NEnv.of().getShellFamilies());
         props.put("os-username", () ->  stringValue(System.getProperty("user.name")));
         props.put("user-home", () -> NPath.ofUserHome());
         props.put("user-dir", () -> NPath.ofUserDirectory());
@@ -501,6 +502,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         FilteredMap props = new FilteredMap(filter);
         NSession session=NSession.of();
         NWorkspace workspace = NWorkspace.of();
+        NEnv environment = NEnv.of();
         NBootOptions options = workspace.getBootOptions();
         Set<String> extraKeys = new TreeSet<>(extraProperties.keySet());
 
@@ -597,7 +599,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         NTerminalMode terminalMode = workspace.getBootOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT);
         props.put("sys-terminal-mode", terminalMode);
         props.put("java-version", NVersion.get(System.getProperty("java.version")).get());
-        props.put("platform", workspace.getPlatform());
+        props.put("platform", environment.getJava());
         props.put("java-home", NPath.of(System.getProperty("java.home")));
         props.put("java-executable", NPath.of(NJavaSdkUtils.of(NWorkspace.of()).resolveJavaCommandByHome(null)));
         props.put("java-classpath",
@@ -614,23 +616,23 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
                                 .collect(Collectors.toList())
                 )
         );
-        props.put("os-name", workspace.getOs());
-        props.put("os-family", (workspace.getOsFamily()));
-        if (workspace.getOsDist() != null) {
-            props.put("os-dist", (workspace.getOsDist()));
+        props.put("os-name", environment.getOs());
+        props.put("os-family", (environment.getOsFamily()));
+        if (environment.getOsDist() != null) {
+            props.put("os-dist", (environment.getOsDist()));
         }
-        props.put("os-arch", workspace.getArch());
-        props.put("os-arch-family", workspace.getArchFamily());
-        props.put("os-desktop", workspace.getDesktopEnvironment());
-        props.put("os-desktops", workspace.getDesktopEnvironments());
-        props.put("os-desktop-family", workspace.getDesktopEnvironmentFamily());
-        props.put("os-desktop-families", workspace.getDesktopEnvironmentFamilies());
-        props.put("os-desktop-path", workspace.getDesktopPath());
-        props.put("os-desktop-launcher", workspace.getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP));
-        props.put("os-menu-launcher", workspace.getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU));
-        props.put("os-user-launcher", workspace.getDesktopIntegrationSupport(NDesktopIntegrationItem.USER));
-        props.put("os-shell", workspace.getShellFamily());
-        props.put("os-shells", workspace.getShellFamilies());
+        props.put("os-arch", environment.getArch());
+        props.put("os-arch-family", environment.getArchFamily());
+        props.put("os-desktop", environment.getDesktopEnvironment());
+        props.put("os-desktops", environment.getDesktopEnvironments());
+        props.put("os-desktop-family", environment.getDesktopEnvironmentFamily());
+        props.put("os-desktop-families", environment.getDesktopEnvironmentFamilies());
+        props.put("os-desktop-path", environment.getDesktopPath());
+        props.put("os-desktop-launcher", environment.getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP));
+        props.put("os-menu-launcher", environment.getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU));
+        props.put("os-user-launcher", environment.getDesktopIntegrationSupport(NDesktopIntegrationItem.USER));
+        props.put("os-shell", environment.getShellFamily());
+        props.put("os-shells", environment.getShellFamilies());
         props.put("os-username", stringValue(System.getProperty("user.name")));
         props.put("user-home", NPath.ofUserHome());
         props.put("user-dir", NPath.ofUserDirectory());
@@ -717,11 +719,6 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
     public NInfoCmd setNtf(boolean ntf) {
         super.setNtf(ntf);
         return this;
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     @Override
