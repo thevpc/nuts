@@ -11,7 +11,6 @@ import net.thevpc.nuts.runtime.standalone.elem.builder.*;
 import net.thevpc.nuts.runtime.standalone.elem.item.*;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
@@ -27,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNElementFactory implements NElementFactory {
 
     public DefaultNElementFactory() {
@@ -879,11 +879,6 @@ public class DefaultNElementFactory implements NElementFactory {
         }
         // ???
         return new DefaultNNumberElement(NElementType.FLOAT, value);
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     @Override
