@@ -305,22 +305,22 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         @Override
         public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NScoredCallable.of(DEFAULT_SCORE, () -> new GithubfsPath(path));
+                return NScoredCallable.of(NScorable.DEFAULT_SCORE, () -> new GithubfsPath(path));
             }
             return null;
         }
 
-        @Override
-        public int getScore(NScorableContext context) {
+        @NScore(fixed = NScorable.DEFAULT_SCORE)
+        public static int getScore(NScorableContext context) {
             String path= context.getCriteria();
             try {
                 if (path.startsWith(PREFIX)) {
-                    return DEFAULT_SCORE;
+                    return NScorable.DEFAULT_SCORE;
                 }
             } catch (Exception ex) {
                 //ignore
             }
-            return UNSUPPORTED_SCORE;
+            return NScorable.UNSUPPORTED_SCORE;
         }
     }
 
