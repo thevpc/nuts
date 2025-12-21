@@ -2,13 +2,11 @@ package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NUncompressPackaging;
 import net.thevpc.nuts.log.NLog;
 
-import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -134,16 +132,16 @@ public class NUncompressGzip implements NUncompressPackaging {
         return null;
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
+    @NScore
+    public static int getScore(NScorableContext context) {
         NUncompress c = context.getCriteria(NUncompress.class);
         String z = NStringUtils.trim(c.getPackaging()).toLowerCase();
         if (
                 z.equals("gzip")
                         || z.equals("gz")
         ) {
-            return DEFAULT_SCORE;
+            return NScorable.DEFAULT_SCORE;
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 }
