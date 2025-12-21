@@ -25,7 +25,8 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.platform.NPlatformFamily;
+import net.thevpc.nuts.platform.NConnectionStringAware;
+import net.thevpc.nuts.platform.NExecutionEngineFamily;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.util.NStream;
@@ -38,7 +39,7 @@ import net.thevpc.nuts.spi.NComponent;
  * @app.category Toolkit
  * @since 0.5.8
  */
-public interface NPs extends NComponent {
+public interface NPs extends NComponent, NConnectionStringAware {
     static NPs of() {
         return NExtensions.of(NPs.class);
     }
@@ -48,7 +49,7 @@ public interface NPs extends NComponent {
      *
      * @return process type to consider. Supported 'java'
      */
-    NPlatformFamily getPlatformFamily();
+    NExecutionEngineFamily getPlatformFamily();
 
     /**
      * set process type to consider.
@@ -57,7 +58,7 @@ public interface NPs extends NComponent {
      * @param processType new type
      * @return return {@code this} instance
      */
-    NPs setPlatformFamily(NPlatformFamily processType);
+    NPs setPlatformFamily(NExecutionEngineFamily processType);
 
     /**
      * list all processes of type {@link #getPlatformFamily()}
@@ -103,21 +104,13 @@ public interface NPs extends NComponent {
     NPs failFast();
 
     /**
-     * return host connection string. when host is not blank, this connection
-     * string will be used to connect to a remote host for execution
-     *
-     * @return host
-     * @since 0.8.4
-     */
-    NConnectionString getConnectionString();
-
-    /**
      * update host connection string. when host is not blank, this connection
      * string will be used to connect to a remote host for execution
      *
      * @param host host
      * @return {@code this} instance
      */
+    @Override
     NPs setConnectionString(String host);
 
     /**
@@ -127,6 +120,7 @@ public interface NPs extends NComponent {
      * @param host host as connection string
      * @return {@code this} instance
      */
+    @Override
     NPs setConnectionString(NConnectionString host);
 
     /**
@@ -136,6 +130,7 @@ public interface NPs extends NComponent {
      * @param host host as connection string
      * @return {@code this} instance
      */
+    @Override
     NPs at(String host);
 
     /**
@@ -145,6 +140,7 @@ public interface NPs extends NComponent {
      * @param host host as connection string
      * @return {@code this} instance
      */
+    @Override
     NPs at(NConnectionString host);
 
 }
