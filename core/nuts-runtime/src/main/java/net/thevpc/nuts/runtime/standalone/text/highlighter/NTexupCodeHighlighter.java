@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.util.NColor;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NNameFormat;
 
 import java.util.*;
 
@@ -51,20 +49,20 @@ public class NTexupCodeHighlighter extends TsonCodeHighlighter {
         return "ntexup";
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
+    @NScore
+    public static int getScore(NScorableContext context) {
         String s = context.getCriteria();
         if (s == null) {
-            return DEFAULT_SCORE;
+            return NScorable.DEFAULT_SCORE;
         }
         switch (s) {
             case "ntexup":
             case "application/ntexup":
             case "text/ntexup": {
-                return DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
 
