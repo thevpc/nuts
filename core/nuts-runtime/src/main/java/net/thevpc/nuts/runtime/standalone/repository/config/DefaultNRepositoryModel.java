@@ -286,7 +286,7 @@ public class DefaultNRepositoryModel {
             }
 
             NRepositoryFactoryComponent factory_ = NExtensions.of()
-                    .createComponent(NRepositoryFactoryComponent.class, conf).orNull();
+                    .createSupported(NRepositoryFactoryComponent.class, conf).orNull();
             if (factory_ != null) {
                 NRepository r = factory_.create(options, parentRepository);
                 if (r != null) {
