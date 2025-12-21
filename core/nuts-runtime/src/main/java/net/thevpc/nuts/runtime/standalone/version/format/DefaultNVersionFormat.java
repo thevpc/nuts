@@ -7,11 +7,13 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.text.NVersionFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NMsg;
@@ -26,6 +28,7 @@ import java.util.TreeSet;
  *
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> implements NVersionFormat {
 
     private final Map<String, String> extraProperties = new LinkedHashMap<>();
@@ -141,7 +144,8 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
         props.put("nuts-runtime-version", workspace.getRuntimeId().getVersion().toString());
         if (all) {
             props.put("java-version", System.getProperty("java.version"));
-            props.put("os-version", workspace.getOs().getVersion().toString());
+            NEnv environment = NEnv.of();
+            props.put("os-version", environment.getOs().getVersion().toString());
         }
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));
@@ -149,8 +153,4 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
         return props;
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
