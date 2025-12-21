@@ -1,15 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.spi.NCodeHighlighter;
-import net.thevpc.nuts.util.NEvictingQueue;
-import net.thevpc.nuts.util.NStreamTokenizer;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.expr.NToken;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -17,10 +13,8 @@ import java.util.List;
 
 public class XmlCodeHighlighter implements NCodeHighlighter {
 
-    private final NWorkspace workspace;
+    public XmlCodeHighlighter() {
 
-    public XmlCodeHighlighter(NWorkspace workspace) {
-        this.workspace = workspace;
     }
 
     @Override
@@ -28,11 +22,11 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
         return "xml";
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
+    @NScore
+    public static int getScore(NScorableContext context) {
         String s = context.getCriteria();
         if(s==null){
-            return DEFAULT_SCORE;
+            return NScorable.DEFAULT_SCORE;
         }
         switch (s){
             case "xml":
@@ -43,10 +37,10 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
             case "html":
             case "sgml":
             {
-                return DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
     @Override
