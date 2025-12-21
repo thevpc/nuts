@@ -3,12 +3,12 @@ package net.thevpc.nuts.runtime.standalone.repository.toolbox.helpers;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepositoryModel;
@@ -106,7 +106,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                             .setScriptName("install-catalina.nsh")
                             .setScriptContent(
                                     "unzip --skip-root \"$nutsIdContentPath\" \"$nutsIdBinPath/app\" \n" +
-                                            (NWorkspace.of().getOsFamily().isPosix() ?
+                                            (NEnv.of().getOsFamily().isPosix() ?
                                                     "chmod a+x $nutsIdBinPath/app/*.sh \n" : "")
                             )
                             .build()
@@ -114,7 +114,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                     .setExecutor(NArtifactCallBuilder.of()
                             .setId(NId.of("exec"))
                             .setArguments(
-                                    NWorkspace.of().getOsFamily().isWindow()
+                                    NEnv.of().getOsFamily().isWindow()
                                             ? "$nutsIdBinPath/app/bin/catalina.bat"
                                             : "$nutsIdBinPath/app/bin/catalina.sh"
                             )
