@@ -17,7 +17,6 @@ import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
@@ -31,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNIORPI implements NIORPI {
     private final NWorkspace workspace;
     public DefaultNWorkspaceConfigModel cmodel;
@@ -533,11 +533,6 @@ public class DefaultNIORPI implements NIORPI {
         public Reader getReader(Charset cs) {
             return inputStreamProvider.getReader();
         }
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
 }
