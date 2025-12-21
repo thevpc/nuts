@@ -29,7 +29,7 @@ import net.thevpc.nuts.core.NConstants;
 
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.command.NFetchCmd;
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.command.NFetchModeNotSupportedException;
 import net.thevpc.nuts.command.NInstallInformation;
 import net.thevpc.nuts.core.NWorkspace;
@@ -538,7 +538,7 @@ public class CoreNUtils {
     }
 
     public static List<NId> resolveNutsApiIdsFromId(NId id) {
-        List<NDependency> deps = NFetchCmd.of(id)
+        List<NDependency> deps = NFetch.of(id)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultDefinition()
                 .getDependencies().get().transitive().toList();
