@@ -29,7 +29,8 @@ import net.thevpc.nuts.reflect.NReflectConfiguration;
 import net.thevpc.nuts.reflect.NReflectConfigurationBuilder;
 import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.reflect.NReflectType;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import java.util.Map;
  *
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNReflectRepository implements NReflectRepository {
 
     private final Map<Type, NReflectType> beans = new HashMap<>();
@@ -86,12 +88,5 @@ public class DefaultNReflectRepository implements NReflectRepository {
     private NReflectType create(Type clz) {
         return new DefaultNReflectType(clz, this);
     }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
-
-
 
 }
