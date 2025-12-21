@@ -4,6 +4,7 @@ import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -37,7 +38,7 @@ public class NSysExecUtils {
             return new Path[0];
         }
         List<Path> all = new ArrayList<>();
-        String p = NWorkspace.of().getSysEnv("PATH").orNull();
+        String p = NEnv.of().getEnv("PATH").orNull();
         if (p != null) {
             for (String s : p.split(File.pathSeparator)) {
                 try {
@@ -62,7 +63,7 @@ public class NSysExecUtils {
     }
 
     public static String resolveRootUserName() {
-        NOsFamily sysFamily = NWorkspace.of().getOsFamily();
+        NOsFamily sysFamily = NEnv.of().getOsFamily();
         switch (sysFamily) {
             case WINDOWS: {
                 String s = (String) NApp.of().getProperty("nuts.windows.root-user", NScopeType.SESSION).orNull();
@@ -104,7 +105,7 @@ public class NSysExecUtils {
     ) {
         NSession session = NSession.of();
         return NSysExecUtils.buildEffectiveCommand(args, runAsMode,
-                NWorkspace.of().getDesktopEnvironmentFamilies(),
+                NEnv.of().getDesktopEnvironmentFamilies(),
                 n -> {
                     Path path = NSysExecUtils.sysWhich(n);
                     if (path != null) {
@@ -112,7 +113,7 @@ public class NSysExecUtils {
                     }
                     return null;
                 },
-                session.isGui() && NWorkspace.of().isGraphicalDesktopEnvironment(),
+                session.isGui() && NEnv.of().isGraphicalDesktopEnvironment(),
                 NSysExecUtils.resolveRootUserName(),
                 System.getProperty("user.name"),
                 executionOptions
@@ -160,13 +161,13 @@ public class NSysExecUtils {
                                                      String[] executorOptions
     ) {
         //String runAsEffective = null;
-        NOsFamily sysFamily = NWorkspace.of().getOsFamily();
+        NOsFamily sysFamily = NEnv.of().getOsFamily();
         List<String> command = new ArrayList<>(Arrays.asList(cmd));
         if (runAsMode == null) {
             runAsMode = NRunAs.CURRENT_USER;
         }
         NSession session = NSession.of();
-        boolean runWithGui = gui != null ? gui : session.isGui() && NWorkspace.of().isGraphicalDesktopEnvironment();
+        boolean runWithGui = gui != null ? gui : session.isGui() && NEnv.of().isGraphicalDesktopEnvironment();
         String rootUserName = rootName != null ? rootName : resolveRootUserName();
         String currentUserName = userName != null ? userName : System.getProperty("user.name");
         if (sysWhich == null) {
@@ -333,7 +334,7 @@ public class NSysExecUtils {
     private static NOptional<String[]> guiPosixSu
             (Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
         if (de == null) {
-            de = NWorkspace.of().getDesktopEnvironmentFamilies();
+            de = NEnv.of().getDesktopEnvironmentFamilies();
         }
         String currSu = null;
         currSu = sysWhich.apply("pkexec");
@@ -369,7 +370,7 @@ public class NSysExecUtils {
     private static NOptional<String[]> guiPosixSudo
             (Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
         if (de == null) {
-            de = NWorkspace.of().getDesktopEnvironmentFamilies();
+            de = NEnv.of().getDesktopEnvironmentFamilies();
         }
         String currSu = null;
         currSu = sysWhich.apply("pkexec");
