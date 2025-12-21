@@ -36,9 +36,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NFolderRepository
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NHttpSrvRepository;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,27 +51,27 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
     public DefaultNRepoFactoryComponent() {
     }
 
-    @Override
-    public int getScore(NScorableContext criteria) {
+    @NScore
+    public static int getScore(NScorableContext criteria) {
         if (criteria == null) {
-            return UNSUPPORTED_SCORE;
+            return NScorable.UNSUPPORTED_SCORE;
         }
         NRepositoryConfig r = criteria.getCriteria(NRepositoryConfig.class);
         if (r != null) {
             String type = NRepositoryUtils.getRepoType(r);
             if (NConstants.RepoTypes.NUTS.equals(type)) {
-                return DEFAULT_SCORE + 10;
+                return NScorable.DEFAULT_SCORE + 10;
             }
             if (NBlankable.isBlank(type)) {
                 NPath rp = NPath.of(r.getLocation().getPath()).resolve("nuts-repository.json");
                 if (rp.exists()) {
                     r.setLocation(r.getLocation().setLocationType(NConstants.RepoTypes.NUTS));
-                    return DEFAULT_SCORE + 10;
+                    return NScorable.DEFAULT_SCORE + 10;
                 }
-                return DEFAULT_SCORE + 2;
+                return NScorable.DEFAULT_SCORE + 2;
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
     @Override
