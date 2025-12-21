@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.xtra.ps;
 
-import net.thevpc.nuts.command.NExecTargetInfo;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -24,11 +23,9 @@ import java.util.Iterator;
 
 public class WindowsPsCsvParser {
     private NConnectionString connectionString;
-    private NExecTargetInfo target;
 
-    public WindowsPsCsvParser(NConnectionString connectionString, NExecTargetInfo target) {
+    public WindowsPsCsvParser(NConnectionString connectionString) {
         this.connectionString = connectionString;
-        this.target = target;
     }
 
     public NStream<NPsInfo> parse(Reader reader) {
