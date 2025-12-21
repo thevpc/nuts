@@ -1,12 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.xtra.glob;
 
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.expr.NGlob;
 
 import java.io.File;
 import java.util.regex.Pattern;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNGlob implements NGlob {
     private String separator;
 
@@ -58,11 +60,6 @@ public class DefaultNGlob implements NGlob {
             return ".*";
         }
         return GlobUtils.globString(pattern, getSeparator());
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     public String escape(String s) {
