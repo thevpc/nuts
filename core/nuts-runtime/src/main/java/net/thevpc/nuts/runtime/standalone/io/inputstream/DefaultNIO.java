@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @NComponentScope(NScopeType.WORKSPACE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNIO implements NIO {
     public DefaultNWorkspaceConfigModel cmodel;
     public DefaultNBootModel bootModel;
@@ -42,11 +43,6 @@ public class DefaultNIO implements NIO {
     @Override
     public InputStream stdin() {
         return getBootModel().getSystemTerminal().in();
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     private DefaultNBootModel getBootModel() {
@@ -422,7 +418,7 @@ public class DefaultNIO implements NIO {
     @Override
     public String probeContentType(NPath path) {
         List<NContentTypeResolver> allSupported = NExtensions.of()
-                .createComponents(NContentTypeResolver.class, path);
+                .createAllSupported(NContentTypeResolver.class, path);
         NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x -> x.probeContentType(path)))
                 .getBest().orNull();
@@ -435,7 +431,7 @@ public class DefaultNIO implements NIO {
     @Override
     public List<String> findExtensionsByContentType(String contentType) {
         List<NContentTypeResolver> allSupported = NExtensions.of()
-                .createComponents(NContentTypeResolver.class, null);
+                .createAllSupported(NContentTypeResolver.class, null);
         LinkedHashSet<String> all = new LinkedHashSet<>();
         for (NContentTypeResolver r : allSupported) {
             List<String> s = r.findExtensionsByContentType(contentType);
@@ -449,7 +445,7 @@ public class DefaultNIO implements NIO {
     @Override
     public List<String> findContentTypesByExtension(String extension) {
         List<NContentTypeResolver> allSupported = NExtensions.of()
-                .createComponents(NContentTypeResolver.class, null);
+                .createAllSupported(NContentTypeResolver.class, null);
         LinkedHashSet<String> all = new LinkedHashSet<>();
         for (NContentTypeResolver r : allSupported) {
             List<String> s = r.findContentTypesByExtension(extension);
@@ -469,7 +465,7 @@ public class DefaultNIO implements NIO {
     @Override
     public String probeContentType(byte[] bytes) {
         List<NContentTypeResolver> allSupported = NExtensions.of()
-                .createComponents(NContentTypeResolver.class, bytes);
+                .createAllSupported(NContentTypeResolver.class, bytes);
         NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x -> x.probeContentType(bytes)))
                 .getBest().orNull();
@@ -497,7 +493,7 @@ public class DefaultNIO implements NIO {
     @Override
     public String probeCharset(NPath path) {
         List<NCharsetResolver> allSupported = NExtensions.of()
-                .createComponents(NCharsetResolver.class, path);
+                .createAllSupported(NCharsetResolver.class, path);
         NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x -> x.probeCharset(path)))
                 .getBest().orNull();
@@ -516,7 +512,7 @@ public class DefaultNIO implements NIO {
     @Override
     public String probeCharset(byte[] bytes) {
         List<NCharsetResolver> allSupported = NExtensions.of()
-                .createComponents(NCharsetResolver.class, bytes);
+                .createAllSupported(NCharsetResolver.class, bytes);
         NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x -> x.probeCharset(bytes)))
                 .getBest().orNull();
