@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.thevpc.nuts.spi.NCodeHighlighter;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.*;
 
@@ -27,11 +29,11 @@ public class BashCodeHighlighter implements NCodeHighlighter {
         return "sh";
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
+    @NScore
+    public static int getScore(NScorableContext context) {
         String s = context.getCriteria();
         if(s==null){
-            return DEFAULT_SCORE;
+            return NScorable.DEFAULT_SCORE;
         }
         switch (s) {
             case "sh":
@@ -41,7 +43,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
             case "ksh":
             case "text/x-shellscript":
             {
-                return DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
             }
             case "system": {
                 switch (NShellFamily.getCurrent()) {
@@ -50,13 +52,13 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                     case CSH:
                     case ZSH:
                     case KSH:{
-                        return DEFAULT_SCORE + 10;
+                        return NScorable.DEFAULT_SCORE + 10;
                     }
                 }
-                return DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
     @Override
