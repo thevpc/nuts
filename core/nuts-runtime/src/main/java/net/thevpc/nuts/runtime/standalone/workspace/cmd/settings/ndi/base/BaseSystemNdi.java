@@ -6,7 +6,7 @@ import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.command.NSearchCmd;
+import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceBootConfig;
@@ -52,7 +52,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public NdiScriptInfo[] getSysRC(NdiScriptOptions options) {
         List<NdiScriptInfo> scriptInfos = new ArrayList<>();
         Set<String> visited = new LinkedHashSet<>();
-        for (NShellFamily sf : NWorkspace.of().getShellFamilies()) {
+        for (NShellFamily sf : NEnv.of().getShellFamilies()) {
             String z = NShellHelper.of(sf).getSysRcName();
             if (!visited.contains(z)) {
                 visited.add(z);
@@ -196,7 +196,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             NDefinition fetched = null;
             if (nid.getVersion().isBlank()) {
-                fetched = NSearchCmd.of()
+                fetched = NSearch.of()
                         .addId(options.getId()).setLatest(true).getResultDefinitions().findFirst().get();
                 nid = fetched.getId().getShortId();
                 //nutsId=fetched.getId().getLongNameId();
@@ -433,11 +433,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     private NDefinition loadIdDefinition(NId nid) {
-        return NSearchCmd.of().addId(nid).setLatest(true).setDistinct(true).getResultDefinitions().findSingleton().get();
+        return NSearch.of().addId(nid).setLatest(true).setDistinct(true).getResultDefinitions().findSingleton().get();
     }
 
     public NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target) {
-        return NWorkspace.of().getDesktopIntegrationSupport(target);
+        return NEnv.of().getDesktopIntegrationSupport(target);
     }
 
     protected boolean matchCondition(NSupportMode createDesktop, NSupportMode desktopIntegrationSupport) {
@@ -737,7 +737,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             return getPreferredIconPath(rt);
         }
-        NDefinition appDef = NSearchCmd.of(appId)
+        NDefinition appDef = NSearch.of(appId)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .setLatest(true).setDistinct(true).getResultDefinitions()
                 .findSingleton().get();
@@ -800,7 +800,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public Path getShortcutPath(NdiScriptOptions options) {
-        NDefinition appDef = NSearchCmd.of()
+        NDefinition appDef = NSearch.of()
                 .addId(options.getId())
                 .setLatest(true)
                 .setDistinct(true)
@@ -816,7 +816,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         String apiVersion = options.getNutsApiVersion().toString();
         NAssert.requireNonBlank(apiVersion, "nuts-api version to link to");
         NId apiId = NWorkspace.of().getApiId().builder().setVersion(apiVersion).build();
-        NDefinition apiDefinition = NSearchCmd.of().addId(apiId).failFast().latest()
+        NDefinition apiDefinition = NSearch.of().addId(apiId).failFast().latest()
                 .distinct()
                 .getResultDefinitions()
                 .findSingleton().get();
