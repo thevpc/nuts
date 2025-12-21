@@ -14,12 +14,12 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NIdFormat {
 
     private boolean omitRepository;
@@ -364,8 +364,4 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
         return false;
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
