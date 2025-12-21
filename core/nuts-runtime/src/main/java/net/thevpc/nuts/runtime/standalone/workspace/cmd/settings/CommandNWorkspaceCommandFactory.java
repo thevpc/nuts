@@ -4,7 +4,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NCommandConfig;
 import net.thevpc.nuts.command.NCommandFactoryConfig;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspaceCmdFactory;
 import net.thevpc.nuts.platform.NShellFamily;
@@ -94,7 +94,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
         if (findCommand.length > 0 && execCommand.length > 0) {
             String[] fc = replaceParam(findCommand, name);
             String[] ec = replaceParam(execCommand, name);
-            NExecCmd exec = NExecCmd.of().addCommand(fc)
+            NExec exec = NExec.of().addCommand(fc)
                     //                        .setExecutorOptions("--show-command")
                     .grabAll()
                     .run();
@@ -114,7 +114,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     public List<NCommandConfig> findCommands() {
         List<NCommandConfig> c = new ArrayList<>();
         if (listCommand.length > 0) {
-            NExecCmd b = NExecCmd.of().addCommand(listCommand)
+            NExec b = NExec.of().addCommand(listCommand)
                     .grabAll();
             int r = b.getResultCode();
             if (r == 0) {
