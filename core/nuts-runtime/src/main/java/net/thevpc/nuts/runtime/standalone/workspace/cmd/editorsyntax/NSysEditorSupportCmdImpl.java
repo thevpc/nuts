@@ -4,7 +4,6 @@ import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NSysEditorFamily;
 import net.thevpc.nuts.command.NSysEditorSupportCmd;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NObjectElement;
@@ -12,6 +11,7 @@ import net.thevpc.nuts.elem.NPairElement;
 import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NTrace;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 import org.w3c.dom.*;
@@ -31,6 +31,7 @@ import java.io.StringReader;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
     private NPath source;
     private Set<NSysEditorFamily> editorKinds = new LinkedHashSet<>();
@@ -344,11 +345,6 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
         return false;
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return NScorable.DEFAULT_SCORE;
-    }
-
     private void runActionInstallIdea(Info info) {
         NMsg styledLangId = NMsg.ofStyledKeyword(info.getLanguageId());
         NMsg app = NMsg.ofStyledDate("IntelliJIdea");
@@ -374,7 +370,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             }
         }
         if (local == null) {
-            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported. Idea does not seem to be installed", styledLangId, app, NWorkspace.of().getOsFamily()));
+            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported. Idea does not seem to be installed", styledLangId, app, NEnv.of().getOsFamily()));
             return;
         } else if (!local.isRegularFile()) {
 
@@ -412,7 +408,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
     private void runActionInstallKate(Info info) {
         NMsg styledLangId = NMsg.ofStyledKeyword(info.getLanguageId());
         NMsg app = NMsg.ofStyledDate("kate");
-        if (NWorkspace.of().getOsFamily().isPosix()) {
+        if (NEnv.of().getOsFamily().isPosix()) {
             NPath local = NPath.ofUserHome().resolve(".local/share/org.kde.syntax-highlighting/syntax/" + info.getLanguageId() + ".xml");
             boolean doForce = false;
             if (!local.isRegularFile()) {
@@ -437,14 +433,14 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             }
 
         } else {
-            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NWorkspace.of().getOsFamily()));
+            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NEnv.of().getOsFamily()));
         }
     }
 
     private void runActionInstallVim(Info info) {
         NMsg styledLangId = NMsg.ofStyledKeyword(info.getLanguageId());
         NMsg app = NMsg.ofStyledDate("vim");
-        if (NWorkspace.of().getOsFamily().isPosix()) {
+        if (NEnv.of().getOsFamily().isPosix()) {
             NPath local = NPath.ofUserHome().resolve(".vim/");
             boolean doForce = false;
             if (
@@ -477,7 +473,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             }
 
         } else {
-            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NWorkspace.of().getOsFamily()));
+            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NEnv.of().getOsFamily()));
         }
     }
 
@@ -487,7 +483,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
         String publisher = NStringUtils.firstNonBlank(info.getLanguageGroupId(), "thevpc");
         String langVersion = NStringUtils.firstNonBlank(info.getLanguageVersion(), "1.0.0");
         String pluginName = info.getLanguageId() + "-syntax";
-        if (NWorkspace.of().getOsFamily().isPosix()) {
+        if (NEnv.of().getOsFamily().isPosix()) {
             NPath local = NPath.ofUserHome().resolve(".vscode/extensions/" + publisher + "." + pluginName + "-"+langVersion);
             boolean doForce = false;
             if (
@@ -526,7 +522,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             }
 
         } else {
-            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NWorkspace.of().getOsFamily()));
+            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NEnv.of().getOsFamily()));
         }
     }
 
@@ -587,7 +583,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
     private void runActionInstallGedit(Info info) {
         NMsg styledLangId = NMsg.ofStyledKeyword(info.getLanguageId());
         NMsg app = NMsg.ofStyledDate("gedit");
-        if (NWorkspace.of().getOsFamily().isPosix()) {
+        if (NEnv.of().getOsFamily().isPosix()) {
             String latestGnomeVersion = "5";
             NPath local = NPath.ofUserHome().resolve(".local/share/").list().stream().filter(x -> x.startsWith("gtksourceview-"))
                     .sorted((a, b) -> NVersion.of(b.getName()).compareTo(a.getName()))
@@ -620,15 +616,16 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             }
 
         } else {
-            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NWorkspace.of().getOsFamily()));
+            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NEnv.of().getOsFamily()));
         }
     }
 
     private void runActionInstallNodepadPlusPlus(Info info) {
         NMsg styledLangId = NMsg.ofStyledKeyword(info.getLanguageId());
         NMsg app = NMsg.ofStyledDate("Nodepad++");
-        if (NWorkspace.of().getOsFamily().isWindow()) {
-            NPath local = NPath.ofUserHome().resolve(NWorkspace.of().getSysEnv("APPDATA") + "/Notepad++/userDefineLangs/" + info.getLanguageId() + ".xml");
+        NEnv environment = NEnv.of();
+        if (environment.getOsFamily().isWindow()) {
+            NPath local = NPath.ofUserHome().resolve(environment.getEnv("APPDATA") + "/Notepad++/userDefineLangs/" + info.getLanguageId() + ".xml");
             boolean doForce = false;
             if (!local.isRegularFile()) {
                 //
@@ -653,7 +650,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                 NTrace.println(NMsg.ofC("%s %s syntax highlighting installed successfully to %s. You might need to restart %s", styledLangId, app, local, app));
             }
         } else {
-            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NWorkspace.of().getOsFamily()));
+            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, environment.getOsFamily()));
         }
     }
 
