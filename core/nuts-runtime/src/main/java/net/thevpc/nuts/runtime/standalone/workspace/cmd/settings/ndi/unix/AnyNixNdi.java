@@ -5,6 +5,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
@@ -27,7 +28,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
     protected NShellFamily[] getShellGroups() {
-        Set<NShellFamily> all=new LinkedHashSet<>(NWorkspace.of().getShellFamilies());
+        Set<NShellFamily> all=new LinkedHashSet<>(NEnv.of().getShellFamilies());
         all.retainAll(Arrays.asList(NShellFamily.SH, NShellFamily.FISH));
         return all.toArray(new NShellFamily[0]);
     }
@@ -74,7 +75,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                     );
                 }
             }
-            final String sysRcName = NShellHelper.of(NWorkspace.of().getShellFamily()).getSysRcName();
+            final String sysRcName = NShellHelper.of(NEnv.of().getShellFamily()).getSysRcName();
             NAsk.of()
                     .forBoolean(NMsg.ofC(
                             "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
@@ -133,9 +134,7 @@ public class AnyNixNdi extends BaseSystemNdi {
 
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
-        return new UnixFreeDesktopEntryWriter(
-                NWorkspace.of().getDesktopPath()==null?null: NPath.of(NWorkspace.of().getDesktopPath())
-        );
+        return new UnixFreeDesktopEntryWriter(NPath.of(NEnv.of().getDesktopPath()));
     }
 
 
