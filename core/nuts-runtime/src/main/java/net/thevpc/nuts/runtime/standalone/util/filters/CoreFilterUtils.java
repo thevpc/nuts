@@ -28,7 +28,6 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.NBlankable;
@@ -169,14 +168,14 @@ public class CoreFilterUtils {
                     if (a.length > 0) {
                         NOsFamily o = NOsFamily.parse(a[0]).orNull();
                         if (o != null) {
-                            if (o != NWorkspace.of().getOsFamily()) {
+                            if (o != NEnv.of().getOsFamily()) {
                                 return false;
                             }
                         }
                         if (a.length > 1) {
                             NArchFamily af = NArchFamily.parse(a[1]).orNull();
                             if (af != null) {
-                                if (af != NWorkspace.of().getArchFamily()) {
+                                if (af != NEnv.of().getArchFamily()) {
                                     return false;
                                 }
                             }
@@ -239,35 +238,35 @@ public class CoreFilterUtils {
         if (envCond == null || envCond.isBlank()) {
             return true;
         }
-        NWorkspace workspace = NWorkspace.of();
+        NEnv env = NEnv.of();
         if (!matchesArch(
-                workspace.getArchFamily().id(),
+                env.getArchFamily().id(),
                 envCond.getArch()
         )) {
             return false;
         }
         if (!matchesOs(
-                workspace.getOsFamily().id(),
+                env.getOsFamily().id(),
                 envCond.getOs()
         )) {
             return false;
         }
         if (!matchesOsDist(
-                workspace.getOsDist().toString(),
+                env.getOsDist().toString(),
                 envCond.getOsDist()
         )) {
             return false;
         }
         if (currentVMOnLy) {
             if (!matchesPlatform(
-                    workspace.getPlatform().toString(),
+                    env.getJava().toString(),
                     envCond.getPlatform()
             )) {
                 return false;
             }
         } else {
             if (!matchesPlatform(
-                    workspace.findPlatforms().toList(),
+                    NExecutionEngines.of().findExecutionEngines().toList(),
                     envCond.getPlatform()
             )) {
                 return false;
@@ -275,7 +274,7 @@ public class CoreFilterUtils {
         }
 
         if (!matchesDesktopEnvironment(
-                workspace.getDesktopEnvironments(),
+                env.getDesktopEnvironments(),
                 envCond.getDesktopEnvironment()
         )) {
             return false;
@@ -426,11 +425,11 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesPlatform(Collection<NPlatformLocation> platforms, Collection<String> allCond) {
+    public static boolean matchesPlatform(Collection<NExecutionEngineLocation> platforms, Collection<String> allCond) {
         if (allCond == null || allCond.isEmpty()) {
             return true;
         }
-        for (NPlatformLocation platform : platforms) {
+        for (NExecutionEngineLocation platform : platforms) {
             NId id = platform.getId();
             if (id != null) {
                 if (matchesPlatform(id.toString(), allCond)) {
@@ -452,7 +451,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NId condId = NId.get(cond).get();
-                NPlatformFamily w = NPlatformFamily.parse(condId.getArtifactId()).orNull();
+                NExecutionEngineFamily w = NExecutionEngineFamily.parse(condId.getArtifactId()).orNull();
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
                 }
