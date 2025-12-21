@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.art.tree;
 
-import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.platform.CorePlatformUtils;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
 
