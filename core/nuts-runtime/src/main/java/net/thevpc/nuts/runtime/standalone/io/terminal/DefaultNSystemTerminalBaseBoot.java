@@ -14,12 +14,14 @@ import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.io.NAnsiTermHelper;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.io.InputStream;
 import java.util.Scanner;
 
 @NComponentScope(NScopeType.PROTOTYPE)
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
 
     private final Scanner scanner;
@@ -63,11 +65,6 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     }
 
 
-
-    @Override
-    public int getScore(NScorableContext criteria) {
-        return DEFAULT_SCORE;
-    }
 
     public String readLine(NPrintStream out, NMsg message) {
         if (out == null) {
