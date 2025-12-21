@@ -196,7 +196,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         if (fetchMode != NFetchMode.REMOTE) {
             if (lib.isReadEnabled()) {
                 all.add(NIteratorBuilder.of(
-                                        lib.searchVersions(id, idFilter, true)
+                                        lib.searchVersions(id, idFilter, false)
                                 ).named(NElement.ofUplet("searchVersionInLib", NElement.ofString(getName())))
                                 .build()
 
@@ -208,7 +208,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 if (cache.isReadEnabled()) {
                     all.add(
                             NIteratorBuilder.of(
-                                    cache.searchVersions(id, idFilter, true)
+                                    cache.searchVersions(id, idFilter, false)
                             )
                                     .named(NElement.ofUplet("searchVersionInCache", NElement.ofString(getName())))
                                     .build());
