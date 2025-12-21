@@ -10,7 +10,8 @@ import net.thevpc.nuts.elem.NElementWriter;
 
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NBlankable;
 
 import java.util.*;
@@ -21,6 +22,7 @@ import java.util.*;
  * @author Nasreddine Bac Ali
  * date 2019-03-02
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNWorkspaceList implements NWorkspaceList {
 
     private String name;
@@ -135,8 +137,4 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
         );
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
