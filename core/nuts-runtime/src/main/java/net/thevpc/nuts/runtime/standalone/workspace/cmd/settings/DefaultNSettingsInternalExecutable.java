@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.ext.NExtensions;
@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNSettingsInternalExecutable(String[] args, NExecCmd execCommand) {
+    public DefaultNSettingsInternalExecutable(String[] args, NExec execCommand) {
         super("settings", args, execCommand);
     }
 
@@ -110,7 +110,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
     public List<NSettingsSubCommand> getSubCommands() {
         if (subCommands == null) {
             subCommands = new ArrayList<>(
-                    NExtensions.of().createComponents(NSettingsSubCommand.class, this)
+                    NExtensions.of().createAllSupported(NSettingsSubCommand.class, this)
             );
         }
         return subCommands;
