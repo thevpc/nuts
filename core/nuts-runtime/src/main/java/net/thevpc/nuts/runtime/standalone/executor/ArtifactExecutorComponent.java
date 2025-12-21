@@ -27,16 +27,18 @@ package net.thevpc.nuts.runtime.standalone.executor;
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.spi.NExecutorComponent;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  */
+@NScore(fixed = NScorable.UNSUPPORTED_SCORE)
 public class ArtifactExecutorComponent implements NExecutorComponent {
 
     private NId id;
@@ -48,11 +50,6 @@ public class ArtifactExecutorComponent implements NExecutorComponent {
     @Override
     public NId getId() {
         return id;
-    }
-
-    @Override
-    public int getScore(NScorableContext nutsDefinition) {
-        return UNSUPPORTED_SCORE;
     }
 
     public int exec(NExecutionContext executionContext) {
@@ -74,7 +71,7 @@ public class ArtifactExecutorComponent implements NExecutorComponent {
         app.addAll(appArgs);
 
 //        File directory = NutsBlankable.isBlank(dir) ? null : new File(executionContext.getWorkspace().io().expandPath(dir));
-        return NExecCmd.of()
+        return NExec.of()
                 .addCommand(app)
                 .setEnv(executionContext.getEnv())
                 .setDirectory(executionContext.getDirectory())
