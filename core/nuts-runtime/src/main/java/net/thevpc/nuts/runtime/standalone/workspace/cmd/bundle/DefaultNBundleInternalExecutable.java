@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.bundle;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDescriptorFlag;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.text.NI18n;
@@ -35,7 +35,7 @@ import java.util.*;
  */
 public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNBundleInternalExecutable(String[] args, NExecCmd execCommand) {
+    public DefaultNBundleInternalExecutable(String[] args, NExec execCommand) {
         super("bundle", args, execCommand);
     }
 
