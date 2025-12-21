@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.standalone.xtra.time;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NProgressEvent;
@@ -24,6 +23,7 @@ import java.nio.file.Path;
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
 
     //    private final NutsLogger LOG;
@@ -250,8 +250,4 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
     }
 
 
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
-    }
 }
