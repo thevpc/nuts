@@ -5,10 +5,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.index;
 
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.command.NUpdateStatsCmd;
+import net.thevpc.nuts.command.NUpdateStats;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 /**
  * @author thevpc
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSettingsIndexSubCommand extends AbstractNSettingsSubCommand {
     public NSettingsIndexSubCommand() {
         super();
@@ -38,7 +40,7 @@ public class NSettingsIndexSubCommand extends AbstractNSettingsSubCommand {
     }
 
     private void updateStatistics(String[] repos) {
-        NUpdateStatsCmd cmd = NUpdateStatsCmd.of();
+        NUpdateStats cmd = NUpdateStats.of();
         for (String repo : repos) {
             cmd.add(repo);
         }
