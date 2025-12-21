@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NPrepareCmd;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -17,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNPrepareInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNPrepareInternalExecutable(String[] args, NExecCmd execCommand) {
+    public DefaultNPrepareInternalExecutable(String[] args, NExec execCommand) {
         super("prepare", args, execCommand);
     }
 
