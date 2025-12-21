@@ -7,13 +7,11 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.*;
-import net.thevpc.nuts.ext.ssh.jcsh.JCshConnection;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.DefaultNConnectionStringBuilder;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.spi.NExecTargetCommandContext;
-import net.thevpc.nuts.spi.NExecTargetInfoContext;
 import net.thevpc.nuts.spi.NExecTargetSPI;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
@@ -27,7 +25,7 @@ import java.util.stream.Collectors;
 public class SshNExecTargetSPI implements NExecTargetSPI {
     private CmdStr resolveNutsExecutableCommand(NExecTargetCommandContext context) {
         NSession session = NSession.of();
-        NExecCmd execCommand = context.getExecCommand();
+        NExec execCommand = context.getExecCommand();
         NDefinition def = execCommand.getCommandDefinition();
         NExecutionType executionType = execCommand.getExecutionType();
         if (executionType == null) {
@@ -147,11 +145,6 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
         }
     }
 
-    @Override
-    public NExecTargetInfo getTargetInfo(NExecTargetInfoContext context) {
-        return context.createDefaultTargetInfo(this::runOnceSystemGrab);
-    }
-
     private String runOnceSystemGrab(String cmd, NConnectionString connectionString) {
         try (SshConnection sshc = SshConnectionPool.of().acquire(connectionString)) {
             return sshc.execStringCommandGrabbed(cmd).outString();
@@ -215,32 +208,32 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
         }
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
+    @NScore
+    public static int getScore(NScorableContext context) {
         Object c = context.getCriteria();
         if (c instanceof String) {
             NConnectionStringBuilder z = DefaultNConnectionStringBuilder.of((String) c).orNull();
             if (z != null && isSupportedProtocol(z.getProtocol())) {
-                return DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
             }
         }
         if (c instanceof NConnectionStringBuilder) {
             NConnectionStringBuilder z = (NConnectionStringBuilder) c;
             if (isSupportedProtocol(z.getProtocol())) {
-                return DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
             }
         }
         if (c instanceof NConnectionString) {
             NConnectionString z = (NConnectionString) c;
             if (isSupportedProtocol(z.getProtocol())) {
-                return DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
 
-    private boolean isSupportedProtocol(String protocol) {
+    private static boolean isSupportedProtocol(String protocol) {
         return (
                 "ssh".equals(protocol)
         );
