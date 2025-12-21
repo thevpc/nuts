@@ -1,6 +1,6 @@
 package net.thevpc.nuts.core.test.oldws;
 
-import net.thevpc.nuts.command.NExecCmd;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionType;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.oldws.impl.OldWorkspace083;
@@ -73,7 +73,7 @@ public abstract class OldWorkspace {
 
     public void showVersion() {
         NOut.println(NMsg.ofC("show workspace version %s", version));
-        NExecCmd.of().setExecutionType(NExecutionType.SYSTEM)
+        NExec.of().setExecutionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
                 .addCommand("-w="+workspaceLocation)
                 .addCommand("version")
