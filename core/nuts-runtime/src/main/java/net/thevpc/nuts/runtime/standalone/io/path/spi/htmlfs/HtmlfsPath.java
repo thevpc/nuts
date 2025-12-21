@@ -14,6 +14,7 @@ import net.thevpc.nuts.text.NMsg;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class HtmlfsPath extends AbstractPathSPIAdapter {
 
@@ -74,6 +75,11 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         } catch (IOException | NIOException | UncheckedIOException e) {
             return NStream.ofEmpty();
         }
+    }
+
+    @Override
+    public List<NPathInfo> listInfos(NPath basePath) {
+        return super.listInfos(basePath);
     }
 
     @Override
@@ -203,22 +209,22 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         @Override
         public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NScoredCallable.of(DEFAULT_SCORE, () -> new HtmlfsPath(path));
+                return NScoredCallable.of(NScorable.DEFAULT_SCORE, () -> new HtmlfsPath(path));
             }
             return null;
         }
 
-        @Override
-        public int getScore(NScorableContext context) {
+        @NScore
+        public static int getScore(NScorableContext context) {
             String path = context.getCriteria();
             try {
                 if (path.startsWith(PREFIX)) {
-                    return DEFAULT_SCORE;
+                    return NScorable.DEFAULT_SCORE;
                 }
             } catch (Exception ex) {
                 //ignore
             }
-            return UNSUPPORTED_SCORE;
+            return NScorable.UNSUPPORTED_SCORE;
         }
     }
 
