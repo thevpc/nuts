@@ -18,7 +18,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnexpectedException;
@@ -40,12 +40,12 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
     boolean failFast;
     NExecutionType executionType;
     NRunAs runAs;
-    DefaultNExecCmd execCommand;
+    DefaultNExec execCommand;
     boolean autoInstall = true;
 
     public DefaultNArtifactExecutable(NDefinition def, String commandName, String[] appArgs, List<String> executorOptions,
                                       List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast,
-                                      NExecutionType executionType, NRunAs runAs, DefaultNExecCmd execCommand) {
+                                      NExecutionType executionType, NRunAs runAs, DefaultNExec execCommand) {
         super(commandName, def.getId().getLongName(), NExecutableType.ARTIFACT, execCommand);
         this.def = def;
         this.runAs = runAs;
@@ -105,8 +105,8 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
         NInstallStatus installStatus = def.getInstallInformation().get().getInstallStatus();
         if (!installStatus.isInstalled()) {
             if (autoInstall) {
-                NInstallCmd.of(def.getId()).run();
-                NInstallStatus st = NFetchCmd.of(def.getId())
+                NInstall.of(def.getId()).run();
+                NInstallStatus st = NFetch.of(def.getId())
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDefinition().getInstallInformation().get().getInstallStatus();
                 if (!st.isInstalled()) {
@@ -117,7 +117,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
             }
         } else if (installStatus.isObsolete()) {
             if (autoInstall) {
-                NInstallCmd.of(def.getId())
+                NInstall.of(def.getId())
                         .configure(true, "--reinstall")
                         .run();
             }
