@@ -35,21 +35,14 @@ import net.thevpc.nuts.util.NScorableContext;
  * implementation for a given predefined interface (named Extension Point).
  * Such interfaces must extend this {@code NutsComponent} interface.
  * Implementations must implement these extension points by providing their
- * best support level (when method {@link #getScore(NScorableContext)} is invoked).
+ * best support level (when method {@link #NScoraable:getScore(NScorableContext)} is invoked).
  * Only implementations with positive support level are considered.
  * Implementations with higher support level are selected first.
  *
  * @app.category SPI Base
  * @since 0.5.4
  */
-public interface NComponent extends NScorable {
+public interface NComponent {
 
-    /**
-     * evaluate support level (who much this instance should be considered convenient, acceptable)
-     * for the given arguments (provided in context).
-     *
-     * @param context evaluation context
-     * @return support level value
-     */
-    int getScore(NScorableContext context);
+
 }
