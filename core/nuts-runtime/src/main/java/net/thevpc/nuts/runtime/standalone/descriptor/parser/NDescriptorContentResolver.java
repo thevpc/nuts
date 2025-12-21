@@ -33,7 +33,7 @@ public class NDescriptorContentResolver {
             NDescriptorContentParserContext ctx = new DefaultNDescriptorContentParserContext(
                     localPath, fileExtension, null, parseOptions);
             List<NDescriptorContentParserComponent> allParsers = NExtensions.of()
-                    .createComponents(NDescriptorContentParserComponent.class, ctx);
+                    .createAllSupported(NDescriptorContentParserComponent.class, ctx);
             if (allParsers.size() > 0) {
                 for (NDescriptorContentParserComponent parser : allParsers) {
                     NDescriptor desc = null;
