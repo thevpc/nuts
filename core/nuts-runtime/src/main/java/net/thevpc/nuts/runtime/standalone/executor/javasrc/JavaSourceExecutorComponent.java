@@ -38,6 +38,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 
 import javax.tools.JavaCompiler;
@@ -54,7 +56,7 @@ import java.util.List;
 @NComponentScope(NScopeType.WORKSPACE)
 public class JavaSourceExecutorComponent implements NExecutorComponent {
 
-    public static NId ID;
+    public static NId ID=NId.get("net.thevpc.nuts.exec:exec-java-src").get();
 
     @Override
     public NId getId() {
@@ -131,18 +133,15 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
         }
     }
 
-    @Override
-    public int getScore(NScorableContext context) {
-        if (ID == null) {
-            ID = NId.get("net.thevpc.nuts.exec:exec-java-src").get();
-        }
+    @NScore
+    public static int getScore(NScorableContext context) {
         NDefinition def = context.getCriteria(NDefinition.class);
         if (def != null) {
             if ("java".equals(def.getDescriptor().getPackaging())) {
-                return DEFAULT_SCORE + 1;
+                return NScorable.DEFAULT_SCORE + 1;
             }
         }
-        return UNSUPPORTED_SCORE;
+        return NScorable.UNSUPPORTED_SCORE;
     }
 
 }
