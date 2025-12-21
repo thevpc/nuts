@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NRepositorySecurityManager;
 import net.thevpc.nuts.security.NAddUserCmd;
 import net.thevpc.nuts.security.NUserConfig;
@@ -34,14 +33,17 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigMana
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NScorable;
 
 /**
  *
  * @author thevpc
  * @since 0.5.4
  */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNAddUserCmd extends AbstractNAddUserCmd {
 
     public DefaultNAddUserCmd() {
