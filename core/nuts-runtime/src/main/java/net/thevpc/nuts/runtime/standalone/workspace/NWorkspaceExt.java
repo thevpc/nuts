@@ -17,7 +17,6 @@ import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryMo
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutionContextBuilder;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.install.InstallIdInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NInstallerComponent;
@@ -88,13 +87,11 @@ public interface NWorkspaceExt {
 
     DefaultNRepositoryModel getRepositoryModel();
 
-    public DefaultNWorkspaceEnvManagerModel getEnvModel();
+    DefaultCustomCommandsModel getCommandModel();
 
-    public DefaultCustomCommandsModel getCommandModel();
+    DefaultNWorkspaceConfigModel getConfigModel();
 
-    public DefaultNWorkspaceConfigModel getConfigModel();
-
-    public DefaultImportModel getImportModel();
+    DefaultImportModel getImportModel();
 
     NDependencySolver createDependencySolver(String solverName);
 
