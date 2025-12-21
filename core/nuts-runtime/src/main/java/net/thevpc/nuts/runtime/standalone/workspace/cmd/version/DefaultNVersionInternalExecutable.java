@@ -8,12 +8,12 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.version;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
 import net.thevpc.nuts.text.NVersionFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
 
 /**
  *
@@ -21,7 +21,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
  */
 public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNVersionInternalExecutable(String[] args, final DefaultNExecCmd execCommand) {
+    public DefaultNVersionInternalExecutable(String[] args, final DefaultNExec execCommand) {
         super("version", args, execCommand);
     }
 
