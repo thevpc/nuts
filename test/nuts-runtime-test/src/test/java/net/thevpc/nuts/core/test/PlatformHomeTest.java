@@ -1,6 +1,5 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.platform.*;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,7 +21,7 @@ public class PlatformHomeTest {
 
     @Test
     public void test02() {
-        NPlatformLocation z = NWorkspace.of().findPlatformByVersion(NPlatformFamily.JAVA, "[1.8,6]").orNull();
+        NExecutionEngineLocation z = NExecutionEngines.of().findExecutionEngineByVersion(NExecutionEngineFamily.JAVA, "[1.8,6]").orNull();
         System.out.println(z);
     }
 
