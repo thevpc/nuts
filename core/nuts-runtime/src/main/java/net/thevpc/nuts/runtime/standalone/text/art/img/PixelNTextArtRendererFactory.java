@@ -3,13 +3,11 @@ package net.thevpc.nuts.runtime.standalone.text.art.img;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.text.art.NTextArtImpl;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NTextArtImageRenderer;
 import net.thevpc.nuts.text.NTextArtRenderer;
 import net.thevpc.nuts.text.NTextArtRendererFactory;
 import net.thevpc.nuts.text.NTextArtTextRenderer;
-import net.thevpc.nuts.util.NCollections;
-import net.thevpc.nuts.util.NOptional;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+@NScore(fixed = NScorable.DEFAULT_SCORE)
 public class PixelNTextArtRendererFactory implements NTextArtRendererFactory {
     String rendererType = "pixel";
 
@@ -82,11 +81,6 @@ public class PixelNTextArtRendererFactory implements NTextArtRendererFactory {
             all.put(id, getRenderer(id).get());
         }
         return all.values().stream();
-    }
-
-    @Override
-    public int getScore(NScorableContext context) {
-        return DEFAULT_SCORE;
     }
 
     public NOptional<NTextArtRenderer> getRenderer(String renderName) {
