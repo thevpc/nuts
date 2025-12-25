@@ -195,7 +195,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 NVersionFormat p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNVersionFormat(workspace));
                 return NOptional.of((T) p);
             }
-            case "net.thevpc.nuts.command.NExecCmd": {
+            case "net.thevpc.nuts.command.NExec": {
                 NExec p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNExec(workspace));
                 return NOptional.of((T) p);
             }
@@ -281,7 +281,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 T y = a.value();
                 ret.add(y);
             } catch (Exception e) {
-                LOG.log(NMsg.ofJ("error while instantiating {0} for {1} : {2}", a, type, e).asError(e));
+                LOG.log(NMsg.ofC("error while instantiating %s for %s : %s", a, type, e).asError(e));
             }
         }
         return ret;
