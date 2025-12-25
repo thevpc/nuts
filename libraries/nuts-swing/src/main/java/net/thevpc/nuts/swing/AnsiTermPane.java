@@ -89,11 +89,11 @@ public class AnsiTermPane extends JTextPane {
             Element first = root.getElement(root.getElementCount() - 1);
             try {
                 int offs = first.getStartOffset();
-                int len = first.getEndOffset()-offs-1;
+                int len = first.getEndOffset() - offs - 1;
                 int length = getDocument().getLength();
                 if (offs < 0 || (offs + len) > length) {
 
-                }else {
+                } else {
                     getDocument().remove(offs, len);
                 }
             } catch (BadLocationException e) {
@@ -150,25 +150,37 @@ public class AnsiTermPane extends JTextPane {
 
     public PrintStream asPrintStream() {
         if (ps == null) {
-            ps = new PrintStream(
-                    new OutputStream() {
+            ps = new TempPrintStream(this);
+        }
+        return ps;
+    }
+
+    private static class TempPrintStream extends PrintStream {
+        private AnsiTermPane termPane;
+
+        public TempPrintStream(AnsiTermPane termPane) {
+            super(new OutputStream() {
                 @Override
                 public void write(int b) throws IOException {
                     UIHelper.withinGUI(() -> {
-                        appendANSI(String.valueOf((char) b));
+                        termPane.appendANSI(String.valueOf((char) b));
                     });
                 }
 
                 @Override
                 public void write(byte[] b, int off, int len) throws IOException {
+                    String ss = new String(b, off, len);
                     UIHelper.withinGUI(() -> {
-                        appendANSI(new String(b, off, len));
+                        termPane.appendANSI(new String(b, off, len));
                     });
                 }
-            }
-            );
+            });
+            this.termPane = termPane;
         }
-        return ps;
+
+        public AnsiTermPane getTermPane() {
+            return termPane;
+        }
     }
 
     public void printlnAnsi(String s) {
@@ -247,7 +259,7 @@ public class AnsiTermPane extends JTextPane {
 
     public void applyANSIColor(String ANSIColor) {
         switch (ANSIColor) {
-            case "\u001B[2K":{
+            case "\u001B[2K": {
                 clearLastLine();
                 return;
             }
