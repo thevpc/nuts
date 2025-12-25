@@ -90,7 +90,8 @@ net.thevpc.nuts.runtime.standalone.elem.parser.DefaultNElementParser
 net.thevpc.nuts.runtime.standalone.text.DefaultNTexts
 net.thevpc.nuts.runtime.standalone.text.highlighter.JavaCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.SqlCodeHighlighter
-net.thevpc.nuts.runtime.standalone.text.highlighter.BashCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.ShCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.ShoptCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.FishCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.HadraCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.JsonCodeHighlighter
