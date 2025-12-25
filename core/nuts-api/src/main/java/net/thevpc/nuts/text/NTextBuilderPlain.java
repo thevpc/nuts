@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class NTextBuilderPlain implements NTextBuilder {
@@ -565,6 +566,23 @@ public class NTextBuilderPlain implements NTextBuilder {
             sb.append(other);
         }
         return new ImmutableNTextPlain(sb.toString());
+    }
+
+
+    @Override
+    public NTextBuilder indent(NText prefix) {
+        return indent(prefix, false);
+    }
+
+    @Override
+    public NTextBuilder indent(NText prefix, boolean skipFirstLine) {
+        if(NBlankable.isBlank(prefix)) {
+            return this;
+        }
+        NStringBuilder old = new NStringBuilder(sb.toString());
+        sb.delete(0, sb.length());
+        sb.append(old.indent(prefix.filteredText(),skipFirstLine).toString());
+        return null;
     }
 
     private static class ImmutableNTextPlain implements NTextPlain {
