@@ -760,9 +760,11 @@ public class InstallHelper {
                 NTextBuilder msg = NTextBuilder.of();
                 msg.append("the following ")
                         .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
-                        .append(" going to be ").append(action).append(" : ")
+                        .append(" going to be ").append(action)
+                        .append(" : ")
+                        .append("\n      ")
                         .appendJoined(
-                                NText.ofPlain(", "),
+                                NText.ofPlain("\n      "),
                                 all.stream().map(x
                                                 -> NText.of(
                                                 x.builder().build()
