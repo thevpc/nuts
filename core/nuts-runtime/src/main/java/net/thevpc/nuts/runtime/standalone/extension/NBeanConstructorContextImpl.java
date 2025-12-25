@@ -10,7 +10,8 @@ public class NBeanConstructorContextImpl implements NBeanConstructorContext {
     public boolean isSupported(Class<?> paramType) {
         switch (paramType.getCanonicalName()) {
             case "net.thevpc.nuts.core.NSession":
-            case "net.thevpc.nuts.core.NWorkspace": {
+            case "net.thevpc.nuts.core.NWorkspace":
+            {
                 return true;
             }
         }
