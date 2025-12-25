@@ -597,6 +597,38 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
         return this;
     }
 
+
+    public NTextBuilder indent(NText prefix) {
+        return indent(prefix, false);
+    }
+
+    public NTextBuilder indent(NText prefix, boolean skipFirstLine) {
+        if (prefix == null || prefix.isEmpty()) {
+            return this;
+        }
+        DefaultNTextBuilder z = (DefaultNTextBuilder) copy().flatten();
+        List<NText> children = new ArrayList<>();
+        boolean wasNewLine = true;
+        boolean firstLine = true;
+        for (NText item : z) {
+            if (item.isNewLine()) {
+                wasNewLine = true;
+                firstLine = false;
+            } else {
+                if (wasNewLine) {
+                    if (!firstLine || !skipFirstLine) {
+                        children.add(prefix);
+                    }
+                }
+                children.add(item);
+                wasNewLine = false;
+            }
+        }
+        this.children.clear();
+        this.children.addAll(children);
+        return this;
+    }
+
     @Override
     public NTextBuilder trim() {
         trimLeft();
