@@ -129,4 +129,8 @@ public interface NTextBuilder extends NText, Iterable<NText> {
     NTextBuilder newLine();
 
     NTextBuilder clear();
+
+    NTextBuilder indent(NText prefix);
+
+    NTextBuilder indent(NText prefix, boolean skipFirstLine);
 }
