@@ -44,7 +44,7 @@ import java.util.Map;
 /**
  * Represents a command execution within the Nuts workspace.
  * <p>
- * {@code NExecCmd} provides a unified API to execute all types of executables:
+ * {@code NExec} provides a unified API to execute all types of executables:
  * <ul>
  *     <li>Internal commands managed by Nuts</li>
  *     <li>External executables on the local machine</li>
@@ -72,14 +72,14 @@ import java.util.Map;
  *     <li>Opening files or URLs with the associated OS handler</li>
  * </ul>
  * <p>
- * {@code NExecCmd} supports output grabbing, error redirection, dry-run mode,
+ * {@code NExec} supports output grabbing, error redirection, dry-run mode,
  * and execution target probing (local or remote).
  * <p>
  * The API is fluent, allowing chaining of configuration calls before execution.
  * <p>
  * Example usage:
  * <pre>{@code
- * NExecCmd.of("ls", "-l")
+ * NExec.of("ls", "-l")
  *         .setBot(true)
  *         .at("ssh://remote-server")
  *         .grabOut()
@@ -97,7 +97,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * Returns a new instance of {@link NExec} using the default extension.
      * The returned instance can be further configured before execution.
      *
-     * @return a new {@code NExecCmd} instance
+     * @return a new {@code NExec} instance
      */
     static NExec of() {
         return NExtensions.of(NExec.class);
@@ -109,7 +109,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * before execution.
      *
      * @param cmd the command and its arguments
-     * @return a new {@code NExecCmd} instance with the specified command
+     * @return a new {@code NExec} instance with the specified command
      */
     static NExec of(String... cmd) {
         return of().addCommand(cmd);
@@ -121,7 +121,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * This is equivalent to {@code of(cmd).system()}.
      *
      * @param cmd the command and its arguments
-     * @return a new {@code NExecCmd} instance configured for system execution
+     * @return a new {@code NExec} instance configured for system execution
      */
     static NExec ofSystem(String... cmd) {
         return of().addCommand(cmd).system();
