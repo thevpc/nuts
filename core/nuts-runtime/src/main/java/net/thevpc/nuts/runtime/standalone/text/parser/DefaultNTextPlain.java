@@ -63,6 +63,10 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
         return text;
     }
 
+    public boolean isNewLine() {
+        return text!=null && (text.equals("\n") || text.equals("\r\n"));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
