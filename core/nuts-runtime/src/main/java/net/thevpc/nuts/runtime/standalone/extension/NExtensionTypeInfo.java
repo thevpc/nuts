@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -30,6 +31,7 @@ public class NExtensionTypeInfo<T> {
     private NScopeType scope;
     private NScorable scorer;
     private NBeanCache beanCache;
+    private MyNBeanConstructorContext0 myNBeanConstructorContext0;
 
     public NExtensionTypeInfo(Class<? extends T> implType, Class<T> apiType, NExtensionTypeInfoPool pool, NBeanCache beanCache) {
         this.pool = pool;
@@ -38,6 +40,7 @@ public class NExtensionTypeInfo<T> {
         log = CoreNUtils.isDevVerbose() ? System.err : null;
         scope = computeScope();
         this.beanCache = beanCache;
+        this.myNBeanConstructorContext0 = new MyNBeanConstructorContext0();
     }
 
     public Class<? extends T> getImplType() {
@@ -53,7 +56,7 @@ public class NExtensionTypeInfo<T> {
     }
 
     public <T> T newInstance() {
-        return newInstance(new Class[0], new Object[0], null,true);
+        return newInstance(new Class[0], new Object[0], null, true);
     }
 
 
@@ -121,24 +124,9 @@ public class NExtensionTypeInfo<T> {
 
 
     private NBeanConstructorContext validateContext(NBeanConstructorContext context) {
-        return context == null ? NBeanConstructorContextImpl.INSTANCE :
-                new NBeanConstructorContext() {
-                    @Override
-                    public boolean isSupported(Class<?> paramType) {
-                        return context.isSupported(paramType)
-                                || NBeanConstructorContextImpl.INSTANCE.isSupported(paramType)
-                                ;
-                    }
-
-                    @Override
-                    public Object resolve(Class<?> paramType) {
-                        if (context.isSupported(paramType)) {
-                            return context.resolve(paramType);
-                        }
-                        return NBeanConstructorContextImpl.INSTANCE.resolve(paramType);
-                    }
-                };
+        return context == null ? myNBeanConstructorContext0 : new MyNBeanConstructorContext(context);
     }
+
 
     protected <T> T newInstance(Class[] argTypes, Object[] args, NBeanConstructorContext context, boolean doLog) {
         T t1 = null;
@@ -209,10 +197,10 @@ public class NExtensionTypeInfo<T> {
                         declaredMethod.setAccessible(true);
                         return new MethodBasedNScorable(this, declaredMethod);
                     } else {
-                        LOG().log(NMsg.ofC("[%S] [%s] scorer method ignored (invalid params) :: %s", implType, apiType, declaredMethod).asSevere());
+                        LOG().log(NMsg.ofC("[%s] [%s] scorer method ignored (invalid params) :: %s", implType, apiType, declaredMethod).asSevere());
                     }
                 } else {
-                    LOG().log(NMsg.ofC("[%S] [%s] scorer method ignored (not static) :: %s", implType, apiType, declaredMethod).asSevere());
+                    LOG().log(NMsg.ofC("[%s] [%s] scorer method ignored (not static) :: %s", implType, apiType, declaredMethod).asSevere());
                 }
             } else {
                 if (
@@ -221,7 +209,7 @@ public class NExtensionTypeInfo<T> {
                                 && parameterTypes.length == 1 && parameterTypes[0].equals(NScorableContext.class)
                                 && declaredMethod.getReturnType().equals(int.class)
                 ) {
-                    LOG().log(NMsg.ofC("[%S] [%s] invalid (still accepted) score method %s ", implType, apiType, declaredMethod).asSevere());
+                    LOG().log(NMsg.ofC("[%s] [%s] invalid (still accepted) score method %s ", implType, apiType, declaredMethod).asSevere());
                     return new MethodBasedNScorable(this, declaredMethod);
                 }
             }
@@ -275,4 +263,70 @@ public class NExtensionTypeInfo<T> {
         }
     }
 
+    private class MyNBeanConstructorContext implements NBeanConstructorContext {
+        private final NBeanConstructorContext context;
+
+        public MyNBeanConstructorContext(NBeanConstructorContext context) {
+            this.context = context;
+        }
+
+        public boolean isSupported(Class<?> paramType) {
+            if (context.isSupported(paramType)) {
+                return true;
+            }
+            switch (paramType.getCanonicalName()) {
+                case "net.thevpc.nuts.core.NSession":
+                case "net.thevpc.nuts.core.NWorkspace":
+                case "net.thevpc.nuts.spi.NScopeType": {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public Object resolve(Class<?> paramType) {
+            if (context.isSupported(paramType)) {
+                return context.resolve(paramType);
+            }
+
+            switch (paramType.getCanonicalName()) {
+                case "net.thevpc.nuts.core.NSession":
+                    return NSession.of();
+                case "net.thevpc.nuts.core.NWorkspace":
+                    return NWorkspace.of();
+                case "net.thevpc.nuts.spi.NScopeType":
+                    return scope;
+            }
+            return null;
+        }
+    }
+
+    private class MyNBeanConstructorContext0 implements NBeanConstructorContext {
+
+        public MyNBeanConstructorContext0() {
+        }
+
+        public boolean isSupported(Class<?> paramType) {
+            switch (paramType.getCanonicalName()) {
+                case "net.thevpc.nuts.core.NSession":
+                case "net.thevpc.nuts.core.NWorkspace":
+                case "net.thevpc.nuts.spi.NScopeType": {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public Object resolve(Class<?> paramType) {
+            switch (paramType.getCanonicalName()) {
+                case "net.thevpc.nuts.core.NSession":
+                    return NSession.of();
+                case "net.thevpc.nuts.core.NWorkspace":
+                    return NWorkspace.of();
+                case "net.thevpc.nuts.spi.NScopeType":
+                    return scope;
+            }
+            return null;
+        }
+    }
 }
