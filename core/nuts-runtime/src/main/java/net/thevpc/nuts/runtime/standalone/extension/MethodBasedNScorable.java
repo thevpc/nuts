@@ -21,7 +21,7 @@ class MethodBasedNScorable implements NScorable {
         try {
             return (int) declaredMethod.invoke(null, context);
         } catch (Exception e) {
-            nExtensionTypeInfo.LOG().log(NMsg.ofC("[%S] [%s] error invoking score method %s ", nExtensionTypeInfo.getImplType(), nExtensionTypeInfo.getApiType(), declaredMethod).asSevere());
+            nExtensionTypeInfo.LOG().log(NMsg.ofC("[%s] [%s] error invoking score method %s ", nExtensionTypeInfo.getImplType(), nExtensionTypeInfo.getApiType(), declaredMethod).asSevere());
         }
         return NScorable.UNSUPPORTED_SCORE;
     }
