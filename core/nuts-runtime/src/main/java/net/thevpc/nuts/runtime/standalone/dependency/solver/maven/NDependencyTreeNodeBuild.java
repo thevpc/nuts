@@ -1,14 +1,20 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver.maven;
 
-import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.text.NI18n;
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.runtime.standalone.dependency.DefaultNDependencyTreeNode;
-import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.text.NMsg;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NDependencyBuilder;
+import net.thevpc.nuts.artifact.NDependencyTreeNode;
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NDescriptorEffectiveConfig;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.runtime.standalone.dependency.DefaultNDependencyTreeNode;
+import net.thevpc.nuts.text.NI18n;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 
 class NDependencyTreeNodeBuild {
 
@@ -128,6 +134,10 @@ class NDependencyTreeNodeBuild {
 
     NId getEffectiveId() {
         return getEffectiveDescriptor().getId();
+    }
+
+    void setPreloadedDescriptor(NDescriptor descriptor) {
+        this.effDescriptor = descriptor;
     }
 
     NDescriptor getEffectiveDescriptor() {
