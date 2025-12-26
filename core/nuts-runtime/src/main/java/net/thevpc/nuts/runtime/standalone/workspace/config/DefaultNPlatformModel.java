@@ -21,15 +21,10 @@ import java.util.function.Predicate;
 
 public class DefaultNPlatformModel {
 
-    private NWorkspace workspace;
     private NWorkspaceModel wsModel;
 
     public DefaultNPlatformModel(NWorkspaceModel wsModel) {
         this.wsModel = wsModel;
-    }
-
-    public NWorkspace getWorkspace() {
-        return workspace;
     }
 
 
@@ -39,7 +34,6 @@ public class DefaultNPlatformModel {
 
     public boolean add0(NExecutionEngineLocation location, boolean notify) {
 //        session = CoreNutsUtils.validate(session, workspace);
-        NSession session=getWorkspace().currentSession();
         if (location != null) {
             NAssert.requireNonBlank(location.getProduct(), "platform location product");
             NAssert.requireNonBlank(location.getName(), "platform location product");
@@ -66,7 +60,7 @@ public class DefaultNPlatformModel {
             }
             list.add(location);
             if (notify) {
-                if (session.isPlainTrace()) {
+                if (NSession.of().isPlainTrace()) {
                     NOut.resetLine().println(NMsg.ofC("%s %s %s %s (%s) %s at %s",
                             NText.ofStyledSuccess("install"),
                             location.getId().getShortName(),
@@ -77,7 +71,7 @@ public class DefaultNPlatformModel {
                             NPath.of(location.getPath())
                     ));
                 }
-                NWorkspaceExt.of(workspace)
+                NWorkspaceExt.of()
                         .getConfigModel()
                         .fireConfigurationChanged("platform", ConfigEventType.MAIN);
             }
@@ -99,7 +93,7 @@ public class DefaultNPlatformModel {
             List<NExecutionEngineLocation> list = getPlatforms().get(location.getExecutionEngineFamily());
             if (list != null) {
                 if (list.remove(location)) {
-                    NWorkspaceExt.of(workspace)
+                    NWorkspaceExt.of()
                             .getConfigModel()
                             .fireConfigurationChanged("platform", ConfigEventType.MAIN);
                     return true;
@@ -180,7 +174,7 @@ public class DefaultNPlatformModel {
     public NStream<NExecutionEngineLocation> searchSystemExecutionEngines(NExecutionEngineFamily executionEngineType) {
         if (executionEngineType == NExecutionEngineFamily.JAVA) {
             try {
-                return NStream.ofArray(NJavaSdkUtils.of(workspace).searchJdkLocationsFuture().get());
+                return NStream.ofArray(NJavaSdkUtils.of().searchJdkLocationsFuture().get());
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
@@ -190,14 +184,14 @@ public class DefaultNPlatformModel {
 
     public NStream<NExecutionEngineLocation> searchSystemExecutionEngines(NExecutionEngineFamily executionEngineType, NPath path) {
         if (executionEngineType == NExecutionEngineFamily.JAVA) {
-            return NStream.ofArray(NJavaSdkUtils.of(workspace).searchJdkLocations(path));
+            return NStream.ofArray(NJavaSdkUtils.of().searchJdkLocations(path));
         }
         return NStream.ofEmpty();
     }
 
     public NOptional<NExecutionEngineLocation> resolveExecutionEngine(NExecutionEngineFamily executionEngineType, NPath path, String preferredName) {
         if (executionEngineType == NExecutionEngineFamily.JAVA) {
-            NExecutionEngineLocation z = NJavaSdkUtils.of(workspace).resolveJdkLocation(path, preferredName);
+            NExecutionEngineLocation z = NJavaSdkUtils.of().resolveJdkLocation(path, preferredName);
             if (z == null) {
                 return NOptional.ofNamedEmpty(NMsg.ofC("%s platform at %s", executionEngineType.id(), path));
             }
