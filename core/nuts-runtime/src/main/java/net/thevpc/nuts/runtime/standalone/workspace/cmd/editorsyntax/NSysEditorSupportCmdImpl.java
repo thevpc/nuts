@@ -9,6 +9,7 @@ import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.elem.NPairElement;
 import net.thevpc.nuts.io.NAsk;
+import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NTrace;
 import net.thevpc.nuts.platform.NEnv;
@@ -375,7 +376,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
         } else if (!local.isRegularFile()) {
 
         } else {
-            if (NAsk.of()
+            if (NIn.ask()
                     .setDefaultValue(true)
                     .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
                     .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
@@ -413,7 +414,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             boolean doForce = false;
             if (!local.isRegularFile()) {
             } else {
-                if (NAsk.of()
+                if (NIn.ask()
                         .setDefaultValue(true)
                         .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
@@ -449,7 +450,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             ) {
                 //
             } else {
-                if (NAsk.of()
+                if (NIn.ask()
                         .setDefaultValue(true)
                         .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
@@ -492,7 +493,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             ) {
                 //
             } else {
-                if (NAsk.of()
+                if (NIn.ask()
                         .setDefaultValue(true)
                         .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
@@ -595,7 +596,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             if (!local.isRegularFile()) {
                 //
             } else {
-                if (NAsk.of()
+                if (NIn.ask()
                         .setDefaultValue(true)
                         .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
@@ -630,7 +631,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             if (!local.isRegularFile()) {
                 //
             } else {
-                if (NAsk.of()
+                if (NIn.ask()
                         .setDefaultValue(true)
                         .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
@@ -662,7 +663,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
         if (!local.isRegularFile()) {
             //
         } else {
-            if (NAsk.of()
+            if (NIn.ask()
                     .setDefaultValue(true)
                     .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
                     .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
