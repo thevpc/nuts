@@ -113,7 +113,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
             return NExecutionException.SUCCESS;
         }
         if (out != null) {
-            out.resetLine();
+            out.flush();
         }
         return pb.getResultCode();
     }
