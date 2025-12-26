@@ -78,6 +78,11 @@ public class NPrintStreamRaw extends NPrintStreamBase {
 //        }
     }
 
+    @Override
+    public NPrintStream printProgressLine(NText b) {
+        return this;
+    }
+
     public PrintStream getBase() {
         return base;
     }
