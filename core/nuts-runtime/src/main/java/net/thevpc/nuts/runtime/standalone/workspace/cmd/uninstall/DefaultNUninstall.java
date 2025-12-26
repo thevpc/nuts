@@ -14,10 +14,7 @@ import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.io.NAsk;
-import net.thevpc.nuts.io.NMemoryPrintStream;
-import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -79,7 +76,7 @@ public class DefaultNUninstall extends AbstractNUninstall {
         NMsg cancelMessage = NMsg.ofC("uninstall cancelled : %s", installed.stream()
                 .map(NId::getFullName)
                 .collect(Collectors.joining(", ")));
-        if (!installed.isEmpty() && !NAsk.of()
+        if (!installed.isEmpty() && !NIn.ask()
                 .forBoolean(NMsg.ofNtf(mout.toString()))
                 .setDefaultValue(true)
                 .setCancelMessage(cancelMessage)
@@ -116,7 +113,7 @@ public class DefaultNUninstall extends AbstractNUninstall {
                                         )
                                 ).collect(Collectors.toList())
                         );
-                out.resetLine().println(msg);
+                out.println(msg);
             } else {
                 session.eout().add(NElement.ofObjectBuilder()
                         .set("command", "warning")
