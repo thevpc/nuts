@@ -73,7 +73,7 @@ public class TerminalTest {
                                             +", sys-fixed="+(systemMode==null?"default":systemMode.id())
                                             +" ->"+sessionMode.id());
 
-                            NTerminal terminal = NTerminal.of();
+                            NTerminal terminal = NTerminal.ofSystem();
                             NPrintStream out = terminal.out().setTerminalMode(systemMode);
                             NTerminalMode initMode = out.getTerminalMode();
                             Assertions.assertEquals(systemMode,initMode);
@@ -103,7 +103,7 @@ public class TerminalTest {
             }else{
                 NSystemTerminal systemTerminal = NIO.of().getSystemTerminal();
                 NPrintStream sysInitMode = systemTerminal.out();
-                NTerminal terminal = NTerminal.of();
+                NTerminal terminal = NTerminal.ofSystem();
                 NPrintStream out = terminal.out().setTerminalMode(systemMode);
                 NTerminalMode initMode = out.getTerminalMode();
                 Assertions.assertEquals(systemMode,initMode);
@@ -147,7 +147,7 @@ public class TerminalTest {
     public void test5() throws Exception {
         for (int i = 0; i < 100; i++) {
             Thread.sleep(100);
-            NSession.of().getTerminal().printProgress((i / 100f), NMsg.ofC("message %s", i));
+            NTerminal.of().printProgress((i / 100f), NMsg.ofC("message %s", i));
         }
     }
 
@@ -214,7 +214,7 @@ public class TerminalTest {
 
 //    @Test
     public void test6() {
-        char[] youDontLike = NAsk.of()
+        char[] youDontLike = NIn.ask()
                 .forPassword(NMsg.ofC("Ask me something %s", "you dont like"))
                 .getValue();
         NOut.println(new String(youDontLike));
