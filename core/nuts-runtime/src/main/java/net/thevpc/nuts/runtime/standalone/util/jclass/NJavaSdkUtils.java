@@ -38,6 +38,10 @@ public class NJavaSdkUtils {
         this.workspace = workspace;
     }
 
+    public static NJavaSdkUtils of() {
+        return of(NWorkspace.of());
+    }
+
     public static NJavaSdkUtils of(NWorkspace ws) {
         return new NJavaSdkUtils(ws);
 //        NutsJavaSdkUtils wp = (NutsJavaSdkUtils) ws.env().getProperty(NutsJavaSdkUtils.class.getName());
