@@ -4,6 +4,7 @@ import net.thevpc.nuts.core.*;
 
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.io.NAsk;
+import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.log.NLog;
@@ -132,7 +133,7 @@ public class NDeleteFileHelper {
                 String line = null;
                 NSession session = NSession.get().orNull();
                 if (session != null) {
-                    line = NAsk.of()
+                    line = NIn.ask()
                             .forString(
                                     NMsg.ofC(
                                             "do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory
