@@ -196,4 +196,6 @@ public interface NPrintStream extends NOutputTarget, AutoCloseable {
     boolean isNtf();
 
     NSystemTerminalBase getTerminal();
+
+    NPrintStream printProgressLine(NText b);
 }
