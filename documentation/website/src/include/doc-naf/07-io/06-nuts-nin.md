@@ -78,7 +78,7 @@ This ensures reliable and robust user interaction with clear guidance and fallba
 ### Password Input Example
 
 ```java
-char[] password = NAsk.of()
+char[] password = NIn.ask()
 .forPassword(NMsg.ofPlain("Password for user " + user))
 .getValue();
 ```
@@ -88,7 +88,7 @@ Prompts for a password securely (input not echoed), and returns a char[].
 ### Boolean Confirmation with Context
 
 ```java
-boolean usePcp = NAsk.of()
+boolean usePcp = NIn.ask()
 .forBoolean(
 NMsg.ofPlain(
 remote
@@ -106,7 +106,7 @@ Prompts the user with a yes/no question.
 
 
 ```java
-boolean override = NAsk.of()
+boolean override = NIn.ask()
     .setDefaultValue(true)
     .setRememberMeKey(
         rememberMeKey == null ? null : ("Override." + rememberMeKey)
@@ -132,7 +132,7 @@ This example:
 ### Custom Validation Example
 
 ```java
-String mainClass = NAsk.of()
+String mainClass = NIn.ask()
     .forString(NMsg.ofNtf("Enter the name or index:"))
     .setValidator((value, question) -> {
         Integer index = NLiteral.of(value).asInt().orNull();
