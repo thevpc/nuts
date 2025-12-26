@@ -627,12 +627,12 @@ public class CProgressBar {
             if(size!=null && size.getColumns()>0){
                 max=size.getColumns()-1;
             }
-            out.resetLine();
+//            out.resetLine();
             int len = p.length();
             if (len > max) {
                 p = p.substring(0, max);
             }
-            out.print(p);
+            out.printProgressLine(p);
         }
     }
 
