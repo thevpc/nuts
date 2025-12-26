@@ -20,6 +20,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.install.*;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
@@ -347,22 +348,22 @@ public class DefaultNUpdate extends AbstractNUpdate {
         });
         if (session.isPlainTrace()) {
             if (notInstalled.size() == 0 && updates.size() == 0) {
-                out.resetLine().println(NMsg.ofC("all packages are %s. You are running latest version%s.",
+                out.println(NMsg.ofC("all packages are %s. You are running latest version%s.",
                         NText.ofStyledSuccess("up-to-date"),
                         result.getAllResults().size() > 1 ? "s" : ""));
             } else {
                 if (updates.size() > 0 && notInstalled.size() > 0) {
-                    out.resetLine().println(NMsg.ofC("workspace has %s package%s not installed and %s package%s to update.",
+                    out.println(NMsg.ofC("workspace has %s package%s not installed and %s package%s to update.",
                             NText.ofStyledPrimary1("" + notInstalled.size()),
                             (notInstalled.size() > 1 ? "s" : ""),
                             NText.ofStyledPrimary1("" + updates.size()),
                             (updates.size() > 1 ? "s" : "")
                     ));
                 } else if (updates.size() > 0) {
-                    out.resetLine().println(NMsg.ofC("workspace has %s package%s to update.", NText.ofStyledPrimary1("" + updates.size()),
+                    out.println(NMsg.ofC("workspace has %s package%s to update.", NText.ofStyledPrimary1("" + updates.size()),
                             (updates.size() > 1 ? "s" : "")));
                 } else if (notInstalled.size() > 0) {
-                    out.resetLine().println(NMsg.ofC("workspace has %s package%s not installed.", NText.ofStyledPrimary1("" + notInstalled.size()),
+                    out.println(NMsg.ofC("workspace has %s package%s not installed.", NText.ofStyledPrimary1("" + notInstalled.size()),
                             (notInstalled.size() > 1 ? "s" : "")));
                 }
                 int widthCol1 = 2;
@@ -446,7 +447,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
     protected NUpdateResult checkRegularUpdate(NId id, Type type, NVersion targetApiVersion, Instant now, boolean updateEvenIfExisting) {
         NVersion version = id.getVersion();
         if (!updateEvenIfExisting && version.isSingleValue()) {
-            updateEvenIfExisting = NAsk.of()
+            updateEvenIfExisting = NIn.ask()
                     .setDefaultValue(true)
                     .forBoolean(NMsg.ofC("version is too restrictive. Do you intend to force update of %s ?", id))
                     .getBooleanValue();
@@ -648,7 +649,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
         if (r.isUpdateApplied()) {
             if (r.isUpdateForced()) {
                 if (d0 == null) {
-                    out.resetLine().println(NMsg.ofC("%s is %s to latest version %s",
+                    out.println(NMsg.ofC("%s is %s to latest version %s",
                             simpleId,
                             factory.ofStyled("updated", NTextStyle.primary3()),
                             d1 == null ? null : d1.getId().getVersion()
@@ -660,18 +661,18 @@ public class DefaultNUpdate extends AbstractNUpdate {
                     NVersion v1 = d1.getId().getVersion();
                     if (v1.compareTo(v0) <= 0) {
                         if (v1.compareTo(v0) == 0) {
-                            out.resetLine().println(NMsg.ofC("%s is %s to %s",
+                            out.println(NMsg.ofC("%s is %s to %s",
                                     simpleId,
                                     factory.ofStyled("forced", NTextStyle.primary3()),
                                     d0.getId().getVersion()));
                         } else {
-                            out.resetLine().println(NMsg.ofC("%s is %s from %s to older version %s",
+                            out.println(NMsg.ofC("%s is %s from %s to older version %s",
                                     simpleId,
                                     factory.ofStyled("forced", NTextStyle.primary3()),
                                     d0.getId().getVersion(), d1.getId().getVersion()));
                         }
                     } else {
-                        out.resetLine().println(NMsg.ofC("%s is %s from %s to latest version %s",
+                        out.println(NMsg.ofC("%s is %s from %s to latest version %s",
                                 simpleId,
                                 factory.ofStyled("updated", NTextStyle.primary3()),
                                 d0.getId().getVersion(), d1.getId().getVersion()));
