@@ -68,9 +68,9 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
         if (fout != null) {
             if (session.getOutputFormat().orDefault() == NContentType.PLAIN) {
                 if (fm != null) {
-                    fout.resetLine().println(fm);
+                    fout.println(fm);
                 } else {
-                    fout.resetLine().println(m);
+                    fout.println(m);
                 }
                 if (showTrace) {
                     throwable.printStackTrace(fout.asPrintStream());
