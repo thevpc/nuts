@@ -60,7 +60,7 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
         }
 
         if (NOut.isPlain()) {
-            NOut.resetLine().println(NWorkspaceExt.of().getWelcomeText());
+            NOut.println(NWorkspaceExt.of().getWelcomeText());
         } else {
             Map<String, Object> welcome = new LinkedHashMap<>();
             welcome.put("message", "Welcome to nuts. Yeah, It's working...");
@@ -75,7 +75,7 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
             welcome.put("runtime-version", session.getWorkspace().getRuntimeId().getVersion());
             welcome.put("workspace", NWorkspace.of().getWorkspaceLocation());
             welcome.put("hash-name", NPath.of(session.getWorkspace().getDigestName()));
-            NOut.resetLine().println(welcome);
+            NOut.println(welcome);
         }
         return NExecutionException.SUCCESS;
     }
