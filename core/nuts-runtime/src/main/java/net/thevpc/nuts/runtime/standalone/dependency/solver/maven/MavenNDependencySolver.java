@@ -1,19 +1,29 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver.maven;
 
-import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.command.NSearch;
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NRepositoryFilter;
-import net.thevpc.nuts.text.NMsgFormattable;
-import net.thevpc.nuts.text.NTreeNode;
-import net.thevpc.nuts.spi.NDependencySolver;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NNoSuchElementException;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+
+import net.thevpc.nuts.artifact.NArtifactNotFoundException;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependencies;
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyScope;
+import net.thevpc.nuts.artifact.NDependencyTreeNode;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NSearch;
+import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.spi.NDependencySolver;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NMsgFormattable;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTreeNode;
+import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NNoSuchElementException;
 
 public class MavenNDependencySolver implements NDependencySolver {
 
@@ -84,7 +94,8 @@ public class MavenNDependencySolver implements NDependencySolver {
             addRootDefinition0(rootInfo.dependency, rootInfo.def);
         }
         pending.clear();
-        PassProcessor pp = new PassProcessor(this);
+        // Use the new ParallelPassProcessor for optimized cold starts
+        ParallelPassProcessor pp = new ParallelPassProcessor(this);
         NDependencies run = pp.run();
         doLogDependencyTree(run);
         doLog("---- END SOLVE");
