@@ -231,7 +231,7 @@ public class NWorkspaceUtils {
         NSession session = workspace.currentSession();
         try {
             if (session.isPlainTrace()) {
-                NOut.resetLine().println("looking for java installations in default locations...");
+                NOut.println("looking for java installations in default locations...");
             }
             NExecutionEngines pinstaller = NExecutionEngines.of();
             List<NExecutionEngineLocation> found = pinstaller.searchHostExecutionEngines(NExecutionEngineFamily.JAVA).toList();
@@ -259,7 +259,6 @@ public class NWorkspaceUtils {
                     .log(NMsg.ofJ("unable to resolve default JRE/JDK locations : {0}", ex).asFinestAlert(ex));
             if (session.isPlainTrace()) {
                 NPrintStream out = session.out();
-                out.resetLine();
                 out.println(NMsg.ofC("%s :  %s",
                         NMsg.ofStyledError("unable to resolve default JRE/JDK locations"),
                         ex));
@@ -271,7 +270,7 @@ public class NWorkspaceUtils {
         NSession session = workspace.currentSession();
         try {
             if (session.isPlainTrace()) {
-                NOut.resetLine().println("configuring current JVM...");
+                NOut.println("configuring current JVM...");
             }
             NExecutionEngines pinstaller = NExecutionEngines.of();
             NExecutionEngineLocation found0 = pinstaller.resolveExecutionEngine(NExecutionEngineFamily.JAVA, NPath.of(System.getProperty("java.home")), null).orNull();
@@ -295,7 +294,7 @@ public class NWorkspaceUtils {
                     .log(NMsg.ofJ("unable to resolve default JRE/JDK locations : {0}", ex).asFineAlert(ex));
             if (session.isPlainTrace()) {
                 NPrintStream out = session.out();
-                out.resetLine().println(NMsg.ofC("Ms :  %s", NMsg.ofStyledError("unable to resolve default JRE/JDK locations"), ex));
+                out.println(NMsg.ofC("Ms :  %s", NMsg.ofStyledError("unable to resolve default JRE/JDK locations"), ex));
             }
         }
     }
@@ -318,7 +317,7 @@ public class NWorkspaceUtils {
                     .log(NMsg.ofJ("unable to install desktop launchers : {0}", ex).asFineAlert(ex));
             if (session.isPlainTrace()) {
                 NPrintStream out = session.out();
-                out.resetLine().println(NMsg.ofC("%s :  %s",
+                out.println(NMsg.ofC("%s :  %s",
                         NMsg.ofStyledError("unable to install desktop launchers"),
                         ex));
             }
@@ -334,7 +333,7 @@ public class NWorkspaceUtils {
         }
         if (session.isPlainTrace()) {
             NPrintStream out = session.out();
-            out.resetLine().println(NMsg.ofC("looking for recommended companion tools to install... detected : %s",
+            out.println(NMsg.ofC("looking for recommended companion tools to install... detected : %s",
                     text.ofBuilder().appendJoined(text.ofPlain(","),
                             companionIds
                     ))
@@ -348,7 +347,7 @@ public class NWorkspaceUtils {
                     .log(NMsg.ofJ("unable to install companions : {0}", ex).asFineAlert(ex));
             if (session.isPlainTrace()) {
                 NPrintStream out = session.out();
-                out.resetLine().println(NMsg.ofC("%s :  %s "
+                out.println(NMsg.ofC("%s :  %s "
                                 + "this happens when none of the following repositories are able to locate them : %s\n",
                         NMsg.ofStyledError("unable to install companion tools"),
                         ex,
