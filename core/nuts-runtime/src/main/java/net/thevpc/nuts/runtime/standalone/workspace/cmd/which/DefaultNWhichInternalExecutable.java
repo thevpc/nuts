@@ -71,7 +71,6 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
             NPrintStream out = session.out();
             try {
                 try (NExecutableInformation p = getExecCommand().copy().clearCommand().configure(false, arg).which()){
-                    NOut.resetLine();
                     switch (p.getType()) {
                         case SYSTEM: {
                             if (NOut.isPlain()) {
