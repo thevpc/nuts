@@ -292,9 +292,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         data.terminals = NIO.of();
         data.terminals
                 .setSystemTerminal(termb)
-                .setDefaultTerminal(NTerminal.of())
+                .setDefaultTerminal(NTerminal.ofSystem())
         ;
-        wsModel.bootModel.bootSession().setTerminal(NTerminal.of());
+        wsModel.bootModel.bootSession().setTerminal(NTerminal.ofSystem());
         wsModel.logModel.getTermHandler().resumeTerminal();
 
         for (NPathFactorySPI nPathFactorySPI : wsModel.extensions.createServiceLoader(NPathFactorySPI.class, NWorkspace.class).loadAll(this)) {
@@ -567,7 +567,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         NSession session = currentSession();
         if (session.isPlainTrace() && !this.getBootOptions().getSkipWelcome().orElse(false)) {
             NPrintStream out = session.out();
-            out.resetLine();
             StringBuilder version = new StringBuilder(nutsVersion.toString());
             CoreStringUtils.fillString(' ', 25 - version.length(), version);
             NPath p = NPath.of("classpath:/net/thevpc/nuts/runtime/includes/standard-header.ntf", getClass().getClassLoader());
@@ -1547,7 +1546,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public NSession createSession() {
         return callWith(() -> {
             NSession nSession = new DefaultNSession(this);
-            nSession.setTerminal(NTerminal.of());
+            nSession.setTerminal(NTerminal.ofSystem());
             nSession.setExpireTime(this.getBootOptions().getExpireTime().orNull());
             return nSession;
         });
