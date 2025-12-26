@@ -597,7 +597,7 @@ public class DefaultNWorkspaceConfigModel {
                     aconfig = compat.parseApiConfig(olderId);
                     if (aconfig != null) {
                         // ask
-                        if (NAsk.of().forBoolean(NMsg.ofC("import older config %s into %s", olderId, apiId))
+                        if (NIn.ask().forBoolean(NMsg.ofC("import older config %s into %s", olderId, apiId))
                                 .setDefaultValue(true)
                                 .getBooleanValue()
                         ) {
