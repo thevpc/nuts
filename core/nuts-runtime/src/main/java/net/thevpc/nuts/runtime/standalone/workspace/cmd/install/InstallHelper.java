@@ -145,7 +145,7 @@ public class InstallHelper {
             StringBuilder sb = new StringBuilder();
             NPrintStream out = NOut.out();
             for (Map.Entry<String, List<InstallIdInfo>> stringListEntry : error.entrySet()) {
-                out.resetLine().println("the following " + (stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
+                out.println("the following " + (stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
                         + stringListEntry.getValue().stream().map(x -> x.id)
                         .map(x -> NIdFormat.of().setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
                         .collect(Collectors.joining(", ")));
@@ -234,11 +234,11 @@ public class InstallHelper {
                                         info.id))
                                 .setDefaultValue(true)
                                 .getBooleanValue()) {
-                            NOut.resetLine().println(NMsg.ofC("%s ```error installation cancelled with error:``` %s%n", info.id, ex));
+                            NOut.println(NMsg.ofC("%s ```error installation cancelled with error:``` %s%n", info.id, ex));
                             result = new NDefinition[0];
                             return;
                         } else {
-                            NOut.resetLine().println(NMsg.ofC("%s ```error installation cancelled with error:``` %s%n", info.id, ex));
+                            NOut.println(NMsg.ofC("%s ```error installation cancelled with error:``` %s%n", info.id, ex));
                         }
                     } else {
                         throw ex;
@@ -280,11 +280,11 @@ public class InstallHelper {
                                 info.id))
                         .setDefaultValue(true)
                         .getBooleanValue()) {
-                    NOut.resetLine().println(NMsg.ofC("%s ```error installation cancelled with error:``` %s%n", info.id, ex));
+                    NOut.println(NMsg.ofC("%s ```error installation cancelled with error:``` %s%n", info.id, ex));
                     result = new NDefinition[0];
                     return DoInstallOneImplSafeResult.EXIT;
                 } else {
-                    NOut.resetLine().println(NMsg.ofC("%s ```error installation cancelled with error:``` %s%n", info.id, ex));
+                    NOut.println(NMsg.ofC("%s ```error installation cancelled with error:``` %s%n", info.id, ex));
                 }
             } else {
                 throw ex;
@@ -365,7 +365,7 @@ public class InstallHelper {
             if (session.isPlainTrace()) {
                 NTexts text = NTexts.of();
                 if (updateMode) {
-                    NOut.resetLine().println(NMsg.ofC("%s %s ...",
+                    NOut.println(NMsg.ofC("%s %s ...",
                             text.ofStyled("update", NTextStyle.warn()),
                             def.getId().getLongId()
                     ));
@@ -379,13 +379,13 @@ public class InstallHelper {
                 } else {
                     reinstall = def.getInstallInformation().get().getInstallStatus().isInstalled();
                     if (reinstall) {
-                        session.out().resetLine().println(NMsg.ofC(
+                        session.out().println(NMsg.ofC(
                                 "%s %s ...",
                                 text.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined())),
                                 def.getId().getLongId()
                         ));
                     } else {
-                        session.out().resetLine().println(NMsg.ofC("%s %s ...",
+                        session.out().println(NMsg.ofC("%s %s ...",
                                 text.ofStyled("install", NTextStyle.success()),
                                 def.getId().getLongId()
                         ));
@@ -484,7 +484,7 @@ public class InstallHelper {
                             throw ex;
                         } catch (Exception ex) {
                             if (session.isPlainTrace()) {
-                                out.resetLine().println(NMsg.ofC("%s ```error failed``` to update : %s.", def.getId(), ex));
+                                out.println(NMsg.ofC("%s ```error failed``` to update : %s.", def.getId(), ex));
                             }
                             updateError = new NExecutionException(
                                     NMsg.ofC("unable to update %s", def.getId()),
@@ -508,7 +508,7 @@ public class InstallHelper {
                             throw ex;
                         } catch (RuntimeException ex) {
                             if (session.isPlainTrace()) {
-                                out.resetLine().println(NMsg.ofC("```error error: failed to install``` %s: %s.", def.getId(), ex));
+                                out.println(NMsg.ofC("```error error: failed to install``` %s: %s.", def.getId(), ex));
                             }
                             try {
                                 installedRepository.uninstall(executionContext.getDefinition());
@@ -600,7 +600,7 @@ public class InstallHelper {
                     if (def.getContent().isNotPresent()) {
                         //this happens when deploying a 'pom' artifact
                         if (session.isPlainTrace()) {
-                            out.resetLine().println(NMsg.ofC("%s %s from %s repository (%s).%s",
+                            out.println(NMsg.ofC("%s %s from %s repository (%s).%s",
                                     installedString,
                                     def.getId().getLongId(),
                                     remoteRepo ? "remote" : "local",
@@ -611,7 +611,7 @@ public class InstallHelper {
                     } else if (!def.getContent().get().isUserCache()) {
                         if (def.getContent().get().isUserTemporary()) {
                             if (session.isPlainTrace()) {
-                                out.resetLine().println(NMsg.ofC("%s %s from %s repository (%s) temporarily file %s.%s",
+                                out.println(NMsg.ofC("%s %s from %s repository (%s) temporarily file %s.%s",
                                         installedString,
                                         def.getId().getLongId(),
                                         remoteRepo ? "remote" : "local",
@@ -622,7 +622,7 @@ public class InstallHelper {
                             }
                         } else {
                             if (session.isPlainTrace()) {
-                                out.resetLine().println(NMsg.ofC("%s %s from %s repository (%s).%s", installedString,
+                                out.println(NMsg.ofC("%s %s from %s repository (%s).%s", installedString,
                                         def.getId().getLongId(),
                                         remoteRepo ? "remote" : "local",
                                         def.getRepositoryName(),
@@ -632,7 +632,7 @@ public class InstallHelper {
                     } else {
                         if (def.getContent().get().isUserTemporary()) {
                             if (session.isPlainTrace()) {
-                                out.resetLine().println(NMsg.ofC("%s %s from %s repository (%s) temporarily file %s.%s",
+                                out.println(NMsg.ofC("%s %s from %s repository (%s) temporarily file %s.%s",
                                         installedString,
                                         def.getId().getLongId(),
                                         remoteRepo ? "remote" : "local",
@@ -642,7 +642,7 @@ public class InstallHelper {
                             }
                         } else {
                             if (session.isPlainTrace()) {
-                                out.resetLine().println(NMsg.ofC("%s %s from %s repository (%s).%s",
+                                out.println(NMsg.ofC("%s %s from %s repository (%s).%s",
                                         installedString,
                                         def.getId().getLongId(),
                                         remoteRepo ? "remote" : "local",
@@ -668,7 +668,7 @@ public class InstallHelper {
                 }
                 if (installedString != null) {
                     if (session.isPlainTrace()) {
-                        out.resetLine().println(NMsg.ofC("%s  %s %s.%s",
+                        out.println(NMsg.ofC("%s  %s %s.%s",
                                 installedString,
                                 def.getId().getLongId(),
                                 text.ofStyled("successfully", NTextStyle.success()),
@@ -771,7 +771,7 @@ public class InstallHelper {
                                         )
                                 ).collect(Collectors.toList())
                         );
-                out.resetLine().println(msg);
+                out.println(msg);
             } else {
                 session.eout().add(NElement.ofObjectBuilder()
                         .set("command", "warning")
