@@ -230,7 +230,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         } else {
             try {
                 if (trace != null) {
-                    trace.resetLine();//.run(NutsTerminalCommand.MOVE_LINE_START);
+                    trace.flush();//.run(NutsTerminalCommand.MOVE_LINE_START);
                 }
                 ProcessBuilder2 p = pb.start();
                 return waitResult(p);
