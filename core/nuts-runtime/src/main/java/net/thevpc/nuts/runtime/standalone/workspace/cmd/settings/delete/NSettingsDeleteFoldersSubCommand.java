@@ -11,6 +11,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
@@ -45,7 +46,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                         NText.ofStyledPrimary1("cache")
                         , s));
                 if (force
-                        || NAsk.of()
+                        || NIn.ask()
                         .forBoolean(NMsg.ofPlain("force delete?")).setDefaultValue(false)
                         .getBooleanValue()) {
                     s.delete();
@@ -104,7 +105,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                         factory.ofStyled(NWorkspace.of().getName(), NTextStyle.primary1()),
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
-                        || NAsk.of()
+                        || NIn.ask()
                         .forBoolean(NMsg.ofPlain("force delete?")).setDefaultValue(false)
                         .getBooleanValue()) {
                     sstoreLocation.delete();
@@ -126,7 +127,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                         factory.ofStyled(repository.getName(), NTextStyle.primary1()),
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
-                        || NAsk.of()
+                        || NIn.ask()
                         .forBoolean(NMsg.ofPlain("Force Delete?")).setDefaultValue(false)
                         .getBooleanValue()) {
                     sstoreLocation.delete();
