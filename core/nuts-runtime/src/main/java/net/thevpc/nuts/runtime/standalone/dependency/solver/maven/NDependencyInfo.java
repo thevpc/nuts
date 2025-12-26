@@ -3,12 +3,12 @@ package net.thevpc.nuts.runtime.standalone.dependency.solver.maven;
 import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NId;
 
-class NDependencyInfo {
+public class NDependencyInfo {
 
     NId normalized;
     NId real;
     int depth;
-    NDependency dependency;
+    public NDependency dependency;
     boolean optional;
     boolean provided;
 

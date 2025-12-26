@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver.maven;
 
-import net.thevpc.nuts.artifact.NDependency;
-import net.thevpc.nuts.artifact.NId;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-class NDependencyInfoSet {
+import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NId;
 
-    Map<NId, NDependencyInfo> visitedSet = new LinkedHashMap<>();
+public class NDependencyInfoSet {
+
+    public Map<NId, NDependencyInfo> visitedSet = new LinkedHashMap<>();
 
     public boolean isVisited(NDependency other) {
         return visitedSet.containsKey(NDependencyInfo.normalizedId(other));
@@ -56,6 +56,10 @@ class NDependencyInfoSet {
             return true;
         }
         return false;
+    }
+
+    public void remove(NDependencyInfo info) {
+        visitedSet.remove(info.normalized);
     }
 
 }

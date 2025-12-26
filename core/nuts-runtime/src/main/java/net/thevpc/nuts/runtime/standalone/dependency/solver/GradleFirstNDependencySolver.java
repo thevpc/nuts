@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
-import net.thevpc.nuts.runtime.standalone.dependency.solver.maven.MavenNDependencySolver;
+import net.thevpc.nuts.runtime.standalone.dependency.solver.gradle.GradleNDependencySolver;
 
-public class GradleFirstNDependencySolver extends MavenNDependencySolver {
+public class GradleFirstNDependencySolver extends GradleNDependencySolver {
     public GradleFirstNDependencySolver() {
         super();
     }
