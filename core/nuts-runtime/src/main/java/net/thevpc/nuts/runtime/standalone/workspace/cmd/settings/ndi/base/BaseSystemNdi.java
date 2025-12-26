@@ -244,7 +244,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NPath f = getBinScriptFile(nid.getArtifactId(), options);
         NTexts factory = NTexts.of();
         if (f.isRegularFile()) {
-            if (NAsk.of()
+            if (NIn.ask()
                     .forBoolean(NMsg.ofC("tool %s will be removed. Confirm?",
                             factory.ofStyled(CoreIOUtils.betterPath(f.toString()), NTextStyle.path())
                     ))
