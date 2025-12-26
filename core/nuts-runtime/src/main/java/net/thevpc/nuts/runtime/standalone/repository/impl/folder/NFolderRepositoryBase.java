@@ -204,7 +204,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         return NIteratorBuilder.ofSupplier(
                 () -> {
 //                    List<NId> ret = new ArrayList<>();
-                    NSession.of().getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, NCoreLogUtils.forProgress(foldersFileUrl)));
+                    NTerminal.of().printProgress(NMsg.ofC("looking for versions of %s at %s", id, NCoreLogUtils.forProgress(foldersFileUrl)));
                     try {
                         return NIterator.of(
                                 foldersFileUrl.stream()
