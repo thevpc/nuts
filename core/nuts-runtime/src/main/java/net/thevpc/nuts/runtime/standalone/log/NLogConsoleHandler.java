@@ -95,8 +95,6 @@ public class NLogConsoleHandler implements NLogSPI {
 
     private void log0(Rec rec) {
         synchronized (NSession.of().err()) {
-            NErr.resetLine();
-
             NErr.println(NMsg.ofC("%s [%-6s] [%-7s] %s%s", rec.instant, rec.msg.getLevel(), rec.msg.getIntent(), rec.msg,
                     rec.msg.getDurationNanos() <= 0 ? ""
                             : NMsg.ofC(" (duration: %s)", NDuration.ofNanos(rec.msg.getDurationNanos()))
