@@ -26,6 +26,7 @@
 package net.thevpc.nuts.io;
 
 
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.text.NMsg;
 
@@ -39,6 +40,10 @@ import java.io.InputStream;
  */
 public interface NTerminal {
     static NTerminal of() {
+        return NSession.of().getTerminal();
+    }
+
+    static NTerminal ofSystem() {
         return NIORPI.of().createTerminal();
     }
 
