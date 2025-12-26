@@ -649,12 +649,12 @@ public class CoreIOUtils {
                     out.mkParentDirs();
                     out.writeBytes(content);
 //                    if (session.isPlainTrace()) {
-//                        NOut.resetLine().println(NMsg.ofC("create file %s", out));
+//                        NOut.println(NMsg.ofC("create file %s", out));
 //                    }
                     return PathInfo.Status.CREATED;
                 }
                 case ASK: {
-                    if (NAsk.of()
+                    if (NIn.ask()
                             .setDefaultValue(true)
                             .forBoolean(NMsg.ofC("create %s ?",
                                     NText.ofStyled(
@@ -664,7 +664,7 @@ public class CoreIOUtils {
                         out.mkParentDirs();
                         out.writeBytes(content);
 //                        if (session.isPlainTrace()) {
-//                            NOut.resetLine().println(NMsg.ofC("create file %s", out));
+//                            NOut.println(NMsg.ofC("create file %s", out));
 //                        }
                         return PathInfo.Status.CREATED;
                     } else {
@@ -686,12 +686,12 @@ public class CoreIOUtils {
                 case OVERRIDE: {
                     out.writeBytes(content);
 //                    if (session.isPlainTrace()) {
-//                        NOut.resetLine().println(NMsg.ofC("update file %s", out));
+//                        NOut.println(NMsg.ofC("update file %s", out));
 //                    }
                     return PathInfo.Status.OVERRIDDEN;
                 }
                 case ASK: {
-                    if (NAsk.of()
+                    if (NIn.ask()
                             .setDefaultValue(true)
                             .setRememberMeKey(rememberMeKey == null ? null : ("Override." + rememberMeKey))
                             .forBoolean(NMsg.ofC("override %s ?",
@@ -701,7 +701,7 @@ public class CoreIOUtils {
                             ).getBooleanValue()) {
                         out.writeBytes(content);
 //                        if (session.isPlainTrace()) {
-//                            NOut.resetLine().println(NMsg.ofC("update file %s", out));
+//                            NOut.println(NMsg.ofC("update file %s", out));
 //                        }
                         return PathInfo.Status.OVERRIDDEN;
                     } else {
