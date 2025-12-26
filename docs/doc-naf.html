@@ -1387,10 +1387,10 @@ NTrace.println("Loading configuration from default path...");
 int value = lit.asInt().get();
 </code></pre><p class="md-phrase">use the <code class="md-code md-code-` ">NLiteral::asXYZ</code> series of methods to convert the string input to common types like <mark class="md-code md-code-` ">double</mark>, <mark class="md-code md-code-` ">boolean</mark>, etc...</p><pre class="md-code md-code-``` java"><code class="java">NLiteral lit = NIn.readLiteral(NMsg.ofPlain("Enter a number: "));
 double value = lit.asDouble().get();
-</code></pre><H4 class="md-title-2">Interactive and Typed Input with NAsk</H4>For complex or type-safe input, NIn.ask() (or NAsk.of()) provides a fluent API to build interactive prompts with support for:<ul class="md-ul"><li class="md-uli">Custom messages,</li><li class="md-uli">Typed inputs (String, int, boolean, enum, etc.),</li><li class="md-uli">Default values,</li><li class="md-uli">Validators,</li><li class="md-uli">Accepted values,</li><li class="md-uli">Password input,</li><li class="md-uli">"Remember me" options,</li><li class="md-uli">Custom parsing and formatting.</li></ul>It will re-prompt indefinitely until a valid input is provided, based on type and validation constraints, or until the user cancels the prompt (e.g., by sending an interrupt like Ctrl+C or entering an empty value when allowed).NAsk will re-prompt indefinitely in an interactive loop until:<ul class="md-ul"><li class="md-uli">A valid value is provided (based on expected type and validation),</li><li class="md-uli">Or the user explicitly cancels the prompt (e.g., by interrupting input or when input is blank and optional). This ensures reliable and robust user interaction with clear guidance and fallback behavior.</li></ul><H4 class="md-title-3">Password Input Example</H4><pre class="md-code md-code-``` java"><code class="java">char[] password = NAsk.of()
+</code></pre><H4 class="md-title-2">Interactive and Typed Input with NAsk</H4>For complex or type-safe input, NIn.ask() (or NAsk.of()) provides a fluent API to build interactive prompts with support for:<ul class="md-ul"><li class="md-uli">Custom messages,</li><li class="md-uli">Typed inputs (String, int, boolean, enum, etc.),</li><li class="md-uli">Default values,</li><li class="md-uli">Validators,</li><li class="md-uli">Accepted values,</li><li class="md-uli">Password input,</li><li class="md-uli">"Remember me" options,</li><li class="md-uli">Custom parsing and formatting.</li></ul>It will re-prompt indefinitely until a valid input is provided, based on type and validation constraints, or until the user cancels the prompt (e.g., by sending an interrupt like Ctrl+C or entering an empty value when allowed).NAsk will re-prompt indefinitely in an interactive loop until:<ul class="md-ul"><li class="md-uli">A valid value is provided (based on expected type and validation),</li><li class="md-uli">Or the user explicitly cancels the prompt (e.g., by interrupting input or when input is blank and optional). This ensures reliable and robust user interaction with clear guidance and fallback behavior.</li></ul><H4 class="md-title-3">Password Input Example</H4><pre class="md-code md-code-``` java"><code class="java">char[] password = NIn.ask()
 .forPassword(NMsg.ofPlain("Password for user " + user))
 .getValue();
-</code></pre>Prompts for a password securely (input not echoed), and returns a char[].<H4 class="md-title-3">Boolean Confirmation with Context</H4><pre class="md-code md-code-``` java"><code class="java">boolean usePcp = NAsk.of()
+</code></pre>Prompts for a password securely (input not echoed), and returns a char[].<H4 class="md-title-3">Boolean Confirmation with Context</H4><pre class="md-code md-code-``` java"><code class="java">boolean usePcp = NIn.ask()
 .forBoolean(
 NMsg.ofPlain(
 remote
@@ -1399,7 +1399,7 @@ remote
 )
 )
 .getValue();
-</code></pre>Prompts the user with a yes/no question.<H4 class="md-title-3">"Remember Me" with Default</H4><pre class="md-code md-code-``` java"><code class="java">boolean override = NAsk.of()
+</code></pre>Prompts the user with a yes/no question.<H4 class="md-title-3">"Remember Me" with Default</H4><pre class="md-code md-code-``` java"><code class="java">boolean override = NIn.ask()
     .setDefaultValue(true)
     .setRememberMeKey(
         rememberMeKey == null ? null : ("Override." + rememberMeKey)
@@ -1413,7 +1413,7 @@ remote
         )
     )
     .getBooleanValue();
-</code></pre>This example:<ul class="md-ul"><li class="md-uli">Proposes a default answer (true),</li><li class="md-uli">Persists the answer under the given key (rememberMeKey), so the question may be skipped next time,</li><li class="md-uli">Uses styled output in the question message.</li></ul><H4 class="md-title-3">Custom Validation Example</H4><pre class="md-code md-code-``` java"><code class="java">String mainClass = NAsk.of()
+</code></pre>This example:<ul class="md-ul"><li class="md-uli">Proposes a default answer (true),</li><li class="md-uli">Persists the answer under the given key (rememberMeKey), so the question may be skipped next time,</li><li class="md-uli">Uses styled output in the question message.</li></ul><H4 class="md-title-3">Custom Validation Example</H4><pre class="md-code md-code-``` java"><code class="java">String mainClass = NIn.ask()
     .forString(NMsg.ofNtf("Enter the name or index:"))
     .setValidator((value, question) -&gt; {
         Integer index = NLiteral.of(value).asInt().orNull();
@@ -2007,7 +2007,7 @@ subtasks[2].runWith(() -&gt; doWork("Task C"));
 );
 </code></pre>These capabilities make NProgressMonitor a robust tool to structure, visualize, and control progress in multi-step or parallel operations, including support for cancellation, suspension, and progress weighting.<H4 class="md-title-2">Terminal & ASCII Progress Rendering</H4><p class="md-phrase">In addition to structured progress monitoring, <mark class="md-code md-code-` ">NAF</mark> allows rendering progress directly in the terminal, including an ASCII progress bar with messages:</p><pre class="md-code md-code-``` java"><code class="java">for (int i = 0; i &lt; 100; i++) {
     Thread.sleep(100);
-    NSession.of().getTerminal()
+    NTerminal.of()
             .printProgress((i / 100f), NMsg.ofC("Processing item %s", i));
 }
 </code></pre>This will render a live progress bar with the associated message, updating in-place in the terminal. It works on both POSIX terminals and Windows terminals via Jansi, leveraging the same styling framework (NText/NTextStyle) used elsewhere.<H4 class="md-title-2">Integration with IO Streams</H4>For monitoring IO progress, Nuts provides NInputStreamMonitor, which wraps an input stream to log or trace progress dynamically:<pre class="md-code md-code-``` java"><code class="java">NInputStreamMonitor monitor = NInputStreamMonitor.of()
