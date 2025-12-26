@@ -8,6 +8,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceCmdFactory;
 import net.thevpc.nuts.io.NAsk;
+import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
@@ -179,7 +180,7 @@ public class DefaultCustomCommandsModel {
             if (oldCommand.equals(command)) {
                 return false;
             }
-            if (!NAsk.of()
+            if (!NIn.ask()
                     .setDefaultValue(false)
                     .forBoolean(NMsg.ofC("override existing command %s ?",
                             NText.ofStyled(
@@ -197,7 +198,7 @@ public class DefaultCustomCommandsModel {
             if (session.isPlainTrace()) {
                 NPrintStream out = session.getTerminal().out();
                 NTexts text = NTexts.of();
-                out.resetLine().println(NMsg.ofC("%s command %s",
+                out.println(NMsg.ofC("%s command %s",
                         text.ofStyled("install", NTextStyle.success()),
                         text.ofStyled(command.getName(), NTextStyle.primary3())));
             }
@@ -227,7 +228,7 @@ public class DefaultCustomCommandsModel {
             if (session.isPlainTrace()) {
                 NPrintStream out = session.getTerminal().out();
                 NTexts text = NTexts.of();
-                out.resetLine().println(NMsg.ofC("%s command %s",
+                out.println(NMsg.ofC("%s command %s",
                         text.ofStyled("update ", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined())),
                         text.ofStyled(command.getName(), NTextStyle.primary3())));
             }
@@ -256,7 +257,7 @@ public class DefaultCustomCommandsModel {
         NSession session = workspace.currentSession();
         if (session.isPlainTrace()) {
             NPrintStream out = session.getTerminal().out();
-            out.resetLine().println(NMsg.ofC("%s command %s", "uninstall", NText.ofStyled(name, NTextStyle.primary3())));
+            out.println(NMsg.ofC("%s command %s", "uninstall", NText.ofStyled(name, NTextStyle.primary3())));
         }
     }
 
