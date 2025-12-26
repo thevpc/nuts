@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.descriptor.util;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NAsk;
+import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.platform.NEnv;
@@ -59,14 +60,14 @@ public class NDescriptorUtils {
                 case ASK:
                 case ERROR: {
                     if (groupId == null) {
-                        groupId = NAsk.of()
+                        groupId = NIn.ask()
                                 .forString(NMsg.ofPlain("group id"))
                                 .setDefaultValue(groupId)
                                 .setHintMessage(NBlankable.isBlank(groupId) ? null : NMsg.ofPlain(groupId))
                                 .getValue();
                     }
                     if (artifactId == null) {
-                        artifactId = NAsk.of()
+                        artifactId = NIn.ask()
                                 .forString(NMsg.ofPlain("artifact id"))
                                 .setDefaultValue(artifactId)
                                 .setHintMessage(NBlankable.isBlank(artifactId) ? null : NMsg.ofPlain(artifactId))
@@ -74,7 +75,7 @@ public class NDescriptorUtils {
                     }
                     if (NBlankable.isBlank(version)) {
                         String ov = version == null ? null : version.getValue();
-                        String v = NAsk.of()
+                        String v = NIn.ask()
                                 .forString(NMsg.ofPlain("version"))
                                 .setDefaultValue(ov)
                                 .setHintMessage(NBlankable.isBlank(ov) ? null : NMsg.ofPlain(ov))
