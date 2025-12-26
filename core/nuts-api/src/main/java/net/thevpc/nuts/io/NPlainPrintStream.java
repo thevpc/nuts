@@ -397,4 +397,8 @@ public class NPlainPrintStream implements NPrintStream {
         return this;
     }
 
+    @Override
+    public NPrintStream printProgressLine(NText b) {
+        return this;
+    }
 }
