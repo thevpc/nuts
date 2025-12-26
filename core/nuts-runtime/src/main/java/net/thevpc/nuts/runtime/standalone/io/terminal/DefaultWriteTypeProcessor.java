@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.core.NConfirmationMode;
 import net.thevpc.nuts.io.NAsk;
+import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.text.NMsg;
@@ -70,7 +71,7 @@ public class DefaultWriteTypeProcessor {
                 throw getValidError().get();
             }
             case ASK: {
-                if (!NAsk.of()
+                if (!NIn.ask()
                         .forBoolean(getValidAskMessage())
                         .setDefaultValue(false).getBooleanValue()) {
                     return false;
