@@ -433,7 +433,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
             //we must make a copy not to alter caller session
 
             if (session.out() != null) {
-                NOut.resetLine();
+                NOut.flush();
             }
             DefaultNClassLoader classLoader;
             Throwable th = null;
