@@ -57,7 +57,7 @@ In addition to structured progress monitoring, `NAF` allows rendering progress d
 ```java
 for (int i = 0; i < 100; i++) {
     Thread.sleep(100);
-    NSession.of().getTerminal()
+    NTerminal.of()
             .printProgress((i / 100f), NMsg.ofC("Processing item %s", i));
 }
 ```
