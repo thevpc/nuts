@@ -10,28 +10,28 @@ import net.thevpc.nuts.text.NMsg;
  */
 public class NIn {
     public static String readLine(NMsg prompt) {
-        return NSession.of().getTerminal().readLine(prompt);
+        return NTerminal.of().readLine(prompt);
     }
 
     public static String readLine() {
-        return NSession.of().getTerminal().readLine(null);
+        return NTerminal.of().readLine(null);
     }
 
     public static char[] readPassword(NMsg prompt) {
-        return NSession.of().getTerminal().readPassword(prompt);
+        return NTerminal.of().readPassword(prompt);
     }
 
     public static char[] readPassword() {
-        return NSession.of().getTerminal().readPassword(null);
+        return NTerminal.of().readPassword(null);
     }
 
 
     public static NLiteral readLiteral(NMsg prompt) {
-        return NLiteral.of(NSession.of().getTerminal().readLine(prompt));
+        return NLiteral.of(NTerminal.of().readLine(prompt));
     }
 
     public static NLiteral readLiteral() {
-        return NLiteral.of(NSession.of().getTerminal().readLine(null));
+        return NLiteral.of(NTerminal.of().readLine(null));
     }
 
     public static <T> NAsk<T> ask() {
