@@ -46,7 +46,6 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
             formatElement(fid, index);
         } else {
             getWriter()
-                    .resetLine()
                     .println(object)
                     .flush();
         }
@@ -55,7 +54,6 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
     private void formatElement(NIdFormatHelper id, long index) {
         NText s = id.getSingleColumnRow(getDisplayOptions());
         getWriter()
-                .resetLine()
                 .println(s)
                 .flush();
     }
