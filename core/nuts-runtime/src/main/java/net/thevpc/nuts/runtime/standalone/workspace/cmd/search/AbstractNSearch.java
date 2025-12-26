@@ -1040,7 +1040,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
             f = NContentType.TREE;
         }
         NSession session2 = session.copy().setOutputFormat(f);
-        session2.out().resetLine().println(n);
+        session2.out().println(n);
     }
 
     private NDefinition loadedIdToDefinition(NId next) {
