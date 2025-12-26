@@ -41,6 +41,10 @@ public class NullNPrintStream implements NPrintStream {
     public void close() {
 
     }
+    @Override
+    public NPrintStream printProgressLine(NText b) {
+        return this;
+    }
 
     @Override
     public NPrintStream print(byte[] b) {
