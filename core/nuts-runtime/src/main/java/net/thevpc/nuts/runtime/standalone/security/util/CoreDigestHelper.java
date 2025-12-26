@@ -126,6 +126,10 @@ public class CoreDigestHelper {
     }
 
 
+    public CoreDigestHelper append(byte[] bytes) {
+        return append(new ByteArrayInputStream(bytes));
+    }
+
     public CoreDigestHelper append(InputStream is) {
         try {
             byte[] bytes = new byte[4096];
