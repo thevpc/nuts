@@ -475,7 +475,8 @@ public class DefaultNExec extends AbstractNExec {
                 }
             }
             case ID: {
-                NId idToExec = findExecId(goodId, prepareSession, forceInstalled, true);
+                IdOrSysPath isp=findExecId(goodId, prepareSession, forceInstalled, true);
+                NId idToExec = (isp!=null && isp.id!=null)?isp.id:null;
                 RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                 if (remoteInfo0 != null) {
                     NAssert.requireNonBlank(command, "command");
@@ -678,24 +679,32 @@ public class DefaultNExec extends AbstractNExec {
                             .setExecutionType(executionType).setEnv(env);
                     return new DefaultNAliasExecutable(command, o, args, this);
                 } else {
-                    NId idToExec = null;
+                    IdOrSysPath isp=null;
                     if (goodId != null) {
-                        idToExec = findExecId(goodId, prepareSession, forceInstalled, true);
+                        isp = findExecId(goodId, prepareSession, forceInstalled, true);
                     }
-                    if (idToExec == null) {
+                    if(isp==null){
                         Path sw = NSysExecUtils.sysWhich(cmdName);
-                        if (sw != null) {
+                        if(sw!=null){
+                            isp=new IdOrSysPath(sw.toAbsolutePath().toString());
+                        }
+                        //throw new NArtifactNotFoundException(goodId, NMsg.ofC("unable to resolve id %s", cmdName));
+                    }
+                    if(isp!=null){
+                        if(isp.id!=null){
+                            return ws_execId(isp.id, cmdName, args, executorOptions, workspaceOptions, executionType, runAs);
+                        }
+                        if(isp.sysPath!=null){
                             List<String> cmdArr = new ArrayList<>();
-                            cmdArr.add(sw.toString());
+                            cmdArr.add(isp.sysPath);
                             cmdArr.addAll(Arrays.asList(args));
                             return new DefaultNSystemExecutable(cmdArr.toArray(new String[0]), executorOptions, this);
                         }
-                        List<String> cmdArr = new ArrayList<>();
-                        cmdArr.add(cmdName);
-                        cmdArr.addAll(Arrays.asList(args));
-                        return new DefaultUnknownExecutable(cmdArr.toArray(new String[0]), this);
                     }
-                    return ws_execId(idToExec, cmdName, args, executorOptions, workspaceOptions, executionType, runAs);
+                    List<String> cmdArr = new ArrayList<>();
+                    cmdArr.add(cmdName);
+                    cmdArr.addAll(Arrays.asList(args));
+                    return new DefaultUnknownExecutable(cmdArr.toArray(new String[0]), this);
                 }
             }
         }
@@ -707,8 +716,20 @@ public class DefaultNExec extends AbstractNExec {
                 NCmdLine.of(command).toString(),
                 command.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
     }
+    protected static class IdOrSysPath{
+        NId id;
+        String sysPath;
 
-    protected NId findExecId(NId nid, NSession traceSession, boolean forceInstalled, boolean ignoreIfUserCommand) {
+        public IdOrSysPath(NId id) {
+            this.id = id;
+        }
+
+        public IdOrSysPath(String sysPath) {
+            this.sysPath = sysPath;
+        }
+    }
+
+    protected IdOrSysPath findExecId(NId nid, NSession traceSession, boolean forceInstalled, boolean ignoreIfUserCommand) {
         if (nid == null) {
             return null;
         }
@@ -717,7 +738,10 @@ public class DefaultNExec extends AbstractNExec {
                 nid = nid.builder().setGroupId(NConstants.Ids.NUTS_GROUP_ID).build();
                 break;
             }
-            case NConstants.Ids.NUTS_API:
+            case NConstants.Ids.NUTS_API:{
+                nid = nid.builder().setArtifactId(NConstants.Ids.NUTS_APP_ARTIFACT_ID).setGroupId(NConstants.Ids.NUTS_GROUP_ID).build();
+                break;
+            }
             case NConstants.Ids.NUTS_RUNTIME:
             case NConstants.Ids.NUTS_API_ARTIFACT_ID:
             case NConstants.Ids.NUTS_RUNTIME_ARTIFACT_ID:
@@ -731,7 +755,7 @@ public class DefaultNExec extends AbstractNExec {
         if (NConstants.Ids.NUTS_APP_ARTIFACT_ID.equals(nid.getShortName())) {
             nid = nid.builder().setGroupId(NConstants.Ids.NUTS_GROUP_ID).build();
         }
-        NSession.of().getTerminal().printProgress(NMsg.ofC("start searching for %s", nid));
+        NTerminal.of().printProgress(NMsg.ofC("start searching for %s", nid));
         NId ff = NSearch.of(nid)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable()).setLatest(true).setFailFast(false)
                 .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
@@ -740,13 +764,16 @@ public class DefaultNExec extends AbstractNExec {
                 .map(NDefinition::getId).findFirst().orElse(null);
         if (ff == null) {
             if (!forceInstalled) {
-                if (ignoreIfUserCommand && NWorkspace.of().findSysCommand(nid.toString()).isPresent()) {
-                    return null;
+                if (ignoreIfUserCommand) {
+                    NOptional<String> sysCommand = NWorkspace.of().findSysCommand(nid.toString());
+                    if(sysCommand.isPresent()) {
+                        return new IdOrSysPath(sysCommand.get());
+                    }
                 }
                 //now search online
                 // this helps recover from "invalid default parseVersion" issue
                 if (traceSession.isPlainTrace()) {
-                    traceSession.out().resetLine().println(NMsg.ofC("%s is %s, will search for it...",
+                    traceSession.out().println(NMsg.ofC("%s is %s, will search for it...",
                             nid,
                             NText.ofStyledError("not installed")
                     ));
@@ -760,7 +787,7 @@ public class DefaultNExec extends AbstractNExec {
                         .getResultIds().findFirst().orElse(null);
                 if (ff == null && NSession.of().getFetchStrategy().orElse(NFetchStrategy.ONLINE) != NFetchStrategy.OFFLINE) {
                     if (traceSession.isPlainTrace()) {
-                        traceSession.out().resetLine().println(NMsg.ofC("%s is %s, will search for it online. Type %s to stop...",
+                        traceSession.out().println(NMsg.ofC("%s is %s, will search for it online. Type %s to stop...",
                                 nid,
                                 NText.ofStyledError("not installed"),
                                 NText.ofStyledError("CTRL^C")
@@ -779,7 +806,7 @@ public class DefaultNExec extends AbstractNExec {
         if (ff == null) {
             return null;
         } else {
-            return ff;
+            return new IdOrSysPath(ff);
         }
     }
 
