@@ -137,6 +137,16 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
+    public boolean isLastWasProgress() {
+        return ((NSystemTerminalBaseImpl)getBase()).isLastWasProgress();
+    }
+
+    @Override
+    public void setLastWasProgress(boolean lastWasProgress) {
+        ((NSystemTerminalBaseImpl)getBase()).setLastWasProgress(lastWasProgress);
+    }
+
+    @Override
     public NPrintStream getOut() {
         return getBase().getOut();
     }
