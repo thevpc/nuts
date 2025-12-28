@@ -89,7 +89,7 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
             if(Double.isNaN(percent)){
                 formattedLine.append(" ").append(text.ofStyled(String.format("%6s", ""), NTextStyle.config())).append("  ");
             }else {
-                formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)), NTextStyle.config())).append("% ");
+                formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent*100)), NTextStyle.config())).append("% ");
             }
             formattedLine.append(" ").append(text.ofStyled(String.format("%6s", mf.formatString(partialSpeed)), NTextStyle.config())).append("/s");
             if (event.getMaxValue() < 0) {
