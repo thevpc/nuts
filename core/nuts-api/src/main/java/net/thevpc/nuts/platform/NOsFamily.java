@@ -91,6 +91,9 @@ public enum NOsFamily implements NEnum {
             if (e.startsWith("LINUX")) {
                 return NOptional.of(NOsFamily.LINUX);
             }
+            if (e.endsWith("LINUX")) {
+                return NOptional.of(NOsFamily.LINUX);
+            }
             if (e.startsWith("WIN")) {
                 return NOptional.of(NOsFamily.WINDOWS);
             }
