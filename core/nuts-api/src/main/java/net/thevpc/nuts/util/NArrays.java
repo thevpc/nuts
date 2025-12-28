@@ -9,6 +9,17 @@ import java.util.function.Predicate;
 
 public class NArrays {
 
+    public static <A> A[] reverse(A[] arr) {
+        if (arr != null) {
+            for (int i = 0; i < arr.length / 2; i++) {
+                A temp = arr[i];
+                arr[i] = arr[arr.length - 1 - i];
+                arr[arr.length - 1 - i] = temp;
+            }
+        }
+        return arr;
+    }
+
     public static <A> int indexOfByMatcher(A[] a1, Predicate<A> b1) {
         for (int i = 0; i < a1.length; i++) {
             if (b1.test(a1[i])) {
@@ -19,7 +30,7 @@ public class NArrays {
     }
 
     public static <A> int lastIndexOfByMatcher(A[] a1, Predicate<A> b1) {
-        for (int i = a1.length-1; i >=0 ; i--) {
+        for (int i = a1.length - 1; i >= 0; i--) {
             if (b1.test(a1[i])) {
                 return i;
             }
@@ -27,11 +38,11 @@ public class NArrays {
         return -1;
     }
 
-    public static <A> int lastIndexOfByMatcher(A[] a1, int from,Predicate<A> b1) {
-        if(from<0){
-            from=a1.length-from;
+    public static <A> int lastIndexOfByMatcher(A[] a1, int from, Predicate<A> b1) {
+        if (from < 0) {
+            from = a1.length - from;
         }
-        for (int i = from; i >=0 ; i--) {
+        for (int i = from; i >= 0; i--) {
             if (b1.test(a1[i])) {
                 return i;
             }
@@ -39,8 +50,8 @@ public class NArrays {
         return -1;
     }
 
-    public static <A> int indexOfByMatcher(A[] a1, int from,Predicate<A> b1) {
-        for (int i = Math.max(0,from); i < a1.length; i++) {
+    public static <A> int indexOfByMatcher(A[] a1, int from, Predicate<A> b1) {
+        for (int i = Math.max(0, from); i < a1.length; i++) {
             if (b1.test(a1[i])) {
                 return i;
             }
@@ -97,7 +108,7 @@ public class NArrays {
         return newArr;
     }
 
-    ////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////
     public static int[] concat(int[] a1, int b1) {
         return append(a1, b1);
     }
@@ -127,7 +138,7 @@ public class NArrays {
         return newArr;
     }
 
-    ////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////
     public static long[] concat(long[] a1, long b1) {
         return append(a1, b1);
     }
@@ -157,7 +168,7 @@ public class NArrays {
         return newArr;
     }
 
-    ////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////
     public static double[] concat(double[] a1, double b1) {
         return append(a1, b1);
     }
@@ -187,7 +198,7 @@ public class NArrays {
         return newArr;
     }
 
-    ////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////
     public static float[] concat(float[] a1, float b1) {
         return append(a1, b1);
     }
@@ -217,7 +228,7 @@ public class NArrays {
         return newArr;
     }
 
-    ////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////
     public static byte[] concat(byte[] a1, byte b1) {
         return append(a1, b1);
     }
@@ -247,7 +258,7 @@ public class NArrays {
         return newArr;
     }
 
-    ////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////
     public static boolean[] concat(boolean[] a1, boolean b1) {
         return append(a1, b1);
     }
@@ -277,7 +288,7 @@ public class NArrays {
         return newArr;
     }
 
-    ////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////
     public static char[] concat(char[] a1, char b1) {
         return append(a1, b1);
     }
@@ -307,7 +318,7 @@ public class NArrays {
         return newArr;
     }
 
-    ////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////
     public static short[] concat(short[] a1, short b1) {
         return append(a1, b1);
     }
