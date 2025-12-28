@@ -20,10 +20,19 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
     private NCmdLineHistory history;
     private String commandHighlighter;
     private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
+    protected boolean lastWasProgress = false;
 
     public AnsiNPrintStreamTerminalBase(NPrintStream out) {
         super();
         this.out = out;
+    }
+
+    public boolean isLastWasProgress() {
+        return lastWasProgress;
+    }
+
+    public void setLastWasProgress(boolean lastWasProgress) {
+        this.lastWasProgress = lastWasProgress;
     }
 
     @Override
