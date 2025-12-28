@@ -7,6 +7,10 @@ public abstract class NSystemTerminalBaseImpl implements NSystemTerminalBase {
     public NSystemTerminalBaseImpl() {
     }
 
+    public abstract boolean isLastWasProgress() ;
+
+    public abstract void setLastWasProgress(boolean lastWasProgress) ;
+
     @Override
     public NSystemTerminalBase resetLine() {
         run(NTerminalCmd.CLEAR_LINE, getOut());
