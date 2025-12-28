@@ -670,43 +670,12 @@ public final class JavaExecutorOptions {
             javaVersion = explicitJavaVersion.toString();
         }
         NJavaSdkUtils nJavaSdkUtils = NJavaSdkUtils.of(NWorkspace.of());
-        NExecutionEngineLocation nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion());
-        if (nutsPlatformLocation == null) {
-            NLog.of(JavaExecutorOptions.class).warn(NMsg.ofC("No JRE %s is configured in nuts. search of system installations.", javaVersion));
-            Predicate<String> versionFilterPredicate = nJavaSdkUtils.createVersionFilterPredicate(getJavaVersion());
-            NExecutionEngineLocation[] existing = Stream.of(nJavaSdkUtils.searchJdkLocations()).filter(
-                    aa -> {
-                        return versionFilterPredicate.test(aa.getVersion());
-                    }
-            ).toArray(NExecutionEngineLocation[]::new);
-            if (existing.length > 0) {
-                if (NIn.ask().forBoolean(
-                                NMsg.ofC("No JRE %s is configured in nuts. However %s %s found. Would you like to auto-configure and use %s?", javaVersion, existing.length
-                                        , existing.length == 1 ? "is" : "are"
-                                        , existing.length == 1 ? "it" : "them"
-                                )
-                        ).setDefaultValue(true)
-                        .getBooleanValue()) {
-                    for (NExecutionEngineLocation p : existing) {
-                        NExecutionEngines.of().addExecutionEngine(p);
-                    }
-                    nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion());
-                }
-            }
-            if (nutsPlatformLocation == null) {
-                if (NIn.ask().forBoolean(
-                                NMsg.ofC("Still JRE %s is configured in nuts. Would you like to use default one : %s ?", javaVersion, System.getProperty("java.version"))
-                        ).setDefaultValue(true)
-                        .getBooleanValue()) {
-                    nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(NPath.of(System.getProperty("java.home")), System.getProperty("java.version"));
-                }
-            }
-            if (nutsPlatformLocation == null) {
-                throw new NExecutionException(NMsg.ofC("no java version %s was found", NStringUtils.trim(getJavaVersion())), NExecutionException.ERROR_1);
-            }
+        NOptional<NExecutionEngineLocation> nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion(),true,true);
+        if (!nutsPlatformLocation.isEmpty()) {
+            throw new NExecutionException(NMsg.ofC("no java version %s was found", NStringUtils.trim(getJavaVersion())), NExecutionException.ERROR_1);
         }
-        javaEffVersion = nutsPlatformLocation.getVersion();
-        javaCommand = nJavaSdkUtils.resolveJavaCommandByVersion(nutsPlatformLocation, javaw);
+        javaEffVersion = nutsPlatformLocation.get().getVersion();
+        javaCommand = nJavaSdkUtils.resolveJavaCommandByVersion(nutsPlatformLocation.get(), javaw);
         if (javaCommand == null) {
             throw new NExecutionException(NMsg.ofC("no java version %s was found", getJavaVersion()), NExecutionException.ERROR_1);
         }
