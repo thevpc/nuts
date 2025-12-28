@@ -31,6 +31,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     private NCmdLineHistory history;
     private String commandHighlighter;
     private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
+    protected boolean lastWasProgress=false;
 
     public DefaultNSystemTerminalBaseBoot(DefaultNBootModel bootModel) {
         super();
@@ -56,14 +57,27 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
         }else if (terminalMode == NTerminalMode.ANSI) {
             terminalMode = NTerminalMode.FORMATTED;
         }
-        this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFdAnsi,
-                this).setTerminalMode(terminalMode);
-        this.err = new NPrintStreamSystem(bootStdFd.getErr(), null, null, bootStdFdAnsi,
-                this).setTerminalMode(terminalMode);
+        if(bootStdFd.getOut()==bootStdFd.getErr()){
+            this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFdAnsi,
+                    this).setTerminalMode(terminalMode);
+            this.err = this.out;
+        }else {
+            this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFdAnsi,
+                    this).setTerminalMode(terminalMode);
+            this.err = new NPrintStreamSystem(bootStdFd.getErr(), null, null, bootStdFdAnsi,
+                    this).setTerminalMode(terminalMode);
+        }
         this.in = bootStdFd.getIn();
         this.scanner = new Scanner(this.in);
     }
 
+    public boolean isLastWasProgress() {
+        return lastWasProgress;
+    }
+
+    public void setLastWasProgress(boolean lastWasProgress) {
+        this.lastWasProgress = lastWasProgress;
+    }
 
 
     public String readLine(NPrintStream out, NMsg message) {
