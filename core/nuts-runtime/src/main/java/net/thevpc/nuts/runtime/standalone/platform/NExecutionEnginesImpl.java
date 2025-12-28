@@ -1,12 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.platform;
 
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.artifact.NVersionFilter;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
+import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNPlatformModel;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.util.function.Predicate;
@@ -40,9 +43,18 @@ public class NExecutionEnginesImpl implements NExecutionEngines {
     }
 
     @Override
-    public NStream<NExecutionEngineLocation> searchRemoteExecutionEngines(NExecutionEngineFamily platformFamily, String product, String packaging, String version) {
-        //TODO FIX ME
-        return NStream.ofEmpty();
+    public NOptional<NExecutionEngineLocation> downloadRemoteExecutionEngine(NExecutionEngineFamily platformFamily, String product, String packaging, String version) {
+        if (!NBlankable.isBlank(platformFamily) ) {
+            switch (platformFamily) {
+                case JAVA: {
+                    NExecutionEngineLocation[] e = NJavaSdkUtils.of().searchRemoteLocationsAndInstall(product, NVersion.of(version));
+                    if (e.length > 0) {
+                        return NOptional.of(e[0]);
+                    }
+                }
+            }
+        }
+        return NOptional.ofNamedEmpty(NMsg.ofC("%s with version %s", platformFamily == null ? "sdk" : platformFamily.id(), version));
     }
 
     @Override
