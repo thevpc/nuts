@@ -71,6 +71,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private NCmdLineAutoCompleteResolver autoCompleteResolver;
     private NCmdLineHistory commandHistory;
     private String commandHighlighter;
+    protected boolean lastWasProgress=false;
 
     public NJLineTerminal() {
         super();
@@ -184,6 +185,14 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             }
         }
         return new AttributedString(n.toString());
+    }
+
+    public boolean isLastWasProgress() {
+        return lastWasProgress;
+    }
+
+    public void setLastWasProgress(boolean lastWasProgress) {
+        this.lastWasProgress = lastWasProgress;
     }
 
     public void prepare() {
