@@ -42,6 +42,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     private String commandHighlighter;
     private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
     private Boolean preferConsole;
+    protected boolean lastWasProgress=false;
 
     public DefaultNSystemTerminalBase() {
         NBootOptions options = NWorkspace.of().getBootOptions();
@@ -67,6 +68,14 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
                 this).setTerminalMode(terminalMode);
         this.in = new NonClosableInputStream(bootStdFd.getIn());
         this.scanner = new Scanner(this.in);
+    }
+
+    public boolean isLastWasProgress() {
+        return lastWasProgress;
+    }
+
+    public void setLastWasProgress(boolean lastWasProgress) {
+        this.lastWasProgress = lastWasProgress;
     }
 
     @Override
