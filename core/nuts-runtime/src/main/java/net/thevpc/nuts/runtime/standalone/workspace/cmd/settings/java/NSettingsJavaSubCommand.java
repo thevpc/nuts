@@ -11,6 +11,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NExecutionEngines;
 import net.thevpc.nuts.platform.NExecutionEngineLocation;
+import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.text.NMutableTableModel;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
@@ -18,8 +19,10 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettin
 import net.thevpc.nuts.platform.NExecutionEngineFamily;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArt;
+import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,11 +43,11 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
         if (autoSave == null) {
             autoSave = false;
         }
-        NSession session= NSession.of();
+        NSession session = NSession.of();
         NPrintStream out = session.out();
         NWorkspace workspace = NWorkspace.of();
         NExecutionEngines pinstaller = NExecutionEngines.of();
-        if (cmdLine.next("add java","java add").isPresent()) {
+        if (cmdLine.next("add java", "java add").isPresent()) {
             if (cmdLine.next("--search").isPresent()) {
                 List<String> extraLocations = new ArrayList<>();
                 while (cmdLine.hasNext()) {
@@ -65,6 +68,24 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                 if (autoSave) {
                     workspace.saveConfig(false);
                 }
+            } else if (cmdLine.next("--download").isPresent()) {
+                while (cmdLine.hasNext()) {
+                    NRef<String> ver = NRef.ofNull();
+                    NRef<String> product = NRef.ofNull();
+                    cmdLine
+                            .matcher()
+                            .with("--version").matchEntry(a -> ver.set(a.stringValue()))
+                            .with("--jdk").matchTrueFlag(a -> product.set(NExecutionEngineLocation.JAVA_PRODUCT_JDK))
+                            .with("--jre").matchTrueFlag(a -> product.set(NExecutionEngineLocation.JAVA_PRODUCT_JRE))
+                            .require();
+                    NExecutionEngineLocation loc = pinstaller.downloadRemoteExecutionEngine(
+                            NExecutionEngineFamily.JAVA,
+                            NStringUtils.firstNonBlank(product.get(), NExecutionEngineLocation.JAVA_PRODUCT_JDK), null, NStringUtils.firstNonBlank(ver.get(), String.valueOf(NJavaSdkUtils.defaultJavaMajorVersion()))
+                    ).orNull();
+                    if (loc != null) {
+                        pinstaller.addExecutionEngine(loc);
+                    }
+                }
             } else {
                 while (cmdLine.hasNext()) {
                     NExecutionEngineLocation loc = pinstaller.resolveExecutionEngine(NExecutionEngineFamily.JAVA,
@@ -78,7 +99,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                 }
             }
             return true;
-        } else if (cmdLine.next("remove java","java remove").isPresent()) {
+        } else if (cmdLine.next("remove java", "java remove").isPresent()) {
             while (cmdLine.hasNext()) {
                 String name = cmdLine.next().get().image();
                 NExecutionEngineLocation loc = pinstaller.findExecutionEngineByName(NExecutionEngineFamily.JAVA, name).orNull();
@@ -96,16 +117,16 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                 workspace.saveConfig(false);
             }
             return true;
-        } else if (cmdLine.next("list java","java list").isPresent()) {
+        } else if (cmdLine.next("list java", "java list").isPresent()) {
             //NTableFormat t = NTableFormat.of()
-                    //                    .setBorder(TableFormatter.SPACE_BORDER)
+            //                    .setBorder(TableFormatter.SPACE_BORDER)
             //        .setVisibleHeader(true);
             NMutableTableModel m = NMutableTableModel.of();
             //t.setValue(m);
             m.addHeaderRow(NText.ofPlain("Name"), NText.ofPlain("Version"), NText.ofPlain("Path"));
             while (cmdLine.hasNext()) {
                 //if (!t.configureFirst(cmdLine)) {
-                    cmdLine.setCommandName("config list java").throwUnexpectedArgument();
+                cmdLine.setCommandName("config list java").throwUnexpectedArgument();
                 //}
             }
             if (cmdLine.isExecMode()) {
