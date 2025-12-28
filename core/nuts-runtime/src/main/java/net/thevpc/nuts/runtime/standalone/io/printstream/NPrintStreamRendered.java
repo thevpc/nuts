@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.printstream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.text.FormatOutputStreamSupport;
+import net.thevpc.nuts.spi.NSystemTerminalBaseImpl;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyled;
@@ -12,7 +13,6 @@ import net.thevpc.nuts.text.NMsg;
 public abstract class NPrintStreamRendered extends NPrintStreamBase {
     protected FormatOutputStreamSupport support;
     protected NPrintStreamBase base;
-    protected boolean lastWasProgress=false;
 
     public NPrintStreamRendered(NPrintStreamBase base, NTerminalMode mode, Bindings bindings) {
         super(true, mode, bindings, base.getTerminal());
@@ -23,11 +23,13 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
     }
 
     public void flushTransientLine(){
-        if(lastWasProgress){
+        NSystemTerminalBaseImpl terminal = (NSystemTerminalBaseImpl) base.getTerminal();
+        if(terminal.isLastWasProgress()){
+            support.flush();
             support.pushNode(NText.ofCommand(NTerminalCmd.CLEAR_LINE));
             support.pushNode(NText.ofCommand(NTerminalCmd.MOVE_LINE_START));
             support.flush();
-            lastWasProgress=false;
+            terminal.setLastWasProgress(false);
         }
     }
 
@@ -80,7 +82,11 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
 
     @Override
     public NPrintStream printProgressLine(NText b) {
-        lastWasProgress = true;
+        NSystemTerminalBaseImpl terminal = (NSystemTerminalBaseImpl) base.getTerminal();
+        if(!terminal.isLastWasProgress()) {
+            terminal.setLastWasProgress(true);
+            support.flush();
+        }
         for (NText line : b.split("\n\r")) {
             support.pushNode(NText.ofCommand(NTerminalCmd.CLEAR_LINE));
             support.pushNode(NText.ofCommand(NTerminalCmd.MOVE_LINE_START));
@@ -98,7 +104,7 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
                         break;
                     }
                     case STYLED: {
-                        printParsed(((NTextStyled) line).getChild());
+                        printParsed0(((NTextStyled) line).getChild());
                         break;
                     }
                     default: {
@@ -128,6 +134,30 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
                 }
                 case STYLED: {
                     printParsed(((NTextStyled) b).getChild());
+                    break;
+                }
+                default: {
+                    throw new IllegalArgumentException("not supported");
+                }
+            }
+        }
+        return this;
+    }
+    protected NPrintStream printParsed0(NText b) {
+        if (isNtf()) {
+            support.pushNode(b);
+        } else {
+            switch (b.type()) {
+                case PLAIN: {
+                    support.pushNode(b);
+                    break;
+                }
+                case COMMAND: {
+                    //ignore
+                    break;
+                }
+                case STYLED: {
+                    printParsed0(((NTextStyled) b).getChild());
                     break;
                 }
                 default: {
