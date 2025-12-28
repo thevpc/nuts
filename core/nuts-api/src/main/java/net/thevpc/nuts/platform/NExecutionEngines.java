@@ -74,7 +74,7 @@ public interface NExecutionEngines extends NComponent, NConnectionStringAware {
 
     NStream<NExecutionEngineLocation> searchHostExecutionEngines(NExecutionEngineFamily platformFamily, NPath path);
 
-    NStream<NExecutionEngineLocation> searchRemoteExecutionEngines(NExecutionEngineFamily platformFamily, String product, String packaging, String version);
+    NOptional<NExecutionEngineLocation> downloadRemoteExecutionEngine(NExecutionEngineFamily platformFamily, String product, String packaging, String version);
 
     /**
      * verify if the path is a valid platform path and return null if not
