@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.artifact.NVersionFilter;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.NExecutionEngineFamily;
 import net.thevpc.nuts.io.NPath;
@@ -108,7 +107,7 @@ public class DefaultNPlatformModel {
     }
 
     public NOptional<NExecutionEngineLocation> findPlatformByPath(NExecutionEngineFamily type, NPath path) {
-        NAssert.requireNonNull(path,"path");
+        NAssert.requireNonNull(path, "path");
         return findOneExecutionEngine(type, location -> location.getPath() != null && location.getPath().equals(path.toString()));
     }
 
@@ -252,17 +251,26 @@ public class DefaultNPlatformModel {
     }
 
     public NStream<NExecutionEngineLocation> findPlatforms(NExecutionEngineFamily type, Predicate<NExecutionEngineLocation> filter) {
+        NJavaSdkUtils nJavaSdkUtils = NJavaSdkUtils.of();
+        NExecutionEngineLocation current = nJavaSdkUtils.getHostJvm();
         if (filter == null) {
             if (type == null) {
-                List<NExecutionEngineLocation> all = new ArrayList<>();
+                List<NExecutionEngineLocation> list = new ArrayList<>();
                 for (List<NExecutionEngineLocation> value : wsModel.getConfigPlatforms().values()) {
-                    all.addAll(value);
+                    list.addAll(value);
                 }
-                return NStream.ofIterable(all);
+                if (!list.contains(current)) {
+                    list.add(current);
+                }
+                return NStream.ofIterable(list);
             }
             List<NExecutionEngineLocation> list = getPlatforms().get(type);
             if (list == null) {
-                return NStream.ofEmpty();
+                list = new ArrayList<>();
+                getPlatforms().put(type, list);
+            }
+            if (!list.contains(current)) {
+                list.add(current);
             }
             return NStream.ofIterable(list);
         }
@@ -283,6 +291,11 @@ public class DefaultNPlatformModel {
                         ret.add(location);
                     }
                 }
+            }
+        }
+        if(filter.test(current)) {
+            if (!ret.contains(current)) {
+                ret.add(current);
             }
         }
         if (!ret.isEmpty()) {
