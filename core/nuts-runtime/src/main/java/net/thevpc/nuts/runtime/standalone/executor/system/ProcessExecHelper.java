@@ -104,6 +104,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                                  String[] executorOptions,
                                                  boolean dry, NSession session
     ) throws NExecutionException {
+        boolean jdk=false;
         NWorkspace workspace = session.getWorkspace();
         NId id = nutMainFile.getId();
         Path installerFile = nutMainFile.getContent().flatMap(NPath::toPath).orNull();
@@ -118,7 +119,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         }
         map.put("nuts.artifact", id.toString());
         map.put("nuts.file", nutMainFile.getContent().flatMap(NPath::toPath).map(Object::toString).orNull());
-        String defaultJavaCommand = NJavaSdkUtils.of(workspace).resolveJavaCommandByVersion("", false);
+        String defaultJavaCommand = NJavaSdkUtils.of(workspace).resolveJavaCommandByVersion("", false,jdk,true,true).orNull();
         if (defaultJavaCommand == null) {
             throw new NExecutionException(NMsg.ofPlain("no java version was found"), NExecutionException.ERROR_1);
         }
@@ -146,7 +147,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     if (NBlankable.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    String s = NJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, false);
+                    String s = NJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, false,jdk,true,true).orNull();
                     if (s == null) {
                         throw new NExecutionException(NMsg.ofC("no java version %s was found", javaVer), NExecutionException.ERROR_1);
                     }
@@ -156,7 +157,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     if (NBlankable.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    String s = NJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, true);
+                    String s = NJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, true,jdk,true,true).orNull();
                     if (s == null) {
                         throw new NExecutionException(NMsg.ofC("no java version %s was found", javaVer), NExecutionException.ERROR_1);
                     }
