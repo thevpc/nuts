@@ -670,12 +670,12 @@ public final class JavaExecutorOptions {
             javaVersion = explicitJavaVersion.toString();
         }
         NJavaSdkUtils nJavaSdkUtils = NJavaSdkUtils.of(NWorkspace.of());
-        NOptional<NExecutionEngineLocation> nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion(),true,true);
-        if (!nutsPlatformLocation.isEmpty()) {
+        NOptional<NExecutionEngineLocation> nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion(), false, true, true);
+        if (!nutsPlatformLocation.isPresent()) {
             throw new NExecutionException(NMsg.ofC("no java version %s was found", NStringUtils.trim(getJavaVersion())), NExecutionException.ERROR_1);
         }
         javaEffVersion = nutsPlatformLocation.get().getVersion();
-        javaCommand = nJavaSdkUtils.resolveJavaCommandByVersion(nutsPlatformLocation.get(), javaw);
+        javaCommand = nJavaSdkUtils.resolveJavaCommandByVersion(nutsPlatformLocation.get(), javaw).orNull();
         if (javaCommand == null) {
             throw new NExecutionException(NMsg.ofC("no java version %s was found", getJavaVersion()), NExecutionException.ERROR_1);
         }
@@ -894,6 +894,7 @@ public final class JavaExecutorOptions {
     public List<String> getExtraExecutorOptions() {
         return extraExecutorOptions;
     }
+
     private void resolveMainClassFromPath(Path path) {
         if (mainClass == null) {
             if (path != null) {
@@ -911,7 +912,7 @@ public final class JavaExecutorOptions {
         } else if (!mainClass.contains(".")) {
             List<NExecutionEntry> classes = NExecutionEntry.parse(NPath.of(path));
             List<String> possibleClasses = classes.stream().map(NExecutionEntry::getName)
-                            .collect(Collectors.toList());
+                    .collect(Collectors.toList());
             String r = resolveMainClass(mainClass, possibleClasses);
             if (r != null) {
                 mainClass = r;
