@@ -38,7 +38,13 @@ public class NIteratorBaseFromJavaIterator<T> extends NIteratorBase<T> {
     public NElement describe() {
         NObjectElement b = NElementDescribables.describeResolveOr(base, () -> NElement.ofObjectBuilder().build())
                 .asObject().get();
-        NElement a = description.get();
+        NElement a = description==null?null:description.get();
+        if(a==null){
+            return b.builder()
+                    .set("name", "")
+                    .build()
+                    ;
+        }
         if (b.isEmpty()) {
             return a;
         }
