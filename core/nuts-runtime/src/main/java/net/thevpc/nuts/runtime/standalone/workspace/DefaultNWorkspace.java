@@ -412,6 +412,17 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         );
             }
         }
+
+        // load default NRepositoryModel instances
+        for (NRepositoryModel m : wsModel.extensionModel.createAll(NRepositoryModel.class)) {
+            NWorkspace.of().addRepository(
+                    new NAddRepositoryOptions()
+                            .setRepositoryModel(m)
+                            .setTemporary(true)
+
+            );
+        }
+
         if (CoreNUtils.isCustomFalse("---perf")) {
             if (session.isPlainOut()) {
                 NOut.println(NMsg.ofC("%s workspace loaded in %s",
