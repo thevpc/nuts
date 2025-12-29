@@ -9,6 +9,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.helpers.NetbeansRepoHelper;
+import net.thevpc.nuts.runtime.standalone.repository.toolbox.helpers.PostgresRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.helpers.TomcatRepoHelper;
 import net.thevpc.nuts.util.*;
 
@@ -21,6 +22,7 @@ public class ToolboxRepositoryModel implements NRepositoryModel {
     public ToolboxRepositoryModel() {
         register(new TomcatRepoHelper());
         register(new NetbeansRepoHelper());
+        register(new PostgresRepoHelper());
     }
 
     private void register(ToolboxRepoHelper t) {
@@ -96,7 +98,7 @@ public class ToolboxRepositoryModel implements NRepositoryModel {
         }
         NIteratorBuilder<NId> b = NIteratorBuilder.emptyBuilder();
         for (ToolboxRepoHelper h : map) {
-            b.concat(h.search(filter, basePaths, repository));
+            b.concat(h.search(null,filter, basePaths, repository));
         }
         return b.build();
     }
