@@ -20,7 +20,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
 
     @Override
     public NIterator<NId> searchVersions(NId id, NDefinitionFilter filter, NRepository repository) {
-        return search(filter, new NPath[]{null}, repository);
+        return search(id, filter, new NPath[]{null}, repository);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
     @Override
     public NDescriptor fetchDescriptor(NId id, NRepository repository) {
         //            String r = getUrl(id.getVersion(), ".zip.md5");
-        if(!baseIdFilterHelper.accept(id)){
+        if (!baseIdFilterHelper.accept(id)) {
             return null;
         }
         String r = getUrl(id.getVersion());
@@ -85,8 +85,8 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
     }
 
     @Override
-    public NIterator<NId> search(NDefinitionFilter filter, NPath[] basePaths, NRepository repository) {
-        if(!baseIdFilterHelper.accept(basePaths)){
+    public NIterator<NId> search(NId id, NDefinitionFilter filter, NPath[] basePaths, NRepository repository) {
+        if (!baseIdFilterHelper.accept(id, basePaths)) {
             return null;
         }
         //List<NutsId> all = new ArrayList<>();
@@ -119,7 +119,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
 
     @Override
     public NPath fetchContent(NId id, NDescriptor descriptor, NRepository repository) {
-        if(!baseIdFilterHelper.accept(id)){
+        if (!baseIdFilterHelper.accept(id)) {
             return null;
         }
         String r = getUrl(id.getVersion());
