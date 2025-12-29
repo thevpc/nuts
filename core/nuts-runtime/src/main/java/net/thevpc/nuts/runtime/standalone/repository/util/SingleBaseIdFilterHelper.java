@@ -24,7 +24,13 @@ public class SingleBaseIdFilterHelper {
         }
     }
 
-    public boolean accept(NPath[] basePaths) {
+
+    public boolean accept(NId id, NPath[] basePaths) {
+        if(id!=null) {
+            if (!baseId.equals(id.getShortId())) {
+                return false;
+            }
+        }
         if (basePaths == null) {
             return true;
         }
@@ -32,6 +38,9 @@ public class SingleBaseIdFilterHelper {
             return true;
         }
         for (NPath basePath : basePaths) {
+            if (basePath == null) {
+                return true;
+            }
             if (isAcceptableBasePath(basePath)) {
                 return true;
             }
