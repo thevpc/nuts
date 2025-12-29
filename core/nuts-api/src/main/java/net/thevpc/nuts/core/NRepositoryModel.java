@@ -31,6 +31,7 @@ import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NIterator;
 
 import java.util.Iterator;
@@ -39,7 +40,7 @@ import java.util.Iterator;
  * @author thevpc
  * @app.category Extensions
  */
-public interface NRepositoryModel {
+public interface NRepositoryModel extends NComponent {
     int MIRRORING = 1;
     int LIB_READ = 2;
     int LIB_WRITE = 4;
