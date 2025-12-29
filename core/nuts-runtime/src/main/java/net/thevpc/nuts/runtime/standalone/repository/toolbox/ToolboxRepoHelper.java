@@ -14,7 +14,7 @@ public interface ToolboxRepoHelper {
 
     NDescriptor fetchDescriptor(NId id, NRepository repository);
 
-    NIterator<NId> search(NDefinitionFilter filter, NPath[] basePaths, NRepository repository);
+    NIterator<NId> search(NId id,NDefinitionFilter filter, NPath[] basePaths, NRepository repository);
 
     NPath fetchContent(NId id, NDescriptor descriptor, NRepository repository);
 }
