@@ -290,7 +290,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     @Override
     public <T> NScoredValue<T> resolveTypeScore(Class<? extends T> implType, Class<T> apiType, NScorableContext scorableContext) {
         if (implType == null || apiType == null || !apiType.isAssignableFrom(implType)) {
-            return FixedNScoredValue.UNSUPPORTED();
+            return FixedNScoredValue.ofUnsupported(implType, apiType);
         }
         return extensionTypeInfoPool.get(implType, apiType).getTypeScoredInstance(scorableContext);
     }
@@ -298,17 +298,26 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     @Override
     public <T> NScoredValue<T> resolveInstanceScore(T instance, Class<T> apiType, NScorableContext scorableContext) {
         if (instance == null || apiType == null || !apiType.isInstance(instance)) {
-            return FixedNScoredValue.UNSUPPORTED();
+            if(instance==null){
+                return FixedNScoredValue.ofUnsupported(null,apiType);
+            }
+            Class<? extends T> implType = (Class<? extends T>) ((T)instance).getClass();
+            if(apiType==null){
+                return FixedNScoredValue.ofUnsupported(implType,null);
+            }
+            return FixedNScoredValue.ofUnsupported(implType,apiType);
         }
         if (!apiType.isAssignableFrom(instance.getClass())) {
-            return FixedNScoredValue.UNSUPPORTED();
+            return FixedNScoredValue.ofUnsupported(null,apiType);
         }
         if (instance instanceof NScorable) {
             NScorable scorable = (NScorable) instance;
-            return new LazyNScoredValueImpl<>(
+            return new LazyNScoredValueImpl<T>(
                     ()->scorable,
                     ()->instance,
-                    scorableContext
+                    scorableContext,
+                    (Class)instance.getClass(),
+                    apiType
             );
         }
         T o = (T) instance;
@@ -349,7 +358,9 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             all.add(new LazyNScoredValueImpl<T>(
                     () -> tnExtensionType.getTypeScorer(),
                     () -> tnExtensionType.resolveInstance(new Class[0], new Object[0], new NBeanConstructorContextAsScorableContext(supportCriteria)),
-                    supportCriteria
+                    supportCriteria,
+                    tnExtensionType.getImplType(),
+                    tnExtensionType.getApiType()
             ));
         }
         return all.stream().filter(x -> x.isValid()).sorted((a, b) -> Integer.compare(b.score(), a.score())).collect(Collectors.toList());
