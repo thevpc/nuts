@@ -11,11 +11,23 @@ public class LazyNScoredValueImpl<T> implements NScoredValue<T> {
     T _instance;
     Integer _score;
     NScorableContext supportCriteria;
+    private Class<? extends T> implType;
+    private Class<T> apiType;
 
-    public LazyNScoredValueImpl(Supplier<NScorable> scorerSupplier, Supplier<T> instanceSupplier, NScorableContext supportCriteria) {
+    public LazyNScoredValueImpl(Supplier<NScorable> scorerSupplier, Supplier<T> instanceSupplier, NScorableContext supportCriteria,Class<? extends T> implType, Class<T> apiType) {
         this.scorerSupplier = scorerSupplier;
         this.instanceSupplier = instanceSupplier;
         this.supportCriteria = supportCriteria;
+        this.implType = implType;
+        this.apiType = apiType;
+    }
+
+    public Class<? extends T> getImplType() {
+        return implType;
+    }
+
+    public Class<T> getApiType() {
+        return apiType;
     }
 
     @Override
