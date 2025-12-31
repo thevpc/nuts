@@ -236,7 +236,7 @@ public class NExtensionTypeInfo<T> {
         return new LazyNScoredValueImpl<>(
                 () -> c -> getTypeScore(c),
                 () -> resolveInstance(),
-                supportCriteria);
+                supportCriteria,implType, apiType);
     }
 
     public NScorable getTypeScorer() {
