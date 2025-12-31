@@ -333,15 +333,15 @@ public class DefaultNWorkspaceExtensionModel {
 //    public Set<Class> discoverTypes(ClassLoader classLoader) {
 //        return objectFactory.discoverTypes(classLoader);
 //    }
-    public <T extends NComponent, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType) {
+    public <T, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType) {
         return createServiceLoader(serviceType, criteriaType, null);
     }
 
-    public <T extends NComponent, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
+    public <T, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
         return new DefaultNServiceLoader<T, B>(serviceType, criteriaType, classLoader);
     }
 
-    public <T extends NComponent, V> NOptional<T> createSupported(Class<T> type, V supportCriteria) {
+    public <T, V> NOptional<T> createSupported(Class<T> type, V supportCriteria) {
         return objectFactory.createComponent(type, supportCriteria);
     }
 
@@ -349,7 +349,7 @@ public class DefaultNWorkspaceExtensionModel {
 //        return objectFactory.createSupported(type, supportCriteria, constructorParameterTypes, constructorParameters, required, session);
 //    }
 
-    public <T extends NComponent, V> List<T> createAllSupported(Class<T> type, V supportCriteria) {
+    public <T, V> List<T> createAllSupported(Class<T> type, V supportCriteria) {
         return objectFactory.createComponents(type, supportCriteria);
     }
 //    public List<Class> resolveComponentTypesOld(Class o) {
@@ -364,7 +364,7 @@ public class DefaultNWorkspaceExtensionModel {
 //        return a;
 //    }
 
-    public <T extends NComponent> List<T> createAll(Class<T> type) {
+    public <T> List<T> createAll(Class<T> type) {
         return objectFactory.createAll(type);
     }
 
@@ -372,23 +372,23 @@ public class DefaultNWorkspaceExtensionModel {
 //    public Set<Class> getExtensionPoints() {
 //        return objectFactory.getExtensionPoints();
 //    }
-    public <T extends NComponent> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint) {
+    public <T> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint) {
         return objectFactory.getExtensionTypes(extensionPoint);
     }
 
-    public <T extends NComponent> List<T> getExtensionObjects(Class<T> extensionPoint) {
+    public <T> List<T> getExtensionObjects(Class<T> extensionPoint) {
         return objectFactory.getExtensionObjects(extensionPoint);
     }
 
-    public <T extends NComponent> boolean isRegisteredType(Class<T> extensionPointType, String name) {
+    public <T> boolean isRegisteredType(Class<T> extensionPointType, String name) {
         return objectFactory.isRegisteredType(extensionPointType, name);
     }
 
-    public <T extends NComponent> boolean isRegisteredInstance(Class<T> extensionPointType, T extensionImpl) {
+    public <T> boolean isRegisteredInstance(Class<T> extensionPointType, T extensionImpl) {
         return objectFactory.isRegisteredInstance(extensionPointType, extensionImpl);
     }
 
-    public <T extends NComponent> boolean registerInstance(Class<T> extensionPointType, T extensionImpl) {
+    public <T> boolean registerInstance(Class<T> extensionPointType, T extensionImpl) {
         if (!isRegisteredType(extensionPointType, extensionImpl.getClass().getName()) && !isRegisteredInstance(extensionPointType, extensionImpl)) {
             objectFactory.registerInstance(extensionPointType, extensionImpl);
             return true;
