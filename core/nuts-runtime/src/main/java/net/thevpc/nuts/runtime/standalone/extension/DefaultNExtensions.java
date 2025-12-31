@@ -58,12 +58,12 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     @Override
-    public <T extends NComponent, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType) {
+    public <T, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType) {
         return wsModel.extensionModel.createServiceLoader(serviceType, criteriaType);
     }
 
     @Override
-    public <T extends NComponent, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
+    public <T, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
         return wsModel.extensionModel.createServiceLoader(serviceType, criteriaType, classLoader);
     }
 
@@ -72,30 +72,30 @@ public class DefaultNExtensions implements NExtensions {
         return new NMutableClassLoaderImpl(parentClassLoader);
     }
 
-    public <T extends NComponent> NOptional<NScorable> getTypeScorable(Class<? extends T> implType, Class<T> apiType) {
+    public <T> NOptional<NScorable> getTypeScorable(Class<? extends T> implType, Class<T> apiType) {
         return wsModel.extensionModel.getObjectFactory().getTypeScorer(implType, apiType);
     }
 
-    public <T extends NComponent> NOptional<NScorable> getInstanceScorable(T instance, Class<T> apiType) {
+    public <T> NOptional<NScorable> getInstanceScorable(T instance, Class<T> apiType) {
         return wsModel.extensionModel.getObjectFactory().getInstanceScorer(instance, apiType);
     }
 
     @Override
-    public <T extends NComponent> NScoredValue<T> getTypeScoredValue(Class<? extends T> implType, Class<T> apiType, NScorableContext scorableContext) {
+    public <T> NScoredValue<T> getTypeScoredValue(Class<? extends T> implType, Class<T> apiType, NScorableContext scorableContext) {
         return wsModel.extensionModel.getObjectFactory().resolveTypeScore(implType, apiType,scorableContext);
     }
 
     @Override
-    public <T extends NComponent> NScoredValue<T> getInstanceScoredValue(T instance, Class<T> apiType, NScorableContext scorableContext) {
+    public <T> NScoredValue<T> getInstanceScoredValue(T instance, Class<T> apiType, NScorableContext scorableContext) {
         return wsModel.extensionModel.getObjectFactory().resolveInstanceScore(instance, apiType,scorableContext);
     }
 
     @Override
-    public <T extends NComponent> NOptional<T> createComponent(Class<T> type) {
+    public <T> NOptional<T> createComponent(Class<T> type) {
         return createSupported(type, null);
     }
 
-    public <T extends NComponent, V> NOptional<T> createSupported(Class<T> serviceType, V criteriaType) {
+    public <T, V> NOptional<T> createSupported(Class<T> serviceType, V criteriaType) {
         if (criteriaType instanceof NConnectionString) {
             NExtensionUtils.ensureExtensionLoadedForProtocol((NConnectionString) criteriaType);
         }
@@ -144,47 +144,47 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     @Override
-    public <T extends NComponent, V> List<T> createAllSupported(Class<T> serviceType, V criteriaType) {
+    public <T, V> List<T> createAllSupported(Class<T> serviceType, V criteriaType) {
         return wsModel.extensionModel.createAllSupported(serviceType, criteriaType);
     }
 
     @Override
-    public <T extends NComponent> List<T> createAll(Class<T> serviceType) {
+    public <T> List<T> createAll(Class<T> serviceType) {
         return wsModel.extensionModel.createAll(serviceType);
     }
 
     @Override
-    public <T extends NComponent> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint) {
+    public <T> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint) {
         return wsModel.extensionModel.getExtensionTypes(extensionPoint);
     }
 
     @Override
-    public <T extends NComponent> List<T> getExtensionObjects(Class<T> extensionPoint) {
+    public <T> List<T> getExtensionObjects(Class<T> extensionPoint) {
         return wsModel.extensionModel.getExtensionObjects(extensionPoint);
     }
 
     @Override
-    public <T extends NComponent> boolean isRegisteredType(Class<T> extensionPointType, String name) {
+    public <T> boolean isRegisteredType(Class<T> extensionPointType, String name) {
         return wsModel.extensionModel.isRegisteredType(extensionPointType, name);
     }
 
     @Override
-    public <T extends NComponent> boolean isRegisteredInstance(Class<T> extensionPointType, T extensionImpl) {
+    public <T> boolean isRegisteredInstance(Class<T> extensionPointType, T extensionImpl) {
         return wsModel.extensionModel.isRegisteredInstance(extensionPointType, extensionImpl);
     }
 
     @Override
-    public <T extends NComponent> boolean registerInstance(Class<T> extensionPointType, T extensionImpl) {
+    public <T> boolean registerInstance(Class<T> extensionPointType, T extensionImpl) {
         return wsModel.extensionModel.registerInstance(extensionPointType, extensionImpl);
     }
 
     @Override
-    public <T extends NComponent> boolean registerType(Class<T> extensionPointType, Class<? extends T> implementation, NId source) {
+    public <T> boolean registerType(Class<T> extensionPointType, Class<? extends T> implementation, NId source) {
         return wsModel.extensionModel.registerType(extensionPointType, implementation, source);
     }
 
     @Override
-    public <T extends NComponent> boolean isRegisteredType(Class<T> extensionPointType, Class<? extends T> implementation) {
+    public <T> boolean isRegisteredType(Class<T> extensionPointType, Class<? extends T> implementation) {
         return wsModel.extensionModel.isRegisteredType(extensionPointType, implementation);
     }
 
