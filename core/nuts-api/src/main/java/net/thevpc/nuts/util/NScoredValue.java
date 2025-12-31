@@ -12,10 +12,25 @@ package net.thevpc.nuts.util;
 public interface NScoredValue<T> {
     /**
      * Returns the scorable instance that was evaluated.
+     * when this is an invalid scored instance, this method should not be called as it might throw an exception.
      *
      * @return the scorable instance
      */
     T value();
+
+    /**
+     * when unsupported, may return null
+     *
+     * @return api interface
+     */
+    Class<T> getApiType();
+
+    /**
+     * when unsupported, may return null
+     *
+     * @return implementation class
+     */
+    Class<? extends T> getImplType();
 
     /**
      * Returns the score computed for the scorable instance.
@@ -28,6 +43,10 @@ public interface NScoredValue<T> {
      */
     int score();
 
+    /**
+     *
+     * @return when this value is valid aka its score is positive non null
+     */
     default boolean isValid() {
         return score() > 0;
     }
