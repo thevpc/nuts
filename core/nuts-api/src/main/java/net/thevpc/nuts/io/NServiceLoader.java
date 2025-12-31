@@ -26,8 +26,10 @@
  */
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NScoredValue;
 
 import java.util.List;
 
@@ -39,7 +41,15 @@ import java.util.List;
  * @app.category SPI Base
  * @since 0.5.4
  */
-public interface NServiceLoader<T extends NComponent> {
+public interface NServiceLoader<T> {
+
+    static <T, B> NServiceLoader<T> of(Class<T> serviceType, Class<B> criteriaType) {
+        return NExtensions.of().createServiceLoader(serviceType, criteriaType);
+    }
+
+    static <T, B> NServiceLoader<T> of(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
+        return NExtensions.of().createServiceLoader(serviceType, criteriaType, classLoader);
+    }
 
     /**
      * load all NutsComponent instances matching criteria
@@ -56,4 +66,11 @@ public interface NServiceLoader<T extends NComponent> {
      * @return load best NutsComponent instance matching criteria
      */
     NOptional<T> loadBest(Object criteria);
+
+    /**
+     * return valid and ordered (highest score first) scored values
+     * @param criteria criteria
+     * @return ordered valid scored values
+     */
+    List<NScoredValue<T>> loadScoredValues(Object criteria);
 }
