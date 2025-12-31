@@ -13,7 +13,7 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NScoredValue;
 
-public class DefaultNServiceLoader<T extends NComponent, B> implements NServiceLoader<T> {
+public class DefaultNServiceLoader<T, B> implements NServiceLoader<T> {
 
     private final ClassLoader classLoader;
     private final Class<T> serviceType;
@@ -26,6 +26,24 @@ public class DefaultNServiceLoader<T extends NComponent, B> implements NServiceL
 
     }
 
+    @Override
+    public List<NScoredValue<T>> loadScoredValues(Object criteria) {
+        List<NScoredValue<T>> all = new ArrayList<>();
+        NScorableContext context = NScorableContext.of(criteria);
+        NExtensions nExtensions = NExtensions.of();
+        for (Class<? extends T> t : ServiceTypeIterator.loadList(serviceType, classLoader)) {
+            NScoredValue<T> s = nExtensions.getTypeScoredValue(t, serviceType, context);
+            if (s.isValid()) {
+                try {
+                    all.add(s);
+                }catch (Exception ex) {
+                    NLog.of(DefaultNServiceLoader.class).log(NMsg.ofC("unable to resolve service type %s : %s",serviceType.getName(),ex));
+                }
+            }
+        }
+        all.sort((a,b)->Double.compare(b.score(),a.score()));
+        return all;
+    }
     @Override
     public List<T> loadAll(Object criteria) {
         List<T> all = new ArrayList<>();
