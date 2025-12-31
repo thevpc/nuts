@@ -134,6 +134,12 @@ public class NExceptions {
         if (e instanceof RuntimeException) {
             return (RuntimeException) e;
         }
+        if (e instanceof InvocationTargetException) {
+            Throwable c = e.getCause();
+            if(c!=null){
+                return ofUncheckedException(c);
+            }
+        }
         if (e instanceof IOException) {
             if (!NWorkspace.get().isPresent()) {
                 return new UncheckedIOException((IOException) e);
