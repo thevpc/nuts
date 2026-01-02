@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
@@ -91,7 +91,7 @@ public class MavenSettingsRepository extends NRepositoryList {
                         String repositoryName = null;
                         String repositoryLayout = null;
                         try {
-                            e = NElementParser.ofJson().parse(nr);
+                            e = NElementReader.ofJson().read(nr);
                         }catch (Exception ex) {
                             // just ignore
                         }
