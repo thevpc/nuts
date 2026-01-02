@@ -3,13 +3,15 @@ package net.thevpc.nuts.internal.optional;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.function.Supplier;
 
 public class NReservedOptionalValidValue<T> extends NReservedOptionalValid<T> implements Cloneable{
     private final T value;
-    public NReservedOptionalValidValue(T value) {
+    public NReservedOptionalValidValue(T value,Supplier<NMsg> message) {
+        super(message);
         this.value = value;
     }
 
