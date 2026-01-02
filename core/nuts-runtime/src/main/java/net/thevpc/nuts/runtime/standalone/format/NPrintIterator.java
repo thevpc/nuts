@@ -34,7 +34,7 @@ public class NPrintIterator<T> extends NIteratorBase<T> {
         this.listFormat = NSession.of().getIterableOutput();
         this.displayOptions = displayOptions;
         if (this.listFormat == null) {
-            this.listFormat = NElementFormat.of().setContentType(NSession.of().getOutputFormat().orDefault()).iter(out);
+            this.listFormat = NElementWriter.of().setContentType(NSession.of().getOutputFormat().orDefault()).iter(out);
         }
         this.listFormat
                 .configure(true, displayOptions.toCmdLineOptions())
