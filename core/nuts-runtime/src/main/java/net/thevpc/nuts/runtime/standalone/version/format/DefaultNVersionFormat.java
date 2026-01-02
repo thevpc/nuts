@@ -33,7 +33,6 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
 
     private final Map<String, String> extraProperties = new LinkedHashMap<>();
     private boolean all;
-    private NVersion version;
 
     public DefaultNVersionFormat(NWorkspace workspace) {
         super("version");
@@ -91,45 +90,19 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
     }
 
     @Override
-    public NVersion getVersion() {
-        return version;
-    }
-
-    @Override
-    public NVersionFormat setVersion(NVersion version) {
-        this.version = version;
-        return this;
-    }
-
-    @Override
-    public boolean isWorkspaceVersion() {
-        return version == null;
-    }
-
-    @Override
-    public void print(NPrintStream out) {
-        NSession session= NSession.of();
-        if (!isNtf()) {
-            out = out.setTerminalMode(NTerminalMode.FILTERED);
+    public void print(Object aValue, NPrintStream out) {
+        if(!(aValue instanceof NVersion)){
+            return;
         }
-        if (NOut.isPlain()) {
-            if (isWorkspaceVersion()) {
-                out.print((NMsg.ofC("%s/%s", session.getWorkspace().getApiVersion(), session.getWorkspace().getRuntimeId().getVersion())));
-            } else {
-                out.print(NText.ofStyled(
-                        getVersion().toString(), NTextStyle.version()
-                ));
-            }
-        } else {
-            if (isWorkspaceVersion()) {
-                out.print(buildProps());
-            } else {
-                out.print(
-                        NText.ofStyled(
-                                getVersion().toString(), NTextStyle.version()
-                        )
-                );
-            }
+        if (isNtf()) {
+            out.print(
+                    NText.ofStyled(
+                            aValue.toString(), NTextStyle.version()
+                    )
+            );
+        }else{
+            out = out.setTerminalMode(NTerminalMode.FILTERED);
+            out.print(aValue.toString());
         }
     }
 
