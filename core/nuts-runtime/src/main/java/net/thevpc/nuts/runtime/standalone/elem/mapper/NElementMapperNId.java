@@ -4,7 +4,9 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.text.NFormats;
+import net.thevpc.nuts.io.NIO;
+import net.thevpc.nuts.text.NObjectWriter;
+import net.thevpc.nuts.text.NTexts;
 
 import java.lang.reflect.Type;
 
@@ -13,7 +15,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
     @Override
     public Object destruct(NId o, Type typeOfSrc, NElementFactoryContext context) {
         if (context.isNtf()) {
-            return NFormats.of(o).get().setNtf(true).format(o);
+            return NObjectWriter.of(o).setNtf(true).format(o);
         } else {
             return o.toString();
         }
@@ -25,7 +27,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
 //                NutsWorkspace ws = context.getSession().getWorkspace();
 //                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);
-            return NElement.ofString(NFormats.of(o).get().setNtf(true).format(o).toString());
+            return NElement.ofString(NObjectWriter.of(o).setNtf(true).format(o).toString());
         } else {
             return context.defaultCreateElement(o.toString(), null);
         }
