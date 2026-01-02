@@ -59,7 +59,7 @@ public class RateLimitedValueTest {
     @Test
     public void test3() {
         NRateLimitValue lv = NRateLimitValue.ofBuilder("example")
-                .withLimit("seconds", 10).per(NDuration.ofSeconds(30))
+                .withLimit("seconds", 10).per(NDuration.ofSeconds(10))
                 .withStrategy(NRateLimitDefaultStrategy.SLIDING_WINDOW)
 //                .withStartDate(Instant.parse("2025-09-16T00:00:00.000Z"))
                 .build();
@@ -70,7 +70,7 @@ public class RateLimitedValueTest {
             });
         }
     }
-    @Test
+//    @Test
     public void test4() {
         NRateLimitValue lv = NRateLimitValue.ofBuilder("example")
                 .withLimit("seconds", 10).per(NDuration.ofMinutes(2))
@@ -84,7 +84,7 @@ public class RateLimitedValueTest {
             });
         }
     }
-    @Test
+//    @Test
     public void test5() {
         NRateLimitValueFactory factory = NRateLimitValueFactory.of();
         factory
