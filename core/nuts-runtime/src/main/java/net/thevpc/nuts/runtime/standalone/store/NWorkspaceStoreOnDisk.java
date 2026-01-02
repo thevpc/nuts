@@ -7,12 +7,12 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceOptionsConfig;
 import net.thevpc.nuts.elem.NElementDescribables;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfig;
-import net.thevpc.nuts.text.NDescriptorFormat;
+import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
@@ -141,7 +141,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             return null;
         }
         try {
-            Map<String, Object> a_config0 = NElementParser.ofJson().parse(bytes, Map.class);
+            Map<String, Object> a_config0 = NElementReader.ofJson().read(bytes, Map.class);
             NVersion version = NVersion.get((String) a_config0.get("configVersion")).onBlankEmpty().orNull();
             if (version == null) {
                 version = NVersion.get((String) a_config0.get("createApiVersion")).onBlankEmpty().orNull();
@@ -167,7 +167,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         NPath path = NPath.ofIdStore(apiId, NStoreType.CONF)
                 .resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NWorkspaceConfigApi c = bytes == null ? null : NElementParser.ofJson().parse(bytes, NWorkspaceConfigApi.class);
+        NWorkspaceConfigApi c = bytes == null ? null : NElementReader.ofJson().read(bytes, NWorkspaceConfigApi.class);
 //        if (c != null) {
 //            c.setApiVersion(getApiVersion());
 //        }
@@ -180,7 +180,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         NPath path = NPath.ofIdStore(workspace.getRuntimeId(), NStoreType.CONF)
                 .resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NWorkspaceConfigRuntime c = bytes == null ? null : NElementParser.ofJson().parse(bytes, NWorkspaceConfigRuntime.class);
+        NWorkspaceConfigRuntime c = bytes == null ? null : NElementReader.ofJson().read(bytes, NWorkspaceConfigRuntime.class);
         return c;
     }
 
@@ -194,7 +194,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                         , NStoreType.CONF)
                 .resolve(CoreNConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NWorkspaceConfigSecurity c = bytes == null ? null : NElementParser.ofJson().parse(bytes, NWorkspaceConfigSecurity.class);
+        NWorkspaceConfigSecurity c = bytes == null ? null : NElementReader.ofJson().read(bytes, NWorkspaceConfigSecurity.class);
         return c;
     }
 
@@ -207,7 +207,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         NPath path = NPath.ofIdStore(apiId, NStoreType.CONF)
                 .resolve(CoreNConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NWorkspaceConfigMain c = bytes == null ? null : NElementParser.ofJson().parse(bytes, NWorkspaceConfigMain.class);
+        NWorkspaceConfigMain c = bytes == null ? null : NElementReader.ofJson().read(bytes, NWorkspaceConfigMain.class);
         return c;
     }
 
@@ -231,7 +231,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         if (file.isRegularFile() && file.getPermissions().contains(NPathPermission.CAN_READ)) {
             byte[] bytes = file.readBytes();
             try {
-                Map<String, Object> a_config0 = NElementParser.ofJson().parse(bytes, Map.class);
+                Map<String, Object> a_config0 = NElementReader.ofJson().read(bytes, Map.class);
                 NVersion version = NVersion.get((String) a_config0.get("configVersion")).orNull();
                 if (version == null || version.isBlank()) {
                     version = workspace.getApiVersion();
@@ -240,7 +240,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                 if (buildNumber < 506) {
 
                 }
-                conf = NElementParser.ofJson().parse(file, NRepositoryConfig.class);
+                conf = NElementReader.ofJson().read(file, NRepositoryConfig.class);
             } catch (RuntimeException ex) {
                 if (workspace.getBootOptions().getRecover().orElse(false)) {
                     onLoadRepositoryError(file, name, null, ex);
@@ -341,7 +341,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             @Override
             public InstallInfoConfig parseObject(NPath path) {
                 try {
-                    InstallInfoConfig u = NElementParser.ofJson().parse(path, InstallInfoConfig.class);
+                    InstallInfoConfig u = NElementReader.ofJson().read(path, InstallInfoConfig.class);
                     if (u != null && u.getId() != null) {
                         return loadInstallInfoConfig(u.getId());
                     }
@@ -379,7 +379,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 //        }
         if (path.isRegularFile()) {
             InstallInfoConfig c = NLock.ofIdPath(id, DefaultNInstalledRepository.NUTS_INSTALL_FILE).callWith(
-                    () -> NElementParser.ofJson().parse(path, InstallInfoConfig.class),
+                    () -> NElementReader.ofJson().read(path, InstallInfoConfig.class),
                     CoreNUtils.LOCK_TIME, CoreNUtils.LOCK_TIME_UNIT
             ).orNull();
             if (c != null) {
@@ -483,7 +483,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             path.mkParentDirs().writeString((String) value);
         } else if (value instanceof NDescriptor) {
             try {
-                NDescriptorFormat.of().setNtf(false).print((NDescriptor) value, path);
+                NDescriptorWriter.of().setNtf(false).print((NDescriptor) value, path);
             } catch (Exception ex) {
                 _LOG()
                         .log(NMsg.ofC("failed to print %s", path).asFineFail(ex));
@@ -504,7 +504,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             } else if (NDescriptor.class.equals(type)) {
                 return (T) NDescriptorParser.of().parse(path).orNull();
             } else {
-                return NElementParser.ofJson().parse(path, type);
+                return NElementReader.ofJson().read(path, type);
             }
         }
         return null;
