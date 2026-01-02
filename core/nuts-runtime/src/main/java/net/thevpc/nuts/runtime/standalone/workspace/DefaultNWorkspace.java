@@ -1455,8 +1455,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         .to(bootstrapFolder.resolve(this.getDefaultIdBasedir(id2))
                                 .resolve(this.getDefaultIdFilename(id2.builder().setFaceContent().setPackaging("jar").build()))
                         ).run();
-                NDescriptorFormat.of(NFetch.of(id2).setDependencyFilter(dependencyRunFilter).getResultDescriptor()).setNtf(false)
-                        .print(bootstrapFolder.resolve(this.getDefaultIdBasedir(id2))
+                NDescriptorFormat.of().setNtf(false)
+                        .print(NFetch.of(id2).setDependencyFilter(dependencyRunFilter).getResultDescriptor(), bootstrapFolder.resolve(this.getDefaultIdBasedir(id2))
                                 .resolve(this.getDefaultIdFilename(id2.builder().setFaceDescriptor().build())));
 
                 Map<String, String> pr = new LinkedHashMap<>();
