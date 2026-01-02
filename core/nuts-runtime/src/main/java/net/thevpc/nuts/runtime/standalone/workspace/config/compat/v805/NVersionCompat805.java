@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v805;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
@@ -15,7 +15,7 @@ public class NVersionCompat805 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigBoot parseConfig(byte[] bytes) {
-        return bytes==null?null: NElementParser.ofJson().parse(bytes, NWorkspaceConfigBoot.class);
+        return bytes==null?null: NElementReader.ofJson().read(bytes, NWorkspaceConfigBoot.class);
     }
 
     @Override
