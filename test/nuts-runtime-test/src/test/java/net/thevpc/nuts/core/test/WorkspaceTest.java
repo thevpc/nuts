@@ -504,7 +504,7 @@ public class WorkspaceTest {
         NWorkspace ws2=TestUtils.runExistingTestWorkspace("--system-conf-home", new File(base, "system.conf.ignored").getPath(),
                 "info").share();
         TestUtils.println("==========================");
-        NInfoCmd.of().println();
+        NInfoCmd.of().run();
         TestUtils.println("==========================");
         TestUtils.println(new File(base, "system.bin").getPath());
         NWorkspace workspace = NWorkspace.of();
