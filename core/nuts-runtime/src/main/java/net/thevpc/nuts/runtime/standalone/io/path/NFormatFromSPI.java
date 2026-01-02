@@ -18,7 +18,7 @@ public class NFormatFromSPI extends DefaultFormatBase<NFormat> {
     }
 
     @Override
-    public void print(NPrintStream out) {
+    public void print(Object aValue, NPrintStream out) {
         spi.print(out);
     }
 
