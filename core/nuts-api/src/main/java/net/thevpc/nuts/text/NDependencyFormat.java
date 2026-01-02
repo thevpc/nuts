@@ -42,10 +42,6 @@ import java.util.List;
  */
 public interface NDependencyFormat extends NFormat, NComponent {
 
-    static NDependencyFormat of(NDependency value) {
-        return of().setValue(value);
-    }
-
     static NDependencyFormat of() {
         return NExtensions.of(NDependencyFormat.class);
     }
@@ -59,7 +55,6 @@ public interface NDependencyFormat extends NFormat, NComponent {
 
     /**
      * if true omit (do not include) repository when formatting the value
-     * set using {@link #setValue(NDependency)} .
      *
      * @param omitRepository new value
      * @return {@code this} instance
@@ -75,7 +70,6 @@ public interface NDependencyFormat extends NFormat, NComponent {
 
     /**
      * if true omit (do not include) group when formatting the value
-     * set using {@link #setValue(NDependency)} .
      *
      * @param omitGroup new value
      * @return {@code this} instance
@@ -91,7 +85,6 @@ public interface NDependencyFormat extends NFormat, NComponent {
 
     /**
      * if true omit (do not include) group (if the group is imported) when formatting the value
-     * set using {@link #setValue(NDependency)} .
      *
      * @param omitEnv new value
      * @return {@code this} instance
@@ -107,7 +100,6 @@ public interface NDependencyFormat extends NFormat, NComponent {
 
     /**
      * if true omit (do not include) query (scope and optional) when formatting the value
-     * set using {@link #setValue(NDependency)} .
      *
      * @param value new value
      * @return {@code this} instance
@@ -123,7 +115,6 @@ public interface NDependencyFormat extends NFormat, NComponent {
 
     /**
      * if true omit (do not include) face when formatting the value
-     * set using {@link #setValue(NDependency)} .
      *
      * @param value new value
      * @return {@code this} instance
@@ -139,7 +130,6 @@ public interface NDependencyFormat extends NFormat, NComponent {
 
     /**
      * if true omit (do not include) face when formatting the value
-     * set using {@link #setValue(NDependency)} .
      *
      * @param value new value
      * @return {@code this} instance
@@ -155,7 +145,6 @@ public interface NDependencyFormat extends NFormat, NComponent {
 
     /**
      * if true omit (do not include) face when formatting the value
-     * set using {@link #setValue(NDependency)} .
      *
      * @param value new value
      * @return {@code this} instance
@@ -179,7 +168,6 @@ public interface NDependencyFormat extends NFormat, NComponent {
 
     /**
      * if true omit (do not include) query property named {@code name} when formatting the value
-     * set using {@link #setValue(NDependency)} .
      *
      * @param name  property name
      * @param value new value
@@ -197,29 +185,11 @@ public interface NDependencyFormat extends NFormat, NComponent {
 
     /**
      * if true omit (do not include) name space when formatting the value
-     * set using {@link #setValue(NDependency)} .
      *
      * @param highlightImportedGroup new value
      * @return {@code this} instance
      */
     NDependencyFormat setHighlightImportedGroup(boolean highlightImportedGroup);
-
-    /**
-     * return current value to format
-     *
-     * @return current value to format
-     * @since 0.5.6
-     */
-    NDependency getValue();
-
-    /**
-     * value dependency to format
-     *
-     * @param dependency dependency to format
-     * @return {@code this} instance
-     * @since 0.5.6
-     */
-    NDependencyFormat setValue(NDependency dependency);
 
     /**
      * configure the current command with the given arguments. This is an
