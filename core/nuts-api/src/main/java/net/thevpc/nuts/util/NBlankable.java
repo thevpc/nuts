@@ -13,13 +13,13 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
@@ -30,6 +30,7 @@ import net.thevpc.nuts.internal.NApiUtilsRPI;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Capable of being blank
@@ -114,6 +115,14 @@ public interface NBlankable {
 
     static <T> T firstNonBlank(T... values) {
         return firstNonBlank(values == null ? null : Arrays.asList(values));
+    }
+
+    static <T> T firstNonBlankLazy(T first, Supplier<T>... suppliers) {
+        return NUtils.firstMatchingLazy(NBlankable::isNonBlank, first, suppliers);
+    }
+
+    static <T> T firstNonBlankLazy(Supplier<T>... suppliers) {
+        return NUtils.firstMatchingLazy(NBlankable::isNonBlank, suppliers);
     }
 
     static <T> T firstNonBlank(List<? extends T> values) {
