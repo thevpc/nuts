@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetchMode;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.expr.NParseException;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
@@ -167,7 +167,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
             case NUTS: {
                 try {
                     Reader rr = new InputStreamReader(in);
-                    return NElementParser.ofJson().parse(rr, NDescriptor.class);
+                    return NElementReader.ofJson().read(rr, NDescriptor.class);
                 } finally {
                     if (closeStream) {
                         try {
