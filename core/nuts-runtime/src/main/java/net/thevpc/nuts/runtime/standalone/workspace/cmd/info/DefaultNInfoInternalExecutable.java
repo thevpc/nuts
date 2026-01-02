@@ -41,8 +41,7 @@ public class DefaultNInfoInternalExecutable extends DefaultInternalNExecutableCo
                 return NExecutionException.SUCCESS;
 
             }
-            NPrintStream out = finalSession.out();
-            NInfoCmd.of().configure(false, args).println(out);
+            NInfoCmd.of().configure(false, args).run();
             return NExecutionException.SUCCESS;
         });
     }
