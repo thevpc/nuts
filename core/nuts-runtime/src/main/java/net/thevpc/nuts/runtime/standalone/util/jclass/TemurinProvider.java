@@ -54,7 +54,7 @@ public class TemurinProvider implements JavaProvider {
                 if (singleRoot.size() == 1) {
                     NPath finalFolder = singleRoot.get(0).resolveSibling("dist");
                     singleRoot.get(0).moveTo(finalFolder);
-                    NElementFormat.ofPlainTson()
+                    NElementWriter.ofPlainTson()
                             .print(NElement.ofObjectBuilder()
                                     .add("vendor", getName())
                                     .add("version", String.valueOf(version))
@@ -82,7 +82,7 @@ public class TemurinProvider implements JavaProvider {
             NOsFamily os,
             NArchFamily arch
     ) {
-        NElement elem = NElementParser.ofJson().parse(NPath.of("https://api.adoptium.net/v3/assets/feature_releases/" + version + "/ga"));
+        NElement elem = NElementReader.ofJson().read(NPath.of("https://api.adoptium.net/v3/assets/feature_releases/" + version + "/ga"));
         String acceptableOs = "";
         switch (os) {
             case WINDOWS: {
