@@ -24,12 +24,32 @@ import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.runtime.standalone.format.impl.NChronometerNFormatSPI;
 import net.thevpc.nuts.time.NDuration;
 
+import java.util.function.Function;
+
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NFormatsImpl implements NFormats {
     private NClassMap<NFormatMapper> mapper = new NClassMap<>(NFormatMapper.class);
 
     public NFormatsImpl() {
         registerDefaults();
+    }
+
+    private void registerConverter(Class clz, Function<Object, Object> mapper) {
+        register(clz, new NFormatMapperBridge() {
+            @Override
+            Object convert(Object o) {
+                return mapper.apply(o);
+            }
+        });
+    }
+
+    private void registerToFormatSPI(Class clz, Function<Object, NFormatSPI> mapper) {
+        register(clz, new NFormatMapperFromSPI() {
+            @Override
+            NFormatSPI toSpi(Object o) {
+                return mapper.apply(o);
+            }
+        });
     }
 
     private void register(Class clz, NFormatMapper mapper) {
@@ -60,67 +80,91 @@ public class NFormatsImpl implements NFormats {
     }
 
     private void registerDefaults() {
-        register(NExec.class, (o, f) -> NExecFormat.of().setValue((NExec) o));
+        register(NExec.class, (o, f) -> NExecFormat.of());
 
-        register(NVersion.class, (o, f) -> NVersionFormat.of().setVersion((NVersion) o));
+        register(NVersion.class, (o, f) -> NVersionFormat.of());
 
-        register(NId.class, (o, f) -> NIdFormat.of().setValue((NId) o));
-        register(NIdBuilder.class, (o, f) -> NIdFormat.of().setValue(((NIdBuilder) o).build()));
+        register(NId.class, (o, f) -> NIdFormat.of());
+        registerConverter(NIdBuilder.class, o -> ((NIdBuilder) o).build());
 
-        register(NDescriptor.class, (o, f) -> NDescriptorFormat.of().setValue((NDescriptor) o));
-        register(NDescriptorBuilder.class, (o, f) -> NDescriptorFormat.of().setValue(((NDescriptorBuilder) o).build()));
+        register(NDescriptor.class, (o, f) -> NDescriptorFormat.of());
+        registerConverter(NDescriptorBuilder.class, o -> ((NDescriptorBuilder) o).build());
 
-        register(NDependency.class, (o, f) -> NDependencyFormat.of().setValue((NDependency) o));
-        register(NDependencyBuilder.class, (o, f) -> NDependencyFormat.of().setValue(((NDependencyBuilder) o).build()));
+        register(NDependency.class, (o, f) -> NDependencyFormat.of());
+        registerConverter(NDependencyBuilder.class, o -> ((NDependencyBuilder) o).build());
 
-        register(NCmdLine.class, (o, f) -> NCmdLineFormat.of().setValue((NCmdLine) o));
+        register(NCmdLine.class, (o, f) -> NCmdLineFormat.of());
 
-        register(NCompressedPath.class, (o, f) -> new NCompressedPath.MyPathFormat((NCompressedPath) o));
-        register(NCompressedPathBase.class, (o, f) -> new NCompressedPathBase.MyPathFormat((NCompressedPathBase) o));
-        register(NPathBase.class, (o, f) -> new NPathBase.PathFormat((NPathBase) o));
+        register(NCompressedPath.class, (o, f) -> new NCompressedPath.MyPathFormat());
+        register(NCompressedPathBase.class, (o, f) -> new NCompressedPathBase.MyPathFormat());
+        register(NPathBase.class, (o, f) -> new NPathBase.PathFormat());
 
         register(NFormatSPI.class, (o, f) -> NFormat.of(((NFormatSPI) o)));
-        register(NChronometer.class, (o, f) -> NFormat.of(new NChronometerNFormatSPI((NChronometer) o)));
-        register(NDuration.class, (o, f) -> NFormat.of(new NDurationFormatSPI((NDuration) o)));
-        register(NByteArrayPrintStream.MyAbstractMultiReadNInputSource.class, (o, f) ->
-                f.ofFormat(((NByteArrayPrintStream.MyAbstractMultiReadNInputSource) o).getValue()).get());
-        register(InputStreamExt.class, (o, f) ->
-                NFormat.of(new NContentMetadataProviderFormatSPI((InputStreamExt) o, ((InputStreamExt) o).getSourceName(), "input-stream")));
-        register(InputStreamTee.class, (o, f) ->
-                NFormat.of(new NContentMetadataProviderFormatSPI((InputStreamTee) o, null, "input-stream-tee")));
-        register(OutputStreamExt.class, (o, f) ->
-                NFormat.of(new NContentMetadataProviderFormatSPI((OutputStreamExt) o, null, "output-stream")));
-        register(NNonBlockingInputStreamAdapter.class, (o, f) ->
-                NFormat.of(new NContentMetadataProviderFormatSPI((NNonBlockingInputStreamAdapter) o, ((NNonBlockingInputStreamAdapter) o).getSourceName(), "input-stream")));
-        register(NInputStreamSource.class, (o, f) ->
-                NFormat.of(new NContentMetadataProviderFormatSPI((NInputStreamSource) o, null, "input-stream")));
-        register(NPrintStream.class, (o, f) ->
-                NFormat.of(new NContentMetadataProviderFormatSPI(((NPrintStream)o), null, "print-stream")));
-        register(OutputTargetExt.class, (o, f) ->
-                NFormat.of(new NContentMetadataProviderFormatSPI((OutputTargetExt) o,((OutputTargetExt) o).getSourceName(), "output-stream")));
-        register(OutputTargetExt.class, (o, f) ->
-                NFormat.of(new NContentMetadataProviderFormatSPI((OutputTargetExt) o,((OutputTargetExt) o).getSourceName(), "output-stream")));
+        registerToFormatSPI(NChronometer.class, o -> new NChronometerNFormatSPI((NChronometer) o));
+        registerToFormatSPI(NDuration.class, o -> new NDurationFormatSPI((NDuration) o));
+        registerConverter(NByteArrayPrintStream.MyAbstractMultiReadNInputSource.class, o -> ((NByteArrayPrintStream.MyAbstractMultiReadNInputSource) o).getValue());
+        registerToFormatSPI(InputStreamExt.class, o->new NContentMetadataProviderFormatSPI((InputStreamExt) o, ((InputStreamExt) o).getSourceName(), "input-stream"));
+        registerToFormatSPI(InputStreamTee.class, o ->new NContentMetadataProviderFormatSPI((InputStreamTee) o, null, "input-stream-tee"));
+        registerToFormatSPI(OutputStreamExt.class, o -> new NContentMetadataProviderFormatSPI((OutputStreamExt) o, null, "output-stream"));
+        registerToFormatSPI(NNonBlockingInputStreamAdapter.class, o -> new NContentMetadataProviderFormatSPI((NNonBlockingInputStreamAdapter) o, ((NNonBlockingInputStreamAdapter) o).getSourceName(), "input-stream"));
+        registerToFormatSPI(NInputStreamSource.class,o -> new NContentMetadataProviderFormatSPI((NInputStreamSource) o, null, "input-stream"));
+        registerToFormatSPI(NPrintStream.class, o -> new NContentMetadataProviderFormatSPI(((NPrintStream) o), null, "print-stream"));
+        registerToFormatSPI(OutputTargetExt.class,o ->new NContentMetadataProviderFormatSPI((OutputTargetExt) o, ((OutputTargetExt) o).getSourceName(), "output-stream"));
+        registerToFormatSPI(OutputTargetExt.class, o-> new NContentMetadataProviderFormatSPI((OutputTargetExt) o, ((OutputTargetExt) o).getSourceName(), "output-stream"));
 
-        register(DefaultNDigest.NDescriptorInputSource.class, (o, f) -> NFormat.of(new NDescriptorInputSourceFormatSPI((DefaultNDigest.NDescriptorInputSource) o)));
+        registerToFormatSPI(DefaultNDigest.NDescriptorInputSource.class, o -> new NDescriptorInputSourceFormatSPI((DefaultNDigest.NDescriptorInputSource) o));
 
-        register(NPathFromSPI.class, (o, f) ->
-        {
-            NPathFromSPI b=(NPathFromSPI) o;
-            NPathSPI base = ((NPathFromSPI) o).getBase();
-            NFormatSPI fspi = null;
-            if (NUseDefaultUtils.isUseDefault(base.getClass(), "formatter", NPath.class)) {
-            } else {
-                fspi = base.formatter(b);
-            }
-            if (fspi != null) {
-                return new NFormatFromSPI(fspi);
-            }
-            return new NPathBase.PathFormat((NPathBase) o);
-        });
+        register(NPathFromSPI.class, (o, f) -> new NFormatAdapter() {
+                    @Override
+                    public NFormatAndValue<Object, NFormat> getBase(Object aValue) {
+                        NPathFromSPI b = (NPathFromSPI) o;
+                        NPathSPI base = ((NPathFromSPI) o).getBase();
+                        NFormatSPI fspi = null;
+                        if (NUseDefaultUtils.isUseDefault(base.getClass(), "formatter", NPath.class)) {
+                        } else {
+                            fspi = base.formatter(b);
+                        }
+                        if (fspi != null) {
+                            return new NFormatAndValue<>(fspi, new NFormatFromSPI(fspi));
+                        }
+                        return new NFormatAndValue<>((NPathBase) o, new NPathBase.PathFormat());
+                    }
+                }
+        );
     }
 
     private interface NFormatMapper {
         NFormat ofFormat(Object t, NFormats texts);
+    }
+
+    private abstract class NFormatMapperFromSPI implements NFormatMapper {
+        abstract NFormatSPI toSpi(Object o);
+
+        @Override
+        public NFormat ofFormat(Object t, NFormats texts) {
+            return new NFormatAdapter() {
+                @Override
+                public NFormatAndValue<Object, NFormat> getBase(Object aValue) {
+                    NFormatSPI spi = toSpi(aValue);
+                    return new NFormatAndValue<>(spi, NFormat.of(spi));
+                }
+            };
+        }
+    }
+
+    private abstract class NFormatMapperBridge implements NFormatMapper {
+        abstract Object convert(Object o);
+
+        @Override
+        public NFormat ofFormat(Object t, NFormats texts) {
+            return new NFormatAdapter() {
+                @Override
+                public NFormatAndValue<Object, NFormat> getBase(Object aValue) {
+                    Object spi = convert(aValue);
+                    return new NFormatAndValue<>(spi, texts.ofFormat(spi).get());
+                }
+            };
+        }
     }
 
 }
