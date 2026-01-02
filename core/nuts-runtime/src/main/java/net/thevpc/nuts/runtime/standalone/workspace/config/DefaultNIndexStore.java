@@ -32,7 +32,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 
 import net.thevpc.nuts.core.NIndexStore;
 
@@ -78,7 +78,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
 //                , NutsUtilStrings.trim(id.getAlternative())
                     );
                     try {
-                        Map[] array = NElementParser.ofJson().parse(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
+                        Map[] array = NElementReader.ofJson().read(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
                         return Arrays.stream(array)
                                 .map(s -> NId.get(s.get("stringId").toString()).get())
                                 .collect(Collectors.toList()).iterator();
@@ -105,7 +105,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                     }
                     String uu = getIndexURL().resolve(NConstants.Folders.ID) + "?repositoryUuid=" + getRepository().getUuid();
                     try {
-                        Map[] array = NElementParser.ofJson().parse(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
+                        Map[] array = NElementReader.ofJson().read(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
                         return Arrays.stream(array)
                                 .map(s -> NId.get(s.get("stringId").toString()).get())
                                 .filter(new NDefinitionFilterToNIdPredicate2(filter))
