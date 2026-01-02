@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.artifact.NIdFormat;
+import net.thevpc.nuts.artifact.NIdWriter;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
@@ -42,13 +42,13 @@ public class NFetchDisplayOptions {
         NDisplayProperty.ID
     };
 
-    private NIdFormat idFormat;
+    private NIdWriter idFormat;
     private List<NDisplayProperty> displays = new ArrayList<>();
     private boolean dependencies;
     private boolean content;
 
     public NFetchDisplayOptions() {
-        this.idFormat = NIdFormat.of();
+        this.idFormat = NIdWriter.of();
         this.idFormat.setHighlightImportedGroupId(true);
         this.idFormat.setOmitOtherProperties(true);
         this.idFormat.setOmitFace(true);
@@ -77,11 +77,11 @@ public class NFetchDisplayOptions {
         return this;
     }
 
-    public void setIdFormat(NIdFormat idFormat) {
+    public void setIdFormat(NIdWriter idFormat) {
         this.idFormat = idFormat;
     }
 
-    public NIdFormat getIdFormat() {
+    public NIdWriter getIdFormat() {
         return idFormat;
     }
 
