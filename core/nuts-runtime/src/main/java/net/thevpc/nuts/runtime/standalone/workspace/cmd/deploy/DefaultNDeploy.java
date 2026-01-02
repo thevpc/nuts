@@ -13,7 +13,7 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryDisabledException;
 import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.core.NRepositoryNotFoundException;
-import net.thevpc.nuts.text.NDescriptorFormat;
+import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
@@ -199,7 +199,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                         descriptor = descriptor2;
                     } else {
                         if (descriptor2 != null && !descriptor2.equals(descriptor)) {
-                            NDescriptorFormat.of().print(descriptor, descFile);
+                            NDescriptorWriter.of().print(descriptor, descFile);
                         }
                     }
                     if (descriptor != null) {
