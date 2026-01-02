@@ -20,7 +20,7 @@ import net.thevpc.nuts.elem.NObjectElement;
 
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
-import net.thevpc.nuts.text.NDescriptorFormat;
+import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNContentEvent;
@@ -437,7 +437,7 @@ public class NRepositoryFolderHelper {
         }
         return NLock.ofId(id).callWith(() -> {
 
-            NDescriptorFormat.ofPlain().print(desc, descFile);
+            NDescriptorWriter.ofPlain().print(desc, descFile);
             byte[] bytes = NDigest.of().sha1().setSource(desc).computeString().getBytes();
             NCp.of()
                     .from(NInputSource.of(
