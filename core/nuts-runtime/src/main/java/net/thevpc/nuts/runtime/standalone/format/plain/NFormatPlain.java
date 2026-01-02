@@ -30,23 +30,12 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
     private final String rootName = "";
     private final List<String> extraConfig = new ArrayList<>();
     private final Map<String, String> multilineProperties = new HashMap<>();
-    private Object value;
     private boolean compact;
 
     public NFormatPlain() {
         super(NContentType.PLAIN.id() + "-format");
     }
 
-    @Override
-    public Object getValue() {
-        return value;
-    }
-
-    @Override
-    public NContentTypeFormat setValue(Object value) {
-        this.value = value;
-        return this;
-    }
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
@@ -85,9 +74,8 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
     }
 
     @Override
-    public void print(NPrintStream w) {
-        Object value = getValue();
-        NText t = NText.of(value);
+    public void print(Object aValue, NPrintStream w) {
+        NText t = NText.of(aValue);
         {
             NPrintStream out = getValidPrintStream(w);
             out.print(t);
