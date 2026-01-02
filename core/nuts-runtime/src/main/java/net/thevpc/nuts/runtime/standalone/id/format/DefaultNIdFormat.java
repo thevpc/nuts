@@ -30,7 +30,6 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
     private boolean omitExclusion;
     private boolean highlightImportedGroup;
     private Set<String> omittedProperties = new HashSet<>();
-    private NId id;
 
     public DefaultNIdFormat() {
         super("id-format");
@@ -148,24 +147,14 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
     }
 
     @Override
-    public NId getValue() {
-        return id;
-    }
-
-    @Override
-    public NIdFormat setValue(NId id) {
-        this.id = id;
-        return this;
-    }
-
-    @Override
-    public NText format() {
-        if (id == null) {
+    public NText format(Object aValue) {
+        if (aValue == null) {
             return isNtf() ?
                     NText.ofStyled("<null>", NTextStyle.of(NTextStyleType.BOOLEAN))
                     : NText.ofPlain("<null>")
                     ;
         }
+        NId id=(NId)aValue;
         Map<String, String> queryMap = id.getProperties();
         String scope = queryMap.remove(NConstants.IdProperties.SCOPE);
         String optional = queryMap.remove(NConstants.IdProperties.OPTIONAL);
@@ -318,8 +307,8 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
     }
 
     @Override
-    public void print(NPrintStream out) {
-        out.print(format());
+    public void print(Object aValue, NPrintStream out) {
+        out.print(format(aValue));
     }
 
     @Override
@@ -331,7 +320,6 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
                 + ", omitProperties=" + omitProperties
                 + ", highlightImportedGroup=" + highlightImportedGroup
                 + ", omittedProperties=" + omittedProperties
-                + ", id=" + id
                 + '}';
     }
 
