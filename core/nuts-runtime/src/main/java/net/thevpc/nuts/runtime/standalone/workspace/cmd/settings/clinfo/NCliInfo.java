@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo;
 
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.platform.NPlatformHome;
@@ -21,7 +21,7 @@ public class NCliInfo {
         Map m = null;
         if (Files.exists(userConfig)) {
             try {
-                m = NElementParser.ofJson().parse(userConfig, Map.class);
+                m = NElementReader.ofJson().read(userConfig, Map.class);
             } catch (Exception ex) {/*IGNORE*/
             }
             if (m != null) {
