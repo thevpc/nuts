@@ -44,10 +44,6 @@ import java.util.List;
  * @since 0.5.4
  */
 public interface NIdFormat extends NFormat, NComponent {
-    static NIdFormat of(NId id) {
-        return of().setValue(id);
-    }
-
     static NIdFormat of() {
         return NExtensions.of(NIdFormat.class);
     }
@@ -160,30 +156,12 @@ public interface NIdFormat extends NFormat, NComponent {
 
     /**
      * if true omit (do not include) query property named {@code name} when formatting the value
-     * set using {@link #setValue(NId)} .
      *
      * @param name  property name
      * @param value new value
      * @return {@code this} instance
      */
     NIdFormat setOmitProperty(String name, boolean value);
-
-    /**
-     * id to format
-     *
-     * @return id to format
-     * @since 0.5.6
-     */
-    NId getValue();
-
-    /**
-     * id to format
-     *
-     * @param id id to format
-     * @return {@code this} instance
-     * @since 0.5.6
-     */
-    NIdFormat setValue(NId id);
 
 
     /**
