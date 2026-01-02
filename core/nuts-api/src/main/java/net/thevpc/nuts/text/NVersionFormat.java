@@ -42,9 +42,6 @@ public interface NVersionFormat extends NFormat, NComponent {
         return NExtensions.of(NVersionFormat.class);
     }
 
-    static NVersionFormat of(NVersion version) {
-        return of().setVersion(version);
-    }
 
     @Override
     NVersionFormat setNtf(boolean ntf);
@@ -52,27 +49,4 @@ public interface NVersionFormat extends NFormat, NComponent {
     NVersionFormat addProperty(String key, String value);
 
     NVersionFormat addProperties(Map<String, String> p);
-
-    /**
-     * return version set by {@link #setVersion(NVersion) }
-     *
-     * @return version set by {@link #setVersion(NVersion) }
-     */
-    NVersion getVersion();
-
-    /**
-     * set version to print. if null, workspace version will be considered.
-     *
-     * @param version version to print
-     * @return {@code this} instance
-     */
-    NVersionFormat setVersion(NVersion version);
-
-    /**
-     * return true if version is null (default). In such case, workspace version
-     * is considered.
-     *
-     * @return true if version is null (default)
-     */
-    boolean isWorkspaceVersion();
 }
