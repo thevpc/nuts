@@ -8,7 +8,7 @@ package net.thevpc.nuts.core.test.log;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogContext;
+import net.thevpc.nuts.log.NLogScope;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.text.NMsg;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,8 +28,8 @@ public class LogTest {
     @Test
     public void test() {
         NLogs.of()
-                .runWith(
-                        NLogContext.of()
+                .runInScope(
+                        NLogScope.of()
                                 .withMessagePrefix(NMsg.ofC("[My Application]"))
                                 .withPlaceholder("module", "Test Module")
                                 .withPlaceholder("user", "Adam")
@@ -37,8 +37,8 @@ public class LogTest {
                         () -> {
                             OtherClass.doThis();
                             NLogs.of()
-                                    .runWith(
-                                            NLogContext.ofMessagePrefix(NMsg.ofC("[Nested] [%s]", NMsg.placeholder("module")))
+                                    .runInScope(
+                                            NLogScope.of().withMessagePrefix(NMsg.ofC("[Nested] [%s]", NMsg.placeholder("module")))
                                                     .withPlaceholder("action", "computation")
                                                     .withLog(message -> {
                                                         NOut.println(NMsg.ofC("[SCOPED] %s", message));
