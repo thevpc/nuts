@@ -9,7 +9,7 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.util.NScorableContext;
@@ -59,7 +59,7 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public NFormatSPI formatter(NPath basePath) {
+    public NObjectWriterSPI formatter(NPath basePath) {
         return new MyPathFormat(this);
     }
 
@@ -857,7 +857,7 @@ public class FilePath implements NPathSPI {
         return NStream.ofIterator(new ReverseLineReaderIterator(file, actualCharset, 4096 * 10 /*max line length*/));
     }
 
-    private static class MyPathFormat implements NFormatSPI {
+    private static class MyPathFormat implements NObjectWriterSPI {
 
         private final FilePath p;
 
