@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.standalone.text.util;
 
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.text.NFormattable;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.*;
@@ -52,8 +51,8 @@ public class NTextUtils {
         if (o == null) {
             return txt.ofBlank();
         }
-        if (o instanceof NFormattable) {
-            return txt.of(o);
+        if (o instanceof NFormatted) {
+            return ((NFormatted) o).format();
         }
         if (o instanceof NPrimitiveElement) {
             o = ((NPrimitiveElement) o).asLiteral().asObject().orNull();
