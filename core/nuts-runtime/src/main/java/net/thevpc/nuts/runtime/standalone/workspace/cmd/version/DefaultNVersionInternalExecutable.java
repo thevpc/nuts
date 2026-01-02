@@ -9,7 +9,7 @@ import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
-import net.thevpc.nuts.text.NVersionFormat;
+import net.thevpc.nuts.text.NVersionWriter;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
@@ -38,7 +38,7 @@ public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutabl
             return NExecutionException.SUCCESS;
         }
         NPrintStream out = session.out();
-        NVersionFormat.of().configure(false, args).println(NWorkspace.of().getRuntimeId().getVersion(), out);
+        NVersionWriter.of().configure(false, args).println(NWorkspace.of().getRuntimeId().getVersion(), out);
         return NExecutionException.SUCCESS;
     }
 
