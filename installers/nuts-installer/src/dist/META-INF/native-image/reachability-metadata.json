@@ -1522,15 +1522,6 @@
       ]
     },
     {
-      "type": "java.lang.Thread",
-      "methods": [
-        {
-          "name": "yield",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
       "type": "sun.awt.SunHints",
       "fields": [
         {
