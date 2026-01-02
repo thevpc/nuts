@@ -10,12 +10,12 @@ import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.spi.NExecTargetCommandContext;
 import net.thevpc.nuts.spi.NExecTargetSPI;
-import net.thevpc.nuts.text.NDescriptorFormat;
+import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -84,7 +84,7 @@ public class RemoteConnectionStringInfo {
             remoteJar.set(remoteJarPath);
         }
         if (copy(apiLocalPath, remoteJarPath)) {
-            NDescriptorFormat.of().setNtf(false).print(
+            NDescriptorWriter.of().setNtf(false).print(
                     def.getDescriptor(), remoteRepo.resolve(id.getMavenPath("nuts")).mkParentDirs()
             );
             return true;
@@ -255,8 +255,8 @@ public class RemoteConnectionStringInfo {
                         .setPath(pHome.getHome() + "/ws/" + workspaceName + "/" + NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)
                         .toString());
                 if (rpath.isRegularFile()) {
-                    workspaceJson = NElementParser.ofJson()
-                            .parse(
+                    workspaceJson = NElementReader.ofJson()
+                            .read(
                                     rpath
                             );
                 }
