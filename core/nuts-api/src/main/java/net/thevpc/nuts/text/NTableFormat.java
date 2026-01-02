@@ -38,12 +38,8 @@ public interface NTableFormat extends NContentTypeFormat {
        return NExtensions.of(NTableFormat.class);
     }
 
-    NTableModel getModel();
-
-    @Override
-    NTableFormat setValue(Object value);
-
-    /**
+    NTableModel getModel(Object aValue);
+/**
      * configure the current command with the given arguments. This is an
      * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
