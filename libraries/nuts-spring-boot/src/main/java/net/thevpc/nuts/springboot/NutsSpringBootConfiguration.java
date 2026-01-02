@@ -20,7 +20,6 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NLibPaths;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NReflect;
-import net.thevpc.nuts.text.NFormats;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
@@ -125,13 +124,6 @@ public class NutsSpringBootConfiguration {
     public NIO nutsIO(@Autowired ApplicationArguments applicationArguments) {
         return nutsSession(applicationArguments).callWith(() -> {
             return NIO.of();
-        });
-    }
-
-    @Bean
-    public NFormats nutsFormats(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(() -> {
-            return NFormats.of();
         });
     }
 
