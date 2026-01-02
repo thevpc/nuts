@@ -107,7 +107,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             throw new NArtifactNotFoundException(command.getId());
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
-        NDescriptorFormat.of(desc).print(new OutputStreamWriter(descStream));
+        NDescriptorFormat.of().print(desc, new OutputStreamWriter(descStream));
         NWebCli nWebCli = NWebCli.of();
         nWebCli.req().POST()
                 .setUrl(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart()))
