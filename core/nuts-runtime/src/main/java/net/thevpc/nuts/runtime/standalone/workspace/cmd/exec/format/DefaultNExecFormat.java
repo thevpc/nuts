@@ -28,9 +28,8 @@ public class DefaultNExecFormat extends DefaultFormatBase<NExecFormat> implement
     private boolean redirectInput=true;
     private boolean redirectOutput=true;
     private boolean redirectError=true;
-    private NExec value;
 
-    public DefaultNExecFormat(NWorkspace workspace) {
+    public DefaultNExecFormat() {
         super("exec-command");
     }
 
@@ -67,16 +66,6 @@ public class DefaultNExecFormat extends DefaultFormatBase<NExecFormat> implement
         return this;
     }
 
-    @Override
-    public NExec getValue() {
-        return value;
-    }
-
-    @Override
-    public NExecFormat setValue(NExec value) {
-        this.value = value;
-        return this;
-    }
 
     @Override
     public Predicate<ArgEntry> getArgumentFilter() {
@@ -123,9 +112,9 @@ public class DefaultNExecFormat extends DefaultFormatBase<NExecFormat> implement
     }
 
     @Override
-    public void print(NPrintStream out) {
+    public void print(Object aValue, NPrintStream out) {
         StringBuilder sb = new StringBuilder();
-        NExec ec = getValue();
+        NExec ec = (NExec) aValue;
         NExecOutput _out = ec.getOut();
         NExecOutput err = ec.getErr();
         NExecInput in = ec.getIn();
