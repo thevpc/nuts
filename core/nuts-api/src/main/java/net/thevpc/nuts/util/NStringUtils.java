@@ -300,6 +300,26 @@ public class NStringUtils {
         return null;
     }
 
+    public static String firstNonBlankTrimmedToNull(String a, String b) {
+        if (!NBlankable.isBlank(a)) {
+            return trimToNull(a);
+        }
+        if (!NBlankable.isBlank(b)) {
+            return trimToNull(b);
+        }
+        return null;
+    }
+
+    public static String firstNonBlankTrimmed(String a, String b) {
+        if (!NBlankable.isBlank(a)) {
+            return trim(a);
+        }
+        if (!NBlankable.isBlank(b)) {
+            return trim(b);
+        }
+        return "";
+    }
+
     public static String firstNonBlank(String a, String b) {
         if (!NBlankable.isBlank(a)) {
             return a;
@@ -312,6 +332,36 @@ public class NStringUtils {
 
     public static String firstNonBlank(String... values) {
         return firstNonBlank(values == null ? null : Arrays.asList(values));
+    }
+
+    public static String firstNonBlankTrimmed(String... values) {
+        return firstNonBlankTrimmed(values == null ? null : Arrays.asList(values));
+    }
+
+    public static String firstNonBlankTrimmedToNull(String... values) {
+        return firstNonBlankTrimmedToNull(values == null ? null : Arrays.asList(values));
+    }
+
+    public static String firstNonBlankTrimmedToNull(List<String> values) {
+        if (values != null) {
+            for (String value : values) {
+                if (!NBlankable.isBlank(value)) {
+                    return trimToNull(value);
+                }
+            }
+        }
+        return null;
+    }
+
+    public static String firstNonBlankTrimmed(List<String> values) {
+        if (values != null) {
+            for (String value : values) {
+                if (!NBlankable.isBlank(value)) {
+                    return trim(value);
+                }
+            }
+        }
+        return null;
     }
 
     public static String firstNonBlank(List<String> values) {
