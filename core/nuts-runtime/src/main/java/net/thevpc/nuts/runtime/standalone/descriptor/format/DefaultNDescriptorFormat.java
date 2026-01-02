@@ -19,7 +19,6 @@ import java.io.*;
 public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorFormat> implements NDescriptorFormat {
 
     private boolean compact;
-    private NDescriptor desc;
     private NDescriptorStyle descriptorStyle;
 
     public DefaultNDescriptorFormat() {
@@ -62,19 +61,6 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
     public NDescriptorFormat setCompact(boolean compact) {
         this.compact = compact;
         return this;
-    }
-
-    public NDescriptor getDescriptor() {
-        return desc;
-    }
-
-    public NDescriptorFormat setDescriptor(NDescriptor desc) {
-        this.desc = desc;
-        return this;
-    }
-
-    public NDescriptorFormat setValue(NDescriptor desc) {
-        return setDescriptor(desc);
     }
 
     @Override
@@ -295,7 +281,8 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
 
 
     @Override
-    public void print(NPrintStream out) {
+    public void print(Object aValue, NPrintStream out) {
+        NDescriptor desc=(NDescriptor) aValue;
         NDescriptorStyle s = getDescriptorStyle();
         if (s == null) {
             s = NDescriptorStyle.NUTS;
