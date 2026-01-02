@@ -36,7 +36,7 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.security.NUser;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
-import net.thevpc.nuts.text.NDescriptorFormat;
+import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.text.NMsg;
@@ -107,7 +107,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             throw new NArtifactNotFoundException(command.getId());
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
-        NDescriptorFormat.of().print(desc, new OutputStreamWriter(descStream));
+        NDescriptorWriter.of().print(desc, new OutputStreamWriter(descStream));
         NWebCli nWebCli = NWebCli.of();
         nWebCli.req().POST()
                 .setUrl(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart()))
