@@ -75,15 +75,15 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     }
 
     public NOptional<Instant> getExpireTime() {
-        return NOptional.ofNamed(expireTime,"expireTime").orElseUse(()-> NSession.of().getExpireTime());
+        return NOptional.ofNamed(expireTime,"expireTime").orElseGetOptionalFrom(()-> NSession.of().getExpireTime());
     }
 
     public NOptional<NFetchStrategy> getFetchStrategy() {
-        return NOptional.ofNamed(fetchStrategy,"fetchStrategy").orElseUse(()-> NSession.of().getFetchStrategy());
+        return NOptional.ofNamed(fetchStrategy,"fetchStrategy").orElseGetOptionalFrom(()-> NSession.of().getFetchStrategy());
     }
 
     public NOptional<Boolean> getTransitive() {
-        return NOptional.ofNamed(transitive,"transitive").orElseUse(()-> NSession.of().getTransitive());
+        return NOptional.ofNamed(transitive,"transitive").orElseGetOptionalFrom(()-> NSession.of().getTransitive());
     }
 
     public T setFetchStrategy(NFetchStrategy fetchStrategy) {
