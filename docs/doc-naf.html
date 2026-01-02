@@ -648,7 +648,7 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
   <td style="background:#75ae50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.6/compat_report.html" target="_blank">0.8.5→0.8.6 (78.80%)</a></td>
   <td style="background:#c27950;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.7/compat_report.html" target="_blank">0.8.5→0.8.7 (34.50%)</a></td>
   <td style="background:#c27950;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.8/compat_report.html" target="_blank">0.8.5→0.8.8 (34.50%)</a></td>
-  <td style="background:#c27950;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.9/compat_report.html" target="_blank">0.8.5→0.8.9 (34.50%)</a></td>
+  <td style="background:#c37850;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.9/compat_report.html" target="_blank">0.8.5→0.8.9 (33.80%)</a></td>
   </tr>
   <tr>
     <th>0.8.6</th>
@@ -661,7 +661,7 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
     <td class="na">-</td>
   <td style="background:#b08550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.7/compat_report.html" target="_blank">0.8.6→0.8.7 (44.90%)</a></td>
   <td style="background:#b08550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.8/compat_report.html" target="_blank">0.8.6→0.8.8 (44.90%)</a></td>
-  <td style="background:#b18550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.9/compat_report.html" target="_blank">0.8.6→0.8.9 (44.50%)</a></td>
+  <td style="background:#b28450;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.9/compat_report.html" target="_blank">0.8.6→0.8.9 (43.50%)</a></td>
   </tr>
   <tr>
     <th>0.8.7</th>
@@ -674,7 +674,7 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
     <td class="na">-</td>
     <td class="na">-</td>
   <td style="background:#50c750;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_0.8.8/compat_report.html" target="_blank">0.8.7→0.8.8 (99.50%)</a></td>
-  <td style="background:#5ac150;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_0.8.9/compat_report.html" target="_blank">0.8.7→0.8.9 (94.20%)</a></td>
+  <td style="background:#6bb550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_0.8.9/compat_report.html" target="_blank">0.8.7→0.8.9 (84.30%)</a></td>
   </tr>
   <tr>
     <th>0.8.8</th>
@@ -687,7 +687,7 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
     <td class="na">-</td>
     <td class="na">-</td>
     <td class="na">-</td>
-  <td style="background:#59c150;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.8_to_0.8.9/compat_report.html" target="_blank">0.8.8→0.8.9 (94.50%)</a></td>
+  <td style="background:#6ab550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.8_to_0.8.9/compat_report.html" target="_blank">0.8.8→0.8.9 (84.60%)</a></td>
   </tr>
   <tr>
     <th>0.8.9</th>
@@ -2077,11 +2077,11 @@ if (NPs.of().isSupportedKillProcess()) {
                             <section id="UC0C655E3C1098EE9112BB8CE134CE8ACBBBF50E9" >
                                 <h3 class="main-section2"><a href="#UF607E04A21F6CC18FAF3F0CCD0ED3C00235EE0C4">10.2 Executing External Commands</a></h3>
                                 <div class="text-card">
-                                NAF provides a high-level API to execute external commands, whether locally or remotely, in a concise, structured, and cross-platform manner. Using NExecCmd, you can run processes, capture their output, handle errors, and even execute them on remote hosts via SSH—all without the verbosity of the standard Java Process API.<b class="md-bold">Key Features</b><ul class="md-ul"><li class="md-uli">Embedded & Local Execution: Run commands in the current JVM or OS environment.</li><li class="md-uli">Remote Execution: Execute commands on SSH-enabled hosts transparently.</li><li class="md-uli">Automatic Output Capture: Grab stdout and stderr without manually reading streams.</li><li class="md-uli">Run Java Artifacts Directly: Download a JAR and its dependencies from Maven or remote repositories and execute it automatically.</li><li class="md-uli">Fail-Fast Control: Stop execution immediately on errors if desired.</li><li class="md-uli">Minimal Boilerplate: Avoid complex Runtime.exec() and thread-based stream consumption.</li></ul><H4 class="md-title-2">To create a new process</H4><pre class="md-code md-code-``` java"><code class="java">// Simple embedded command execution
-String result = NExecCmd.of("info")
+                                NAF provides a high-level API to execute external commands, whether locally or remotely, in a concise, structured, and cross-platform manner. Using NExec, you can run processes, capture their output, handle errors, and even execute them on remote hosts via SSH—all without the verbosity of the standard Java Process API.<b class="md-bold">Key Features</b><ul class="md-ul"><li class="md-uli">Embedded & Local Execution: Run commands in the current JVM or OS environment.</li><li class="md-uli">Remote Execution: Execute commands on SSH-enabled hosts transparently.</li><li class="md-uli">Automatic Output Capture: Grab stdout and stderr without manually reading streams.</li><li class="md-uli">Run Java Artifacts Directly: Download a JAR and its dependencies from Maven or remote repositories and execute it automatically.</li><li class="md-uli">Fail-Fast Control: Stop execution immediately on errors if desired.</li><li class="md-uli">Minimal Boilerplate: Avoid complex Runtime.exec() and thread-based stream consumption.</li></ul><H4 class="md-title-2">To create a new process</H4><pre class="md-code md-code-``` java"><code class="java">// Simple embedded command execution
+String result = NExec.of("info")
                 .getGrabbedAllString();
 NOut.println(result);
-</code></pre><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">.of("info")</code> creates the command to execute.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">.getGrabbedAllString()</code> captures the full output (stdout + stderr) as a string.</p></li><li class="md-uli"><p class="md-phrase">No exceptions are thrown automatically; the caller can inspect result or <code class="md-code md-code-` ">getResultCode()</code> to decide if the execution succeeded.</p></li></ul><H4 class="md-title-2">Example: Executing a shell command with NSH</H4><pre class="md-code md-code-``` java"><code class="java">String result = NExecCmd.of()
+</code></pre><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">.of("info")</code> creates the command to execute.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">.getGrabbedAllString()</code> captures the full output (stdout + stderr) as a string.</p></li><li class="md-uli"><p class="md-phrase">No exceptions are thrown automatically; the caller can inspect result or <code class="md-code md-code-` ">getResultCode()</code> to decide if the execution succeeded.</p></li></ul><H4 class="md-title-2">Example: Executing a shell command with NSH</H4><pre class="md-code md-code-``` java"><code class="java">String result = NExec.of()
         .addCommand(NConstants.Ids.NSH, "-c", "ls")
         .grabAll()
         .failFast()
@@ -2089,14 +2089,14 @@ NOut.println(result);
 
 NOut.println("Result:");
 NOut.println(result);
-</code></pre><ul class="md-ul"><li class="md-uli">Nuts provides embedded shells (NSH) for running commands in a sandboxed environment.</li><li class="md-uli">Output is automatically sanitized to remove terminal formatting unless explicitly requested.</li></ul><H4 class="md-title-2">Special Executor IDs</H4>Nuts can handle commands with special identifiers or remote resources:<pre class="md-code md-code-``` java"><code class="java">String result = NExecCmd.of()
+</code></pre><ul class="md-ul"><li class="md-uli">Nuts provides embedded shells (NSH) for running commands in a sandboxed environment.</li><li class="md-uli">Output is automatically sanitized to remove terminal formatting unless explicitly requested.</li></ul><H4 class="md-title-2">Special Executor IDs</H4>Nuts can handle commands with special identifiers or remote resources:<pre class="md-code md-code-``` java"><code class="java">String result = NExec.of()
         .addExecutorOptions("--bot")
         .addCommand("com.mycompany:my-remote-artifact")
         .addCommand("list", "-i")
         .getGrabbedAllString();
 
 NOut.println(result);
-</code></pre><ul class="md-ul"><li class="md-uli">Useful for running workspace-bound tools or remote executables.</li><li class="md-uli">Works with Maven coordinates or URLs pointing to executable jars.</li></ul><H4 class="md-title-2">Remote & Structured Command Execution</H4>NExecCmd is not limited to local commands: you can execute processes on remote systems via SSH (or any supported executor) and easily capture stdout/stderr with minimal boilerplate:<pre class="md-code md-code-``` java"><code class="java">NExecCmd u = NExecCmd.of()
+</code></pre><ul class="md-ul"><li class="md-uli">Useful for running workspace-bound tools or remote executables.</li><li class="md-uli">Works with Maven coordinates or URLs pointing to executable jars.</li></ul><H4 class="md-title-2">Remote & Structured Command Execution</H4>NExec is not limited to local commands: you can execute processes on remote systems via SSH (or any supported executor) and easily capture stdout/stderr with minimal boilerplate:<pre class="md-code md-code-``` java"><code class="java">NExec u = NExec.of()
         .at("ssh://me@myserver")              // Execute on remote server
         .setIn(NExecInput.ofNull())           // No stdin input
         .addCommand("ps", "-eo",             // Command + arguments
@@ -2112,7 +2112,7 @@ int exitCode = u.getResultCode();
 
 NOut.println("Exit code: " + exitCode);
 NOut.println("Output:\n" + stdout);
-</code></pre>Key points:<ul class="md-ul"><li class="md-uli">at(...) allows specifying a remote target (SSH, etc.).</li><li class="md-uli">grabOut() / grabErr() capture output streams automatically.</li><li class="md-uli">setFailFast(true) ensures that any failure will stop execution immediately.</li><li class="md-uli">No need for Runtime.exec() boilerplate or manual stream handling.</li></ul>This makes NExecCmd a powerful, concise, and cross-platform alternative to the traditional Java Process API.<H4 class="md-title-2">Why NExecCmd is Better than Runtime.exec()</H4>Using Runtime.exec() requires verbose boilerplate to:<ul class="md-ul"><li class="md-uli">manage stdin/stdout/stderr streams,</li><li class="md-uli">handle threading to avoid blocking,</li><li class="md-uli">wait for process completion,</li><li class="md-uli">and manually check exit codes.</li></ul>With NExecCmd, all of this is simplified and made cross-platform, while also supporting structured output handling, remote execution, and direct execution of downloaded Java artifacts transparently.
+</code></pre>Key points:<ul class="md-ul"><li class="md-uli">at(...) allows specifying a remote target (SSH, etc.).</li><li class="md-uli">grabOut() / grabErr() capture output streams automatically.</li><li class="md-uli">setFailFast(true) ensures that any failure will stop execution immediately.</li><li class="md-uli">No need for Runtime.exec() boilerplate or manual stream handling.</li></ul>This makes NExec a powerful, concise, and cross-platform alternative to the traditional Java Process API.<H4 class="md-title-2">Why NExec is Better than Runtime.exec()</H4>Using Runtime.exec() requires verbose boilerplate to:<ul class="md-ul"><li class="md-uli">manage stdin/stdout/stderr streams,</li><li class="md-uli">handle threading to avoid blocking,</li><li class="md-uli">wait for process completion,</li><li class="md-uli">and manually check exit codes.</li></ul>With NExec, all of this is simplified and made cross-platform, while also supporting structured output handling, remote execution, and direct execution of downloaded Java artifacts transparently.
                                 </div>
                                 
                             </section>
@@ -2164,8 +2164,8 @@ NLog.of(Nsh.class)
     );
 </code></pre><H4 class="md-title-2">Scoped Logging</H4>Traditional MDC allows you to store key-value pairs for the current thread, but managing nested or dynamic contexts often becomes cumbersome. NLog builds on and extends this concept by allowing nested logging scopes, dynamic placeholders, message prefixes, and custom log handlers — all without touching global configuration or rewriting classes. Logs automatically inherit the correct context, making them structured, expressive, and runtime-aware. With NLog, you get the convenience of MDC plus the power of non-invasive, modular, and scoped logging.<pre class="md-code md-code-``` java"><code class="java">class MyApp {
     public void test() {
-        NLogs.of().runWith(
-            NLogContext.of()
+        NLog.runInScope(
+            NLogScope.of()
                     .withMessagePrefix(NMsg.ofC("[My Application]")) // Prefix added to every log message in this scope
                     .withPlaceholder("user", "Adam") // Placeholder available to all logs in this scope
                     .withLog(message -&gt; NOut.println(NMsg.ofC("[SCOPED] %s", message))), // Custom log handler: redirect all messages to stdout with a [SCOPED] prefix
@@ -2623,7 +2623,7 @@ Implementation-Version: 1.2.3
                     <section id="UDC5147345B8C70262CACF7D3D45E088FF0CBC4BF" >
                         <h2 class="main-section1"><a href="#UDC5147345B8C70262CACF7D3D45E088FF0CBC4BF">13 Integration & Interoperability</a></h2>
                         <div class="text-card">
-                        NAF (Nuts Application Framework) is designed not only to provide powerful core utilities but also to integrate seamlessly with other Java ecosystems and frameworks. This section explores how NAF can interoperate with common tools and frameworks, allowing you to leverage its features without sacrificing compatibility or flexibility.<H4 class="md-title-2">Key Points</H4><H4 class="md-title-3">Spring Boot Integration</H4>NAF can be used alongside Spring Boot, providing its services (like NWorkspace, NExecCmd, NLog, and NTextArt) as beans or components in a Spring-managed application. This enables combining Spring’s dependency injection and lifecycle management with NAF’s runtime utilities.<H4 class="md-title-3">SLF4J Backend for NLog</H4>While NAF provides its own logging API (NLog) with advanced features like structured logging, scopes, and message formatting, it can delegate to widely-used logging frameworks like SLF4J. This allows applications to retain NLog capabilities while integrating with existing logging infrastructure, including Logback or Log4j2.<H4 class="md-title-3">Flexible Output & Messaging</H4>NAF’s components—such as NTextArt, NProgressMonitor, and NExecCmd—can output to different destinations, including standard streams, files, or logging backends. This makes it easy to integrate visual and progress feedback into GUI applications, web services, or enterprise pipelines.<H4 class="md-title-3">Cross-Framework Reusability</H4>Because NAF is modular and decoupled, its APIs can coexist with other libraries without requiring significant refactoring. You can use Nuts for dependency resolution, task execution, logging, and progress monitoring in the context of Spring Boot, Micronaut, or even plain Java SE projects.
+                        NAF (Nuts Application Framework) is designed not only to provide powerful core utilities but also to integrate seamlessly with other Java ecosystems and frameworks. This section explores how NAF can interoperate with common tools and frameworks, allowing you to leverage its features without sacrificing compatibility or flexibility.<H4 class="md-title-2">Key Points</H4><H4 class="md-title-3">Spring Boot Integration</H4>NAF can be used alongside Spring Boot, providing its services (like NWorkspace, NExec, NLog, and NTextArt) as beans or components in a Spring-managed application. This enables combining Spring’s dependency injection and lifecycle management with NAF’s runtime utilities.<H4 class="md-title-3">SLF4J Backend for NLog</H4>While NAF provides its own logging API (NLog) with advanced features like structured logging, scopes, and message formatting, it can delegate to widely-used logging frameworks like SLF4J. This allows applications to retain NLog capabilities while integrating with existing logging infrastructure, including Logback or Log4j2.<H4 class="md-title-3">Flexible Output & Messaging</H4>NAF’s components—such as NTextArt, NProgressMonitor, and NExec—can output to different destinations, including standard streams, files, or logging backends. This makes it easy to integrate visual and progress feedback into GUI applications, web services, or enterprise pipelines.<H4 class="md-title-3">Cross-Framework Reusability</H4>Because NAF is modular and decoupled, its APIs can coexist with other libraries without requiring significant refactoring. You can use Nuts for dependency resolution, task execution, logging, and progress monitoring in the context of Spring Boot, Micronaut, or even plain Java SE projects.
                         </div>
                         
                             <!--pageLevel2-->
@@ -2983,9 +2983,9 @@ session.setLogFilter(log -&gt; log.getVerb().equals(NLogIntent.FAIL));
                    data-original-title="GitHub"><i class="fab fa-github"></i></a></li>
         </ul>
         <p class="text-2 text-center mb-0">
-            Copyright © 2018-2025 Nuts Package Manager Team.
+            Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-12-01-225512
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2026-01-02-161952
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
