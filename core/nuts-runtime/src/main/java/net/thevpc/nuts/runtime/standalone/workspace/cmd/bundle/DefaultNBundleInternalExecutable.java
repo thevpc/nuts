@@ -17,7 +17,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NShellFamily;
-import net.thevpc.nuts.text.NDescriptorFormat;
+import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.shell.NShellWriter;
 import net.thevpc.nuts.text.NMsg;
@@ -236,7 +236,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     //descriptor is not classifier aware
                     .builder().setClassifier(null).build()
                     .getMavenPath(NConstants.Files.DESCRIPTOR_FILE_EXTENSION_SIMPLE);
-            cp.from(NDescriptorFormat.of().formatPlain(d.getDescriptor()).getBytes())
+            cp.from(NDescriptorWriter.of().formatPlain(d.getDescriptor()).getBytes())
                     .to(bundleFolder.resolve(fullPath))
                     .run();
             if (includeConfigFiles) {
