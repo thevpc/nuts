@@ -18,7 +18,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfigManager;
 import net.thevpc.nuts.core.NRepositoryNotFoundException;
-import net.thevpc.nuts.text.NDescriptorFormat;
+import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNContentEvent;
@@ -139,7 +139,7 @@ public class NRepositoryMirroringHelper {
 //                    } else {
 //                        goodFile = versionFolder.resolve(NutsUtilStrings.trim(a)).resolve(idFilename);
 //                    }
-                    NDescriptorFormat.of().print(nutsDescriptor, goodFile);
+                    NDescriptorWriter.of().print(nutsDescriptor, goodFile);
                     return nutsDescriptor;
                 }
             }
@@ -240,7 +240,7 @@ public class NRepositoryMirroringHelper {
                         NWorkspaceExt dws = NWorkspaceExt.of();
                         NId id2 = dws.resolveEffectiveId(nutsDescriptor).builder().setFaceDescriptor().build();
                         NPath localNutFile = cache.getLongIdLocalFile(id2);
-                        NDescriptorFormat.of().print(nutsDescriptor, localNutFile);
+                        NDescriptorWriter.of().print(nutsDescriptor, localNutFile);
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                             bestId = id2;
                         }
