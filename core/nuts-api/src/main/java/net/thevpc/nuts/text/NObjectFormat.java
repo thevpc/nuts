@@ -64,22 +64,6 @@ public interface NObjectFormat extends NContentTypeFormat {
     NObjectFormat setOutputFormat(NContentType outputFormat);
 
     /**
-     * return value to format
-     *
-     * @return value to format
-     */
-    Object getValue();
-
-    /**
-     * set value to format
-     *
-     * @param value value to format
-     * @return {@code this} instance
-     */
-    NObjectFormat setValue(Object value);
-
-
-    /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
