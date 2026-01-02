@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.text.NFormat;
+import net.thevpc.nuts.text.NObjectWriter;
 import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
+import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NPathSPIAware;
@@ -471,9 +471,9 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @NScore(fixed = NScorable.DEFAULT_SCORE)
-    public static class MyPathFormat extends DefaultFormatBase<NFormat> {
+    public static class MyPathObjectWriter extends DefaultObjectWriterBase<NObjectWriter> {
 
-        public MyPathFormat() {
+        public MyPathObjectWriter() {
             super("path");
         }
 
