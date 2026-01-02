@@ -8,17 +8,12 @@ package net.thevpc.nuts.runtime.standalone.format.tree;
 import java.util.AbstractMap;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.text.NContentType;
-import net.thevpc.nuts.text.NTreeFormat;
-import net.thevpc.nuts.text.NTreeNode;
-import net.thevpc.nuts.text.NTreeNodeFormat;
+import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.text.NTreeObjectWriter;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextArt;
-import net.thevpc.nuts.text.NTextArtTreeRenderer;
 
 /**
  * @author thevpc
@@ -76,7 +71,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
                 .setOmitRoot(true)
                 .setInfinite(!last);
         getWriter().println(treeRenderer.render(
-                        NTreeFormat.of().getModel(new AbstractMap.SimpleEntry<Object, Object>("ROOT", object))
+                        NTreeObjectWriter.of().getModel(new AbstractMap.SimpleEntry<Object, Object>("ROOT", object))
                 )
         );
         getWriter().flush();
