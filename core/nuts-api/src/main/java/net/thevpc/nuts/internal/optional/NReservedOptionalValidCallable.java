@@ -16,17 +16,11 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
     private final NCallable<NOptional<T>> value;
     private NOptional<T> result;
     private boolean evaluated;
-    private Supplier<NMsg> msg;
-
-    public NReservedOptionalValidCallable(NCallable<NOptional<T>> value) {
-        NAssert.requireNonNull(value, "callable");
-        this.value = value;
-    }
 
     public NReservedOptionalValidCallable(NCallable<NOptional<T>> value, Supplier<NMsg> msg) {
+        super(msg);
         NAssert.requireNonNull(value, "callable");
         this.value = value;
-        this.msg = msg;
     }
 
     public NOptional<T> withMessage(Supplier<NMsg> message) {
@@ -73,64 +67,30 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
                     T v = result.get();
                     try {
                         V r = mapper.apply(v);
-                        if (msg != null) {
-                            return NOptional.of(r, msg);
-                        }
-                        return NOptional.of(r);
+                        return NOptional.of(r, getMessage());
                     } catch (Exception ex) {
-                        if (msg != null) {
-                            return NOptional.ofError(msg, ex);
-                        }
-                        return NOptional.ofError(ex);
+                        return NOptional.ofError(getMessage(), ex);
                     }
                 } else {
-                    if (msg != null) {
-                        return (NOptional<V>) result.withMessage(msg);
-                    }
-                    return (NOptional<V>) result;
+                    return (NOptional<V>) result.withMessage(getMessage());
                 }
             } else {
                 return NOptional.ofEmpty(getMessage());
             }
         }
         return new NReservedOptionalValidCallable<V>(() -> {
-            if (msg == null) {
-                try {
-                    T y = get();
-                    if (y != null) {
-                        V v = mapper.apply(y);
-                        return NOptional.of(v);
-                    } else {
-                        return null;
-                    }
-                } catch (Exception ex) {
-                    if (msg != null) {
-                        return NOptional.ofError(msg, ex);
-                    }
-                    return NOptional.ofError(ex);
+            try {
+                T y = get();
+                if (y != null) {
+                    V v = mapper.apply(y);
+                    return NOptional.of(v, getMessage());
+                } else {
+                    return null;
                 }
-            } else {
-                try {
-                    T y = get();
-                    if (y != null) {
-                        V v = mapper.apply(y);
-                        return NOptional.of(v, msg);
-                    } else {
-                        return null;
-                    }
-                } catch (Exception ex) {
-                    if (msg != null) {
-                        return NOptional.ofError(msg, ex);
-                    }
-                    return NOptional.ofError(ex);
-                }
+            } catch (Exception ex) {
+                return NOptional.ofError(getMessage(), ex);
             }
-        }, msg);
-    }
-
-    @Override
-    public Supplier<NMsg> getMessage() {
-        return msg == null ? () -> NMsg.ofMissingValue() : msg;
+        }, getMessage());
     }
 
     @Override
@@ -148,7 +108,7 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
 
     @Override
     public NElement describe() {
-        if(evaluated) {
+        if (evaluated) {
             return NElement.ofUpletBuilder("Optional")
                     .add("evaluated", true)
                     .add("error", result.isError())
@@ -156,7 +116,7 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
                     .add("value", NElementDescribables.describeResolveOrDestruct(result.get()))
                     .build()
                     ;
-        }else{
+        } else {
             return NElement.ofUpletBuilder("Optional")
                     .add("evaluated", false)
                     .add("expression", NElementDescribables.describeResolveOrDestruct(value))
