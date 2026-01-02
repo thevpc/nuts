@@ -78,18 +78,16 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                         .sorted((x, y) -> x.getName().compareTo(y.getName()))
                         .collect(Collectors.toList());
                 if (NOut.isPlain()) {
-                    NPropertiesFormat.of().setValue(
-                            r.stream().collect(
-                                    Collectors.toMap(
-                                            NCustomCmd::getName,
-                                            x -> NCmdLine.of(x.getCommand()).toString(),
-                                            (x, y) -> {
-                                                throw new NIllegalArgumentException(NMsg.ofC("duplicate %s", x));
-                                            },
-                                            //preserve order
-                                            LinkedHashMap::new
-                                    ))
-                    ).println();
+                    NPropertiesFormat.of().println(r.stream().collect(
+                            Collectors.toMap(
+                                    NCustomCmd::getName,
+                                    x -> NCmdLine.of(x.getCommand()).toString(),
+                                    (x, y) -> {
+                                        throw new NIllegalArgumentException(NMsg.ofC("duplicate %s", x));
+                                    },
+                                    //preserve order
+                                    LinkedHashMap::new
+                            )));
                 } else {
                     NOut.println(
                             r.stream().map(x -> new AliasInfo(x)).collect(Collectors.toList())
