@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.*;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 
 
@@ -34,7 +34,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
         setName(null);
         NPath file = getConfigFile();
         if (file.exists()) {
-            this.config = NElementParser.ofJson().parse(file, NWorkspaceListConfig.class);
+            this.config = NElementReader.ofJson().read(file, NWorkspaceListConfig.class);
             for (NWorkspaceLocation var : this.config.getWorkspaces()) {
                 this.workspaces.put(var.getUuid(), var);
             }
