@@ -34,7 +34,6 @@ import java.util.function.Consumer;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> implements NElementFormat {
     private final DefaultNTextManagerModel model;
-    private Object value;
     private NContentType contentType = NContentType.JSON;
     private boolean compact;
     private boolean logProgress;
@@ -115,16 +114,6 @@ public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> imp
         return setContentType(NContentType.XML);
     }
 
-    @Override
-    public Object getValue() {
-        return value;
-    }
-
-    @Override
-    public NElementFormat setValue(Object value) {
-        this.value = value;
-        return this;
-    }
 
     @Override
     public boolean isCompact() {
@@ -180,8 +169,8 @@ public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> imp
         return false;
     }
 
-    private void print(NPrintStream out, NElementStreamFormat format) {
-        NElement elem = NElements.of().doWithMapperStore(d->d.copyFrom(mapperStore())).toElement(value);
+    private void print(Object aValue, NPrintStream out, NElementStreamFormat format) {
+        NElement elem = NElements.of().doWithMapperStore(d->d.copyFrom(mapperStore())).toElement(aValue);
         if (out.isNtf()) {
             NPrintStream bos = NMemoryPrintStream.of();
             format.printElement(elem, bos, compact, createFactoryContext());
@@ -193,11 +182,11 @@ public class DefaultNElementFormat extends DefaultFormatBase<NElementFormat> imp
     }
 
     @Override
-    public void print(NPrintStream out) {
+    public void print(Object aValue, NPrintStream out) {
         if (contentType == NContentType.PLAIN) {
-            print(out, model.getJsonMan());
+            print(aValue, out, model.getJsonMan());
         } else {
-            print(out, model.getStreamFormat(contentType==null?NContentType.JSON : contentType));
+            print(aValue, out, model.getStreamFormat(contentType==null?NContentType.JSON : contentType));
         }
     }
 
