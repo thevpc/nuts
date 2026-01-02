@@ -259,7 +259,7 @@ public class DefaultNElementWriter implements NElementWriter {
 
     @Override
     public void write(Object any, File file) {
-        write(NPath.of(file));
+        write(any,NPath.of(file));
     }
 
     @Override
