@@ -630,7 +630,7 @@ public class NElementPathFilter {
                 u = new HashSet<>();
                 matchContext.put("unique", u);
             }
-            String v = NElementWriter.ofJson().toString(value);
+            String v = NElementWriter.ofJson().formatPlain(value);
             if (u.contains(v)) {
                 return false;
             }
