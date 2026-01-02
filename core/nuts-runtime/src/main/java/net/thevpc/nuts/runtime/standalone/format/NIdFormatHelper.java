@@ -359,7 +359,7 @@ public class NIdFormatHelper {
         }
         switch (dp) {
             case ID: {
-                return oo.getIdFormat().setValue(id).setNtf(ntf).format();
+                return oo.getIdFormat().setNtf(ntf).format(id);
             }
             case STATUS: {
                 return getFormattedStatusString();
