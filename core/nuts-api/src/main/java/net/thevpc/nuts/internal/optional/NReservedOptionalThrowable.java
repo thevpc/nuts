@@ -1,5 +1,6 @@
 package net.thevpc.nuts.internal.optional;
 
+import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
@@ -16,30 +17,42 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
     private Throwable rootStack = DEBUG ? new Throwable() : null;
     private Supplier<NOptional<T>> defaultValue;
 
-    public NReservedOptionalThrowable() {
+    public NReservedOptionalThrowable(Supplier<NMsg> message) {
+        super(message);
     }
 
     public T orDefault() {
-        if (defaultValue == null) {
-            return null;
+        if (defaultValue != null) {
+            NOptional<T> o = defaultValue.get();
+            if (o != null) {
+                return o.orDefault(); // recursive resolution
+            }
         }
-        NOptional<T> o = defaultValue.get();
-        if (o == null) {
-            return null;
+        return null;
+    }
+
+    @Override
+    public T orDefault(Class<T> defaultType) {
+        T v = orDefault();
+        if (v != null) {
+            return v;
         }
-        return o.orDefault();
+        return defaultType == null
+                ? null
+                : (T) NReflectUtils.getDefaultValue(defaultType);
     }
 
     @Override
     public NOptional<T> orDefaultOptional() {
         if (defaultValue == null) {
-            return null;
-        }
-        NOptional<T> o = defaultValue.get();
-        if (o == null) {
+            return this;
+        } else {
+            NOptional<T> o = defaultValue.get();
+            if (o != null) {
+                return o.orDefaultOptional(); // recursive resolution
+            }
             return NOptional.ofEmpty(getMessage());
         }
-        return o.orDefaultOptional();
     }
 
     protected NMsg prepareMessage(NMsg m) {
