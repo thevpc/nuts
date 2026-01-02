@@ -38,7 +38,7 @@ public class MavenSolrSearchCommand {
         String configProperty = repo.config().getConfigProperty("maven.solrsearch.enable").flatMap(NLiteral::asString).orNull();
         return solrSearchUrl != null
                 && NLiteral.of(configProperty).asBoolean()
-                .ifEmpty(true).orElse(false);
+                .onEmpty(true).orElse(false);
     }
 
     public NIterator<NId> search(NDefinitionFilter filter, NId[] baseIds, NFetchMode fetchMode) {
