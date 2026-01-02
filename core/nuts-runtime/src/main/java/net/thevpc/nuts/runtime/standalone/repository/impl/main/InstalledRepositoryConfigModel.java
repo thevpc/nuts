@@ -273,7 +273,7 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
     public NOptional<NLiteral> get(String key, boolean inherit) {
         NOptional<NLiteral> o = NOptional.ofEmpty(() -> NMsg.ofC("repo config property not found : %s", key));
         if (inherit) {
-            return o.orElseUse(()->NWorkspace.of().getConfigProperty(key));
+            return o.orElseGetOptionalFrom(()->NWorkspace.of().getConfigProperty(key));
         }
         return o;
     }
