@@ -690,7 +690,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     public NOptional<NLiteral> get(String key, boolean inherit) {
         NOptional<NLiteral> o = config_getEnv(key, inherit);
         if (o.isBlank() && inherit) {
-            return o.orElseUse(() -> NWorkspace.of().getConfigProperty(key));
+            return o.orElseGetOptionalFrom(() -> NWorkspace.of().getConfigProperty(key));
         }
         return o;
     }
