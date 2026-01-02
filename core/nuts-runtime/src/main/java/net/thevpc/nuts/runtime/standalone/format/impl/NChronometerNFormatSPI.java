@@ -32,7 +32,7 @@ public class NChronometerNFormatSPI implements NFormatSPI {
                 .configure(true,
                         "--mode",
                         (formatMode == null ? NDurationFormatMode.DEFAULT : formatMode).id())
-                .format());
+                .format(value.getDuration()));
     }
 
     @Override
