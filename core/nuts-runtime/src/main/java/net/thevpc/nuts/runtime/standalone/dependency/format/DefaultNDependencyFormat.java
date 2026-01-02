@@ -28,7 +28,6 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
     private boolean omitQuery = false;
     //    private boolean omitFace = true;
     private boolean highlightImportedGroup;
-    private NDependency value;
     private Set<String> queryPropertiesOmitted = new HashSet<>();
 
     public DefaultNDependencyFormat(NWorkspace workspace) {
@@ -107,8 +106,8 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
     }
 
     @Override
-    public NText format() {
-        NIdBuilder id = value.toId().builder();
+    public NText format(Object aValue) {
+        NIdBuilder id = ((NDependency) aValue).toId().builder();
         Map<String, String> q = id.getProperties();
         for (Map.Entry<String, String> e : q.entrySet()) {
             switch (e.getKey()) {
@@ -130,25 +129,13 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
             id1.setOmitProperty(omitQueryProperty, true);
         }
         return id1
-                .setValue(id.build())
                 .setHighlightImportedGroupId(isHighlightImportedGroup())
                 .setOmitOtherProperties(false)
                 .setOmitGroupId(isOmitGroupId())
                 .setOmitImportedGroupId(isOmitImportedGroupId())
                 .setOmitRepository(isOmitRepository())
                 .setNtf(isNtf())
-                .format();
-    }
-
-    @Override
-    public NDependency getValue() {
-        return value;
-    }
-
-    @Override
-    public NDependencyFormat setValue(NDependency id) {
-        this.value = id;
-        return this;
+                .format(id.build());
     }
 
 
@@ -204,8 +191,8 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
     }
 
     @Override
-    public void print(NPrintStream out) {
-        out.print(format());
+    public void print(Object aValue, NPrintStream out) {
+        out.print(format(aValue));
     }
 
 
