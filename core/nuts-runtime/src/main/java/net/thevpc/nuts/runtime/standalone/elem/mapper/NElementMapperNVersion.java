@@ -13,7 +13,7 @@ public class NElementMapperNVersion implements NElementMapper<NVersion> {
     @Override
     public Object destruct(NVersion src, Type typeOfSrc, NElementFactoryContext context) {
         if (context.isNtf()) {
-            return NFormats.of().ofFormat(src).get().setNtf(true).format();
+            return NFormats.of(src).get().setNtf(true).format(src);
         } else {
             return src.toString();
         }
@@ -22,7 +22,7 @@ public class NElementMapperNVersion implements NElementMapper<NVersion> {
     @Override
     public NElement createElement(NVersion o, Type typeOfSrc, NElementFactoryContext context) {
         if (context.isNtf()) {
-            return NElement.ofString(NFormats.of().ofFormat(o).get().setNtf(true).format().toString());
+            return NElement.ofString(NFormats.of(o).get().setNtf(true).format(o).toString());
         } else {
             return context.defaultCreateElement(o.toString(), null);
         }
