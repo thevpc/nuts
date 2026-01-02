@@ -8,7 +8,7 @@ import net.thevpc.nuts.net.DefaultNConnectionStringBuilder;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.spi.NPathSPIAware;
 import net.thevpc.nuts.net.NConnectionStringBuilder;
-import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -75,8 +75,8 @@ class SshNPath implements NPathSPI {
 
 
     @Override
-    public NFormatSPI formatter(NPath basePath) {
-        return new NFormatSPI() {
+    public NObjectWriterSPI formatter(NPath basePath) {
+        return new NObjectWriterSPI() {
             @Override
             public String getName() {
                 return "path";
