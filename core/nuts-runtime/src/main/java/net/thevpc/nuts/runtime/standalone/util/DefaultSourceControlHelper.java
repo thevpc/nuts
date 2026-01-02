@@ -69,7 +69,7 @@ public class DefaultSourceControlHelper {
                 d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
             }
             NId newId = NDeploy.of().setContent(folder).setDescriptor(d).getResult().get(0);
-            NDescriptorFormat.of(d).print(file);
+            NDescriptorFormat.of().print(d, file);
             NIOUtils.delete(folder);
             return newId;
         } else {
@@ -102,7 +102,7 @@ public class DefaultSourceControlHelper {
             NId newId = d.getId().builder().setVersion(oldVersion + CoreNConstants.Versions.CHECKED_OUT_EXTENSION).build();
             d = d.builder().setId(newId).build();
 
-            NDescriptorFormat.of(d).print(file);
+            NDescriptorFormat.of().print(d, file);
 
             return new DefaultNDefinitionBuilder()
                     .setRepositoryUuid(nutToInstall.getRepositoryUuid())
