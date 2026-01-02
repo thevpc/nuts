@@ -398,16 +398,14 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     @NScore(fixed = NScorable.DEFAULT_SCORE)
     public static class PathFormat extends DefaultFormatBase<NFormat> {
 
-        private final NPathBase p;
 
-        public PathFormat(NPathBase p) {
+        public PathFormat() {
             super("path");
-            this.p = p;
         }
 
         @Override
-        public void print(NPrintStream out) {
-            out.print(NText.ofStyled(p.toNutsString(), NTextStyle.path()));
+        public void print(Object aValue, NPrintStream out) {
+            out.print(NText.ofStyled(((NPathBase) aValue).toNutsString(), NTextStyle.path()));
         }
 
         @Override
