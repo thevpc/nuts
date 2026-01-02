@@ -19,7 +19,7 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.text.NVersionFormat;
+import net.thevpc.nuts.text.NVersionWriter;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
 import net.thevpc.nuts.util.NAssert;
@@ -41,7 +41,7 @@ public class ExecTest {
 
     @Test
     public void execURL() {
-        TestUtils.println(NVersionFormat.of());
+        TestUtils.println(NVersionWriter.of());
         NSearch q = NSearch.of()
                 .setId("net.thevpc.hl:hadra-build-tool#0.1.0")
 //                .setRepositoryFilter("maven-central")
@@ -97,7 +97,7 @@ public class ExecTest {
 
     @Test
     public void testEmbeddedInfo() {
-        TestUtils.println(NVersionFormat.of());
+        TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
                 .addCommand("info")
                 .getGrabbedAllString();
@@ -108,7 +108,7 @@ public class ExecTest {
     //disabled, unless we find a good executable example jar
     //@Test
     public void execURL2() {
-        TestUtils.println(NVersionFormat.of());
+        TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
                 //there are three classes and no main-class, so need to specify the one
                 .addExecutorOption("--main-class=Version")
@@ -127,7 +127,7 @@ public class ExecTest {
 
     //@Test
     public void testNtf() {
-        TestUtils.println(NVersionFormat.of());
+        TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
                 //.addExecutorOption()
                 .addCommand(NConstants.Ids.NSH, "-c", "ls")
@@ -140,7 +140,7 @@ public class ExecTest {
 
     //@Test
     public void testCallSpecialId() {
-        TestUtils.println(NVersionFormat.of());
+        TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
                 .addExecutorOptions("--bot")
                 //.setExecutionType(NExecutionType.EMBEDDED)
@@ -206,7 +206,7 @@ public class ExecTest {
 
     @Test
     public void testExecOnWindows1() {
-        TestUtils.println(NVersionFormat.of());
+        TestUtils.println(NVersionWriter.of());
         if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
             runUsingProcessBuilder2("cmd.exe", "dir", ".");
         }
@@ -215,7 +215,7 @@ public class ExecTest {
 
     @Test
     public void testExecOnWindows2() {
-        TestUtils.println(NVersionFormat.of());
+        TestUtils.println(NVersionWriter.of());
         if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
             runUsingRuntime("cmd.exe", "dir", ".");
         }
@@ -223,7 +223,7 @@ public class ExecTest {
 
     @Test
     public void testExecOnWindows3() {
-        TestUtils.println(NVersionFormat.of());
+        TestUtils.println(NVersionWriter.of());
         if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
             String[] args = {
                     "powershell.exe", "-Command",
@@ -238,7 +238,7 @@ public class ExecTest {
 
     @Test
     public void testExecOnWindows4() {
-        TestUtils.println(NVersionFormat.of());
+        TestUtils.println(NVersionWriter.of());
         if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
             String[] args = {
                     "powershell.exe", "-Command",
