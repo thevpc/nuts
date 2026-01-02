@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.format;
 
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
@@ -46,10 +47,7 @@ import java.io.File;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author thevpc
@@ -57,13 +55,13 @@ import java.util.Map;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> implements NObjectFormat {
 
-    private Object value;
 
     private String formatMode;
     private String formatString;
     private Map<String, Object> formatParams = new HashMap<>();
     private boolean compact;
     private NContentType outputFormat;
+    private List<String[]> confCmds = new ArrayList<>();
 
     public DefaultNObjectFormat(NWorkspace workspace) {
         super("object-format");
@@ -128,16 +126,6 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
         return this;
     }
 
-    @Override
-    public Object getValue() {
-        return value;
-    }
-
-    @Override
-    public NObjectFormat setValue(Object value) {
-        this.value = value;
-        return this;
-    }
 
     @Override
     public boolean isCompact() {
@@ -150,17 +138,16 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
         return this;
     }
 
-    public NContentTypeFormat getBase() {
-        NSession session=NSession.of();
-        NContentTypeFormat base = createObjectFormat();
-        base.configure(true, NWorkspace.of().getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
-        base.configure(true, session.getOutputFormatOptions().toArray(new String[0]));
+    public NFormatAndValue<Object, NContentTypeFormat> getBase(Object aValue) {
+        NSession session = NSession.of();
+        NFormatAndValue<Object, NContentTypeFormat> base = createObjectFormat(aValue);
+        base.getFormat().configure(true, NWorkspace.of().getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
+        base.getFormat().configure(true, session.getOutputFormatOptions().toArray(new String[0]));
         return base;
     }
 
-    public NContentTypeFormat createObjectFormat() {
-        NSession session=NSession.of();
-        Object value = getValue();
+    public NFormatAndValue<Object, NContentTypeFormat> createObjectFormat(Object value) {
+        NSession session = NSession.of();
         String formatMode = getFormatMode();
         String type2 = formatMode == null ? "" : NNameFormat.CLASS_NAME.format(NStringUtils.trim(formatMode));
         switch (type2) {
@@ -202,6 +189,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
                 NElementFormat ee = NElementFormat.of().setNtf(isNtf())
                         .setCompact(isCompact())
                         .setContentType(session.getOutputFormat().orDefault());
+                Object aValue = null;
                 if (value instanceof NText) {
                     NTextBuilder builder = ((NText) value).builder();
                     Object[] r = builder.lines().map(
@@ -215,49 +203,66 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
 
                             ).redescribe(NElementDescribables.ofDesc("filteredText"))
                     ).toArray(Object[]::new);
-                    ee.setValue(r);
+                    aValue = r;
                 } else {
-                    ee.setValue(value);
+                    aValue = value;
                 }
-                return ee;
+                for (String[] confCmd : confCmds) {
+                    ee.configure(true, confCmd);
+                }
+                return new NFormatAndValue<>(aValue, ee);
             }
             case PROPS: {
+                Object aValue = null;
                 NPropertiesFormat ee = NPropertiesFormat.of().setNtf(isNtf());
                 if (value instanceof NText) {
                     NTextBuilder builder = ((NText) value).builder();
                     Object[] r = builder.lines().toArray(Object[]::new);
-                    ee.setValue(r);
+                    aValue = r;
                 } else {
-                    ee.setValue(value);
+                    aValue = value;
                 }
-                return ee;
+                for (String[] confCmd : confCmds) {
+                    ee.configure(true, confCmd);
+                }
+                return new NFormatAndValue<>(aValue, ee);
             }
             case TREE: {
+                Object aValue = null;
                 NTreeFormat ee = NTreeFormat.of().setNtf(isNtf());
                 if (value instanceof NText) {
                     NTextBuilder builder = ((NText) value).builder();
                     Object[] r = builder.lines().toArray(Object[]::new);
-                    ee.setValue(r);
+                    aValue = r;
                 } else {
-                    ee.setValue(value);
+                    aValue = value;
                 }
-                return ee;
+                for (String[] confCmd : confCmds) {
+                    ee.configure(true, confCmd);
+                }
+                return new NFormatAndValue<>(aValue, ee);
             }
             case TABLE: {
                 NTableFormat ee = NTableFormat.of().setNtf(isNtf());
+                Object aValue = null;
                 if (value instanceof NText) {
                     NTextBuilder builder = ((NText) value).builder();
                     Object[] r = builder.lines().toArray(Object[]::new);
-                    ee.setValue(r);
+                    aValue = r;
                 } else {
-                    ee.setValue(value);
+                    aValue = value;
                 }
-                return ee;
+                for (String[] confCmd : confCmds) {
+                    ee.configure(true, confCmd);
+                }
+                return new NFormatAndValue<>(aValue, ee);
             }
             case PLAIN: {
                 NFormatPlain ee = new NFormatPlain().setCompact(isCompact()).setNtf(isNtf());
-                ee.setValue(value);
-                return ee;
+                for (String[] confCmd : confCmds) {
+                    ee.configure(true, confCmd);
+                }
+                return new NFormatAndValue<>(value, ee);
             }
         }
         throw new NUnsupportedEnumException(session.getOutputFormat().orDefault());
@@ -269,73 +274,91 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
 //    }
 
     @Override
-    public NText format() {
-        return getBase().format();
+    public NText format(Object aValue) {
+        return getBase(aValue).getFormat().format(aValue);
     }
 
     @Override
-    public void print() {
-        getBase().print();
+    public void print(Object aValue) {
+        getBase(aValue).getFormat().print(aValue);
     }
 
     @Override
-    public void println() {
-        getBase().println();
+    public void println(Object aValue) {
+        getBase(aValue).getFormat().println(aValue);
     }
 
     @Override
-    public void print(NPrintStream out) {
-        getBase().print(out);
+    public void print(Object aValue, NPrintStream out) {
+        getBase(aValue).getFormat().print(aValue, out);
     }
 
     @Override
-    public void print(Writer out) {
-        getBase().print(out);
+    public void print(Object aValue, Writer out) {
+        getBase(aValue).getFormat().print(aValue, out);
     }
 
     @Override
-    public void print(Path out) {
-        getBase().print(out);
+    public void print(Object aValue, Path out) {
+        getBase(aValue).getFormat().print(aValue, out);
     }
 
     @Override
-    public void print(File out) {
-        getBase().print(out);
+    public void print(Object aValue, File out) {
+        getBase(aValue).getFormat().print(aValue, out);
     }
 
     @Override
-    public void print(NTerminal terminal) {
-        getBase().print(terminal);
+    public void print(Object aValue, NTerminal terminal) {
+        getBase(aValue).getFormat().print(aValue, terminal);
     }
 
     @Override
-    public void println(Writer w) {
-        getBase().println(w);
+    public void println(Object aValue, Writer w) {
+        getBase(aValue).getFormat().println(aValue, w);
     }
 
     @Override
-    public void println(NPrintStream out) {
-        getBase().println(out);
+    public void println(Object aValue, NPrintStream out) {
+        getBase(aValue).getFormat().println(aValue, out);
     }
 
     @Override
-    public void println(Path path) {
-        getBase().println(path);
+    public void println(Object aValue, Path path) {
+        getBase(aValue).getFormat().println(aValue, path);
     }
 
     @Override
-    public void println(NTerminal terminal) {
-        getBase().println(terminal);
+    public void println(Object aValue, NTerminal terminal) {
+        getBase(aValue).getFormat().println(aValue, terminal);
     }
 
     @Override
-    public void println(File file) {
-        getBase().println(file);
+    public void println(Object aValue, File file) {
+        getBase(aValue).getFormat().println(aValue, file);
     }
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        return getBase().configureFirst(cmdLine);
+        NOptional<NArg> peek = cmdLine.peek();
+        if (peek.isPresent()) {
+            NOptional<NArg> n = cmdLine.next();
+            confCmds.add(new String[]{n.get().image()});
+            return true;
+        }
+        return false;
     }
 
+    @Override
+    public boolean configure(boolean skipUnsupported, NCmdLine cmdLine) {
+        String[] a = cmdLine.toStringArray();
+        cmdLine.skipAll();
+        confCmds.add(a);
+        return a.length > 0;
+    }
+
+    @Override
+    public void configureLast(NCmdLine cmdLine) {
+        configure(true, cmdLine);
+    }
 }
