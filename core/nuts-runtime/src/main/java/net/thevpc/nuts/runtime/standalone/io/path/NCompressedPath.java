@@ -119,6 +119,9 @@ public class NCompressedPath extends NPathBase {
 
     @Override
     public NPath resolve(String other) {
+        if(NBlankable.isBlank(other)){
+            return this;
+        }
         return base.resolve(other).toCompressedForm();
     }
 
@@ -435,20 +438,17 @@ public class NCompressedPath extends NPathBase {
     @NScore(fixed = NScorable.DEFAULT_SCORE)
     public static class MyPathFormat extends DefaultFormatBase<NFormat> {
 
-        private final NCompressedPath p;
-
-        public MyPathFormat(NCompressedPath p) {
+        public MyPathFormat() {
             super("path");
-            this.p = p;
         }
 
-        public NText asFormattedString() {
+        public NText asFormattedString(NCompressedPath p) {
             return p.formattedCompressedForm;
         }
 
         @Override
-        public void print(NPrintStream out) {
-            out.print(asFormattedString());
+        public void print(Object aValue, NPrintStream out) {
+            out.print(asFormattedString((NCompressedPath) aValue));
         }
 
         @Override
