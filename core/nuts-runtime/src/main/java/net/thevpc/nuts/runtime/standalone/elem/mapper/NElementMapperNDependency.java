@@ -2,12 +2,13 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NDependencyBuilder;
-import net.thevpc.nuts.text.NDependencyFormat;
+import net.thevpc.nuts.io.NIO;
+import net.thevpc.nuts.text.NDependencyWriter;
 import net.thevpc.nuts.runtime.standalone.DefaultNDependencyBuilder;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.text.NFormats;
+import net.thevpc.nuts.text.NObjectWriter;
 import net.thevpc.nuts.text.NText;
 
 import java.lang.reflect.Type;
@@ -19,10 +20,10 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
         if (o.getExclusions().isEmpty()) {
             //use compact form
             if (context.isNtf()) {
-                return NDependencyFormat.of().setNtf(true).format(o);
+                return NDependencyWriter.of().setNtf(true).format(o);
             } else {
 
-                return context.defaultDestruct(NFormats.of(o).get()
+                return context.defaultDestruct(NObjectWriter.of(o)
                         .setNtf(context.isNtf())
                         .format(o), null);
             }
@@ -43,7 +44,7 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
 //                    return ws.elem().forString(ws.dependency().formatter().setNtf(true).setValue(o).format());
 //                } else {
 
-        NText format = NFormats.of(o).get()
+        NText format = NObjectWriter.of(o)
                 .setNtf(context.isNtf())
                 .format(o);
         return context.defaultCreateElement(
