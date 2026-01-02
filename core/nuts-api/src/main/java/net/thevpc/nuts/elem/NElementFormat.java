@@ -46,72 +46,8 @@ import java.util.function.Consumer;
 public interface NElementFormat extends NContentTypeFormat {
 
 
-    static NElementFormat of(Object any) {
-        return of().setValue(any);
-    }
-
     static NElementFormat of() {
         return NExtensions.of(NElementFormat.class);
-    }
-
-    static NElementFormat ofPlainJson(Object any) {
-        return of().setValue(any).setNtf(false).json();
-    }
-
-    static NElementFormat ofPlainProps(Object any) {
-        return of().setValue(any).setNtf(false).setContentType(NContentType.PROPS);
-    }
-
-    static NElementFormat ofPlainXml(Object any) {
-        return of().setValue(any).setNtf(false).setContentType(NContentType.XML);
-    }
-
-    static NElementFormat ofPlainTree(Object any) {
-        return of().setValue(any).setNtf(false).setContentType(NContentType.TREE);
-    }
-
-    static NElementFormat ofPlain(Object any) {
-        return of().setValue(any).setNtf(false).setContentType(NContentType.PLAIN);
-    }
-
-    static NElementFormat ofPlainTson(Object any) {
-        return of().setValue(any).setNtf(false).setContentType(NContentType.TSON);
-    }
-
-    static NElementFormat ofPlainYaml(Object any) {
-        return of().setValue(any).setNtf(false).setContentType(NContentType.YAML);
-    }
-
-    static NElementFormat ofPlainTable(Object any) {
-        return of().setValue(any).setNtf(false).setContentType(NContentType.TABLE);
-    }
-
-    static NElementFormat ofNtfJson(Object any) {
-        return of().setValue(any).setNtf(true).json();
-    }
-
-    static NElementFormat ofNtfProps(Object any) {
-        return of().setValue(any).setNtf(true).setContentType(NContentType.PROPS);
-    }
-
-    static NElementFormat ofNtfXml(Object any) {
-        return of().setValue(any).setNtf(true).setContentType(NContentType.XML);
-    }
-
-    static NElementFormat ofNtfTree(Object any) {
-        return of().setValue(any).setNtf(true).setContentType(NContentType.TREE);
-    }
-
-    static NElementFormat ofNtfTson(Object any) {
-        return of().setValue(any).setNtf(true).setContentType(NContentType.TSON);
-    }
-
-    static NElementFormat ofNtfYaml(Object any) {
-        return of().setValue(any).setNtf(true).setContentType(NContentType.YAML);
-    }
-
-    static NElementFormat ofNtfTable(Object any) {
-        return of().setValue(any).setNtf(true).setContentType(NContentType.TABLE);
     }
 
     static NElementFormat ofPlainJson() {
@@ -199,25 +135,6 @@ public interface NElementFormat extends NContentTypeFormat {
     NElementFormat tson();
 
     NElementFormat xml();
-
-    /**
-     * return current value to format.
-     *
-     * @return current value to format
-     * @since 0.5.6
-     */
-    @Override
-    Object getValue();
-
-    /**
-     * set current value to format.
-     *
-     * @param value value to format
-     * @return {@code this} instance
-     * @since 0.5.6
-     */
-    @Override
-    NElementFormat setValue(Object value);
 
     /**
      * configure the current command with the given arguments. This is an
