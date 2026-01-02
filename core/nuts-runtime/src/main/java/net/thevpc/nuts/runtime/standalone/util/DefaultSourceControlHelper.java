@@ -11,7 +11,7 @@ import net.thevpc.nuts.command.NDeploy;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
-import net.thevpc.nuts.text.NDescriptorFormat;
+import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
@@ -69,7 +69,7 @@ public class DefaultSourceControlHelper {
                 d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
             }
             NId newId = NDeploy.of().setContent(folder).setDescriptor(d).getResult().get(0);
-            NDescriptorFormat.of().print(d, file);
+            NDescriptorWriter.of().print(d, file);
             NIOUtils.delete(folder);
             return newId;
         } else {
@@ -102,7 +102,7 @@ public class DefaultSourceControlHelper {
             NId newId = d.getId().builder().setVersion(oldVersion + CoreNConstants.Versions.CHECKED_OUT_EXTENSION).build();
             d = d.builder().setId(newId).build();
 
-            NDescriptorFormat.of().print(d, file);
+            NDescriptorWriter.of().print(d, file);
 
             return new DefaultNDefinitionBuilder()
                     .setRepositoryUuid(nutToInstall.getRepositoryUuid())
