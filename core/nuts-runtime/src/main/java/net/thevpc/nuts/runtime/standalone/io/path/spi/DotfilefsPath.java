@@ -92,7 +92,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public NFormatSPI formatter(NPath basePath) {
+    public NObjectWriterSPI formatter(NPath basePath) {
         return new MyPathFormat(this);
     }
 
@@ -276,7 +276,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
     }
 
 
-    private static class MyPathFormat implements NFormatSPI {
+    private static class MyPathFormat implements NObjectWriterSPI {
 
         private final DotfilefsPath p;
 
