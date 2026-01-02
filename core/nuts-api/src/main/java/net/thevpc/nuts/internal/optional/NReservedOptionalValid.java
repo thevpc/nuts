@@ -9,6 +9,9 @@ import java.util.function.Supplier;
 
 public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T> implements Cloneable {
 
+    public NReservedOptionalValid(Supplier<NMsg> message) {
+        super(message);
+    }
 
     @Override
     public <V> NOptional<V> then(Function<T, V> mapper) {
@@ -54,16 +57,11 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
         return false;
     }
 
-    public NOptional<T> ifBlankEmpty() {
+    public NOptional<T> onBlankEmpty() {
         if (isBlank()) {
-            return NOptional.ofEmpty(NMsg::ofMissingValue);
+            return NOptional.ofEmpty(getMessage());
         }
         return this;
-    }
-
-    @Override
-    public Supplier<NMsg> getMessage() {
-        return NMsg::ofMissingValue;
     }
 
     @Override
@@ -92,6 +90,11 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
     }
 
     @Override
+    public T orDefault(Class<T> defaultType) {
+        return get();
+    }
+
+    @Override
     public NOptional<T> orDefaultOptional() {
         return this;
     }
@@ -116,8 +119,4 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
         return NOptionalType.PRESENT;
     }
 
-    @Override
-    public NOptional<T> withExceptionFactory(ExceptionFactory exceptionFactory) {
-        return this;
-    }
 }
