@@ -78,8 +78,8 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
 //        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
         NWorkspace workspace = NWorkspace.of();
-        boolean initializeScripts = workspace.getBootOptions().getInitScripts().ifEmpty(true).get();
-        boolean initializeLaunchers = workspace.getBootOptions().getInitLaunchers().ifEmpty(true).get();
+        boolean initializeScripts = workspace.getBootOptions().getInitScripts().onEmpty(true).get();
+        boolean initializeLaunchers = workspace.getBootOptions().getInitLaunchers().onEmpty(true).get();
         Boolean installCompanions = workspace.getBootOptions().getInstallCompanions().orElse(false);
 
 //        if (initializeJava) {
