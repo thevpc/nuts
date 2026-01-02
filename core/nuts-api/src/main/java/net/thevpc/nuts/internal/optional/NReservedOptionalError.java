@@ -14,14 +14,10 @@ import java.util.function.Supplier;
 
 public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> implements Cloneable {
 
-    private Supplier<NMsg> message;
     private Throwable cause;
 
     public NReservedOptionalError(Supplier<NMsg> message, Throwable cause) {
-        if (message == null) {
-            message = () -> NMsg.ofInvalidValue(cause);
-        }
-        this.message = message;
+        super(message==null?() -> NMsg.ofInvalidValue(cause):message);
         this.cause = cause;
     }
 
@@ -59,7 +55,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public T get() {
-        throwError(message);
+        throwError(getMessage());
         return null;
     }
 
@@ -71,7 +67,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
     }
 
     @Override
-    public NOptional<T> ifBlankEmpty() {
+    public NOptional<T> onBlankEmpty() {
         return this;
     }
 
@@ -95,10 +91,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
         return true;
     }
 
-    @Override
-    public Supplier<NMsg> getMessage() {
-        return message;
-    }
+
 
     @Override
     public boolean isBlank() {
@@ -117,7 +110,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
 
     protected void throwError(Supplier<NMsg> preferredMessage) {
         if (preferredMessage == null) {
-            preferredMessage = message;
+            preferredMessage = getMessage();
         }
         if (preferredMessage == null) {
             preferredMessage = NMsg::ofMissingValue;
