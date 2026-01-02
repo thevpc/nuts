@@ -46,7 +46,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     }
 
     static <T> NOptional<T> ofNamedEmpty(String name) {
-        return ofEmpty(() -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
+        return ofEmpty(() -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankTrimmed(name, "value")));
     }
 
     static <T> NOptional<T> ofNamedEmpty(NMsg message) {
@@ -62,7 +62,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     }
 
     static <T> NOptional<T> ofNamedError(String name) {
-        return ofError(() -> NMsg.ofC("error evaluating %s", NStringUtils.firstNonBlank(name, "value")));
+        return ofError(() -> NMsg.ofC("error evaluating %s", NStringUtils.firstNonBlankTrimmed(name, "value")));
     }
 
     static <T> NOptional<T> ofNamedError(String name, Throwable throwable) {
@@ -106,21 +106,25 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     }
 
     static <T> NOptional<T> ofNullable(T value) {
-        return new NReservedOptionalValidValue<>(value);
+        return ofNullable(value, (Supplier<NMsg>) null);
+    }
+
+    static <T> NOptional<T> ofNullable(T value, Supplier<NMsg> message) {
+        return new NReservedOptionalValidValue<>(value, message);
     }
 
     static <T> NOptional<T> ofCallable(NCallable<T> value) {
         NAssert.requireNonNull(value, "callable");
-        return new NReservedOptionalValidCallable<>(() -> NOptional.of(value.call()));
+        return new NReservedOptionalValidCallable<>(() -> NOptional.of(value.call()), null);
     }
 
     static <T> NOptional<T> ofSupplier(Supplier<T> value) {
         NAssert.requireNonNull(value, "supplier");
-        return new NReservedOptionalValidCallable<>(() -> NOptional.of(value.get()));
+        return new NReservedOptionalValidCallable<>(() -> NOptional.of(value.get()), null);
     }
 
     static <T> NOptional<T> ofNamed(T value, String name) {
-        return of(value, () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
+        return of(value, () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankTrimmed(name, "value")));
     }
 
     static <T> NOptional<T> ofNamed(T value, NMsg name) {
@@ -131,14 +135,14 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
         if (value == null) {
             return ofEmpty(emptyMessage);
         }
-        return ofNullable(value);
+        return ofNullable(value, emptyMessage);
     }
 
     static <T> NOptional<T> of(T value, NMsg emptyMessage) {
         if (value == null) {
             return ofEmpty(emptyMessage);
         }
-        return ofNullable(value);
+        return ofNullable(value, emptyMessage == null ? null : () -> emptyMessage);
     }
 
     static <T> NOptional<T> ofNull() {
@@ -146,30 +150,30 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     }
 
     static <T> NOptional<T> ofNamedOptional(Optional<T> optional, String name) {
-        return ofOptional(optional, () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
+        return ofOptional(optional, () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankTrimmed(name, "value")));
     }
 
     static <T> NOptional<T> ofOptional(Optional<T> optional, NMsg errorMessage) {
-        return ofOptional(optional, () -> errorMessage);
+        return ofOptional(optional, errorMessage == null ? null : () -> errorMessage);
     }
 
     static <T> NOptional<T> ofOptional(Optional<T> optional, Supplier<NMsg> errorMessage) {
         if (optional.isPresent()) {
-            return of(optional.get());
+            return of(optional.get(), errorMessage);
         }
         return ofEmpty(errorMessage);
     }
 
     /**
      * Creates an NOptional from a collection that must contain exactly one element.
-     *
+     * <p>
      * If the collection:
      * - Is empty: returns empty optional
      * - Has exactly 1 element: returns NOptional wrapping that element
      * - Has more than 1 element: returns error optional with message "too many elements"
-     *
+     * <p>
      * Use this when you expect exactly one result, and want to catch duplicates as errors.
-     *
+     * <p>
      * Example:
      * <pre>
      *   List<User> results = db.findByEmail("user@example.com");
@@ -187,14 +191,14 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
 
     /**
      * Creates an NOptional from a collection that must contain exactly one element.
-     *
+     * <p>
      * If the collection:
      * - Is empty: returns empty optional
      * - Has exactly 1 element: returns NOptional wrapping that element
      * - Has more than 1 element: returns error optional with message "too many elements"
-     *
+     * <p>
      * Use this when you expect exactly one result, and want to catch duplicates as errors.
-     *
+     * <p>
      * Example:
      * <pre>
      *   List<User> results = db.findByEmail("user@example.com");
@@ -203,7 +207,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * </pre>
      *
      * @param collection the collection to extract from
-     * @param name name a appear in the error message as "missing $name"
+     * @param name       name a appear in the error message as "missing $name"
      * @return NOptional with the single element, or empty/error based on collection size
      */
     static <T> NOptional<T> ofNamedSingleton(Collection<T> collection, String name) {
@@ -211,20 +215,20 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
             return ofSingleton(collection, null, null);
         }
         return ofSingleton(collection,
-                () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")),
-                () -> NMsg.ofC("too many elements %s>1 for %s", collection == null ? 0 : collection.size(), NStringUtils.firstNonBlank(name, "value")));
+                () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankTrimmed(name, "value")),
+                () -> NMsg.ofC("too many elements %s>1 for %s", collection == null ? 0 : collection.size(), NStringUtils.firstNonBlankTrimmed(name, "value")));
     }
 
     /**
      * Creates an NOptional from a collection that must contain exactly one element.
-     *
+     * <p>
      * If the collection:
      * - Is empty: returns empty optional
      * - Has exactly 1 element: returns NOptional wrapping that element
      * - Has more than 1 element: returns error optional with message "too many elements"
-     *
+     * <p>
      * Use this when you expect exactly one result, and want to catch duplicates as errors.
-     *
+     * <p>
      * Example:
      * <pre>
      *   List<User> results = db.findByEmail("user@example.com");
@@ -232,7 +236,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      *   // Empty if no results, User if exactly 1, Error if >1
      * </pre>
      *
-     * @param collection the collection to extract from
+     * @param collection   the collection to extract from
      * @param errorMessage optional errorMessage
      * @return NOptional with the single element, or empty/error based on collection size
      */
@@ -247,20 +251,20 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
             return ofError(errorMessage);
         }
         for (T t : collection) {
-            return of(t);
+            return of(t, emptyMessage);
         }
         return ofEmpty(errorMessage);
     }
 
     /**
      * Creates an NOptional from the first element of a collection.
-     *
+     * <p>
      * If the collection:
      * - Is empty: returns empty optional
      * - Has at least 1 element: returns NOptional wrapping the first element
-     *
+     * <p>
      * Use this when you only care about the first result and want to ignore the rest.
-     *
+     * <p>
      * Example:
      * <pre>
      *   List<User> results = db.search("active users");
@@ -269,24 +273,24 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * </pre>
      *
      * @param collection the collection to extract from
-     * @param name name a appear in the error message as "missing $name"
+     * @param name       name a appear in the error message as "missing $name"
      * @return NOptional with the first element, or empty if collection is empty
      */
     static <T> NOptional<T> ofNamedFirst(Collection<T> collection, String name) {
         return ofFirst(collection,
-                () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value"))
+                () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankTrimmed(name, "value"))
         );
     }
 
     /**
      * Creates an NOptional from the first element of a collection.
-     *
+     * <p>
      * If the collection:
      * - Is empty: returns empty optional
      * - Has at least 1 element: returns NOptional wrapping the first element
-     *
+     * <p>
      * Use this when you only care about the first result and want to ignore the rest.
-     *
+     * <p>
      * Example:
      * <pre>
      *   List<User> results = db.search("active users");
@@ -303,13 +307,13 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
 
     /**
      * Creates an NOptional from the first element of a collection.
-     *
+     * <p>
      * If the collection:
      * - Is empty: returns empty optional
      * - Has at least 1 element: returns NOptional wrapping the first element
-     *
+     * <p>
      * Use this when you only care about the first result and want to ignore the rest.
-     *
+     * <p>
      * Example:
      * <pre>
      *   List<User> results = db.search("active users");
@@ -317,7 +321,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      *   // Empty if no results, first User otherwise
      * </pre>
      *
-     * @param collection the collection to extract from
+     * @param collection   the collection to extract from
      * @param emptyMessage optional message supplier
      * @return NOptional with the first element, or empty if collection is empty
      */
@@ -329,7 +333,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
             return ofEmpty(emptyMessage);
         }
         for (T t : collection) {
-            return of(t);
+            return of(t, emptyMessage);
         }
         return ofEmpty(emptyMessage);
     }
@@ -337,14 +341,14 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     /**
      * Throws immediately if this optional is in error state, otherwise returns unchanged.
      * Useful in chaining to detect and propagate errors early without waiting for terminal operations.
-     *
+     * <p>
      * If this optional:
      * - Is empty: returns this unchanged (empty is not an error)
      * - Is error: calls {@link #get()} which throws the error
      * - Is present: returns this unchanged
-     *
+     * <p>
      * Use this to fail fast in optional chains before performing expensive operations.
-     *
+     * <p>
      * Example:
      * <pre>
      *   result = loadConfig()
@@ -377,7 +381,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     /**
      * Maps the value if this optional is present (non-empty and non-error).
      * If the optional is empty or in error state, returns an empty optional of the mapped type.
-     *
+     * <p>
      * This is the most common conditional map. Use it when you want to transform
      * a value only if it exists.
      *
@@ -394,9 +398,9 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * - Empty arrays
      * - Empty collections or maps
      * - Objects implementing NBlankable where isBlank() returns true
-     *
+     * <p>
      * Use this for user-input validation or optional string/collection handling.
-     *
+     * <p>
      * Example:
      * <pre>
      *   NOptional.of("  ").mapIfNotBlank(String::trim);
@@ -416,16 +420,16 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     /**
      * Maps the value if it is not empty according to {@link NBlankable#isBlank(Object)}.
      * This is an alias for {@link #mapIfNotBlank(Function)}.
-     *
+     * <p>
      * "Empty" includes:
      * - null
      * - Empty strings or strings with only whitespace
      * - Empty arrays
      * - Empty collections or maps
      * - Objects implementing NBlankable where isBlank() returns true
-     *
+     * <p>
      * Use this when you want to explicitly convey that you're checking for "empty" state.
-     *
+     * <p>
      * Example:
      * <pre>
      *   NOptional.of(Collections.emptyList()).mapIfNotEmpty(List::size);
@@ -444,14 +448,14 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * Maps the value if it is not null.
      * Unlike {@link #mapIfPresent(Function)}, this explicitly distinguishes between
      * a null value (which passes) and an absent/error state (which doesn't).
-     *
+     * <p>
      * If this optional is:
      * - Empty or error: returns empty optional
      * - Present with null value: mapper is NOT applied, returns empty optional
      * - Present with non-null value: applies mapper
-     *
+     * <p>
      * Useful when you need to treat null as a distinct state from "not present".
-     *
+     * <p>
      * Example:
      * <pre>
      *   NOptional.ofNullable(null).mapIfNotNull(v -> v.toUpperCase());
@@ -468,12 +472,12 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     /**
      * Conditionally maps this optional based on a predicate.
      * If the predicate is true, applies {@code trueExpr}; if false, applies {@code falseExpr}.
-     *
+     * <p>
      * If this optional is empty or in error state, applies {@code falseExpr} with null value.
      * Both branches return their results wrapped in NOptional.
-     *
+     * <p>
      * Use this for branching logic where both paths should be evaluated and result in a value.
-     *
+     * <p>
      * Example:
      * <pre>
      *   NOptional<String> status = NOptional.of(user)
@@ -483,7 +487,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * </pre>
      *
      * @param predicate the condition to test (null is treated as false)
-     * @param trueExpr function to apply if predicate is true
+     * @param trueExpr  function to apply if predicate is true
      * @param falseExpr function to apply if predicate is false or optional not present
      * @return NOptional wrapping the result of either trueExpr or falseExpr
      */
@@ -493,9 +497,9 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * Conditionally maps this optional based on a predicate, returning the same type.
      * If the predicate is true, applies {@code trueExpr} and returns the transformed value.
      * If the predicate is false or optional is not present, returns this optional unchanged.
-     *
+     * <p>
      * Use this for optional transformations where you only modify the value if a condition holds.
-     *
+     * <p>
      * Example:
      * <pre>
      *   NOptional<Integer> value = NOptional.of(10)
@@ -504,9 +508,9 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * </pre>
      *
      * @param predicate the condition to test (null is treated as false)
-     * @param trueExpr function to apply if predicate is true
+     * @param trueExpr  function to apply if predicate is true
      * @return NOptional wrapping the transformed value if predicate passes,
-     *         or this optional unchanged if predicate fails or optional not present
+     * or this optional unchanged if predicate fails or optional not present
      */
     NOptional<T> mapIf(Predicate<T> predicate, Function<T, T> trueExpr);
 
@@ -516,7 +520,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * - Empty or error: returns unchanged
      * - Present with actual value (not default): applies mapper
      * - Present but equals the default: returns unchanged
-     *
+     * <p>
      * Use this to apply transformations only to user-provided values, not defaults.
      *
      * @param mapper function to apply to non-default values
@@ -530,7 +534,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * - Empty or error: returns unchanged
      * - Present but not default: returns unchanged
      * - Present and equals the default: applies mapper
-     *
+     * <p>
      * Use this to apply special handling to default values.
      *
      * @param mapper function to apply to default values
@@ -545,9 +549,9 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     /**
      * Casts this optional's value to a specific type if the value is an instance of that type.
      * If the value is not an instance of the target class, returns an empty optional.
-     *
+     * <p>
      * Use this for safe type casting without exceptions.
-     *
+     * <p>
      * Example:
      * <pre>
      *   NOptional<Object> obj = NOptional.of(getSomeObject());
@@ -559,20 +563,20 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      *
      * @param targetClass the class to check and cast to
      * @return NOptional wrapping the casted value if instance of targetClass,
-     *         empty optional otherwise
+     * empty optional otherwise
      */
     <V> NOptional<V> instanceOf(Class<V> targetClass);
 
     /**
      * Transforms this optional's value and wraps the result back into an NOptional.
      * Enables safe chaining of non-optional method calls to handle deep object graphs.
-     *
+     * <p>
      * If this optional is:
      * - Not present or error: returns an empty optional
      * - Present: applies mapper and wraps result in NOptional (result can be null)
-     *
+     * <p>
      * Use this for the common pattern: {@code a?.b()?.c()?.d}
-     *
+     * <p>
      * Example (safe null traversal):
      * <pre>
      *   String path = NOptional.of(clazz.getProtectionDomain())
@@ -587,46 +591,17 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      */
     <V> NOptional<V> then(Function<T, V> mapper);
 
-    /**
-     * Transforms this optional's value using a function that returns an NOptional,
-     * and flattens the result.
-     *
-     * Use this when chaining operations where each step returns an NOptional
-     * (e.g., JSON parsing, querying, or other optional-returning methods).
-     * This prevents double-wrapping (NOptional&lt;NOptional&lt;V&gt;&gt;).
-     *
-     * If this optional is:
-     * - Not present or error: returns an empty optional
-     * - Present: applies mapper and returns the resulting NOptional (flattened)
-     *
-     * Example (chaining optional-returning operations):
-     * <pre>
-     *   NListContainerElement components = NOptional.of(root)
-     *       .thenOptional(x -> x.toObject())           // Returns NOptional<NObjectContainer>
-     *       .thenOptional(x -> x.get("info"))          // Returns NOptional<NElement>
-     *       .thenOptional(x -> x.asObject())           // Returns NOptional<NObjectContainer>
-     *       .thenOptional(x -> x.get("servers"))       // Returns NOptional<NElement>
-     *       .thenOptional(x -> x.asListContainer())    // Returns NOptional<NListContainer>
-     *       .orNull(); // Final result or null if any step returned empty
-     * </pre>
-     *
-     * @param mapper function that takes the value and returns an NOptional
-     * @return the NOptional returned by mapper, or empty if this optional is not present
-     * @see #flatMap(Function)
-     */
-    <V> NOptional<V> thenOptional(Function<T, NOptional<V>> mapper);
-
 
     /**
      * Filters this optional using a predicate that carries its own error message.
      * An NMessagedPredicate combines a {@link Predicate} and an associated error message,
      * allowing the predicate logic itself to define the failure reason.
-     *
+     * <p>
      * Use this when the validation logic naturally knows why it failed.
      *
      * @param predicate a messaged predicate (predicate + error message combined)
      * @return this optional unchanged if predicate passes or optional is not present,
-     *         empty optional with predicate's message if predicate fails
+     * empty optional with predicate's message if predicate fails
      */
     NOptional<T> filter(NMessagedPredicate<T> predicate);
 
@@ -635,9 +610,9 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * If the value is present and passes the predicate, returns this optional unchanged.
      * If the value is present but fails the predicate, returns an empty optional.
      * If this optional is empty or in error state, returns this optional unchanged.
-     *
+     * <p>
      * Use this to add additional validation or constraints to an existing optional.
-     *
+     * <p>
      * Example:
      * <pre>
      *   NOptional.of(user)
@@ -647,7 +622,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      *
      * @param predicate the condition to test
      * @return this optional unchanged if predicate passes or optional is not present,
-     *         empty optional if predicate fails
+     * empty optional if predicate fails
      */
     NOptional<T> filter(Predicate<T> predicate);
 
@@ -656,7 +631,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * Filters this optional with a custom error message if the predicate fails.
      * Semantically equivalent to {@link #filter(Predicate)}, but allows you to provide
      * a descriptive message that will be included in the exception if {@link #get()} is called.
-     *
+     * <p>
      * Example:
      * <pre>
      *   NOptional.of(user)
@@ -666,18 +641,18 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * </pre>
      *
      * @param predicate the condition to test
-     * @param message supplier for custom error message if predicate fails
+     * @param message   supplier for custom error message if predicate fails
      * @return this optional unchanged if predicate passes or optional is not present,
-     *         empty optional with custom message if predicate fails
+     * empty optional with custom message if predicate fails
      */
     NOptional<T> filter(Predicate<T> predicate, Supplier<NMsg> message);
 
     /**
      * Executes a side-effect operation if this optional is present (non-empty and non-error).
      * Returns this optional unchanged for chaining.
-     *
+     * <p>
      * Use this to perform actions based on a present value without transforming it.
-     *
+     * <p>
      * Example:
      * <pre>
      *   NOptional.of(user)
@@ -686,10 +661,20 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      *       .ifPresent(email -> sendNotification(email));
      * </pre>
      *
-     * @param t consumer function to execute on the value
+     * @param action consumer function to execute on the value
      * @return this optional unchanged, for chaining
      */
-    NOptional<T> ifPresent(Consumer<T> t);
+    NOptional<T> ifPresent(Consumer<T> action);
+
+    NOptional<T> ifCondition(Predicate<NOptional<T>> condition, Consumer<NOptional<T>> action);
+
+
+    NOptional<T> ifNonPresent(Runnable action);
+
+    NOptional<T> ifNull(Runnable action);
+
+    NOptional<T> ifError(Consumer<Throwable> action);
+
 
     /**
      * Returns the value if present, otherwise returns {@code other}.
@@ -700,6 +685,28 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      */
     T orElse(T other);
 
+
+    /**
+     * Returns this optional if present, otherwise returns a new optional containing
+     * the result of invoking {@code other}.
+     * If the result of {@code other} is {@code null}, an empty optional is returned.
+     * If this optional is in an error state, it returns a new optional containing
+     * the result of invoking {@code other}.
+     *
+     * @param other a {@code Supplier} whose result is returned in a new NOptional if this one is empty or error
+     * @return this optional if present, or a new NOptional with the result of {@code other}
+     */
+    NOptional<T> orElseGetOptionalOf(Supplier<T> other);
+
+    /**
+     * Returns this optional if present, otherwise returns the optional provided by the supplier.
+     * This handles both **empty** and **error** states by attempting to provide a fallback optional.
+     *
+     * @param other a {@code Supplier} that returns an alternative {@code NOptional}
+     * @return this optional if present, otherwise the optional provided by {@code other}
+     */
+    NOptional<T> orElseGetOptionalFrom(Supplier<NOptional<T>> other);
+
     /**
      * Returns the value if present, otherwise invokes {@code other} and returns the result.
      * If this optional is in an error state, it invokes {@code other} and returns the result.
@@ -709,67 +716,6 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      */
     T orElseGet(Supplier<? extends T> other);
 
-    /**
-     * Returns this optional if present, otherwise returns a new optional containing
-     * the result of invoking {@code other}.
-     * If the result of {@code other} is {@code null}, an empty optional is returned.
-     * If this optional is in an error state, it returns a new optional containing
-     * the result of invoking {@code other}.
-     *
-     * @param other a {@code Supplier} whose result is returned in a new NOptional if this one is empty or error
-     * @return this optional if present, or a new NOptional with the result of {@code other}
-     */
-    NOptional<T> orElseOf(Supplier<T> other);
-
-    /**
-     * Returns this optional if present, otherwise returns a new optional containing
-     * the result of invoking {@code other}. The result of {@code other} may be {@code null}.
-     * If this optional is in an error state, it returns a new optional containing
-     * the result of invoking {@code other}.
-     *
-     * @param other a {@code Supplier} whose result is returned in a new NOptional if this one is empty or error
-     * @return this optional if present, or a new NOptional with the result of {@code other}
-     */
-    NOptional<T> orElseOfNullable(Supplier<T> other);
-
-    /**
-     * Returns the value if present or in an error state, otherwise invokes {@code other} and returns the result.
-     * This method specifically handles the **empty** state. The error state is unaffected.
-     *
-     * @param other a {@code Supplier} whose result is returned if this optional is empty
-     * @return the value, or the result of {@code other} if empty
-     */
-    T ifEmptyGet(Supplier<? extends T> other);
-
-    /**
-     * Returns this optional if present or in an error state, otherwise returns a new optional containing
-     * the result of invoking {@code other}.
-     * If the result of {@code other} is {@code null}, an empty optional is returned.
-     * This method specifically handles the **empty** state.
-     *
-     * @param other a {@code Supplier} whose result is returned in a new NOptional if this one is empty
-     * @return this optional if present or error, or a new NOptional with the result of {@code other}
-     */
-    NOptional<T> ifEmptyOf(Supplier<T> other);
-
-    /**
-     * Returns this optional if present or in an error state, otherwise returns a new optional containing
-     * the result of invoking {@code other}. The result of {@code other} may be {@code null}.
-     * This method specifically handles the **empty** state.
-     *
-     * @param other a {@code Supplier} whose result is returned in a new NOptional if this one is empty
-     * @return this optional if present or error, or a new NOptional with the result of {@code other}
-     */
-    NOptional<T> ifEmptyOfNullable(Supplier<T> other);
-
-    /**
-     * Returns this optional if present, otherwise returns the optional provided by the supplier.
-     * This handles both **empty** and **error** states by attempting to provide a fallback optional.
-     *
-     * @param other a {@code Supplier} that returns an alternative {@code NOptional}
-     * @return this optional if present, otherwise the optional provided by {@code other}
-     */
-    NOptional<T> orElseUse(Supplier<NOptional<T>> other);
 
     /**
      * Returns the contained value if present, otherwise throws an exception produced by the exception supplier.
@@ -777,9 +723,9 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * (the default ExceptionFactory).
      *
      * @param exceptionSupplier the supplier that will return the exception to be thrown
+     * @param <R>               the type of exception to be thrown
      * @return the value
-     * @param <R> the type of exception to be thrown
-     * @throws R if this optional is empty
+     * @throws R                if this optional is empty
      * @throws RuntimeException if this optional is in an error state (throws via {@link #get()})
      */
     <R extends Throwable> T orElseThrow(Supplier<? extends R> exceptionSupplier) throws R;
@@ -792,7 +738,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * @param other the value to return in a new NOptional if this one is empty
      * @return this optional if present or error, or a new NOptional with the value {@code other}
      */
-    NOptional<T> ifEmpty(T other);
+    NOptional<T> onEmpty(T other);
 
     /**
      * Returns this optional if present or in an error state, otherwise returns the optional provided by the supplier.
@@ -806,12 +752,12 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
 
     /**
      * Returns the contained value if present.
-     *
+     * <p>
      * If this optional is:
      * - Present: returns the value.
      * - Empty: throws {@code NEmptyOptionalException}.
      * - Error: throws {@code NErrorOptionalException} (or another exception type based on the configured {@code ExceptionFactory}).
-     *
+     * <p>
      * This is the "active" accessor that forces a result or an exception.
      *
      * @return the value
@@ -823,7 +769,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
 
     /**
      * Returns the contained value if present, using a custom message for the exception if empty.
-     *
+     * <p>
      * If this optional is:
      * - Present: returns the value.
      * - Empty: throws {@code NEmptyOptionalException} using the provided message.
@@ -855,11 +801,11 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     /**
      * Returns the contained value, or {@code null} if this optional is empty or an error.
      * This is the "passive" accessor — it never throws an exception.
-     *
+     * <p>
      * Use this when:
      * - You want to gracefully handle missing values without exceptions
      * - You're chaining multiple nullable operations
-     *
+     * <p>
      * Example:
      * <pre>
      *   String path = NOptional.of(clazz.getProtectionDomain())
@@ -876,17 +822,17 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     /**
      * Returns the contained value, or the configured default value if this optional is empty.
      * The default must be explicitly set using {@link #withDefault(T)} or {@link #withDefault(Supplier)}.
-     *
+     * <p>
      * If this optional is:
      * - Present: returns the value
      * - Empty with default configured: returns the default
      * - Empty without default: throws NEmptyOptionalException
      * - Error: throws NErrorOptionalException
-     *
+     * <p>
      * Use this when:
      * - You've explicitly configured a fallback via {@code withDefault()}
      * - You want to provide sensible defaults (e.g., 0 for numeric types, empty collections, etc.)
-     *
+     * <p>
      * Example:
      * <pre>
      *   // In config class:
@@ -910,13 +856,50 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     T orDefault();
 
     /**
+     * Returns the contained value, or the configured default value if this optional is empty.
+     * <p>
+     * If no explicit default has been configured (via {@link #withDefault(T)} or
+     * {@link #withDefault(Supplier)}), this method falls back to the JVM default value
+     * for the given {@code defaultType}.
+     * <p>
+     * The default resolution follows these steps:
+     * <ul>
+     *   <li>If this optional is present: returns the value</li>
+     *   <li>If empty with a configured default: resolves the default recursively</li>
+     *   <li>If the resolved default is {@code null} or no default is configured:
+     *       returns {@link net.thevpc.nuts.reflect.NReflectUtils#getDefaultValue(Class)} for {@code defaultType}</li>
+     * </ul>
+     * <p>
+     * If this optional is in an error state, the error is propagated.
+     * <p>
+     * This method is useful when a type-level default is acceptable as a final fallback
+     * (for example {@code 0} for numeric types, {@code false} for booleans, or {@code null}
+     * for reference types), without requiring an explicit {@code withDefault()} configuration.
+     * <p>
+     * Example:
+     * <pre>
+     *   int timeout = config.getTimeout().orDefault(int.class);
+     *   boolean enabled = flags.getEnabled().orDefault(boolean.class);
+     * </pre>
+     *
+     * @param defaultType the type whose JVM default value is used as a final fallback;
+     *                    may be {@code null}, in which case {@code null} is returned
+     * @return the value, the configured default, or the JVM default for {@code defaultType}
+     * @throws NErrorOptionalException if in error state
+     * @see #orDefault()
+     * @see #withDefault(T)
+     * @see #withDefault(Supplier)
+     */
+    T orDefault(Class<T> defaultType);
+
+    /**
      * Wraps the result of {@link #orDefault()} back into an NOptional.
      * If this optional is present, returns an NOptional wrapping the value.
      * If this optional is empty but has a default configured, returns an NOptional wrapping the default.
      * If this optional is empty without a default **or is in an error state**, returns an empty NOptional.
-     *
+     * <p>
      * Useful for chaining operations that expect NOptional return types.
-     *
+     * <p>
      * Example:
      * <pre>
      * NOptional<Boolean> isBot = NOptional.ofNamed(bot, "bot")
@@ -950,7 +933,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * @return this optional if present and not blank, or a new NOptional with the value {@code other}
      * @see #mapIfNotBlank(Function)
      */
-    NOptional<T> ifBlank(T other);
+    NOptional<T> onBlank(T other);
 
     /**
      * Returns this optional if its value is not blank, otherwise returns an empty optional
@@ -960,7 +943,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * @param emptyMessage supplier for the empty message if the present value is blank
      * @return this optional if present and not blank, otherwise an empty optional
      */
-    NOptional<T> ifBlankEmpty(Supplier<NMsg> emptyMessage);
+    NOptional<T> onBlankEmpty(Supplier<NMsg> emptyMessage);
 
     /**
      * Returns this optional if its value is not blank, otherwise returns an empty optional
@@ -969,7 +952,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      *
      * @return this optional if present and not blank, otherwise an empty optional
      */
-    NOptional<T> ifBlankEmpty();
+    NOptional<T> onBlankEmpty();
 
     /**
      * Returns an empty optional if this optional is in an error state, otherwise returns this optional unchanged.
@@ -977,7 +960,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      *
      * @return this optional if present or empty, otherwise an empty optional
      */
-    NOptional<T> ifErrorNull();
+    NOptional<T> onErrorEmpty();
 
     /**
      * Returns this optional if present or empty, otherwise returns a new optional
@@ -987,7 +970,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * @param other the value to return in a new NOptional if this one is in error state
      * @return this optional if present or empty, or a new NOptional with the value {@code other}
      */
-    NOptional<T> ifError(T other);
+    NOptional<T> onError(T other);
 
     /**
      * Returns this optional if its value is not blank, otherwise returns the optional provided by the supplier.
@@ -996,7 +979,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * @param other a {@code Supplier} that returns an alternative {@code NOptional}
      * @return this optional if present and not blank, otherwise the optional provided by {@code other}
      */
-    NOptional<T> ifBlankUse(Supplier<NOptional<T>> other);
+    NOptional<T> onBlankUse(Supplier<NOptional<T>> other);
 
     /**
      * Returns this optional if its value is not {@code null}, otherwise returns the optional provided by the supplier.
@@ -1005,41 +988,41 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * @param other a {@code Supplier} that returns an alternative {@code NOptional}
      * @return this optional if present and not null, otherwise the optional provided by {@code other}
      */
-    NOptional<T> ifNullUse(Supplier<NOptional<T>> other);
+    NOptional<T> onNullUse(Supplier<NOptional<T>> other);
 
     /**
      * Returns an empty optional if this optional is present but holds a {@code null} value,
      * otherwise returns this optional unchanged.
-     *
+     * <p>
      * If this optional is:
      * <ul>
      * <li>Present with non-null value: returns this unchanged.</li>
      * <li>Present with {@code null} value: returns a new empty optional.</li>
      * <li>Empty or Error: returns this unchanged.</li>
      * </ul>
-     *
+     * <p>
      * Use this to explicitly treat a present, but null, value as a non-present (empty) state.
      *
      * @return this optional if non-null, or a new empty optional if present and null.
      */
-    NOptional<T> ifNullEmpty();
+    NOptional<T> onNullEmpty();
 
     /**
      * Returns this optional if it is present or empty, otherwise returns the optional provided by the supplier.
      * This method specifically handles the **error** state by providing a recovery path.
-     *
+     * <p>
      * If this optional is:
      * <ul>
      * <li>Present or Empty: returns this unchanged.</li>
      * <li>Error: returns the {@code NOptional} result from {@code other}.</li>
      * </ul>
-     *
+     * <p>
      * Use this when an operation might fail (return an error optional) but a reliable fallback optional is available.
      *
      * @param other a {@code Supplier} that returns an alternative {@code NOptional}
      * @return this optional if present or empty, otherwise the optional provided by {@code other}
      */
-    NOptional<T> ifErrorUse(Supplier<NOptional<T>> other);
+    NOptional<T> onErrorUse(Supplier<NOptional<T>> other);
 
     /**
      * return true when not an error and has no content. {@code isPresent()}
@@ -1099,7 +1082,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
      * <li>If **Error**: Returns the error message supplier.</li>
      * <li>If **Present**: Returns {@code null}.</li>
      * </ul>
-     *
+     * <p>
      * The supplier must be invoked to get the actual message (an {@code NMsg} instance).
      *
      * @return a {@code Supplier} for the associated {@code NMsg}, or {@code null} if present.
@@ -1109,9 +1092,9 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     /**
      * Sets a custom error message for this optional.
      * The message will be used when {@link #get()} is called and the optional is empty or error.
-     *
+     * <p>
      * Use this to provide a full, specific error message for debugging or user communication.
-     *
+     * <p>
      * Example:
      * <pre>
      *   NOptional.ofEmpty()
@@ -1127,9 +1110,9 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     /**
      * Sets a custom error message for this optional.
      * The message will be used when {@link #get()} is called and the optional is empty or error.
-     *
+     * <p>
      * Use this to provide a full, specific error message for debugging or user communication.
-     *
+     * <p>
      * Example:
      * <pre>
      *   NOptional.ofEmpty()
@@ -1145,9 +1128,9 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     /**
      * Sets a name for this optional, used to construct an automatic error message.
      * The message will be formatted as "missing {name}" when {@link #get()} is called.
-     *
+     * <p>
      * Use this as a shorthand when you want a consistent, auto-generated message format.
-     *
+     * <p>
      * Example:
      * <pre>
      *   NOptional.ofEmpty()
@@ -1163,9 +1146,9 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
     /**
      * Sets a name for this optional, used to construct an automatic error message.
      * The message will be formatted as "missing {name}" when {@link #get()} is called.
-     *
+     * <p>
      * Use this as a shorthand when you want a consistent, auto-generated message format.
-     *
+     * <p>
      * Example:
      * <pre>
      *   NOptional.ofEmpty()
@@ -1189,14 +1172,14 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
 
     /**
      * Converts this {@code NOptional} to a standard Java {@code Optional<T>}.
-     *
+     * <p>
      * If this optional is:
      * <ul>
      * <li>Present (including present-with-null): returns a present {@code Optional} wrapping the value.</li>
      * <li>Empty: returns an empty {@code Optional}.</li>
      * <li>Error: returns an empty {@code Optional} (to remain coherent with Java's {@code Optional} which does not support an error state).</li>
      * </ul>
-     *
+     * <p>
      * **No exception is thrown.**
      *
      * @return a standard Java {@code Optional}
@@ -1205,7 +1188,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
 
     /**
      * Returns a sequential {@code NStream} with the contained value if this optional is present.
-     *
+     * <p>
      * If this optional is:
      * <ul>
      * <li>Present: returns a stream containing only the value.</li>
@@ -1239,7 +1222,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
          * is called on an optional that is in the **Error** state.
          *
          * @param message the descriptive error message
-         * @param e the underlying throwable that caused the error state, if available (may be null)
+         * @param e       the underlying throwable that caused the error state, if available (may be null)
          * @return the runtime exception to throw (e.g., NErrorOptionalException)
          */
         RuntimeException createOptionalErrorException(NMsg message, Throwable e);
@@ -1249,7 +1232,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
          * within the Nuts framework (e.g., by the {@code NAssert} utility).
          *
          * @param message the assertion failure message
-         * @param e the underlying throwable, if available (may be null)
+         * @param e       the underlying throwable, if available (may be null)
          * @return the runtime exception to throw
          */
         RuntimeException createAssertException(NMsg message, Throwable e);
@@ -1259,7 +1242,7 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
          * typically encountered during option parsing, validation, or command execution.
          *
          * @param message the command-line error message
-         * @param e the underlying throwable, if available (may be null)
+         * @param e       the underlying throwable, if available (may be null)
          * @return the runtime exception to throw
          */
         RuntimeException createCmdLineException(NMsg message, Throwable e);
