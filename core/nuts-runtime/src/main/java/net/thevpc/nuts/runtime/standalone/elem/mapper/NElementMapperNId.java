@@ -13,7 +13,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
     @Override
     public Object destruct(NId o, Type typeOfSrc, NElementFactoryContext context) {
         if (context.isNtf()) {
-            return NFormats.of().ofFormat(o).get().setNtf(true).format();
+            return NFormats.of(o).get().setNtf(true).format(o);
         } else {
             return o.toString();
         }
@@ -25,7 +25,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
 //                NutsWorkspace ws = context.getSession().getWorkspace();
 //                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);
-            return NElement.ofString(NFormats.of().ofFormat(o).get().setNtf(true).format().toString());
+            return NElement.ofString(NFormats.of(o).get().setNtf(true).format(o).toString());
         } else {
             return context.defaultCreateElement(o.toString(), null);
         }
