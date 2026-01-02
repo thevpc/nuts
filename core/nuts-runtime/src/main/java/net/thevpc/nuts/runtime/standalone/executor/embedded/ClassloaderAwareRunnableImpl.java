@@ -9,7 +9,7 @@ import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspaceOptionsBuilder;
 import net.thevpc.nuts.core.NWorkspaceOptionsConfig;
-import net.thevpc.nuts.text.NCmdLineFormat;
+import net.thevpc.nuts.text.NCmdLineWriter;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorOptions;
@@ -98,7 +98,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 
                         NWorkspaceOptionsBuilder bootOptions = JavaExecutorComponent.createChildOptions(executionContext);
                         System.setProperty("nuts.boot.args",
-                                NCmdLineFormat.of().setShellFamily(NShellFamily.SH).formatPlain(bootOptions
+                                NCmdLineWriter.of().setShellFamily(NShellFamily.SH).formatPlain(bootOptions
                                         .toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))
                                         .add(id.getLongName()))
                         );
