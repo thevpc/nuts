@@ -5,10 +5,9 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NSysEditorFamily;
 import net.thevpc.nuts.command.NSysEditorSupportCmd;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.elem.NPairElement;
-import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NTrace;
@@ -215,7 +214,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             info.repoFolder = source;
             NPath s = source.resolve("sys-editor-support.tson");
             if (s.isRegularFile()) {
-                NObjectElement sObj = NElementParser.ofTson().parse(s).asObject().get();
+                NObjectElement sObj = NElementReader.ofTson().read(s).asObject().get();
                 for (NElement child : sObj.children()) {
                     if (child.isNamedPair()) {
                         NPairElement p = child.asPair().get();
