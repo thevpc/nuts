@@ -142,9 +142,9 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         }
         try {
             Map<String, Object> a_config0 = NElementParser.ofJson().parse(bytes, Map.class);
-            NVersion version = NVersion.get((String) a_config0.get("configVersion")).ifBlankEmpty().orNull();
+            NVersion version = NVersion.get((String) a_config0.get("configVersion")).onBlankEmpty().orNull();
             if (version == null) {
-                version = NVersion.get((String) a_config0.get("createApiVersion")).ifBlankEmpty().orNull();
+                version = NVersion.get((String) a_config0.get("createApiVersion")).onBlankEmpty().orNull();
                 if (version == null) {
                     version = Nuts.getVersion();
                 }
@@ -483,7 +483,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             path.mkParentDirs().writeString((String) value);
         } else if (value instanceof NDescriptor) {
             try {
-                NDescriptorFormat.of((NDescriptor) value).setNtf(false).print(path);
+                NDescriptorFormat.of().setNtf(false).print((NDescriptor) value, path);
             } catch (Exception ex) {
                 _LOG()
                         .log(NMsg.ofC("failed to print %s", path).asFineFail(ex));
