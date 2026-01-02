@@ -4,7 +4,7 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 
 
 import net.thevpc.nuts.security.NUserConfig;
@@ -94,7 +94,7 @@ public class NVersionCompat506 extends AbstractNVersionCompat {
     }
 
     private NWorkspaceConfigBoot506 parseConfig506(byte[] bytes) {
-        return NElementParser.ofJson().parse(bytes, NWorkspaceConfigBoot506.class);
+        return NElementReader.ofJson().read(bytes, NWorkspaceConfigBoot506.class);
     }
 
 }
