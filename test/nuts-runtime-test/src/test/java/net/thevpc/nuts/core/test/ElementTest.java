@@ -32,7 +32,7 @@ import java.util.Map;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.text.NObjectFormat;
+import net.thevpc.nuts.text.NObjectObjectWriter;
 import net.thevpc.nuts.text.*;
 import org.junit.jupiter.api.*;
 
@@ -93,7 +93,7 @@ public class ElementTest {
                                 .build()
                 ).build())
                 .build();
-        NObjectFormat ss = NObjectFormat.of().setNtf(false);
+        NObjectObjectWriter ss = NObjectObjectWriter.of().setNtf(false);
         ss.println(p);
         String json = ss.formatPlain(p);
         String EXPECTED = "[\n" +
