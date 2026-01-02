@@ -4,9 +4,76 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NReflectUtils {
+    private static final Map<Class<?>, Object> DEFAULTS_CACHE = new ConcurrentHashMap<>();
+
     private NReflectUtils() {
+    }
+
+    /**
+     * Resolves the default value for a class annotated with @DefaultsTo.
+     * Supports:
+     * - Enum constants
+     * - Static fields
+     * - Static no-arg methods
+     * Returns null if no @DefaultsTo is present or value cannot be resolved.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T getDefaultValue(Class<T> type) {
+        if (type == null) return null;
+        Object d = getJavaDefaultValue(type);
+        if (d != null) {
+            return (T) d;
+        }
+
+        // Check cache first
+        if (DEFAULTS_CACHE.containsKey(type)) {
+            return (T) DEFAULTS_CACHE.get(type);
+        }
+
+        NDefaultsTo annotation = type.getAnnotation(NDefaultsTo.class);
+        if (annotation != null) {
+            String valueName = annotation.value();
+            Object resolved = null;
+            try {
+                // Enum constant
+                if (type.isEnum()) {
+                    resolved = Enum.valueOf((Class<Enum>) type.asSubclass(Enum.class), valueName);
+                } else {
+                    // Static field
+                    try {
+                        java.lang.reflect.Field field = type.getField(valueName);
+                        if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+                            resolved = field.get(null);
+                        }
+                    } catch (NoSuchFieldException ignored) {
+                    }
+
+                    // Static method
+                    if (resolved == null) {
+                        try {
+                            java.lang.reflect.Method method = type.getMethod(valueName);
+                            if (java.lang.reflect.Modifier.isStatic(method.getModifiers())) {
+                                resolved = method.invoke(null);
+                            }
+                        } catch (NoSuchMethodException ignored) {
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to resolve @DefaultsTo for " + type.getName(), e);
+            }
+
+            // Cache result (even nulls)
+            DEFAULTS_CACHE.put(type, resolved);
+            return (T) resolved;
+        }
+
+        // Cache null if no annotation
+        DEFAULTS_CACHE.put(type, null);
+        return null;
     }
 
     public static boolean isValidIdentifier(String anyType, String extraWordChars) {
@@ -40,7 +107,39 @@ public class NReflectUtils {
         return true;
     }
 
-    public static Object getDefaultValue(Class<?> anyType) {
+    public static boolean isPrimitiveOrBoxed(Class<?> anyType) {
+        return isPrimitiveOrBoxed(anyType, true);
+    }
+
+    public static boolean isPrimitiveOrBoxed(Class<?> anyType, boolean includeVoid) {
+        if (anyType == null) {
+            return false;
+        }
+        switch (anyType.getName()) {
+            case "boolean":
+            case "byte":
+            case "short":
+            case "int":
+            case "long":
+            case "char":
+            case "float":
+            case "double":
+            case "void":
+            case "java.lang.Boolean":
+            case "java.lang.Byte":
+            case "java.lang.Short":
+            case "java.lang.Integer":
+            case "java.lang.Long":
+            case "java.lang.Character":
+            case "java.lang.Float":
+            case "java.lang.Double":
+            case "java.lang.Void":
+                return true;
+        }
+        return false;
+    }
+
+    public static Object getJavaDefaultValue(Class<?> anyType) {
         NAssert.requireNonNull(anyType, "type");
         switch (anyType.getName()) {
             case "boolean":
