@@ -468,7 +468,7 @@ exec                     : execute an artifact (tool)
 deploy, undeploy         : manage artifacts on the local repositories
 
 <span style="color: #0000A3" class="">##)  SYNOPSIS:
-</span><span style="color: #000055" class="">nuts</span> [<<span style="color: #005078" class="">-options</span>>]... <command> <args> ...
+</span><span style="color: #000055" class="">nuts</span> []... <command> <args> ...
 
 <span style="color: #0000A3" class="">##)  VERSIONS:
 </span>Boot API     Version: <span style="color: #0000A3" class="">${nuts.workspace-boot.version}</span>
@@ -1086,12 +1086,12 @@ Non standard options can be used by <span style="color: #000055" class="">nuts</
 
 
 <span style="color: #005078" class="">###)  SPECIAL OPTIONS:
-</span><span style="color: #005078" class="">--version</span>  [<<span style="color: #005078" class="">-options</span>>]...
+</span><span style="color: #005078" class="">--version</span>  []...
  or <span style="color: #005078" class="">-version</span> or <span style="color: #005078" class="">-v</span>
       show api version and exit without loading the workspace
       for more details, type : <span style="color: #000055" class="">nuts</span> version version
 
- <span style="color: #005078" class="">--help</span>  [<<span style="color: #005078" class="">-options</span>>]...
+ <span style="color: #005078" class="">--help</span>  []...
  or <span style="color: #005078" class="">-help</span> or <span style="color: #005078" class="">-h</span>
       show a short message describing nuts and exit without loading the workspace
       for more details, type : <span style="color: #000055" class="">nuts</span> help
@@ -1102,69 +1102,69 @@ for installing. Commands support include internal commands, supported packages (
 will search for it), aliases (a commodity mechanism to extend internal commands) and even any other executable.
  Here is a lis of internal commands :
 
- <span style="color: #000055" class="">version</span>  [<<span style="color: #005078" class="">-options</span>>]...
+ <span style="color: #000055" class="">version</span>  []...
       load workspace and show api and runtime versions, then exit
 
- <span style="color: #000055" class="">info</span>  [<<span style="color: #005078" class="">-options</span>>]...
+ <span style="color: #000055" class="">info</span>  []...
       show workspace detailed information (paths and libraries) and exit.
       for more details, type : <span style="color: #000055" class="">nuts</span> help info
 
- <span style="color: #000055" class="">welcome</span>  [<<span style="color: #005078" class="">-options</span>>]...
+ <span style="color: #000055" class="">welcome</span>  []...
       show welcome message and exit.
       for more details, type : <span style="color: #000055" class="">nuts</span> help welcome
 
- <span style="color: #000055" class="">help</span>  [<<span style="color: #005078" class="">-options</span>>]... <id>...
+ <span style="color: #000055" class="">help</span>  []... <id>...
  or <span style="color: #005078" class="">--help</span> or <span style="color: #005078" class="">-</span>? or <span style="color: #005078" class="">-h</span>
       show this help and exit
       for more details, type : <span style="color: #000055" class="">nuts</span> help help
 
- <span style="color: #000055" class="">license</span> [<<span style="color: #005078" class="">-options</span>>]...
+ <span style="color: #000055" class="">license</span> []...
       show license info and exit
       for more details, type : <span style="color: #000055" class="">nuts</span> help info
 
- <span style="color: #000055" class="">install</span> [<<span style="color: #005078" class="">-options</span>>]... <id>... <args> ...
+ <span style="color: #000055" class="">install</span> []... <id>... <args> ...
       install <span style="color: #000055" class="">nuts</span> package <id>
       for more details, type : <span style="color: #000055" class="">nuts</span> help install
 
- <span style="color: #000055" class="">uninstall</span> [<<span style="color: #005078" class="">-options</span>>]... <id>... <args> ...
+ <span style="color: #000055" class="">uninstall</span> []... <id>... <args> ...
       uninstall  <span style="color: #000055" class="">nuts</span> package <id>
       for more details, type : <span style="color: #000055" class="">nuts</span> help uninstall
 
- <span style="color: #000055" class="">update</span> [<<span style="color: #005078" class="">-options</span>>]... <id> ...  <args> ...
+ <span style="color: #000055" class="">update</span> []... <id> ...  <args> ...
       check if a newer version of <span style="color: #000055" class="">nuts</span> or any of the provided <id>
       is available in the current workspace and perform update by downloading (fetch)
       and installing the artifact. The updated version is promoted to 'default' version.
       for more details, type : <span style="color: #000055" class="">nuts</span> help update
             
- <span style="color: #000055" class="">check-updates</span> [<<span style="color: #005078" class="">-options</span>>]... <id> ...
+ <span style="color: #000055" class="">check-updates</span> []... <id> ...
       check if a newer version of <span style="color: #000055" class="">nuts</span> is available in the current workspace without performing updates
       Takes the same arguments and options as <span style="color: #000055" class="">update</span> command
       for more details, type : <span style="color: #000055" class="">nuts</span> help check-updates
 
- <span style="color: #000055" class="">search</span> [<<span style="color: #005078" class="">-options</span>>]... <id> ...
+ <span style="color: #000055" class="">search</span> []... <id> ...
       search for <id>
       for more details, type : <span style="color: #000055" class="">nuts</span> help search
             
- <span style="color: #000055" class="">fetch</span> [<<span style="color: #005078" class="">-options</span>>]... <id> ...
+ <span style="color: #000055" class="">fetch</span> []... <id> ...
       download <id>  without installing them
       for more details, type : <span style="color: #000055" class="">nuts</span> help fetch
             
- <span style="color: #000055" class="">deploy</span> [<<span style="color: #005078" class="">-options</span>>]... <id> ...
+ <span style="color: #000055" class="">deploy</span> []... <id> ...
       deploy <id>  without installing them
       for more details, type : <span style="color: #000055" class="">nuts</span> help deploy
             
- <span style="color: #000055" class="">undeploy</span> [<<span style="color: #005078" class="">-options</span>>]... <id> ...
+ <span style="color: #000055" class="">undeploy</span> []... <id> ...
       undeploy <id>
       for more details, type : <span style="color: #000055" class="">nuts</span> help undeploy
             
- <span style="color: #000055" class="">exec</span> [<<span style="color: #005078" class="">-options</span>>]... [command] <args>...
- <span style="color: #005078" class="">--exec</span> [<<span style="color: #005078" class="">-options</span>>]... [command] <args>...
- <span style="color: #005078" class="">-e</span> [<<span style="color: #005078" class="">-options</span>>]... [command] <args>...
+ <span style="color: #000055" class="">exec</span> []... [command] <args>...
+ <span style="color: #005078" class="">--exec</span> []... [command] <args>...
+ <span style="color: #005078" class="">-e</span> []... [command] <args>...
       run command with the given executor options ( it will be considered an option if it
       starts with <span style="color: #005078" class="">-</span> ). This is helpful to issue JVM Options to executor for instance.
       for more details, type : <span style="color: #000055" class="">nuts</span> help exec
 
- <span style="color: #000055" class="">which</span> [<<span style="color: #005078" class="">-options</span>>]... [command] ...
+ <span style="color: #000055" class="">which</span> []... [command] ...
       show command to be executed if run with 'exec' 
       for more details, type : <span style="color: #000055" class="">nuts</span> help which
             
@@ -1373,81 +1373,6 @@ nuts ndiff my-app-v1.jar my-app-v2.jar
                             <div class="text-card">
                                 
 
-<span style="color: #000055" class="">ntexup</span> Declarative Document & Presentation Generator
-
-<span style="color: #000055" class="">ntexup</span> is an open-source, text-based document and presentation generator designed to make the creation of professional, math-heavy, and reusable teaching materials effortless.
-
-<span style="color: #0000A3" class=""> INSTALL</span>
-
-<span style="color: #0000A3" class="">nuts install ntexup</span>
-
-
-<span style="color: #0000A3" class="">##) EXAMPLE OF USAGE</span>
-
-<span style="color: #0000A3" class="">nuts ntexup show  file.ntexup</span>
-
-
-) SYNOPSYS (CMD MODE)
-
-nuts ntexup <option> file.ntexup
-
-
-Commands are :
-
-reopen
-reopen last file/folder
-
---dump
-build repository
-
-list-templates
-list available templates
-
-generate-doc
-build documentation
-
-<path>
-generate file ntexup file/folder
-
---output=<path>
-generated file output file/folder path
-
-
---pdf
-generate pf
-
---dump
-show dump
-
-
-<span style="color: #005078" class="">###)  SYNOPSYS (UI MODE)
-</span>
-nuts ntexup show <option>
-
-
-
-Options are :
-
-new
-create new project
-
---show
-create new project and show it
-
---show-log
-show log panel
-
-
-show-doc
-show documentation
-
-<path>
-
-
-<span style="color: #0000A3" class="">##)  EXAMPLES:
-</span>
-# ntexup: generate pdf
-nuts -Zy -w test ntexup show myfolder
 
                             </div>
                         </div>
@@ -2441,10 +2366,10 @@ nuts omegat
                                 </div>
                             </div>
                             <div class="text-card">
-                                <H4 class="md-title-2">Mindustry Game</H4><ul class="md-ul"><li class="md-uli">G0013- Mindustry Desktop (Game)</li></ul><pre class="md-code md-code-``` "><code class="">nuts com.github.anuken:mindustry-desktop
+                                <H4 class="md-title-2">Mindustry Game</H4><ul class="md-ul"><li class="md-uli">G0013- Mindustry Desktop (Game)</li></ul><pre class="md-code md-code-``` "><code class="">nuts install com.github.anuken:mindustry-desktop
 # Example of usage
   nuts mindustry-desktop
-</code></pre><ul class="md-ul"><li class="md-uli">G0013- Mindustry Server (Game Server)</li></ul><pre class="md-code md-code-``` "><code class="">nuts com.github.anuken:mindustry-server
+</code></pre><ul class="md-ul"><li class="md-uli">G0013- Mindustry Server (Game Server)</li></ul><pre class="md-code md-code-``` "><code class="">nuts install com.github.anuken:mindustry-server
 # Example of usage
   nuts mindustry-server
 </code></pre>
@@ -2563,9 +2488,9 @@ nuts ntomcat --start
                    data-original-title="GitHub"><i class="fab fa-github"></i></a></li>
         </ul>
         <p class="text-2 text-center mb-0">
-            Copyright © 2018-2025 Nuts Package Manager Team.
+            Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2025-12-01-225512
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2026-01-02-161952
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
