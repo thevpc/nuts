@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.web;
 
 import net.thevpc.nuts.concurrent.NOnceValue;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.text.NMsg;
@@ -98,7 +98,7 @@ public class NWebResponseImpl implements NWebResponse {
             return null;
         }
         try (InputStream in = content1.getInputStream()) {
-            return NElementParser.ofJson().parse(in, clz);
+            return NElementReader.ofJson().read(in, clz);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
@@ -114,7 +114,7 @@ public class NWebResponseImpl implements NWebResponse {
             return null;
         }
         try (InputStream in = content1.getInputStream()) {
-            return NElementParser.ofJson().parse(in, clz);
+            return NElementReader.ofJson().read(in, clz);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
