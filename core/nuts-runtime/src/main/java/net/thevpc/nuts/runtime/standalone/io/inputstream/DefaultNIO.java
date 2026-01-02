@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.app.NApp;
-import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.concurrent.NScoredCallable;
@@ -10,14 +10,14 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
-import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
+import net.thevpc.nuts.runtime.standalone.io.path.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.FilePath;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
 import net.thevpc.nuts.runtime.standalone.io.printstream.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.io.NIOUtils;
 
@@ -76,21 +76,21 @@ public class DefaultNIO implements NIO {
     public boolean isStdin(InputStream in) {
         InputStream sysin = unwrapInputStream(getBootModel().getSystemTerminal().in());
         in = unwrapInputStream(in);
-        return in==sysin;
+        return in == sysin;
     }
 
     @Override
     public boolean isStdout(OutputStream out) {
         OutputStream sysout = unwrapOutputStream(getBootModel().getSystemTerminal().out().asOutputStream());
-        out=unwrapOutputStream(out);
-        return out==sysout;
+        out = unwrapOutputStream(out);
+        return out == sysout;
     }
 
     @Override
     public boolean isStderr(OutputStream err) {
         OutputStream syserr = unwrapOutputStream(getBootModel().getSystemTerminal().err().asOutputStream());
-        err=unwrapOutputStream(err);
-        return err==syserr;
+        err = unwrapOutputStream(err);
+        return err == syserr;
     }
 
     @Override
@@ -526,5 +526,6 @@ public class DefaultNIO implements NIO {
     public NTempOutputStream ofTempOutputStream() {
         return new NTempOutputStreamImpl();
     }
+
 
 }
