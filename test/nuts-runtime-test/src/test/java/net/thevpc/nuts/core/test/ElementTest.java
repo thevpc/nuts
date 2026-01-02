@@ -93,9 +93,9 @@ public class ElementTest {
                                 .build()
                 ).build())
                 .build();
-        NObjectFormat ss = NObjectFormat.of().setValue(p).setNtf(false);
-        ss.println();
-        String json = ss.formatPlain();
+        NObjectFormat ss = NObjectFormat.of().setNtf(false);
+        ss.println(p);
+        String json = ss.formatPlain(p);
         String EXPECTED = "[\n" +
                 "  {\n" +
                 "    first : {\n" +
@@ -206,9 +206,9 @@ public class ElementTest {
             TestUtils.println("=====================================");
             TestUtils.println("CHECKING : '" + tt.path + "'");
             List<NElement> filtered1 = NElementPath.of(tt.path).filter(p);
-            ss.setValue(filtered1).println();
+            ss.println(filtered1);
             NText sexpected = NText.ofPlain(tt.expected.get(0));
-            NText sresult = ss.format();
+            NText sresult = ss.format(filtered1);
             Assertions.assertEquals(sexpected, sresult);
         }
     }
