@@ -184,8 +184,8 @@ public final class NReservedUtils {
 
     public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
         return
-                NLiteral.of(System.getProperty("nuts." + property)).asBoolean().ifEmpty(defaultValue).orElse(false)
-                        || NLiteral.of(System.getProperty("nuts.export." + property)).asBoolean().ifEmpty(defaultValue).orElse(false)
+                NLiteral.of(System.getProperty("nuts." + property)).asBoolean().onEmpty(defaultValue).orElse(false)
+                        || NLiteral.of(System.getProperty("nuts.export." + property)).asBoolean().onEmpty(defaultValue).orElse(false)
                 ;
     }
 
@@ -610,7 +610,7 @@ public final class NReservedUtils {
         NOptional<List<String>> o = parseStringIdList(s);
         if (o.isPresent()) {
             for (String x : o.get()) {
-                NOptional<NId> y = NId.get(x).ifBlankEmpty();
+                NOptional<NId> y = NId.get(x).onBlankEmpty();
                 if (y.isError()) {
                     return NOptional.ofError(y.getMessage());
                 }
