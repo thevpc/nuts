@@ -21,22 +21,22 @@ public class DefaultNLogs implements NLogs {
     }
 
     @Override
-    public NLogContext newContext() {
-        return NLogContextImpl.BLANK;
+    public NLogScope newContext() {
+        return NLogScopeImpl.BLANK;
     }
 
     @Override
-    public NLogContext getContext() {
+    public NLogScope getContext() {
         return model.getContext();
     }
 
     @Override
-    public void runWith(NLogContext context, Runnable runnable) {
+    public void runInScope(NLogScope context, Runnable runnable) {
         model.runWithContext(context, runnable);
     }
 
     @Override
-    public <T> T callWithContext(NLogContext context, NCallable<T> callable) {
+    public <T> T callInScope(NLogScope context, NCallable<T> callable) {
         return model.callWithContext(context, callable);
     }
 
