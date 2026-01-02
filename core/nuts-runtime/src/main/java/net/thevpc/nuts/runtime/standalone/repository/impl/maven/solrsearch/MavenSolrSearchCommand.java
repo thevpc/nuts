@@ -109,9 +109,9 @@ public class MavenSolrSearchCommand {
                             @Override
                             public boolean hasNext() {
                                 if (arr == null) {
-                                    NElement e = NElementParser.ofJson()
+                                    NElement e = NElementReader.ofJson()
                                             .setLogProgress(true)
-                                            .parse(query);
+                                            .read(query);
                                     if (e.isObject()) {
                                         NObjectElement o = e.asObject().get();
                                         String status = o.getByPath("responseHeader", "status").map(NElement::asLiteral).flatMap(NLiteral::asString).orElse("");
