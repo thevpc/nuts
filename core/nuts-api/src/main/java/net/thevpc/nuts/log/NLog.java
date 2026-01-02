@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.log;
 
+import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgBuilder;
@@ -40,7 +41,14 @@ import java.util.logging.Level;
  */
 public interface NLog {
 
-    String getName();
+    static void runInScope(NLogScope context, Runnable runnable) {
+        NLogs.of().runInScope(context, runnable);
+    }
+
+    static <T> T callInScope(NLogScope context, NCallable<T> callable) {
+        return NLogs.of().callInScope(context, callable);
+    }
+
 
     /**
      * create an instance of {@link NLog}
@@ -81,6 +89,8 @@ public interface NLog {
     static NLog ofScoped(String name) {
         return of(name).scoped();
     }
+
+    String getName();
 
     /**
      * Check if a message of the given level would actually be logged
