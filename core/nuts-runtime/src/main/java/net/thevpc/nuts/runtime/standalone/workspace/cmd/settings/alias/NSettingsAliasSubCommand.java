@@ -15,7 +15,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.NShellFamily;
-import net.thevpc.nuts.text.NPropertiesFormat;
+import net.thevpc.nuts.text.NPropertiesWriter;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NIllegalArgumentException;
@@ -78,7 +78,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                         .sorted((x, y) -> x.getName().compareTo(y.getName()))
                         .collect(Collectors.toList());
                 if (NOut.isPlain()) {
-                    NPropertiesFormat.of().println(r.stream().collect(
+                    NPropertiesWriter.of().println(r.stream().collect(
                             Collectors.toMap(
                                     NCustomCmd::getName,
                                     x -> NCmdLine.of(x.getCommand()).toString(),
