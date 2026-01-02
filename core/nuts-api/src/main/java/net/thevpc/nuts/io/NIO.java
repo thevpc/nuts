@@ -33,6 +33,8 @@ import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.text.NObjectWriter;
+import net.thevpc.nuts.util.NOptional;
 
 import java.io.File;
 import java.io.InputStream;
