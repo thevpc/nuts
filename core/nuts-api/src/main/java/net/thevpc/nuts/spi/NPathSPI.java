@@ -94,7 +94,7 @@ public interface NPathSPI {
         return null;
     }
 
-    default NFormatSPI formatter(NPath basePath) {
+    default NObjectWriterSPI formatter(NPath basePath) {
         return null;
     }
 
