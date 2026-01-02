@@ -6,7 +6,7 @@
 package net.thevpc.nuts.io;
 
 
-import net.thevpc.nuts.text.NFormats;
+import net.thevpc.nuts.text.NObjectWriter;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -69,7 +69,7 @@ public class DefaultNPathMetadata {
 
     public NOptional<NMsg> getMessage() {
         return NOptional.ofNamed(message, "message")
-                .orElseGetOptionalOf(() -> NMsg.ofNtf(NFormats.of(path).get().format(path)))
+                .orElseGetOptionalOf(() -> NMsg.ofNtf(NObjectWriter.of(path).format(path)))
                 ;
     }
 
