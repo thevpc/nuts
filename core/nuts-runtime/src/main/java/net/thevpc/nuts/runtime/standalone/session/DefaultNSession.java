@@ -338,7 +338,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                             if (a.isNegated()) {
                                 this.setDebug(
                                         String.valueOf(!NLiteral.of(a.getStringValue().get()).asBoolean()
-                                                .ifEmpty(true).orElse(false)
+                                                .onEmpty(true).orElse(false)
                                         ));
                             } else {
                                 this.setDebug(a.getStringValue().get());
@@ -399,7 +399,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                             }
                         } else {
                             v = a.getStringValue().flatMap(NTerminalMode::parse)
-                                    .ifEmpty(NTerminalMode.FORMATTED).get();
+                                    .onEmpty(NTerminalMode.FORMATTED).get();
                             if (v == NTerminalMode.DEFAULT) {
                                 v = NTerminalMode.INHERITED;
                             }
@@ -1650,7 +1650,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 if (enabled) {
                     String id = a.getKey().asString().get();
                     this.setLogFileLevel(
-                            NLogUtils.parseLogLevel(id.substring("--log-file-".length())).ifEmpty(null).get());
+                            NLogUtils.parseLogLevel(id.substring("--log-file-".length())).onEmpty(null).get());
                 }
                 break;
             }
@@ -1668,7 +1668,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.getKey().asString().get();
-                    this.setLogTermLevel(NLogUtils.parseLogLevel(id.substring("--log-term-".length())).ifEmpty(null).get());
+                    this.setLogTermLevel(NLogUtils.parseLogLevel(id.substring("--log-term-".length())).onEmpty(null).get());
                 }
                 break;
             }
@@ -1694,7 +1694,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.getKey().asString().get();
-                    Level lvl = NLogUtils.parseLogLevel(id.substring("--log-".length())).ifEmpty(null).get();
+                    Level lvl = NLogUtils.parseLogLevel(id.substring("--log-".length())).onEmpty(null).get();
                     this.setLogTermLevel(lvl);
                     this.setLogFileLevel(lvl);
                 }
