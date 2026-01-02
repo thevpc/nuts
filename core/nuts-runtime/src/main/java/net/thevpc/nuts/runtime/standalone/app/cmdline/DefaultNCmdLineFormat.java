@@ -16,7 +16,6 @@ import net.thevpc.nuts.text.NText;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNCmdLineFormat extends DefaultFormatBase<NCmdLineFormat> implements NCmdLineFormat {
 
-    private NCmdLine value;
     private NShellFamily formatFamily = NShellFamily.getCurrent();
     private NCmdLineFormatStrategy formatStrategy = NCmdLineFormatStrategy.DEFAULT;
 
@@ -27,22 +26,6 @@ public class DefaultNCmdLineFormat extends DefaultFormatBase<NCmdLineFormat> imp
     public NCmdLineFormat setNtf(boolean ntf) {
         super.setNtf(ntf);
         return this;
-    }
-
-    @Override
-    public NCmdLineFormat setValue(NCmdLine value) {
-        this.value = value;
-        return this;
-    }
-
-    @Override
-    public NCmdLineFormat setValue(String[] args) {
-        return setValue(args == null ? null : NCmdLine.of(args));
-    }
-
-    @Override
-    public NCmdLineFormat setValue(String args) {
-        return setValue(args == null ? null : NCmdLines.of().parseCmdLine(args).get());
     }
 
     public NShellFamily getShellFamily() {
@@ -63,21 +46,16 @@ public class DefaultNCmdLineFormat extends DefaultFormatBase<NCmdLineFormat> imp
     }
 
     @Override
-    public NCmdLine getValue() {
-        return value;
-    }
-
-    @Override
     public boolean configureFirst(NCmdLine cmdLine) {
         return false;
     }
 
     @Override
-    public void print(NPrintStream out) {
-        if (value != null) {
+    public void print(Object aValue, NPrintStream out) {
+        if (aValue != null) {
             String cmd =
                     NShellHelper.of(getShellFamily())
-                            .escapeArguments(value.toStringArray(),
+                            .escapeArguments(((NCmdLine)aValue).toStringArray(),
                                     new NCmdLineShellOptions()
                                             .setFormatStrategy(getFormatStrategy())
                                             .setExpectEnv(true)
