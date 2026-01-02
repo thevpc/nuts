@@ -11,7 +11,7 @@ import net.thevpc.nuts.runtime.standalone.io.path.NCompressedPath;
 import net.thevpc.nuts.runtime.standalone.io.path.NCompressedPathHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.util.NScorableContext;
@@ -145,7 +145,7 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public NFormatSPI formatter(NPath basePath) {
+    public NObjectWriterSPI formatter(NPath basePath) {
         return new MyPathFormat(this);
     }
 
@@ -454,7 +454,7 @@ public class NResourcePath implements NPathSPI {
         return String.valueOf(path);
     }
 
-    private static class MyPathFormat implements NFormatSPI {
+    private static class MyPathFormat implements NObjectWriterSPI {
 
         private NResourcePath p;
 
