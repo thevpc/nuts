@@ -267,7 +267,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
         } else if (obj instanceof byte[]) {
             this.print((byte[]) obj);
         } else {
-            NObjectFormat.of().setValue(obj).print(this);
+            NObjectFormat.of().print(obj, this);
         }
         return this;
     }
