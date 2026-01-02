@@ -30,10 +30,9 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     private final boolean omitNull = true;
     private boolean escapeText = true;
     private String separator = " = ";
-    private Object value;
     private Map<String, String> multilineProperties = new HashMap<>();
 
-    public DefaultNPropertiesFormat(NWorkspace workspace) {
+    public DefaultNPropertiesFormat() {
         super("props-format");
     }
 
@@ -70,9 +69,9 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
         return this;
     }
 
-    public Map buildModel() {
+    public Map buildModel(Object aValue) {
         NElements e = NElements.of();
-        Object value = e.destruct(getValue());
+        Object value = e.destruct(aValue);
         LinkedHashMap<NText, NText> map = new LinkedHashMap<>();
         fillMap(NText.of((rootName==null?"":rootName)), value, map);
         return map;
@@ -127,8 +126,8 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     }
 
     @Override
-    public Map getModel() {
-        return buildModel();
+    public Map getModel(Object aValue) {
+        return buildModel(aValue);
     }
 
     public boolean isSorted() {
@@ -150,10 +149,10 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     }
 
     @Override
-    public void print(NPrintStream w) {
+    public void print(Object aValue, NPrintStream w) {
         NPrintStream out = getValidPrintStream(w);
         Map<Object, Object> mm;
-        Map model = buildModel();
+        Map model = buildModel(aValue);
         if (sorted) {
             mm = new LinkedHashMap<>();
             List<Object> keys = new ArrayList(model.keySet());
@@ -292,15 +291,5 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
         }
     }
 
-    @Override
-    public Object getValue() {
-        return value;
-    }
-
-    @Override
-    public NPropertiesFormat setValue(Object value) {
-        this.value = value;
-        return this;
-    }
 
 }
