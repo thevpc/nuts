@@ -73,7 +73,7 @@ public interface NLock extends Lock, NElementDescribable {
 
     static NLock ofIdPath(NId id) {
         return NLockBuilder.of().setSource(id.getLongId()).setResource(NPath.ofIdStore(id, NStoreType.RUN)
-                .resolve("nuts-" + NStringUtils.firstNonBlank(id.getFace(), "content"))
+                .resolve("nuts-" + NStringUtils.firstNonBlankTrimmed(id.getFace(), "content"))
                 .toPath().get()
         ).build();
     }
