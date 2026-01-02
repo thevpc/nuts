@@ -42,7 +42,7 @@ import java.util.function.Function;
 import javax.swing.ImageIcon;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NPairElement;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.NText;
@@ -240,7 +240,7 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
     }
 
     private void load(String content) {
-        final NElement o = NElementParser.ofTson().parse(content);
+        final NElement o = NElementReader.ofTson().read(content);
         if (!o.isNamedObject("npixel")) {
             throw new IllegalArgumentException("invalid format");
         }
