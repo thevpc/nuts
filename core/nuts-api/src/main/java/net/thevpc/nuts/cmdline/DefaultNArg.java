@@ -215,7 +215,7 @@ public class DefaultNArg implements NArg {
                 .ifEmptyUse(
                         () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
                 )
-                .ifErrorUse(
+                .onErrorUse(
                         () -> NOptional.ofEmpty(() -> NMsg.ofC("erroneous value for : %s", getKey().asString().orElse("")))
                 );
     }
@@ -379,11 +379,11 @@ public class DefaultNArg implements NArg {
     @Override
     public NOptional<Boolean> getBooleanValue() {
         if (isNegated()) {
-            return getValue().asBoolean().ifEmpty(true).map(x -> isNegated() != x)
+            return getValue().asBoolean().onEmpty(true).map(x -> isNegated() != x)
                     .ifEmptyUse(
                             () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
                     )
-                    .ifErrorUse(
+                    .onErrorUse(
                             () -> NOptional.ofEmpty(() -> NMsg.ofC("erroneous value for : %s", getKey().asString().orElse("")))
                     );
         }
@@ -391,7 +391,7 @@ public class DefaultNArg implements NArg {
                 .ifEmptyUse(
                         () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
                 )
-                .ifErrorUse(
+                .onErrorUse(
                         () -> NOptional.ofEmpty(() -> NMsg.ofC("erroneous value for : %s", getKey().asString().orElse("")))
                 );
     }
