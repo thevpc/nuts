@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -55,7 +55,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     @Override
-    public NFormatSPI formatter(NPath basePath) {
+    public NObjectWriterSPI formatter(NPath basePath) {
         return new MyPathFormat(this);
     }
 
@@ -275,7 +275,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
 
 
-    private static class MyPathFormat implements NFormatSPI {
+    private static class MyPathFormat implements NObjectWriterSPI {
 
         private final AbstractPathSPIAdapter p;
 
