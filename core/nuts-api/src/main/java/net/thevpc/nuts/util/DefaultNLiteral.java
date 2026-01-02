@@ -13,7 +13,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
@@ -650,7 +649,7 @@ public class DefaultNLiteral implements NLiteral {
     public NOptional<Byte> asByte() {
         return asLong()
                 .ifEmptyUse(() -> NOptional.ofEmpty(() -> NMsg.ofPlain("empty Byte")))
-                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Byte : %s", asObject().orNull())))
+                .onErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Byte : %s", asObject().orNull())))
                 .flatMap(value -> {
                     byte smallValue = value.byteValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
@@ -664,7 +663,7 @@ public class DefaultNLiteral implements NLiteral {
     public NOptional<Short> asShort() {
         return asLong()
                 .ifEmptyUse(() -> NOptional.ofEmpty(() -> NMsg.ofPlain("empty Short")))
-                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Short : %s", asObject().orNull())))
+                .onErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Short : %s", asObject().orNull())))
                 .flatMap(value -> {
                     short smallValue = value.shortValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
@@ -678,7 +677,7 @@ public class DefaultNLiteral implements NLiteral {
     public NOptional<Integer> asInt() {
         return asLong()
                 .ifEmptyUse(() -> NOptional.ofEmpty(() -> NMsg.ofPlain("empty Integer")))
-                .ifErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Integer : %s", asObject().orNull())))
+                .onErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Integer : %s", asObject().orNull())))
                 .flatMap(value -> {
                     int smallValue = value.intValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
