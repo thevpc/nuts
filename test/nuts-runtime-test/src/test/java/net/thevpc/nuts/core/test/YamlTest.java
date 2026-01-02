@@ -24,10 +24,10 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.text.NTableModel;
 import net.thevpc.nuts.text.NText;
@@ -52,13 +52,13 @@ public class YamlTest {
     @Test
     public void test1() throws Exception {
         String path = "net/thevpc/nuts/core/test/blackbox/yaml1.yml";
-        NElement e = NElementParser.ofYaml().parse(getClass().getClassLoader().getResource(path), NElement.class);
+        NElement e = NElementReader.ofYaml().read(getClass().getClassLoader().getResource(path), NElement.class);
         display(e);
     }
 
     @Test
     public void test2() throws Exception {
-        NElement e = NElementParser.ofYaml().parse("\n" +
+        NElement e = NElementReader.ofYaml().read("\n" +
                 "id: changelog070\n" +
                 "title: Version 0.7.2.0 released\n" +
                 "sub_title: Publishing 0.7.2.0 version\n" +
@@ -73,7 +73,7 @@ public class YamlTest {
 
     @Test
     public void test3() throws Exception {
-        NElement e = NElementParser.ofYaml().parse("\n" +
+        NElement e = NElementReader.ofYaml().read("\n" +
                 "id: changelog070\n" +
                 "title: | \n" +
                 "  hello\n" +
@@ -84,7 +84,7 @@ public class YamlTest {
 
     @Test
     public void test4() throws Exception {
-        NElement e = NElementParser.ofYaml().parse("\n" +
+        NElement e = NElementReader.ofYaml().read("\n" +
                 "title: API Documentation\n" +
                 "type: {\"name\":\"javadoc\",\"sources\": [\"../../../../../core/nuts-api\"]}\n", NElement.class);
         display(e);
@@ -92,7 +92,7 @@ public class YamlTest {
 
     @Test
     public void test5() throws Exception {
-        NElement e = NElementParser.ofYaml().parse("title: Genesis\n" +
+        NElement e = NElementReader.ofYaml().read("title: Genesis\n" +
                 "subTitle: | \n" +
                 "    ##Nuts Application Framework## (NAF) is a ##lightweight##, ##modular## framework designed \n" +
                 "    Java features when available.\n" +
