@@ -320,7 +320,7 @@ public class DefaultNDigest implements NDigest {
         }
 
         private byte[] getBytes() {
-            return NDescriptorFormat.of()
+            return NDescriptorWriter.of()
                     .setNtf(false)
                     .format(source).filteredText().getBytes();
         }
@@ -337,7 +337,7 @@ public class DefaultNDigest implements NDigest {
 
         @Override
         public long getContentLength() {
-            return NDescriptorFormat.of()
+            return NDescriptorWriter.of()
                     .setNtf(false)
                     .format(source).filteredText().getBytes().length;
         }
@@ -347,7 +347,7 @@ public class DefaultNDigest implements NDigest {
             NId id = source.getId();
             NText str;
             if (id != null) {
-                str = NFormats.of(id).get().format(id);
+                str = NObjectWriter.of(id).format(id);
             } else {
                 str = NText.ofStyled("<empty-descriptor>", NTextStyle.path());
             }
