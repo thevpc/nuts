@@ -15,7 +15,7 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.*;
 
 
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.text.NMsg;
@@ -158,7 +158,7 @@ public class DefaultNWorkspaceExtensionModel {
             if (u != null) {
                 NExtensionInformation[] s = new NExtensionInformation[0];
                 try (Reader rr = new InputStreamReader(NPath.of(u).getInputStream())) {
-                    s = NElementParser.ofJson().parse(rr, DefaultNExtensionInformation[].class);
+                    s = NElementReader.ofJson().read(rr, DefaultNExtensionInformation[].class);
                 } catch (IOException ex) {
                     _LOG()
                             .log(NMsg.ofC("failed to parse NutsExtensionInformation from %s : %s", u, ex).asError(ex));
