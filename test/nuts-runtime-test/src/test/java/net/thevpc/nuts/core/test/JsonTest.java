@@ -26,9 +26,8 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.*;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.text.NText;
 import org.junit.jupiter.api.*;
 
@@ -67,8 +66,8 @@ public class JsonTest {
 
     @Test
     public void test2()  {
-        NElement a = NElementParser.of().json()
-                .parse(
+        NElement a = NElementReader.of().json()
+                .read(
                         "{\n" +
                                 "    title: 'Some Title',\n" +
                                 "    tagline: 'The official coding standards for main programming languages',\n" +
