@@ -1,0 +1,199 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.thevpc.nuts.runtime.standalone.format.plain;
+
+import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
+import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesObjectWriter;
+import net.thevpc.nuts.text.NContentTypeWriter;
+import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.text.NContentType;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NUnsupportedArgumentException;
+
+import java.util.*;
+
+/**
+ * @author thevpc
+ */
+@NScore(fixed = NScorable.DEFAULT_SCORE)
+public class NWriterPlain extends DefaultObjectWriterBase<NContentTypeWriter> implements NContentTypeWriter {
+
+    private final String rootName = "";
+    private final List<String> extraConfig = new ArrayList<>();
+    private final Map<String, String> multilineProperties = new HashMap<>();
+    private boolean compact;
+
+    public NWriterPlain() {
+        super(NContentType.PLAIN.id() + "-format");
+    }
+
+
+    @Override
+    public boolean configureFirst(NCmdLine cmdLine) {
+        NArg n = cmdLine.peek().orNull();
+        if (n != null) {
+            NArg a;
+            boolean enabled = n.isUncommented();
+            if ((a = cmdLine.nextEntry(DefaultNPropertiesObjectWriter.OPTION_MULTILINE_PROPERTY).orNull()) != null) {
+                if (enabled) {
+                    NArg i = NArg.of(a.getStringValue().get());
+                    extraConfig.add(a.asString().get());
+                    addMultilineProperty(i.key(), i.getStringValue().get());
+                }
+            } else {
+                a = cmdLine.next().get();
+                if (!a.isOption() || a.isUncommented()) {
+                    extraConfig.add(a.asString().get());
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public NContentTypeWriter addMultilineProperty(String property, String separator) {
+        multilineProperties.put(property, separator);
+        return this;
+    }
+
+    private String getFormattedPrimitiveValue(NElement value) {
+        switch (value.type()) {
+            default: {
+                throw new NUnsupportedArgumentException(NMsg.ofC("invalid element type: %s", value.type()));
+            }
+        }
+    }
+
+    @Override
+    public void print(Object aValue, NPrintStream w) {
+        NText t = NText.of(aValue);
+        {
+            NPrintStream out = getValidPrintStream(w);
+            out.print(t);
+            out.flush();
+        }
+//        if(true){
+//            return;
+//        }
+//        if (value instanceof NTableModel) {
+//            NTableFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+//        } else if (value instanceof NTreeNode) {
+//            NTreeFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+//        } else if (value instanceof Properties) {
+//            NPropertiesFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+//        } else if (value instanceof NElement) {
+//            ew().write(value, w);
+//        } else if (value instanceof org.w3c.dom.Document) {
+//            XmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w.asPrintStream()), false, true);
+//        } else if (value instanceof org.w3c.dom.Element) {
+//            Element elem = (org.w3c.dom.Element) value;
+//            Document doc = XmlUtils.createDocument();
+//            doc.appendChild(doc.importNode(elem, true));
+//            XmlUtils.writeDocument(doc, new StreamResult(w.asPrintStream()), false, false);
+//        } else {
+//            NElements element = NElements.of();
+//            Object newVal = element.destruct(value);
+//            Flags f = new Flags();
+//            collectFlags(newVal, f, 300);
+//            if (f.map) {
+//                if (f.msg || f.formattable) {
+//                    NTreeFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+//                } else if (f.elems) {
+//                    ew().write(value,w);
+//                } else {
+//                    //defaults to elements
+//                    ew().write(value,w);
+//                }
+//            } else if (f.list) {
+//                if (f.msg || f.formattable) {
+//                    NTableFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+//                    //table.configure(true, "--no-header", "--border=spaces");
+//                } else if (f.elems) {
+//                    ew().write(value,w);
+//                } else {
+//                    //defaults to elements
+//                    ew().write(value,w);
+//                }
+//            } else {
+//                NPrintStream out = getValidPrintStream(w);
+//                out.print(NText.of(value));
+//                out.flush();
+//            }
+//        }
+    }
+
+    private NElementWriter ew() {
+        return NElementWriter.of().setNtf(isNtf()).setCompact(isCompact()).configure(true, extraConfig.toArray(new String[0]));
+    }
+
+    private void collectFlags(Object value, Flags flags, int depth) {
+        if (depth < 0) {
+            return;
+        }
+        if (value instanceof Map) {
+            flags.map = true;
+            for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
+                collectFlags(entry.getKey(), flags, depth - 1);
+                collectFlags(entry.getValue(), flags, depth - 1);
+            }
+        } else if (value instanceof List) {
+            flags.list = true;
+            Flags f2 = new Flags();
+            for (Object entry : ((List) value)) {
+                collectFlags(entry, f2, depth - 1);
+            }
+            if (f2.list || f2.map) {
+                flags.map = true;
+            }
+            flags.elems |= f2.elems;
+            flags.msg |= f2.msg;
+            flags.primitives |= f2.primitives;
+            flags.formattable |= f2.formattable;
+        } else if (value instanceof Formattable) {
+            flags.formattable = true;
+        } else if (value instanceof NElement) {
+            flags.elems = true;
+            if (value instanceof NObjectElement) {
+                flags.map = true;
+            } else if (value instanceof NArrayElement) {
+                flags.list = true;
+            }
+        } else if (value instanceof NMsg) {
+            flags.msg = true;
+        } else {
+            flags.primitives = true;
+        }
+    }
+
+    @Override
+    public NWriterPlain setNtf(boolean ntf) {
+        return (NWriterPlain) super.setNtf(ntf);
+    }
+
+    public boolean isCompact() {
+        return compact;
+    }
+
+    public NWriterPlain setCompact(boolean compact) {
+        this.compact = compact;
+        return this;
+    }
+
+    private static class Flags {
+        boolean elems;
+        boolean list;
+        boolean map;
+        boolean primitives;
+        boolean msg;
+        boolean formattable;
+    }
+}
