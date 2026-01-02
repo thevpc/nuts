@@ -11,7 +11,7 @@ import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.text.NExecFormat;
+import net.thevpc.nuts.text.NExecWriter;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
@@ -105,10 +105,10 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         if (session.isDry()) {
             if (out.getTerminalMode() == NTerminalMode.FORMATTED) {
                 out.print("[dry] ==[exec]== ");
-                out.println(NExecFormat.of().format(pb));
+                out.println(NExecWriter.of().format(pb));
             } else {
                 out.print("[dry] exec ");
-                out.println(NExecFormat.of().format(pb));
+                out.println(NExecWriter.of().format(pb));
             }
             return NExecutionException.SUCCESS;
         }
