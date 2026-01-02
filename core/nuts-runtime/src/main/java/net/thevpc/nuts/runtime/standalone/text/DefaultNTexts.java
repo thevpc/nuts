@@ -1,20 +1,33 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.elem.NElementDescribables;
-import net.thevpc.nuts.io.NContentMetadata;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.runtime.standalone.format.NDescriptorInputSourceWriterSPI;
+import net.thevpc.nuts.runtime.standalone.format.NDurationWriterSPI;
+import net.thevpc.nuts.runtime.standalone.format.NObjectWriterAdapter;
+import net.thevpc.nuts.runtime.standalone.format.impl.NChronometerWriterSPI;
+import net.thevpc.nuts.runtime.standalone.io.path.*;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NByteArrayPrintStream;
+import net.thevpc.nuts.runtime.standalone.io.printstream.OutputStreamExt;
+import net.thevpc.nuts.runtime.standalone.io.printstream.OutputTargetExt;
+import net.thevpc.nuts.runtime.standalone.io.util.InputStreamExt;
+import net.thevpc.nuts.runtime.standalone.io.util.InputStreamTee;
+import net.thevpc.nuts.runtime.standalone.io.util.NInputStreamSource;
+import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
+import net.thevpc.nuts.runtime.standalone.reflect.NUseDefaultUtils;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.io.NInputSource;
-import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.util.NRef;
 
 import net.thevpc.nuts.reflect.NReflectUtils;
-import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
-import net.thevpc.nuts.runtime.standalone.io.path.NFormatFromSPI;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
 import net.thevpc.nuts.runtime.standalone.text.parser.*;
 import net.thevpc.nuts.runtime.standalone.text.util.DefaultNDurationFormat2;
@@ -36,6 +49,7 @@ import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 @NComponentScope(NScopeType.SESSION)
@@ -43,39 +57,41 @@ import java.util.logging.Level;
 public class DefaultNTexts implements NTexts {
 
     private final DefaultNTextManagerModel shared;
-    private NClassMap<NTextMapper> mapper = new NClassMap<>(NTextMapper.class);
+    private NClassMap<NTextMapper> textMappers = new NClassMap<>(NTextMapper.class);
+    private NClassMap<NObjectWriterMapper> writerMappers = new NClassMap<>(NObjectWriterMapper.class);
 
     public DefaultNTexts() {
         this.shared = NWorkspaceExt.of().getModel().textModel;
-        registerDefaults();
+        registerDefaultTextMappers();
+        registerDefaultsObjectWriters();
     }
 
-    private void registerDefaults() {
-        register(NFormatted.class, (o, t) -> (((NFormatted) o).format()));
-        register(NTextFormattable.class, (o, t) -> (NText) o);
-        register(NMsgFormattable.class, (o, t) -> _NMsg_toString((((NMsgFormattable) o).toMsg())));
-        register(NMsg.class, (o, t) -> _NMsg_toString((NMsg) o));
-        register(NText.class, (o, t) -> (NText) o);
-        register(InputStream.class, (o, t) -> {
+    private void registerDefaultTextMappers() {
+        registerTextMapper(NFormatted.class, (o, t) -> (((NFormatted) o).format()));
+        registerTextMapper(NTextFormattable.class, (o, t) -> (NText) o);
+        registerTextMapper(NMsgFormattable.class, (o, t) -> _NMsg_toString((((NMsgFormattable) o).toMsg())));
+        registerTextMapper(NMsg.class, (o, t) -> _NMsg_toString((NMsg) o));
+        registerTextMapper(NText.class, (o, t) -> (NText) o);
+        registerTextMapper(InputStream.class, (o, t) -> {
             NContentMetadata metaData = NInputSource.of((InputStream) o).getMetaData();
             return t.ofStyled(metaData.getName().orElse(o.toString()), NTextStyle.path());
         });
-        register(OutputStream.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
-        register(NPrintStream.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
-        register(Writer.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
-        register(NEnum.class, (o, t) -> t.ofStyled(((NEnum) o).id(), NTextStyle.option()));
-        register(Enum.class, (o, t) -> (o instanceof NEnum) ? t.ofStyled(((NEnum) o).id(), NTextStyle.option()) : ofStyled(((Enum<?>) o).name(), NTextStyle.option()));
-        register(Number.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.number()));
-        register(Date.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.date()));
-        register(Temporal.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.date()));
-        register(TemporalAmount.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.date()));
-        register(Boolean.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.bool()));
-        register(Path.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
-        register(File.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
-        register(URL.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
-        register(NTreeNode.class, (o, t) -> NTextArt.of().getTreeRenderer().get().render((NTreeNode) o));
-        register(NTableModel.class, (o, t) -> NTextArt.of().getTableRenderer().get().render((NTableModel) o));
-        register(Class.class, (o, t) -> {
+        registerTextMapper(OutputStream.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        registerTextMapper(NPrintStream.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        registerTextMapper(Writer.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        registerTextMapper(NEnum.class, (o, t) -> t.ofStyled(((NEnum) o).id(), NTextStyle.option()));
+        registerTextMapper(Enum.class, (o, t) -> (o instanceof NEnum) ? t.ofStyled(((NEnum) o).id(), NTextStyle.option()) : ofStyled(((Enum<?>) o).name(), NTextStyle.option()));
+        registerTextMapper(Number.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.number()));
+        registerTextMapper(Date.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.date()));
+        registerTextMapper(Temporal.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.date()));
+        registerTextMapper(TemporalAmount.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.date()));
+        registerTextMapper(Boolean.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.bool()));
+        registerTextMapper(Path.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        registerTextMapper(File.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        registerTextMapper(URL.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        registerTextMapper(NTreeNode.class, (o, t) -> NTextArt.of().getTreeRenderer().get().render((NTreeNode) o));
+        registerTextMapper(NTableModel.class, (o, t) -> NTextArt.of().getTableRenderer().get().render((NTableModel) o));
+        registerTextMapper(Class.class, (o, t) -> {
             Class cc = (Class) o;
             Class dc = cc.getDeclaringClass();
             if (dc != null) {
@@ -96,7 +112,7 @@ public class DefaultNTexts implements NTexts {
                 return tb.build();
             }
         });
-        register(Level.class, (o, t) -> {
+        registerTextMapper(Level.class, (o, t) -> {
             switch (((Level) o).getName()) {
                 case "OFF":
                     return t.ofStyled(o.toString(), NTextStyle.pale());
@@ -118,11 +134,11 @@ public class DefaultNTexts implements NTexts {
                     return t.ofStyled(o.toString(), NTextStyle.bold());
             }
         });
-        register(Throwable.class, (o, t) -> t.ofStyled(
+        registerTextMapper(Throwable.class, (o, t) -> t.ofStyled(
                 of(CoreStringUtils.exceptionToMessage((Throwable) o)),
                 NTextStyle.error()
         ));
-        register(Collection.class, (o, t) -> {
+        registerTextMapper(Collection.class, (o, t) -> {
             NTextBuilder b = ofBuilder();
             b.append("[", NTextStyle.separator());
             boolean first = true;
@@ -138,7 +154,7 @@ public class DefaultNTexts implements NTexts {
             b.append("]", NTextStyle.separator());
             return b.build();
         });
-        register(Map.Entry.class, (o, t) -> {
+        registerTextMapper(Map.Entry.class, (o, t) -> {
             NTextBuilder b = ofBuilder();
             Map.Entry e = (Map.Entry) o;
             b.append(t.of(e.getKey()));
@@ -147,7 +163,7 @@ public class DefaultNTexts implements NTexts {
             b.append(t.of(e.getValue()));
             return b.build();
         });
-        register(Map.class, (o, t) -> {
+        registerTextMapper(Map.class, (o, t) -> {
             NTextBuilder b = ofBuilder();
             b.append("{", NTextStyle.separator());
             boolean first = true;
@@ -165,11 +181,66 @@ public class DefaultNTexts implements NTexts {
         });
     }
 
-    private void register(Class clz, NTextMapper mapper) {
+    private void registerDefaultsObjectWriters() {
+        registerObjectWriter(NExec.class, (o, f) -> NExecWriter.of());
+
+        registerObjectWriter(NVersion.class, (o, f) -> NVersionWriter.of());
+
+        registerObjectWriter(NId.class, (o, f) -> NIdWriter.of());
+        registerObjectWriterFromConverter(NIdBuilder.class, o -> ((NIdBuilder) o).build());
+
+        registerObjectWriter(NDescriptor.class, (o, f) -> NDescriptorWriter.of());
+        registerObjectWriterFromConverter(NDescriptorBuilder.class, o -> ((NDescriptorBuilder) o).build());
+
+        registerObjectWriter(NDependency.class, (o, f) -> NDependencyWriter.of());
+        registerObjectWriterFromConverter(NDependencyBuilder.class, o -> ((NDependencyBuilder) o).build());
+
+        registerObjectWriter(NCmdLine.class, (o, f) -> NCmdLineWriter.of());
+
+        registerObjectWriter(NCompressedPath.class, (o, f) -> new NCompressedPath.MyPathObjectWriter());
+        registerObjectWriter(NCompressedPathBase.class, (o, f) -> new NCompressedPathBase.MyPathObjectWriter());
+        registerObjectWriter(NPathBase.class, (o, f) -> new NPathBase.PathObjectWriter());
+
+        registerObjectWriter(NObjectWriterSPI.class, (o, f) -> NObjectWriter.of(((NObjectWriterSPI) o)));
+        registerObjectWriterFromSPI(NChronometer.class, o -> new NChronometerWriterSPI((NChronometer) o));
+        registerObjectWriterFromSPI(NDuration.class, o -> new NDurationWriterSPI((NDuration) o));
+        registerObjectWriterFromConverter(NByteArrayPrintStream.MyAbstractMultiReadNInputSource.class, o -> ((NByteArrayPrintStream.MyAbstractMultiReadNInputSource) o).getValue());
+        registerObjectWriterFromSPI(InputStreamExt.class, o -> new NContentMetadataProviderWriterSPI((InputStreamExt) o, ((InputStreamExt) o).getSourceName(), "input-stream"));
+        registerObjectWriterFromSPI(InputStreamTee.class, o -> new NContentMetadataProviderWriterSPI((InputStreamTee) o, null, "input-stream-tee"));
+        registerObjectWriterFromSPI(OutputStreamExt.class, o -> new NContentMetadataProviderWriterSPI((OutputStreamExt) o, null, "output-stream"));
+        registerObjectWriterFromSPI(NNonBlockingInputStreamAdapter.class, o -> new NContentMetadataProviderWriterSPI((NNonBlockingInputStreamAdapter) o, ((NNonBlockingInputStreamAdapter) o).getSourceName(), "input-stream"));
+        registerObjectWriterFromSPI(NInputStreamSource.class, o -> new NContentMetadataProviderWriterSPI((NInputStreamSource) o, null, "input-stream"));
+        registerObjectWriterFromSPI(NPrintStream.class, o -> new NContentMetadataProviderWriterSPI(((NPrintStream) o), null, "print-stream"));
+        registerObjectWriterFromSPI(OutputTargetExt.class, o -> new NContentMetadataProviderWriterSPI((OutputTargetExt) o, ((OutputTargetExt) o).getSourceName(), "output-stream"));
+        registerObjectWriterFromSPI(OutputTargetExt.class, o -> new NContentMetadataProviderWriterSPI((OutputTargetExt) o, ((OutputTargetExt) o).getSourceName(), "output-stream"));
+
+        registerObjectWriterFromSPI(DefaultNDigest.NDescriptorInputSource.class, o -> new NDescriptorInputSourceWriterSPI((DefaultNDigest.NDescriptorInputSource) o));
+
+        registerObjectWriter(NPathFromSPI.class, (o, f) -> new NObjectWriterAdapter() {
+                    @Override
+                    public NFormatAndValue<Object, NObjectWriter> getBase(Object aValue) {
+                        NPathFromSPI b = (NPathFromSPI) o;
+                        NPathSPI base = ((NPathFromSPI) o).getBase();
+                        NObjectWriterSPI fspi = null;
+                        if (NUseDefaultUtils.isUseDefault(base.getClass(), "formatter", NPath.class)) {
+                        } else {
+                            fspi = base.formatter(b);
+                        }
+                        if (fspi != null) {
+                            return new NFormatAndValue<>(fspi, new NObjectWriterFromSPI(fspi));
+                        }
+                        return new NFormatAndValue<>((NPathBase) o, new NPathBase.PathObjectWriter());
+                    }
+                }
+        );
+    }
+
+
+    private void registerTextMapper(Class clz, NTextMapper mapper) {
         if (mapper == null) {
-            this.mapper.remove(clz);
+            this.textMappers.remove(clz);
         } else {
-            this.mapper.put(clz, mapper);
+            this.textMappers.put(clz, mapper);
         }
     }
 
@@ -258,11 +329,11 @@ public class DefaultNTexts implements NTexts {
             b.append("]", NTextStyle.separator());
             return b.build();
         }
-        NTextMapper e = mapper.get(c);
+        NTextMapper e = textMappers.get(c);
         if (e != null) {
             return e.ofText(t, this);
         }
-        NFormat nFormat = NFormats.of(t).orNull();
+        NObjectWriter nFormat = NObjectWriter.get(t).orNull();
         if (nFormat != null) {
             return (nFormat.setNtf(true).format(t));
         }
@@ -1131,15 +1202,35 @@ public class DefaultNTexts implements NTexts {
         }
     }
 
-    @Override
-    public NFormat createFormat(NFormatSPI format) {
-        return new NFormatFromSPI(format);
+    public NOptional<NObjectWriter> resolveWriter(Object format) {
+        if (format == null) {
+            return NOptional.ofNamedEmpty("null");
+        }
+        if (format instanceof NText) {
+            return NOptional.of((NObjectWriter) format);
+        }
+        if (format instanceof NObjectWriterSPI) {
+            return NOptional.of(new NObjectWriterFromSPI((NObjectWriterSPI) format));
+        }
+        Class<?> c = format.getClass();
+        NObjectWriterMapper e = writerMappers.get(c);
+        if (e != null) {
+            NObjectWriter n = e.ofFormat(format, this);
+            if (n != null) {
+                return NOptional.of(n);
+            }
+        }
+        return NOptional.ofNamedEmpty("format for " + format.getClass().getSimpleName());
     }
+//    @Override
+//    public NObjectWriter createFormat(NFormatSPI format) {
+//        return new NObjectWriterFromSPI(format);
+//    }
 
-    @Override
-    public <T> NFormat createFormat(T object, NTextFormat<T> format) {
-        return new NFormatDefaultFormatBase<>(format, object);
-    }
+//    @Override
+//    public <T> NObjectWriter createFormat(T object, NTextFormat<T> format) {
+//        return new NFormatDefaultObjectWriterBase<>(format, object);
+//    }
 
     @Override
     public NOptional<NTextFormat<Number>> createNumberTextFormat(String type, String pattern) {
@@ -1330,27 +1421,89 @@ public class DefaultNTexts implements NTexts {
         NText ofText(Object t, NTexts texts);
     }
 
-    @NScore(fixed = NScorable.DEFAULT_SCORE)
-    private static class NFormatDefaultFormatBase<T> extends DefaultFormatBase<NFormat> {
-        private final NTextFormat<T> format;
-        private final T object;
+//    @NScore(fixed = NScorable.DEFAULT_SCORE)
+//    private static class NFormatDefaultObjectWriterBase<T> extends DefaultObjectWriterBase<NObjectWriter> {
+//        private final NTextFormat<T> format;
+//        private final T object;
+//
+//        public NFormatDefaultObjectWriterBase(NTextFormat<T> format, T object) {
+//            super("NTextFormat");
+//            this.format = format;
+//            this.object = object;
+//        }
+//
+//        @Override
+//        public void print(Object aValue, NPrintStream out) {
+//            NText u = format.toText((T)aValue);
+//            out.print(u);
+//        }
+//
+//        @Override
+//        public boolean configureFirst(NCmdLine cmdLine) {
+//            return false;
+//        }
+//
+//    }
 
-        public NFormatDefaultFormatBase(NTextFormat<T> format, T object) {
-            super("NTextFormat");
-            this.format = format;
-            this.object = object;
-        }
-
-        @Override
-        public void print(Object aValue, NPrintStream out) {
-            NText u = format.toText(object);
-            out.print(u);
-        }
-
-        @Override
-        public boolean configureFirst(NCmdLine cmdLine) {
-            return false;
-        }
-
+    private interface NObjectWriterMapper {
+        NObjectWriter ofFormat(Object t, NTexts texts);
     }
+
+    private abstract class NObjectWriterMapperFromSPI implements NObjectWriterMapper {
+        abstract NObjectWriterSPI toSpi(Object o);
+
+        @Override
+        public NObjectWriter ofFormat(Object t, NTexts texts) {
+            return new NObjectWriterAdapter() {
+                @Override
+                public NFormatAndValue<Object, NObjectWriter> getBase(Object aValue) {
+                    NObjectWriterSPI spi = toSpi(aValue);
+                    return new NFormatAndValue<>(spi, NObjectWriter.of(spi));
+                }
+            };
+        }
+    }
+
+    private abstract class NObjectWriterMapperBridge implements NObjectWriterMapper {
+        abstract Object convert(Object o);
+
+        @Override
+        public NObjectWriter ofFormat(Object t, NTexts texts) {
+            return new NObjectWriterAdapter() {
+                @Override
+                public NFormatAndValue<Object, NObjectWriter> getBase(Object aValue) {
+                    Object spi = convert(aValue);
+                    return new NFormatAndValue<>(spi, NObjectWriter.of(spi));
+                }
+            };
+        }
+    }
+
+
+    private void registerObjectWriterFromConverter(Class clz, Function<Object, Object> mapper) {
+        registerObjectWriter(clz, new NObjectWriterMapperBridge() {
+            @Override
+            Object convert(Object o) {
+                return mapper.apply(o);
+            }
+        });
+    }
+
+    private void registerObjectWriterFromSPI(Class clz, Function<Object, NObjectWriterSPI> mapper) {
+        registerObjectWriter(clz, new NObjectWriterMapperFromSPI() {
+            @Override
+            NObjectWriterSPI toSpi(Object o) {
+                return mapper.apply(o);
+            }
+        });
+    }
+
+    private void registerObjectWriter(Class clz, NObjectWriterMapper mapper) {
+        if (mapper == null) {
+            this.writerMappers.remove(clz);
+        } else {
+            this.writerMappers.put(clz, mapper);
+        }
+    }
+
 }
