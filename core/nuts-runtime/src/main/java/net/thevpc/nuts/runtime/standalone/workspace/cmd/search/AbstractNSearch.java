@@ -44,7 +44,6 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
@@ -660,7 +659,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
             }
             case "--default":
             case "--default-versions": {
-                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byDefaultVersion(v.getBooleanValue().ifError(false).orElse(null)))).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byDefaultVersion(v.getBooleanValue().onError(false).orElse(null)))).anyMatch();
             }
             case "--duplicates": {
                 return cmdLine.matcher().matchFlag((v) -> this.setDistinct(!v.booleanValue())).anyMatch();
