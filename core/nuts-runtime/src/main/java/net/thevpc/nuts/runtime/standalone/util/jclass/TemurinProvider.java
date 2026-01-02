@@ -11,13 +11,10 @@ import net.thevpc.nuts.platform.NArchFamily;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 
 import java.time.Instant;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TemurinProvider implements JavaProvider {
@@ -57,18 +54,16 @@ public class TemurinProvider implements JavaProvider {
                 if (singleRoot.size() == 1) {
                     NPath finalFolder = singleRoot.get(0).resolveSibling("dist");
                     singleRoot.get(0).moveTo(finalFolder);
-                    NElementFormat.ofPlainTson(
-                                    NElement.ofObjectBuilder()
-                                            .add("vendor", getName())
-                                            .add("version", String.valueOf(version))
-                                            .add("os", NElement.ofEnum(os))
-                                            .add("arch", NElement.ofEnum(arch))
-                                            .add("distFolderName", singleRoot.get(0).getName())
-                                            .add("downloadUrl", p.get().path.toString())
-                                            .add("downloadDate", NElement.ofInstant(Instant.now()))
-                                            .add("localCachePath", toCache.toString())
-                            )
-                            .print(finalFolder.resolve("nuts-install-info.tson"));
+                    NElementFormat.ofPlainTson()
+                            .print(NElement.ofObjectBuilder()
+                                    .add("vendor", getName())
+                                    .add("version", String.valueOf(version))
+                                    .add("os", NElement.ofEnum(os))
+                                    .add("arch", NElement.ofEnum(arch))
+                                    .add("distFolderName", singleRoot.get(0).getName())
+                                    .add("downloadUrl", p.get().path.toString())
+                                    .add("downloadDate", NElement.ofInstant(Instant.now()))
+                                    .add("localCachePath", toCache.toString()), finalFolder.resolve("nuts-install-info.tson"));
                     return NOptional.of(finalFolder);
                 }
             }
