@@ -20,7 +20,7 @@ public class NExprEvaluatorAsContext extends NExprDeclarationsBase {
     public NOptional<NExprFctDeclaration> getFunction(String fctName, NExprNodeValue... args) {
         return eval.getFunction(fctName, args, this)
                 .<NExprFctDeclaration>map(x -> new DefaultNExprFctDeclaration(fctName, x))
-                .orElseUse(() -> parent.getFunction(fctName, args))
+                .orElseGetOptionalFrom(() -> parent.getFunction(fctName, args))
                 ;
     }
 
@@ -28,7 +28,7 @@ public class NExprEvaluatorAsContext extends NExprDeclarationsBase {
     public NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNodeValue... args) {
         return eval.getConstruct(constructName, args, this)
                 .<NExprConstructDeclaration>map(x -> new DefaultNExprConstructDeclaration(constructName, x))
-                .orElseUse(() -> parent.getConstruct(constructName, args))
+                .orElseGetOptionalFrom(() -> parent.getConstruct(constructName, args))
                 ;
     }
 
@@ -36,7 +36,7 @@ public class NExprEvaluatorAsContext extends NExprDeclarationsBase {
     public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
         return eval.getOperator(opName, type, args, this)
                 .<NExprOpDeclaration>map(x -> new DefaultNExprOpDeclaration(opName, x))
-                .orElseUse(() -> parent.getOperator(opName, type, args))
+                .orElseGetOptionalFrom(() -> parent.getOperator(opName, type, args))
                 ;
     }
 
@@ -44,7 +44,7 @@ public class NExprEvaluatorAsContext extends NExprDeclarationsBase {
     public NOptional<NExprVarDeclaration> getVar(String varName) {
         return eval.getVar(varName, this)
                 .<NExprVarDeclaration>map(x -> new DefaultNExprVarDeclaration(varName, x))
-                .orElseUse(() -> parent.getVar(varName))
+                .orElseGetOptionalFrom(() -> parent.getVar(varName))
                 ;
     }
 
