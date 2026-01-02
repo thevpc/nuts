@@ -28,8 +28,6 @@ package net.thevpc.nuts.command;
 import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.text.NFormat;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
