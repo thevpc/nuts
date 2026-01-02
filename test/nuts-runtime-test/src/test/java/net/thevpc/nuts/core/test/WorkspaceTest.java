@@ -263,7 +263,7 @@ public class WorkspaceTest {
             Assertions.assertNotNull(c);
         }
         {
-            NIdFormat r = NIdFormat.of();
+            NIdWriter r = NIdWriter.of();
             Assertions.assertNotNull(r);
         }
         {
@@ -299,7 +299,7 @@ public class WorkspaceTest {
             Assertions.assertNotNull(r);
         }
         {
-            NDescriptorFormat r = NDescriptorFormat.of();
+            NDescriptorWriter r = NDescriptorWriter.of();
             Assertions.assertNotNull(r);
         }
         {
@@ -307,7 +307,7 @@ public class WorkspaceTest {
             Assertions.assertNotNull(r);
         }
         {
-            NVersionFormat r = NVersionFormat.of();
+            NVersionWriter r = NVersionWriter.of();
             Assertions.assertNotNull(r);
         }
         {
@@ -319,7 +319,7 @@ public class WorkspaceTest {
             Assertions.assertNotNull(r);
         }
         {
-            NObjectFormat r = NObjectFormat.of();
+            NObjectObjectWriter r = NObjectObjectWriter.of();
             Assertions.assertNotNull(r);
         }
         {
@@ -327,23 +327,23 @@ public class WorkspaceTest {
             Assertions.assertNotNull(r);
         }
         {
-            NExecFormat r = NExecFormat.of();
+            NExecWriter r = NExecWriter.of();
             Assertions.assertNotNull(r);
         }
         {
-            NCmdLineFormat r = NCmdLineFormat.of();
+            NCmdLineWriter r = NCmdLineWriter.of();
             Assertions.assertNotNull(r);
         }
         {
-            NTableFormat r = NTableFormat.of();
+            NTableWriter r = NTableWriter.of();
             Assertions.assertNotNull(r);
         }
         {
-            NTreeFormat r = NTreeFormat.of();
+            NTreeObjectWriter r = NTreeObjectWriter.of();
             Assertions.assertNotNull(r);
         }
         {
-            NPropertiesFormat r = NPropertiesFormat.of();
+            NPropertiesWriter r = NPropertiesWriter.of();
             Assertions.assertNotNull(r);
         }
 
