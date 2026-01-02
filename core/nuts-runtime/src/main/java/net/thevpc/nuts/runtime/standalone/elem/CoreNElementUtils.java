@@ -1,17 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.text.NFormattable;
+import net.thevpc.nuts.text.NFormatted;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NTruth;
-import net.thevpc.nuts.util.NTruthPredicate;
 
 import java.lang.reflect.*;
 import java.time.temporal.Temporal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.Predicate;
 
 public class CoreNElementUtils {
@@ -67,7 +62,7 @@ public class CoreNElementUtils {
                 return (
                         NText.class.isAssignableFrom(cls)
                                 || NElement.class.isAssignableFrom(cls)
-                                || NFormattable.class.isAssignableFrom(cls)
+                                || NFormatted.class.isAssignableFrom(cls)
                                 || NMsg.class.isAssignableFrom(cls)
                 );
             } else if (type instanceof ParameterizedType) {
@@ -224,7 +219,7 @@ public class CoreNElementUtils {
                 return (
                         NText.class.isAssignableFrom(cls)
                                 || NElement.class.isAssignableFrom(cls)
-                                || NFormattable.class.isAssignableFrom(cls)
+                                || NFormatted.class.isAssignableFrom(cls)
                                 || NMsg.class.isAssignableFrom(cls)
                 );
             } else if (type instanceof ParameterizedType) {
