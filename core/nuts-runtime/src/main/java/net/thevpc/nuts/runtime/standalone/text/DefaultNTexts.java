@@ -51,7 +51,6 @@ public class DefaultNTexts implements NTexts {
     }
 
     private void registerDefaults() {
-        register(NFormattable.class, (o, t) -> (((NFormattable) o).formatter().setNtf(true).format()));
         register(NFormatted.class, (o, t) -> (((NFormatted) o).format()));
         register(NTextFormattable.class, (o, t) -> (NText) o);
         register(NMsgFormattable.class, (o, t) -> _NMsg_toString((((NMsgFormattable) o).toMsg())));
@@ -263,9 +262,9 @@ public class DefaultNTexts implements NTexts {
         if (e != null) {
             return e.ofText(t, this);
         }
-        NFormat nFormat = NFormats.of().ofFormat(t).orNull();
+        NFormat nFormat = NFormats.of(t).orNull();
         if (nFormat != null) {
-            return (nFormat.setNtf(true).format());
+            return (nFormat.setNtf(true).format(t));
         }
         return ofPlain(t.toString());
     }
@@ -1343,7 +1342,7 @@ public class DefaultNTexts implements NTexts {
         }
 
         @Override
-        public void print(NPrintStream out) {
+        public void print(Object aValue, NPrintStream out) {
             NText u = format.toText(object);
             out.print(u);
         }
