@@ -43,8 +43,8 @@ import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.security.NWorkspaceSecurityManager;
-import net.thevpc.nuts.text.NDescriptorFormat;
-import net.thevpc.nuts.text.NVersionFormat;
+import net.thevpc.nuts.text.NDescriptorWriter;
+import net.thevpc.nuts.text.NVersionWriter;
 import net.thevpc.nuts.log.NLogFactorySPI;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
@@ -700,8 +700,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             //just log known implementations
             NCmdLines.of();
             NIO.of();
-            NVersionFormat.of();
-            NIdFormat.of();
+            NVersionWriter.of();
+            NIdWriter.of();
 
             wsModel.LOG.log(mstart.withMsgPlain(" ==============================================================================="));
             String s = NIOUtils.loadString(getClass().getResourceAsStream("/net/thevpc/nuts/runtime/includes/standard-header.ntf"), true);
@@ -1455,7 +1455,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         .to(bootstrapFolder.resolve(this.getDefaultIdBasedir(id2))
                                 .resolve(this.getDefaultIdFilename(id2.builder().setFaceContent().setPackaging("jar").build()))
                         ).run();
-                NDescriptorFormat.of().setNtf(false)
+                NDescriptorWriter.of().setNtf(false)
                         .print(NFetch.of(id2).setDependencyFilter(dependencyRunFilter).getResultDescriptor(), bootstrapFolder.resolve(this.getDefaultIdBasedir(id2))
                                 .resolve(this.getDefaultIdFilename(id2.builder().setFaceDescriptor().build())));
 
