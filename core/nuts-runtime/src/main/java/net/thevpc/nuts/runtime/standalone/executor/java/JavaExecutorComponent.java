@@ -261,9 +261,9 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 if (def.getId().equalsShortId(session.getWorkspace().getApiId())) {
                     extraStartWithAppArgs.addAll(ncmdLine.toStringList());
                 }
-                String bootArgumentsString = NCmdLineFormat.ofPlain(ncmdLine
+                String bootArgumentsString = NCmdLineFormat.of().setShellFamily(NShellFamily.SH).formatPlain(ncmdLine
                         .add(executionContext.getDefinition().getId().getLongName())
-                ).setShellFamily(NShellFamily.SH).toString();
+                );
                 if (!NBlankable.isBlank(bootArgumentsString)) {
                     osEnv.put("NUTS_BOOT_ARGS", bootArgumentsString);
                     joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
@@ -332,7 +332,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
                 if (joptions.isJar()) {
                     xargs.add(txt.ofPlain("-jar"));
-                    xargs.add(NIdFormat.of(def.getId()).format());
+                    xargs.add(NIdFormat.of().format(def.getId()));
                     args.add("-jar");
                     args.add(contentFile.toString());
                 } else {
