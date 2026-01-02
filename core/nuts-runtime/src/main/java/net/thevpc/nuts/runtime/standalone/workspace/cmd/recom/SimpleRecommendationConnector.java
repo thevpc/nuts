@@ -34,7 +34,7 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
                 loc = Locale.getDefault().toString();
             }
             post.setHeader("Accept-Language", loc);
-            String out = NElementWriter.ofJson().toString(ri.q);
+            String out = NElementWriter.ofJson().formatPlain(ri.q);
             post.setRequestBody(out.getBytes());
             return post.run().getContentAs(resultType, NContentType.JSON);
         } catch (NException ex) {
