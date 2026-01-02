@@ -39,44 +39,40 @@ import net.thevpc.nuts.spi.NComponent;
  * @since 0.5.4
  */
 public interface NDescriptorFormat extends NFormat, NComponent {
-    static NDescriptorFormat ofNtf(NDescriptor value) {
-        return of().setNtf(true).setValue(value);
+    static NDescriptorFormat ofNtf() {
+        return of().setNtf(true);
     }
 
-    static NDescriptorFormat ofPlain(NDescriptor value) {
-        return of().setNtf(false).setValue(value);
-    }
-
-    static NDescriptorFormat of(NDescriptor value) {
-        return of().setValue(value);
+    static NDescriptorFormat ofPlain() {
+        return of().setNtf(false);
     }
 
     static NDescriptorFormat of() {
         return NExtensions.of(NDescriptorFormat.class);
     }
 
-    static NDescriptorFormat ofNtfMaven(NDescriptor value) {
-        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.MAVEN).setValue(value);
+    static NDescriptorFormat ofNtfMaven() {
+        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.MAVEN);
     }
 
-    static NDescriptorFormat ofMaven(NDescriptor value) {
-        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.MAVEN).setValue(value);
+    static NDescriptorFormat ofMaven() {
+        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.MAVEN);
     }
 
-    static NDescriptorFormat ofNtfNuts(NDescriptor value) {
-        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.NUTS).setValue(value);
+    static NDescriptorFormat ofNtfNuts() {
+        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.NUTS);
     }
 
-    static NDescriptorFormat ofNuts(NDescriptor value) {
-        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.NUTS).setValue(value);
+    static NDescriptorFormat ofNuts() {
+        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.NUTS);
     }
 
-    static NDescriptorFormat ofNtfManifest(NDescriptor value) {
-        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.MANIFEST).setValue(value);
+    static NDescriptorFormat ofNtfManifest() {
+        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.MANIFEST);
     }
 
-    static NDescriptorFormat ofManifest(NDescriptor value) {
-        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.MANIFEST).setValue(value);
+    static NDescriptorFormat ofManifest() {
+        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.MANIFEST);
     }
 
     NDescriptorStyle getDescriptorStyle();
@@ -117,14 +113,6 @@ public interface NDescriptorFormat extends NFormat, NComponent {
      */
     NDescriptorFormat compact();
 
-    /**
-     * set the descriptor instance to print
-     *
-     * @param descriptor value to format
-     * @return {@code this} instance
-     * @since 0.5.6
-     */
-    NDescriptorFormat setValue(NDescriptor descriptor);
 
     /**
      * configure the current command with the given arguments. This is an
