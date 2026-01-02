@@ -9,7 +9,7 @@ import net.thevpc.nuts.artifact.NDependencyTreeNode;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.text.NVersionFormat;
+import net.thevpc.nuts.text.NVersionWriter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -34,7 +34,7 @@ public class TestSpecial_ExecURLTest {
 
 
     public void testNtf2() {
-        TestUtils.println(NVersionFormat.of());
+        TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
                 .setConnectionString("ssh://vpc:a@192.168.1.36")
                 //.addCommand("ls","-l")
