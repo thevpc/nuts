@@ -37,9 +37,8 @@ public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutabl
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NWorkspace ws = session.getWorkspace();
         NPrintStream out = session.out();
-        NVersionFormat.of().configure(false, args).println(out);
+        NVersionFormat.of().configure(false, args).println(NWorkspace.of().getRuntimeId().getVersion(), out);
         return NExecutionException.SUCCESS;
     }
 
