@@ -1,9 +1,9 @@
 package net.thevpc.nuts.core.test.manual;
 
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementParser;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.io.NPs;
 import net.thevpc.nuts.io.NPsInfo;
@@ -60,8 +60,8 @@ public class PsManualTest {
         for (NPsInfo notepad : notepads) {
             NPs.of().killProcess(notepad.getPid());
         }
-        String str = NElementWriter.ofJson().toString(nPsInfos);
-        NElement parsed = NElementParser.ofJson().parse(str);
+        String str = NElementWriter.ofJson().formatPlain(nPsInfos);
+        NElement parsed = NElementReader.ofJson().read(str);
         for (NPsInfo nPsInfo : nPsInfos) {
             NOut.println(nPsInfo);
         }
