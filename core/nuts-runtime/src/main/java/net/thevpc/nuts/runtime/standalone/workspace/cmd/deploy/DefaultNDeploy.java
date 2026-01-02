@@ -199,7 +199,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                         descriptor = descriptor2;
                     } else {
                         if (descriptor2 != null && !descriptor2.equals(descriptor)) {
-                            NDescriptorFormat.of(descriptor).print(descFile);
+                            NDescriptorFormat.of().print(descriptor, descFile);
                         }
                     }
                     if (descriptor != null) {
