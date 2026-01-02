@@ -34,7 +34,7 @@ import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.command.NInstallListener;
 import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.concurrent.NScopedValue;
-import net.thevpc.nuts.elem.NElementFormat;
+import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.core.NRepositoryListener;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NMsg;
@@ -1174,7 +1174,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
         if (!iterableOut) {
             return null;
         }
-        return NElementFormat.of().setContentType(getOutputFormat().orDefault()).iter(out());
+        return NElementWriter.of().setContentType(getOutputFormat().orDefault()).iter(out());
     }
 
     @Override
