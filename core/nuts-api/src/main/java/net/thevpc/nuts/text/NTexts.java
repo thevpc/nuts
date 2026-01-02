@@ -29,7 +29,6 @@ package net.thevpc.nuts.text;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Arrays;
@@ -141,9 +140,9 @@ public interface NTexts extends NComponent {
     String filterText(String text);
 
 
-    NFormat createFormat(NFormatSPI format);
+    NOptional<NObjectWriter> resolveWriter(Object format);
 
-    <T> NFormat createFormat(T object, NTextFormat<T> format);
+//    <T> NObjectWriter createFormat(T object, NTextFormat<T> format);
 
     <T> NOptional<NTextFormat<T>> createTextFormat(String type, String pattern, Class<T> expectedType);
 
