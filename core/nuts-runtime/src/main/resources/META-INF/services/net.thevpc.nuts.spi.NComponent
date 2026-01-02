@@ -67,25 +67,23 @@ net.thevpc.nuts.runtime.standalone.xtra.glob.DefaultNGlob
 net.thevpc.nuts.runtime.standalone.io.terminal.history.NCmdLineHistoryImpl
 net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLines
 
-net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLineFormat
-net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format.DefaultNExecFormat
-net.thevpc.nuts.runtime.standalone.format.DefaultNObjectFormat
-net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat
-net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat
-net.thevpc.nuts.runtime.standalone.format.table.DefaultTableFormat
+net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLineWriter
+net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format.DefaultNExecWriter
+net.thevpc.nuts.runtime.standalone.format.DefaultNObjectObjectWriter
+net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter
+net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesObjectWriter
+net.thevpc.nuts.runtime.standalone.format.table.DefaultTableObjectWriter
 net.thevpc.nuts.runtime.standalone.format.table.DefaultNMutableTableModel
-net.thevpc.nuts.runtime.standalone.format.tree.DefaultNTreeFormat
-net.thevpc.nuts.runtime.standalone.format.NFormatsImpl
-net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdFormat
-net.thevpc.nuts.runtime.standalone.descriptor.format.DefaultNDescriptorFormat
-net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat
-net.thevpc.nuts.runtime.standalone.dependency.format.DefaultNDependencyFormat
+net.thevpc.nuts.runtime.standalone.format.tree.DefaultNTreeObjectWriter
+net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdWriter
+net.thevpc.nuts.runtime.standalone.descriptor.format.DefaultNDescriptorWriter
+net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter
+net.thevpc.nuts.runtime.standalone.dependency.format.DefaultNDependencyWriter
 
 net.thevpc.nuts.runtime.standalone.elem.DefaultNElements
 net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory
-net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFormat
-net.thevpc.nuts.runtime.standalone.elem.writer.DefaultNElementWriter
-net.thevpc.nuts.runtime.standalone.elem.parser.DefaultNElementParser
+net.thevpc.nuts.runtime.standalone.elem.DefaultNElementWriter
+net.thevpc.nuts.runtime.standalone.elem.parser.DefaultNElementReader
 
 net.thevpc.nuts.runtime.standalone.text.DefaultNTexts
 net.thevpc.nuts.runtime.standalone.text.highlighter.JavaCodeHighlighter
