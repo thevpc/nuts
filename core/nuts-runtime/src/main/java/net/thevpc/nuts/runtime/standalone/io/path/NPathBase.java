@@ -2,9 +2,9 @@ package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.text.NFormat;
+import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
+import net.thevpc.nuts.text.NObjectWriter;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
 import net.thevpc.nuts.spi.NPathSPIAware;
 import net.thevpc.nuts.text.NMsg;
@@ -396,10 +396,10 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @NScore(fixed = NScorable.DEFAULT_SCORE)
-    public static class PathFormat extends DefaultFormatBase<NFormat> {
+    public static class PathObjectWriter extends DefaultObjectWriterBase<NObjectWriter> {
 
 
-        public PathFormat() {
+        public PathObjectWriter() {
             super("path");
         }
 
