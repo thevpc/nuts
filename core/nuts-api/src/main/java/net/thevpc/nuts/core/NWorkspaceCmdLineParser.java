@@ -436,7 +436,7 @@ public final class NWorkspaceCmdLineParser {
                                     }
                                 } else {
                                     NTerminalMode v = a.getStringValue().flatMap(NTerminalMode::parse)
-                                            .ifEmpty(NTerminalMode.FORMATTED).get();
+                                            .onEmpty(NTerminalMode.FORMATTED).get();
                                     if (v == NTerminalMode.DEFAULT) {
                                         v = NTerminalMode.INHERITED;
                                     }
@@ -559,7 +559,7 @@ public final class NWorkspaceCmdLineParser {
                                     if (a.isNegated()) {
                                         options.setDebug(
                                                 String.valueOf(!NLiteral.of(a.getStringValue().get()).asBoolean()
-                                                        .ifEmpty(true).ifError(false).get()));
+                                                        .onEmpty(true).onError(false).get()));
                                     } else {
                                         options.setDebug(a.getStringValue().get());
                                     }
@@ -1216,7 +1216,7 @@ public final class NWorkspaceCmdLineParser {
                         if (active) {
                             if (options != null) {
                                 if (!NBlankable.isBlank(a.getStringValue())) {
-                                    options.setExpireTime(a.getValue().asInstant().ifEmpty(null).get());
+                                    options.setExpireTime(a.getValue().asInstant().onEmpty(null).get());
                                 } else {
                                     options.setExpireTime(Instant.now());
                                 }
