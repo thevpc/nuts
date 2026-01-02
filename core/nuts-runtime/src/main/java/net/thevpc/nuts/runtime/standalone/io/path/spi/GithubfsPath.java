@@ -4,7 +4,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.*;
@@ -76,7 +76,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public NFormatSPI formatter(NPath basePath) {
+    public NObjectWriterSPI formatter(NPath basePath) {
         return new MyPathFormat(this);
     }
 
@@ -233,7 +233,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
 
     private Object load(NPath p) {
         NElements elems = NElements.of();
-        NElement e = NElementParser.ofJson().parse(ref);
+        NElement e = NElementReader.ofJson().read(ref);
         if (e != null) {
             if (e.isArray()) {
                 return NStream.ofArray(elems.convert(e, Info[].class)).toArray(Info[]::new);
@@ -324,7 +324,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         }
     }
 
-    private static class MyPathFormat implements NFormatSPI {
+    private static class MyPathFormat implements NObjectWriterSPI {
 
         private final GithubfsPath p;
 
