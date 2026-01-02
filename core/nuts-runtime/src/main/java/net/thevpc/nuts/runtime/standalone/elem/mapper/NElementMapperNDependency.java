@@ -19,12 +19,12 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
         if (o.getExclusions().isEmpty()) {
             //use compact form
             if (context.isNtf()) {
-                return NDependencyFormat.of().setNtf(true).setValue(o).format();
+                return NDependencyFormat.of().setNtf(true).format(o);
             } else {
 
-                return context.defaultDestruct(NFormats.of().ofFormat(o).get()
+                return context.defaultDestruct(NFormats.of(o).get()
                         .setNtf(context.isNtf())
-                        .format(), null);
+                        .format(o), null);
             }
         }
         return context.defaultDestruct(NDependencyBuilder.of().copyFrom(o), null);
@@ -43,9 +43,9 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
 //                    return ws.elem().forString(ws.dependency().formatter().setNtf(true).setValue(o).format());
 //                } else {
 
-        NText format = NFormats.of().ofFormat(o).get()
+        NText format = NFormats.of(o).get()
                 .setNtf(context.isNtf())
-                .format();
+                .format(o);
         return context.defaultCreateElement(
                 format, null);
 //                }
