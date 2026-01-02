@@ -316,8 +316,8 @@ public class CoreNUtils {
             x.put("repository-uuid", def.getRepositoryUuid());
         }
         if (def.getDescriptor() != null) {
-            x.put("descriptor", NDescriptorFormat.of().format(def.getDescriptor()));
-            x.put("effective-descriptor", NDescriptorFormat.of(
+            x.put("descriptor", NDescriptorWriter.of().format(def.getDescriptor()));
+            x.put("effective-descriptor", NDescriptorWriter.of(
             ).format(
                     def.getEffectiveDescriptor().orElseGet(()-> NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(),new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true)))
             ));
