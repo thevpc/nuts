@@ -14,7 +14,6 @@ import net.thevpc.nuts.text.NMsg;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class HtmlfsPath extends AbstractPathSPIAdapter {
 
@@ -83,7 +82,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public NFormatSPI formatter(NPath basePath) {
+    public NObjectWriterSPI formatter(NPath basePath) {
         return new MyPathFormat(this);
     }
 
@@ -228,7 +227,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         }
     }
 
-    private static class MyPathFormat implements NFormatSPI {
+    private static class MyPathFormat implements NObjectWriterSPI {
 
         private final HtmlfsPath p;
 
