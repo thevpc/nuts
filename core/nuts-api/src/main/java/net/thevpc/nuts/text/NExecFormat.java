@@ -39,10 +39,6 @@ import java.util.function.Predicate;
  * @since 0.5.4
  */
 public interface NExecFormat extends NFormat {
-    static NExecFormat of(NExec execCmd) {
-        return of().setValue(execCmd);
-    }
-
     static NExecFormat of() {
        return NExtensions.of(NExecFormat.class);
     }
@@ -91,21 +87,6 @@ public interface NExecFormat extends NFormat {
      * @return {@code this} instance
      */
     NExecFormat setRedirectError(boolean redirectError);
-
-    /**
-     * return value to format
-     *
-     * @return value to format
-     */
-    NExec getValue();
-
-    /**
-     * set value to format
-     *
-     * @param value value to format
-     * @return {@code this} instance
-     */
-    NExecFormat setValue(NExec value);
 
     /**
      * return argument filter
