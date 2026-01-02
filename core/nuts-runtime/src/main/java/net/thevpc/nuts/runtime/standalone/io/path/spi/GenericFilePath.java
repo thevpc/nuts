@@ -7,7 +7,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.util.*;
@@ -39,7 +39,7 @@ public class GenericFilePath implements NPathSPI {
     }
 
     @Override
-    public NFormatSPI formatter(NPath basePath) {
+    public NObjectWriterSPI formatter(NPath basePath) {
         return new MyPathFormat(this);
     }
 
@@ -414,7 +414,7 @@ public class GenericFilePath implements NPathSPI {
         return value;
     }
 
-    private static class MyPathFormat implements NFormatSPI {
+    private static class MyPathFormat implements NObjectWriterSPI {
 
         private final GenericFilePath p;
 
