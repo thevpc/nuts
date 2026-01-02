@@ -40,48 +40,17 @@ import net.thevpc.nuts.platform.NShellFamily;
  */
 public interface NCmdLineFormat extends NFormat {
 
-    static NCmdLineFormat ofPlain(NCmdLine value) {
-        return of().setNtf(false).setValue(value);
+    static NCmdLineFormat ofPlain() {
+        return of().setNtf(false);
     }
 
     static NCmdLineFormat of(NCmdLine value) {
-        return of().setValue(value);
+        return of();
     }
 
     static NCmdLineFormat of() {
        return NExtensions.of(NCmdLineFormat.class);
     }
-
-    /**
-     * return current command line
-     *
-     * @return current command line
-     */
-    NCmdLine getValue();
-
-    /**
-     * set command line
-     *
-     * @param value value
-     * @return {@code this} instance
-     */
-    NCmdLineFormat setValue(NCmdLine value);
-
-    /**
-     * set command line from string array
-     *
-     * @param args args
-     * @return {@code this} instance
-     */
-    NCmdLineFormat setValue(String[] args);
-
-    /**
-     * set command line from parsed string
-     *
-     * @param args args
-     * @return {@code this} instance
-     */
-    NCmdLineFormat setValue(String args);
 
     /**
      * return command line family
