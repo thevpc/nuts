@@ -61,7 +61,7 @@ public class OptionalTest {
             Assertions.assertEquals(true, a.isPresent());
             Assertions.assertEquals(false, a.isNotPresent());
 
-            NOptional<String> b=a.ifBlankEmpty();
+            NOptional<String> b=a.onBlankEmpty();
             Assertions.assertThrows(NDetachedEmptyOptionalException.class, () -> b.get());
             Assertions.assertEquals(true, b.isEmpty());
             Assertions.assertEquals(false, b.isError());
