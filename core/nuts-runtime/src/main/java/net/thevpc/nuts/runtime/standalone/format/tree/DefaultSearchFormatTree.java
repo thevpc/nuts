@@ -74,9 +74,11 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
         NTextArtTreeRenderer treeRenderer = NTextArt.of().getTreeRenderer().get()
                 .setNodeFormat(nTreeNodeFormat)
                 .setOmitRoot(true)
-                .setInfinite(!last)
-                ;
-        getWriter().println(treeRenderer.render(NTreeFormat.of(new AbstractMap.SimpleEntry<Object, Object>("ROOT",object)).getModel()));
+                .setInfinite(!last);
+        getWriter().println(treeRenderer.render(
+                        NTreeFormat.of().getModel(new AbstractMap.SimpleEntry<Object, Object>("ROOT", object))
+                )
+        );
         getWriter().flush();
     }
 
