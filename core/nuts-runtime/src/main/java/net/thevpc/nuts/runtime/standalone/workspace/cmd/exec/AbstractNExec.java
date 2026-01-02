@@ -657,7 +657,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             case "--run-as": {
                 NArg s = cmdLine.nextEntry().get();
                 if (enabled) {
-                    setRunAs(NRunAs.user(s.getStringValue().ifBlankEmpty().get()));
+                    setRunAs(NRunAs.user(s.getStringValue().onBlankEmpty().get()));
                 }
                 return true;
             }
