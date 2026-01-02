@@ -42,13 +42,13 @@ public interface NLogs extends NComponent {
         return NExtensions.of(NLogs.class);
     }
 
-    NLogContext newContext();
+    NLogScope newContext();
 
-    NLogContext getContext();
+    NLogScope getContext();
 
-    void runWith(NLogContext context, Runnable runnable);
+    void runInScope(NLogScope context, Runnable runnable);
 
-    <T> T callWithContext(NLogContext context, NCallable<T> callable);
+    <T> T callInScope(NLogScope context, NCallable<T> callable);
 
     /**
      * create an instance of {@link NLog}
