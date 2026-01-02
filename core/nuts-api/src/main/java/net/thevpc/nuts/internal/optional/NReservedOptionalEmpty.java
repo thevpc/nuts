@@ -13,13 +13,9 @@ import java.util.function.Supplier;
 
 public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> implements Cloneable {
 
-    private Supplier<NMsg> message;
 
     public NReservedOptionalEmpty(Supplier<NMsg> message) {
-        if (message == null) {
-            message = NMsg::ofMissingValue;
-        }
-        this.message = message;
+        super(message);
     }
 
     public NOptional<T> withMessage(Supplier<NMsg> message) {
@@ -47,7 +43,7 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public T get() {
-        throwError(message);
+        throwError(getMessage());
         //never reached!
         return null;
     }
@@ -75,7 +71,7 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
     }
 
     @Override
-    public NOptional<T> ifBlankEmpty() {
+    public NOptional<T> onBlankEmpty() {
         return this;
     }
 
@@ -105,11 +101,6 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
     }
 
     @Override
-    public Supplier<NMsg> getMessage() {
-        return message;
-    }
-
-    @Override
     public boolean isBlank() {
         return true;
     }
@@ -126,7 +117,7 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
 
     protected void throwError(Supplier<NMsg> preferredMessage) {
         if (preferredMessage == null) {
-            preferredMessage = message;
+            preferredMessage = getMessage();
         }
         if (preferredMessage == null) {
             preferredMessage = NMsg::ofMissingValue;
