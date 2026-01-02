@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.text.NObjectFormat;
+import net.thevpc.nuts.text.NObjectObjectWriter;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
@@ -267,7 +267,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
         } else if (obj instanceof byte[]) {
             this.print((byte[]) obj);
         } else {
-            NObjectFormat.of().print(obj, this);
+            NObjectObjectWriter.of().print(obj, this);
         }
         return this;
     }
