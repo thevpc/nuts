@@ -123,7 +123,7 @@ public class DefaultNLog implements NLog {
     }
 
     private NMsg prepareMsg(NMsg other) {
-        NLogContext c = NLogs.of().getContext();
+        NLogScope c = NLogs.of().getContext();
         return other.withPrefix(c.getMessagePrefix()).withSuffix(c.getMessageSuffix()).withPlaceholders(c::getPlaceholder);
     }
 }
