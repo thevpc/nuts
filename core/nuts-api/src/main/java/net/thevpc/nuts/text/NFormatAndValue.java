@@ -1,6 +1,6 @@
 package net.thevpc.nuts.text;
 
-public class NFormatAndValue<V,F extends NFormat> {
+public class NFormatAndValue<V,F extends NObjectWriter> {
     private V value;
     private F format;
 
