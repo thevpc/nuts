@@ -9,11 +9,10 @@ import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.text.NVersionFormat;
+import net.thevpc.nuts.text.NVersionWriter;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.time.NChronometer;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,7 +35,7 @@ public class SearchTest {
 
     @Test
     public void find1() {
-        TestUtils.println(NVersionFormat.of());
+        TestUtils.println(NVersionWriter.of());
         NSearch q = NSearch.of()
                 .setId("org.eclipse.jetty.orbit:javax.mail.glassfish#1.4.1.v201005082020")
 //                .setRepositoryFilter("maven-central")
@@ -52,7 +51,7 @@ public class SearchTest {
 
 //    @Test
     public void find2() {
-        TestUtils.println(NVersionFormat.of());
+        TestUtils.println(NVersionWriter.of());
         NSearch q = NSearch.of()
                 .setId("org.eclipse.jetty:jetty-home#9.4.44.v20210927\n")
 //                .setInlineDependencies(true)
@@ -72,7 +71,7 @@ public class SearchTest {
 
     @Test
     public void find3() {
-        TestUtils.println(NVersionFormat.of());
+        TestUtils.println(NVersionWriter.of());
         NSearch q = NSearch.of()
                 .setId("net.thevpc.nuts:nuts-ssh")
 //                .setInlineDependencies(true)
