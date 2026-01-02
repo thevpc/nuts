@@ -10,7 +10,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.elem.NElementParser;
+import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NObjectElement;
 
 
@@ -124,7 +124,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                             @Override
                             public boolean visitFile(String path, InputStream inputStream) {
                                 if (("/"+NConstants.Files.WORKSPACE_CONFIG_FILE_NAME).equals(path)) {
-                                    NObjectElement e = NElementParser.ofJson().parse(inputStream, NObjectElement.class).asObject().get();
+                                    NObjectElement e = NElementReader.ofJson().read(inputStream, NObjectElement.class).asObject().get();
                                     nutsWorkspaceConfigRef[0] = e;
                                     return false;
                                 }
