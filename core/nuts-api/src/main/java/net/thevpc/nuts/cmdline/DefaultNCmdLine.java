@@ -876,7 +876,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public void throwError(NMsg message) {
-        throw NExceptions.ofSafeCmdLineException(NMsg.ofC("%s : %s", NStringUtils.firstNonBlank(commandName, "command"), message));
+        throw NExceptions.ofSafeCmdLineException(NMsg.ofC("%s : %s", NStringUtils.firstNonBlankTrimmed(commandName, "command"), message));
     }
 
     @Override
