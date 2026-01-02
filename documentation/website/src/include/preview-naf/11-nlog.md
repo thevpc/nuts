@@ -15,8 +15,8 @@ contentType: java
 
 class MyApp {
     public void test() {
-        NLogs.of().runWith(
-            NLogContext.of()
+        NLog.runInScope(
+            NLogScope.of()
                     .withMessagePrefix(NMsg.ofC("[My Application]")) // Prefix added to every log message in this scope
                     .withPlaceholder("user", "Adam") // Placeholder available to all logs in this scope
                     .withLog(message -> NOut.println(NMsg.ofC("[SCOPED] %s", message))), // Custom log handler: redirect all messages to stdout with a [SCOPED] prefix
