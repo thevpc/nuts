@@ -69,7 +69,7 @@ public class DefaultNPathMetadata {
 
     public NOptional<NMsg> getMessage() {
         return NOptional.ofNamed(message, "message")
-                .orElseOf(() -> NMsg.ofNtf(NFormats.of(path).get().format()))
+                .orElseGetOptionalOf(() -> NMsg.ofNtf(NFormats.of(path).get().format(path)))
                 ;
     }
 
@@ -79,19 +79,19 @@ public class DefaultNPathMetadata {
 
     public NOptional<Long> getContentLength() {
         return NOptional.ofNamed(contentLength, "contentLength")
-                .orElseOf(() -> path.getContentLength())
+                .orElseGetOptionalOf(() -> path.getContentLength())
                 ;
     }
 
     public NOptional<String> getContentType() {
         return NOptional.ofNamed(contentType, "contentType")
-                .orElseOf(() -> path.getContentType())
+                .orElseGetOptionalOf(() -> path.getContentType())
                 ;
     }
 
     public NOptional<String> getCharset() {
         return NOptional.ofNamed(charset, "charset")
-                .orElseOf(() -> path.getCharset())
+                .orElseGetOptionalOf(() -> path.getCharset())
                 ;
     }
 
