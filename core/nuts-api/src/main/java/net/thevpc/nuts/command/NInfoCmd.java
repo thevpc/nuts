@@ -28,6 +28,7 @@ package net.thevpc.nuts.command;
 import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NFormat;
 import net.thevpc.nuts.util.NOptional;
 
@@ -41,7 +42,7 @@ import java.util.*;
  * @app.category Base
  * @since 0.5.4
  */
-public interface NInfoCmd extends NFormat, NWorkspaceCmd {
+public interface NInfoCmd extends NWorkspaceCmd {
 
     static NInfoCmd of() {
        return NExtensions.of(NInfoCmd.class);
@@ -59,7 +60,6 @@ public interface NInfoCmd extends NFormat, NWorkspaceCmd {
     @Override
     NInfoCmd configure(boolean skipUnsupported, String... args);
 
-    @Override
     NInfoCmd setNtf(boolean ntf);
 
     /**
@@ -109,9 +109,13 @@ public interface NInfoCmd extends NFormat, NWorkspaceCmd {
      */
     NInfoCmd setFancy(boolean fancy);
 
-
+//    NInfoCmd print(NPrintStream w);
+//
+//    NInfoCmd println(NPrintStream w);
 
     Map<String, Object> getPropertyValues() ;
 
     NOptional<Object> getPropertyValue(String propertyName) ;
+
+
 }
