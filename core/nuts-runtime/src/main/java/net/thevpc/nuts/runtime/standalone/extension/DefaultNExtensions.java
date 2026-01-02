@@ -11,10 +11,8 @@ import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.text.NFormats;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.log.NLogs;
-import net.thevpc.nuts.runtime.standalone.format.NFormatsImpl;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
@@ -116,14 +114,6 @@ public class DefaultNExtensions implements NExtensions {
                     if (t == null) {
                         t = new DefaultNTexts();
                         wsModel.textModel.defaultNTexts = t;
-                    }
-                    return NOptional.of((T) t);
-                }
-                case "net.thevpc.nuts.text.NFormats": {
-                    NFormats t = wsModel.textModel.defaultNFormats;
-                    if (t == null) {
-                        t = new NFormatsImpl();
-                        wsModel.textModel.defaultNFormats = t;
                     }
                     return NOptional.of((T) t);
                 }
