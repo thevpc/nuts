@@ -127,6 +127,10 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
         return of().addCommand(cmd).system();
     }
 
+    static NExec ofOpenFile(NPath path) {
+        return of().addCommand(path).open();
+    }
+
     /**
      * if true, an exception is thrown whenever the command returns non zero
      * value.
