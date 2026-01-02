@@ -46,7 +46,7 @@ public interface NPropertiesFormat extends NContentTypeFormat {
      *
      * @return model to format
      */
-    Map<?, ?> getModel();
+    Map<?, ?> getModel(Object aValue);
 
     /**
      * return true is key has to be sorted when formatting
@@ -77,9 +77,6 @@ public interface NPropertiesFormat extends NContentTypeFormat {
      * @return {@code this} instance
      */
     NPropertiesFormat setSeparator(String separator);
-
-    @Override
-    NPropertiesFormat setValue(Object value);
 
 
     /**
