@@ -84,8 +84,8 @@ public class RemoteConnectionStringInfo {
             remoteJar.set(remoteJarPath);
         }
         if (copy(apiLocalPath, remoteJarPath)) {
-            NDescriptorFormat.of(def.getDescriptor()).setNtf(false).print(
-                    remoteRepo.resolve(id.getMavenPath("nuts")).mkParentDirs()
+            NDescriptorFormat.of().setNtf(false).print(
+                    def.getDescriptor(), remoteRepo.resolve(id.getMavenPath("nuts")).mkParentDirs()
             );
             return true;
         }
