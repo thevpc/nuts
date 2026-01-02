@@ -105,10 +105,10 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         if (session.isDry()) {
             if (out.getTerminalMode() == NTerminalMode.FORMATTED) {
                 out.print("[dry] ==[exec]== ");
-                out.println(NExecFormat.of(pb).format());
+                out.println(NExecFormat.of().format(pb));
             } else {
                 out.print("[dry] exec ");
-                out.println(NExecFormat.of(pb).format());
+                out.println(NExecFormat.of().format(pb));
             }
             return NExecutionException.SUCCESS;
         }
