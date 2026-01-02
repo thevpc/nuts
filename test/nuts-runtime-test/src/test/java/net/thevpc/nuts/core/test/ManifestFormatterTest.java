@@ -52,9 +52,8 @@ public class ManifestFormatterTest {
         NPrintStream out = NPrintStream.of(baos);
 
         NDescriptorFormat.of()
-                .setValue(descriptor)
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
-                .print(out);
+                .print(descriptor, out);
 
         String manifest = baos.toString();
 
@@ -90,9 +89,8 @@ public class ManifestFormatterTest {
         NPrintStream out = NPrintStream.of(baos);
 
         NDescriptorFormat.of()
-                .setValue(descriptor)
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
-                .print(out);
+                .print(descriptor, out);
 
         String manifest = baos.toString();
 
@@ -123,9 +121,8 @@ public class ManifestFormatterTest {
         NPrintStream out = NPrintStream.of(baos);
 
         NDescriptorFormat.of()
-                .setValue(descriptor)
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
-                .print(out);
+                .print(descriptor, out);
 
         String manifest = baos.toString();
 
@@ -174,9 +171,8 @@ public class ManifestFormatterTest {
         NPrintStream out = NPrintStream.of(baos);
 
         NDescriptorFormat.of()
-                .setValue(original)
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
-                .print(out);
+                .print(original, out);
 
         String manifestContent = baos.toString();
         TestUtils.println("Generated MANIFEST.MF for round-trip test:");
@@ -251,9 +247,8 @@ public class ManifestFormatterTest {
         NPrintStream out = NPrintStream.of(baos);
 
         NDescriptorFormat.of()
-                .setValue(descriptor)
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
-                .print(out);
+                .print(descriptor, out);
 
         String manifest = baos.toString();
 
@@ -289,9 +284,8 @@ public class ManifestFormatterTest {
         NPrintStream out = NPrintStream.of(baos);
 
         NDescriptorFormat.of()
-                .setValue(descriptor)
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
-                .print(out);
+                .print(descriptor, out);
 
         String manifest = baos.toString();
 
@@ -326,9 +320,8 @@ public class ManifestFormatterTest {
         NPrintStream out = NPrintStream.of(baos);
 
         NDescriptorFormat.of()
-                .setValue(descriptor)
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
-                .print(out);
+                .print(descriptor, out);
 
         String manifest = baos.toString();
 
@@ -376,9 +369,8 @@ public class ManifestFormatterTest {
         NPrintStream out = NPrintStream.of(baos);
 
         NDescriptorFormat.of()
-                .setValue(descriptor)
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
-                .print(out);
+                .print(descriptor, out);
 
         String manifest = baos.toString();
 
@@ -418,9 +410,8 @@ public class ManifestFormatterTest {
         NPrintStream out = NPrintStream.of(baos);
 
         NDescriptorFormat.of()
-                .setValue(descriptor)
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
-                .print(out);
+                .print(descriptor, out);
 
         String manifest = baos.toString();
 
@@ -455,9 +446,8 @@ public class ManifestFormatterTest {
         NPrintStream out = NPrintStream.of(baos);
 
         NDescriptorFormat.of()
-                .setValue(descriptor)
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
-                .print(out);
+                .print(descriptor, out);
 
         String manifest = baos.toString();
 
@@ -489,9 +479,8 @@ public class ManifestFormatterTest {
         NPrintStream out = NPrintStream.of(baos);
 
         NDescriptorFormat.of()
-                .setValue(descriptor)
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
-                .print(out);
+                .print(descriptor, out);
 
         String manifest = baos.toString();
 
@@ -526,9 +515,8 @@ public class ManifestFormatterTest {
         NPrintStream out1 = NPrintStream.of(baos1);
 
         NDescriptorFormat.of()
-                .setValue(descriptor1)
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
-                .print(out1);
+                .print(descriptor1, out1);
 
         String manifest1 = baos1.toString();
 
@@ -566,9 +554,8 @@ public class ManifestFormatterTest {
         NPrintStream out = NPrintStream.of(baos);
 
         NDescriptorFormat.of()
-                .setValue(descriptor)
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
-                .print(out);
+                .print(descriptor, out);
 
         String manifest = baos.toString();
 
