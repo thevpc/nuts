@@ -22,22 +22,14 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     private NText rootName;
 
 
-    private Object tree;
-
     public DefaultNTreeFormat() {
-        super("tree-format");
+        this( null, null);
     }
 
-    public DefaultNTreeFormat(NTreeNode tree) {
-        this(tree, null, null);
-    }
-
-    public DefaultNTreeFormat(NTreeNode tree, NTreeNodeFormat formatter, NTreeLinkFormat linkFormatter) {
+    public DefaultNTreeFormat(NTreeNodeFormat formatter, NTreeLinkFormat linkFormatter) {
         super("tree");
         renderer.setFormatter(formatter);
         renderer.setLinkFormat(linkFormatter);
-        NAssert.requireNonNull(tree, "tree");
-        this.tree = tree;
     }
 
     private XNodeFormatter xNodeFormatter = new XNodeFormatter() {
@@ -67,7 +59,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
 
 
     @Override
-    public NTreeNode getModel() {
+    public NTreeNode getModel(Object tree) {
         if (tree instanceof NTreeNode) {
 //        if(tree instanceof NutsTreeModel){
             return (NTreeNode) tree;
@@ -80,20 +72,13 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     }
 
     @Override
-    public DefaultNTreeFormat setValue(Object value) {
-        this.tree = value;
-        return this;
-    }
-
-
-    @Override
-    public String toString() {
-        return renderer.render(getModel()).filteredText();
+    public String formatPlain(Object value) {
+        return renderer.render(getModel(value)).filteredText();
     }
 
     @Override
-    public void print(NPrintStream out) {
-        out.print(renderer.render(getModel()));
+    public void print(Object aValue, NPrintStream out) {
+        out.print(renderer.render(getModel(aValue)));
         out.flush();
     }
 
@@ -137,10 +122,6 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
         return false;
     }
 
-    @Override
-    public Object getValue() {
-        return tree;
-    }
 
 
 }
