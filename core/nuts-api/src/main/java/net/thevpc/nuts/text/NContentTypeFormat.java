@@ -40,28 +40,9 @@ import net.thevpc.nuts.ext.NExtensions;
  */
 public interface NContentTypeFormat extends NFormat {
 
-    static NContentTypeFormat of(Object any) {
-        return of().setValue(any);
-    }
-
     static NContentTypeFormat of() {
         return NExtensions.of(NContentTypeFormat.class);
     }
-
-    /**
-     * return value to format
-     *
-     * @return value to format
-     */
-    Object getValue();
-
-    /**
-     * set value to format
-     *
-     * @param value value to format
-     * @return {@code this} instance
-     */
-    NContentTypeFormat setValue(Object value);
 
     /**
      * configure the current command with the given arguments. This is an
