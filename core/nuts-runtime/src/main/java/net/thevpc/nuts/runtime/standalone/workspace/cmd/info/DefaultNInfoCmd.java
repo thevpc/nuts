@@ -28,7 +28,6 @@ import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
-import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.runtime.standalone.dependency.solver.NDependencySolverUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
@@ -195,7 +194,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         }
         Object fresult = result;
         session.runWith(() -> {
-            NObjectFormat.of().configure(true, args.toArray(new String[0])).print(fresult, w);
+            NObjectObjectWriter.of().configure(true, args.toArray(new String[0])).print(fresult, w);
         });
         return this;
     }
@@ -459,8 +458,8 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("command-line-short", () -> NWorkspace.of().getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(true)));
         props.put("inherited", () -> NWorkspace.of().getBootOptions().getInherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", () -> NCmdLineFormat.of().format(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)));
-        props.put("inherited-nuts-args", () -> NCmdLineFormat.of().format(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)));
+        props.put("inherited-nuts-boot-args", () -> NCmdLineWriter.of().format(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)));
+        props.put("inherited-nuts-args", () -> NCmdLineWriter.of().format(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)));
         props.put("creation-started", () -> NWorkspace.of().getCreationStartTime());
         props.put("creation-finished", () -> NWorkspace.of().getCreationFinishTime());
         props.put("creation-within", () -> NWorkspace.of().getCreationDuration().normalize());
@@ -649,8 +648,8 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("command-line-short", workspace.getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(true)));
         props.put("inherited", workspace.getBootOptions().getInherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", NCmdLineFormat.of().format(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)));
-        props.put("inherited-nuts-args", NCmdLineFormat.of().format(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)));
+        props.put("inherited-nuts-boot-args", NCmdLineWriter.of().format(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)));
+        props.put("inherited-nuts-args", NCmdLineWriter.of().format(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)));
         props.put("creation-started", workspace.getCreationStartTime());
         props.put("creation-finished", workspace.getCreationFinishTime());
         props.put("creation-within", workspace.getCreationDuration().normalize());
