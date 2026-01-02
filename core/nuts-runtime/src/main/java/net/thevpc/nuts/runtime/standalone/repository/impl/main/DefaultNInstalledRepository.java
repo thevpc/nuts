@@ -554,7 +554,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public <T> T readJson(NId id, String name, Class<T> clazz) {
-        return NElementParser.ofJson().parse(getPath(id, name), clazz);
+        return NElementReader.ofJson().read(getPath(id, name), clazz);
     }
 
     public void printJson(NId id, String name, InstallInfoConfig value) {
