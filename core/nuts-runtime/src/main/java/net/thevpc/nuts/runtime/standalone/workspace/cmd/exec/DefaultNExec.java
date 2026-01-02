@@ -150,7 +150,6 @@ public class DefaultNExec extends AbstractNExec {
         }
         switch (executionType) {
             case OPEN: {
-                NAssert.requireNonNull(getCommandDefinition(), "artifact definition");
                 NAssert.requireNonBlank(command, "command");
                 NConnectionString connectionString = getConnectionString();
                 if (!NBlankable.isBlank(connectionString)) {
