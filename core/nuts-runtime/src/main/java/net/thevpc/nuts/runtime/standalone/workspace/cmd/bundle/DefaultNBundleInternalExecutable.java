@@ -140,10 +140,10 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 }
             }
         }
-        nuts_bundle_info_config.appName = NStringUtils.firstNonBlank(boptions.appName, boptions.appTitle, defaultName);
-        nuts_bundle_info_config.appVersion = NStringUtils.firstNonBlank(boptions.appVersion, defaultVersion, "1.0");
-        nuts_bundle_info_config.appTitle = NStringUtils.firstNonBlank(boptions.appTitle, nuts_bundle_info_config.appName);
-        nuts_bundle_info_config.appDesc = NStringUtils.firstNonBlank(boptions.appDesc, nuts_bundle_info_config.appTitle);
+        nuts_bundle_info_config.appName = NStringUtils.firstNonBlankTrimmed(boptions.appName, boptions.appTitle, defaultName);
+        nuts_bundle_info_config.appVersion = NStringUtils.firstNonBlankTrimmed(boptions.appVersion, defaultVersion, "1.0");
+        nuts_bundle_info_config.appTitle = NStringUtils.firstNonBlankTrimmed(boptions.appTitle, nuts_bundle_info_config.appName);
+        nuts_bundle_info_config.appDesc = NStringUtils.firstNonBlankTrimmed(boptions.appDesc, nuts_bundle_info_config.appTitle);
         String fullAppFileName = ensureValidFileName(nuts_bundle_info_config.appName).orElse("app") + "-" + ensureValidFileName(nuts_bundle_info_config.appVersion).orElse("1.0");
         nuts_bundle_info_config.target = "${user.dir}/" + fullAppFileName;
 
@@ -236,7 +236,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     //descriptor is not classifier aware
                     .builder().setClassifier(null).build()
                     .getMavenPath(NConstants.Files.DESCRIPTOR_FILE_EXTENSION_SIMPLE);
-            cp.from(NDescriptorFormat.of().setValue(d.getDescriptor()).setNtf(false).toString().getBytes())
+            cp.from(NDescriptorFormat.of().formatPlain(d.getDescriptor()).getBytes())
                     .to(bundleFolder.resolve(fullPath))
                     .run();
             if (includeConfigFiles) {
