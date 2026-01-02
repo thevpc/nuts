@@ -316,10 +316,11 @@ public class CoreNUtils {
             x.put("repository-uuid", def.getRepositoryUuid());
         }
         if (def.getDescriptor() != null) {
-            x.put("descriptor", NDescriptorFormat.of(def.getDescriptor()).format());
+            x.put("descriptor", NDescriptorFormat.of().format(def.getDescriptor()));
             x.put("effective-descriptor", NDescriptorFormat.of(
+            ).format(
                     def.getEffectiveDescriptor().orElseGet(()-> NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(),new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true)))
-            ).format());
+            ));
         }
         return x;
     }
@@ -648,7 +649,7 @@ public class CoreNUtils {
 
     public static boolean isCustomTrue(String name) {
         return NWorkspace.of().getCustomBootOption(name)
-                .ifEmpty(NLiteral.of("true"))
+                .onEmpty(NLiteral.of("true"))
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }
