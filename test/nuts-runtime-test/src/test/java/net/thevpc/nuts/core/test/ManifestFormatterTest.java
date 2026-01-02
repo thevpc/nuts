@@ -3,7 +3,7 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.text.NDescriptorFormat;
+import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder;
 import net.thevpc.nuts.util.NStringUtils;
@@ -51,7 +51,7 @@ public class ManifestFormatterTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         NPrintStream out = NPrintStream.of(baos);
 
-        NDescriptorFormat.of()
+        NDescriptorWriter.of()
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
                 .print(descriptor, out);
 
@@ -88,7 +88,7 @@ public class ManifestFormatterTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         NPrintStream out = NPrintStream.of(baos);
 
-        NDescriptorFormat.of()
+        NDescriptorWriter.of()
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
                 .print(descriptor, out);
 
@@ -120,7 +120,7 @@ public class ManifestFormatterTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         NPrintStream out = NPrintStream.of(baos);
 
-        NDescriptorFormat.of()
+        NDescriptorWriter.of()
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
                 .print(descriptor, out);
 
@@ -170,7 +170,7 @@ public class ManifestFormatterTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         NPrintStream out = NPrintStream.of(baos);
 
-        NDescriptorFormat.of()
+        NDescriptorWriter.of()
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
                 .print(original, out);
 
@@ -246,7 +246,7 @@ public class ManifestFormatterTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         NPrintStream out = NPrintStream.of(baos);
 
-        NDescriptorFormat.of()
+        NDescriptorWriter.of()
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
                 .print(descriptor, out);
 
@@ -283,7 +283,7 @@ public class ManifestFormatterTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         NPrintStream out = NPrintStream.of(baos);
 
-        NDescriptorFormat.of()
+        NDescriptorWriter.of()
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
                 .print(descriptor, out);
 
@@ -319,7 +319,7 @@ public class ManifestFormatterTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         NPrintStream out = NPrintStream.of(baos);
 
-        NDescriptorFormat.of()
+        NDescriptorWriter.of()
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
                 .print(descriptor, out);
 
@@ -368,7 +368,7 @@ public class ManifestFormatterTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         NPrintStream out = NPrintStream.of(baos);
 
-        NDescriptorFormat.of()
+        NDescriptorWriter.of()
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
                 .print(descriptor, out);
 
@@ -409,7 +409,7 @@ public class ManifestFormatterTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         NPrintStream out = NPrintStream.of(baos);
 
-        NDescriptorFormat.of()
+        NDescriptorWriter.of()
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
                 .print(descriptor, out);
 
@@ -445,7 +445,7 @@ public class ManifestFormatterTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         NPrintStream out = NPrintStream.of(baos);
 
-        NDescriptorFormat.of()
+        NDescriptorWriter.of()
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
                 .print(descriptor, out);
 
@@ -478,7 +478,7 @@ public class ManifestFormatterTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         NPrintStream out = NPrintStream.of(baos);
 
-        NDescriptorFormat.of()
+        NDescriptorWriter.of()
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
                 .print(descriptor, out);
 
@@ -514,7 +514,7 @@ public class ManifestFormatterTest {
         ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
         NPrintStream out1 = NPrintStream.of(baos1);
 
-        NDescriptorFormat.of()
+        NDescriptorWriter.of()
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
                 .print(descriptor1, out1);
 
@@ -553,7 +553,7 @@ public class ManifestFormatterTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         NPrintStream out = NPrintStream.of(baos);
 
-        NDescriptorFormat.of()
+        NDescriptorWriter.of()
                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
                 .print(descriptor, out);
 
