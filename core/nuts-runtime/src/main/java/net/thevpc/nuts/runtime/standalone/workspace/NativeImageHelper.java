@@ -2,13 +2,13 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLines;
-import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectFormat;
+import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectObjectWriter;
 
 public class NativeImageHelper {
     public static void prepare(NWorkspace workspace){
         if(Boolean.getBoolean("EnableGraalVM")){
             new DefaultNCmdLines();
-            new DefaultNObjectFormat(workspace);
+            new DefaultNObjectObjectWriter(workspace);
         }
     }
 }
