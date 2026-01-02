@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NIdFormat;
+import net.thevpc.nuts.artifact.NIdWriter;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -261,7 +261,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 if (def.getId().equalsShortId(session.getWorkspace().getApiId())) {
                     extraStartWithAppArgs.addAll(ncmdLine.toStringList());
                 }
-                String bootArgumentsString = NCmdLineFormat.of().setShellFamily(NShellFamily.SH).formatPlain(ncmdLine
+                String bootArgumentsString = NCmdLineWriter.of().setShellFamily(NShellFamily.SH).formatPlain(ncmdLine
                         .add(executionContext.getDefinition().getId().getLongName())
                 );
                 if (!NBlankable.isBlank(bootArgumentsString)) {
@@ -332,7 +332,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
                 if (joptions.isJar()) {
                     xargs.add(txt.ofPlain("-jar"));
-                    xargs.add(NIdFormat.of().format(def.getId()));
+                    xargs.add(NIdWriter.of().format(def.getId()));
                     args.add("-jar");
                     args.add(contentFile.toString());
                 } else {
