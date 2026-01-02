@@ -28,17 +28,11 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.text.NContentType;
-import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.text.NContentTypeWriter;
+import net.thevpc.nuts.text.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NTerminal;
-import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NProgressFactory;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.nio.file.Path;
 import java.util.function.Consumer;
 
 /**
@@ -49,43 +43,71 @@ import java.util.function.Consumer;
  * @app.category Format
  * @since 0.5.5
  */
-public interface NElementWriter extends NComponent, NCmdLineConfigurable {
+public interface NElementWriter extends NContentTypeWriter {
 
 
     static NElementWriter of() {
         return NExtensions.of(NElementWriter.class);
     }
 
+    static NElementWriter ofPlainJson() {
+        return of().setNtf(false).json();
+    }
+
     static NElementWriter ofJson() {
         return of().setNtf(false).json();
+    }
+
+    static NElementWriter ofPlainProps() {
+        return of().setNtf(false).setContentType(NContentType.PROPS);
     }
 
     static NElementWriter ofProps() {
         return of().setNtf(false).setContentType(NContentType.PROPS);
     }
 
+    static NElementWriter ofPlainXml() {
+        return of().setNtf(false).setContentType(NContentType.XML);
+    }
+
     static NElementWriter ofXml() {
         return of().setNtf(false).setContentType(NContentType.XML);
+    }
+
+    static NElementWriter ofPlainTree() {
+        return of().setNtf(false).setContentType(NContentType.TREE);
     }
 
     static NElementWriter ofTree() {
         return of().setNtf(false).setContentType(NContentType.TREE);
     }
 
+    static NElementWriter ofPlain() {
+        return of().setNtf(false).setContentType(NContentType.PLAIN);
+    }
+
+    static NElementWriter ofPlainTson() {
+        return of().setNtf(false).setContentType(NContentType.TSON);
+    }
+
     static NElementWriter ofTson() {
         return of().setNtf(false).setContentType(NContentType.TSON);
+    }
+
+    static NElementWriter ofPlainYaml() {
+        return of().setNtf(false).setContentType(NContentType.YAML);
     }
 
     static NElementWriter ofYaml() {
         return of().setNtf(false).setContentType(NContentType.YAML);
     }
 
-    static NElementWriter ofTable() {
+    static NElementWriter ofPlainTable() {
         return of().setNtf(false).setContentType(NContentType.TABLE);
     }
 
-    static NElementWriter ofPlain() {
-        return of().setNtf(false).setContentType(NContentType.PLAIN);
+    static NElementWriter ofTable() {
+        return of().setNtf(false).setContentType(NContentType.TABLE);
     }
 
     static NElementWriter ofNtfJson() {
@@ -142,11 +164,21 @@ public interface NElementWriter extends NComponent, NCmdLineConfigurable {
 
     NElementWriter xml();
 
-    NElementWriter table();
+    /**
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NCmdLineConfigurable#configure(boolean, String...)
+     * }
+     * to help return a more specific return type;
+     *
+     * @param skipUnsupported when true, all unsupported options are skipped
+     * @param args            argument to configure with
+     * @return {@code this} instance
+     */
+    @Override
+    NElementWriter configure(boolean skipUnsupported, String... args);
 
-    NElementWriter tree();
-
-    NElementWriter props();
+    @Override
+    NElementWriter setNtf(boolean ntf);
 
     /**
      * true is compact json flag is armed
@@ -163,8 +195,7 @@ public interface NElementWriter extends NComponent, NCmdLineConfigurable {
      */
     NElementWriter setCompact(boolean compact);
 
-    NElementMapperStore mapperStore();
-    NElementWriter doWithMapperStore(Consumer<NElementMapperStore> doWith);
+    NIterableFormat iter(NPrintStream out);
 
     boolean isLogProgress();
 
@@ -178,132 +209,7 @@ public interface NElementWriter extends NComponent, NCmdLineConfigurable {
 
     NElementWriter setProgressFactory(NProgressFactory progressFactory);
 
+    NElementMapperStore mapperStore();
 
-    /**
-     * format current value and write result to {@code getSession().out()}.
-     */
-    void write(Object object);
-
-    /**
-     * format current value and write result to {@code getSession().out()} and
-     * finally appends a new line.
-     */
-    void writeln(Object object);
-
-    /**
-     * format current value and write result to {@code out}
-     *
-     * @param out recipient print stream
-     */
-    void write(Object object, NPrintStream out);
-
-    /**
-     * format current value and write result to {@code out}
-     *
-     * @param out recipient writer
-     */
-    void write(Object object, Writer out);
-
-    /**
-     * format current value and write result to {@code out}
-     *
-     * @param out recipient writer
-     */
-    void write(Object object, OutputStream out);
-
-    /**
-     * format current value and write result to {@code out}
-     *
-     * @param out recipient path
-     */
-    void write(Object object, Path out);
-
-    /**
-     * format current value and write result to {@code out}
-     *
-     * @param out recipient path
-     */
-    void write(Object object, NPath out);
-
-    /**
-     * format current value and write result to {@code out}
-     *
-     * @param out recipient file
-     */
-    void write(Object object, File out);
-
-    /**
-     * format current value and write result to {@code terminal}
-     *
-     * @param terminal recipient terminal
-     */
-    void write(Object object, NTerminal terminal);
-
-    /**
-     * format current value and write result to {@code out} and finally appends
-     * a new line.
-     *
-     * @param out recipient
-     */
-    void writeln(Object object, Writer out);
-
-    /**
-     * format current value and write result to {@code out} and finally appends
-     * a new line.
-     *
-     * @param out recipient print stream
-     */
-    void writeln(Object object, NPrintStream out);
-
-    /**
-     * format current value and write result to {@code out} and finally appends
-     * a new line.
-     *
-     * @param out recipient print stream
-     */
-    void writeln(Object object, OutputStream out);
-
-    /**
-     * format current value and write result to {@code out} and finally appends
-     * a new line.
-     *
-     * @param out recipient path
-     */
-    void writeln(Object object, Path out);
-
-    /**
-     * format current value and write result to {@code out} and finally appends
-     * a new line.
-     *
-     * @param out recipient path
-     */
-    void writeln(Object object, NPath out);
-
-    /**
-     * format current value and write result to {@code terminal} and finally appends
-     * a new line.
-     *
-     * @param terminal recipient terminal
-     */
-    void writeln(Object object, NTerminal terminal);
-
-    /**
-     * format current value and write result to {@code out} and finally appends
-     * a new line.
-     *
-     * @param file recipient file
-     */
-    void writeln(Object object, File file);
-
-    String toString(Object object);
-
-    NText toText(Object object);
-
-
-    boolean isNtf();
-
-    NElementWriter setNtf(boolean nft);
-
-
-    NElementWriter configure(boolean skipUnsupported, String... args);
+    NElementWriter doWithMapperStore(Consumer<NElementMapperStore> doWith);
 }
