@@ -139,7 +139,7 @@ public class NRepositoryMirroringHelper {
 //                    } else {
 //                        goodFile = versionFolder.resolve(NutsUtilStrings.trim(a)).resolve(idFilename);
 //                    }
-                    NDescriptorFormat.of(nutsDescriptor).print(goodFile);
+                    NDescriptorFormat.of().print(nutsDescriptor, goodFile);
                     return nutsDescriptor;
                 }
             }
@@ -240,7 +240,7 @@ public class NRepositoryMirroringHelper {
                         NWorkspaceExt dws = NWorkspaceExt.of();
                         NId id2 = dws.resolveEffectiveId(nutsDescriptor).builder().setFaceDescriptor().build();
                         NPath localNutFile = cache.getLongIdLocalFile(id2);
-                        NDescriptorFormat.of(nutsDescriptor).print(localNutFile);
+                        NDescriptorFormat.of().print(nutsDescriptor, localNutFile);
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                             bestId = id2;
                         }
