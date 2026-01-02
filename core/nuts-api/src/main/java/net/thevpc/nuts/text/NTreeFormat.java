@@ -45,20 +45,14 @@ public interface NTreeFormat extends NContentTypeFormat {
         return NExtensions.of(NTreeFormat.class);
     }
 
-    static NTreeFormat of(Object value) {
-        return of().setValue(value);
-    }
-
     /**
      * return tree model
      *
      * @return tree model
      */
-    NTreeNode getModel();
+    NTreeNode getModel(Object value);
 
-    @Override
-    NTreeFormat setValue(Object value);
-
+    String formatPlain(Object value);
 
     /**
      * configure the current command with the given arguments. This is an
