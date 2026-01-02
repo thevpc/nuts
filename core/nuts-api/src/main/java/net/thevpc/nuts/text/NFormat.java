@@ -58,7 +58,7 @@ public interface NFormat extends NCmdLineConfigurable, NComponent {
     }
 
     /**
-     * equivalent to {@link #format() }
+     * equivalent to {@link #format(Object) }
      *
      * @return formatted current value
      */
@@ -70,12 +70,12 @@ public interface NFormat extends NCmdLineConfigurable, NComponent {
      *
      * @return formatted current value
      */
-    NText format();
+    NText format(Object aValue);
 
-    default String formatPlain() {
+    default String formatPlain(Object aValue) {
         boolean ntf = isNtf();
         try {
-            return format().filteredText();
+            return format(aValue).filteredText();
         } finally {
             setNtf(ntf);
         }
@@ -84,118 +84,132 @@ public interface NFormat extends NCmdLineConfigurable, NComponent {
     /**
      * format current value and write result to {@code getSession().out()}.
      */
-    void print();
+    void print(Object aValue);
 
     /**
      * format current value and write result to {@code getSession().out()} and
      * finally appends a new line.
      */
-    void println();
+    void println(Object aValue);
 
     /**
      * format current value and write result to {@code out}
      *
-     * @param out recipient print stream
+     * @param aValue
+     * @param out    recipient print stream
      */
-    void print(NPrintStream out);
+    void print(Object aValue, NPrintStream out);
 
     /**
      * format current value and write result to {@code out}
      *
-     * @param out recipient writer
+     * @param aValue
+     * @param out    recipient writer
      */
-    void print(Writer out);
+    void print(Object aValue, Writer out);
 
     /**
      * format current value and write result to {@code out}
      *
-     * @param out recipient writer
+     * @param aValue
+     * @param out    recipient writer
      */
-    void print(OutputStream out);
+    void print(Object aValue, OutputStream out);
 
     /**
      * format current value and write result to {@code out}
      *
-     * @param out recipient path
+     * @param aValue
+     * @param out    recipient path
      */
-    void print(Path out);
+    void print(Object aValue, Path out);
 
     /**
      * format current value and write result to {@code out}
      *
-     * @param out recipient path
+     * @param aValue
+     * @param out    recipient path
      */
-    void print(NPath out);
+    void print(Object aValue, NPath out);
 
     /**
      * format current value and write result to {@code out}
      *
-     * @param out recipient file
+     * @param aValue
+     * @param out    recipient file
      */
-    void print(File out);
+    void print(Object aValue, File out);
 
     /**
      * format current value and write result to {@code terminal}
      *
+     * @param aValue
      * @param terminal recipient terminal
      */
-    void print(NTerminal terminal);
+    void print(Object aValue, NTerminal terminal);
 
     /**
      * format current value and write result to {@code out} and finally appends
      * a new line.
      *
-     * @param out recipient
+     * @param aValue
+     * @param out    recipient
      */
-    void println(Writer out);
+    void println(Object aValue, Writer out);
 
     /**
      * format current value and write result to {@code out} and finally appends
      * a new line.
      *
-     * @param out recipient print stream
+     * @param aValue
+     * @param out    recipient print stream
      */
-    void println(NPrintStream out);
+    void println(Object aValue, NPrintStream out);
 
     /**
      * format current value and write result to {@code out} and finally appends
      * a new line.
      *
-     * @param out recipient print stream
+     * @param aValue
+     * @param out    recipient print stream
      */
-    void println(OutputStream out);
+    void println(Object aValue, OutputStream out);
 
     /**
      * format current value and write result to {@code out} and finally appends
      * a new line.
      *
-     * @param out recipient path
+     * @param aValue
+     * @param out    recipient path
      */
-    void println(Path out);
+    void println(Object aValue, Path out);
 
     /**
      * format current value and write result to {@code out} and finally appends
      * a new line.
      *
-     * @param out recipient path
+     * @param aValue
+     * @param out    recipient path
      */
-    void println(NPath out);
+    void println(Object aValue, NPath out);
 
     /**
      * format current value and write result to {@code terminal} and finally appends
      * a new line.
      *
+     * @param aValue
      * @param terminal recipient terminal
      */
-    void println(NTerminal terminal);
+    void println(Object aValue, NTerminal terminal);
 
     /**
      * format current value and write result to {@code out} and finally appends
      * a new line.
      *
-     * @param file recipient file
+     * @param aValue
+     * @param file   recipient file
      */
-    void println(File file);
+    void println(Object aValue, File file);
 
 
     /**
