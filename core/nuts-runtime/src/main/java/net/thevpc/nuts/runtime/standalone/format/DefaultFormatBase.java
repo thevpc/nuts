@@ -39,24 +39,24 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     }
 
     @Override
-    public NText format() {
+    public NText format(Object aValue) {
         if (isNtf()) {
             NPrintStream out = NMemoryPrintStream.of(NTerminalMode.FORMATTED);
-            print(out);
+            print(aValue, out);
             return NText.of(out.toString());
         } else {
             NPrintStream out = NMemoryPrintStream.of(NTerminalMode.INHERITED);
-            print(out);
+            print(aValue, out);
             return NText.ofPlain(out.toString());
         }
     }
 
     @Override
-    public String formatPlain() {
+    public String formatPlain(Object aValue) {
         boolean ntf = isNtf();
         try {
             NPrintStream out = NPrintStream.ofMem(NTerminalMode.INHERITED);
-            print(out);
+            print(aValue, out);
             return out.toString();
         } finally {
             setNtf(ntf);
@@ -64,19 +64,19 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     }
 
     @Override
-    public void print() {
+    public void print(Object aValue) {
         NSession session=NSession.of();
-        print(session.getTerminal());
+        print(aValue, session.getTerminal());
     }
 
     @Override
-    public void println() {
+    public void println(Object aValue) {
         NSession session=NSession.of();
-        println(session.getTerminal());
+        println(aValue, session.getTerminal());
     }
 
     @Override
-    public abstract void print(NPrintStream out);
+    public abstract void print(Object aValue, NPrintStream out);
 
     //    @Override
 //    public void print(PrintStream out) {
@@ -87,116 +87,111 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 //        }
 //    }
     @Override
-    public void print(Writer out) {
+    public void print(Object aValue, Writer out) {
         if (out == null) {
             NPrintStream pout = getValidPrintStream();
-            print(pout);
+            print(aValue, pout);
             pout.flush();
         } else {
             NPrintStream pout = NPrintStream.of(out);
-            print(pout);
+            print(aValue, pout);
             pout.flush();
         }
     }
 
     @Override
-    public void print(OutputStream out) {
+    public void print(Object aValue, OutputStream out) {
         NPrintStream p =
                 out == null ? getValidPrintStream() :
                         NPrintStream.of(out);
-        print(p);
+        print(aValue, p);
         p.flush();
     }
 
     @Override
-    public void print(Path path) {
-        print(NPath.of(path));
+    public void print(Object aValue, Path path) {
+        print(aValue, NPath.of(path));
     }
 
     @Override
-    public void print(NPath path) {
+    public void print(Object aValue, NPath path) {
         path.mkParentDirs();
         try (Writer w = path.getWriter()) {
-            print(w);
+            print(aValue, w);
         } catch (IOException ex) {
             throw new NIOException(ex);
         }
     }
 
     @Override
-    public void print(File file) {
-        print(NPath.of(file));
+    public void print(Object aValue, File file) {
+        print(aValue, NPath.of(file));
     }
 
     @Override
-    public void print(NTerminal terminal) {
+    public void print(Object aValue, NTerminal terminal) {
         NSession session=NSession.of();
-        print(terminal == null ? session.getTerminal().out() : terminal.out());
+        print(aValue, terminal == null ? session.getTerminal().out() : terminal.out());
     }
 
     @Override
-    public void println(Writer w) {
+    public void println(Object aValue, Writer w) {
         if (w == null) {
             NPrintStream pout = getValidPrintStream();
-            println(pout);
+            println(aValue, pout);
             pout.flush();
         } else {
             NPrintStream pout = NPrintStream.of(w);
-            println(pout);
+            println(aValue, pout);
             pout.flush();
         }
     }
 
     @Override
-    public void println(NPrintStream out) {
+    public void println(Object aValue, NPrintStream out) {
         NPrintStream p = getValidPrintStream(out);
-        print(out);
+        print(aValue, out);
         p.println();
         p.flush();
     }
 
     @Override
-    public void println(OutputStream out) {
+    public void println(Object aValue, OutputStream out) {
         if (out == null) {
             NPrintStream pout = getValidPrintStream();
-            println(pout);
+            println(aValue, pout);
             pout.flush();
         } else {
             NPrintStream pout = NPrintStream.of(out);
-            println(pout);
+            println(aValue, pout);
             pout.flush();
         }
     }
 
     @Override
-    public void println(Path path) {
-        println(NPath.of(path));
+    public void println(Object aValue, Path path) {
+        println(aValue, NPath.of(path));
     }
 
     @Override
-    public void println(NPath out) {
+    public void println(Object aValue, NPath out) {
         out.mkParentDirs();
         try (Writer w = out.getWriter()) {
-            println(w);
+            println(aValue, w);
         } catch (IOException ex) {
             throw new NIOException(ex);
         }
     }
 
     @Override
-    public void println(NTerminal terminal) {
+    public void println(Object aValue, NTerminal terminal) {
         NSession session= NSession.of();
-        println(terminal == null ? session.getTerminal().out() : terminal.out());
+        println(aValue, terminal == null ? session.getTerminal().out() : terminal.out());
     }
 
     @Override
-    public void println(File file) {
-        println(file.toPath());
-    }
-
-    @Override
-    public String toString() {
-        return formatPlain();
+    public void println(Object aValue, File file) {
+        println(aValue, file.toPath());
     }
 
 }
