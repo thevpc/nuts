@@ -147,10 +147,10 @@ public class InstallHelper {
             for (Map.Entry<String, List<InstallIdInfo>> stringListEntry : error.entrySet()) {
                 out.println("the following " + (stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
                         + stringListEntry.getValue().stream().map(x -> x.id)
-                        .map(x -> NIdFormat.of().setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
+                        .map(x -> NIdFormat.of().setOmitImportedGroupId(true).format(x.getLongId()).toString())
                         .collect(Collectors.joining(", ")));
                 sb.append("\n" + "the following ").append(stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is").append(" cannot be installed (").append(stringListEntry.getKey()).append(") : ").append(stringListEntry.getValue().stream().map(x -> x.id)
-                        .map(x -> NIdFormat.of().setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
+                        .map(x -> NIdFormat.of().setOmitImportedGroupId(true).format(x.getLongId()).toString())
                         .collect(Collectors.joining(", ")));
             }
             throw new NInstallException(null, NMsg.ofNtf(sb.toString().trim()), null);
