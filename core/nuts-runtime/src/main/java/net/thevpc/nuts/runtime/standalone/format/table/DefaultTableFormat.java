@@ -56,7 +56,6 @@ import java.util.stream.Collectors;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implements NTableFormat {
 
-    private Object model;
     private DefaultNTextArtTableRenderer helper = new DefaultNTextArtTableRenderer();
 
     public DefaultTableFormat(NWorkspace workspace) {
@@ -65,29 +64,24 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
 
 
     @Override
-    public NTableModel getModel() {
-        return createTableModel(model);
-    }
-
-    @Override
-    public NTableFormat setValue(Object value) {
-        this.model = value;
-        return this;
+    public NTableModel getModel(Object aValue) {
+        return createTableModel(aValue);
     }
 
 
+
     @Override
-    public void print(NPrintStream w) {
+    public void print(Object aValue, NPrintStream w) {
         NPrintStream out = getValidPrintStream(w);
-        out.print(helper.render(getModel()));
+        out.print(helper.render(getModel(aValue)));
         out.flush();
     }
 
     @Override
-    public String toString() {
+    public String formatPlain(Object aValue) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         OutputStreamWriter w = new OutputStreamWriter(out);
-        print(w);
+        print(aValue, w);
         try {
             w.flush();
         } catch (IOException ex) {
@@ -95,7 +89,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         }
         return out.toString();
     }
-
 
     private static class SimpleRow {
         List<SimpleCell> cells = new ArrayList<>();
@@ -146,7 +139,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         if (
                 (o instanceof NMsg)
                         || (o instanceof NText)
-                        || (o instanceof NFormattable)
+                        || (o instanceof NFormatted)
         ) {
             NMutableTableModel model = NMutableTableModel.of();
             model.newRow();
@@ -327,11 +320,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     @Override
-    public Object getValue() {
-        return model;
-    }
-
-    @Override
     public boolean configureFirst(NCmdLine cmdLine) {
         NArg a;
         if ((a = cmdLine.nextFlag("--no-header").orNull()) != null) {
@@ -352,29 +340,29 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
             }
             return true;
         } else if (cmdLine.hasNext() && cmdLine.isNextOption()) {
-            int cc = getModel().getColumnsCount();
-
-            Map<String, Integer> columns = new HashMap<>();
-            for (int i = 0; i < cc; i++) {
-                Object v = getModel().getHeaderValue(cc);
-                if (v instanceof String) {
-                    columns.put(v.toString().toLowerCase(), i);
-                }
-            }
-            NArg a2 = null;
-            for (Map.Entry<String, Integer> e : columns.entrySet()) {
-                if ((a2 = cmdLine.next("--" + e.getKey()).orNull()) != null) {
-                    if (a2.isUncommented()) {
-                        helper.setVisibleColumn(e.getValue(), true);
-                    }
-                    return true;
-                } else if ((a2 = cmdLine.next("--no-" + e.getKey()).orNull()) != null) {
-                    if (a2.isUncommented()) {
-                        helper.setVisibleColumn(e.getValue(), false);
-                    }
-                    return true;
-                }
-            }
+//            int cc = getModel(aValue).getColumnsCount();
+//
+//            Map<String, Integer> columns = new HashMap<>();
+//            for (int i = 0; i < cc; i++) {
+//                Object v = getModel(aValue).getHeaderValue(cc);
+//                if (v instanceof String) {
+//                    columns.put(v.toString().toLowerCase(), i);
+//                }
+//            }
+//            NArg a2 = null;
+//            for (Map.Entry<String, Integer> e : columns.entrySet()) {
+//                if ((a2 = cmdLine.next("--" + e.getKey()).orNull()) != null) {
+//                    if (a2.isUncommented()) {
+//                        helper.setVisibleColumn(e.getValue(), true);
+//                    }
+//                    return true;
+//                } else if ((a2 = cmdLine.next("--no-" + e.getKey()).orNull()) != null) {
+//                    if (a2.isUncommented()) {
+//                        helper.setVisibleColumn(e.getValue(), false);
+//                    }
+//                    return true;
+//                }
+//            }
         }
         return false;
     }
