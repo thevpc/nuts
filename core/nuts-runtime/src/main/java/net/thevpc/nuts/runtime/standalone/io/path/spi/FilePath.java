@@ -913,7 +913,11 @@ public class FilePath implements NPathSPI {
 
         @NScore
         public static int getScore(NScorableContext context) {
-            String path = context.getCriteria();
+            Object cri = context.getCriteria();
+            if(!(cri instanceof String)) {
+                return NScorable.DEFAULT_SCORE;
+            }
+            String path = (String) cri;
             try {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
                     return NScorable.UNSUPPORTED_SCORE;
