@@ -31,6 +31,7 @@ import net.thevpc.nuts.text.NPrimitiveText;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextAnchor;
 import net.thevpc.nuts.text.NTextType;
+import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NStream;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import java.util.Objects;
 /**
  * Created by vpc on 5/23/17.
  */
+@NImmutable
 public class DefaultNTextAnchor extends NTextSpecialBase implements NTextAnchor {
     private String value;
 
