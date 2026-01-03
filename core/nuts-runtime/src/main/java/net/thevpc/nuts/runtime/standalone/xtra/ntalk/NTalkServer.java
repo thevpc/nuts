@@ -230,7 +230,7 @@ public class NTalkServer implements Closeable{
     }
 
     private void log(String msg) {
-//        System.err.println("[NSERVER] "+msg);
+
     }
 
     public void stop() {
