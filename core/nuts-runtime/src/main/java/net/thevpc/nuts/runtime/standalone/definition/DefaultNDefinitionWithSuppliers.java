@@ -39,7 +39,8 @@ import java.util.function.Supplier;
 /**
  * Created by vpc on 1/6/17.
  */
-public class DefaultNDefinitionWithSuppliers implements NDefinition, NImmutable {
+@NImmutable
+public class DefaultNDefinitionWithSuppliers implements NDefinition {
 
     final NOnceValue<NId> id;
     final NOnceValue<String> repositoryUuid;
