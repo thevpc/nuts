@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.inputstream;
 import net.thevpc.nuts.core.NBootOptions;
 
 import net.thevpc.nuts.command.NExecutionEntry;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
@@ -32,12 +33,10 @@ import java.util.List;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNIORPI implements NIORPI {
-    private final NWorkspace workspace;
     public DefaultNWorkspaceConfigModel cmodel;
     public DefaultNBootModel bootModel;
 
-    public DefaultNIORPI(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNIORPI() {
         this.cmodel = NWorkspaceExt.of().getConfigModel();
         bootModel = NWorkspaceExt.of().getModel().bootModel;
     }
@@ -45,7 +44,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public <T> NAsk<T> createQuestion() {
-        return createQuestion(workspace.currentSession().getTerminal());
+        return createQuestion(NSession.of().getTerminal());
     }
 
     @Override
@@ -60,7 +59,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NMemoryPrintStream ofInMemoryPrintStream(NTerminalMode mode) {
-        return new NByteArrayPrintStream(mode, workspace);
+        return new NByteArrayPrintStream(mode);
     }
 
     @Override
@@ -137,7 +136,7 @@ public class DefaultNIORPI implements NIORPI {
         if (out instanceof NPrintStreamAdapter) {
             return ((NPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(mode);
         }
-        SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, terminal, workspace);
+        SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, terminal);
         return ofPrintStream(w, mode, terminal);
     }
 
@@ -296,7 +295,7 @@ public class DefaultNIORPI implements NIORPI {
         }
 
         InputStream inputStreamExt = ofInputSourceBuilder(inputStream).setMetadata(metadata).createInputStream();
-        return new NInputStreamSource(inputStreamExt, null, workspace);
+        return new NInputStreamSource(inputStreamExt, null);
     }
 
 
