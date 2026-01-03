@@ -24,13 +24,20 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NIdWriter;
 import net.thevpc.nuts.command.NExec;
-import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.concurrent.NConcurrent;
 import net.thevpc.nuts.core.NWorkspace;
 
+import net.thevpc.nuts.elem.NElementFactory;
+import net.thevpc.nuts.elem.NElementReader;
+import net.thevpc.nuts.elem.NElementWriter;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NIO;
+import net.thevpc.nuts.io.NLibPaths;
+import net.thevpc.nuts.log.NLogs;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementWriter;
@@ -40,14 +47,11 @@ import net.thevpc.nuts.runtime.standalone.platform.NEnvLocal;
 import net.thevpc.nuts.runtime.standalone.util.FixedNScoredValue;
 import net.thevpc.nuts.runtime.standalone.util.NUtilSPIImpl;
 import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter;
-import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.text.NPositionType;
-import net.thevpc.nuts.text.NVersionWriter;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
 import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.runtime.standalone.*;
-import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElements;
 import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectObjectWriter;
@@ -55,7 +59,6 @@ import net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdWriter;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
-import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.DefaultNExprs;
 import net.thevpc.nuts.util.*;
@@ -90,7 +93,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         this.workspace = ws;
         LOG = ((DefaultNWorkspace) ws).getModel().LOG;
         beanCache = NWorkspace.of().getOrComputeProperty(NBeanCache.class, () -> new NBeanCache(LOG));
-        extensionTypeInfoPool = new NExtensionTypeInfoPool(LOG,beanCache);
+        extensionTypeInfoPool = new NExtensionTypeInfoPool(LOG, beanCache);
     }
 
     @Override
@@ -115,13 +118,12 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     @Override
     public <T> NOptional<T> createComponent(Class<T> type, Object supportCriteria) {
-        NSession session = workspace.currentSession();
-        // should handle NApp specifically because It's the root for resolving scoped properties
-        // TODO should it, or should it not??
-
+        if (supportCriteria instanceof NConnectionString) {
+            NExtensionUtils.ensureExtensionLoadedForProtocol((NConnectionString) supportCriteria);
+        }
         switch (type.getName()) {
             case "net.thevpc.nuts.app.NApp": {
-                return NOptional.of((T) ((DefaultNSession) session).getPropertiesHolder().getOrComputeProperty(type.getName(), () -> new NAppImpl(), NScopeType.TRANSITIVE_SESSION));
+                return NOptional.of((T) NWorkspaceExt.of().getModel().getRequiredNWorkspaceEnvScope().currentApp);
             }
         }
         NScorableContext context = NScorableContext.of(supportCriteria);
@@ -131,74 +133,78 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 T y = a.value();
                 return NOptional.of(y);
             } catch (Exception e) {
-                LOG.log(NMsg.ofJ("error while instantiating {0} for {1} : {2}", a, type, e).asError(e));
+                if (NFailSafeHelper.isWorkspaceInitializing()) {
+                    NFailSafeHelper.log(err -> err.println(NMsg.ofJ("error while instantiating {0} for {1} : {2}", a, type, e).asError(e)));
+                } else {
+                    LOG.log(NMsg.ofJ("error while instantiating {0} for {1} : {2}", a, type, e).asError(e));
+                }
             }
         }
 
         //fallback needed in bootstrap or if the extensions are broken!
         switch (type.getName()) {
             case "net.thevpc.nuts.log.NLogs": {
-                DefaultNLogs p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNLogs());
+                NLogs p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNLogs.class, NLogs.class, NScopeType.SESSION, DefaultNLogs::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.text.NTexts": {
-                DefaultNTexts p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNTexts());
+                NTexts p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNTexts.class, NTexts.class, NScopeType.SESSION, DefaultNTexts::new);
                 return NOptional.of((T) p);
             }
-            case "net.thevpc.nuts.text.NObjectFormat": {
-                DefaultNObjectObjectWriter p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNObjectObjectWriter(workspace));
+            case "net.thevpc.nuts.text.NObjectObjectWriter": {
+                NObjectObjectWriter p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNObjectObjectWriter.class, NObjectObjectWriter.class, NScopeType.SESSION, DefaultNObjectObjectWriter::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.io.NIO": {
-                DefaultNIO p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new DefaultNIO());
+                NIO p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNIO.class, NIO.class, NScopeType.WORKSPACE, DefaultNIO::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.elem.NElements": {
-                DefaultNElements p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElements());
+                NElements p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNElements.class, NElements.class, NScopeType.SESSION, DefaultNElements::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.elem.NElementWriter": {
-                DefaultNElementWriter p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElementWriter());
+                NElementWriter p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNElementWriter.class, NElementWriter.class, NScopeType.SESSION, DefaultNElementWriter::new);
                 return NOptional.of((T) p);
             }
-            case "net.thevpc.nuts.elem.NElementParser": {
-                DefaultNElementReader p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElementReader());
+            case "net.thevpc.nuts.elem.NElementReader": {
+                NElementReader p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNElementReader.class, NElementReader.class, NScopeType.SESSION, DefaultNElementReader::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.elem.NElementFactory": {
-                DefaultNElementFactory p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElementFactory());
+                NElementFactory p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNElementFactory.class, NElementFactory.class, NScopeType.SESSION, DefaultNElementFactory::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.io.NLibPaths": {
-                DefaultNLibPaths p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNLibPaths(workspace));
+                NLibPaths p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNLibPaths.class, NLibPaths.class, NScopeType.SESSION, DefaultNLibPaths::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.io.NDigest": {
-                NDigest p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNDigest(workspace));
+                NDigest p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNDigest.class, NDigest.class, NScopeType.SESSION, DefaultNDigest::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.internal.rpi.NIORPI": {
-                NIORPI p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNIORPI(workspace));
+                NIORPI p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNIORPI.class, NIORPI.class, NScopeType.SESSION, DefaultNIORPI::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.internal.rpi.NCollectionsRPI": {
-                NCollectionsRPI p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNCollectionsRPI());
+                NCollectionsRPI p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNCollectionsRPI.class, NCollectionsRPI.class, NScopeType.SESSION, DefaultNCollectionsRPI::new);
                 return NOptional.of((T) p);
             }
-            case "net.thevpc.nuts.artifact.NIdFormat": {
-                NIdWriter p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNIdWriter());
+            case "net.thevpc.nuts.artifact.NIdWriter": {
+                NIdWriter p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNIdWriter.class, NIdWriter.class, NScopeType.SESSION, DefaultNIdWriter::new);
                 return NOptional.of((T) p);
             }
-            case "net.thevpc.nuts.text.NVersionFormat": {
-                NVersionWriter p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNVersionWriter(workspace));
+            case "net.thevpc.nuts.text.NVersionWriter": {
+                NVersionWriter p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNVersionWriter.class, NVersionWriter.class, NScopeType.SESSION, DefaultNVersionWriter::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.command.NExec": {
-                NExec p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNExec(workspace));
+                NExec p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNExec.class, NExec.class, NScopeType.SESSION, DefaultNExec::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.net.NWebCli": {
-                NWebCli p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNWebCli());
+                NWebCli p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNWebCli.class, NWebCli.class, NScopeType.SESSION, DefaultNWebCli::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.artifact.NIdBuilder": {
@@ -222,46 +228,36 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             case "net.thevpc.nuts.expr.NExprs": {
                 return NOptional.of((T) new DefaultNExprs());
             }
-            case "net.thevpc.nuts.app.NApp": {
-                return NOptional.of((T) new NAppImpl());
-            }
             case "net.thevpc.nuts.spi.NUtilSPI": {
                 return NOptional.of((T) new NUtilSPIImpl());
             }
             case "net.thevpc.nuts.concurrent.NConcurrent": {
-                return NOptional.of((T) new NConcurrentImpl());
+                NConcurrent p = NExtensionTypeInfo.getOrComputeCachedBean(NConcurrentImpl.class, NConcurrent.class, NScopeType.WORKSPACE, NConcurrentImpl::new);
+                return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.platform.NEnv": {
                 if (supportCriteria == null) {
-                    NEnv p = workspace.getOrComputeProperty("fallback::" + type.getName(), () -> new NEnvLocal());
-                    return NOptional.of((T) p);
+                    NEnvLocal env = ((NWorkspaceExt) workspace).getModel().getEnv();
+                    return NOptional.of((T) env);
                 }
                 break;
             }
             default: {
                 //wont use NLog because not yet initialized!
-                //System.err.println("[Nuts] createComponent failed for :" + type.getName());
             }
         }
         if (all.isEmpty()) {
-            if (!session.isBot()) {
-                System.err.println("[Nuts] unable to resolve " + type);
-                Set<Class<? extends T>> extensionTypes = getExtensionTypes(type);
-                System.err.println("[Nuts] extensionTypes =  " + extensionTypes);
-                dump(type);
-                new Throwable().printStackTrace();
+            if (NFailSafeHelper.isWorkspaceInitializing()) {
+                NFailSafeHelper.log(err -> {
+                    err.println("[Nuts] unable to resolve " + type);
+                    Set<Class<? extends T>> extensionTypes = getExtensionTypes(type);
+                    err.println("[Nuts] extensionTypes =  " + extensionTypes);
+                    dump(type);
+                    new Throwable().printStackTrace(err);
+                });
             }
         }
 
-        if (all.isEmpty()) {
-            if (!session.isBot()) {
-                System.err.println("[Nuts] unable to resolve " + type);
-                Set<Class<? extends T>> extensionTypes = getExtensionTypes(type);
-                System.err.println("[Nuts] extensionTypes =  " + extensionTypes);
-                dump(type);
-                new Throwable().printStackTrace();
-            }
-        }
         return NOptional.ofNamedEmpty(NMsg.ofC("missing %s", type));
     }
 
@@ -292,25 +288,25 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     @Override
     public <T> NScoredValue<T> resolveInstanceScore(T instance, Class<T> apiType, NScorableContext scorableContext) {
         if (instance == null || apiType == null || !apiType.isInstance(instance)) {
-            if(instance==null){
-                return FixedNScoredValue.ofUnsupported(null,apiType);
+            if (instance == null) {
+                return FixedNScoredValue.ofUnsupported(null, apiType);
             }
-            Class<? extends T> implType = (Class<? extends T>) ((T)instance).getClass();
-            if(apiType==null){
-                return FixedNScoredValue.ofUnsupported(implType,null);
+            Class<? extends T> implType = (Class<? extends T>) ((T) instance).getClass();
+            if (apiType == null) {
+                return FixedNScoredValue.ofUnsupported(implType, null);
             }
-            return FixedNScoredValue.ofUnsupported(implType,apiType);
+            return FixedNScoredValue.ofUnsupported(implType, apiType);
         }
         if (!apiType.isAssignableFrom(instance.getClass())) {
-            return FixedNScoredValue.ofUnsupported(null,apiType);
+            return FixedNScoredValue.ofUnsupported(null, apiType);
         }
         if (instance instanceof NScorable) {
             NScorable scorable = (NScorable) instance;
             return new LazyNScoredValueImpl<T>(
-                    ()->scorable,
-                    ()->instance,
+                    () -> scorable,
+                    () -> instance,
                     scorableContext,
-                    (Class)instance.getClass(),
+                    (Class) instance.getClass(),
                     apiType
             );
         }
@@ -486,53 +482,55 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
 
     protected <T> T resolveInstance(Class<? extends T> implType, Class<T> apiType) {
-        return extensionTypeInfoPool.get(implType, apiType).resolveInstance(new Class[0], new Object[0],null);
+        return extensionTypeInfoPool.get(implType, apiType).resolveInstance(new Class[0], new Object[0], null);
     }
 
     public void dump(Class<?> type) {
-        System.err.println("Start Extensions Factory Dump");
-        String tname = type.getName();
-        for (Map.Entry<NId, IdCache> e : discoveredCacheById.entrySet()) {
-            IdCache idCache = e.getValue();
-            System.err.println("\t" + e.getKey() + " :: " + idCache.url);
-            for (Map.Entry<Class<?>, NClassClassMap> v : idCache.classes.entrySet()) {
-                NClassClassMap vv = v.getValue();
-                Set<Class> classes = vv.allKeySet();
-                for (Class k : classes) {
-                    if (k.isInterface()) {
-                        if (k.getName().equals(tname)) {
-                            if (k.equals(type)) {
-                                System.err.println("\t\t --->  " + k + "->" + vv.get(k));
+        NFailSafeHelper.log(err -> {
+            err.println("Start Extensions Factory Dump");
+            String tname = type.getName();
+            for (Map.Entry<NId, IdCache> e : discoveredCacheById.entrySet()) {
+                IdCache idCache = e.getValue();
+                err.println("\t" + e.getKey() + " :: " + idCache.url);
+                for (Map.Entry<Class<?>, NClassClassMap> v : idCache.classes.entrySet()) {
+                    NClassClassMap vv = v.getValue();
+                    Set<Class> classes = vv.allKeySet();
+                    for (Class k : classes) {
+                        if (k.isInterface()) {
+                            if (k.getName().equals(tname)) {
+                                if (k.equals(type)) {
+                                    err.println("\t\t --->  " + k + "->" + vv.get(k));
+                                } else {
+                                    err.println("\t\t --->  " + k + "->" + vv.get(k) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
+                                }
+                                err.println("\t\t\t --->  " + type + "->" + vv.get(type) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
+                                err.println("\t\t\t\t --->  getAll => " + type + "->" + Arrays.asList(vv.getAll(type)));
+                                err.println("\t\t\t\t --->  getExtensionTypes => " + getExtensionTypes((Class) type));
+                                err.println("\t\t\t\t --->  getExtensionTypesNoCache => " + getExtensionTypesNoCache((Class) type));
+                                err.println("\t\t\t\t --->  getExtensionTypesNoCache2 => " + getExtensionTypesNoCache2((Class) type));
                             } else {
-                                System.err.println("\t\t --->  " + k + "->" + vv.get(k) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
+                                err.println("\t\t" + k + "->" + vv.get(k));
                             }
-                            System.err.println("\t\t\t --->  " + type + "->" + vv.get(type) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
-                            System.err.println("\t\t\t\t --->  getAll => " + type + "->" + Arrays.asList(vv.getAll(type)));
-                            System.err.println("\t\t\t\t --->  getExtensionTypes => " + getExtensionTypes((Class) type));
-                            System.err.println("\t\t\t\t --->  getExtensionTypesNoCache => " + getExtensionTypesNoCache((Class) type));
-                            System.err.println("\t\t\t\t --->  getExtensionTypesNoCache2 => " + getExtensionTypesNoCache2((Class) type));
-                        } else {
-                            System.err.println("\t\t" + k + "->" + vv.get(k));
                         }
                     }
-                }
-                for (Class k : classes) {
-                    if (!k.isInterface()) {
-                        if (k.getName().equals(tname)) {
-                            if (k.equals(type)) {
-                                System.err.println("\t\t --->  " + k + "->" + vv.get(k));
+                    for (Class k : classes) {
+                        if (!k.isInterface()) {
+                            if (k.getName().equals(tname)) {
+                                if (k.equals(type)) {
+                                    err.println("\t\t --->  " + k + "->" + vv.get(k));
+                                } else {
+                                    err.println("\t\t --->  " + k + "->" + vv.get(k) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
+                                }
+                                err.println("\t\t\t --->  " + type + "->" + vv.get(type) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
                             } else {
-                                System.err.println("\t\t --->  " + k + "->" + vv.get(k) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
+                                err.println("\t\t" + k + "->" + vv.get(k));
                             }
-                            System.err.println("\t\t\t --->  " + type + "->" + vv.get(type) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
-                        } else {
-                            System.err.println("\t\t" + k + "->" + vv.get(k));
                         }
                     }
                 }
             }
-        }
-        System.err.println("Finish Extensions Factory Dump");
+            err.println("Finish Extensions Factory Dump");
+        });
     }
 
     private static class NBeanConstructorContextAsScorableContext implements NBeanConstructorContext {
@@ -544,7 +542,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
         @Override
         public boolean isSupported(Class<?> paramType) {
-            switch (paramType.getName()){
+            switch (paramType.getName()) {
                 case "net.thevpc.nuts.util.NScorableContext":
                     return true;
             }
