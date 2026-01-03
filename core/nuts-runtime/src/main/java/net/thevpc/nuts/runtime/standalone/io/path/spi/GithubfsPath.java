@@ -312,7 +312,11 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
 
         @NScore(fixed = NScorable.DEFAULT_SCORE)
         public static int getScore(NScorableContext context) {
-            String path= context.getCriteria();
+            Object cri = context.getCriteria();
+            if(!(cri instanceof String)) {
+                return NScorable.DEFAULT_SCORE;
+            }
+            String path = (String) cri;
             try {
                 if (path.startsWith(PREFIX)) {
                     return NScorable.DEFAULT_SCORE;
