@@ -9,7 +9,8 @@ import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.Arrays;
 
-public class NMemorySize implements Serializable, NImmutable {
+@NImmutable
+public class NMemorySize implements Serializable{
     private final long[] values = new long[NMemoryUnit.values().length];
     private final NMemoryUnit smallestUnit;
     private final NMemoryUnit largestUnit;
