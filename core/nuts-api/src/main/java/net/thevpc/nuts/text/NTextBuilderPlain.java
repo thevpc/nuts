@@ -3,10 +3,7 @@ package net.thevpc.nuts.text;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NStream;
-import net.thevpc.nuts.util.NStringBuilder;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 public class NTextBuilderPlain implements NTextBuilder {
 
@@ -585,6 +582,7 @@ public class NTextBuilderPlain implements NTextBuilder {
         return null;
     }
 
+    @NImmutable
     private static class ImmutableNTextPlain implements NTextPlain {
 
         private final String str;
