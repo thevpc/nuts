@@ -5,10 +5,12 @@ import net.thevpc.nuts.artifact.NDescriptorProperty;
 import net.thevpc.nuts.artifact.NDescriptorPropertyBuilder;
 import net.thevpc.nuts.artifact.NEnvCondition;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NLiteral;
 
 import java.util.Objects;
 
+@NImmutable
 public class DefaultNDescriptorProperty implements NDescriptorProperty {
     private final String name;
     private final NLiteral value;
