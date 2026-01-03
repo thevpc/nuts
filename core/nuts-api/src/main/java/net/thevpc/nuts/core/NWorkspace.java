@@ -44,13 +44,11 @@ import net.thevpc.nuts.util.*;
 
 import java.io.Closeable;
 import java.net.URL;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -138,12 +136,6 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     List<NRepositoryListener> getRepositoryListeners();
 
-    NWorkspace addUserPropertyListener(NObservableMapListener<String, Object> listener);
-
-    NWorkspace removeUserPropertyListener(NObservableMapListener<String, Object> listener);
-
-    List<NObservableMapListener<String, Object>> getUserPropertyListeners();
-
     NWorkspace removeWorkspaceListener(NWorkspaceListener listener);
 
     NWorkspace addWorkspaceListener(NWorkspaceListener listener);
@@ -217,42 +209,90 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     /// /////////
 
+    NWorkspace addPropertyListener(NObservableMapListener<String, Object> listener);
+
+    NWorkspace removePropertyListener(NObservableMapListener<String, Object> listener);
+
+    List<NObservableMapListener<String, Object>> getPropertyListeners();
+
 
     /**
-     * @return properties
+     * Returns a map of all properties currently defined in this workspace.
+     * <p>
+     * The returned map is a snapshot of the workspace properties and may be
+     * unmodifiable depending on implementation. Use {@link #getProperty(String)}
+     * or {@link #setProperty(String, Object)} to interact with individual properties.
+     *
+     * @return a map of property names to values
      * @since 0.8.1
      */
     Map<String, Object> getProperties();
 
     /**
-     * return property raw value
+     * Retrieves the raw value of a property by name from the workspace.
+     * <p>
+     * The returned value is not type-checked; use {@link #getProperty(Class)} for
+     * typed access.
      *
-     * @param property property name
-     * @return property raw value
+     * @param property the name of the property
+     * @return the property value wrapped in {@link NOptional}, empty if not present
      * @since 0.8.1
      */
     NOptional<Object> getProperty(String property);
 
     /**
+     * Retrieves the value of a property using a class as key.
+     * <p>
+     * The property key is the fully qualified class name of {@code propertyTypeAndName}.
      *
-     * @param propertyTypeAndName
-     * @param <T>                 Type
-     * @return
+     * @param propertyTypeAndName the class used as property key
+     * @param <T>                 the type of the property
+     * @return the property value wrapped in {@link NOptional}, empty if not present
      * @since 0.8.9
      */
     <T> NOptional<T> getProperty(Class<T> propertyTypeAndName);
 
     /**
-     * @param property property
-     * @param value    value
-     * @return {@code this} instance
+     * Sets a property value in this workspace.
+     * <p>
+     * If the property already exists, its value is replaced. This method returns
+     * the workspace itself to allow fluent chaining.
+     *
+     * @param property the property name
+     * @param value    the property value
+     * @return this {@code NWorkspace} instance
      * @since 0.8.1
      */
     NWorkspace setProperty(String property, Object value);
 
-
+    /**
+     * Retrieves an existing property by class key, or computes it using the provided supplier if absent.
+     * <p>
+     * The property is added to the workspace if computed. The key is the fully qualified
+     * name of {@code property}.
+     *
+     * @param property the class used as property key
+     * @param supplier the function to compute the property if absent
+     * @param <T>      the type of the property
+     * @return the existing or newly computed property
+     * @throws NullPointerException if {@code supplier} is null
+     * @since 0.8.9
+     */
     <T> T getOrComputeProperty(Class<T> property, Supplier<T> supplier);
 
+
+    /**
+     * Retrieves an existing property by name, or computes it using the provided supplier if absent.
+     * <p>
+     * The property is added to the workspace if computed.
+     *
+     * @param property the property name
+     * @param supplier the function to compute the property if absent
+     * @param <T>      the type of the property
+     * @return the existing or newly computed property
+     * @throws NullPointerException if {@code supplier} is null
+     * @since 0.8.1
+     */
     <T> T getOrComputeProperty(String property, Supplier<T> supplier);
 
 
