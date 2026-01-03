@@ -215,7 +215,11 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
         @NScore
         public static int getScore(NScorableContext context) {
-            String path = context.getCriteria();
+            Object cri = context.getCriteria();
+            if(!(cri instanceof String)) {
+                return NScorable.DEFAULT_SCORE;
+            }
+            String path = (String) cri;
             try {
                 if (path.startsWith(PREFIX)) {
                     return NScorable.DEFAULT_SCORE;
