@@ -13,7 +13,7 @@ import java.util.logging.Level;
 public class ProgressOptions {
 
     public static ProgressOptions of() {
-        return NApp.of().getOrComputeProperty(ProgressOptions.class.getName(), NScopeType.SESSION, () -> {
+        return NSession.of().getOrComputeProperty(ProgressOptions.class, () -> {
             ProgressOptions o = new ProgressOptions();
             boolean enabledVisited = false;
             Map<String, String> m = NStringMapFormat.COMMA_FORMAT.parse(NSession.of().getProgressOptions()).get();
