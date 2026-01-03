@@ -68,16 +68,16 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
                 return this;
             }
             case FORMAT: {
-                return new FormatOutputStream(new SimpleWriterOutputStream(this, term, workspace), term);
+                return new FormatOutputStream(new SimpleWriterOutputStream(this, term), term);
             }
             case FILTER: {
-                return new FilterFormatOutputStream(new SimpleWriterOutputStream(this, term, workspace), term);
+                return new FilterFormatOutputStream(new SimpleWriterOutputStream(this, term), term);
             }
             case ESCAPE: {
-                return new EscapeOutputStream(new SimpleWriterOutputStream(this, term, workspace), term);
+                return new EscapeOutputStream(new SimpleWriterOutputStream(this, term), term);
             }
             case UNESCAPE: {
-                return new EscapeOutputStream(new SimpleWriterOutputStream(this, term, workspace), term);
+                return new EscapeOutputStream(new SimpleWriterOutputStream(this, term), term);
             }
         }
         throw new NUnsupportedEnumException(other);
