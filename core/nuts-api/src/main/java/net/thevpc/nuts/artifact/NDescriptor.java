@@ -53,7 +53,7 @@ import java.util.Set;
  * @app.category Descriptor
  * @since 0.1.0
  */
-public interface NDescriptor extends Serializable, NBlankable, NImmutable {
+public interface NDescriptor extends Serializable, NBlankable{
 
     /**
      * artifact full id (groupId+artifactId+version)
