@@ -302,7 +302,6 @@ public class NBPlusTree<K extends Comparable<K>, V> extends AbstractMap<K, V> {
         if (isEmpty()) {
 
             /* Flow of execution goes here when B+ tree has no dictionary pairs */
-            //System.err.println("Invalid Delete: The B+ tree is currently empty.");
             return false;
         } else {
 
