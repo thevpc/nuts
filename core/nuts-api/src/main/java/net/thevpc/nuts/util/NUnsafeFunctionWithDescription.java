@@ -5,7 +5,8 @@ import net.thevpc.nuts.elem.NElement;
 
 import java.util.function.Supplier;
 
-public class NUnsafeFunctionWithDescription<T, V> implements NUnsafeFunction<T, V>, NImmutable {
+@NImmutable
+public class NUnsafeFunctionWithDescription<T, V> implements NUnsafeFunction<T, V>{
     private final NUnsafeFunction<T, V> base;
     private final Supplier<NElement> description;
 
