@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NStream;
 
 import java.util.*;
@@ -33,6 +34,7 @@ import java.util.*;
 /**
  * Created by vpc on 5/23/17.
  */
+@NImmutable
 public class DefaultNTextList extends AbstractNText implements NTextList {
 
     private final List<NText> children = new ArrayList<NText>();
