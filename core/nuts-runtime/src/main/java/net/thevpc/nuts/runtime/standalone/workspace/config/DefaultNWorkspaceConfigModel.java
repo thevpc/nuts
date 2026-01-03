@@ -25,6 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
@@ -42,6 +43,7 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfig;
 import net.thevpc.nuts.core.NRepositoryRef;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
+import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.extension.NExtensionUtils;
 import net.thevpc.nuts.runtime.standalone.util.*;
@@ -136,8 +138,6 @@ public class DefaultNWorkspaceConfigModel {
     private NTerminal terminal;
 
 
-    public NScopedValue<Map<String, String>> currentEnv = NScopedValue.ofSupplier(this::rootEnv);
-
     public DefaultNWorkspaceConfigModel(final DefaultNWorkspace workspace) {
         this.workspace = workspace;
         NBootOptions bOptions = NWorkspaceExt.of().getModel().bootModel.getBootEffectiveOptions();
@@ -157,49 +157,14 @@ public class DefaultNWorkspaceConfigModel {
         //        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
     }
 
-
-    public Map<String, String> appendEnv(Map<String, String> env) {
-        Map<String, String> curr = currentEnv.get();
-        Map<String, String> m = newSysEnvEmptyMap();
-        m.putAll(curr);
-        if (env != null) {
-            for (Map.Entry<String, String> e : env.entrySet()) {
-                String k = e.getKey();
-                String v = e.getValue();
-                if (k != null) {
-                    if (v == null) {
-                        m.remove(k);
-                    } else {
-                        m.put(k, v);
-                    }
-                }
-            }
-        }
-        return m;
-    }
-
-    public Map<String, String> rootEnv() {
-        Map<String, String> m = newSysEnvEmptyMap();
-        m.putAll(System.getenv());
-        return m;
-    }
-
-    public Map<String, String> newSysEnvEmptyMap() {
-        switch (workspace.getModel().getEnv().getOsFamily()) {
-            case WINDOWS: {
-                return new NCaseInsensitiveStringMap<>();
-            }
-        }
-        return new HashMap<>();
-    }
-
     public Map<String, String> sysEnv() {
-        return currentEnv.get();
+        NWorkspaceModel wsModel = workspace.getModel();
+        return wsModel.getRequiredNWorkspaceEnvScope().env;
     }
 
     public void onNewComponent(Class componentType) {
         if (NPathFactorySPI.class.isAssignableFrom(componentType)) {
-            DefaultNWorkspaceFactory aa = (DefaultNWorkspaceFactory) (((NWorkspaceExt) workspace).getModel().extensionModel.getObjectFactory());
+            DefaultNWorkspaceFactory aa = (DefaultNWorkspaceFactory) (workspace.getModel().extensionModel.getObjectFactory());
             addPathFactory(
                     (NPathFactorySPI) aa.newInstance(componentType, NPathFactorySPI.class)
             );
@@ -486,7 +451,7 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public void installBootIds() {
-        NWorkspaceModel wsModel = NWorkspaceExt.of().getModel();
+        NWorkspaceModel wsModel = workspace.getModel();
         NId iruntimeId = wsModel.bootModel.getBootEffectiveOptions().getRuntimeId().orNull();
         if (wsModel.bootModel.getBootEffectiveOptions().getRuntimeBootDescriptor().isPresent()) {
             //not present in shaded jar mode
@@ -1686,7 +1651,6 @@ public class DefaultNWorkspaceConfigModel {
 
         @NScore
         public static int getScore(NScorableContext context) {
-            String path = context.getCriteria();
             return NScorable.DEFAULT_SCORE;
         }
     }
