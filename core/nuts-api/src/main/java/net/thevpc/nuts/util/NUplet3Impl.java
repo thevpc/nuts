@@ -8,7 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-final class NUplet3Impl<A extends T, B extends T, C extends T, T> implements NUplet3<A, B, C, T>,NImmutable {
+@NImmutable
+final class NUplet3Impl<A extends T, B extends T, C extends T, T> implements NUplet3<A, B, C, T>{
     private final A a;
     private final B b;
     private final C c;
