@@ -7,7 +7,8 @@ import java.util.function.Function;
 /**
  * Created by vpc on 8/15/14.
  */
-public class NImmutableConvertedList<A, B> extends AbstractList<B> implements NImmutable{
+@NImmutable
+public class NImmutableConvertedList<A, B> extends AbstractList<B>{
 
     private final List<A> base;
     private final Function<A, B> converter;
