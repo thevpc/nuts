@@ -12,7 +12,8 @@ import java.util.function.Supplier;
  *
  * @since 0.8.7
  */
-public class NUnsafeRunnableWithDescription implements NUnsafeRunnable, NImmutable {
+@NImmutable
+public class NUnsafeRunnableWithDescription implements NUnsafeRunnable{
     /** The original unsafe runnable being wrapped. */
     private final NUnsafeRunnable base;
 
