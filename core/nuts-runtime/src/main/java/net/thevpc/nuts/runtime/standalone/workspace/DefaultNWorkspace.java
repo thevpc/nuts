@@ -1702,7 +1702,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     public <T> T getOrComputeProperty(Class<T> property, Supplier<T> supplier) {
-        return getOrComputeProperty(property.getName(), supplier);
+        return getOrComputeProperty(property==null?null:property.getName(), supplier);
     }
 
     public <T> T getOrComputeProperty(String property, Supplier<T> supplier) {
