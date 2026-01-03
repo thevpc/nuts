@@ -28,6 +28,7 @@ package net.thevpc.nuts.internal;
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.boot.NBootLogConfig;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -188,7 +189,7 @@ public class NApiUtilsRPI {
             name = "default";
         }
         String key = type.getName() + "(" + name + ")";
-        return NApp.of().getOrComputeProperty(key, NScopeType.SESSION, () -> sup.get());
+        return NSession.of().getOrComputeProperty(key, () -> sup.get());
     }
 
     public static <T> T getOrCreateRefProperty(Class<T> type, Supplier<T> sup) {
