@@ -1,9 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.reflect.mapper;
 
 import net.thevpc.nuts.reflect.NReflectTypeMapper;
+import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NOptional;
 
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.time.temporal.Temporal;
 import java.util.*;
 
@@ -164,23 +166,53 @@ public class TypeMapperRepositoryDef {
     }
 
     private static boolean isImmutableType(Type type) {
+        if (type == null) {
+            return false;
+        }
+
+        // Primitives and boxed types
         if (TypeHelper.isBoxedOrPrimitive(type)) {
             return true;
         }
+
+        // String
         if (String.class.equals(type)) {
             return true;
         }
+
+        // Numbers
+        if (Number.class.isAssignableFrom(TypeHelper.toClass(type))) {
+            return true;
+        }
+
+        // Enums
+        if (TypeHelper.toClass(type).isEnum()) {
+            return true;
+        }
+
+        // Temporal types (LocalDate, Instant, Duration, etc.)
         if (TypeHelper.isAssignableFrom(Temporal.class, type)) {
             return true;
         }
-        if (TypeHelper.isAssignableFrom(Number.class, type)) {
+
+        // Common immutable Java classes
+        Class<?> cls = TypeHelper.toClass(type);
+        if (cls == URI.class
+                || cls == UUID.class
+                || cls == Locale.class
+                || cls == Currency.class
+                || cls == Class.class
+                || cls == StackTraceElement.class) {
             return true;
         }
-        if (TypeHelper.isEnum(type)) {
+
+        // Classes annotated with @NImmutable
+        if (cls.getAnnotation(NImmutable.class) != null) {
             return true;
         }
-        //Date is not immutable is it?
-        return TypeHelper.isAssignableFrom(Date.class, type);
+
+        // By default, not immutable
+        return false;
     }
 
     private NReflectTypeMapper resolveDefaultMapper(Class from, Type to) {
