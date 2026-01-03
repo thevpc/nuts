@@ -4,6 +4,7 @@ import net.thevpc.nuts.ext.NFactoryException;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.reflect.NFactoryMethod;
+import net.thevpc.nuts.runtime.standalone.workspace.NFailSafeHelper;
 import net.thevpc.nuts.text.NMsg;
 
 import java.lang.reflect.Constructor;
@@ -70,7 +71,7 @@ public class NBeanConstructorHelper {
                         ).asFinest().withIntent(NMsgIntent.FAIL);
                         if (NExtensionUtils.isBootstrapLogType(apiType)) {
                             //do not use log. this is a bug that must be resolved fast!
-                            NExtensionUtils.safeLog(errorMessage, null);
+                            NFailSafeHelper.log(err->err.println(errorMessage.toString()));
                         } else {
                             LOG.log(errorMessage);
                         }
@@ -83,7 +84,7 @@ public class NBeanConstructorHelper {
                     ).asFinest().withIntent(NMsgIntent.FAIL);
                     if (NExtensionUtils.isBootstrapLogType(apiType)) {
                         //do not use log. this is a bug that must be resolved fast!
-                        NExtensionUtils.safeLog(errorMessage, null);
+                        NFailSafeHelper.log(err->err.println(errorMessage.toString()));
                     } else {
                         LOG.log(errorMessage);
                     }
@@ -123,7 +124,7 @@ public class NBeanConstructorHelper {
                             ex).asFinest().withIntent(NMsgIntent.FAIL);
                     if (NExtensionUtils.isBootstrapLogType(apiType)) {
                         //do not use log. this is a bug that must be resolved fast!
-                        NExtensionUtils.safeLog(errorMessage, null);
+                        NFailSafeHelper.log(err->err.println(errorMessage.toString()));
                     } else {
                         if (LOG.isLoggable(Level.FINEST)) {
                             LOG.log(errorMessage);
@@ -163,7 +164,7 @@ public class NBeanConstructorHelper {
                             ex).asFinest().withIntent(NMsgIntent.FAIL);
                     if (NExtensionUtils.isBootstrapLogType(apiType)) {
                         //do not use log. this is a bug that must be resolved fast!
-                        NExtensionUtils.safeLog(errorMessage, null);
+                        NFailSafeHelper.log(err->err.println(errorMessage.toString()));
                     } else {
                         if (LOG.isLoggable(Level.FINEST)) {
                             LOG.log(errorMessage);
@@ -184,7 +185,7 @@ public class NBeanConstructorHelper {
         ).asFinest().withIntent(NMsgIntent.FAIL);
         if (NExtensionUtils.isBootstrapLogType(apiType)) {
             //do not use log. this is a bug that must be resolved fast!
-            NExtensionUtils.safeLog(errorMessage, null);
+            NFailSafeHelper.log(err->err.println(errorMessage.toString()));
         } else {
             LOG.log(errorMessage);
         }
