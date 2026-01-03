@@ -31,12 +31,9 @@ public class ProgressMonitorTranslator implements NProgressHandler {
     public void onEvent(NProgressHandlerEvent event) {
         double progress = event.getModel().getProgress();
         double translatedProgress = Double.isNaN(progress) ? progress : (progress * factor + start);
-//        double translatedProgress = (progress-start)/factor;
         if (!Double.isNaN(progress) && (translatedProgress < 0 || translatedProgress > 1)) {
             if (translatedProgress > 1 && translatedProgress < 1.1) {
                 translatedProgress = 1;
-//            } else {
-//                System.err.println("ProgressMonitorTranslator : %= " + translatedProgress + "????????????");
             }
         }
         getDelegate().setProgress(translatedProgress, event.getModel().getMessage());
