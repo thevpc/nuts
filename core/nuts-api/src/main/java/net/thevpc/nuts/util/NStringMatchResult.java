@@ -2,7 +2,7 @@ package net.thevpc.nuts.util;
 
 import java.util.regex.Matcher;
 
-public abstract class NStringMatchResult implements NImmutable{
+public abstract class NStringMatchResult{
     private static final NStringMatchResult NO_MATCH = new NStringMatchResultAsNoMatch();
     private final NMatchType mode;
 
@@ -43,6 +43,7 @@ public abstract class NStringMatchResult implements NImmutable{
 
     public abstract String get(String name);
 
+    @NImmutable
     private static class YesPattern extends NStringMatchResult {
         private Matcher value;
 
@@ -62,6 +63,7 @@ public abstract class NStringMatchResult implements NImmutable{
         }
     }
 
+    @NImmutable
     private static class YesString extends NStringMatchResult {
         private String value;
 
@@ -81,6 +83,7 @@ public abstract class NStringMatchResult implements NImmutable{
         }
     }
 
+    @NImmutable
     private static class NStringMatchResultAsNoMatch extends NStringMatchResult {
         public NStringMatchResultAsNoMatch() {
             super(NMatchType.NO_MATCH);
@@ -96,6 +99,7 @@ public abstract class NStringMatchResult implements NImmutable{
         }
     }
 
+    @NImmutable
     private static class NStringMatchResultAsPartial extends NStringMatchResult {
         private String value;
 
