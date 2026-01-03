@@ -787,18 +787,19 @@ public class URLPath implements NPathSPI {
 
         @NScore(fixed = NScorable.DEFAULT_SCORE)
         public static int getScore(NScorableContext context) {
-            Object c = context.getCriteria();
-            if (c instanceof String) {
-                String path = (String) c;
-                if (path.length() > 0) {
-                    char s = path.charAt(0);
-                    if (Character.isAlphabetic(s)) {
-                        try {
-                            URL url = CoreIOUtils.urlOf(path);
-                            return 6;
-                        } catch (Exception e) {
-                            //
-                        }
+            Object cri = context.getCriteria();
+            if(!(cri instanceof String)) {
+                return NScorable.DEFAULT_SCORE;
+            }
+            String path = (String) cri;
+            if (!path.isEmpty()) {
+                char s = path.charAt(0);
+                if (Character.isAlphabetic(s)) {
+                    try {
+                        URL url = CoreIOUtils.urlOf(path);
+                        return NScorable.DEFAULT_SCORE+6;
+                    } catch (Exception e) {
+                        //
                     }
                 }
             }
