@@ -156,7 +156,7 @@ public class DefaultNLogModel {
     }
 
     private Map<String, NLog> loaded() {
-        return NApp.of().getOrComputeProperty(NLog.class.getName() + "#Map", NScopeType.WORKSPACE, () -> new HashMap<String, NLog>());
+        return NWorkspace.of().getOrComputeProperty(NLog.class.getName() + "#Map", HashMap::new);
     }
 
     public NLog getNullLogger() {
