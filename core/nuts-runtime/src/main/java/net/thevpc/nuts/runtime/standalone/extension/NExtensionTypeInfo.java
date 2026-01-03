@@ -5,8 +5,8 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceFactory;
 import net.thevpc.nuts.spi.NComponent;
@@ -20,6 +20,8 @@ import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 public class NExtensionTypeInfo<T> {
@@ -64,17 +66,34 @@ public class NExtensionTypeInfo<T> {
         return resolveInstance(new Class[0], new Object[0], null);
     }
 
-    private static NPropertiesHolder resolveBeansHolder(NScopeType scope) {
-        return NApp.of().getOrComputeProperty(NWorkspaceFactory.class.getName() + "::beans", scope, () -> new NPropertiesHolder());
+    public static <T> T getOrComputeCachedBean(Class<? extends T> implType, Class<T> apiType, NScopeType scope, Supplier<T> supplier) {
+        NAssert.requireNonNull(scope, "scope");
+        String beansKey = NWorkspaceFactory.class.getName() + "::beans";
+        switch (scope) {
+            case PROTOTYPE:
+                return supplier.get();
+            case SESSION: {
+                ConcurrentHashMap<String, Object> m = NSession.of().getOrComputeSessionProperty(beansKey, ConcurrentHashMap<String, Object>::new);
+                return (T) m.computeIfAbsent(implType.getName(), s -> supplier.get());
+            }
+            case SHARED_SESSION: {
+                ConcurrentHashMap<String, Object> m = NSession.of().getOrComputeSharedProperty(beansKey, ConcurrentHashMap<String, Object>::new);
+                return (T) m.computeIfAbsent(implType.getName(), s -> supplier.get());
+            }
+            case TRANSITIVE_SESSION: {
+                ConcurrentHashMap<String, Object> m = NSession.of().getOrComputeTransitiveProperty(beansKey, ConcurrentHashMap<String, Object>::new);
+                return (T) m.computeIfAbsent(implType.getName(), s -> supplier.get());
+            }
+            case WORKSPACE: {
+                ConcurrentHashMap<String, Object> m = NWorkspace.of().getOrComputeProperty(beansKey, ConcurrentHashMap<String, Object>::new);
+                return (T) m.computeIfAbsent(implType.getName(), s -> supplier.get());
+            }
+        }
+        throw new NUnexpectedException(NMsg.ofC("enum not found %s", scope));
     }
 
-
     public <T extends NComponent> T resolveInstance(Class<?>[] argTypes, Object[] args, NBeanConstructorContext context) {
-        if (scope == NScopeType.PROTOTYPE) {
-            return newInstance(argTypes, args, context, true);
-        }
-        NPropertiesHolder beans = resolveBeansHolder(scope);
-        return (T) beans.getOrComputeProperty(implType.getName(), () -> newInstance(argTypes, args, context, true), scope);
+        return (T) getOrComputeCachedBean(implType, apiType, scope, () -> newInstance(argTypes, args, context, true));
     }
 
     private NScopeType computeScope() {
@@ -236,7 +255,7 @@ public class NExtensionTypeInfo<T> {
         return new LazyNScoredValueImpl<>(
                 () -> c -> getTypeScore(c),
                 () -> resolveInstance(),
-                supportCriteria,implType, apiType);
+                supportCriteria, implType, apiType);
     }
 
     public NScorable getTypeScorer() {
