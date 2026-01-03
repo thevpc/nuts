@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.LinkedHashMap;
@@ -104,6 +105,7 @@ public class NPropertiesHolder {
     }
 
     public <T> T getOrComputeProperty(String key, Supplier<T> supplier, NScopeType scope) {
+        NAssert.requireNonNull(supplier, "supplier");
         NScopedPropertyValue v = properties.get(key);
         if (v != null) {
             return (T) v.value;
