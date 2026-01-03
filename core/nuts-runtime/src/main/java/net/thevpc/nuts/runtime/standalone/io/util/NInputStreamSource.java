@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NContentMetadata;
 import net.thevpc.nuts.io.NIOException;
 
@@ -11,8 +10,8 @@ public class NInputStreamSource extends AbstractSingleReadNInputSource {
     private InputStream inputStream;
     private NContentMetadata md;
 
-    public NInputStreamSource(InputStream inputStream, NContentMetadata md, NWorkspace workspace) {
-        super(workspace);
+    public NInputStreamSource(InputStream inputStream, NContentMetadata md) {
+        super();
         this.inputStream = inputStream;
         this.md = CoreIOUtils.createContentMetadata(md, inputStream);
     }
