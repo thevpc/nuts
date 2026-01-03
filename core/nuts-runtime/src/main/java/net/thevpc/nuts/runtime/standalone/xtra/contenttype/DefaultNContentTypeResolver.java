@@ -248,9 +248,9 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
 
     public DefaultNContentTypeResolverModel model() {
         synchronized (NWorkspace.of()) {
-            return NApp.of().getOrComputeProperty(
-                    DefaultNContentTypeResolverModel.class.getName(), NScopeType.WORKSPACE,
-                    () -> new DefaultNContentTypeResolverModel()
+            return NWorkspace.of().getOrComputeProperty(
+                    DefaultNContentTypeResolverModel.class,
+                    DefaultNContentTypeResolverModel::new
             );
         }
     }
