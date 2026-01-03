@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.ntalk;
 
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.runtime.standalone.workspace.NFailSafeHelper;
 import net.thevpc.nuts.text.NMsg;
 
 import java.io.*;
@@ -266,7 +267,8 @@ public class NTalkAgent implements Closeable{
                                     NTalkUtils.writeArray(errorMessage.getBytes(), clientSession.outAgentToClient);
                                 }
                             } catch (Exception ex) {
-                                System.err.println("kill client after error " + errorMessage);
+                                String finalErrorMessage = errorMessage;
+                                NFailSafeHelper.log(err->err.println("[NTalkAgent] kill client after error " + finalErrorMessage));
                                 quit = true;
                             }
                         }
@@ -278,7 +280,7 @@ public class NTalkAgent implements Closeable{
                         break;
                     }
                     default: {
-                        System.err.println("Unexpected");
+                        NFailSafeHelper.log(err->err.println("[NTalkAgent] Unexpected command"));
                         quit = true;
                         sessionsById.remove(clientSession.sessionId);
                         break;
@@ -334,7 +336,7 @@ public class NTalkAgent implements Closeable{
                         break;
                     }
                     default: {
-                        System.err.println("Pbm");
+                        NFailSafeHelper.log(err->err.println("[NTalkAgent] Unexpected command"));
                         quit = true;
                     }
                 }
