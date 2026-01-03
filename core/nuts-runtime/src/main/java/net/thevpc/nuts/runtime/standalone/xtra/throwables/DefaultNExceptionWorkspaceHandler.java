@@ -8,6 +8,7 @@ import net.thevpc.nuts.elem.NElement;
 
 
 import net.thevpc.nuts.platform.NEnv;
+import net.thevpc.nuts.runtime.standalone.workspace.NFailSafeHelper;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NIO;
@@ -145,7 +146,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                 javax.swing.JOptionPane.showMessageDialog(null, NMsg.ofPlain(sb.toString()).toString());
             } catch (UnsatisfiedLinkError e) {
                 //exception may occur if the sdk is built in headless mode
-                System.err.printf("[Graphical Environment Unsupported] %s%n", title);
+                NFailSafeHelper.log(err->err.printf("[Graphical Environment Unsupported] %s%n", title));
             }
         }
         return (errorCode);
