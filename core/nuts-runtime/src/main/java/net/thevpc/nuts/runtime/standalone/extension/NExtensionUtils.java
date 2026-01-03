@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.extension;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.runtime.standalone.workspace.NFailSafeHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NExecTargetSPI;
 import net.thevpc.nuts.text.NMsg;
@@ -64,18 +65,5 @@ public class NExtensionUtils {
         }
         return false;
     }
-
-    public static void safeLog(NMsg msg, Throwable any) {
-        //TODO: should we use boot stdio?
-        PrintStream err = NWorkspaceExt.of().getModel().bootModel.getBootTerminal().getErr();
-        if (err == null) {
-            err = System.err;
-        }
-        err.println(msg.toString() + ":");
-        any.printStackTrace();
-    }
-
-
-
 
 }
