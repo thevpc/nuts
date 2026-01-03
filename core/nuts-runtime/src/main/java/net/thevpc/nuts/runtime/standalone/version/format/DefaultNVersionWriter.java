@@ -32,7 +32,7 @@ public class DefaultNVersionWriter extends DefaultObjectWriterBase<NVersionWrite
     private final Map<String, String> extraProperties = new LinkedHashMap<>();
     private boolean all;
 
-    public DefaultNVersionWriter(NWorkspace workspace) {
+    public DefaultNVersionWriter() {
         super("version");
     }
 
