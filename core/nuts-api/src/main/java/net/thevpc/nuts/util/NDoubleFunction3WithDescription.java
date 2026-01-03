@@ -5,7 +5,8 @@ import net.thevpc.nuts.elem.NElement;
 
 import java.util.function.Supplier;
 
-public class NDoubleFunction3WithDescription implements NDoubleFunction3,NImmutable {
+@NImmutable
+public class NDoubleFunction3WithDescription implements NDoubleFunction3{
     private final NDoubleFunction3 base;
     private Supplier<NElement> description;
 
