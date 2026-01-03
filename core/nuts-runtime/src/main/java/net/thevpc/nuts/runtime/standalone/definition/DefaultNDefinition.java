@@ -40,7 +40,8 @@ import net.thevpc.nuts.util.NOptional;
 /**
  * Created by vpc on 1/6/17.
  */
-public class DefaultNDefinition implements NDefinition, NImmutable {
+@NImmutable
+public class DefaultNDefinition implements NDefinition{
 
     private final NId id;
     private final NDescriptor descriptor;
