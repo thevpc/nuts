@@ -28,10 +28,12 @@ package net.thevpc.nuts.runtime.standalone.descriptor;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
+import net.thevpc.nuts.util.NImmutable;
 
 /**
  * Created by vpc on 2/19/17.
  */
+@NImmutable
 public abstract class AbstractNDescriptor implements NDescriptor {
     public AbstractNDescriptor() {
 
