@@ -377,41 +377,5 @@ public interface NApp extends NComponent {
      */
     NApp setStartTime(NClock startTime);
 
-    /**
-     * Retrieves the property associated with the specified name and scope,
-     * or computes and stores it using the provided supplier if the property
-     * does not already exist.
-     *
-     * @param <T> the type of the property being retrieved or computed
-     * @param name the name of the property to retrieve or compute
-     * @param scope the scope within which the property is stored
-     * @param supplier the supplier function used to compute the property if it
-     *                 does not already exist
-     * @return the existing or newly computed property of type T
-     */
-    <T> T getOrComputeProperty(String name, NScopeType scope, Supplier<T> supplier);
-
-    /**
-     * Sets a property with the specified name, scope, and value.
-     *
-     * @param <T>   The type of the value to be set.
-     * @param name  The name of the property to set. Must not be null.
-     * @param scope The scope in which the property is being set. Must not be null.
-     * @param value The value to assign to the property.
-     * @return The value that was set for the property.
-     */
-    <T> T setProperty(String name, NScopeType scope, T value);
-
-    /**
-     * Retrieves a property with the specified name and scope type.
-     *
-     * @param name the name of the property to retrieve
-     * @param scope the scope type which defines the context of the property
-     * @param <T> the type of the property value
-     * @return an NOptional containing the property value if found, or an empty NOptional if the property does not exist
-     */
-    <T> NOptional<T> getProperty(String name, NScopeType scope);
-
-
 
 }
