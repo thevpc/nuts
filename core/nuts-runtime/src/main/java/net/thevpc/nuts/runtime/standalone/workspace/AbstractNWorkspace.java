@@ -121,19 +121,19 @@ public abstract class AbstractNWorkspace implements NWorkspace {
     }
 
     @Override
-    public NWorkspace addUserPropertyListener(NObservableMapListener<String, Object> listener) {
+    public NWorkspace addPropertyListener(NObservableMapListener<String, Object> listener) {
         eventsModel().addUserPropertyListener(listener);
         return this;
     }
 
     @Override
-    public NWorkspace removeUserPropertyListener(NObservableMapListener<String, Object> listener) {
+    public NWorkspace removePropertyListener(NObservableMapListener<String, Object> listener) {
         eventsModel().removeUserPropertyListener(listener);
         return this;
     }
 
     @Override
-    public List<NObservableMapListener<String, Object>> getUserPropertyListeners() {
+    public List<NObservableMapListener<String, Object>> getPropertyListeners() {
         return eventsModel().getUserPropertyListeners();
     }
 
