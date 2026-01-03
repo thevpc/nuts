@@ -99,7 +99,11 @@ public class ClassLoaderPath extends URLPath {
 
         @NScore
         public static int getScore(NScorableContext context) {
-            String path= context.getCriteria();
+            Object cri = context.getCriteria();
+            if(!(cri instanceof String)) {
+                return NScorable.DEFAULT_SCORE;
+            }
+            String path = (String) cri;
             if (path.startsWith("classpath:")) {
                 return NScorable.DEFAULT_SCORE;
             }
