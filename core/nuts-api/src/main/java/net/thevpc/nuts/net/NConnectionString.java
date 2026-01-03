@@ -7,7 +7,7 @@ import net.thevpc.nuts.util.NOptional;
 import java.util.List;
 import java.util.Map;
 
-public interface NConnectionString extends NImmutable {
+public interface NConnectionString  {
     static NOptional<NConnectionString> get(String expression) {
         return NExtensions.of(NConnectionStringBuilderFactory.class)
                 .create(expression).map(NConnectionStringBuilder::build);
