@@ -57,7 +57,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
 
     private T execute() {
         NSession session = NSession.of();
-        NAskCache askCache = NApp.of().getOrComputeProperty(NAskCache.class.getName(), NScopeType.SESSION, () -> new NAskCache());
+        NAskCache askCache = NSession.of().getOrComputeProperty(NAskCache.class, NAskCache::new);
         if (rememberMeKey != null) {
             Object o = askCache.get(rememberMeKey);
             if (o != null) {
