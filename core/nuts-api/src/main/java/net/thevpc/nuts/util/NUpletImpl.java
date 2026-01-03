@@ -5,7 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-final class NUpletImpl<T> implements NUplet<T>, NImmutable {
+@NImmutable
+final class NUpletImpl<T> implements NUplet<T>{
     private T[] values;
 
     public NUpletImpl(T[] a) {
