@@ -482,17 +482,19 @@ public class GenericFilePath implements NPathSPI {
 
         @NScore(fixed = NScorable.DEFAULT_SCORE)
         public static int getScore(NScorableContext context) {
-            String path = context.getCriteria();
+            Object cri = context.getCriteria();
+            if(!(cri instanceof String)) {
+                return NScorable.DEFAULT_SCORE;
+            }
+            String path = (String) cri;
             try {
-                if (path != null) {
-                    if (path.trim().length() > 0) {
-                        for (char c : path.toCharArray()) {
-                            if (c < 32) {
-                                return NScorable.UNSUPPORTED_SCORE;
-                            }
+                if (!path.trim().isEmpty()) {
+                    for (char c : path.toCharArray()) {
+                        if (c < 32) {
+                            return NScorable.UNSUPPORTED_SCORE;
                         }
-                        return 1;
                     }
+                    return 1;
                 }
             } catch (Exception ex) {
                 //ignore
