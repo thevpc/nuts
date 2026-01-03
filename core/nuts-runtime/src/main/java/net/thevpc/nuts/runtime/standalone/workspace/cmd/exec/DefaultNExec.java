@@ -90,7 +90,7 @@ import java.util.*;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNExec extends AbstractNExec {
 
-    public DefaultNExec(NWorkspace workspace) {
+    public DefaultNExec() {
         super();
     }
 
