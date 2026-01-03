@@ -145,6 +145,6 @@ public class NTalkClient implements Closeable {
     }
 
     private void log(String msg) {
-//        System.err.println("[NCLIENT] "+msg);
+
     }
 }
