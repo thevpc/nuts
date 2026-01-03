@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.standalone.xtra.digest;
 
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.*;
@@ -53,12 +52,10 @@ import java.util.List;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNDigest implements NDigest {
 
-    private final NWorkspace workspace;
     private List<NInputSource> sources;
     private String algorithm;
 
-    public DefaultNDigest(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNDigest() {
     }
 
     public NDigest addSource(NInputSource source) {
