@@ -1,9 +1,6 @@
 package net.thevpc.nuts.net;
 
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringMapFormat;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -11,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@NImmutable
 public class DefaultNConnectionString implements NConnectionString {
 
     private String protocol;
