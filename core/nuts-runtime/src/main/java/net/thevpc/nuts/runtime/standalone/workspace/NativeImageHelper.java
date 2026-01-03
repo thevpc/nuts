@@ -8,7 +8,7 @@ public class NativeImageHelper {
     public static void prepare(NWorkspace workspace){
         if(Boolean.getBoolean("EnableGraalVM")){
             new DefaultNCmdLines();
-            new DefaultNObjectObjectWriter(workspace);
+            new DefaultNObjectObjectWriter();
         }
     }
 }
