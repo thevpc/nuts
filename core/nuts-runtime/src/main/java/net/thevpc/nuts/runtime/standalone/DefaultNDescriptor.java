@@ -36,6 +36,7 @@ import java.util.*;
 /**
  * Created by vpc on 1/5/17.
  */
+@NImmutable
 public class DefaultNDescriptor implements NDescriptor {
 
     private static final long serialVersionUID = 1L;
