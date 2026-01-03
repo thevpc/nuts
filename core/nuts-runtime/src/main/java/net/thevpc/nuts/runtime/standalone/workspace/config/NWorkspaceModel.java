@@ -17,6 +17,7 @@ import net.thevpc.nuts.platform.NExecutionEngineFamily;
 import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NBeanRef;
+import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.DefaultElementMapperStore;
@@ -30,8 +31,7 @@ import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreOnDisk;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NProgressMonitor;
-import net.thevpc.nuts.util.NDefaultObservableMap;
-import net.thevpc.nuts.util.NLRUMap;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilterModel;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
@@ -43,14 +43,9 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalled
 import net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityModel;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SafeRecommendationConnector;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SimpleRecommendationConnector;
-import net.thevpc.nuts.util.NObservableMap;
-import net.thevpc.nuts.util.NOptional;
 
 import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class NWorkspaceModel {
@@ -99,6 +94,18 @@ public class NWorkspaceModel {
     private NEnvLocal env;
     private final Map<NExecutionEngineFamily, List<NExecutionEngineLocation>> configPlatforms = new LinkedHashMap<>();
 
+    public NWorkspaceEnvScope currentEnvInitial = new NWorkspaceEnvScope();
+    public NScopedValue<NWorkspaceEnvScope> currentEnv = NScopedValue.of();
+
+    public NWorkspaceEnvScope getRequiredNWorkspaceEnvScope() {
+        NWorkspaceEnvScope u = currentEnv.getOrElse(() -> null);
+        if (u == null) {
+            throw new NIllegalStateException(NMsg.ofC("workspace environment was nto found"));
+        }
+        return u;
+    }
+
+
     public NWorkspaceModel(NWorkspace workspace, NBootOptions initialBootOptions) {
         this.workspace = workspace;
         this.userProperties = new NDefaultObservableMap<>();
@@ -125,8 +132,11 @@ public class NWorkspaceModel {
         askedRuntimeId = initialBootOptions.getRuntimeId().orNull();
         if (askedRuntimeId == null) {
             askedRuntimeId = NId.getRuntime("").get();
-        }
 
+        }
+        currentEnvInitial.currentApp = new NAppImpl();
+        currentEnvInitial.env = rootEnv();
+        currentEnv.getOrCompute(() -> currentEnvInitial);
         this.textModel = new DefaultNTextManagerModel(workspace);
         this.apiId = NId.getApi(Nuts.getVersion()).get();
         this.runtimeId = NId.get(
@@ -137,9 +147,46 @@ public class NWorkspaceModel {
         this.bootModel.init();
     }
 
+    public Map<String, String> appendEnv(Map<String, String> env) {
+        Map<String, String> curr = getRequiredNWorkspaceEnvScope().env;
+        Map<String, String> m = newSysEnvEmptyMap();
+        m.putAll(curr);
+        if (env != null) {
+            for (Map.Entry<String, String> e : env.entrySet()) {
+                String k = e.getKey();
+                String v = e.getValue();
+                if (k != null) {
+                    if (v == null) {
+                        m.remove(k);
+                    } else {
+                        m.put(k, v);
+                    }
+                }
+            }
+        }
+        return m;
+    }
+
+
+    public Map<String, String> rootEnv() {
+        Map<String, String> m = newSysEnvEmptyMap();
+        m.putAll(System.getenv());
+        return m;
+    }
+
+    public Map<String, String> newSysEnvEmptyMap() {
+        switch (getEnv().getOsFamily()) {
+            case WINDOWS: {
+                return new NCaseInsensitiveStringMap<>();
+            }
+        }
+        return new HashMap<>();
+    }
+
+
     public NEnvLocal getEnv() {
-        if(env==null){
-            env= NExtensions.of(NEnvLocal.class);
+        if (env == null) {
+            env = new NEnvLocal();
         }
         return env;
     }
@@ -167,7 +214,6 @@ public class NWorkspaceModel {
         }
         return pid;
     }
-
 
 
     public Map<String, Object> getProperties() {
@@ -217,12 +263,12 @@ public class NWorkspaceModel {
     private class StackBasedNBeanContainer implements NBeanContainer {
         @Override
         public <T> NOptional<T> get(NBeanRef ref) {
-            List<NBeanContainer> all ;
+            List<NBeanContainer> all;
             synchronized (scopedBeanContainerStack) {
                 all = scopedBeanContainerStack.getStackSnapshot();
             }
             NOptional<T> firstError = null;
-            for (int i = all.size()-1; i >= 0; i--) {
+            for (int i = all.size() - 1; i >= 0; i--) {
                 NBeanContainer e = all.get(i);
                 NOptional<T> r = e.get(ref);
                 if (r.isPresent()) {
