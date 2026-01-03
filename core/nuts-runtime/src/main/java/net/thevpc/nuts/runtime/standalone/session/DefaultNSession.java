@@ -60,6 +60,7 @@ import net.thevpc.nuts.util.*;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 /**
@@ -1733,5 +1734,102 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     @Override
     public boolean isVerboseFile() {
         return isLogFileLevel(Level.FINEST);
+    }
+
+    @Override
+    public NSession setProperty(String property, Object value) {
+        return setSessionProperty(property, value);
+    }
+
+    @Override
+    public <T> NSession setProperty(Class<T> property, T value) {
+        return setSessionProperty(property == null ? null : property.getName(), value);
+    }
+
+    @Override
+    public NSession setSessionProperty(String property, Object value) {
+        Object old = getPropertiesHolder().setProperty(property, value, NScopeType.SESSION);
+        return this;
+    }
+
+    @Override
+    public NSession setTransitiveProperty(String property, Object value) {
+        Object old = getPropertiesHolder().setProperty(property, CoreNUtils.checkCopiableValue(value), NScopeType.TRANSITIVE_SESSION);
+        return this;
+    }
+
+    @Override
+    public NSession setSharedProperty(String property, Object value) {
+        Object old = getPropertiesHolder().setProperty(property, value, NScopeType.SHARED_SESSION);
+        return this;
+    }
+
+    @Override
+    public NOptional<Object> getProperty(String property) {
+        return getPropertiesHolder().getOptional(property)
+                .withDefault(() -> getWorkspace().getProperty(property).orDefault())
+                ;
+    }
+
+    @Override
+    public Map<String, Object> getProperties() {
+        return getPropertiesHolder().toMap();
+    }
+
+    @Override
+    public <T> NOptional<T> getProperty(Class<T> propertyTypeAndName) {
+        return getProperty(propertyTypeAndName == null ? null : propertyTypeAndName.getName()).instanceOf(propertyTypeAndName);
+    }
+
+    @Override
+    public <T> NSession setTransitiveProperty(Class<T> property, T value) throws NNonCopiableException {
+        return setTransitiveProperty(property==null?null:property.getName(), value);
+    }
+
+    @Override
+    public <T> NSession setSharedProperty(Class<T> property, T value) {
+        return setSharedProperty(property==null?null:property.getName(), value);
+    }
+
+    @Override
+    public <T> T getOrComputeProperty(String property, Supplier<T> supplier) {
+        return getOrComputeSessionProperty(property, supplier);
+    }
+
+    @Override
+    public <T> T getOrComputeSessionProperty(String property, Supplier<T> supplier) {
+        return getPropertiesHolder().getOrComputeProperty(property, supplier, NScopeType.SESSION);
+    }
+
+    @Override
+    public <T> T getOrComputeSharedProperty(String property, Supplier<T> supplier) {
+        return getPropertiesHolder().getOrComputeProperty(property, supplier, NScopeType.SHARED_SESSION);
+    }
+
+    @Override
+    public <T> T getOrComputeTransitiveProperty(String property, Supplier<T> supplier) {
+        return getPropertiesHolder().getOrComputeProperty(property,
+                supplier == null ? null : () -> CoreNUtils.checkCopiableValue(supplier.get())
+                , NScopeType.TRANSITIVE_SESSION);
+    }
+
+    @Override
+    public <T> T getOrComputeProperty(Class<T> property, Supplier<T> supplier) {
+        return getOrComputeSessionProperty(property, supplier);
+    }
+
+    @Override
+    public <T> T getOrComputeSessionProperty(Class<T> property, Supplier<T> supplier) {
+        return getOrComputeSessionProperty(property == null ? null : property.getName(), supplier);
+    }
+
+    @Override
+    public <T> T getOrComputeSharedProperty(Class<T> property, Supplier<T> supplier) {
+        return getOrComputeSharedProperty(property == null ? null : property.getName(), supplier);
+    }
+
+    @Override
+    public <T> T getOrComputeTransitiveProperty(Class<T> property, Supplier<T> supplier) {
+        return getOrComputeTransitiveProperty(property == null ? null : property.getName(), supplier);
     }
 }
