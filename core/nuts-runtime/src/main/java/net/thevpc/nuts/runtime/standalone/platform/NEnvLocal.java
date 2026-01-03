@@ -13,7 +13,6 @@ import net.thevpc.nuts.util.*;
 
 import java.util.Map;
 
-@NComponentScope(NScopeType.WORKSPACE)
 public class NEnvLocal extends NEnvBase {
 
 
@@ -33,7 +32,7 @@ public class NEnvLocal extends NEnvBase {
             this.initialized = true;
             userHome=System.getProperty("user.home");
             userName=System.getProperty("user.name");
-            switch (osFamily) {
+            switch (getOsFamily()) {
                 case WINDOWS:{
                     rootUserName=resolveWindowAdminName(userName,rootUserName);
                     break;
