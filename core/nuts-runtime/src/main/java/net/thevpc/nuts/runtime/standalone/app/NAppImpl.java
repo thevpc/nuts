@@ -40,7 +40,7 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@NComponentScope(NScopeType.SESSION)
+@NComponentScope(NScopeType.SHARED_SESSION)
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NAppImpl implements NApp, Cloneable, NCopiable {
     private Class appClass;
@@ -61,6 +61,14 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
      */
     private NVersion previousVersion;
     private List<String> modeArgs = new ArrayList<>();
+
+    public NAppImpl() {
+        System.out.println("really");
+    }
+
+    public void setBundleName(String bundleName) {
+        this.bundleName = bundleName;
+    }
 
     @Override
     public NApp copy() {
@@ -179,19 +187,17 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             }
             args = args.subList(1, args.size());
         }
-        NId _appId = (NId) NApplications.getSharedMap().get("nuts.embedded.application.id");
-        if (_appId != null) {
+        NId _appId = this.id; // if already set!
+        if (NBlankable.isBlank(this.id)) {
             //("=== Inherited "+_appId);
-        } else {
             _appId = NId.getForClass(appClass).orNull();
-        }
-        if (_appId == null) {
-            throw new NExecutionException(NMsg.ofC("invalid Nuts Application (%s). Id cannot be resolved", appClass.getName()), NExecutionException.ERROR_255);
+            if (NBlankable.isBlank(_appId)) {
+                throw new NExecutionException(NMsg.ofC("invalid Nuts Application (%s). Id cannot be resolved", appClass.getName()), NExecutionException.ERROR_255);
+            }
+            this.id = _appId;
         }
         this.args = (args);
-        this.id = (_appId);
         this.appClass = appClass == null ? null : JavaClassUtils.unwrapCGLib(appClass);
-        NWorkspace workspace = NWorkspace.of();
         for (NStoreType folder : NStoreType.values()) {
             this.setFolder(folder, NPath.ofIdStore(this.id, folder));
             this.setSharedFolder(folder, NPath.ofIdStore(this.id.builder().setVersion("SHARED").build(), folder));
@@ -207,7 +213,9 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         } else {
             this.autoComplete = null;
         }
-        bundleName = resolveAppNameFromClass(this.appClass, _appId.getArtifactId());
+        if(bundleName==null){
+            bundleName = resolveAppNameFromClass(this.appClass, _appId.getArtifactId());
+        }
     }
 
     public String getBundleName() {
@@ -592,31 +600,6 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             case PROTOTYPE:
             default: {
                 throw new NUnsupportedEnumException(scope);
-            }
-        }
-    }
-
-    public <T> NOptional<T> getProperty(String name, NScopeType scope) {
-        if (scope == null) {
-            scope = NScopeType.SHARED_SESSION;
-        }
-        switch (scope) {
-            case PROTOTYPE: {
-                return NOptional.<T>ofNamedEmpty(name)
-                        .withDefault(() -> this.<T>getProperty(name, NScopeType.SESSION).orDefault());
-            }
-            case SHARED_SESSION:
-            case SESSION:
-            case TRANSITIVE_SESSION: {
-                return ((DefaultNSession) NSession.of()).getPropertiesHolder().<T>getOptional(name)
-                        .withDefault(() -> this.<T>getProperty(name, NScopeType.WORKSPACE).orDefault())
-                        ;
-            }
-            case WORKSPACE: {
-                return (NWorkspaceExt.of()).getModel().properties.getOptional(name);
-            }
-            default: {
-                return NOptional.<T>ofNamedEmpty(name);
             }
         }
     }
