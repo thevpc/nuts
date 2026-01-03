@@ -9,6 +9,9 @@ import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.util.NStringUtils;
+
+import java.util.Objects;
 
 public class SshPathFactory implements NPathFactorySPI {
     NWorkspace workspace;
@@ -35,8 +38,12 @@ public class SshPathFactory implements NPathFactorySPI {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String path= context.getCriteria();
-        if(path.startsWith("ssh:")){
+        Object cri = context.getCriteria();
+        if(!(cri instanceof String)) {
+            return NScorable.DEFAULT_SCORE;
+        }
+        String path = (String) cri;
+        if(NStringUtils.trim(path).startsWith("ssh:")){
             return NScorable.DEFAULT_SCORE;
         }
         return NScorable.UNSUPPORTED_SCORE;
