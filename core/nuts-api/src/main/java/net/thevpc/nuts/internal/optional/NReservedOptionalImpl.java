@@ -27,7 +27,9 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
 
     @Override
     public <V> NOptional<V> instanceOf(Class<V> targetClass) {
-        NAssert.requireNonNull(targetClass, "type");
+        if (targetClass == null) {
+            return (NOptional<V>) this;
+        }
         return map(a -> {
             if (targetClass.isInstance(a)) {
                 return (V) a;
