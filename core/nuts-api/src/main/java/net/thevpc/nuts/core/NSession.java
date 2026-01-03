@@ -29,11 +29,14 @@ import net.thevpc.nuts.command.NExecutionType;
 import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.command.NInstallListener;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.concurrent.NCallable;
+import net.thevpc.nuts.util.NAssertException;
+import net.thevpc.nuts.util.NNonCopiableException;
 import net.thevpc.nuts.util.NObservableMapListener;
 import net.thevpc.nuts.util.NOptional;
 
@@ -41,6 +44,8 @@ import java.io.Closeable;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 /**
@@ -632,4 +637,261 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
     NSession setDependencySolver(String dependencySolver);
 
     void close();
+
+    /// /////////////////////
+    /// Properties
+    /// /////////////////////
+
+
+    /**
+     * Sets a property in this session.
+     * <p>
+     * By default, this is a session-local property that is dropped when the session is copied.
+     * Passing {@code null} is equivalent to removing the property.
+     * Equivalent to {@link #setSessionProperty(String, Object)}.
+     * @param property the name of the property
+     * @param value    the value to store, or {@code null} to remove
+     * @return this {@code NSession} instance, for fluent usage
+     * @since 0.8.9
+     */
+    NSession setProperty(String property, Object value);
+
+    /**
+     * Sets a property in this session.
+     * <p>
+     * By default, this is a session-local property that is dropped when the session is copied.
+     * Passing {@code null} is equivalent to removing the property.
+     * Equivalent to {@link #setSessionProperty(String, Object)}.
+     * @param property the name of the property
+     * @param value    the value to store, or {@code null} to remove
+     * @return this {@code NSession} instance, for fluent usage
+     * @since 0.8.9
+     */
+    <T> NSession setProperty(Class<T> property, T value);
+
+    /**
+     * Sets a session-local property that is not copied when the session is duplicated.
+     * <p>
+     * By default, this is a session-local property that is dropped when the session is copied.
+     * Passing {@code null} is equivalent to removing the property.
+     * Equivalent to {@link #setSessionProperty(String, Object)}.
+     * @param property the name of the property
+     * @param value    the value to store, or {@code null} to remove
+     * @return this {@code NSession} instance, for fluent usage
+     * @since 0.8.9
+     */
+    NSession setSessionProperty(String property, Object value);
+
+    /**
+     * Sets a property that is copied when this session is duplicated.
+     * <p>
+     * The value must either be immutable (primitive, boxed, {@link String}, {@link Number}, {@link java.time.temporal.Temporal},
+     * {@link Enum}, or a class annotated with {@link net.thevpc.nuts.util.NImmutable}) or implement {@link net.thevpc.nuts.util.NCopiable}.
+     * <p>
+     * Passing {@code null} is equivalent to removing the property.
+     *
+     * @throws net.thevpc.nuts.util.NNonCopiableException if the computed value is not copyable or immutable
+     * @param property the name of the property
+     * @param value    the value to store, or {@code null} to remove
+     * @return this {@code NSession} instance
+     * @since 0.8.9
+     */
+    NSession setTransitiveProperty(String property, Object value) throws NNonCopiableException;
+
+    /**
+     * Sets a property that is copied when this session is duplicated.
+     * <p>
+     * The value must either be immutable (primitive, boxed, {@link String}, {@link Number}, {@link java.time.temporal.Temporal},
+     * {@link Enum}, or a class annotated with {@link net.thevpc.nuts.util.NImmutable}) or implement {@link net.thevpc.nuts.util.NCopiable}.
+     * <p>
+     * Passing {@code null} is equivalent to removing the property.
+     *
+     * @throws net.thevpc.nuts.util.NNonCopiableException if the computed value is not copyable or immutable
+     * @param property the name of the property
+     * @param value    the value to store, or {@code null} to remove
+     * @return this {@code NSession} instance
+     * @since 0.8.9
+     */
+    <T> NSession setTransitiveProperty(Class<T> property, T value) throws NNonCopiableException;
+
+    /**
+     * Sets a property that is shared by reference with all descendant sessions.
+     * <p>
+     * Changes to this value in one session are visible in all copies.
+     * <p>
+     * Passing {@code null} is equivalent to removing the property.
+     *
+     * @param property the name of the property
+     * @param value    the value to store, or {@code null} to remove
+     * @return this {@code NSession} instance
+     * @since 0.8.9
+     */
+    NSession setSharedProperty(String property, Object value);
+
+    /**
+     * Sets a property that is shared by reference with all descendant sessions.
+     * <p>
+     * Changes to this value in one session are visible in all copies.
+     * <p>
+     * Passing {@code null} is equivalent to removing the property.
+     *
+     * @param property the name of the property
+     * @param value    the value to store, or {@code null} to remove
+     * @return this {@code NSession} instance
+     * @since 0.8.9
+     */
+    <T> NSession setSharedProperty(Class<T> property, T value);
+
+    /**
+     * Returns a read-only view of all properties in this session.
+     *
+     * @return a map of property names to their current values
+     * @since 0.8.9
+     */
+    Map<String, Object> getProperties();
+
+    /**
+     * Retrieves the current value of a property by name.
+     * <p>
+     * This does not expose any copy or scope semantics; it returns the value
+     * currently visible in this session.
+     *
+     * @param property the name of the property
+     * @return an {@link NOptional} containing the property value if present, or empty otherwise
+     * @since 0.8.9
+     */
+    NOptional<Object> getProperty(String property);
+
+    /**
+     * Retrieves the current value of a property identified by type.
+     * <p>
+     * Useful for type-safe property storage.
+     *
+     * @param propertyTypeAndName the class of the property
+     * @param <T>                 the type of the property
+     * @return an {@link NOptional} containing the property value if present, or empty otherwise
+     * @since 0.8.9
+     */
+    <T> NOptional<T> getProperty(Class<T> propertyTypeAndName);
+
+    /**
+     * Retrieves an existing property of the given type, or computes and stores it
+     * using the supplied function if absent.
+     *
+     * @param property the class identifying the property
+     * @param supplier the function to compute the property if absent
+     * @param <T>      the type of the property
+     * @return the existing or newly computed property
+     * @since 0.8.9
+     */
+    <T> T getOrComputeProperty(Class<T> property, Supplier<T> supplier);
+
+    /**
+     * Retrieves an existing property by name, or computes and stores it
+     * using the supplied function if absent.
+     *
+     * @param property the name of the property
+     * @param supplier the function to compute the property if absent
+     * @param <T>      the type of the property
+     * @return the existing or newly computed property
+     * @since 0.8.9
+     */
+    <T> T getOrComputeProperty(String property, Supplier<T> supplier);
+
+    /**
+     * Retrieves the value of a session-local property by name, or computes it if absent.
+     * <p>
+     * The property is stored in the current session only. It will <strong>not</strong> be
+     * copied to descendant sessions if this session is copied.
+     *
+     * @param property the property name
+     * @param supplier the supplier to compute the value if the property is absent
+     * @param <T>      the type of the property
+     * @return the existing or newly computed property value
+     * @throws NAssertException if {@code supplier} is null
+     * @since 0.8.9
+     */
+    <T> T getOrComputeSessionProperty(String property, Supplier<T> supplier);
+
+    /**
+     * Retrieves the value of a shared property by name, or computes it if absent.
+     * <p>
+     * The property is shared by reference across this session and all descendant sessions
+     * created via {@link NSession#copy()}. Mutating the value affects all sessions.
+     *
+     * @param property the property name
+     * @param supplier the supplier to compute the value if the property is absent
+     * @param <T>      the type of the property
+     * @return the existing or newly computed property value
+     * @throws NAssertException if {@code supplier} is null
+     * @since 0.8.9
+     */
+    <T> T getOrComputeSharedProperty(String property, Supplier<T> supplier) ;
+
+    /**
+     * Retrieves the value of a transitive property by name, or computes it if absent.
+     * <p>
+     * The property is copied when this session is copied:
+     * <ul>
+     *     <li>If the value is immutable, it is reused directly.</li>
+     *     <li>If the value implements {@link net.thevpc.nuts.util.NCopiable}, {@code copy()} is called to create
+     *         a new instance for the descendant session.</li>
+     *     <li>Otherwise, an exception is thrown.</li>
+     * </ul>
+     *
+     * @param property the property name
+     * @param supplier the supplier to compute the value if the property is absent
+     * @param <T>      the type of the property
+     * @return the existing or newly computed property value
+     * @throws NullPointerException if {@code supplier} is null
+     * @throws NAssertException if {@code supplier} is null
+     * @since 0.8.9
+     */
+    <T> T getOrComputeTransitiveProperty(String property, Supplier<T> supplier) ;
+
+    /**
+     * Retrieves the value of a session-local property for a class-based key, or computes it if absent.
+     * <p>
+     * Equivalent to {@link #getOrComputeSessionProperty(String, Supplier)}, using
+     * {@code property.getName()} as the key.
+     *
+     * @param property the class used as property key
+     * @param supplier the supplier to compute the value if absent
+     * @param <T>      the type of the property
+     * @return the existing or newly computed property value
+     * @throws NAssertException if {@code supplier} is null
+     * @since 0.8.9
+     */
+    <T> T getOrComputeSessionProperty(Class<T> property, Supplier<T> supplier) ;
+
+    /**
+     * Retrieves the value of a shared property for a class-based key, or computes it if absent.
+     * <p>
+     * Equivalent to {@link #getOrComputeSharedProperty(String, Supplier)}, using
+     * {@code property.getName()} as the key.
+     *
+     * @param property the class used as property key
+     * @param supplier the supplier to compute the value if absent
+     * @param <T>      the type of the property
+     * @return the existing or newly computed property value
+     * @throws NAssertException if {@code supplier} is null
+     * @since 0.8.9
+     */
+    <T> T getOrComputeSharedProperty(Class<T> property, Supplier<T> supplier) ;
+
+    /**
+     * Retrieves the value of a transitive property for a class-based key, or computes it if absent.
+     * <p>
+     * Equivalent to {@link #getOrComputeTransitiveProperty(String, Supplier)}, using
+     * {@code property.getName()} as the key.
+     *
+     * @param property the class used as property key
+     * @param supplier the supplier to compute the value if absent
+     * @param <T>      the type of the property
+     * @return the existing or newly computed property value
+     * @throws NAssertException if {@code supplier} is null
+     * @throws net.thevpc.nuts.util.NNonCopiableException if the computed value is not copyable or immutable
+     * @since 0.8.9
+     */
+    <T> T getOrComputeTransitiveProperty(Class<T> property, Supplier<T> supplier) throws NNonCopiableException;
 }
