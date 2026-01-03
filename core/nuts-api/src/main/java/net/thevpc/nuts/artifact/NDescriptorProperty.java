@@ -37,7 +37,7 @@ import net.thevpc.nuts.util.NLiteral;
  * @since 0.8.3
  * @app.category Descriptor
  */
-public interface NDescriptorProperty extends NBlankable, NImmutable {
+public interface NDescriptorProperty extends NBlankable{
     /**
      * property name
      *
