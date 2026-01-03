@@ -8,6 +8,26 @@ public class TypeHelper {
         T newInstance();
     }
 
+    /**
+     * Converts a Type to a Class, if possible.
+     * If the type is already a Class, returns it.
+     * If the type is a ParameterizedType, returns its raw type as Class.
+     * Otherwise returns Object.class as fallback.
+     */
+    public static Class<?> toClass(Type type) {
+        if (type instanceof Class<?>) {
+            return (Class<?>) type;
+        }
+        if (type instanceof ParameterizedType) {
+            Type raw = ((ParameterizedType) type).getRawType();
+            if (raw instanceof Class<?>) {
+                return (Class<?>) raw;
+            }
+        }
+        // GenericArrayType, TypeVariable, WildcardType — fallback to Object
+        return Object.class;
+    }
+
     public static <T> ObjFactory<T> constructorOf(Class<T> t){
         Constructor<T> c;
         try {
