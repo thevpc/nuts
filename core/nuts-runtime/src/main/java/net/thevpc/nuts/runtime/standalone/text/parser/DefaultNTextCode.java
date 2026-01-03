@@ -30,6 +30,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 /**
  * Created by vpc on 5/23/17.
  */
+@NImmutable
 public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
 
     private final String text;
