@@ -6,6 +6,7 @@ import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
@@ -43,8 +44,12 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
         @NScore
         public static int getScore(NScorableContext context) {
-            String path = context.getCriteria();
-            if (path.startsWith(PREFIX)) {
+            Object cri = context.getCriteria();
+            if(!(cri instanceof String)) {
+                return NScorable.DEFAULT_SCORE;
+            }
+            String path = (String) cri;
+            if (NStringUtils.trim(path).startsWith(PREFIX)) {
                 return NScorable.DEFAULT_SCORE;
             }
             return NScorable.UNSUPPORTED_SCORE;
