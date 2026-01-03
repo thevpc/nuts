@@ -15,9 +15,13 @@ import java.util.function.Supplier;
  * @param <T> the type of the scoped value
  */
 public class NScopedValue<T> {
-    /** Holds the thread-local value. */
+    /**
+     * Holds the thread-local value.
+     */
     private InheritableThreadLocal<T> holder = new InheritableThreadLocal<>();
-    /** Supplier to provide a default value if none is set. */
+    /**
+     * Supplier to provide a default value if none is set.
+     */
     private Supplier<T> defaultSupplier;
 
     /**
@@ -25,9 +29,9 @@ public class NScopedValue<T> {
      *
      * @param defaultSupplier the supplier used to provide a default value
      */
-    public static <T> NScopedValue<T> ofSupplier(Supplier<T> defaultSupplier){
+    public static <T> NScopedValue<T> ofSupplier(Supplier<T> defaultSupplier) {
         NAssert.requireNonNull(defaultSupplier, "supplier supplier");
-        return new NScopedValue<T>(defaultSupplier) ;
+        return new NScopedValue<T>(defaultSupplier);
     }
 
     /**
@@ -35,9 +39,10 @@ public class NScopedValue<T> {
      *
      * @param value the value used
      */
-    public static <T> NScopedValue<T> of(T value){
-        return new NScopedValue<T>(value==null?null:()->value) ;
+    public static <T> NScopedValue<T> of(T value) {
+        return new NScopedValue<T>(value == null ? null : () -> value);
     }
+
     /**
      * Creates a new {@code NScopedValue} with a default value supplier.
      *
@@ -49,7 +54,6 @@ public class NScopedValue<T> {
 
     /**
      * Creates a new {@code NScopedValue} without a default supplier.
-     *
      */
     public static <T> NScopedValue<T> of() {
         return new NScopedValue<>();
@@ -86,7 +90,7 @@ public class NScopedValue<T> {
         if (defaultSupplier != null) {
             h = defaultSupplier.get();
         }
-        if(h == null) {
+        if (h == null) {
             h = supplier.get();
             holder.set(h);
         }
@@ -111,6 +115,53 @@ public class NScopedValue<T> {
         return h;
     }
 
+    public T getOrElse(Supplier<T> other) {
+        T h = holder.get();
+        if (h != null) {
+            return h;
+        }
+        if (other != null) {
+            return other.get();
+        }
+        if (defaultSupplier != null) {
+            h = defaultSupplier.get();
+        }
+        return h;
+    }
+
+    public T getOrCompute(Supplier<T> other) {
+        T h = holder.get();
+        if (h != null) {
+            return h;
+        }
+        if (other != null) {
+            h = other.get();
+            if (h != null) {
+                holder.set(h);
+                return h;
+            }
+        }
+        if (defaultSupplier != null) {
+            h = defaultSupplier.get();
+            if (h == null) {
+                holder.set(h);
+            }
+        }
+        return h;
+    }
+
+    public T getOrCompute() {
+        T h = holder.get();
+        if (h != null) {
+            return h;
+        }
+        if (defaultSupplier != null) {
+            h = defaultSupplier.get();
+            holder.set(h);
+        }
+        return h;
+    }
+
     /**
      * Executes a {@link Runnable} with a temporary scoped value.
      * <p>
@@ -118,7 +169,7 @@ public class NScopedValue<T> {
      * the duration of the runnable. After execution, the original value is restored.
      *
      * @param value the value to set temporarily
-     * @param r the runnable to execute
+     * @param r     the runnable to execute
      */
     public void runWith(T value, Runnable r) {
         T old = holder.get();
@@ -150,8 +201,8 @@ public class NScopedValue<T> {
      * the duration of the callable. After execution, the original value is restored.
      *
      * @param value the value to set temporarily
-     * @param r the callable to execute
-     * @param <V> the type of the result
+     * @param r     the callable to execute
+     * @param <V>   the type of the result
      * @return the result of the callable, or {@code null} if the callable is {@code null}
      */
     public <V> V callWith(T value, NCallable<V> r) {
