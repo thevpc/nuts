@@ -3,7 +3,8 @@ package net.thevpc.nuts.text;
 import net.thevpc.nuts.util.NDTO;
 import net.thevpc.nuts.util.NImmutable;
 
-public class NMsgCode implements NDTO, NImmutable {
+@NImmutable
+public class NMsgCode implements NDTO{
     private String code;
     private String[] params;
     private String message;
