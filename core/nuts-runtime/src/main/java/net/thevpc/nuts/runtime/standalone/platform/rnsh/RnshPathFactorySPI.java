@@ -14,6 +14,7 @@ import net.thevpc.nuts.util.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RnshPathFactorySPI implements NPathFactorySPI {
@@ -47,14 +48,18 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String path = context.getCriteria();
+        Object cri = context.getCriteria();
+        if(!(cri instanceof String)) {
+            return NScorable.DEFAULT_SCORE;
+        }
+        String path = (String) cri;
         if (
                 path.startsWith("rnsh-http:")
                         || path.startsWith("rnsh:")
                         || path.startsWith("rnsh-https:")
                         || path.startsWith("rnshs:")
         ) {
-            return NScorable.DEFAULT_SCORE;
+                return NScorable.DEFAULT_SCORE;
         }
         return NScorable.UNSUPPORTED_SCORE;
     }
