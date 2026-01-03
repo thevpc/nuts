@@ -32,7 +32,6 @@ public class PlainParserStep extends ParserStep {
         state.setLineStart(c == '\n');
         this.exitOnBrace = exitOnBrace;
 //        _COUNT++;
-//        System.err.println(" PlainParserStep "+c+" : "+value);
     }
 
     public PlainParserStep(String s, boolean spreadLines, boolean lineStart, DefaultNTextNodeParser.State state, IntPredicate exitCondition, boolean preParsed, boolean exitOnBrace) {
@@ -45,7 +44,6 @@ public class PlainParserStep extends ParserStep {
             value.append(s);
             last = value.getLast();
 //            _COUNT++;
-//            System.err.println(" PlainParserStep "+s+" : "+value);
             state.setLineStart(s.indexOf('\n')>=0);
         }else {
             char c=s.charAt(0);
@@ -57,7 +55,6 @@ public class PlainParserStep extends ParserStep {
             last = c;
             state.setLineStart(c == '\n');
 //            _COUNT++;
-//            System.err.println(" PlainParserStep "+c+" : "+value);
             for (int i = 1; i < s.length(); i++) {
                 char c2 = s.charAt(i);
                 consume(c2, state, false);
