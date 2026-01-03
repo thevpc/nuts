@@ -2,13 +2,14 @@ package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.app.NAppInitInfo;
-import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspaceOptionsBuilder;
 import net.thevpc.nuts.core.NWorkspaceOptionsConfig;
+import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceEnvScope;
 import net.thevpc.nuts.text.NCmdLineWriter;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
@@ -20,7 +21,6 @@ import net.thevpc.nuts.time.NClock;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 
@@ -39,15 +39,17 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 
     @Override
     public Object runWithContext() {
-        Map<String, String> newEnv = NWorkspaceExt.of().getConfigModel().appendEnv(executionContext.getEnv());
-        return NWorkspaceExt.of().getConfigModel().currentEnv.callWith(newEnv, () -> {
+        NWorkspaceEnvScope s = new NWorkspaceEnvScope();
+        s.env = NWorkspaceExt.of().getModel().appendEnv(executionContext.getEnv());
+        s.currentApp = new NAppImpl();
+        return NWorkspaceExt.of().getModel().currentEnv.callWith(s, () -> {
             NClock now = NClock.now();
             if (cls.getName().equals("net.thevpc.nuts.Nuts")) {
                 NWorkspaceOptionsBuilder o = NWorkspaceOptionsBuilder.of().setCmdLine(
                         joptions.getAppArgs().toArray(new String[0])
                 );
                 List<String> appArgs;
-                if (o.getApplicationArguments().get().size() == 0) {
+                if (o.getApplicationArguments().get().isEmpty()) {
                     if (o.getSkipWelcome().orElse(false)) {
                         return null;
                     }
@@ -56,18 +58,12 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                     appArgs = o.getApplicationArguments().get();
                 }
                 session.configure(o.build());
-                Object oldId = NApplications.getSharedMap().get("nuts.embedded.application.id");
-                NApplications.getSharedMap().put("nuts.embedded.application.id", id);
-                try {
-                    NExec.of()
-                            .addCommand(appArgs)
-                            .addExecutorOptions(o.getExecutorOptions().orNull())
-                            .setExecutionType(o.getExecutionType().orNull())
-                            .failFast()
-                            .run();
-                } finally {
-                    NApplications.getSharedMap().put("nuts.embedded.application.id", oldId);
-                }
+                NExec.of()
+                        .addCommand(appArgs)
+                        .addExecutorOptions(o.getExecutorOptions().orNull())
+                        .setExecutionType(o.getExecutionType().orNull())
+                        .failFast()
+                        .run();
                 return null;
             }
             final Method[] mainMethod = {null};
@@ -91,7 +87,6 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                 try {
                     if (finalNutsAppVersion != null && finalNutsApp != null) {
                         //NutsWorkspace
-                        NApplications.getSharedMap().put("nuts.embedded.application.id", id);
                         mainMethod[0].invoke(finalNutsApp, sessionCopy, joptions.getAppArgs().toArray(new String[0]));
                     } else {
                         //NutsWorkspace
