@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -38,6 +39,7 @@ import java.util.Objects;
 /**
  * Created by vpc on 5/23/17.
  */
+@NImmutable
 public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     private String value;
 
