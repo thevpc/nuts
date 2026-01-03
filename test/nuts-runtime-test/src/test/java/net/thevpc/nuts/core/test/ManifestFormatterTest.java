@@ -6,6 +6,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder;
+import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -585,33 +586,44 @@ public class ManifestFormatterTest {
 
     // Helper method to create properties
     private NDescriptorProperty createProperty(String name, String value) {
-        return new NDescriptorProperty() {
-            @Override
-            public String getName() {
-                return name;
-            }
+        return new MyNDescriptorProperty(name, value);
+    }
 
-            @Override
-            public net.thevpc.nuts.util.NLiteral getValue() {
-                return net.thevpc.nuts.util.NLiteral.of(value);
-            }
+    @NImmutable
+    private static class MyNDescriptorProperty implements NDescriptorProperty {
+        private final String name;
+        private final String value;
 
-            @Override
-            public NEnvCondition getCondition() {
-                return null;
-            }
+        public MyNDescriptorProperty(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
 
-            @Override
-            public NDescriptorPropertyBuilder builder() {
-                return new net.thevpc.nuts.runtime.standalone.DefaultNDescriptorPropertyBuilder()
-                    .setName(name)
-                    .setValue(value);
-            }
+        @Override
+        public String getName() {
+            return name;
+        }
 
-            @Override
-            public boolean isBlank() {
-                return net.thevpc.nuts.util.NBlankable.isBlank(name) && net.thevpc.nuts.util.NBlankable.isBlank(value);
-            }
-        };
+        @Override
+        public net.thevpc.nuts.util.NLiteral getValue() {
+            return net.thevpc.nuts.util.NLiteral.of(value);
+        }
+
+        @Override
+        public NEnvCondition getCondition() {
+            return null;
+        }
+
+        @Override
+        public NDescriptorPropertyBuilder builder() {
+            return new net.thevpc.nuts.runtime.standalone.DefaultNDescriptorPropertyBuilder()
+                .setName(name)
+                .setValue(value);
+        }
+
+        @Override
+        public boolean isBlank() {
+            return net.thevpc.nuts.util.NBlankable.isBlank(name) && net.thevpc.nuts.util.NBlankable.isBlank(value);
+        }
     }
 }
