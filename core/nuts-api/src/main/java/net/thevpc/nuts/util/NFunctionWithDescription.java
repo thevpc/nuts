@@ -5,7 +5,8 @@ import net.thevpc.nuts.elem.NElement;
 
 import java.util.function.Supplier;
 
-public class NFunctionWithDescription<T, V> implements NFunction<T, V>,NImmutable {
+@NImmutable
+public class NFunctionWithDescription<T, V> implements NFunction<T, V>{
     private final NFunction<T, V> base;
     private Supplier<NElement> description;
 
