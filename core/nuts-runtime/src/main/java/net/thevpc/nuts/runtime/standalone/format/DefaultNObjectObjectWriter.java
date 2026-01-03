@@ -63,7 +63,7 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
     private NContentType outputFormat;
     private List<String[]> confCmds = new ArrayList<>();
 
-    public DefaultNObjectObjectWriter(NWorkspace workspace) {
+    public DefaultNObjectObjectWriter() {
         super("object-format");
     }
 
