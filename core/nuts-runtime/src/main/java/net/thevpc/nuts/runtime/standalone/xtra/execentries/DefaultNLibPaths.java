@@ -27,10 +27,8 @@ import java.util.stream.Collectors;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNLibPaths implements NLibPaths {
-    private final NWorkspace workspace;
 
-    public DefaultNLibPaths(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNLibPaths() {
     }
 
     @Override
@@ -121,7 +119,7 @@ public class DefaultNLibPaths implements NLibPaths {
     @Override
     public List<NId> resolveIds(NPath path) {
         LinkedHashSet<NId> all = new LinkedHashSet<>();
-        NPomId[] u = MavenUtils.createPomIdResolver(workspace).resolvePomIds(path);
+        NPomId[] u = MavenUtils.createPomIdResolver(NWorkspace.of()).resolvePomIds(path);
         all.addAll(
                 Arrays.asList(new NMetaInfIdResolver().resolvePomIds(path))
         );
@@ -141,7 +139,7 @@ public class DefaultNLibPaths implements NLibPaths {
                 all.add(NId.get(annotation.id()).get());
             }
         }
-        NPomId[] u = MavenUtils.createPomIdResolver(workspace).resolvePomIds(clazz);
+        NPomId[] u = MavenUtils.createPomIdResolver(NWorkspace.of()).resolvePomIds(clazz);
         all.addAll(
                 Arrays.asList(new NMetaInfIdResolver().resolvePomIds(clazz))
         );
