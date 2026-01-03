@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPrintStream {
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
-    public NByteArrayPrintStream(NTerminalMode mode, NWorkspace workspace) {
+    public NByteArrayPrintStream(NTerminalMode mode) {
         super(new ByteArrayOutputStream2(), mode, null, null, new Bindings(), null);
         getMetaData().setMessage(
                 NMsg.ofNtf(NText.ofStyledPath("<memory-buffer>"))
