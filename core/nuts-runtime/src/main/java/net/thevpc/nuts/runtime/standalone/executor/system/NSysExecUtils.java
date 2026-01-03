@@ -66,7 +66,7 @@ public class NSysExecUtils {
         NOsFamily sysFamily = NEnv.of().getOsFamily();
         switch (sysFamily) {
             case WINDOWS: {
-                String s = (String) NApp.of().getProperty("nuts.windows.root-user", NScopeType.SESSION).orNull();
+                String s = (String) NSession.of().getProperty("nuts.windows.root-user").orNull();
                 if (s == null) {
                     s = NWorkspace.of().getConfigProperty("nuts.windows.root-user").flatMap(NLiteral::asString).orNull();
                 }
@@ -84,7 +84,7 @@ public class NSysExecUtils {
     public static String resolveRootUserName(NOsFamily sysFamily) {
         switch (sysFamily) {
             case WINDOWS: {
-                String s = (String) NApp.of().getProperty("nuts.windows.root-user", NScopeType.SESSION).orNull();
+                String s = (String) NSession.of().getProperty("nuts.windows.root-user").orNull();
                 if (s == null) {
                     s = NWorkspace.of().getConfigProperty("nuts.windows.root-user").flatMap(NLiteral::asString).orNull();
                 }
