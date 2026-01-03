@@ -154,9 +154,6 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
 
 
         public synchronized ParserStep applyPop(ParserStep me) {
-            if (statusStack.size() < 2) {
-                System.err.println("problem");
-            }
             ParserStep tt = _pop(me);
             ParserStep parent = statusStack.peek();
             parent.appendChild(tt);
@@ -186,20 +183,20 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
 
         private void _push(ParserStep r) {
             if (statusStack.isEmpty()) {
-                System.err.println("problem");
+
             } else if (statusStack.peek() instanceof PlainParserStep && r instanceof PlainParserStep) {
-                System.err.println("problem");
+
             }
             statusStack.push(r);
         }
 
         private ParserStep _pop(ParserStep me) {
             if (statusStack.size() < 2) {
-                System.err.println("problem");
+
             }
             ParserStep r = statusStack.peek();
             if (!Objects.equals(r, me)) {
-                System.err.println("problem");
+
             }
             return statusStack.pop();
         }
