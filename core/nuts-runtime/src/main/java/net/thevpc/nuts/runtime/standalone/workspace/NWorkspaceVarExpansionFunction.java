@@ -7,6 +7,7 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NInfoCmd;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
@@ -20,7 +21,7 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
 
     public static NWorkspaceVarExpansionFunction of() {
         NWorkspace ws = NWorkspace.of();
-        return NApp.of().getOrComputeProperty(NWorkspaceVarExpansionFunction.class.getName(), NScopeType.SESSION, ()->new NWorkspaceVarExpansionFunction(ws));
+        return NSession.of().getOrComputeProperty(NWorkspaceVarExpansionFunction.class, ()->new NWorkspaceVarExpansionFunction(ws));
     }
 
     public NWorkspaceVarExpansionFunction(NWorkspace workspace) {
