@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.time;
 
 import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -254,7 +255,7 @@ public class CProgressBar {
     }
 
     public static CProgressBar of() {
-        return NApp.of().getOrComputeProperty(CProgressBar.class.getName(), NScopeType.SESSION, CProgressBar::new);
+        return NSession.of().getOrComputeProperty(CProgressBar.class, CProgressBar::new);
     }
 
     public CProgressBar() {
