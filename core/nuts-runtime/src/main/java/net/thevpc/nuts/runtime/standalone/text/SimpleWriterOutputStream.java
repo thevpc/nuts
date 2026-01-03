@@ -27,14 +27,12 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
 
     private final ByteBuffer decoderIn = ByteBuffer.allocate(128);
     private final CharBuffer decoderOut;
-    private final NWorkspace workspace;
     private final NSystemTerminalBase term;
     public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder, NSystemTerminalBase term, NWorkspace workspace) {
-        this(writer, decoder, DEFAULT_BUFFER_SIZE, false,term, workspace);
+        this(writer, decoder, DEFAULT_BUFFER_SIZE, false,term);
     }
 
-    public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder, int bufferSize, boolean writeImmediately, NSystemTerminalBase term, NWorkspace workspace) {
-        this.workspace = workspace;
+    public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder, int bufferSize, boolean writeImmediately, NSystemTerminalBase term) {
         this.writer = writer;
         this.decoder = decoder;
         this.term = term;
@@ -42,30 +40,30 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
         decoderOut = CharBuffer.allocate(bufferSize);
     }
 
-    public SimpleWriterOutputStream(Writer writer, Charset charset, int bufferSize, boolean writeImmediately, NSystemTerminalBase term, NWorkspace workspace) {
+    public SimpleWriterOutputStream(Writer writer, Charset charset, int bufferSize, boolean writeImmediately, NSystemTerminalBase term) {
         this(writer,
                 charset.newDecoder()
                         .onMalformedInput(CodingErrorAction.REPLACE)
                         .onUnmappableCharacter(CodingErrorAction.REPLACE)
                         .replaceWith("?"),
                 bufferSize,
-                writeImmediately,term,workspace);
+                writeImmediately,term);
     }
 
-    public SimpleWriterOutputStream(Writer writer, Charset charset, NSystemTerminalBase term, NWorkspace workspace) {
-        this(writer, charset, DEFAULT_BUFFER_SIZE, false,term,workspace);
+    public SimpleWriterOutputStream(Writer writer, Charset charset, NSystemTerminalBase term) {
+        this(writer, charset, DEFAULT_BUFFER_SIZE, false,term);
     }
 
-    public SimpleWriterOutputStream(Writer writer, String charsetName, int bufferSize, boolean writeImmediately, NSystemTerminalBase term, NWorkspace workspace) {
-        this(writer, Charset.forName(charsetName), bufferSize, writeImmediately,term,workspace);
+    public SimpleWriterOutputStream(Writer writer, String charsetName, int bufferSize, boolean writeImmediately, NSystemTerminalBase term) {
+        this(writer, Charset.forName(charsetName), bufferSize, writeImmediately,term);
     }
 
-    public SimpleWriterOutputStream(Writer writer, String charsetName, NSystemTerminalBase term, NWorkspace workspace) {
-        this(writer, charsetName, DEFAULT_BUFFER_SIZE, false,term,workspace);
+    public SimpleWriterOutputStream(Writer writer, String charsetName, NSystemTerminalBase term) {
+        this(writer, charsetName, DEFAULT_BUFFER_SIZE, false,term);
     }
 
-    public SimpleWriterOutputStream(Writer writer, NSystemTerminalBase term, NWorkspace workspace) {
-        this(writer, Charset.defaultCharset(), DEFAULT_BUFFER_SIZE, false,term,workspace);
+    public SimpleWriterOutputStream(Writer writer, NSystemTerminalBase term) {
+        this(writer, Charset.defaultCharset(), DEFAULT_BUFFER_SIZE, false,term);
     }
 
     @Override
