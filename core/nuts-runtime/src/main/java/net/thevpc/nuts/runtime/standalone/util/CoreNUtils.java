@@ -319,7 +319,7 @@ public class CoreNUtils {
             x.put("descriptor", NDescriptorWriter.of().format(def.getDescriptor()));
             x.put("effective-descriptor", NDescriptorWriter.of(
             ).format(
-                    def.getEffectiveDescriptor().orElseGet(()-> NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(),new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true)))
+                    def.getEffectiveDescriptor().orElseGet(() -> NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(), new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true)))
             ));
         }
         return x;
@@ -674,13 +674,6 @@ public class CoreNUtils {
     }
 
 
-    public static Object checkCopiableValue(Object value) {
-        if (!isCopiableValue(value)) {
-            throw new IllegalArgumentException("value is not copiable : " + value);
-        }
-        return value;
-    }
-
     public static boolean isImmutableValue(Object value) {
         if (value == null) {
             return true;
@@ -699,10 +692,20 @@ public class CoreNUtils {
     }
 
     public static boolean isCopiableValue(Object value) {
+        if (value == null) {
+            return true;
+        }
         if (isImmutableValue(value)) {
             return true;
         }
         return value instanceof NCopiable;
+    }
+
+    public static <T> T checkCopiableValue(T value) {
+        if (!isCopiableValue(value)) {
+            throw new NNonCopiableException(NMsg.ofC("value is not copiable : %s", value));
+        }
+        return value;
     }
 
     public static Object copyValue(Object value) {
@@ -712,8 +715,7 @@ public class CoreNUtils {
         if (value instanceof NCopiable) {
             return ((NCopiable) value).copy();
         }
-        throw new IllegalArgumentException("value is not copiable : " + value);
+        throw new NNonCopiableException(NMsg.ofC("value is not copiable : %s", value));
     }
-
 
 }
