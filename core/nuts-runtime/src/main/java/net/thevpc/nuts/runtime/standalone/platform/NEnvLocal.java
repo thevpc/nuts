@@ -120,7 +120,7 @@ public class NEnvLocal extends NEnvBase {
 
     @Override
     public Map<String, String> getEnv() {
-        return NWorkspaceExt.of().getConfigModel().sysEnv();
+        return NWorkspaceExt.of().getSysEnv();
     }
 
     @NScore(fixed = NScorable.DEFAULT_SCORE)
