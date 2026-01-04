@@ -772,7 +772,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     boolean sandboxOrInMemory = NBootUtils.sameEnum(isolationLevel, "SANDBOX") || NBootUtils.sameEnum(isolationLevel, "MEMORY");
                     if(!sandboxOrInMemory) {
                         //force loading version early, it will be used later-on
-                        log.log(isAskConfirm(getOptions()) ? Level.OFF : Level.WARNING, NBootLog.INTENT_ALERT, NBootMsg.ofPlain(NBootI18n.of("reset workspace")));
+                        log.log(isAskConfirm(getOptions()) ? Level.OFF : Level.FINE, NBootLog.INTENT_ALERT, NBootMsg.ofPlain(NBootI18n.of("reset workspace")));
                         if (dryFlag) {
                             //
                         } else {
@@ -791,7 +791,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     // retain all existing repositories
                     previousRepositories=lastConfigLoaded==null?null:lastConfigLoaded.getRepositories();
                 } else if (NBootUtils.firstNonNull(options.getRecover(), false)) {
-                    log.log(isAskConfirm(getOptions()) ? Level.OFF : Level.WARNING, NBootLog.INTENT_ALERT, NBootMsg.ofPlain(NBootI18n.of("recover workspace.")));
+                    log.log(isAskConfirm(getOptions()) ? Level.OFF : Level.FINE, NBootLog.INTENT_ALERT, NBootMsg.ofPlain(NBootI18n.of("recover workspace.")));
                     if (dryFlag) {
                         //log.log(Level.INFO, "DEBUG", NBootMsg.ofPlain("[dry] [recover] delete CACHE/TEMP workspace folders"));
                     } else {
