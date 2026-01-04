@@ -453,7 +453,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                     }
                 }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
-                Map<String, String> newEnv = new HashMap<>(NWorkspaceExt.of().getConfigModel().sysEnv());
+                Map<String, String> newEnv = new HashMap<>(NWorkspaceExt.of().getSysEnv());
                 newEnv.putAll(executionContext.getEnv());
                 newEnv.putAll(NExecutionContextUtils.defaultEnv(def));
                 ((DefaultNExecutionContext) executionContext).setEnv(newEnv);
