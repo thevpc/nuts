@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace;
 
+import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
@@ -23,6 +24,7 @@ import net.thevpc.nuts.spi.NInstallerComponent;
 import net.thevpc.nuts.text.NText;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author thevpc
@@ -37,6 +39,8 @@ public interface NWorkspaceExt {
     static NWorkspaceExt of(NWorkspace ws) {
         return ((NWorkspaceExt) ws);
     }
+
+    Map<String, String> getSysEnv();
 
     NWorkspaceStore store();
 
@@ -77,6 +81,7 @@ public interface NWorkspaceExt {
 
     NSession defaultSession();
 
+    NApp getApp();
     NWorkspaceModel getModel();
 
     String getInstallationDigest();
