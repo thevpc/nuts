@@ -25,15 +25,15 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
+import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.boot.NBootOptionsInfo;
-import net.thevpc.nuts.boot.NBootWorkspaceFactory;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.boot.NBootWorkspaceAlreadyExistsException;
-import net.thevpc.nuts.boot.NBootWorkspaceNotFoundException;
-import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.elem.NElementDescribables;
@@ -128,10 +128,29 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public static final NId RUNTIME_ID = NId.get(RUNTIME_VERSION_STRING).get();
     //    public NLog LOG;
     private NWorkspaceModel wsModel;
+    protected NBootOptionsInfo callerBootOptionsInfo;
+    public Map<String, String> env;
+    /**
+     * using currentApp so that we can change NApp when calling embedded apps
+     */
+    public NApp currentApp=new NAppImpl();
 
     public DefaultNWorkspace(NBootOptionsInfo callerBootOptionsInfo, NBootOptions info) {
-        super(callerBootOptionsInfo);
+        this.callerBootOptionsInfo=callerBootOptionsInfo;
         initWorkspace(info);
+    }
+
+    public Map<String, String> getSysEnv() {
+        return env;
+    }
+
+    @Override
+    public NApp getApp() {
+        return currentApp;
+    }
+
+    public NBootOptionsInfo getCallerBootOptionsInfo() {
+        return callerBootOptionsInfo;
     }
 
     @Override
@@ -2240,6 +2259,39 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     @Override
     public NWorkspaceTerminalOptions getBootTerminal() {
         return getBootModel().getBootTerminal();
+    }
+
+    @Override
+    public void runBootCommand() {
+        runWith(() -> {
+            NBootOptions info2 = new DefaultNBootOptionsBuilder(getCallerBootOptionsInfo()).build();
+            NApp.of().setId(getApiId());
+            NLog LOG = NLog.of(NBootWorkspaceImpl.class);
+            LOG.log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2))
+                    .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
+            );
+            NExec execCmd = NExec.of()
+                    .setExecutionType(info2.getExecutionType().orNull())
+                    .setRunAs(info2.getRunAs().orNull())
+                    .failFast();
+            List<String> executorOptions = info2.getExecutorOptions().orNull();
+            if (executorOptions != null) {
+                execCmd.configure(true, executorOptions.toArray(new String[0]));
+            }
+            NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions).setExpandSimpleOptions(false);
+            while (executorOptionsCmdLine.hasNext()) {
+                execCmd.configureLast(executorOptionsCmdLine);
+            }
+            if (info2.getApplicationArguments().get().isEmpty()) {
+                if (info2.getSkipWelcome().orElse(false)) {
+                    return;
+                }
+                execCmd.addCommand("welcome");
+            } else {
+                execCmd.addCommand(info2.getApplicationArguments().get());
+            }
+            execCmd.run();
+        });
     }
 
 }
