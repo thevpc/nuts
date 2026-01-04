@@ -10,15 +10,15 @@
  * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * <p>
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -52,20 +52,19 @@ import java.util.logging.Level;
  * Created by vpc on 1/6/17.
  */
 public abstract class AbstractNWorkspace implements NWorkspace {
-    protected NBootOptionsInfo callerBootOptionsInfo;
 
-    public AbstractNWorkspace(NBootOptionsInfo callerBootOptionsInfo) {
-        this.callerBootOptionsInfo=callerBootOptionsInfo;
+    public AbstractNWorkspace() {
     }
+
 
     @Override
     public void runWith(Runnable runnable) {
-        NScopedWorkspace.runWith(this,runnable);
+        NScopedWorkspace.runWith(this, runnable);
     }
 
     @Override
     public <T> T callWith(NCallable<T> callable) {
-        return NScopedWorkspace.callWith(this,callable);
+        return NScopedWorkspace.callWith(this, callable);
     }
 
     @Override
@@ -94,13 +93,13 @@ public abstract class AbstractNWorkspace implements NWorkspace {
 
     @Override
     public boolean isSharedInstance() {
-        return NScopedWorkspace.getSharedWorkspaceInstance()==this;
+        return NScopedWorkspace.getSharedWorkspaceInstance() == this;
     }
 
     /// //////////////////////////////
 
     private DefaultNWorkspaceEventModel eventsModel() {
-        return ((NWorkspaceExt)this).getModel().eventsModel;
+        return ((NWorkspaceExt) this).getModel().eventsModel;
     }
 
     @Override
@@ -171,41 +170,7 @@ public abstract class AbstractNWorkspace implements NWorkspace {
         return eventsModel().getInstallListeners();
     }
 
-
-    @Override
-    public void runBootCommand() {
-        runWith(() -> {
-            NBootOptions info2=new DefaultNBootOptionsBuilder(callerBootOptionsInfo).build();
-            NApp.of().setId(getApiId());
-            NLog LOG = NLog.of(NBootWorkspaceImpl.class);
-            LOG.log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2))
-                    .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
-            );
-            NExec execCmd = NExec.of()
-                    .setExecutionType(info2.getExecutionType().orNull())
-                    .setRunAs(info2.getRunAs().orNull())
-                    .failFast();
-            List<String> executorOptions = info2.getExecutorOptions().orNull();
-            if (executorOptions != null) {
-                execCmd.configure(true, executorOptions.toArray(new String[0]));
-            }
-            NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions).setExpandSimpleOptions(false);
-            while (executorOptionsCmdLine.hasNext()) {
-                execCmd.configureLast(executorOptionsCmdLine);
-            }
-            if (info2.getApplicationArguments().get().isEmpty()) {
-                if (info2.getSkipWelcome().orElse(false)) {
-                    return;
-                }
-                execCmd.addCommand("welcome");
-            } else {
-                execCmd.addCommand(info2.getApplicationArguments().get());
-            }
-            execCmd.run();
-        });
-    }
-
-    private String getRunModeString(NBootOptions options) {
+    protected String getRunModeString(NBootOptions options) {
         if (options.getReset().orElse(false)) {
             return "reset";
         } else if (options.getRecover().orElse(false)) {
