@@ -9,7 +9,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspaceOptionsBuilder;
 import net.thevpc.nuts.core.NWorkspaceOptionsConfig;
 import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceEnvScope;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExtNewContext;
 import net.thevpc.nuts.text.NCmdLineWriter;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
@@ -21,6 +21,7 @@ import net.thevpc.nuts.time.NClock;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 
@@ -39,10 +40,11 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 
     @Override
     public Object runWithContext() {
-        NWorkspaceEnvScope s = new NWorkspaceEnvScope();
-        s.env = NWorkspaceExt.of().getModel().appendEnv(executionContext.getEnv());
-        s.currentApp = new NAppImpl();
-        return NWorkspaceExt.of().getModel().currentEnv.callWith(s, () -> {
+        NWorkspaceExt ows = NWorkspaceExt.of();
+        Map<String, String> newEnv = ows.getModel().appendEnv(executionContext.getEnv());
+        NAppImpl newApp = new NAppImpl();
+        NWorkspaceExtNewContext wsc= new NWorkspaceExtNewContext(ows,newEnv,newApp);
+        return wsc.callWith(() -> {
             NClock now = NClock.now();
             if (cls.getName().equals("net.thevpc.nuts.Nuts")) {
                 NWorkspaceOptionsBuilder o = NWorkspaceOptionsBuilder.of().setCmdLine(
