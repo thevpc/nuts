@@ -14,9 +14,14 @@ import net.thevpc.nuts.util.NUnsupportedOperationException;
 
 
 public abstract class RemoteNWorkspace extends AbstractNWorkspace {
+    protected NBootOptionsInfo callerBootOptionsInfo;
 
     public RemoteNWorkspace(NBootOptionsInfo info) {
-        super(info);
+        this.callerBootOptionsInfo=info;
+    }
+
+    public NBootOptionsInfo getCallerBootOptionsInfo() {
+        return callerBootOptionsInfo;
     }
 
     public NElement createCall(String commandName, NElement body) {
