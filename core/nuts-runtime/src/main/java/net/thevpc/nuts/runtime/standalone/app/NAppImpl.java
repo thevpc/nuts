@@ -63,7 +63,6 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     private List<String> modeArgs = new ArrayList<>();
 
     public NAppImpl() {
-        System.out.println("really");
     }
 
     public void setBundleName(String bundleName) {
