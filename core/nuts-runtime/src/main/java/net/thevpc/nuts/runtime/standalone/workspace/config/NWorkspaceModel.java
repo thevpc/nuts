@@ -10,14 +10,12 @@ import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.core.NIsolationLevel;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.platform.NExecutionEngineFamily;
 import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NBeanRef;
-import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.DefaultElementMapperStore;
@@ -29,6 +27,7 @@ import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreInMemory;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreOnDisk;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NProgressMonitor;
 import net.thevpc.nuts.util.*;
@@ -94,17 +93,6 @@ public class NWorkspaceModel {
     private NEnvLocal env;
     private final Map<NExecutionEngineFamily, List<NExecutionEngineLocation>> configPlatforms = new LinkedHashMap<>();
 
-    public NWorkspaceEnvScope currentEnvInitial = new NWorkspaceEnvScope();
-    public NScopedValue<NWorkspaceEnvScope> currentEnv = NScopedValue.of();
-
-    public NWorkspaceEnvScope getRequiredNWorkspaceEnvScope() {
-        NWorkspaceEnvScope u = currentEnv.getOrElse(() -> null);
-        if (u == null) {
-            throw new NIllegalStateException(NMsg.ofC("workspace environment was nto found"));
-        }
-        return u;
-    }
-
 
     public NWorkspaceModel(NWorkspace workspace, NBootOptions initialBootOptions) {
         this.workspace = workspace;
@@ -132,11 +120,8 @@ public class NWorkspaceModel {
         askedRuntimeId = initialBootOptions.getRuntimeId().orNull();
         if (askedRuntimeId == null) {
             askedRuntimeId = NId.getRuntime("").get();
-
         }
-        currentEnvInitial.currentApp = new NAppImpl();
-        currentEnvInitial.env = rootEnv();
-        currentEnv.getOrCompute(() -> currentEnvInitial);
+        ((DefaultNWorkspace)NWorkspace.of()).env = rootEnv();
         this.textModel = new DefaultNTextManagerModel(workspace);
         this.apiId = NId.getApi(Nuts.getVersion()).get();
         this.runtimeId = NId.get(
@@ -148,7 +133,7 @@ public class NWorkspaceModel {
     }
 
     public Map<String, String> appendEnv(Map<String, String> env) {
-        Map<String, String> curr = getRequiredNWorkspaceEnvScope().env;
+        Map<String, String> curr = NWorkspaceExt.of().getSysEnv();
         Map<String, String> m = newSysEnvEmptyMap();
         m.putAll(curr);
         if (env != null) {
