@@ -25,7 +25,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
@@ -34,7 +33,6 @@ import net.thevpc.nuts.command.NCommandFactoryConfig;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.command.NInstallStatus;
 import net.thevpc.nuts.concurrent.NScoredCallable;
-import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.elem.NElementDescribables;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.platform.*;
@@ -43,7 +41,6 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfig;
 import net.thevpc.nuts.core.NRepositoryRef;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
-import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.extension.NExtensionUtils;
 import net.thevpc.nuts.runtime.standalone.util.*;
@@ -155,11 +152,6 @@ public class DefaultNWorkspaceConfigModel {
         addPathFactory(new GenericFilePath.GenericPathFactory());
         this.invalidPathFactory = new InvalidFilePathFactory();
         //        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
-    }
-
-    public Map<String, String> sysEnv() {
-        NWorkspaceModel wsModel = workspace.getModel();
-        return wsModel.getRequiredNWorkspaceEnvScope().env;
     }
 
     public void onNewComponent(Class componentType) {
