@@ -123,7 +123,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         }
         switch (type.getName()) {
             case "net.thevpc.nuts.app.NApp": {
-                return NOptional.of((T) NWorkspaceExt.of().getModel().getRequiredNWorkspaceEnvScope().currentApp);
+                return NOptional.of((T) NWorkspaceExt.of().getApp());
             }
         }
         NScorableContext context = NScorableContext.of(supportCriteria);
