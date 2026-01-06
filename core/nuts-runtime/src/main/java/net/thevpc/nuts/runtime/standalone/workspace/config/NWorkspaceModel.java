@@ -12,6 +12,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogs;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NExecutionEngineFamily;
 import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.reflect.NBeanContainer;
@@ -19,6 +20,7 @@ import net.thevpc.nuts.reflect.NBeanRef;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.DefaultElementMapperStore;
+import net.thevpc.nuts.runtime.standalone.extension.NExtensionTypeInfo;
 import net.thevpc.nuts.runtime.standalone.io.cache.CachedSupplier;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLog;
 import net.thevpc.nuts.runtime.standalone.log.NLogSPIJUL;
@@ -28,6 +30,7 @@ import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreInMemory;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreOnDisk;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NProgressMonitor;
 import net.thevpc.nuts.util.*;
@@ -171,7 +174,7 @@ public class NWorkspaceModel {
 
     public NEnvLocal getEnv() {
         if (env == null) {
-            env = new NEnvLocal();
+            env = (NEnvLocal) NExtensionTypeInfo.getOrComputeCachedBean(NEnvLocal.class, NEnv.class, NScopeType.WORKSPACE, NEnvLocal::new);
         }
         return env;
     }
