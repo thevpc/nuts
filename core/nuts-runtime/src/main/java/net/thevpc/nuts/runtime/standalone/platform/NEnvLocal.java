@@ -13,6 +13,7 @@ import net.thevpc.nuts.util.*;
 
 import java.util.Map;
 
+@NComponentScope(NScopeType.WORKSPACE)
 public class NEnvLocal extends NEnvBase {
 
 
