@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -80,57 +81,57 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
             return NOptional.of(this);
         }
         NOptional<Number> newValue;
-        switch (elemType){
-            case BYTE:{
-                newValue= (NOptional) NLiteral.of(value()).asByte();
+        switch (elemType) {
+            case BYTE: {
+                newValue = (NOptional) NLiteral.of(value()).asByte();
                 break;
             }
-            case SHORT:{
-                newValue= (NOptional) NLiteral.of(value()).asShort();
+            case SHORT: {
+                newValue = (NOptional) NLiteral.of(value()).asShort();
                 break;
             }
-            case INT:{
-                newValue= (NOptional) NLiteral.of(value()).asInt();
+            case INT: {
+                newValue = (NOptional) NLiteral.of(value()).asInt();
                 break;
             }
-            case LONG:{
-                newValue= (NOptional) NLiteral.of(value()).asLong();
+            case LONG: {
+                newValue = (NOptional) NLiteral.of(value()).asLong();
                 break;
             }
-            case FLOAT:{
-                newValue= (NOptional) NLiteral.of(value()).asFloat();
+            case FLOAT: {
+                newValue = (NOptional) NLiteral.of(value()).asFloat();
                 break;
             }
-            case DOUBLE:{
-                newValue= (NOptional) NLiteral.of(value()).asDouble();
+            case DOUBLE: {
+                newValue = (NOptional) NLiteral.of(value()).asDouble();
                 break;
             }
-            case BIG_INT:{
-                newValue= (NOptional) NLiteral.of(value()).asBigInt();
+            case BIG_INT: {
+                newValue = (NOptional) NLiteral.of(value()).asBigInt();
                 break;
             }
-            case BIG_DECIMAL:{
-                newValue= (NOptional) NLiteral.of(value()).asBigDecimal();
+            case BIG_DECIMAL: {
+                newValue = (NOptional) NLiteral.of(value()).asBigDecimal();
                 break;
             }
-            case FLOAT_COMPLEX:{
-                newValue= (NOptional) NLiteral.of(value()).asFloatComplex();
+            case FLOAT_COMPLEX: {
+                newValue = (NOptional) NLiteral.of(value()).asFloatComplex();
                 break;
             }
-            case DOUBLE_COMPLEX:{
-                newValue= (NOptional) NLiteral.of(value()).asDoubleComplex();
+            case DOUBLE_COMPLEX: {
+                newValue = (NOptional) NLiteral.of(value()).asDoubleComplex();
                 break;
             }
-            case BIG_COMPLEX:{
-                newValue= (NOptional) NLiteral.of(value()).asBigComplex();
+            case BIG_COMPLEX: {
+                newValue = (NOptional) NLiteral.of(value()).asBigComplex();
                 break;
             }
-            default:{
-                newValue=NOptional.ofEmpty();
+            default: {
+                newValue = NOptional.ofEmpty();
             }
         }
-        if(!newValue.isPresent()){
-            return NOptional.ofNamedEmpty(NMsg.ofC("unable to convert %s to %s : %s",type(),elemType));
+        if (!newValue.isPresent()) {
+            return NOptional.ofNamedEmpty(NMsg.ofC("unable to convert %s to %s : %s", type(), elemType));
         }
         return NOptional.of(new DefaultNNumberElement(
                 type(), newValue.get(),
@@ -138,4 +139,118 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
                 suffix,
                 annotations().toArray(new NElementAnnotation[0]), comments()));
     }
+
+    private String toStringPart(Number value, boolean compactMax) {
+        StringBuilder sb = new StringBuilder();
+        switch (type()) {
+            case BYTE: {
+                byte t = value.byteValue();
+                sb.append(Long.toString(t, layout.radix()));
+                sb.append("s8");
+                break;
+            }
+            case SHORT: {
+                short t = value.shortValue();
+                if (compactMax) {
+                    switch (t) {
+                        case Short.MIN_VALUE: {
+                            sb.append("0Min");
+                            break;
+                        }
+                        case Short.MAX_VALUE: {
+                            sb.append("0Max");
+                            break;
+                        }
+                        default: {
+                            sb.append(Long.toString(t, layout.radix()));
+                        }
+                    }
+                } else {
+                    sb.append(Long.toString(t, layout.radix()));
+                }
+                sb.append("_s16");
+                break;
+            }
+            case INT: {
+                int t = value.intValue();
+                if (compactMax) {
+                    switch (t) {
+                        case Integer.MIN_VALUE: {
+                            sb.append("0Min");
+                            break;
+                        }
+                        case Integer.MAX_VALUE: {
+                            sb.append("0Max");
+                            break;
+                        }
+                        default: {
+                            sb.append(Long.toString(t, layout.radix()));
+                        }
+                    }
+                } else {
+                    sb.append(Long.toString(t, layout.radix()));
+                }
+                sb.append("_s32");
+                break;
+            }
+            case LONG: {
+                long t = value.longValue();
+                if (compactMax) {
+                    if (t == Long.MIN_VALUE) {
+                        sb.append("0Min");
+                    } else if (t == Long.MAX_VALUE) {
+                        sb.append("0Max");
+                    } else {
+                        sb.append(Long.toString(t, layout.radix()));
+                    }
+                } else {
+                    sb.append(Long.toString(t, layout.radix()));
+                }
+                sb.append("_s64");
+                break;
+            }
+            case BIG_INT: {
+                sb.append((((BigInteger) value).toString(layout.radix())));
+                sb.append("_s0");
+                break;
+            }
+            case FLOAT: {
+                float t = value.floatValue();
+                if (Float.isNaN(t)) {
+                    sb.append("0NaN");
+                } else if (t == Float.NEGATIVE_INFINITY) {
+                    sb.append("Inf");
+                } else if (t == Float.POSITIVE_INFINITY) {
+                    sb.append("Inf");
+                } else {
+                    sb.append(t);
+                }
+                sb.append("_s32");
+                break;
+            }
+            case DOUBLE: {
+                double t = value.doubleValue();
+                if (Double.isNaN(t)) {
+                    sb.append("NaN");
+                } else if (t == Double.NEGATIVE_INFINITY) {
+                    sb.append("NInf");
+                } else if (t == Double.POSITIVE_INFINITY) {
+                    sb.append("PInf");
+                } else {
+                    sb.append(t);
+                }
+                break;
+            }
+            case BIG_DECIMAL: {
+                sb.append(value);
+                sb.append("LL");
+                break;
+            }
+        }
+        if(!NBlankable.isBlank(value)) {
+            sb.append(suffix);
+        }
+        return sb.toString();
+    }
+
 }
