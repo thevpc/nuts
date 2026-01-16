@@ -43,10 +43,17 @@ import java.util.Objects;
 public class DefaultNCharStreamElement extends AbstractNElement implements NCharStreamElement {
 
     private final NReaderProvider value;
+    private final String blockIdentifier;
 
-    public DefaultNCharStreamElement(NReaderProvider value, NElementAnnotation[] annotations, NElementComments comments) {
+    public DefaultNCharStreamElement(String blockIdentifier,NReaderProvider value, NElementAnnotation[] annotations, NElementComments comments) {
         super(NElementType.CHAR_STREAM, annotations, comments);
         this.value = value;
+        this.blockIdentifier = NStringUtils.trim(blockIdentifier);
+    }
+
+    @Override
+    public String getBlocIdentifier() {
+        return blockIdentifier;
     }
 
     @Override
