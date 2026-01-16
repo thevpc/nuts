@@ -91,7 +91,7 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
 
     @Override
     public NOptional<NElement> get(String s) {
-        NElements elements = NElements.of();
+//        NElements elements = NElements.of();
         for (NElement x : values) {
             if (x instanceof NPairElement) {
                 NPairElement e = (NPairElement) x;
