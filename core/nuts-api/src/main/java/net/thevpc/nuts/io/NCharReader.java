@@ -1,92 +1,136 @@
 package net.thevpc.nuts.io;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Reader;
+import net.thevpc.nuts.util.NExceptions;
 
-public class NCharReader extends BufferedReader {
+import java.io.*;
+import java.nio.CharBuffer;
+
+public class NCharReader extends Reader {
+    private final Reader in;
+    private final char[] buffer;
+    private final boolean autoClose;
+    private int pos = 0;    // current position in buffer
+    private int limit = 0;  // number of chars available in buffer
 
     public NCharReader(Reader reader) {
-        super(reader);
+        this(reader,1024,true);
     }
 
-    public String read(int count) throws IOException {
+    public NCharReader(Reader reader, int bufferSize, boolean autoClose) {
+        this.in = reader;
+        this.buffer = new char[bufferSize];
+        this.autoClose = autoClose;
+    }
+
+    private void fill(int min) {
+        while (limit - pos < min) {
+            if (limit == buffer.length) {
+                // shift remaining chars to start
+                int remaining = limit - pos;
+                System.arraycopy(buffer, pos, buffer, 0, remaining);
+                pos = 0;
+                limit = remaining;
+            }
+            int n = 0;
+            try {
+                n = in.read(buffer, limit, buffer.length - limit);
+            } catch (IOException e) {
+                throw NExceptions.ofSafeIOException(e);
+            }
+            if (n < 0) break;
+            limit += n;
+        }
+    }
+    public int peekChar(int offset) {
+        fill(offset + 1);
+        int index = pos + offset;
+        return (index < limit) ? buffer[index] : -1;
+    }
+    public String read(int count) {
         char[] c = new char[count];
         int v = read(c);
         return new String(c, 0, v);
     }
 
-    public boolean canRead() throws IOException {
-        return peek(1).length() > 0;
+    public boolean canRead() {
+        fill(1);
+        return limit - pos > 0;
     }
 
-    public boolean canReadByCount(int count) throws IOException {
-        return peek(count).length() > count;
+    public boolean canRead(int count) {
+        fill(count);
+        return limit - pos >= count;
     }
 
-    public int read(char[] buffer) throws IOException {
+    public int read(char[] buffer) {
         return read(buffer, 0, buffer.length);
     }
 
-    public int read(char[] buffer, int offset, int count) throws IOException {
-        int read = 0;
-        while (read < count) {
-            int v = super.read(buffer, offset, count);
-            if (v <= 0) {
-                break;
+    public int read(char[] dst, int offset, int count) {
+        fill(count);
+        int available = Math.min(count, limit - pos);
+        if (available <= 0) return -1;
+
+        System.arraycopy(buffer, pos, dst, offset, available);
+        pos += available;
+        return available;
+    }
+
+    public boolean read(String text) {
+        if (text == null || text.isEmpty()) return true;
+        fill(text.length());
+        if (limit - pos < text.length()) return false;
+        for (int i = 0; i < text.length(); i++) {
+            if (buffer[pos + i] != text.charAt(i)) return false;
+        }
+        pos += text.length();
+        return true;
+    }
+
+    public boolean peek(String text) {
+        if (text == null || text.isEmpty()) return true;
+        fill(text.length());
+        if (limit - pos < text.length()) return false;
+        for (int i = 0; i < text.length(); i++) {
+            if (buffer[pos + i] != text.charAt(i)) return false;
+        }
+        return true;
+    }
+
+    public char readChar() {
+        fill(1);
+        if (pos >= limit) throw NExceptions.ofSafeIOException(new EOFException());
+        return buffer[pos++];
+    }
+
+    @Override
+    public int read() {
+        fill(1);
+        if (pos >= limit) {
+            return -1;
+        }
+        return buffer[pos++];
+    }
+
+    public int peek() {
+        fill(1);
+        return pos < limit ? buffer[pos] : -1;
+    }
+
+    public String peek(int count) {
+        fill(count);
+        int available = Math.min(count, limit - pos);
+        return new String(buffer, pos, available);
+    }
+
+    @Override
+    public void close() {
+        if (autoClose) {
+            try {
+                in.close();
+            } catch (IOException e) {
+                throw NExceptions.ofSafeIOException(e);
             }
-            offset += v;
-            read += v;
-            count -= v;
         }
-        return read;
-    }
-
-    public boolean read(String text) throws IOException {
-        if(text==null||text.isEmpty()){
-            return true;
-        }
-        String s = peek(text.length());
-        if(s.equals(text)){
-            skip(text.length());
-            return true;
-        }
-        return false;
-    }
-
-    public boolean peek(String text) throws IOException {
-        if(text==null||text.isEmpty()){
-            return true;
-        }
-        String s = peek(text.length());
-        return s.equals(text);
-    }
-
-    public char readChar() throws IOException {
-        int c = read();
-        if(c<0){
-            throw new IllegalArgumentException("EOF");
-        }
-        return (char)c;
-    }
-
-    public int peek() throws IOException {
-        mark(1);
-        int s = read();
-        if(s>=0) {
-            reset();
-        }
-        return s;
-    }
-
-    public String peek(int count) throws IOException {
-        if (count <= 0) {
-            return "";
-        }
-        mark(count);
-        String s = read(count);
-        reset();
-        return s;
     }
 }
