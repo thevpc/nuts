@@ -29,7 +29,7 @@ import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPairElement;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNUpletElement;
 import net.thevpc.nuts.runtime.standalone.elem.item.NElementCommentsImpl;
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
@@ -47,29 +47,31 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     public DefaultNUpletElementBuilder() {
     }
+
     @Override
     public NUpletElementBuilder removeAnnotation(NElementAnnotation annotation) {
         super.removeAnnotation(annotation);
         return this;
     }
+
     @Override
     public NUpletElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other, NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
     @Override
     public NUpletElementBuilder copyFrom(NElement other) {
-        copyFrom(other, NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
+    public NUpletElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
         if (other == null) {
             return this;
         }
-        super.copyFrom(other, strategy);
+        super.copyFrom(other, assignmentPolicy);
         if (other instanceof NPairElementBuilder) {
             NPairElementBuilder from = (NPairElementBuilder) other;
             add(from.key());
@@ -111,11 +113,11 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
+    public NUpletElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
         if (other == null) {
             return this;
         }
-        super.copyFrom(other, strategy);
+        super.copyFrom(other, assignmentPolicy);
         if (other instanceof NPairElementBuilder) {
             NPairElementBuilder from = (NPairElementBuilder) other;
             add(from.key());
