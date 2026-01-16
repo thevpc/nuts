@@ -1,10 +1,24 @@
 package net.thevpc.nuts.core.test;
 
+import java.io.StringReader;
+import java.math.BigInteger;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementReader;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import net.thevpc.nuts.elem.NListElement;
+import net.thevpc.nuts.elem.NListItemElement;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementToken;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenType;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCustomLexer;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCustomParser;
+import net.thevpc.nuts.util.NOptional;
 
 public class TsonTest {
 
@@ -36,5 +50,385 @@ public class TsonTest {
         TestUtils.println(parsed.toString());
     }
 
+    @Test
+    public void test04() {
+        String tson = "-1";
+        NElement parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(parsed.toString());
+    }
 
+    @Test
+    public void test05() {
+        String tson = "-1E-5";
+        NElement parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(parsed.toString());
+    }
+
+    @Test
+    public void test06() {
+        String tson = "ω=π+freq*g";
+        NElement parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(parsed.toString());
+    }
+
+
+    @Test
+    public void test07() {
+        String tson = "-1E-5hello";
+        NElement parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(parsed.toString());
+    }
+
+    @Test
+    public void test08() {
+        String tson = "ω=π+f*g";
+//        String tson = "-1E-5hello";
+        TsonCustomLexer parsed = new TsonCustomLexer(new StringReader(tson));
+        List<NElementToken> a = parsed.all();
+        Assertions.assertEquals(7,a.size());
+        Assertions.assertEquals("ω", a.get(0).image());
+        Assertions.assertEquals("=", a.get(1).image());
+        Assertions.assertEquals("π", a.get(2).image());
+        Assertions.assertEquals("+", a.get(3).image());
+        Assertions.assertEquals("f", a.get(4).image());
+        Assertions.assertEquals("*", a.get(5).image());
+        Assertions.assertEquals("g", a.get(6).image());
+    }
+
+    @Test
+    public void test09() {
+        String tson = "-1E-5hello";
+        TsonCustomLexer parsed = new TsonCustomLexer(new StringReader(tson));
+        List<NElementToken> a = parsed.all();
+        System.out.println(a);
+        Assertions.assertEquals(1,a.size());
+        Assertions.assertEquals("-1E-5hello", a.get(0).image());
+    }
+
+    @Test
+    public void test11_comments() {
+        String tson = "// line comment\n/* block\ncomment */";
+        TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
+        List<NElementToken> tokens = lexer.all();
+        // Comments are returned as WHITESPACE
+        for (NElementToken token : tokens) {
+            Assertions.assertEquals(NElementTokenType.WHITESPACE, token.type());
+        }
+    }
+
+    @Test
+    public void test12_unicode_identifiers() {
+        String tson = "ω π identifier_123 $var";
+        TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
+        List<NElementToken> tokens = lexer.all();
+        Assertions.assertEquals("ω", tokens.get(0).image());
+        Assertions.assertEquals("π", tokens.get(2).image());
+        Assertions.assertEquals("identifier_123", tokens.get(4).image());
+        Assertions.assertEquals("$var", tokens.get(6).image());
+    }
+
+    @Test
+    public void test13_numbers_bitwidth() {
+        String tson = "123s8 456u16 789s32 1011u64 1213n";
+        TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
+        List<NElementToken> tokens = lexer.all();
+        Assertions.assertEquals("123s8", tokens.get(0).image());
+        Assertions.assertEquals("456u16", tokens.get(2).image());
+        Assertions.assertEquals("789s32", tokens.get(4).image());
+        Assertions.assertEquals("1011u64", tokens.get(6).image());
+        Assertions.assertEquals("1213n", tokens.get(8).image());
+    }
+
+    @Test
+    public void test14_complex_numbers() {
+        String tson = "1+2i 3.5-4.2i 5i";
+        TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
+        List<NElementToken> tokens = lexer.all();
+        Assertions.assertEquals("1+2i", tokens.get(0).image());
+        Assertions.assertEquals("3.5-4.2i", tokens.get(2).image());
+        Assertions.assertEquals("5i", tokens.get(4).image());
+    }
+
+    @Test
+    public void test15_temporal_types() {
+        String tson = "2023-10-27 10:30:00 2023-10-27T10:30:00Z";
+        TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
+        List<NElementToken> tokens = lexer.all();
+        Assertions.assertEquals(NElementTokenType.DATE, tokens.get(0).type());
+        Assertions.assertEquals(NElementTokenType.TIME, tokens.get(2).type());
+        Assertions.assertEquals(NElementTokenType.INSTANT, tokens.get(4).type());
+    }
+
+    @Test
+    public void test16_streams() {
+        String tson = "^[SGVsbG8=] ^myid{Hello World^myid} ^^ ^^^";
+        TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
+        List<NElementToken> tokens = lexer.all();
+        Assertions.assertEquals("^[SGVsbG8=]", tokens.get(0).image());
+        Assertions.assertEquals("^myid{Hello World^myid}", tokens.get(2).image());
+        Assertions.assertEquals("^^", tokens.get(4).image());
+        Assertions.assertEquals("^^^", tokens.get(6).image());
+    }
+
+    @Test
+    public void test17_custom_parser() {
+        String tson = "/*hello*/a:b {c:d, e:[1,2,3]} @ann(x:y) f(g)";
+        TsonCustomParser parser = new TsonCustomParser(tson);
+        NElement element = parser.parseDocument();
+        TestUtils.println(element);
+        Assertions.assertNotNull(element);
+    }
+
+    @Test
+    public void test18_custom_parser() {
+        String tson = "a:b} {c:d";
+        TsonCustomParser parser = new TsonCustomParser(tson);
+        NElement element = parser.parseDocument();
+        TestUtils.println(element);
+        Assertions.assertNotNull(element);
+    }
+
+    @Test
+    public void testList_unordered_basic_ast() {
+        String tson = ". Apple\n.. Banana\n.. Cherry\n. Date";
+        TsonCustomParser parser = new TsonCustomParser(tson);
+        NElement element = parser.parseDocument();
+        TestUtils.println(element);
+
+        Assertions.assertNotNull(element);
+
+        // 1. Confirm it's a list (and specifically unordered)
+        Assertions.assertTrue(element.isList());
+        Assertions.assertTrue(element.isUnorderedList());
+        NOptional<NListElement> topLevelOpt = element.asList();
+        Assertions.assertTrue(topLevelOpt.isPresent());
+        NListElement topLevel = topLevelOpt.get();
+
+        // 2. Top-level list has 2 items: "Apple", "Date"
+        Assertions.assertEquals(2, topLevel.children().size());
+
+        // 3. First item: "Apple" with a sublist
+        NListItemElement firstItem = topLevel.children().get(0);
+        Assertions.assertTrue(firstItem.value().isPresent());
+        // Assuming value is an NString-like element; compare raw content if needed
+        Assertions.assertEquals("Apple", firstItem.value().get().asName().get().stringValue());
+
+        NOptional<NListElement> subListOpt = firstItem.subList();
+        Assertions.assertTrue(subListOpt.isPresent());
+        NListElement subList = subListOpt.get();
+        Assertions.assertTrue(subList.isUnorderedList()); // sublist inherits type
+        Assertions.assertEquals(2, subList.children().size());
+
+        // 4. Sublist items: "Banana", "Cherry"
+        Assertions.assertEquals("Banana", subList.children().get(0).value().get().asName().get().toString());
+        Assertions.assertEquals("Cherry", subList.children().get(1).value().get().asName().get().toString());
+
+        // 5. Second top-level item: "Date", no sublist
+        NListItemElement secondItem = topLevel.children().get(1);
+        Assertions.assertTrue(secondItem.value().isPresent());
+        Assertions.assertEquals("Date", secondItem.value().get().asName().get().toString());
+        Assertions.assertTrue(secondItem.subList().isEmpty());
+
+    }
+
+    @Test
+    public void testList_unordered_basic_ast2() {
+        String tson = ". A ..... B .. C";
+        TsonCustomParser parser = new TsonCustomParser(tson);
+        NElement element = parser.parseDocument();
+        TestUtils.println(element);
+
+        Assertions.assertNotNull(element);
+
+        Assertions.assertTrue(element.isUnorderedList());
+
+        NOptional<NListElement> topLevelOpt = element.asUnorderedList();
+        Assertions.assertTrue(topLevelOpt.isPresent());
+        NListElement topLevel = topLevelOpt.get();
+
+        // Top-level list has depth 1
+        Assertions.assertEquals(1, topLevel.depth());
+        // Only one top-level item: A
+        Assertions.assertEquals(1, topLevel.children().size());
+
+        // First (and only) item is A
+        NListItemElement itemA = topLevel.children().get(0);
+        Assertions.assertEquals(1, itemA.depth());
+        Assertions.assertTrue(itemA.value().isPresent());
+        Assertions.assertEquals("A", itemA.value().get().asName().get().stringValue());
+
+        // A must have a sublist
+        Assertions.assertTrue(itemA.subList().isPresent());
+        NListElement subList = itemA.subList().get();
+
+        // Sublist depth = min(5, 2) = 2
+        Assertions.assertEquals(2, subList.depth());
+        Assertions.assertEquals(2, subList.children().size());
+
+        // First child: B (depth=5)
+        NListItemElement itemB = subList.children().get(0);
+        Assertions.assertEquals(5, itemB.depth());
+        Assertions.assertTrue(itemB.value().isPresent());
+        Assertions.assertEquals("B", itemB.value().get().asName().get().stringValue());
+        // B has no sublist
+        Assertions.assertTrue(itemB.subList().isEmpty());
+
+        // Second child: C (depth=2)
+        NListItemElement itemC = subList.children().get(1);
+        Assertions.assertEquals(2, itemC.depth());
+        Assertions.assertTrue(itemC.value().isPresent());
+        Assertions.assertEquals("C", itemC.value().get().asName().get().stringValue());
+        // C has no sublist
+        Assertions.assertTrue(itemC.subList().isEmpty());
+    }
+
+    @Test
+    public void testList_unordered_basic_ast3() {
+        String tson = ". A\n" +
+                ".. B\n" +
+                "... C\n" +
+                ".. D";
+
+        TsonCustomParser parser = new TsonCustomParser(tson);
+        NElement element = parser.parseDocument();
+        TestUtils.println(element);
+
+        Assertions.assertNotNull(element);
+        Assertions.assertTrue(element.isUnorderedList());
+
+        NOptional<NListElement> topLevelOpt = element.asUnorderedList();
+        Assertions.assertTrue(topLevelOpt.isPresent());
+        NListElement topLevel = topLevelOpt.get();
+
+        // Top-level list has depth 1
+        Assertions.assertEquals(1, topLevel.depth());
+        // Only one top-level item: A
+        Assertions.assertEquals(1, topLevel.children().size());
+
+        // === Item A ===
+        NListItemElement itemA = topLevel.children().get(0);
+        Assertions.assertEquals(1, itemA.depth());
+        Assertions.assertTrue(itemA.value().isPresent());
+        Assertions.assertEquals("A", itemA.value().get().asName().get().stringValue());
+
+        // A must have a sublist
+        Assertions.assertTrue(itemA.subList().isPresent());
+        NListElement subListA = itemA.subList().get();
+        Assertions.assertEquals(2, subListA.depth()); // min(2, 2) = 2
+        Assertions.assertEquals(2, subListA.children().size());
+
+        // === Item B (first child of A's sublist) ===
+        NListItemElement itemB = subListA.children().get(0);
+        Assertions.assertEquals(2, itemB.depth());
+        Assertions.assertTrue(itemB.value().isPresent());
+        Assertions.assertEquals("B", itemB.value().get().asName().get().stringValue());
+
+        // B must have a sublist
+        Assertions.assertTrue(itemB.subList().isPresent());
+        NListElement subListB = itemB.subList().get();
+        Assertions.assertEquals(3, subListB.depth()); // only child has depth 3
+        Assertions.assertEquals(1, subListB.children().size());
+
+        // === Item C (child of B's sublist) ===
+        NListItemElement itemC = subListB.children().get(0);
+        Assertions.assertEquals(3, itemC.depth());
+        Assertions.assertTrue(itemC.value().isPresent());
+        Assertions.assertEquals("C", itemC.value().get().asName().get().stringValue());
+        Assertions.assertTrue(itemC.subList().isEmpty()); // no further nesting
+
+        // === Item D (second child of A's sublist) ===
+        NListItemElement itemD = subListA.children().get(1);
+        Assertions.assertEquals(2, itemD.depth());
+        Assertions.assertTrue(itemD.value().isPresent());
+        Assertions.assertEquals("D", itemD.value().get().asName().get().stringValue());
+        Assertions.assertTrue(itemD.subList().isEmpty()); // no sublist
+    }
+
+    @Test
+    public void testList_unordered_basic() {
+        String tson = ". Apple\n.. Banana\n.. Cherry\n. Date";
+        TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
+        List<NElementToken> tokens = lexer.all().stream().filter(x->x.type()!=NElementTokenType.WHITESPACE).collect(Collectors.toList());
+        Assertions.assertEquals(".", tokens.get(0).image());
+        Assertions.assertEquals("Apple", tokens.get(1).image());
+        Assertions.assertEquals("..", tokens.get(2).image());
+        Assertions.assertEquals("Banana", tokens.get(3).image());
+        Assertions.assertEquals("..", tokens.get(4).image());
+        Assertions.assertEquals("Cherry", tokens.get(5).image());
+        Assertions.assertEquals(".", tokens.get(6).image());
+        Assertions.assertEquals("Date", tokens.get(7).image());
+    }
+
+    @Test
+    public void testNumberConstants() {
+        // Signed Integers
+        checkConstant("0max_s8", (byte) 127);
+        checkConstant("0min_s8", (byte) -128);
+        checkConstant("0max_s16", (short) 32767);
+        checkConstant("0min_s16", (short) -32768);
+        checkConstant("0max_s32", 2147483647);
+        checkConstant("0min_s32", -2147483648);
+        checkConstant("0max_s64", 9223372036854775807L);
+        checkConstant("0min_s64", -9223372036854775808L);
+
+        // Unsigned Integers
+        checkConstant("0max_u8", (short) 255);
+        checkConstant("0min_u8", (short) 0);
+        checkConstant("0max_u16", 65535);
+        checkConstant("0min_u16", 0);
+        checkConstant("0max_u32", 4294967295L);
+        checkConstant("0min_u32", 0L);
+        checkConstant("0max_u64", new BigInteger("18446744073709551615"));
+        checkConstant("0min_u64", BigInteger.ZERO);
+
+        // Floating Point
+        checkConstant("0max_f32", Float.MAX_VALUE);
+        checkConstant("0min_f32", Float.MIN_VALUE);
+        checkConstant("0pinf_f32", Float.POSITIVE_INFINITY);
+        checkConstant("0ninf_f32", Float.NEGATIVE_INFINITY);
+        checkConstant("0nan_f32", Float.NaN);
+
+        checkConstant("0max_f64", Double.MAX_VALUE);
+        checkConstant("0min_f64", Double.MIN_VALUE);
+        checkConstant("0pinf_f64", Double.POSITIVE_INFINITY);
+        checkConstant("0ninf_f64", Double.NEGATIVE_INFINITY);
+        checkConstant("0nan_f64", Double.NaN);
+        checkConstant("0NaN", Double.NaN);
+    }
+
+    @Test
+    public void testNumberConstantsCaseInsensitivity() {
+        checkConstant("0MAX_s8", (byte) 127);
+        checkConstant("0Pinf_f32", Float.POSITIVE_INFINITY);
+        checkConstant("0nAn_f64", Double.NaN);
+    }
+
+    @Test
+    public void testNumberConstantsUnderscoreOptionality() {
+        checkConstant("0maxs8", (byte) 127);
+        checkConstant("0pinf_f32", Float.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testNumberConstantsSuffixes() {
+        NElement e = net.thevpc.nuts.elem.NElementReader.ofTson().read("0max_s8%");
+        Assertions.assertEquals((byte) 127, e.asByteValue().get());
+        Assertions.assertEquals("%", e.asNumber().get().numberSuffix());
+
+        e = net.thevpc.nuts.elem.NElementReader.ofTson().read("0pinf_f32ms");
+        Assertions.assertEquals(Float.POSITIVE_INFINITY, e.asFloatValue().get());
+        Assertions.assertEquals("ms", e.asNumber().get().numberSuffix());
+    }
+
+    private void checkConstant(String tson, Object expected) {
+        NElement e = net.thevpc.nuts.elem.NElementReader.ofTson().read(tson);
+        Object actual = e.asNumber().get().numberValue();
+        if (expected instanceof Float && ((Float) expected).isNaN()) {
+            Assertions.assertTrue(actual instanceof Float && ((Float) actual).isNaN(), "Expected NaN (float) for " + tson + " but got " + actual);
+        } else if (expected instanceof Double && ((Double) expected).isNaN()) {
+            Assertions.assertTrue(actual instanceof Double && ((Double) expected).isNaN(), "Expected NaN (double) for " + tson + " but got " + actual);
+        } else {
+            Assertions.assertEquals(expected, actual, "Failed for " + tson);
+        }
+    }
 }
