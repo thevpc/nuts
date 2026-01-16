@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.builder;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNCustomElement;
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -17,28 +17,30 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NCustomElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other,NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
+
     @Override
     public NCustomElementBuilder removeAnnotation(NElementAnnotation annotation) {
         super.removeAnnotation(annotation);
         return this;
     }
+
     @Override
     public NCustomElementBuilder copyFrom(NElement other) {
-        copyFrom(other,NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
     @Override
-    public NCustomElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
-        return (NCustomElementBuilder) super.copyFrom(other,strategy);
+    public NCustomElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
+        return (NCustomElementBuilder) super.copyFrom(other, assignmentPolicy);
     }
 
     @Override
-    public NCustomElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
-        return (NCustomElementBuilder) super.copyFrom(other,strategy);
+    public NCustomElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
+        return (NCustomElementBuilder) super.copyFrom(other, assignmentPolicy);
     }
 
     @Override
