@@ -2,7 +2,9 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementAnnotation;
+import net.thevpc.nuts.elem.NElementAnnotationBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
+import net.thevpc.nuts.runtime.standalone.elem.builder.NElementAnnotationBuilderImpl;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
@@ -22,14 +24,19 @@ public class NElementAnnotationImpl implements NElementAnnotation {
 
     @Override
     public boolean isCustomTree() {
-        if(params!=null){
+        if (params != null) {
             for (NElement param : params) {
-                if(param.isCustomTree()){
+                if (param.isCustomTree()) {
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    @Override
+    public NElementAnnotationBuilder builder() {
+        return new NElementAnnotationBuilderImpl(name, params());
     }
 
     public boolean isParametrized() {
@@ -73,7 +80,7 @@ public class NElementAnnotationImpl implements NElementAnnotation {
     public String toString(boolean compact) {
         NStringBuilder sb = new NStringBuilder();
         NElementToStringHelper.appendUplet("@" + (NStringUtils.trim(name)), null, compact, sb);
-        if(params!=null){
+        if (params != null) {
             sb.append("(");
             NElementToStringHelper.appendChildren(params(), compact, new NElementToStringHelper.SemiCompactInfo().setMaxChildren(10).setMaxLineSize(120), sb);
             sb.append(")");
