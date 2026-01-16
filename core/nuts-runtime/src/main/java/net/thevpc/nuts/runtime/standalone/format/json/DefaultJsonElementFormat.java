@@ -85,10 +85,10 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             case INSTANT:
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
-            case ANTI_QUOTED_STRING:
+            case BACKTICK_STRING:
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_ANTI_QUOTED_STRING:
+            case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
             case NAME:
 //            case NUTS_STRING:
@@ -270,14 +270,17 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 NOperatorElement ope = (NOperatorElement) e;
                 NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(e);
                 value1.clearChildren();
-                value1.set("op", ope.type().opSymbol());
-                value1.set("mode", ope.operatorType().id());
+                value1.set("op", ope.type().id());
+                value1.set("symbol", ope.symbol().id());
+                value1.set("position", ope.position().id());
                 value1.name(null);
-                if (ope.first().isPresent()) {
-                    value1.set("$first", ope.first().get());
-                }
-                if (ope.second().isPresent()) {
-                    value1.set("$second", ope.second().get());
+                if(ope.isBinaryOperator()) {
+                    NBinaryOperatorElement bb = ope.asBinaryOperator().get();
+                    value1.set("$first", bb.first());
+                    value1.set("$second", bb.second());
+                }else if(ope.isUnaryOperator()){
+                    NUnaryOperatorElement bb = ope.asUnaryOperator().get();
+                    value1.set("$first", bb.first());
                 }
                 return value1.build();
             }
@@ -303,7 +306,6 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                             .build();
                 }
             }
-            case REGEX:
             case NAME:
             case INSTANT:
             case BIG_COMPLEX:
@@ -318,10 +320,10 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             case CHAR:
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
-            case ANTI_QUOTED_STRING:
+            case BACKTICK_STRING:
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_ANTI_QUOTED_STRING:
+            case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
                 // TODO FIXE ME LATER
             {
@@ -437,9 +439,6 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                             .build();
                 }
             }
-            case MATRIX:
-            case NAMED_MATRIX:
-            case NAMED_PARAMETRIZED_MATRIX:
             default: {
                 throw new NUnsupportedOperationException(NMsg.ofC("unsupported ensureJson for %s", e.type()));
             }
