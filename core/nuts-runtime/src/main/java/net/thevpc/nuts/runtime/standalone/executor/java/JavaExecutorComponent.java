@@ -177,7 +177,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
             NWorkspaceOptions extraOptions = NWorkspaceOptionsBuilder.of().setCmdLine(
                     NCmdLine.parseDefault(a).get().toStringArray()
             ).build();
-            options.copyFrom(extraOptions, NMapStrategy.SOURCE_NON_NULL);
+            options.copyFrom(extraOptions, NAssignmentPolicy.SOURCE_NON_NULL);
         }
         //sandbox workspace children are always confined
         if (options.getIsolationLevel().orNull() == NIsolationLevel.SANDBOX) {
