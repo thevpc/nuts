@@ -159,6 +159,11 @@ public abstract class AbstractNElement implements NElement {
         return type().isAnyListContainer();
     }
 
+    @Override
+    public boolean isListOrParametrizedContainer() {
+        return type().isAnyListOrParametrizedContainer();
+    }
+
 
     @Override
     public NOptional<NNumberElement> asNumber() {
@@ -173,12 +178,21 @@ public abstract class AbstractNElement implements NElement {
         return NOptional.ofEmpty(_expected("list container"));
     }
 
+
     @Override
     public NOptional<NParametrizedContainerElement> asParametrizedContainer() {
         if (isListContainer()) {
             return NOptional.of((NParametrizedContainerElement) this);
         }
         return NOptional.ofEmpty(_expected("parametrized container"));
+    }
+
+    @Override
+    public NOptional<NListOrParametrizedContainerElement> asListOrParametrizedContainer() {
+        if (isListOrParametrizedContainer()) {
+            return NOptional.of((NListOrParametrizedContainerElement) this);
+        }
+        return NOptional.ofEmpty(_expected("lis or parametrized container"));
     }
 
     @Override
@@ -235,11 +249,6 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public boolean isAnyMatrix() {
-        return type().isAnyMatrix();
-    }
-
-    @Override
     public boolean isAnyUplet() {
         return type().isAnyUplet();
     }
@@ -275,41 +284,6 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public boolean isNamedMatrix() {
-        return type() == NElementType.NAMED_MATRIX;
-    }
-
-    @Override
-    public boolean isAnyNamedMatrix() {
-        return false;
-    }
-
-    @Override
-    public boolean isAnyNamedMatrix(String name) {
-        return isNamedMatrix() && isNamed(name);
-    }
-
-    @Override
-    public boolean isParametrizedMatrix() {
-        return type() == NElementType.PARAMETRIZED_MATRIX;
-    }
-
-    @Override
-    public boolean isAnyParametrizedMatrix() {
-        return type().isAnyParametrizedMatrix();
-    }
-
-    @Override
-    public boolean isAnyParametrizedMatrix(String name) {
-        return isNamedParametrizedMatrix() && isNamed(name);
-    }
-
-    @Override
-    public boolean isNamedParametrizedMatrix() {
-        return type() == NElementType.NAMED_PARAMETRIZED_MATRIX;
-    }
-
-    @Override
     public boolean isNamed(String name) {
         return isNamed() && Objects.equals(asNamed().get(), name);
     }
@@ -341,16 +315,6 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public boolean isNamedParametrizedObject(Predicate<String> nameCondition) {
         return isNamedParametrizedObject() && isNamed(nameCondition);
-    }
-
-    @Override
-    public boolean isNamedParametrizedMatrix(Predicate<String> nameCondition) {
-        return isNamedParametrizedMatrix() && isNamed(nameCondition);
-    }
-
-    @Override
-    public boolean isNamedParametrizedMatrix(String name) {
-        return isNamedParametrizedMatrix() && isNamed(name);
     }
 
     @Override
@@ -422,14 +386,6 @@ public abstract class AbstractNElement implements NElement {
             return NOptional.of((NUpletElement) this);
         }
         return NOptional.ofError(() -> _expected("uplet"));
-    }
-
-    @Override
-    public NOptional<NMatrixElement> asMatrix() {
-        if (this instanceof NMatrixElement) {
-            return NOptional.of((NMatrixElement) this);
-        }
-        return NOptional.ofError(() -> _expected("matrix"));
     }
 
     @Override
@@ -554,54 +510,77 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<NOperatorSymbolElement> asOperatorSymbol() {
+        if (this instanceof NOperatorSymbolElement) {
+            return NOptional.of((NOperatorSymbolElement) this);
+        }
+        return NOptional.ofEmpty(_expected("operator"));
+    }
+
+    @Override
+    public NOptional<NBinaryOperatorElement> asBinaryOperator() {
+        if (this instanceof NBinaryOperatorElement) {
+            return NOptional.of((NBinaryOperatorElement) this);
+        }
+        return NOptional.ofEmpty(_expected("operator"));
+    }
+
+    @Override
+    public NOptional<NUnaryOperatorElement> asUnaryOperator() {
+        if (this instanceof NUnaryOperatorElement) {
+            return NOptional.of((NUnaryOperatorElement) this);
+        }
+        return NOptional.ofEmpty(_expected("operator"));
+    }
+
+    @Override
     public boolean isBinaryInfixOperator() {
-        NOptional<NOperatorElement> o = asOperator();
-        if (o.isPresent()) {
-            NOperatorElement oo = o.get();
-            return oo.operatorType() == NOperatorType.BINARY_INFIX;
+        if (type() == NElementType.BINARY_OPERATOR) {
+            NOptional<NOperatorElement> o = asOperator();
+            if (o.isPresent()) {
+                NOperatorElement oo = o.get();
+                return oo.position() == NOperatorPosition.INFIX;
+            }
         }
         return false;
     }
 
     @Override
     public boolean isUnaryPrefixOperator() {
-        NOptional<NOperatorElement> o = asOperator();
-        if (o.isPresent()) {
-            NOperatorElement oo = o.get();
-            return oo.operatorType() == NOperatorType.UNARY_PREFIX;
+        if (type() == NElementType.UNARY_OPERATOR) {
+            NOptional<NOperatorElement> o = asOperator();
+            if (o.isPresent()) {
+                NOperatorElement oo = o.get();
+                return oo.position() == NOperatorPosition.PREFIX;
+            }
         }
         return false;
     }
 
     @Override
     public boolean isBinaryOperator() {
+        return type() == NElementType.BINARY_OPERATOR;
+    }
+
+    @Override
+    public boolean isBinaryOperator(NOperatorSymbol type) {
+        NAssert.requireTrue(type != null, () -> NMsg.ofC("required operator type, got %s", type));
         NOptional<NOperatorElement> o = asOperator();
         if (o.isPresent()) {
             NOperatorElement oo = o.get();
-            return oo.operatorType() == NOperatorType.BINARY_INFIX;
+            return oo.symbol() == type;
         }
         return false;
     }
 
     @Override
-    public boolean isBinaryOperator(NElementType type) {
-        NAssert.requireTrue(type != null && type.typeGroup() == NElementTypeGroup.OPERATOR, () -> NMsg.ofC("required operator type, got %s", type));
-        NOptional<NOperatorElement> o = asOperator();
+    public boolean isLeftNamedBinaryOperator(NOperatorSymbol type) {
+        NAssert.requireTrue(type != null, () -> NMsg.ofC("required operator type, got %s", type));
+        NOptional<NBinaryOperatorElement> o = asBinaryOperator();
         if (o.isPresent()) {
-            NOperatorElement oo = o.get();
-            return oo.operatorType() == NOperatorType.BINARY_INFIX && oo.type() == type;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isLeftNamedBinaryOperator(NElementType type) {
-        NAssert.requireTrue(type != null && type.typeGroup() == NElementTypeGroup.OPERATOR, () -> NMsg.ofC("required operator type, got %s", type));
-        NOptional<NOperatorElement> o = asOperator();
-        if (o.isPresent()) {
-            NOperatorElement oo = o.get();
-            if (oo.operatorType() == NOperatorType.BINARY_INFIX && oo.type() == type && oo.first().isPresent()) {
-                NElement f = oo.first().get();
+            NBinaryOperatorElement oo = o.get();
+            if (oo.symbol() == type) {
+                NElement f = oo.first();
                 return (f.isName() || f.isString());
             }
         }
@@ -609,14 +588,14 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public boolean isLeftNamedBinaryOperator(NElementType type, String name) {
+    public boolean isLeftNamedBinaryOperator(NOperatorSymbol type, String name) {
         NAssert.requireNonNull(name, "name");
-        NAssert.requireTrue(type != null && type.typeGroup() == NElementTypeGroup.OPERATOR, () -> NMsg.ofC("required operator type, got %s", type));
-        NOptional<NOperatorElement> o = asOperator();
+        NAssert.requireTrue(type != null, () -> NMsg.ofC("required operator type, got %s", type));
+        NOptional<NBinaryOperatorElement> o = asBinaryOperator();
         if (o.isPresent()) {
-            NOperatorElement oo = o.get();
-            if (oo.operatorType() == NOperatorType.BINARY_INFIX && oo.type() == type && oo.first().isPresent()) {
-                NElement f = oo.first().get();
+            NBinaryOperatorElement oo = o.get();
+            if (oo.symbol() == type) {
+                NElement f = oo.first();
                 return (f.isName() || f.isString()) && Objects.equals(f.asStringValue().orNull(), name);
             }
         }
@@ -630,12 +609,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isUnaryOperator() {
-        NOptional<NOperatorElement> o = asOperator();
-        if (o.isPresent()) {
-            NOperatorElement oo = o.get();
-            return oo.operatorType() == NOperatorType.UNARY_PREFIX;
-        }
-        return false;
+        return type() == NElementType.UNARY_OPERATOR;
     }
 
     @Override
@@ -1228,5 +1202,53 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public NElement[] transform(NElementTransform transform) {
         return NElementTransformHelper.transform(this, transform);
+    }
+
+    @Override
+    public boolean isList() {
+        NElementType type = type();
+        return type == NElementType.ORDERED_LIST || type == NElementType.UNORDERED_LIST;
+    }
+
+    @Override
+    public NOptional<NListElement> asList() {
+        if (this instanceof NListElement) {
+            return NOptional.of((NListElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to list: %s", type().id(), this));
+    }
+
+    @Override
+    public NOptional<NListElement> asOrderedList() {
+        if (type() == NElementType.ORDERED_LIST) {
+            return NOptional.of((NListElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to ordered list: %s", type().id(), this));
+    }
+
+    @Override
+    public NOptional<NListElement> asUnorderedList() {
+        if (type() == NElementType.UNORDERED_LIST) {
+            return NOptional.of((NListElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to unordered list: %s", type().id(), this));
+    }
+
+    @Override
+    public boolean isOrderedList() {
+        return type() == NElementType.ORDERED_LIST;
+    }
+
+    @Override
+    public boolean isUnorderedList() {
+        return type() == NElementType.UNORDERED_LIST;
+    }
+
+    @Override
+    public NOptional<NStringElement> asName() {
+        if (type() == NElementType.NAME) {
+            return NOptional.of((NStringElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to name: %s", type().id(), this));
     }
 }
