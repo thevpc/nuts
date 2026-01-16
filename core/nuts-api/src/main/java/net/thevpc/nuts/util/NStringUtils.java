@@ -498,7 +498,7 @@ public class NStringUtils {
                     break;
                 }
                 case '`': {
-                    if (quoteType == NElementType.ANTI_QUOTED_STRING) {
+                    if (quoteType == NElementType.BACKTICK_STRING) {
                         sb.append("\\").append(c);
                         if (!requireQuotes && allowQuotes) {
                             requireQuotes = true;
@@ -538,7 +538,7 @@ public class NStringUtils {
                     sb.append('\'');
                     break;
                 }
-                case ANTI_QUOTED_STRING: {
+                case BACKTICK_STRING: {
                     sb.insert(0, '`');
                     sb.append('`');
                     break;
@@ -553,7 +553,7 @@ public class NStringUtils {
                     sb.append("'''");
                     break;
                 }
-                case TRIPLE_ANTI_QUOTED_STRING: {
+                case TRIPLE_BACKTICK_STRING: {
                     sb.insert(0, "```");
                     sb.append("```");
                     break;
