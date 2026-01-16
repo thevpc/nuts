@@ -33,6 +33,51 @@ public class NExceptions {
         return new NIllegalArgumentException(e);
     }
 
+    public static RuntimeException ofSafeIOException(Throwable e) {
+        if (!NWorkspace.get().isPresent()) {
+            if (e == null) {
+                return new UncheckedIOException(new IOException());
+            }
+            if (e instanceof IOException) {
+                return new UncheckedIOException((IOException) e);
+            }
+            return new UncheckedIOException(new IOException(NMsg.ofC("%s", getErrorMessage(e)).toString(), e));
+        }
+        if (e == null) {
+            return new NIOException(NMsg.ofC("io error"));
+        }
+        return new NIOException(NMsg.ofC("%s", getErrorMessage(e)), e);
+    }
+
+    public static RuntimeException ofSafeIOException(NMsg msg, Throwable e) {
+        if (!NWorkspace.get().isPresent()) {
+            if (msg == null && e == null) {
+                return new UncheckedIOException(new IOException());
+            }
+            if (msg == null) {
+                msg = NMsg.ofC("%s", getErrorMessage(e));
+            }
+            if (e instanceof IOException) {
+                return new UncheckedIOException(msg.toString(), (IOException) e);
+            }
+            return new UncheckedIOException(new IOException(msg.toString(), e));
+        }
+        if (msg == null && e == null) {
+            return new NIOException(NMsg.ofC("io error"));
+        }
+        if (msg == null) {
+            msg = NMsg.ofC("%s", getErrorMessage(e));
+        }
+        return new NIOException(msg, e);
+    }
+
+    public static RuntimeException ofSafeIOException(NMsg e) {
+        if (!NWorkspace.get().isPresent()) {
+            return new UncheckedIOException(new IOException(e.toString()));
+        }
+        return new NIOException(e);
+    }
+
     public static RuntimeException ofSafeIllegalArgumentException(NMsg message, Throwable ex) {
         if (!NWorkspace.get().isPresent()) {
             return new IllegalArgumentException(message.toString(), ex);
@@ -136,7 +181,7 @@ public class NExceptions {
         }
         if (e instanceof InvocationTargetException) {
             Throwable c = e.getCause();
-            if(c!=null){
+            if (c != null) {
                 return ofUncheckedException(c);
             }
         }
