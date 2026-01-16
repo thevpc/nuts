@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.elem.builder;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNArrayElement;
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NArrayElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other,NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
@@ -62,11 +62,11 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NArrayElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
+    public NArrayElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy condition) {
         if (other == null) {
             return this;
         }
-        super.copyFrom(other, strategy);
+        super.copyFrom(other, condition);
         if (other instanceof NPairElementBuilder) {
             NPairElementBuilder from = (NPairElementBuilder) other;
             add(from.key());
@@ -104,23 +104,15 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
             name(from.name().orNull());
             return this;
         }
-        if (other instanceof NMatrixElementBuilder) {
-            NMatrixElementBuilder from = (NMatrixElementBuilder) other;
-            for (NArrayElement row : from.rows()) {
-                add(row);
-            }
-            name(from.name().orNull());
-            return this;
-        }
         return this;
     }
 
     @Override
-    public NArrayElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
+    public NArrayElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
         if (other == null) {
             return this;
         }
-        super.copyFrom(other, strategy);
+        super.copyFrom(other, assignmentPolicy);
         if (other instanceof NPairElementBuilder) {
             NPairElementBuilder from = (NPairElementBuilder) other;
             add(from.key());
@@ -154,14 +146,6 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
             List<NElement> p = from.params().orNull();
             if (p != null) {
                 this.addParams(p);
-            }
-            name(from.name().orNull());
-            return this;
-        }
-        if (other instanceof NMatrixElement) {
-            NMatrixElement from = (NMatrixElement) other;
-            for (NArrayElement row : from.rows()) {
-                add(row);
             }
             name(from.name().orNull());
             return this;
