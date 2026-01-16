@@ -27,6 +27,7 @@ import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -349,7 +350,7 @@ public class DefaultNIORPI implements NIORPI {
         if(writer instanceof NOutputTarget){
             return (NOutputTarget) writer;
         }
-        return ofOutputTarget(new WriterOutputStream(writer), metadata);
+        return ofOutputTarget(new WriterOutputStream(writer, StandardCharsets.UTF_8), metadata);
     }
 
     @Override
