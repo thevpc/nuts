@@ -39,7 +39,7 @@ import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NSupportMode;
@@ -350,7 +350,7 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
 
     NWorkspaceOptionsBuilder copyFrom(NWorkspaceOptionsBuilder other);
 
-    NWorkspaceOptionsBuilder copyFrom(NWorkspaceOptions other, NMapStrategy strategy);
+    NWorkspaceOptionsBuilder copyFrom(NWorkspaceOptions other, NAssignmentPolicy assignmentPolicy);
 
     NWorkspaceOptionsBuilder setCmdLine(String cmdLine);
 
