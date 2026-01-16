@@ -153,7 +153,7 @@ public class DefaultNCp implements NCp {
 
     @Override
     public NCp to(Writer target) {
-        this.target = target == null ? null : new WriterOutputTarget(workspace, target);
+        this.target = target == null ? null : new WriterOutputTarget(target);
         return this;
     }
 
