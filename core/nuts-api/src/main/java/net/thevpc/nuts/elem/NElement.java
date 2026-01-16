@@ -63,6 +63,10 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
         return NElementFactory.of().ofPair(key, value);
     }
 
+    static NOperatorSymbolElement ofOpSymbol(NOperatorSymbol kind) {
+        return NElementFactory.of().ofOp(kind);
+    }
+
     static NPairElement ofPair(String key, NElement value) {
         return NElementFactory.of().ofPair(key, value);
     }
@@ -124,31 +128,31 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
         return NElementFactory.of().ofOpBuilder();
     }
 
-    static NOperatorElementBuilder ofOpBuilder(NElementType op) {
-        return NElementFactory.of().ofOpBuilder().operator(op);
+    static NOperatorElementBuilder ofOpBuilder(NOperatorSymbol op) {
+        return NElementFactory.of().ofOpBuilder().symbol(op);
     }
 
-    static NOperatorElement ofOp(NElementType op, NOperatorType operatorType, NElement first, NElement second) {
+    static NOperatorElement ofOp(NOperatorSymbol op, NOperatorPosition operatorType, NElement first, NElement second) {
         return NElementFactory.of().ofOp(op, operatorType, first, second);
     }
 
-    static NOperatorElement ofOp(NElementType op, NElement first, NElement second) {
+    static NOperatorElement ofOp(NOperatorSymbol op, NElement first, NElement second) {
         return NElementFactory.of().ofOp(op, first, second);
     }
 
-    static NOperatorElement ofOp(NElementType op, NElement first) {
+    static NOperatorElement ofOp(NOperatorSymbol op, NElement first) {
         return NElementFactory.of().ofOp(op, first);
     }
 
-    static NOperatorElementBuilder ofOpBuilder(NElementType op, NOperatorType operatorType, NElement first, NElement second) {
-        return ofOpBuilder().operator(op).operatorType(operatorType).first(first).second(second);
+    static NOperatorElementBuilder ofOpBuilder(NOperatorSymbol op, NOperatorPosition operatorType, NElement first, NElement second) {
+        return ofOpBuilder().symbol(op).position(operatorType).first(first).second(second);
     }
 
-    static NOperatorElementBuilder ofOpBuilder(NElementType op, NElement first, NElement second) {
+    static NOperatorElementBuilder ofOpBuilder(NOperatorSymbol op, NElement first, NElement second) {
         return ofOpBuilder(op, null, first, second);
     }
 
-    static NOperatorElementBuilder ofOpBuilder(NElementType op, NElement first) {
+    static NOperatorElementBuilder ofOpBuilder(NOperatorSymbol op, NElement first) {
         return ofOpBuilder(op, null, first, null);
     }
 
@@ -193,10 +197,6 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     static NPrimitiveElement ofBoolean(boolean value) {
         return NElementFactory.of().ofBoolean(value);
-    }
-
-    static NPrimitiveElement ofRegex(String value) {
-        return NElementFactory.of().ofRegex(value);
     }
 
     static NPrimitiveElement ofName(String value) {
@@ -435,6 +435,10 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
         return NElementFactory.of().ofDoubleComplex(real, imag);
     }
 
+    static NPrimitiveElement ofDoubleComplex(double real, double imag, String suffix) {
+        return NElementFactory.of().ofDoubleComplex(real, imag, suffix);
+    }
+
     static NPrimitiveElement ofFloatComplex(float real) {
         return NElementFactory.of().ofFloatComplex(real);
     }
@@ -443,12 +447,20 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
         return NElementFactory.of().ofFloatComplex(real, imag);
     }
 
+    static NPrimitiveElement ofFloatComplex(float real, float imag, String suffix) {
+        return NElementFactory.of().ofFloatComplex(real, imag, suffix);
+    }
+
     static NPrimitiveElement ofBigComplex(BigDecimal real) {
         return NElementFactory.of().ofBigComplex(real);
     }
 
     static NPrimitiveElement ofBigComplex(BigDecimal real, BigDecimal imag) {
         return NElementFactory.of().ofBigComplex(real, imag);
+    }
+
+    static NPrimitiveElement ofBigComplex(BigDecimal real, BigDecimal imag, String suffix) {
+        return NElementFactory.of().ofBigComplex(real, imag, suffix);
     }
 
     static NPrimitiveElement ofNumber(Number value) {
@@ -501,10 +513,6 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     static NUpletElement ofNamedUplet(String name, NElement... items) {
         return NElementFactory.of().ofNamedUplet(name, items);
-    }
-
-    static NMatrixElementBuilder ofMatrixBuilder() {
-        return NElementFactory.of().ofMatrixBuilder();
     }
 
     static NArrayElement ofIntArray(int... items) {
@@ -668,7 +676,11 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     }
 
     static NElement ofCharStream(NReaderProvider value) {
-        return NElementFactory.of().ofCharStream(value);
+        return NElementFactory.of().ofCharStream(value, "");
+    }
+
+    static NElement ofCharStream(NReaderProvider value, String blocIdentifier) {
+        return NElementFactory.of().ofCharStream(value, blocIdentifier);
     }
 
     static NBinaryStreamElementBuilder ofBinaryStreamBuilder() {
@@ -689,6 +701,10 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     static NPrimitiveElementBuilder ofPrimitiveBuilder() {
         return NElementFactory.of().ofPrimitiveBuilder();
+    }
+
+    static NExprElementBuilder ofExprBuilder() {
+        return NElementFactory.of().ofExprBuilder();
     }
 
     /**
@@ -787,12 +803,6 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     boolean isNamedParametrizedObject(Predicate<String> nameCondition);
 
-    boolean isNamedParametrizedMatrix();
-
-    boolean isNamedParametrizedMatrix(Predicate<String> nameCondition);
-
-    boolean isNamedParametrizedMatrix(String name);
-
     boolean isNamedParametrizedObject(String name);
 
     boolean isNamedArray();
@@ -801,11 +811,11 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     boolean isListContainer();
 
+    boolean isListOrParametrizedContainer();
+
     boolean isParametrizedContainer();
 
     boolean isAnyObject();
-
-    boolean isAnyMatrix();
 
     boolean isAnyUplet();
 
@@ -819,23 +829,11 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     boolean isNamedParametrizedArray(String name);
 
-    boolean isNamedMatrix();
-
-    boolean isAnyNamedMatrix();
-
-    boolean isAnyNamedMatrix(String name);
-
-    boolean isParametrizedMatrix();
-
-    boolean isAnyParametrizedMatrix();
-
     boolean isName(String name);
 
     boolean isName(Predicate<String> nameCondition);
 
     boolean isNamed(String name);
-
-    boolean isAnyParametrizedMatrix(String name);
 
     List<NElementAnnotation> annotations();
 
@@ -867,8 +865,6 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     NOptional<NUpletElement> asUplet();
 
-    NOptional<NMatrixElement> asMatrix();
-
     NOptional<NPairElement> asPair();
 
     NOptional<NNumberElement> asInt();
@@ -880,6 +876,8 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
      * @return {@link NObjectElement}
      */
     NOptional<NListContainerElement> asListContainer();
+
+    NOptional<NListOrParametrizedContainerElement> asListOrParametrizedContainer();
 
     NOptional<NParametrizedContainerElement> asParametrizedContainer();
 
@@ -1087,13 +1085,19 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     NOptional<NOperatorElement> asOperator();
 
+    NOptional<NOperatorSymbolElement> asOperatorSymbol();
+
+    NOptional<NBinaryOperatorElement> asBinaryOperator();
+
+    NOptional<NUnaryOperatorElement> asUnaryOperator();
+
     boolean isBinaryOperator();
 
-    boolean isBinaryOperator(NElementType type);
+    boolean isBinaryOperator(NOperatorSymbol type);
 
-    boolean isLeftNamedBinaryOperator(NElementType type);
+    boolean isLeftNamedBinaryOperator(NOperatorSymbol type);
 
-    boolean isLeftNamedBinaryOperator(NElementType type, String name);
+    boolean isLeftNamedBinaryOperator(NOperatorSymbol type, String name);
 
     boolean isAnyOperator();
 
@@ -1114,4 +1118,18 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     NOptional<NPairElement> asNamedPair();
 
     NOptional<NPairElement> asSimplePair();
+
+    boolean isList();
+
+    NOptional<NListElement> asList();
+
+    boolean isOrderedList();
+
+    NOptional<NListElement> asOrderedList();
+
+    boolean isUnorderedList();
+
+    NOptional<NListElement> asUnorderedList();
+
+    NOptional<NStringElement> asName();
 }
