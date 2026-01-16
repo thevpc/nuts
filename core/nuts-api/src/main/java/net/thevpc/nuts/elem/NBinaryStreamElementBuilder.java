@@ -25,7 +25,7 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.io.NInputStreamProvider;
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -75,7 +75,9 @@ public interface NBinaryStreamElementBuilder extends NElementBuilder {
     NBinaryStreamElementBuilder copyFrom(NElementBuilder other);
 
     NBinaryStreamElementBuilder copyFrom(NElement other);
-    NBinaryStreamElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+    NBinaryStreamElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
-    NBinaryStreamElementBuilder copyFrom(NElement other, NMapStrategy strategy);
+    NBinaryStreamElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
+
+    NBinaryStreamElementBuilder writeBase64(String base64String);
 }
