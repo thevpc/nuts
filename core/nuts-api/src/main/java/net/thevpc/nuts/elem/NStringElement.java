@@ -37,4 +37,6 @@ public interface NStringElement extends NPrimitiveElement {
 
     String stringValue();
     NPrimitiveElementBuilder builder();
+
+    String literalString();
 }
