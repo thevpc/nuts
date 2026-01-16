@@ -10,7 +10,7 @@ import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNNumberElement;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPrimitiveElement;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNStringElement;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.text.NMsg;
 
 import java.math.BigDecimal;
@@ -32,29 +32,31 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     public DefaultNPrimitiveElementBuilder() {
         this.type = NElementType.NULL;
     }
+
     @Override
     public NPrimitiveElementBuilder removeAnnotation(NElementAnnotation annotation) {
         super.removeAnnotation(annotation);
         return this;
     }
+
     @Override
     public NPrimitiveElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other,NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
     @Override
     public NPrimitiveElementBuilder copyFrom(NElement other) {
-        copyFrom(other,NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
     @Override
-    public NPrimitiveElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
+    public NPrimitiveElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
         if (other == null) {
             return this;
         }
-        super.copyFrom(other, strategy);
+        super.copyFrom(other, assignmentPolicy);
         if (other instanceof NPrimitiveElementBuilder) {
             NPrimitiveElementBuilder from = (NPrimitiveElementBuilder) other;
             this.type = from.type();
@@ -66,16 +68,16 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NPrimitiveElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
+    public NPrimitiveElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
         if (other == null) {
             return this;
         }
-        super.copyFrom(other, strategy);
+        super.copyFrom(other, assignmentPolicy);
         if (other instanceof NPrimitiveElement) {
             NPrimitiveElement from = (NPrimitiveElement) other;
             this.type = from.type();
             this.value = from.value();
-            if(other instanceof NNumberElement) {
+            if (other instanceof NNumberElement) {
                 NNumberElement nfrom = (NNumberElement) other;
                 this.numberLayout = nfrom.numberLayout();
                 this.numberSuffix = nfrom.numberSuffix();
@@ -250,11 +252,11 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         if (value == null) {
             return setNull();
         }
-        NElementType newType=this.type;
-        if(newType!=null && newType.isAnyString()){
+        NElementType newType = this.type;
+        if (newType != null && newType.isAnyString()) {
             //okkay
-        }else{
-            newType=NElementType.DOUBLE_QUOTED_STRING;
+        } else {
+            newType = NElementType.DOUBLE_QUOTED_STRING;
         }
         this.value = value;
         this.type = newType;
@@ -266,11 +268,11 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     @Override
     public NPrimitiveElementBuilder setString(String value, NElementType stringLayout) {
         if (stringLayout == null) {
-            NElementType newType=this.type;
-            if(newType!=null && newType.isAnyString()){
+            NElementType newType = this.type;
+            if (newType != null && newType.isAnyString()) {
                 //okkay
-            }else{
-                newType=NElementType.DOUBLE_QUOTED_STRING;
+            } else {
+                newType = NElementType.DOUBLE_QUOTED_STRING;
             }
             stringLayout = newType;
         }
@@ -320,7 +322,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
 
     @Override
     public NPrimitiveElementBuilder setAntiQuotedString(String value) {
-        return setString(value, NElementType.ANTI_QUOTED_STRING);
+        return setString(value, NElementType.BACKTICK_STRING);
     }
 
     @Override
@@ -335,7 +337,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
 
     @Override
     public NPrimitiveElementBuilder setTripleAntiQuotedString(String value) {
-        return setString(value, NElementType.TRIPLE_ANTI_QUOTED_STRING);
+        return setString(value, NElementType.TRIPLE_BACKTICK_STRING);
     }
 
     @Override
@@ -523,7 +525,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
             return new DefaultNNumberElement(type, (Number) value, numberLayout(), numberSuffix(), annotations().toArray(new NElementAnnotation[0]), comments());
         }
         if (type().isAnyStringOrName()) {
-            return new DefaultNStringElement(type, (String) value, annotations().toArray(new NElementAnnotation[0]), comments());
+            return new DefaultNStringElement(type, (String) value,(String) value, annotations().toArray(new NElementAnnotation[0]), comments());
         }
         return new DefaultNPrimitiveElement(type, value, annotations().toArray(new NElementAnnotation[0]), comments());
     }
@@ -655,8 +657,8 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         if (element != null) {
             addAnnotations(element.annotations());
             addComments(element.comments());
-            this.value=element.value();
-            this.type=element.type();
+            this.value = element.value();
+            this.type = element.type();
             if (element instanceof NNumberElement) {
                 NNumberElement ne = (NNumberElement) element;
                 numberLayout(ne.numberLayout());
