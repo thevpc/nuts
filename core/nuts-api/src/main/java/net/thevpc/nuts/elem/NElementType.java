@@ -26,8 +26,6 @@ package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.util.*;
 
-import java.util.function.Function;
-
 /**
  * Element type. this an extension of json element types.
  *
@@ -80,13 +78,13 @@ public enum NElementType implements NEnum {
 
     DOUBLE_QUOTED_STRING,
     SINGLE_QUOTED_STRING,
-    ANTI_QUOTED_STRING,
+    BACKTICK_STRING,
     TRIPLE_DOUBLE_QUOTED_STRING,
     TRIPLE_SINGLE_QUOTED_STRING,
-    TRIPLE_ANTI_QUOTED_STRING,
+    TRIPLE_BACKTICK_STRING,
     LINE_STRING,
+    BLOCK_STRING,
 
-    REGEX,
     NAME,
     CHAR,
 
@@ -117,77 +115,23 @@ public enum NElementType implements NEnum {
     BINARY_STREAM,
     CHAR_STREAM,
     UPLET,
-    MATRIX,
     ALIAS,
 
 
-    OP_PLUS,
-    OP_PLUS2,
-    OP_PLUS3,
-    OP_MINUS,
-    OP_MINUS2,
-    OP_MINUS3,
-    OP_MUL,
-    OP_MUL2,
-    OP_MUL3,
-    OP_DIV,
-    OP_HAT,
-    OP_HAT2,
-    OP_HAT3,
-    OP_REM,
-    OP_REM2,
-    OP_REM3,
-    OP_EQ,
-    OP_EQ2,
-    OP_EQ3,
-    OP_TILDE,
-    OP_TILDE2,
-    OP_TILDE3,
-    OP_LT,
-    OP_LT2,
-    OP_LT3,
-    OP_GT,
-    OP_GT2,
-    OP_GT3,
-    OP_LTE,
-    OP_GTE,
-    OP_COLON_EQ,
-    OP_COLON_EQ2,
-    OP_MINUS_GT,
-    OP_MINUS2_GT,
-    OP_EQ_GT,
-    OP_EQ2_GT,
-    OP_LT_MINUS2,
-    OP_LT_EQ2,
-    OP_PIPE,
-    OP_PIPE2,
-    OP_PIPE3,
-    OP_AND,
-    OP_AND2,
-    OP_AND3,
-    OP_HASH,
-    OP_HASH2,
-    OP_HASH3,
-    OP_HASH4,
-    OP_HASH5,
-    OP_HASH6,
-    OP_HASH7,
-    OP_HASH8,
-    OP_HASH9,
-    OP_HASH10,
-    OP_AT2,
+    OPERATOR_SYMBOL,
+    BINARY_OPERATOR,
+    UNARY_OPERATOR,
+    EXPR,
 
     NAMED_ARRAY,
     NAMED_PARAMETRIZED_ARRAY,
     NAMED_OBJECT,
     NAMED_PARAMETRIZED_OBJECT,
     NAMED_UPLET,
-    NAMED_MATRIX,
-    NAMED_PARAMETRIZED_MATRIX,
-    PARAMETRIZED_MATRIX,
     PARAMETRIZED_ARRAY,
     PARAMETRIZED_OBJECT,
-
+    ORDERED_LIST,
+    UNORDERED_LIST,
     ;
 
     /**
@@ -200,236 +144,7 @@ public enum NElementType implements NEnum {
     }
 
     public static NOptional<NElementType> parse(String value) {
-        return NEnumUtils.parseEnum(value, NElementType.class, new Function<NEnumUtils.EnumValue, NOptional<NElementType>>() {
-            @Override
-            public NOptional<NElementType> apply(NEnumUtils.EnumValue enumValue) {
-                switch (enumValue.getValue().trim()) {
-                    case "+":
-                        return NOptional.of(OP_PLUS);
-                    case "++":
-                        return NOptional.of(OP_PLUS2);
-                    case "+++":
-                        return NOptional.of(OP_PLUS3);
-                    case "-":
-                        return NOptional.of(OP_MINUS);
-                    case "--":
-                        return NOptional.of(OP_MINUS2);
-                    case "---":
-                        return NOptional.of(OP_MINUS3);
-                    case "*":
-                        return NOptional.of(OP_MUL);
-                    case "**":
-                        return NOptional.of(OP_MUL2);
-                    case "***":
-                        return NOptional.of(OP_MUL3);
-                    case "/":
-                        return NOptional.of(OP_DIV);
-                    case "^":
-                        return NOptional.of(OP_HAT);
-                    case "^^":
-                        return NOptional.of(OP_HAT2);
-                    case "^^^":
-                        return NOptional.of(OP_HAT3);
-                    case "%":
-                        return NOptional.of(OP_REM);
-                    case "%%":
-                        return NOptional.of(OP_REM2);
-                    case "%%%":
-                        return NOptional.of(OP_REM3);
-                    case "=":
-                        return NOptional.of(OP_EQ);
-                    case "==":
-                        return NOptional.of(OP_EQ2);
-                    case "===":
-                        return NOptional.of(OP_EQ3);
-                    case "~":
-                        return NOptional.of(OP_TILDE);
-                    case "~~":
-                        return NOptional.of(OP_TILDE2);
-                    case "~~~":
-                        return NOptional.of(OP_TILDE3);
-                    case "<":
-                        return NOptional.of(OP_LT);
-                    case "<<":
-                        return NOptional.of(OP_LT2);
-                    case "<<<":
-                        return NOptional.of(OP_LT3);
-                    case ">":
-                        return NOptional.of(OP_GT);
-                    case ">>":
-                        return NOptional.of(OP_GT2);
-                    case ">>>":
-                        return NOptional.of(OP_GT3);
-                    case "<=":
-                        return NOptional.of(OP_LTE);
-                    case ">=":
-                        return NOptional.of(OP_GTE);
-                    case ":=":
-                        return NOptional.of(OP_COLON_EQ);
-                    case ":==":
-                        return NOptional.of(OP_COLON_EQ2);
-                    case "->":
-                        return NOptional.of(OP_MINUS_GT);
-                    case "-->":
-                        return NOptional.of(OP_MINUS2_GT);
-                    case "=>":
-                        return NOptional.of(OP_EQ_GT);
-                    case "==>":
-                        return NOptional.of(OP_EQ2_GT);
-                    case "<--":
-                        return NOptional.of(OP_LT_MINUS2);
-                    case "<==":
-                        return NOptional.of(OP_LT_EQ2);
-                    case "|":
-                        return NOptional.of(OP_PIPE);
-                    case "||":
-                        return NOptional.of(OP_PIPE2);
-                    case "|||":
-                        return NOptional.of(OP_PIPE3);
-                    case "&":
-                        return NOptional.of(OP_AND);
-                    case "&&":
-                        return NOptional.of(OP_AND2);
-                    case "&&&":
-                        return NOptional.of(OP_AND3);
-                    case "#":
-                        return NOptional.of(OP_HASH);
-                    case "##":
-                        return NOptional.of(OP_HASH2);
-                    case "###":
-                        return NOptional.of(OP_HASH3);
-                    case "#####":
-                        return NOptional.of(OP_HASH4);
-                    case "######":
-                        return NOptional.of(OP_HASH5);
-                    case "#######":
-                        return NOptional.of(OP_HASH6);
-                    case "########":
-                        return NOptional.of(OP_HASH7);
-                    case "#########":
-                        return NOptional.of(OP_HASH8);
-                    case "##########":
-                        return NOptional.of(OP_HASH9);
-                    case "###########":
-                        return NOptional.of(OP_HASH10);
-                    case "@@":
-                        return NOptional.of(OP_AT2);
-                }
-                switch (enumValue.getNormalizedValue()) {
-                    case "PLUS":
-                        return NOptional.of(OP_PLUS);
-                    case "PLUS2":
-                        return NOptional.of(OP_PLUS2);
-                    case "PLUS3":
-                        return NOptional.of(OP_PLUS3);
-                    case "MINUS":
-                        return NOptional.of(OP_MINUS);
-                    case "MINUS2":
-                        return NOptional.of(OP_MINUS2);
-                    case "MINUS3":
-                        return NOptional.of(OP_MINUS3);
-                    case "MUL":
-                        return NOptional.of(OP_MUL);
-                    case "MUL2":
-                        return NOptional.of(OP_MUL2);
-                    case "MUL3":
-                        return NOptional.of(OP_MUL3);
-                    case "DIV":
-                        return NOptional.of(OP_DIV);
-                    case "HAT":
-                        return NOptional.of(OP_HAT);
-                    case "HAT2":
-                        return NOptional.of(OP_HAT2);
-                    case "HAT3":
-                        return NOptional.of(OP_HAT3);
-                    case "REM":
-                        return NOptional.of(OP_REM);
-                    case "REM2":
-                        return NOptional.of(OP_REM2);
-                    case "REM3":
-                        return NOptional.of(OP_REM3);
-                    case "EQ":
-                        return NOptional.of(OP_EQ);
-                    case "EQ2":
-                        return NOptional.of(OP_EQ2);
-                    case "EQ3":
-                        return NOptional.of(OP_EQ3);
-                    case "TILDE":
-                        return NOptional.of(OP_TILDE);
-                    case "TILDE2":
-                        return NOptional.of(OP_TILDE2);
-                    case "TILDE3":
-                        return NOptional.of(OP_TILDE3);
-                    case "LT":
-                        return NOptional.of(OP_LT);
-                    case "LT2":
-                        return NOptional.of(OP_LT2);
-                    case "LT3":
-                        return NOptional.of(OP_LT3);
-                    case "GT":
-                        return NOptional.of(OP_GT);
-                    case "GT2":
-                        return NOptional.of(OP_GT2);
-                    case "GT3":
-                        return NOptional.of(OP_GT3);
-                    case "LTE":
-                        return NOptional.of(OP_LTE);
-                    case "GTE":
-                        return NOptional.of(OP_GTE);
-                    case "ASSIGN":
-                        return NOptional.of(OP_COLON_EQ);
-                    case "ASSIGN_EQ":
-                        return NOptional.of(OP_COLON_EQ2);
-                    case "MINUS_GT":
-                        return NOptional.of(OP_MINUS_GT);
-                    case "MINUS2_GT":
-                        return NOptional.of(OP_MINUS2_GT);
-                    case "EQ_GT":
-                        return NOptional.of(OP_EQ_GT);
-                    case "EQ2_GT":
-                        return NOptional.of(OP_EQ2_GT);
-                    case "LT_MINUS2":
-                        return NOptional.of(OP_LT_MINUS2);
-                    case "LT_EQ2":
-                        return NOptional.of(OP_LT_EQ2);
-                    case "PIPE":
-                        return NOptional.of(OP_PIPE);
-                    case "PIPE2":
-                        return NOptional.of(OP_PIPE2);
-                    case "PIPE3":
-                        return NOptional.of(OP_PIPE3);
-                    case "AND":
-                        return NOptional.of(OP_AND);
-                    case "AND2":
-                        return NOptional.of(OP_AND2);
-                    case "AND3":
-                        return NOptional.of(OP_AND3);
-                    case "HASH":
-                        return NOptional.of(OP_HASH);
-                    case "HASH2":
-                        return NOptional.of(OP_HASH2);
-                    case "HASH3":
-                        return NOptional.of(OP_HASH3);
-                    case "HASH4":
-                        return NOptional.of(OP_HASH4);
-                    case "HASH5":
-                        return NOptional.of(OP_HASH5);
-                    case "HASH6":
-                        return NOptional.of(OP_HASH6);
-                    case "HASH7":
-                        return NOptional.of(OP_HASH7);
-                    case "HASH8":
-                        return NOptional.of(OP_HASH8);
-                    case "HASH9":
-                        return NOptional.of(OP_HASH9);
-                    case "HASH10":
-                        return NOptional.of(OP_HASH10);
-                    case "AT2":
-                        return NOptional.of(OP_AT2);
-                }
-                return null;
-            }
-        });
+        return NEnumUtils.parseEnum(value, NElementType.class);
     }
 
     public boolean isAnyFloatingNumber() {
@@ -492,61 +207,9 @@ public enum NElementType implements NEnum {
 
     public boolean isAnyOp() {
         switch (this) {
-            case OP_PLUS:
-            case OP_PLUS2:
-            case OP_PLUS3:
-            case OP_MINUS:
-            case OP_MINUS2:
-            case OP_MINUS3:
-            case OP_MUL:
-            case OP_MUL2:
-            case OP_MUL3:
-            case OP_DIV:
-            case OP_HAT:
-            case OP_HAT2:
-            case OP_HAT3:
-            case OP_REM:
-            case OP_REM2:
-            case OP_REM3:
-            case OP_EQ:
-            case OP_EQ2:
-            case OP_EQ3:
-            case OP_TILDE:
-            case OP_TILDE2:
-            case OP_TILDE3:
-            case OP_LT:
-            case OP_LT2:
-            case OP_LT3:
-            case OP_GT:
-            case OP_GT2:
-            case OP_GT3:
-            case OP_LTE:
-            case OP_GTE:
-            case OP_COLON_EQ:
-            case OP_COLON_EQ2:
-            case OP_MINUS_GT:
-            case OP_MINUS2_GT:
-            case OP_EQ_GT:
-            case OP_EQ2_GT:
-            case OP_LT_MINUS2:
-            case OP_LT_EQ2:
-            case OP_PIPE:
-            case OP_PIPE2:
-            case OP_PIPE3:
-            case OP_AND:
-            case OP_AND2:
-            case OP_AND3:
-            case OP_HASH:
-            case OP_HASH2:
-            case OP_HASH3:
-            case OP_HASH4:
-            case OP_HASH5:
-            case OP_HASH6:
-            case OP_HASH7:
-            case OP_HASH8:
-            case OP_HASH9:
-            case OP_HASH10:
-            case OP_AT2:
+            case BINARY_OPERATOR:
+            case UNARY_OPERATOR:
+            case OPERATOR_SYMBOL:
                 return true;
         }
         return false;
@@ -568,11 +231,12 @@ public enum NElementType implements NEnum {
             case NULL:
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
-            case ANTI_QUOTED_STRING:
+            case BACKTICK_STRING:
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_ANTI_QUOTED_STRING:
+            case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
+            case BLOCK_STRING:
             case CHAR:
             case BOOLEAN:
             case NAME:
@@ -581,7 +245,6 @@ public enum NElementType implements NEnum {
             case LOCAL_DATE:
             case LOCAL_TIME:
             case INSTANT:
-            case REGEX:
                 return true;
         }
         return false;
@@ -601,10 +264,10 @@ public enum NElementType implements NEnum {
         switch (this) {
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
-            case ANTI_QUOTED_STRING:
+            case BACKTICK_STRING:
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_ANTI_QUOTED_STRING:
+            case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
                 return true;
         }
@@ -615,13 +278,12 @@ public enum NElementType implements NEnum {
         switch (this) {
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
-            case ANTI_QUOTED_STRING:
+            case BACKTICK_STRING:
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_ANTI_QUOTED_STRING:
+            case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
             case NAME:
-            case REGEX:
             case CHAR:
                 return true;
         }
@@ -668,8 +330,7 @@ public enum NElementType implements NEnum {
             case NAMED_OBJECT:
             case NAMED_PARAMETRIZED_OBJECT:
             case NAMED_UPLET:
-            case NAMED_MATRIX:
-            case NAMED_PARAMETRIZED_MATRIX: {
+            {
                 return true;
             }
         }
@@ -682,8 +343,7 @@ public enum NElementType implements NEnum {
             case NAMED_PARAMETRIZED_ARRAY:
             case PARAMETRIZED_OBJECT:
             case NAMED_PARAMETRIZED_OBJECT:
-            case PARAMETRIZED_MATRIX:
-            case NAMED_PARAMETRIZED_MATRIX: {
+            {
                 return true;
             }
         }
@@ -742,15 +402,6 @@ public enum NElementType implements NEnum {
         return false;
     }
 
-    public boolean isAnyNamedMatrix() {
-        switch (this) {
-            case NAMED_MATRIX:
-            case NAMED_PARAMETRIZED_MATRIX:
-                return true;
-        }
-        return false;
-    }
-
     public boolean isAnyParametrizedObject() {
         switch (this) {
             case PARAMETRIZED_OBJECT:
@@ -769,21 +420,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
-    public boolean isAnyParametrizedMatrix() {
-        switch (this) {
-            case PARAMETRIZED_MATRIX:
-            case NAMED_PARAMETRIZED_MATRIX:
-                return true;
-        }
-        return false;
-    }
-
     public boolean isAnyArray() {
         switch (this) {
             case ARRAY:
             case NAMED_ARRAY:
             case PARAMETRIZED_ARRAY:
-            case NAMED_PARAMETRIZED_MATRIX:
                 return true;
         }
         return false;
@@ -800,21 +441,26 @@ public enum NElementType implements NEnum {
         return false;
     }
 
-    public boolean isAnyMatrix() {
+    public boolean isAnyUplet() {
         switch (this) {
-            case MATRIX:
-            case NAMED_MATRIX:
-            case PARAMETRIZED_MATRIX:
-            case NAMED_PARAMETRIZED_MATRIX:
+            case UPLET:
+            case NAMED_UPLET:
                 return true;
         }
         return false;
     }
 
-    public boolean isAnyUplet() {
+    public boolean isAnyListOrParametrizedContainer() {
         switch (this) {
             case UPLET:
             case NAMED_UPLET:
+            case OBJECT:
+            case NAMED_OBJECT:
+            case PARAMETRIZED_OBJECT:
+            case NAMED_PARAMETRIZED_OBJECT:
+            case ARRAY:
+            case NAMED_ARRAY:
+            case NAMED_PARAMETRIZED_ARRAY:
                 return true;
         }
         return false;
@@ -831,7 +477,6 @@ public enum NElementType implements NEnum {
             case ARRAY:
             case NAMED_ARRAY:
             case PARAMETRIZED_ARRAY:
-            case NAMED_PARAMETRIZED_MATRIX:
                 return true;
         }
         return false;
@@ -857,15 +502,13 @@ public enum NElementType implements NEnum {
                 return NElementTypeGroup.NUMBER;
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
-            case ANTI_QUOTED_STRING:
+            case BACKTICK_STRING:
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_ANTI_QUOTED_STRING:
+            case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
             case CHAR:
                 return NElementTypeGroup.STRING;
-            case REGEX:
-                return NElementTypeGroup.REGEX;
             case NAME:
                 return NElementTypeGroup.NAME;
             case INSTANT:
@@ -877,76 +520,20 @@ public enum NElementType implements NEnum {
             case OBJECT:
             case PAIR:
             case UPLET:
-            case MATRIX:
             case NAMED_ARRAY:
             case NAMED_PARAMETRIZED_ARRAY:
             case NAMED_OBJECT:
             case NAMED_PARAMETRIZED_OBJECT:
             case NAMED_UPLET:
-            case NAMED_MATRIX:
-            case NAMED_PARAMETRIZED_MATRIX:
-            case PARAMETRIZED_MATRIX:
             case PARAMETRIZED_ARRAY:
             case PARAMETRIZED_OBJECT:
                 return NElementTypeGroup.CONTAINER;
             case BINARY_STREAM:
             case CHAR_STREAM:
                 return NElementTypeGroup.STREAM;
-            case OP_PLUS:
-            case OP_PLUS2:
-            case OP_PLUS3:
-            case OP_MINUS:
-            case OP_MINUS2:
-            case OP_MINUS3:
-            case OP_MUL:
-            case OP_MUL2:
-            case OP_MUL3:
-            case OP_DIV:
-            case OP_HAT:
-            case OP_HAT2:
-            case OP_HAT3:
-            case OP_REM:
-            case OP_REM2:
-            case OP_REM3:
-            case OP_EQ:
-            case OP_EQ2:
-            case OP_EQ3:
-            case OP_TILDE:
-            case OP_TILDE2:
-            case OP_TILDE3:
-            case OP_LT:
-            case OP_LT2:
-            case OP_LT3:
-            case OP_GT:
-            case OP_GT2:
-            case OP_GT3:
-            case OP_LTE:
-            case OP_GTE:
-            case OP_COLON_EQ:
-            case OP_COLON_EQ2:
-            case OP_MINUS_GT:
-            case OP_MINUS2_GT:
-            case OP_EQ_GT:
-            case OP_EQ2_GT:
-            case OP_LT_MINUS2:
-            case OP_LT_EQ2:
-            case OP_PIPE:
-            case OP_PIPE2:
-            case OP_PIPE3:
-            case OP_AND:
-            case OP_AND2:
-            case OP_AND3:
-            case OP_HASH:
-            case OP_HASH2:
-            case OP_HASH3:
-            case OP_HASH4:
-            case OP_HASH5:
-            case OP_HASH6:
-            case OP_HASH7:
-            case OP_HASH8:
-            case OP_HASH9:
-            case OP_HASH10:
-            case OP_AT2:
+            case OPERATOR_SYMBOL:
+            case BINARY_OPERATOR:
+            case UNARY_OPERATOR:
                 return NElementTypeGroup.OPERATOR;
             case CUSTOM:
                 return NElementTypeGroup.CUSTOM;
@@ -956,121 +543,4 @@ public enum NElementType implements NEnum {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public String opSymbol() {
-        NAssert.requireTrue(isAnyOp(), "type as op");
-        switch (this) {
-            case OP_PLUS:
-                return "+";
-            case OP_PLUS2:
-                return "++";
-            case OP_PLUS3:
-                return "+++";
-            case OP_MINUS:
-                return "-";
-            case OP_MINUS2:
-                return "--";
-            case OP_MINUS3:
-                return "---";
-            case OP_MUL:
-                return "*";
-            case OP_MUL2:
-                return "**";
-            case OP_MUL3:
-                return "***";
-            case OP_DIV:
-                return "/";
-            case OP_HAT:
-                return "^";
-            case OP_HAT2:
-                return "^^";
-            case OP_HAT3:
-                return "^^^";
-            case OP_REM:
-                return "%";
-            case OP_REM2:
-                return "%%";
-            case OP_REM3:
-                return "%%%";
-            case OP_EQ:
-                return "=";
-            case OP_EQ2:
-                return "==";
-            case OP_EQ3:
-                return "===";
-            case OP_TILDE:
-                return "~";
-            case OP_TILDE2:
-                return "~~";
-            case OP_TILDE3:
-                return "~~~";
-            case OP_LT:
-                return "<";
-            case OP_LT2:
-                return "<<";
-            case OP_LT3:
-                return "<<<";
-            case OP_GT:
-                return ">";
-            case OP_GT2:
-                return ">>";
-            case OP_GT3:
-                return ">>>";
-            case OP_LTE:
-                return "<=";
-            case OP_GTE:
-                return ">=";
-            case OP_COLON_EQ:
-                return ":=";
-            case OP_COLON_EQ2:
-                return ":==";
-            case OP_MINUS_GT:
-                return "->";
-            case OP_MINUS2_GT:
-                return "-->";
-            case OP_EQ_GT:
-                return "=>";
-            case OP_EQ2_GT:
-                return "==>";
-            case OP_LT_MINUS2:
-                return "<--";
-            case OP_LT_EQ2:
-                return "<==";
-            case OP_PIPE:
-                return "|";
-            case OP_PIPE2:
-                return "||";
-            case OP_PIPE3:
-                return "|||";
-            case OP_AND:
-                return "&";
-            case OP_AND2:
-                return "&&";
-            case OP_AND3:
-                return "&&&";
-            case OP_HASH:
-                return "#";
-            case OP_HASH2:
-                return "##";
-            case OP_HASH3:
-                return "###";
-            case OP_HASH4:
-                return "#####";
-            case OP_HASH5:
-                return "######";
-            case OP_HASH6:
-                return "#######";
-            case OP_HASH7:
-                return "########";
-            case OP_HASH8:
-                return "#########";
-            case OP_HASH9:
-                return "#########";
-            case OP_HASH10:
-                return "##########";
-            case OP_AT2:
-                return "@@";
-        }
-        NAssert.requireTrue(false, "type as op");
-        return "";//never happens
-    }
 }
