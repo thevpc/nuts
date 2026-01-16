@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.elem;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -34,10 +35,11 @@ import java.util.stream.Stream;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NArrayElement extends NNamedElement, NListContainerElement, NParametrizedContainerElement, Iterable<NElement> {
+public interface NArrayElement extends NNamedElement, NListContainerElement, NParametrizedContainerElement, NListOrParametrizedContainerElement, Iterable<NElement> {
     static NArrayElement ofEmpty() {
         return NElement.ofArray();
     }
+    List<NParamOrChild> paramsOrChildren();
 
     Stream<NElement> stream();
 
