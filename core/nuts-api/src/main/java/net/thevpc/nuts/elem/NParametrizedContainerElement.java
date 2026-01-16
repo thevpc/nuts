@@ -36,7 +36,7 @@ import java.util.List;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NParametrizedContainerElement extends NElement {
+public interface NParametrizedContainerElement extends NElement, NListOrParametrizedContainerElement {
     boolean isParametrized();
 
     NOptional<List<NElement>> params();
