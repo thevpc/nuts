@@ -29,7 +29,7 @@ import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNObjectElement;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPairElement;
 import net.thevpc.nuts.runtime.standalone.elem.item.NElementCommentsImpl;
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
@@ -57,22 +57,22 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other, NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
     @Override
     public NObjectElementBuilder copyFrom(NElement other) {
-        copyFrom(other, NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
     @Override
-    public NObjectElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
+    public NObjectElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
         if (other == null) {
             return this;
         }
-        super.copyFrom(other, strategy);
+        super.copyFrom(other, assignmentPolicy);
         if (other instanceof NPairElementBuilder) {
             NPairElementBuilder from = (NPairElementBuilder) other;
             add(from.key(), from.value());
@@ -109,23 +109,15 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
             name(from.name().orNull());
             return this;
         }
-        if (other instanceof NMatrixElementBuilder) {
-            NMatrixElementBuilder from = (NMatrixElementBuilder) other;
-            for (NArrayElement row : from.rows()) {
-                add(row);
-            }
-            name(from.name().orNull());
-            return this;
-        }
         return this;
     }
 
     @Override
-    public NObjectElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
+    public NObjectElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
         if (other == null) {
             return this;
         }
-        super.copyFrom(other, strategy);
+        super.copyFrom(other, assignmentPolicy);
         if (other instanceof NPairElement) {
             NPairElement from = (NPairElement) other;
             add(from.key(), from.value());
@@ -158,14 +150,6 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
             List<NElement> p = from.params().orNull();
             if (p != null) {
                 this.addParams(p);
-            }
-            name(from.name().orNull());
-            return this;
-        }
-        if (other instanceof NMatrixElement) {
-            NMatrixElement from = (NMatrixElement) other;
-            for (NArrayElement row : from.rows()) {
-                add(row);
             }
             name(from.name().orNull());
             return this;
@@ -613,7 +597,7 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
                 int i2 = values.size() - index;
                 if (i2 >= 0 && i2 < values.size()) {
                     values.add(i2, item);
-                }else if(i2<0){
+                } else if (i2 < 0) {
                     values.add(0, item);
                 }
             }
