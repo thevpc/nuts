@@ -206,12 +206,11 @@ public class DefaultElementMapperStore {
             }
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
-            case ANTI_QUOTED_STRING:
+            case BACKTICK_STRING:
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_ANTI_QUOTED_STRING:
+            case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
-            case REGEX:
             case NAME: {
                 return store.getMapper(String.class);
             }
@@ -265,12 +264,6 @@ public class DefaultElementMapperStore {
             }
             case DOUBLE_COMPLEX: {
                 return store.getMapper(NDoubleComplex.class);
-            }
-            case MATRIX:
-            case NAMED_MATRIX:
-            case NAMED_PARAMETRIZED_MATRIX:
-            case PARAMETRIZED_MATRIX: {
-                return store.getMapper(NMatrixElement.class);
             }
             case NULL: {
                 return F_NULL;
