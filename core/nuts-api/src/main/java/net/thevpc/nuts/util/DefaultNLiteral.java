@@ -806,10 +806,10 @@ public class DefaultNLiteral implements NLiteral {
                 return NStringUtils.formatStringLiteral(asString().get(), NElementType.SINGLE_QUOTED_STRING);
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
-            case ANTI_QUOTED_STRING:
+            case BACKTICK_STRING:
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_ANTI_QUOTED_STRING:
+            case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
                 return NStringUtils.formatStringLiteral(asString().get(), type());
             case BOOLEAN:
@@ -840,10 +840,10 @@ public class DefaultNLiteral implements NLiteral {
             }
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
-            case ANTI_QUOTED_STRING:
+            case BACKTICK_STRING:
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_ANTI_QUOTED_STRING:
+            case TRIPLE_BACKTICK_STRING:
             case LINE_STRING: {
                 return toString().isEmpty();
             }
@@ -1033,10 +1033,10 @@ public class DefaultNLiteral implements NLiteral {
                 return true;
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
-            case ANTI_QUOTED_STRING:
+            case BACKTICK_STRING:
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_ANTI_QUOTED_STRING:
+            case TRIPLE_BACKTICK_STRING:
             case LINE_STRING: {
                 String s = asString().get();
                 s = s.trim();
