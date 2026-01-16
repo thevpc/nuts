@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStream;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -10,12 +11,39 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractNListContainerElement extends AbstractNElement implements NListContainerElement {
     public AbstractNListContainerElement(NElementType type, NElementAnnotation[] annotations, NElementComments comments) {
         super(type, annotations, comments);
     }
 
+    @Override
+    public List<NParamOrChild> paramsOrChildren() {
+        List<NParamOrChild> result = new ArrayList<>();
+        if (this instanceof NParametrizedContainerElement) {
+            NParametrizedContainerElement p=(NParametrizedContainerElement)  this;
+            if(p.isParametrized()) {
+                p.params().ifPresent(list -> {
+                    for (int i = 0; i < list.size(); i++) {
+                        result.add(NParamOrChildImpl.param(list.get(i),i));
+                    }
+                });
+            }
+        }
+        List<NElement> children = children();
+        for (int i = 0; i < children.size(); i++) {
+            NElement e = children.get(i);
+            result.add(NParamOrChildImpl.child(e,i));
+        }
+        return result;
+    }
+
+    @Override
+    public NStream<NParamOrChild> streamParamsOrChildren() {
+        return null;
+    }
 
     @Override
     public NOptional<String> getStringValue(int index) {
