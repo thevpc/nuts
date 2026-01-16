@@ -56,4 +56,5 @@ public interface NElementAnnotation extends NBlankable {
     boolean isNamed();
 
     String toString(boolean compact);
+    NElementAnnotationBuilder builder();
 }
