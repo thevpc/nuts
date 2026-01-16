@@ -4,13 +4,14 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NReaderProvider;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNCharStreamElement;
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 
 import java.util.List;
 import java.util.function.Consumer;
 
 public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder implements NCharStreamElementBuilder {
     private NReaderProvider value;
+    private String blockIdentifier;
 
 
     public DefaultNCharStreamElementBuilder() {
@@ -21,31 +22,32 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
         super.removeAnnotation(annotation);
         return this;
     }
+
     @Override
     public NCharStreamElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other,NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
     @Override
     public NCharStreamElementBuilder copyFrom(NElement other) {
-        copyFrom(other,NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
     @Override
-    public NCharStreamElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
-        return (NCharStreamElementBuilder) super.copyFrom(other,strategy);
+    public NCharStreamElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
+        return (NCharStreamElementBuilder) super.copyFrom(other, assignmentPolicy);
     }
 
     @Override
-    public NCharStreamElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
-        return (NCharStreamElementBuilder) super.copyFrom(other,strategy);
+    public NCharStreamElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
+        return (NCharStreamElementBuilder) super.copyFrom(other, assignmentPolicy);
     }
 
     @Override
     public NCharStreamElementBuilder doWith(Consumer<NCharStreamElementBuilder> con) {
-        if(con!=null){
+        if (con != null) {
             con.accept(this);
         }
         return this;
@@ -63,7 +65,16 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
 
     @Override
     public NCharStreamElement build() {
-        return new DefaultNCharStreamElement(value, annotations().toArray(new NElementAnnotation[0]), comments());
+        return new DefaultNCharStreamElement(blockIdentifier,value, annotations().toArray(new NElementAnnotation[0]), comments());
+    }
+
+    public String getBlockIdentifier() {
+        return blockIdentifier;
+    }
+
+    public NCharStreamElementBuilder setBlockIdentifier(String blockIdentifier) {
+        this.blockIdentifier = blockIdentifier;
+        return this;
     }
 
     @Override
@@ -168,7 +179,7 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
 
     @Override
     public NCharStreamElementBuilder addAnnotation(String name, NElement... args) {
-        super.addAnnotation(name,args);
+        super.addAnnotation(name, args);
         return this;
     }
 
