@@ -1,16 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.reflect.mapper;
 
-import net.thevpc.nuts.reflect.NReflectTypeMapper;
-import net.thevpc.nuts.util.NImmutable;
+import net.thevpc.nuts.reflect.NReflect;
+import net.thevpc.nuts.reflect.NReflectMappingStrategy;
+import net.thevpc.nuts.runtime.standalone.reflect.ReflectUtils;
 import net.thevpc.nuts.util.NOptional;
 
 import java.lang.reflect.Type;
-import java.net.URI;
-import java.time.temporal.Temporal;
 import java.util.*;
 
 public class TypeMapperRepositoryDef {
-    private final Map<Key, NReflectTypeMapper> definitions = new HashMap<>();
+    private final Map<Key, NReflectMappingStrategy> definitions = new HashMap<>();
 
     private final Map<Key, CacheItem> cache = new HashMap<>();
 
@@ -46,10 +45,10 @@ public class TypeMapperRepositoryDef {
     public static class CacheItem {
         private final Key key;
         private final Key base;
-        private final NReflectTypeMapper mapper;
+        private final NReflectMappingStrategy mapper;
         private final int far;
 
-        public CacheItem(Key key, Key base, NReflectTypeMapper mapper, int far) {
+        public CacheItem(Key key, Key base, NReflectMappingStrategy mapper, int far) {
             this.key = key;
             this.base = base;
             this.mapper = mapper;
@@ -64,7 +63,7 @@ public class TypeMapperRepositoryDef {
             return base;
         }
 
-        public NReflectTypeMapper getMapper() {
+        public NReflectMappingStrategy getMapper() {
             return mapper;
         }
 
@@ -73,7 +72,7 @@ public class TypeMapperRepositoryDef {
         }
     }
 
-    public NOptional<NReflectTypeMapper> findTypeMapper(Class from, Type to) {
+    public NOptional<NReflectMappingStrategy> getMappingStrategy(Class from, Type to) {
         CacheItem cacheItem = findCacheItem(from, to);
         if (cacheItem.getMapper() == null) {
             return NOptional.ofNamedEmpty("mapper from " + from.getSimpleName() + " to " + to);
@@ -87,7 +86,7 @@ public class TypeMapperRepositoryDef {
         if (o != null) {
             return o;
         }
-        NReflectTypeMapper m = definitions.get(k);
+        NReflectMappingStrategy m = definitions.get(k);
         if (m != null) {
             o = new CacheItem(k, k, m, 0);
             cache.put(k, o);
@@ -127,7 +126,7 @@ public class TypeMapperRepositoryDef {
             }
         }
         if (found == null) {
-            NReflectTypeMapper typeMapper = resolveDefaultMapper(from, to);
+            NReflectMappingStrategy typeMapper = resolveDefaultMapper(from, to);
             if (typeMapper != null) {
                 found = new CacheItem(k, k, typeMapper, 0);
             }
@@ -156,95 +155,47 @@ public class TypeMapperRepositoryDef {
         cache.clear();
     }
 
-    public void tryRegister(Class<?> from, Type to, NReflectTypeMapper mapper) {
+    public void tryRegister(Class<?> from, Type to, NReflectMappingStrategy mapper) {
         register(from, to, mapper);
     }
 
-    public void register(Class<?> from, Type to, NReflectTypeMapper mapper) {
+    public void register(Class<?> from, Type to, NReflectMappingStrategy mapper) {
         invalidateCache();
         definitions.put(new Key(from, to), mapper);
     }
 
-    private static boolean isImmutableType(Type type) {
-        if (type == null) {
-            return false;
-        }
 
-        // Primitives and boxed types
-        if (TypeHelper.isBoxedOrPrimitive(type)) {
-            return true;
-        }
 
-        // String
-        if (String.class.equals(type)) {
-            return true;
-        }
-
-        // Numbers
-        if (Number.class.isAssignableFrom(TypeHelper.toClass(type))) {
-            return true;
-        }
-
-        // Enums
-        if (TypeHelper.toClass(type).isEnum()) {
-            return true;
-        }
-
-        // Temporal types (LocalDate, Instant, Duration, etc.)
-        if (TypeHelper.isAssignableFrom(Temporal.class, type)) {
-            return true;
-        }
-
-        // Common immutable Java classes
-        Class<?> cls = TypeHelper.toClass(type);
-        if (cls == URI.class
-                || cls == UUID.class
-                || cls == Locale.class
-                || cls == Currency.class
-                || cls == Class.class
-                || cls == StackTraceElement.class) {
-            return true;
-        }
-
-        // Classes annotated with @NImmutable
-        if (cls.getAnnotation(NImmutable.class) != null) {
-            return true;
-        }
-
-        // By default, not immutable
-        return false;
-    }
-
-    private NReflectTypeMapper resolveDefaultMapper(Class from, Type to) {
+    private NReflectMappingStrategy resolveDefaultMapper(Class from, Type to) {
         if (from.isArray()) {
             if (TypeHelper.isArray(to)) {
-                return new ArrayToArrayTypeMapper(to);
+                return new ArrayToArrayMappingStrategy(to);
             } else if (TypeHelper.isAssignableFrom(Collection.class, to)) {
-                return new ArrayToCollectionTypeMapper(to);
+                return new ArrayToCollectionMappingStrategy(to);
             }
         } else if (Collection.class.isAssignableFrom(from)) {
             if (TypeHelper.isArray(to)) {
-                return new CollectionToArrayTypeMapper(to);
+                return new CollectionToArrayMappingStrategy(to);
             } else if (TypeHelper.isAssignableFrom(Collection.class, to)) {
-                return new CollectionToCollectionTypeMapper(to);
+                return new CollectionToCollectionMappingStrategy(to);
             }
         }
         if (
                 TypeHelper.isAssignableFrom(Map.class, from)
                         && TypeHelper.isAssignableFrom(Map.class, to)) {
-            return new MapToMapTypeMapper(to);
+            return new MapToMapMappingStrategy(to);
         }
 
         if (TypeHelper.isBoxedOrPrimitive(from) &&
                 Objects.equals(TypeHelper.toPrimitiveName(from), TypeHelper.toPrimitiveName(to))) {
-            return IdentityTypeMapper.IDENTITY_TYPE_MAPPER;
+            return IdentityMappingStrategy.IDENTITY_TYPE_MAPPER;
         }
-        if (isImmutableType(from) &&
+        if (NReflect.of().isImmutableType(from) &&
                 Objects.equals(TypeHelper.toPrimitiveName(from), TypeHelper.toPrimitiveName(to))) {
-            return IdentityTypeMapper.IDENTITY_TYPE_MAPPER;
+            return IdentityMappingStrategy.IDENTITY_TYPE_MAPPER;
         }
         if (!TypeHelper.isBoxedOrPrimitive(from) && !TypeHelper.isBoxedOrPrimitive(to)) {
-            return new DataObjectTypeMapper(from, to);
+            return new DataObjectMappingStrategy(from, to);
         }
         return null;
     }
