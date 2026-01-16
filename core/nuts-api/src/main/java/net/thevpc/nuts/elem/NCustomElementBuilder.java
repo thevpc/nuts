@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -71,7 +71,7 @@ public interface NCustomElementBuilder extends NElementBuilder {
     NCustomElementBuilder copyFrom(NElementBuilder other);
 
     NCustomElementBuilder copyFrom(NElement other);
-    NCustomElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+    NCustomElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
-    NCustomElementBuilder copyFrom(NElement other, NMapStrategy strategy);
+    NCustomElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 }
