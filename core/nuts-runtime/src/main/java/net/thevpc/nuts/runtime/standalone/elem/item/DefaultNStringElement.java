@@ -8,18 +8,22 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 public class DefaultNStringElement extends DefaultNPrimitiveElement implements NStringElement {
+    private String rawValue;
 
-    public DefaultNStringElement(NElementType type, String value) {
-        this(type, value, null, null);
+    public DefaultNStringElement(NElementType type, String value, String rawValue) {
+        this(type, value, rawValue, null, null);
     }
 
     public DefaultNStringElement(NElementType type, String value,
+                                 String rawValue,
                                  NElementAnnotation[] annotations, NElementComments comments) {
         super(type, value, annotations, comments);
+        this.rawValue = rawValue;
         if (type == NElementType.NAME) {
-            NAssert.requireTrue(NElementUtils.isValidElementName((String) value), "valid name : "+value);
+            NAssert.requireTrue(NElementUtils.isValidElementName((String) value), "valid name : " + value);
         }
     }
+
     public DefaultNStringElement(NElementType type, Character value,
                                  NElementAnnotation[] annotations, NElementComments comments) {
         super(type, value, annotations, comments);
@@ -38,4 +42,8 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
         return NOptional.of(this);
     }
 
+    @Override
+    public String literalString() {
+        return asLiteral().toStringLiteral();
+    }
 }
