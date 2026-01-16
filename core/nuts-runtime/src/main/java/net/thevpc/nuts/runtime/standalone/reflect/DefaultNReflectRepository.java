@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -25,10 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.reflect;
 
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.reflect.NReflectConfiguration;
-import net.thevpc.nuts.reflect.NReflectConfigurationBuilder;
-import net.thevpc.nuts.reflect.NReflectRepository;
-import net.thevpc.nuts.reflect.NReflectType;
+import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NScorable;
 
