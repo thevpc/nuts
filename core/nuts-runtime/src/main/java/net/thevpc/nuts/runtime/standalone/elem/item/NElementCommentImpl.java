@@ -11,27 +11,38 @@ import java.util.stream.Collectors;
 
 public class NElementCommentImpl implements NElementComment {
     private NElementCommentType type;
+    private String raw;
     private List<String> lines = new ArrayList<>();
+    private static NElementCommentImpl EMPTY=new NElementCommentImpl(null,null,null);
 
     public static NElementComment of(String text) {
         return ofMultiLine(text);
     }
 
     public static NElementCommentImpl ofMultiLine(String... text) {
-        return new NElementCommentImpl(NElementCommentType.MULTI_LINE, text);
+        return new NElementCommentImpl(NElementCommentType.MULTI_LINE, null, text);
     }
 
     public static NElementCommentImpl ofSingleLine(String... text) {
-        return new NElementCommentImpl(NElementCommentType.SINGLE_LINE, text);
+        return new NElementCommentImpl(NElementCommentType.SINGLE_LINE, null, text);
     }
 
-    public NElementCommentImpl(NElementCommentType type, String... texts) {
+    public NElementCommentImpl(NElementCommentType type, String raw, String... texts) {
         this.type = type;
         if (texts != null) {
             for (String text : texts) {
                 this.lines.addAll(new NStringBuilder(text).lines().toList());
             }
         }
+        if (raw == null) {
+            this.raw = "/*"+lines.stream().collect(Collectors.joining("\n"))+"*/";
+        } else {
+            this.raw = raw;
+        }
+    }
+
+    public static NElementComment of(NElementCommentType type, String text) {
+        return type==NElementCommentType.MULTI_LINE ? ofMultiLine(text) : ofSingleLine(text);
     }
 
     @Override
