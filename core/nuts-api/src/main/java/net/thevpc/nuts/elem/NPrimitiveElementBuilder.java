@@ -27,7 +27,7 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -172,7 +172,7 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
 
     NPrimitiveElementBuilder copyFrom(NElement other);
 
-    NPrimitiveElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+    NPrimitiveElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
-    NPrimitiveElementBuilder copyFrom(NElement other, NMapStrategy strategy);
+    NPrimitiveElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 }
