@@ -476,7 +476,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         return null;
     }
 
-    public <T> T newInstance(Class<T> t, Class<? super T> apiType) {
+    public <T> T newInstance(Class<? extends T> t, Class<T> apiType) {
         return extensionTypeInfoPool.get(t, apiType).newInstance();
     }
 
