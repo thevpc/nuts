@@ -145,10 +145,10 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             }
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
-            case ANTI_QUOTED_STRING:
+            case BACKTICK_STRING:
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_ANTI_QUOTED_STRING:
+            case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
             {
                 Element e = doc.createElement(TAG_STRING);
@@ -263,10 +263,10 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                                 }
                                 case DOUBLE_QUOTED_STRING:
                                 case SINGLE_QUOTED_STRING:
-                                case ANTI_QUOTED_STRING:
+                                case BACKTICK_STRING:
                                 case TRIPLE_DOUBLE_QUOTED_STRING:
                                 case TRIPLE_SINGLE_QUOTED_STRING:
-                                case TRIPLE_ANTI_QUOTED_STRING:
+                                case TRIPLE_BACKTICK_STRING:
                                 case LINE_STRING:
                                 {
                                     entryElem.setAttribute(ATTRIBUTE_VALUE, ne.value().asStringValue().get());
