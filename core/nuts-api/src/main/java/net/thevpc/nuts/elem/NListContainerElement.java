@@ -42,7 +42,7 @@ import java.util.List;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NListContainerElement extends NElement {
+public interface NListContainerElement extends NElement, NListOrParametrizedContainerElement {
 
     /**
      * return value for name or null. If multiple values are available return
@@ -54,6 +54,7 @@ public interface NListContainerElement extends NElement {
     NOptional<NElement> get(String key);
 
     NOptional<NElement> getAt(int index);
+
     NOptional<NElement> get(int index);
 
     List<NElement> getAll(String key);
