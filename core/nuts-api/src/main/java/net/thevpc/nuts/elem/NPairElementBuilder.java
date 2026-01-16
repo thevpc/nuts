@@ -1,6 +1,6 @@
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
@@ -65,7 +65,7 @@ public interface NPairElementBuilder extends NElementBuilder {
 
     NPairElementBuilder copyFrom(NElement other);
 
-    NPairElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+    NPairElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
-    NPairElementBuilder copyFrom(NElement other, NMapStrategy strategy);
+    NPairElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 }
