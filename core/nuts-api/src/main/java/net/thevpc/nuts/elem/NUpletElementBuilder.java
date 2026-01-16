@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Collection;
@@ -378,9 +378,9 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     NUpletElementBuilder copyFrom(NElement other);
 
-    NUpletElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+    NUpletElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
-    NUpletElementBuilder copyFrom(NElement other, NMapStrategy strategy);
+    NUpletElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 
     NUpletElementBuilder setParams(List<NElement> params);
 }
