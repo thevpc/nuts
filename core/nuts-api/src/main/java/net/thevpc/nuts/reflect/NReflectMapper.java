@@ -1,31 +1,53 @@
 package net.thevpc.nuts.reflect;
 
-import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NEqualizer;
+import net.thevpc.nuts.util.NAssignmentPolicy;
+import net.thevpc.nuts.util.NOptional;
 
 import java.lang.reflect.Type;
 
-public interface NReflectMapper extends NComponent {
+public interface NReflectMapper {
     static NReflectMapper of() {
-        return NExtensions.of(NReflectMapper.class);
+        return NReflect.of().createMapper();
     }
 
-    NReflectRepository getReflectRepository();
+    static NReflectMapper of(NReflectRepository repository) {
+        return NReflect.of().createMapper().setRepository(repository);
+    }
 
-    NReflectMapper setReflectRepository(NReflectRepository r);
+    Object mapToType(Object value, NReflectType toType);
+
+    Object mapToType(Object value, Type toType);
 
     boolean copy(Object from, Object to);
 
-    Object mapToType(Object from, Type to);
+    // type configuration
 
-    Object mapToType(Object from, NReflectType to);
+    NReflectMapper includeProperty(String... names);
 
-    interface Context {
-        NReflectRepository getReflectRepository();
-    }
+    NReflectMapper excludeProperty(String... names);
 
-    interface Converter {
-        Object convert(Object value, String path, NReflectType fromType, NReflectType toType, NReflectMapperContext context);
-    }
+    NReflectMapper renameProperty(String from, String to);
+
+
+    // global configuration
+
+    NOptional<NReflectMappingStrategy> getMappingStrategy(NReflectType from, NReflectType to);
+
+    NEqualizer<Object> getEqualizer();
+
+    NReflectMapper setEqualizer(NEqualizer<Object> eq);
+
+    NAssignmentPolicy getAssignmentPolicy();
+
+    NReflectMapper setAssignmentPolicy(NAssignmentPolicy mapStrategy);
+
+    NReflectRepository getRepository();
+
+    NReflectMapper setRepository(NReflectRepository repository);
+
+    NReflectMapper setPropertyConverter(String property, NReflectConverter converter);
+
+    NReflectMapper setTypeConverter(NReflectType fromType, NReflectType toType, NReflectConverter converter);
 
 }
