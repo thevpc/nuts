@@ -25,14 +25,17 @@ public class YamlFormat {
                 NOperatorElement ope = (NOperatorElement) value;
                 NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(value);
                 value1.clearChildren();
-                value1.set("op", ope.type().opSymbol());
-                value1.set("mode", ope.operatorType().id());
+                value1.set("op", ope.type().id());
+                value1.set("symbol", ope.symbol().id());
+                value1.set("position", ope.position().id());
                 value1.name(null);
-                if (ope.first().isPresent()) {
-                    value1.set("$first", ope.first().get());
-                }
-                if (ope.second().isPresent()) {
-                    value1.set("$second", ope.second().get());
+                if(ope.isBinaryOperator()) {
+                    NBinaryOperatorElement bb = ope.asBinaryOperator().get();
+                    value1.set("$first", bb.first());
+                    value1.set("$second", bb.second());
+                }else if(ope.isUnaryOperator()){
+                    NUnaryOperatorElement bb = ope.asUnaryOperator().get();
+                    value1.set("$first", bb.first());
                 }
                 return value1.build();
             }
@@ -44,10 +47,9 @@ public class YamlFormat {
             case LOCAL_DATE:
             case LOCAL_DATETIME:
             case LOCAL_TIME:
-            case REGEX:
             case LINE_STRING:
-            case ANTI_QUOTED_STRING:
-            case TRIPLE_ANTI_QUOTED_STRING:
+            case BACKTICK_STRING:
+            case TRIPLE_BACKTICK_STRING:
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
             case INSTANT:
@@ -108,26 +110,6 @@ public class YamlFormat {
             }
             case UPLET:
             case NAMED_UPLET: {
-                NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(value);
-                List<NElement> children = value1.children();
-                value1.clearChildren();
-                if (value1.name().isPresent()) {
-                    value1.set("$name", value1.name().get());
-                    value1.name(null);
-                }
-                if (value1.params().isPresent()) {
-                    value1.set("$params", NElement.ofArray(value1.params().get().toArray(new NElement[0])));
-                    value1.setParametrized(false);
-                }
-                value1.set("$array", NElement.ofArray(children.toArray(new NElement[0])));
-                return value1.build();
-            }
-            case MATRIX: {
-                return NElement.ofArrayBuilder().copyFrom(value).build();
-            }
-            case NAMED_PARAMETRIZED_MATRIX:
-            case PARAMETRIZED_MATRIX:
-            case NAMED_MATRIX: {
                 NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(value);
                 List<NElement> children = value1.children();
                 value1.clearChildren();
