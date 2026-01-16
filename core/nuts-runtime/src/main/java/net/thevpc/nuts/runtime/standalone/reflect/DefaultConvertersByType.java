@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.reflect;
 
+import net.thevpc.nuts.reflect.NReflectConverter;
 import net.thevpc.nuts.reflect.NReflectMapper;
-import net.thevpc.nuts.reflect.NReflectMapperContext;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.util.NEnum;
 
@@ -9,9 +9,9 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
-public class DefaultConvertersByType implements NReflectMapper.Converter {
+public class DefaultConvertersByType implements NReflectConverter {
     @Override
-    public Object convert(Object value, String path, NReflectType fromType, NReflectType toType, NReflectMapperContext context) {
+    public Object convert(Object value, String path, NReflectType fromType, NReflectType toType, NReflectMapper context) {
         if (value == null) {
             return toType.getDefaultValue();
         }
@@ -60,7 +60,7 @@ public class DefaultConvertersByType implements NReflectMapper.Converter {
                 case "java.lang.Float":return Float.parseFloat((String) value);
                 case "java.lang.Double":return Double.parseDouble((String) value);
             }
-        } else if (context.repository().getType(Number.class).isAssignableFrom(fromType)) {
+        } else if (context.getRepository().getType(Number.class).isAssignableFrom(fromType)) {
             if (tojType instanceof Enum) {
                 return ((Class<? extends Enum>) tojType).getEnumConstants()[((Number) value).intValue()];
             }else if (tojType instanceof Class && Number.class.isAssignableFrom((Class<?>) tojType)) {
@@ -91,7 +91,7 @@ public class DefaultConvertersByType implements NReflectMapper.Converter {
                     } else if (cTojType.equals(java.util.Set.class)) {
                         cTojType = java.util.HashSet.class;
                     }
-                    Collection li = (Collection) context.repository().getType(cTojType).newInstance();
+                    Collection li = (Collection) context.getRepository().getType(cTojType).newInstance();
                     int len = Array.getLength(value);
                     for (int i = 0; i < len; i++) {
                         li.add(Array.get(value, i));
@@ -119,7 +119,7 @@ public class DefaultConvertersByType implements NReflectMapper.Converter {
                     } else if (cTojType.equals(java.util.Set.class)) {
                         cTojType = java.util.HashSet.class;
                     }
-                    Collection li = (Collection) context.repository().getType(cTojType).newInstance();
+                    Collection li = (Collection) context.getRepository().getType(cTojType).newInstance();
                     Collection coll = (Collection) value;
                     li.addAll(coll);
                     return li;
