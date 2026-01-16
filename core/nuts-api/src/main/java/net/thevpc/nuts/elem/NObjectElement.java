@@ -40,6 +40,7 @@ public interface NObjectElement extends NNamedElement, NListContainerElement, NP
         return NElement.ofObject();
     }
 
+
     Stream<NElement> stream();
 
     /**
