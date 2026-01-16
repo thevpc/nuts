@@ -136,29 +136,26 @@ public class NElementTransformHelper {
                     b.value(compressElement(v));
                     o = b.build();
                     return transform.postTransform(o);
-                }else if (item.isAnyMatrix()) {
-                    //TODO
-                    throw new NUnsupportedOperationException(NMsg.ofC("matrices are not yet fully supported. cannot transform matrix"));
                 }
                 throw new NUnsupportedOperationException(NMsg.ofC("container %s not yet fully supported", item.type()));
             }
             case OPERATOR: {
                 if (item.isBinaryOperator()) {
-                    NOperatorElement o = item.asOperator().get();
-                    NElement[] k = o.first().get().transform(transform);
-                    NElement[] v = o.second().get().transform(transform);
+                    NBinaryOperatorElement o = item.asBinaryOperator().get();
+                    NElement[] k = o.first().transform(transform);
+                    NElement[] v = o.second().transform(transform);
                     NOperatorElementBuilder b = o.builder();
                     b.first(compressElement(k));
                     b.second(compressElement(v));
-                    o = b.build();
+                    o = (NBinaryOperatorElement) b.build();
                     return transform.postTransform(o);
                 }
                 if (item.isUnaryOperator()) {
-                    NOperatorElement o = item.asOperator().get();
-                    NElement[] k = o.first().get().transform(transform);
+                    NUnaryOperatorElement o = item.asUnaryOperator().get();
+                    NElement[] k = o.first().transform(transform);
                     NOperatorElementBuilder b = o.builder();
                     b.first(compressElement(k));
-                    o = b.build();
+                    o = (NUnaryOperatorElement) b.build();
                     return transform.postTransform(o);
                 }
                 throw new NUnsupportedOperationException(NMsg.ofC("operator %s not yet fully supported", item.type()));
@@ -167,7 +164,6 @@ public class NElementTransformHelper {
             case NUMBER:
             case TEMPORAL:
             case STRING:
-            case REGEX:
             case STREAM:
             case BOOLEAN:
             case NULL:
