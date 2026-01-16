@@ -81,9 +81,14 @@ public interface NElementFactory extends NComponent {
     NPairElementBuilder ofPairBuilder(NElement key, NElement value);
 
     NOperatorElementBuilder ofOpBuilder();
-    NOperatorElement ofOp(NElementType op, NOperatorType operatorType,NElement first, NElement second);
-    NOperatorElement ofOp(NElementType op,NElement first, NElement second);
-    NOperatorElement ofOp(NElementType op,NElement first);
+
+    NOperatorElement ofOp(NOperatorSymbol op, NOperatorPosition position, NElement first, NElement second);
+
+    NOperatorElement ofOp(NOperatorSymbol op, NElement first, NElement second);
+
+    NOperatorElement ofOp(NOperatorSymbol op, NElement first);
+
+    NOperatorSymbolElement ofOp(NOperatorSymbol op);
 
     NPairElementBuilder ofPairBuilder();
 
@@ -115,8 +120,6 @@ public interface NElementFactory extends NComponent {
     NPrimitiveElement ofBoolean(String value);
 
     NPrimitiveElement ofBoolean(boolean value);
-
-    NPrimitiveElement ofRegex(String value);
 
     NPrimitiveElement ofName(String value);
 
@@ -238,13 +241,19 @@ public interface NElementFactory extends NComponent {
 
     NPrimitiveElement ofDoubleComplex(double real, double imag);
 
+    NPrimitiveElement ofDoubleComplex(double real, double imag, String suffix);
+
     NPrimitiveElement ofFloatComplex(float real);
 
     NPrimitiveElement ofFloatComplex(float real, float imag);
 
+    NPrimitiveElement ofFloatComplex(float real, float imag, String suffix);
+
     NPrimitiveElement ofBigComplex(BigDecimal real);
 
     NPrimitiveElement ofBigComplex(BigDecimal real, BigDecimal imag);
+
+    NPrimitiveElement ofBigComplex(BigDecimal real, BigDecimal imag, String suffix);
 
 
     NPrimitiveElement ofNumber(Number value);
@@ -272,8 +281,6 @@ public interface NElementFactory extends NComponent {
     NUpletElement ofUplet(String name, NElement... items);
 
     NUpletElement ofNamedUplet(String name, NElement... items);
-
-    NMatrixElementBuilder ofMatrixBuilder();
 
     NArrayElement ofIntArray(int... items);
 
@@ -355,7 +362,7 @@ public interface NElementFactory extends NComponent {
 
     NElement ofBinaryStream(NInputStreamProvider value);
 
-    NElement ofCharStream(NReaderProvider value);
+    NElement ofCharStream(NReaderProvider value, String blockIdentifier);
 
     NBinaryStreamElementBuilder ofBinaryStreamBuilder();
 
@@ -366,4 +373,6 @@ public interface NElementFactory extends NComponent {
     NElementAnnotation ofAnnotation(String name);
 
     NPrimitiveElementBuilder ofPrimitiveBuilder();
+
+    NExprElementBuilder ofExprBuilder();
 }
