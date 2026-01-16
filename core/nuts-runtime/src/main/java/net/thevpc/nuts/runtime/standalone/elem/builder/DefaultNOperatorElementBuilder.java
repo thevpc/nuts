@@ -2,9 +2,10 @@ package net.thevpc.nuts.runtime.standalone.elem.builder;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
-import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNOperatorElement;
+import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNOperatorElementBinary;
+import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNOperatorElementUnary;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
@@ -13,20 +14,18 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder implements NOperatorElementBuilder {
-    private NElementType operator;
-    private NOperatorType operatorType;
+    private NOperatorSymbol symbol;
+    private NOperatorPosition position;
 
     private NElement first;
 
     private NElement second;
 
-    public NOperatorElementBuilder operator(NElementType operator) {
-        if (operator != null) {
-            NAssert.requireTrue(operator.isAnyOp(), "operator");
-        }
-        this.operator = operator;
+    public NOperatorElementBuilder symbol(NOperatorSymbol operator) {
+        this.symbol = operator;
         return this;
     }
+
     @Override
     public NOperatorElementBuilder removeAnnotation(NElementAnnotation annotation) {
         super.removeAnnotation(annotation);
@@ -34,12 +33,12 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
-    public NOperatorType operatorType() {
-        return operatorType;
+    public NOperatorPosition position() {
+        return position;
     }
 
-    public NOperatorElementBuilder operatorType(NOperatorType operatorType) {
-        this.operatorType = operatorType;
+    public NOperatorElementBuilder position(NOperatorPosition operatorType) {
+        this.position = operatorType;
         return this;
     }
 
@@ -59,18 +58,18 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
-    public NElementType operator() {
-        return operator;
+    public NOperatorSymbol symbol() {
+        return symbol;
     }
 
     @Override
     public NOptional<NElement> first() {
-        return NOptional.ofNamed(first, NMsg.ofC("first operand of %s", operator()));
+        return NOptional.ofNamed(first, NMsg.ofC("first operand of %s", symbol()));
     }
 
     @Override
     public NOptional<NElement> second() {
-        return NOptional.ofNamed(second, NMsg.ofC("second operand of %s", operator()));
+        return NOptional.ofNamed(second, NMsg.ofC("second operand of %s", symbol()));
     }
 
 
@@ -87,37 +86,40 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
         if (object == null || getClass() != object.getClass()) return false;
         if (!super.equals(object)) return false;
         DefaultNOperatorElementBuilder that = (DefaultNOperatorElementBuilder) object;
-        return operator == that.operator && Objects.equals(first, that.first) && Objects.equals(second, that.second);
+        return symbol == that.symbol && Objects.equals(first, that.first) && Objects.equals(second, that.second);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), operator, first, second);
+        return Objects.hash(super.hashCode(), symbol, first, second);
     }
 
     @Override
     public NOperatorElement build() {
-        NAssert.requireNonNull(operator, "operator");
+        NAssert.requireNonNull(symbol, "operator");
         NAssert.requireNonNull(first, "first");
-        if (operatorType == null) {
+        if (position == null) {
             if (second == null) {
-                operatorType = NOperatorType.UNARY_PREFIX;
+                position = NOperatorPosition.PREFIX;
             } else {
-                operatorType = NOperatorType.BINARY_INFIX;
+                position = NOperatorPosition.INFIX;
             }
         }
-        if (operatorType == NOperatorType.BINARY_INFIX && second == null) {
+        if (position == NOperatorPosition.INFIX && second == null) {
             NAssert.requireNonNull(second, "second");
         }
-        return new DefaultNOperatorElement(operator, operatorType, first, second, annotations().toArray(new NElementAnnotation[0]), comments());
+        if (second == null) {
+            return new DefaultNOperatorElementUnary(symbol, position, first, annotations().toArray(new NElementAnnotation[0]), comments());
+        }
+        return new DefaultNOperatorElementBinary(symbol, position, first, second, annotations().toArray(new NElementAnnotation[0]), comments());
     }
 
     @Override
     public NOperatorElementBuilder copyFrom(NOperatorElementBuilder element) {
         if (element != null) {
             super.copyFrom(element);
-            operator = element.operator();
-            operatorType = element.operatorType();
+            symbol = element.symbol();
+            position = element.position();
             first = element.first().orNull();
             second = element.second().orNull();
         }
@@ -230,13 +232,13 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
-    public NOperatorElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
-        return (NOperatorElementBuilder) super.copyFrom(other, strategy);
+    public NOperatorElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
+        return (NOperatorElementBuilder) super.copyFrom(other, assignmentPolicy);
     }
 
     @Override
-    public NOperatorElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
-        return (NOperatorElementBuilder) super.copyFrom(other, strategy);
+    public NOperatorElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
+        return (NOperatorElementBuilder) super.copyFrom(other, assignmentPolicy);
     }
 
     @Override
