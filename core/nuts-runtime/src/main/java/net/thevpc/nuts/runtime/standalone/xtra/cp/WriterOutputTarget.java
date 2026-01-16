@@ -6,12 +6,13 @@ import net.thevpc.nuts.runtime.standalone.io.printstream.OutputTargetExt;
 import net.thevpc.nuts.io.WriterOutputStream;
 
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 class WriterOutputTarget extends OutputTargetExt {
     Writer writer;
 
-    public WriterOutputTarget(NWorkspace workspace,Writer writer) {
-        super(new WriterOutputStream(writer), new DefaultNContentMetadata());
+    public WriterOutputTarget(Writer writer) {
+        super(new WriterOutputStream(writer, StandardCharsets.UTF_8), new DefaultNContentMetadata());
         this.writer = writer;
     }
 
