@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.builder;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPairElement;
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
     }
     @Override
     public NPairElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other,NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
@@ -37,11 +37,11 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
     }
 
     @Override
-    public NPairElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
+    public NPairElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
         if(other==null){
             return this;
         }
-        super.copyFrom(other, strategy);
+        super.copyFrom(other, assignmentPolicy);
         if(other instanceof NPairElementBuilder){
             NPairElementBuilder from = (NPairElementBuilder) other;
             this.key = from.key();
@@ -82,11 +82,11 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
     }
 
     @Override
-    public NPairElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
+    public NPairElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
         if(other==null){
             return this;
         }
-        super.copyFrom(other, strategy);
+        super.copyFrom(other, assignmentPolicy);
         if(other instanceof NPairElement){
             NPairElement from = (NPairElement) other;
             this.key = from.key();
@@ -308,7 +308,7 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
 
     @Override
     public NPairElementBuilder copyFrom(NElement other) {
-        copyFrom(other,NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
