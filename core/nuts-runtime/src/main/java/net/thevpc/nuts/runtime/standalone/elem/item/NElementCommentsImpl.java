@@ -13,6 +13,7 @@ public class NElementCommentsImpl implements NElementComments {
     public static final NElementComments BLANK = new NElementCommentsImpl();
     private NElementComment[] leadingComments;
     private NElementComment[] trailingComments;
+    private static NElementCommentsImpl EMPTY=new NElementCommentsImpl();
 
     private static NElementComment[] _trim(NElementComment[] all) {
         List<NElementComment> ok = new ArrayList<>();
@@ -29,14 +30,23 @@ public class NElementCommentsImpl implements NElementComments {
     }
 
     public static NElementComments ofLeading(NElementComment... all) {
+        if(all==null || all.length==0){
+            return EMPTY;
+        }
         return new NElementCommentsImpl(all, null);
     }
 
     public static NElementComments ofTrailing(NElementComment... all) {
+        if(all==null || all.length==0){
+            return EMPTY;
+        }
         return new NElementCommentsImpl(null, all);
     }
 
     public static NElementComments ofTrailing(NElementComment[] leading, NElementComment[] trailing) {
+        if((leading==null || leading.length==0) && (trailing==null || trailing.length==0)){
+            return EMPTY;
+        }
         return new NElementCommentsImpl(leading, trailing);
     }
 
