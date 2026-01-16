@@ -105,8 +105,8 @@ public class NColor {
     public static final NColor PURPLE_3 = _reg("Purple3", "Purple", 95, 0, 175);
     public static final NColor PURPLE_4 = _reg("Purple4", "Purple", 95, 0, 215);
     public static final NColor BLUE_VIOLET = _reg("BlueViolet", "BlueViolet", 95, 0, 255);
-    public static final NColor ORANGE = _reg("Orange", "Orange", 95, 95, 0);
-    public static final NColor LIGHT_ORANGE = _reg("LightOrange", "Orange", 252, 210, 153);
+    public static final NColor ORANGE = _reg("Orange", "Orange", 255, 165, 0);
+    public static final NColor LIGHT_ORANGE = _reg("LightOrange", "Orange", 250, 181, 127);
     public static final NColor MEDIUM_PURPLE = _reg("MediumPurple", "Purple", 95, 95, 135);
     public static final NColor DARK_SLATE_BLUE = _reg("DarkSlateBlue", "SlateBlue", 72, 61, 139);
     public static final NColor SLATE_BLUE = _reg("SlateBlue", "SlateBlue", 95, 95, 175);
