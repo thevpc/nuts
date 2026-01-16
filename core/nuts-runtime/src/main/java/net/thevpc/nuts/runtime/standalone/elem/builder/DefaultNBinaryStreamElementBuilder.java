@@ -4,7 +4,9 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNBinaryStreamElement;
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NAssignmentPolicy;
+import net.thevpc.nuts.util.NUnsupportedOperationException;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -15,31 +17,33 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
 
     public DefaultNBinaryStreamElementBuilder() {
     }
+
     @Override
     public NBinaryStreamElementBuilder removeAnnotation(NElementAnnotation annotation) {
         super.removeAnnotation(annotation);
         return this;
     }
+
     @Override
     public NBinaryStreamElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other,NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
     @Override
     public NBinaryStreamElementBuilder copyFrom(NElement other) {
-        copyFrom(other,NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
     @Override
-    public NBinaryStreamElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
-        return (NBinaryStreamElementBuilder) super.copyFrom(other,strategy);
+    public NBinaryStreamElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
+        return (NBinaryStreamElementBuilder) super.copyFrom(other, assignmentPolicy);
     }
 
     @Override
-    public NBinaryStreamElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
-        return (NBinaryStreamElementBuilder) super.copyFrom(other,strategy);
+    public NBinaryStreamElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
+        return (NBinaryStreamElementBuilder) super.copyFrom(other, assignmentPolicy);
     }
 
     @Override
@@ -211,4 +215,8 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
         return this;
     }
 
+    @Override
+    public NBinaryStreamElementBuilder writeBase64(String base64String) {
+        throw new NUnsupportedOperationException(NMsg.ofC("not yet implemented NBinaryStreamElementBuilder::writeBase64"));
+    }
 }
