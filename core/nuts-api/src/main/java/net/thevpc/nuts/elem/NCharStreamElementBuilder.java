@@ -25,7 +25,7 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.io.NReaderProvider;
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -34,15 +34,23 @@ import java.util.function.Consumer;
  * @author thevpc
  */
 public interface NCharStreamElementBuilder extends NElementBuilder {
+
+    String getBlockIdentifier();
+
+    NCharStreamElementBuilder setBlockIdentifier(String blockIdentifier);
+
     NCharStreamElementBuilder doWith(Consumer<NCharStreamElementBuilder> con);
+
     NCharStreamElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
-    NCharStreamElementBuilder addAnnotation(String name,NElement ...args);
+    NCharStreamElementBuilder addAnnotation(String name, NElement... args);
+
     NCharStreamElementBuilder addAnnotation(NElementAnnotation annotation);
 
     NCharStreamElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
 
     NCharStreamElementBuilder removeAnnotationAt(int index);
+
     NCharStreamElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NCharStreamElementBuilder clearAnnotations();
@@ -87,7 +95,8 @@ public interface NCharStreamElementBuilder extends NElementBuilder {
     NCharStreamElementBuilder copyFrom(NElementBuilder other);
 
     NCharStreamElementBuilder copyFrom(NElement other);
-    NCharStreamElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
 
-    NCharStreamElementBuilder copyFrom(NElement other, NMapStrategy strategy);
+    NCharStreamElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
+
+    NCharStreamElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 }
