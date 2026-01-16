@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 
 import java.util.List;
 
@@ -86,9 +86,9 @@ public interface NElementBuilder {
 
     NElementBuilder copyFrom(NElement other);
 
-    NElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+    NElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
-    NElementBuilder copyFrom(NElement other, NMapStrategy strategy);
+    NElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 
     NElement build();
 }
