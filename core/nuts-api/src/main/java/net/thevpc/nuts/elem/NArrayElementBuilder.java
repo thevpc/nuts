@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Collection;
@@ -301,9 +301,9 @@ public interface NArrayElementBuilder extends NElementBuilder {
 
     NArrayElementBuilder copyFrom(NElement other);
 
-    NArrayElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+    NArrayElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy condition);
 
-    NArrayElementBuilder copyFrom(NElement other, NMapStrategy strategy);
+    NArrayElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 
     NArrayElementBuilder addAnnotations(List<NElementAnnotation> annotations);
     NArrayElementBuilder addAnnotation(NElementAnnotation annotation);
