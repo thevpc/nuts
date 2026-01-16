@@ -5,7 +5,7 @@ import net.thevpc.nuts.runtime.standalone.elem.builder.NElementCommentsBuilderIm
 import net.thevpc.nuts.runtime.standalone.elem.item.NElementAnnotationImpl;
 import net.thevpc.nuts.runtime.standalone.elem.item.NElementCommentImpl;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,12 +29,12 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
 
     public NElementBuilder addLeadingComment(NElementCommentType type, String text) {
         NAssert.requireNonNull(type, "comment type");
-        return addLeadingComment(new NElementCommentImpl(type, text));
+        return addLeadingComment(NElementCommentImpl.of(type, text));
     }
 
     public NElementBuilder addTrailingComment(NElementCommentType type, String text) {
         NAssert.requireNonNull(type, "comment type");
-        return addTrailingComment(new NElementCommentImpl(type, text));
+        return addTrailingComment(NElementCommentImpl.of(type, text));
     }
 
     public NElementBuilder addLeadingComment(NElementComment comment) {
@@ -166,7 +166,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
 
     @Override
     public NElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other,NMapStrategy.ANY);
+        copyFrom(other, NAssignmentPolicy.ANY);
         return this;
     }
 
@@ -179,7 +179,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
     }
 
     @Override
-    public NElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy) {
+    public NElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
         if(other==null){
             return this;
         }
@@ -190,7 +190,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
     }
 
     @Override
-    public NElementBuilder copyFrom(NElement other, NMapStrategy strategy) {
+    public NElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
         if(other==null){
             return this;
         }
