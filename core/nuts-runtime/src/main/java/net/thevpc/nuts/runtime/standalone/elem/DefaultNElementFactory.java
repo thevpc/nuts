@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.expr.NParseException;
 import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
 import net.thevpc.nuts.math.NBigComplex;
@@ -9,6 +8,8 @@ import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.runtime.standalone.elem.builder.*;
 import net.thevpc.nuts.runtime.standalone.elem.item.*;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementToken;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCustomLexer;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
@@ -97,6 +98,11 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
+    public NOperatorSymbolElement ofOp(NOperatorSymbol op) {
+        return new DefaultNOperatorSymbolElement(op, new NElementAnnotation[0], null);
+    }
+
+    @Override
     public NPairElement ofPair(String key, LocalTime value) {
         return ofPair(ofNameOrString(key), ofLocalTime(value));
     }
@@ -116,18 +122,18 @@ public class DefaultNElementFactory implements NElementFactory {
 
 
     @Override
-    public NOperatorElement ofOp(NElementType op, NOperatorType type, NElement first, NElement second) {
-        return ofOpBuilder().operator(op).operatorType(type).first(first).second(second).build();
+    public NOperatorElement ofOp(NOperatorSymbol op, NOperatorPosition type, NElement first, NElement second) {
+        return ofOpBuilder().symbol(op).position(type).first(first).second(second).build();
     }
 
     @Override
-    public NOperatorElement ofOp(NElementType op, NElement first, NElement second) {
-        return ofOp(op,null, first, second);
+    public NOperatorElement ofOp(NOperatorSymbol op, NElement first, NElement second) {
+        return ofOp(op, null, first, second);
     }
 
     @Override
-    public NOperatorElement ofOp(NElementType op, NElement operand) {
-        return ofOp(op,null, operand, null);
+    public NOperatorElement ofOp(NOperatorSymbol op, NElement operand) {
+        return ofOp(op, null, operand, null);
     }
 
     @Override
@@ -391,17 +397,13 @@ public class DefaultNElementFactory implements NElementFactory {
             stringLayout = NElementType.DOUBLE_QUOTED_STRING;
         }
         if (stringLayout.isAnyStringOrName()) {
-            return new DefaultNStringElement(stringLayout, str, null, null);
+            return new DefaultNStringElement(stringLayout, str, str, null, null);
         }
         throw new NUnsupportedEnumException(stringLayout);
     }
 
-    public NPrimitiveElement ofRegex(String str) {
-        return str == null ? ofNull() : new DefaultNStringElement(NElementType.REGEX, str, null, null);
-    }
-
     public NPrimitiveElement ofName(String str) {
-        return str == null ? ofNull() : new DefaultNStringElement(NElementType.NAME, str, null, null);
+        return str == null ? ofNull() : new DefaultNStringElement(NElementType.NAME, str, str, null, null);
     }
 
     @Override
@@ -409,8 +411,8 @@ public class DefaultNElementFactory implements NElementFactory {
         if (value == null) {
             return ofNull();
         }
-        return NElementUtils.isValidElementName(value) ? new DefaultNStringElement(NElementType.NAME, value, null, null)
-                : new DefaultNStringElement(NElementType.DOUBLE_QUOTED_STRING, value, null, null)
+        return NElementUtils.isValidElementName(value) ? new DefaultNStringElement(NElementType.NAME, value, value, null, null)
+                : new DefaultNStringElement(NElementType.DOUBLE_QUOTED_STRING, value, value, null, null)
                 ;
     }
 
@@ -522,8 +524,8 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
-    public NElement ofCharStream(NReaderProvider value) {
-        return value == null ? ofNull() : new DefaultNCharStreamElement(value, null, null);
+    public NElement ofCharStream(NReaderProvider value, String blockIdentifier) {
+        return value == null ? ofNull() : new DefaultNCharStreamElement(NStringUtils.trim(blockIdentifier), value, null, null);
     }
 
     @Override
@@ -589,38 +591,55 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NPrimitiveElement ofNumber(String value) {
-        if (value == null) {
+        if (NBlankable.isBlank(value)) {
             return ofNull();
         }
-        if (value.indexOf('.') >= 0) {
-            try {
-                return ofNumber(Double.parseDouble(value));
-            } catch (Exception ex) {
-
-            }
-            try {
-                return ofNumber(new BigDecimal(value));
-            } catch (Exception ex) {
-
-            }
-        } else {
-            try {
-                return ofNumber(Integer.parseInt(value));
-            } catch (Exception ex) {
-
-            }
-            try {
-                return ofNumber(Long.parseLong(value));
-            } catch (Exception ex) {
-
-            }
-            try {
-                return ofNumber(new BigInteger(value));
-            } catch (Exception ex) {
-
+        NElementToken next = new TsonCustomLexer(value).next();
+        if(next!=null){
+            Object v = next.value();
+            if(v instanceof NPrimitiveElement){
+                if(((NPrimitiveElement) v).isNumber()){
+                    return (NPrimitiveElement) v;
+                }
             }
         }
-        throw new NParseException(NMsg.ofC("unable to parse number %s", value));
+        throw new NIllegalArgumentException(NMsg.ofC("not a number %s",value));
+//        TsonNumberHelper parse;
+//        try {
+//            parse = TsonNumberHelper.parse(value);
+//        } catch (RuntimeException ex) {
+//            throw ex;
+//        }
+//        return (NPrimitiveElement) parse.toTson();
+//        if (value.indexOf('.') >= 0) {
+//            try {
+//                return ofNumber(Double.parseDouble(value));
+//            } catch (Exception ex) {
+//
+//            }
+//            try {
+//                return ofNumber(new BigDecimal(value));
+//            } catch (Exception ex) {
+//
+//            }
+//        } else {
+//            try {
+//                return ofNumber(Integer.parseInt(value));
+//            } catch (Exception ex) {
+//
+//            }
+//            try {
+//                return ofNumber(Long.parseLong(value));
+//            } catch (Exception ex) {
+//
+//            }
+//            try {
+//                return ofNumber(new BigInteger(value));
+//            } catch (Exception ex) {
+//
+//            }
+//        }
+//        throw new NParseException(NMsg.ofC("unable to parse number %s", value));
     }
 
     @Override
@@ -823,6 +842,11 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
+    public NPrimitiveElement ofDoubleComplex(double real, double imag, String suffix) {
+        return new DefaultNNumberElement(NElementType.DOUBLE_COMPLEX, new NDoubleComplex(real, imag), NNumberLayout.DECIMAL, suffix);
+    }
+
+    @Override
     public NPrimitiveElement ofFloatComplex(float real) {
         return ofFloatComplex(real, 0);
     }
@@ -830,6 +854,11 @@ public class DefaultNElementFactory implements NElementFactory {
     @Override
     public NPrimitiveElement ofFloatComplex(float real, float imag) {
         return new DefaultNNumberElement(NElementType.FLOAT_COMPLEX, new NFloatComplex(real, imag));
+    }
+
+    @Override
+    public NPrimitiveElement ofFloatComplex(float real, float imag, String suffix) {
+        return new DefaultNNumberElement(NElementType.FLOAT_COMPLEX, new NFloatComplex(real, imag), NNumberLayout.DECIMAL, suffix);
     }
 
     @Override
@@ -843,6 +872,14 @@ public class DefaultNElementFactory implements NElementFactory {
             return ofNull();
         }
         return new DefaultNNumberElement(NElementType.BIG_COMPLEX, new NBigComplex(real, imag));
+    }
+
+    @Override
+    public NPrimitiveElement ofBigComplex(BigDecimal real, BigDecimal imag, String suffix) {
+        if (real == null && imag == null) {
+            return ofNull();
+        }
+        return new DefaultNNumberElement(NElementType.BIG_COMPLEX, new NBigComplex(real, imag), NNumberLayout.DECIMAL, suffix);
     }
 
     @Override
@@ -881,11 +918,6 @@ public class DefaultNElementFactory implements NElementFactory {
         return new DefaultNNumberElement(NElementType.FLOAT, value);
     }
 
-    @Override
-    public NMatrixElementBuilder ofMatrixBuilder() {
-        throw new NUnsupportedOperationException(NMsg.ofC("not implemented yet ofMatrixBuilder()"));
-    }
-
     public NElementComments ofMultiLineComments(String... lines) {
         return new NElementCommentsImpl(new NElementComment[]{ofMultiLineComment(lines)}, null);
     }
@@ -913,5 +945,10 @@ public class DefaultNElementFactory implements NElementFactory {
     @Override
     public NPrimitiveElementBuilder ofPrimitiveBuilder() {
         return new DefaultNPrimitiveElementBuilder();
+    }
+
+    @Override
+    public NExprElementBuilder ofExprBuilder() {
+        return new DefaultNExprElementBuilder();
     }
 }
