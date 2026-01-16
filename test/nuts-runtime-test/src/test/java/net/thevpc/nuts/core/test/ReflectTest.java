@@ -1,11 +1,9 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.reflect.NReflectMapper;
-import net.thevpc.nuts.reflect.NReflectProperty;
-import net.thevpc.nuts.reflect.NReflectRepository;
-import net.thevpc.nuts.reflect.NReflectType;
+import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NStringBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -45,9 +43,9 @@ public class ReflectTest {
 
     @Test
     public void test01() {
-        NReflectRepository typesRepository = NWorkspaceUtils.of().getReflectRepository();
         NReflectMapper c = NReflectMapper.of();
-        Object u = c.mapToType(new Toto("Hammadi"), typesRepository.getType(Titi.class));
+        c.setAssignmentPolicy(NAssignmentPolicy.SOURCE_NON_NULL);
+        Object u = c.mapToType(new Toto("Hammadi"), Titi.class);
         Assertions.assertEquals("Titi{name='Hammadi'}", u.toString());
     }
 
