@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr.template;
 
-import net.thevpc.nuts.io.NCharReader;
-
 import java.io.IOException;
+
+import net.thevpc.nuts.io.NCharReader;
 
 public class TagTokenReader {
     String startTag;
@@ -252,22 +252,18 @@ public class TagTokenReader {
     }
 
     private boolean isReadEndOfTag(StringBuilderImage image) {
-        try {
-            if (startOfLine && br.read(endTag + "\r\n")) {
-                image.appendImageOnly(endTag + "\r\n");
-                return true;
-            } else if (startOfLine && br.read(endTag + "\n")) {
-                image.appendImageOnly(endTag + "\n");
-                return true;
+        if (startOfLine && br.read(endTag + "\r\n")) {
+            image.appendImageOnly(endTag + "\r\n");
+            return true;
+        } else if (startOfLine && br.read(endTag + "\n")) {
+            image.appendImageOnly(endTag + "\n");
+            return true;
 //            } else if (br.read(endTag + "\n")) {
 //                image.appendImageOnly(endTag);
 //                return true;
-            } else if (br.read(endTag)) {
-                image.appendImageOnly(endTag);
-                return true;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } else if (br.read(endTag)) {
+            image.appendImageOnly(endTag);
+            return true;
         }
         return false;
     }
