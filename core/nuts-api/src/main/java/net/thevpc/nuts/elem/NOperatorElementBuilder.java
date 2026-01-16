@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.util.NMapStrategy;
+import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
@@ -41,13 +41,13 @@ public interface NOperatorElementBuilder extends NElementBuilder {
 
     NOptional<NElement> second();
 
-    NOperatorElementBuilder operator(NElementType value);
+    NOperatorElementBuilder symbol(NOperatorSymbol value);
 
-    NOperatorElementBuilder operatorType(NOperatorType operatorType);
+    NOperatorElementBuilder position(NOperatorPosition operatorType);
 
-    NOperatorType operatorType();
+    NOperatorPosition position();
 
-    NElementType operator();
+    NOperatorSymbol symbol();
 
     NOperatorElement build();
 
@@ -64,6 +64,7 @@ public interface NOperatorElementBuilder extends NElementBuilder {
     NOperatorElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
 
     NOperatorElementBuilder removeAnnotationAt(int index);
+
     NOperatorElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NOperatorElementBuilder clearAnnotations();
@@ -103,7 +104,7 @@ public interface NOperatorElementBuilder extends NElementBuilder {
 
     NOperatorElementBuilder copyFrom(NElement other);
 
-    NOperatorElementBuilder copyFrom(NElementBuilder other, NMapStrategy strategy);
+    NOperatorElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
-    NOperatorElementBuilder copyFrom(NElement other, NMapStrategy strategy);
+    NOperatorElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 }
