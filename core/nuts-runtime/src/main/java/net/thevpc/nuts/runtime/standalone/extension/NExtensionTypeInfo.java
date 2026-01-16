@@ -57,12 +57,12 @@ public class NExtensionTypeInfo<T> {
         return NWorkspaceExt.of().getModel().LOG;
     }
 
-    public <T> T newInstance() {
+    public T newInstance() {
         return newInstance(new Class[0], new Object[0], null, true);
     }
 
 
-    public <T extends NComponent> T resolveInstance() {
+    public T resolveInstance() {
         return resolveInstance(new Class[0], new Object[0], null);
     }
 
@@ -92,7 +92,7 @@ public class NExtensionTypeInfo<T> {
         throw new NUnexpectedException(NMsg.ofC("enum not found %s", scope));
     }
 
-    public <T extends NComponent> T resolveInstance(Class<?>[] argTypes, Object[] args, NBeanConstructorContext context) {
+    public <T> T resolveInstance(Class<?>[] argTypes, Object[] args, NBeanConstructorContext context) {
         return (T) getOrComputeCachedBean(implType, apiType, scope, () -> newInstance(argTypes, args, context, true));
     }
 
@@ -233,7 +233,7 @@ public class NExtensionTypeInfo<T> {
                 }
             }
         }
-        LOG().log(NMsg.ofC("[%s] [%s] accepted, though missing valid scoring", implType, apiType));
+        LOG().log(NMsg.ofC("[%s] [%s] accepted, though missing valid scoring", implType, apiType).asFineAlert());
         return createFixedNComponentScorer(NScorable.CUSTOM_SCORE);
     }
 
