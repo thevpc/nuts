@@ -24,9 +24,17 @@
  */
 package net.thevpc.nuts.runtime.standalone.reflect;
 
+import net.thevpc.nuts.runtime.standalone.reflect.mapper.TypeHelper;
+import net.thevpc.nuts.util.NImmutable;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.net.URI;
+import java.time.temporal.Temporal;
+import java.util.Currency;
+import java.util.Locale;
+import java.util.UUID;
 
 /**
  *
