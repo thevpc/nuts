@@ -35,7 +35,6 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
 
@@ -43,7 +42,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
 /**
@@ -58,10 +56,6 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
 
     public NMutableClassLoaderImpl(ClassLoader parent) {
         super(new URL[0], parent);
-    }
-
-    public <S> List<S> loadServices(Class<S> serviceClass) {
-        return NCollections.list(ServiceLoader.load(serviceClass, this));
     }
 
     @Override
