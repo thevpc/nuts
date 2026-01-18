@@ -29,6 +29,7 @@ import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
+import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
@@ -40,6 +41,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
@@ -124,36 +126,36 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     }
 
 
-    static NOperatorElementBuilder ofOpBuilder() {
+    static NExprElementBuilder ofExprBuilder() {
         return NElementFactory.of().ofOpBuilder();
     }
 
-    static NOperatorElementBuilder ofOpBuilder(NOperatorSymbol op) {
+    static NExprElementBuilder ofExprBuilder(NOperatorSymbol op) {
         return NElementFactory.of().ofOpBuilder().symbol(op);
     }
 
-    static NOperatorElement ofOp(NOperatorSymbol op, NOperatorPosition operatorType, NElement first, NElement second) {
+    static NExprElement ofOp(NOperatorSymbol op, NOperatorPosition operatorType, NElement first, NElement second) {
         return NElementFactory.of().ofOp(op, operatorType, first, second);
     }
 
-    static NOperatorElement ofOp(NOperatorSymbol op, NElement first, NElement second) {
+    static NExprElement ofOp(NOperatorSymbol op, NElement first, NElement second) {
         return NElementFactory.of().ofOp(op, first, second);
     }
 
-    static NOperatorElement ofOp(NOperatorSymbol op, NElement first) {
+    static NExprElement ofOp(NOperatorSymbol op, NElement first) {
         return NElementFactory.of().ofOp(op, first);
     }
 
-    static NOperatorElementBuilder ofOpBuilder(NOperatorSymbol op, NOperatorPosition operatorType, NElement first, NElement second) {
-        return ofOpBuilder().symbol(op).position(operatorType).first(first).second(second);
+    static NExprElementBuilder ofExprBuilder(NOperatorSymbol op, NOperatorPosition operatorType, NElement first, NElement second) {
+        return ofExprBuilder().symbol(op).position(operatorType).first(first).second(second);
     }
 
-    static NOperatorElementBuilder ofOpBuilder(NOperatorSymbol op, NElement first, NElement second) {
-        return ofOpBuilder(op, null, first, second);
+    static NExprElementBuilder ofExprBuilder(NOperatorSymbol op, NElement first, NElement second) {
+        return ofExprBuilder(op, null, first, second);
     }
 
-    static NOperatorElementBuilder ofOpBuilder(NOperatorSymbol op, NElement first) {
-        return ofOpBuilder(op, null, first, null);
+    static NExprElementBuilder ofExprBuilder(NOperatorSymbol op, NElement first) {
+        return ofExprBuilder(op, null, first, null);
     }
 
 
@@ -583,6 +585,12 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
         return NElementFactory.of().ofStringArray(items);
     }
 
+    static NArrayElement ofEnumArray(Enum<?>... items) {
+        return NElementFactory.of().ofArray(
+                Arrays.stream(items).map(NElement::ofEnum).toArray(NElement[]::new)
+        );
+    }
+
     static NArrayElement ofDoubleArray(double... items) {
         return NElementFactory.of().ofDoubleArray(items);
     }
@@ -703,8 +711,12 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
         return NElementFactory.of().ofPrimitiveBuilder();
     }
 
-    static NExprElementBuilder ofExprBuilder() {
-        return NElementFactory.of().ofExprBuilder();
+    static NFlatExprElementBuilder ofFlatExprBuilder() {
+        return NElementFactory.of().ofFlatExprBuilder();
+    }
+
+    static NErrorElementBuilder ofErrorBuilder() {
+        return NElementFactory.of().ofErrorBuilder();
     }
 
     /**
@@ -716,7 +728,17 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     String toString(boolean compact);
 
+    /**
+     * Traverse this element and its entire subtree (including annotations).
+     *
+     * @param visitor the visitor to apply
+     * @return true if traversal completed fully, false if TERMINATE was returned
+     */
+    NTreeVisitResult traverse(NElementVisitor visitor);
+
     boolean isCustomTree();
+
+    boolean isErrorTree();
 
     boolean isStream();
 
@@ -764,13 +786,11 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
 
     /**
-     *
      * @since 0.8.9
      */
     boolean isNamedListContainer();
 
     /**
-     *
      * @since 0.8.9
      */
     boolean isNamedListContainer(String name);
@@ -1083,7 +1103,7 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     boolean isAnyDate();
 
-    NOptional<NOperatorElement> asOperator();
+    NOptional<NExprElement> asOperator();
 
     NOptional<NOperatorSymbolElement> asOperatorSymbol();
 
@@ -1109,7 +1129,9 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     NOptional<NElement> asNumberType(NElementType elemType);
 
-    NElement[] transform(NElementTransform transform);
+    List<NElement> transform(NElementTransform transform);
+
+    List<NElement> transform(NElementPath path, NElementTransform transform);
 
     String snippet();
 
@@ -1132,4 +1154,8 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     NOptional<NListElement> asUnorderedList();
 
     NOptional<NStringElement> asName();
+
+    NOptional<NTernaryOperatorElement> asTernaryOperator();
+
+    NOptional<NAryOperatorElement> asNaryOperator();
 }
