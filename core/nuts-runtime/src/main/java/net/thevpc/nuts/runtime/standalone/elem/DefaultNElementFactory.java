@@ -116,23 +116,28 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
-    public NOperatorElementBuilder ofOpBuilder() {
-        return new DefaultNOperatorElementBuilder();
+    public NExprElementBuilder ofOpBuilder() {
+        return new DefaultNExprElementBuilder();
     }
 
 
     @Override
-    public NOperatorElement ofOp(NOperatorSymbol op, NOperatorPosition type, NElement first, NElement second) {
+    public NExprElement ofOp(NOperatorSymbol op, NOperatorPosition type, NElement first, NElement second) {
         return ofOpBuilder().symbol(op).position(type).first(first).second(second).build();
     }
 
     @Override
-    public NOperatorElement ofOp(NOperatorSymbol op, NElement first, NElement second) {
+    public NExprElement ofOp(NOperatorSymbol op, NElement first, NElement second) {
         return ofOp(op, null, first, second);
     }
 
     @Override
-    public NOperatorElement ofOp(NOperatorSymbol op, NElement operand) {
+    public NErrorElementBuilder ofErrorBuilder() {
+        return new  DefaultNErrorElementBuilder();
+    }
+
+    @Override
+    public NExprElement ofOp(NOperatorSymbol op, NElement operand) {
         return ofOp(op, null, operand, null);
     }
 
@@ -948,7 +953,7 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
-    public NExprElementBuilder ofExprBuilder() {
-        return new DefaultNExprElementBuilder();
+    public NFlatExprElementBuilder ofFlatExprBuilder() {
+        return new DefaultNFlatExprElementBuilder();
     }
 }
