@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.elem.NOperatorAssociativity;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -139,7 +140,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.PLUS, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.PLUS, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -150,7 +151,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.MINUS, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.MINUS, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -161,7 +162,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.MUL, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.MUL, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -172,7 +173,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.DIV, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.DIV, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -183,7 +184,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.MOD, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.MOD, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -196,7 +197,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case POSTFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.PARS, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.PARS, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -209,7 +210,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case POSTFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.BRACKETS, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.BRACKETS, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -222,7 +223,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case POSTFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.BRACES, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.BRACES, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -235,7 +236,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.DOT, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.DOT, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -250,7 +251,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.SHIFT, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.SHIFT, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -265,7 +266,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.CMP, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -280,7 +281,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.EQ, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.EQ, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -292,7 +293,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.AND, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.AND, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -304,7 +305,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.AMP, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.AMP, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -316,7 +317,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.OR, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.OR, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -328,7 +329,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.PIPE, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.PIPE, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -340,7 +341,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NExprOpPrecedence.COALESCE, NExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.COALESCE, NOperatorAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -349,14 +350,14 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
         throw new IllegalArgumentException("unsupported operator "+name);
     }
 
-    public NExprOpDeclaration declareOperator(String name, NExprOpType type, int precedence, NExprOpAssociativity associativity, NExprConstruct impl) {
+    public NExprOpDeclaration declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprConstruct impl) {
         if (!NBlankable.isBlank(name) && type != null) {
             if (impl == null) {
                 this.ops.put(new NExprOpNameAndType(name, type), REMOVED);
             } else {
                 DefaultNExprOpDeclaration r = new DefaultNExprOpDeclaration(name, new NExprOp() {
                     @Override
-                    public NExprOpAssociativity getAssociativity() {
+                    public NOperatorAssociativity getAssociativity() {
                         return associativity;
                     }
 
