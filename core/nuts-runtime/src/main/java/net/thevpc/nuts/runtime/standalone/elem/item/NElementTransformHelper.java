@@ -5,40 +5,40 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.text.NMsg;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class NElementTransformHelper {
 
-    public static NElement[] transform(NElement c, NElementTransform transform) {
+    public static List<NElement> transform(NElementPath path,NElement c, NElementTransform transform) {
         if (c == null) {
-            return new NElement[0];
+            return Collections.emptyList();
         }
         if (transform == null) {
-            return new NElement[]{c};
+            return Collections.singletonList(c);
         }
-        NElement[] allThis = transform.preTransform(c);
+        List<NElement> allThis = transform.preTransform(path,c);
         List<NElement> result = new ArrayList<>();
         for (NElement a : allThis) {
-            NElement[] u = transformAfter(a, transform);
+            List<NElement> u = transformAfter(path,a, transform);
             if (u != null) {
-                result.addAll(Arrays.asList(u));
+                result.addAll(u);
             }
         }
-        return result.toArray(new NElement[0]);
+        return result;
     }
 
-    private static NElement[] transformAfter(NElement item, NElementTransform transform) {
+    private static List<NElement> transformAfter(NElementPath path,NElement item, NElementTransform transform) {
         List<NElementAnnotation> annotations = item.builder().annotations();
         List<NElementAnnotation> annotations2 = new ArrayList<>();
         for (NElementAnnotation a : annotations) {
             List<NElement> u = a.params();
             if (u == null) {
                 annotations2.add(NElement.ofAnnotation(a.name()));
-            }else {
+            } else {
                 List<NElement> u2 = new ArrayList<>(u.size());
                 for (NElement nElement : u) {
-                    u2.addAll(Arrays.asList(nElement.transform(transform)));
+                    u2.addAll(nElement.transform(path,transform));
                 }
                 annotations2.add(NElement.ofAnnotation(a.name(), u2.toArray(new NElement[0])));
             }
@@ -55,9 +55,9 @@ public class NElementTransformHelper {
                         }
                         b.clearParams();
                         for (NElement e : o.params().get()) {
-                            NElement[] u = e.transform(transform);
+                            List<NElement> u = e.transform(path,transform);
                             if (u != null) {
-                                b.addParams(Arrays.asList(u));
+                                b.addParams(u);
                             }
                         }
                     }
@@ -67,7 +67,7 @@ public class NElementTransformHelper {
                         }
                         b.clearChildren();
                         for (NElement e : o.children()) {
-                            NElement[] u = e.transform(transform);
+                            List<NElement> u = e.transform(path,transform);
                             if (u != null) {
                                 b.addAll(u);
                             }
@@ -76,8 +76,8 @@ public class NElementTransformHelper {
                     if (b != null) {
                         o = b.build();
                     }
-                    return transform.postTransform(o);
-                }else if (item.isAnyArray()) {
+                    return transform.postTransform(path,o);
+                } else if (item.isAnyArray()) {
                     NArrayElement o = item.asArray().get();
                     NArrayElementBuilder b = null;
                     if (o.params().isPresent()) {
@@ -86,9 +86,9 @@ public class NElementTransformHelper {
                         }
                         b.clearParams();
                         for (NElement e : o.params().get()) {
-                            NElement[] u = e.transform(transform);
+                            List<NElement> u = e.transform(path,transform);
                             if (u != null) {
-                                b.addParams(Arrays.asList(u));
+                                b.addParams(u);
                             }
                         }
                     }
@@ -98,7 +98,7 @@ public class NElementTransformHelper {
                         }
                         b.clearChildren();
                         for (NElement e : o.children()) {
-                            NElement[] u = e.transform(transform);
+                            List<NElement> u = e.transform(path,transform);
                             if (u != null) {
                                 b.addAll(u);
                             }
@@ -107,8 +107,8 @@ public class NElementTransformHelper {
                     if (b != null) {
                         o = b.build();
                     }
-                    return transform.postTransform(o);
-                }else if (item.isAnyUplet()) {
+                    return transform.postTransform(path,o);
+                } else if (item.isAnyUplet()) {
                     NUpletElement o = item.asUplet().get();
                     NUpletElementBuilder b = null;
                     if (!o.params().isEmpty()) {
@@ -117,46 +117,46 @@ public class NElementTransformHelper {
                         }
                         b.clearParams();
                         for (NElement e : o.params()) {
-                            NElement[] u = e.transform(transform);
+                            List<NElement> u = e.transform(path,transform);
                             if (u != null) {
-                                b.addAll(Arrays.asList(u));
+                                b.addAll(u);
                             }
                         }
                     }
                     if (b != null) {
                         o = b.build();
                     }
-                    return transform.postTransform(o);
-                }else if (item.isPair()) {
+                    return transform.postTransform(path,o);
+                } else if (item.isPair()) {
                     NPairElement o = item.asPair().get();
-                    NElement[] k = o.key().transform(transform);
-                    NElement[] v = o.value().transform(transform);
+                    List<NElement> k = o.key().transform(path,transform);
+                    List<NElement> v = o.value().transform(path,transform);
                     NPairElementBuilder b = o.builder();
                     b.key(compressElement(k));
                     b.value(compressElement(v));
                     o = b.build();
-                    return transform.postTransform(o);
+                    return transform.postTransform(path,o);
                 }
                 throw new NUnsupportedOperationException(NMsg.ofC("container %s not yet fully supported", item.type()));
             }
             case OPERATOR: {
                 if (item.isBinaryOperator()) {
                     NBinaryOperatorElement o = item.asBinaryOperator().get();
-                    NElement[] k = o.first().transform(transform);
-                    NElement[] v = o.second().transform(transform);
-                    NOperatorElementBuilder b = o.builder();
+                    List<NElement> k = o.firstOperand().transform(path,transform);
+                    List<NElement> v = o.secondOperand().transform(path,transform);
+                    NExprElementBuilder b = o.builder();
                     b.first(compressElement(k));
                     b.second(compressElement(v));
                     o = (NBinaryOperatorElement) b.build();
-                    return transform.postTransform(o);
+                    return transform.postTransform(path,o);
                 }
                 if (item.isUnaryOperator()) {
                     NUnaryOperatorElement o = item.asUnaryOperator().get();
-                    NElement[] k = o.first().transform(transform);
-                    NOperatorElementBuilder b = o.builder();
+                    List<NElement> k = o.operand().transform(path,transform);
+                    NExprElementBuilder b = o.builder();
                     b.first(compressElement(k));
                     o = (NUnaryOperatorElement) b.build();
-                    return transform.postTransform(o);
+                    return transform.postTransform(path,o);
                 }
                 throw new NUnsupportedOperationException(NMsg.ofC("operator %s not yet fully supported", item.type()));
             }
@@ -170,18 +170,18 @@ public class NElementTransformHelper {
             case CUSTOM:
             case OTHER:
             default: {
-                return transform.postTransform(item);
+                return transform.postTransform(path,item);
             }
         }
     }
 
-    private static NElement compressElement(NElement[] many) {
+    private static NElement compressElement(List<NElement> many) {
         if (many == null) {
             return NElement.ofNull();
         }
-        if (many.length == 1) {
-            return many[0] == null ? NElement.ofNull() : many[0];
+        if (many.size() == 1) {
+            return many.get(0) == null ? NElement.ofNull() : many.get(0);
         }
-        return NElement.ofUplet(many);
+        return NElement.ofUplet(many.toArray(new NElement[0]));
     }
 }
