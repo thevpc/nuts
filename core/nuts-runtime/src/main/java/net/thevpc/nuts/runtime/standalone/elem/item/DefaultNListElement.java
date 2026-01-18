@@ -1,11 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.text.NTreeVisitResult;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class DefaultNListElement extends AbstractNElement implements NListElement {
     private int depth;
@@ -15,6 +13,29 @@ public class DefaultNListElement extends AbstractNElement implements NListElemen
         super(type, annotations, comments);
         this.depth = depth;
         this.children = Collections.unmodifiableList(new ArrayList<>(children));
+    }
+
+    protected NTreeVisitResult traverseChildren(NElementVisitor visitor) {
+        for (NListItemElement element : children) {
+            NElement n = element.value().orNull();
+            if (n != null) {
+                NTreeVisitResult result = n.traverse(visitor);
+                if (result == NTreeVisitResult.TERMINATE) {
+                    return result;
+                }
+                if (result == NTreeVisitResult.SKIP_SIBLINGS) {
+                    break;
+                }
+            }
+            NListElement subList = element.subList().orNull();
+            if (subList != null) {
+                NTreeVisitResult result = subList.traverse(visitor);
+                if (result != NTreeVisitResult.CONTINUE) {
+                    return result;
+                }
+            }
+        }
+        return NTreeVisitResult.CONTINUE;
     }
 
     @Override
