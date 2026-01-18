@@ -50,6 +50,7 @@ public class DefaultNCustomElement extends AbstractNElement implements NCustomEl
         return true;
     }
 
+
     @Override
     public NOptional<NElement> resolve(String pattern) {
         pattern = NStringUtils.trimToNull(pattern);
