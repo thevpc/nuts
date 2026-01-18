@@ -265,26 +265,6 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
     }
 
     private NElement ensureJson(NElement e) {
-        switch (e.type().typeGroup()){
-            case OPERATOR:{
-                NOperatorElement ope = (NOperatorElement) e;
-                NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(e);
-                value1.clearChildren();
-                value1.set("op", ope.type().id());
-                value1.set("symbol", ope.symbol().id());
-                value1.set("position", ope.position().id());
-                value1.name(null);
-                if(ope.isBinaryOperator()) {
-                    NBinaryOperatorElement bb = ope.asBinaryOperator().get();
-                    value1.set("$first", bb.first());
-                    value1.set("$second", bb.second());
-                }else if(ope.isUnaryOperator()){
-                    NUnaryOperatorElement bb = ope.asUnaryOperator().get();
-                    value1.set("$first", bb.first());
-                }
-                return value1.build();
-            }
-        }
         switch (e.type()) {
             case NULL:
             case INT:
@@ -305,6 +285,30 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                             .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
                             .build();
                 }
+            }
+            case OPERATOR_SYMBOL:{
+                NOperatorSymbolElement ope = (NOperatorSymbolElement) e;
+                NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(e);
+                value1.clearChildren();
+                value1.set("op", ope.type().id());
+                value1.set("symbol", ope.symbol().id());
+                value1.name(null);
+                return value1.build();
+            }
+            case BINARY_OPERATOR:
+            case TERNARY_OPERATOR:
+            case UNARY_OPERATOR:
+            case NARY_OPERATOR:
+            case FLAT_EXPR:{
+                NExprElement ope = (NExprElement) e;
+                NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(e);
+                value1.clearChildren();
+                value1.set("op", ope.type().id());
+                value1.set("symbols", NElement.ofEnumArray(ope.operatorSymbols().toArray(new Enum[0])));
+                value1.set("operands", NElement.ofArray(ope.operands().toArray(new NElement[0])));
+                value1.set("position", ope.position().id());
+                value1.name(null);
+                return value1.build();
             }
             case NAME:
             case INSTANT:
@@ -333,17 +337,6 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 } else {
                     return NElement.ofObjectBuilder()
                             .add("value", e.builder().clearAnnotations().build())
-                            .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
-                            .build();
-                }
-            }
-            case ALIAS: {
-                List<NElementAnnotation> a = e.annotations();
-                if (a.isEmpty()) {
-                    return NElement.ofString("&" + e.asStringValue().get());
-                } else {
-                    return NElement.ofObjectBuilder()
-                            .add("value", "&" + e.builder().clearAnnotations().build().asStringValue().get())
                             .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
                             .build();
                 }
