@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathImpl;
 import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
+import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
@@ -36,6 +37,19 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
         }
     }
 
+    protected NTreeVisitResult traverseChildren(NElementVisitor visitor) {
+        NTreeVisitResult r = traverseList(visitor, params);
+        if(r!=NTreeVisitResult.CONTINUE){
+            return r;
+        }
+        if(r==NTreeVisitResult.SKIP_SIBLINGS){
+            return NTreeVisitResult.CONTINUE;
+        }
+        r = traverseList(visitor, values); // body
+        return r;
+    }
+
+
     @Override
     public boolean isCustomTree() {
         if (super.isCustomTree()) {
@@ -51,6 +65,28 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
         if (values != null) {
             for (NElement value : values) {
                 if (value.isCustomTree()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isErrorTree() {
+        if(super.isErrorTree()){
+            return true;
+        }
+        if(params!=null){
+            for (NElement value : params) {
+                if(value.isErrorTree()){
+                    return true;
+                }
+            }
+        }
+        if(values!=null){
+            for (NElement value : values) {
+                if(value.isErrorTree()){
                     return true;
                 }
             }
