@@ -135,8 +135,6 @@ public class DefaultNLiteral implements NLiteral {
                     return NElementType.BIG_COMPLEX;
                 case "net.thevpc.nuts.elem.NName":
                     return NElementType.NAME;
-                case "net.thevpc.nuts.elem.NAliasName":
-                    return NElementType.ALIAS;
             }
             if (value instanceof Number) {
                 return NElementType.DOUBLE;
