@@ -11,7 +11,7 @@ import net.thevpc.nuts.elem.NElementAnnotation;
 import net.thevpc.nuts.elem.NElementBuilder;
 import net.thevpc.nuts.elem.NElementComment;
 import net.thevpc.nuts.elem.NElementType;
-import net.thevpc.nuts.elem.NExprElementBuilder;
+import net.thevpc.nuts.elem.NFlatExprElementBuilder;
 import net.thevpc.nuts.elem.NListElement;
 import net.thevpc.nuts.elem.NListItemElement;
 import net.thevpc.nuts.elem.NObjectElementBuilder;
@@ -135,9 +135,9 @@ public class TsonCustomParser {
         if (all.size() == 1) {
             return all.get(0);
         }
-        NExprElementBuilder b = NExprElementBuilder.of();
+        NFlatExprElementBuilder b = NFlatExprElementBuilder.of();
         for (NElement nElement : all) {
-            b.addElement(nElement);
+            b.add(nElement);
         }
         return b.build();
     }
