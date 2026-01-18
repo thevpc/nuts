@@ -27,7 +27,6 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Array implementation of Nuts Element type. Nuts Element types are generic
@@ -35,18 +34,24 @@ import java.util.stream.Stream;
  *
  * @author thevpc
  * @app.category Elements
- * @since 0.8.9
+ * @since 0.5.6
  */
-public interface NExprElement extends NElement, Iterable<NElement> {
-    NOptional<NElement> get(int index);
+public interface NExprElement extends NElement {
 
-    List<NElement> children();
+    NOperatorPosition position();
 
-    Stream<NElement> stream();
+    List<NElement> operands();
 
-    int size();
+    List<NOperatorSymbol> operatorSymbols();
 
-    boolean isEmpty();
-
+    /**
+     * return new builder initialized with this instance
+     *
+     * @return new builder initialized with this instance
+     */
     NExprElementBuilder builder();
+
+    NOptional<NElement> operand(int index);
+
+    NOptional<NOperatorSymbol> operatorSymbol(int index);
 }
