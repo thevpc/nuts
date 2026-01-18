@@ -1,10 +1,13 @@
 package net.thevpc.nuts.elem;
 
+import java.util.Collections;
+import java.util.List;
+
 public interface NElementTransform {
-    default NElement[] preTransform(NElement element){
-        return new NElement[]{element};
+    default List<NElement> preTransform(NElementPath path, NElement element){
+        return Collections.singletonList(element);
     }
-    default NElement[] postTransform(NElement element){
-        return new NElement[]{element};
+    default List<NElement> postTransform(NElementPath path,NElement element){
+        return Collections.singletonList(element);
     }
 }
