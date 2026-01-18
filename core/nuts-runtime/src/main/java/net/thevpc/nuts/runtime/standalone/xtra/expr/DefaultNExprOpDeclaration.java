@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.elem.NOperatorAssociativity;
 import net.thevpc.nuts.expr.*;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class DefaultNExprOpDeclaration implements NExprOpDeclaration {
     }
 
     @Override
-    public NExprOpAssociativity getAssociativity() {
+    public NOperatorAssociativity getAssociativity() {
         return op.getAssociativity();
     }
 
