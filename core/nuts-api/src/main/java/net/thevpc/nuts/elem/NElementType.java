@@ -115,13 +115,14 @@ public enum NElementType implements NEnum {
     BINARY_STREAM,
     CHAR_STREAM,
     UPLET,
-    ALIAS,
 
 
     OPERATOR_SYMBOL,
     BINARY_OPERATOR,
+    TERNARY_OPERATOR,
+    NARY_OPERATOR,
     UNARY_OPERATOR,
-    EXPR,
+    FLAT_EXPR,
 
     NAMED_ARRAY,
     NAMED_PARAMETRIZED_ARRAY,
@@ -132,6 +133,7 @@ public enum NElementType implements NEnum {
     PARAMETRIZED_OBJECT,
     ORDERED_LIST,
     UNORDERED_LIST,
+    ERROR,
     ;
 
     /**
@@ -240,7 +242,6 @@ public enum NElementType implements NEnum {
             case CHAR:
             case BOOLEAN:
             case NAME:
-            case ALIAS:
             case LOCAL_DATETIME:
             case LOCAL_DATE:
             case LOCAL_TIME:
@@ -537,8 +538,6 @@ public enum NElementType implements NEnum {
                 return NElementTypeGroup.OPERATOR;
             case CUSTOM:
                 return NElementTypeGroup.CUSTOM;
-            case ALIAS:
-                return NElementTypeGroup.OTHER;
         }
         throw new UnsupportedOperationException("Not supported yet.");
     }
