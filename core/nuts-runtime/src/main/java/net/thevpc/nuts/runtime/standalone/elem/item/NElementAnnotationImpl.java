@@ -35,6 +35,18 @@ public class NElementAnnotationImpl implements NElementAnnotation {
     }
 
     @Override
+    public boolean isErrorTree() {
+        if (params != null) {
+            for (NElement param : params) {
+                if (param.isErrorTree()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public NElementAnnotationBuilder builder() {
         return new NElementAnnotationBuilderImpl(name, params());
     }
