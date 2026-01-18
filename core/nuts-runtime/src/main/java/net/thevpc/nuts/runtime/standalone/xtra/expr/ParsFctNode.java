@@ -1,12 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.elem.NOperatorAssociativity;
 import net.thevpc.nuts.expr.*;
 
 import java.util.List;
 
 public class ParsFctNode extends AbstractOp {
     public ParsFctNode() {
-        super("(", NExprOpPrecedence.PARS, NExprOpAssociativity.LEFT, NExprOpType.POSTFIX);
+        super("(", NExprOpPrecedence.PARS, NOperatorAssociativity.LEFT, NExprOpType.POSTFIX);
     }
 
     @Override
