@@ -75,11 +75,11 @@ public enum NOperatorSymbol implements NEnum {
     INTERROGATION("?"),
     INTERROGATION2("??"),
     INTERROGATION3("???"),
-    EXCLAMATION("!"),
-    EXCLAMATION2("!!"),
-    EXCLAMATION_EQ2("!=="),
-    EXCLAMATION_EQ("!="),
-    EXCLAMATION3("!!!"),
+    NOT("!"),
+    NOT2("!!"),
+    NOT_EQ2("!=="),
+    NOT_EQ("!="),
+    NOT3("!!!"),
     AT2("@@"),
     AT3("@@");
 
