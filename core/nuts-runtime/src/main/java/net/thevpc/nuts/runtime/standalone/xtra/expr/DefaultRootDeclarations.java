@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.elem.NOperatorAssociativity;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.reflect.*;
@@ -19,22 +20,22 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
     public DefaultRootDeclarations(NExprs exprs) {
         super(exprs);
         reflectRepository = NReflectRepository.of();
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.AND, NExprOpPrecedence.AND, NExprOpAssociativity.LEFT), "&");
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.OR, NExprOpPrecedence.OR, NExprOpAssociativity.LEFT), "|");
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.LT, NExprOpPrecedence.CMP, NExprOpAssociativity.LEFT));
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.LTE, NExprOpPrecedence.CMP, NExprOpAssociativity.LEFT));
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.GT, NExprOpPrecedence.CMP, NExprOpAssociativity.LEFT));
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.GTE, NExprOpPrecedence.CMP, NExprOpAssociativity.LEFT));
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.EQ, NExprOpPrecedence.CMP, NExprOpAssociativity.LEFT));
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.NE, NExprOpPrecedence.CMP, NExprOpAssociativity.LEFT), "!=", "!==", "<>");
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.PLUS, NExprOpPrecedence.PLUS, NExprOpAssociativity.LEFT));
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.MINUS, NExprOpPrecedence.PLUS, NExprOpAssociativity.LEFT));
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.MUL, NExprOpPrecedence.MUL, NExprOpAssociativity.LEFT));
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.DIV, NExprOpPrecedence.MUL, NExprOpAssociativity.LEFT));
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.REM, NExprOpPrecedence.CMP, NExprOpAssociativity.LEFT));
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.XOR, NExprOpPrecedence.OR, NExprOpAssociativity.LEFT));
-        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.POW, NExprOpPrecedence.POW, NExprOpAssociativity.LEFT));
-        addDefaultOp(new NExprCommonOpFctNodeBase(NExprCommonOp.DOT, NExprOpPrecedence.DOT, NExprOpAssociativity.LEFT, NExprOpType.INFIX) {
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.AND, NExprOpPrecedence.AND, NOperatorAssociativity.LEFT), "&");
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.OR, NExprOpPrecedence.OR, NOperatorAssociativity.LEFT), "|");
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.LT, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT));
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.LTE, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT));
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.GT, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT));
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.GTE, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT));
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.EQ, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT));
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.NE, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT), "!=", "!==", "<>");
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.PLUS, NExprOpPrecedence.PLUS, NOperatorAssociativity.LEFT));
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.MINUS, NExprOpPrecedence.PLUS, NOperatorAssociativity.LEFT));
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.MUL, NExprOpPrecedence.MUL, NOperatorAssociativity.LEFT));
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.DIV, NExprOpPrecedence.MUL, NOperatorAssociativity.LEFT));
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.REM, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT));
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.XOR, NExprOpPrecedence.OR, NOperatorAssociativity.LEFT));
+        addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.POW, NExprOpPrecedence.POW, NOperatorAssociativity.LEFT));
+        addDefaultOp(new NExprCommonOpFctNodeBase(NExprCommonOp.DOT, NExprOpPrecedence.DOT, NOperatorAssociativity.LEFT, NExprOpType.INFIX) {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
                 NExprNodeValue a = args.get(0);
@@ -98,10 +99,10 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
             }
         });
 
-        addDefaultOp(new NExprCommonOpFctNodePrefix(NExprCommonOp.MINUS, NExprOpPrecedence.NOT, NExprOpAssociativity.RIGHT));
-        addDefaultOp(new NExprCommonOpFctNodePrefix(NExprCommonOp.NOT, NExprOpPrecedence.NOT, NExprOpAssociativity.RIGHT));
+        addDefaultOp(new NExprCommonOpFctNodePrefix(NExprCommonOp.MINUS, NExprOpPrecedence.NOT, NOperatorAssociativity.RIGHT));
+        addDefaultOp(new NExprCommonOpFctNodePrefix(NExprCommonOp.NOT, NExprOpPrecedence.NOT, NOperatorAssociativity.RIGHT));
 
-        addDefaultOp(new NExprCommonOpFctNodeBase(NExprCommonOp.ASSIGN, NExprOpPrecedence.ASSIGN, NExprOpAssociativity.RIGHT, NExprOpType.INFIX) {
+        addDefaultOp(new NExprCommonOpFctNodeBase(NExprCommonOp.ASSIGN, NExprOpPrecedence.ASSIGN, NOperatorAssociativity.RIGHT, NExprOpType.INFIX) {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
                 NExprNode a = args.get(0);
@@ -117,7 +118,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
         });
 
         for (String relOp : new String[]{"+", "-", "*", "/", "%", "^", "**"}) {
-            addDefaultOp(new AbstractOp(relOp + "=", NExprOpPrecedence.ASSIGN, NExprOpAssociativity.RIGHT, NExprOpType.INFIX) {
+            addDefaultOp(new AbstractOp(relOp + "=", NExprOpPrecedence.ASSIGN, NOperatorAssociativity.RIGHT, NExprOpType.INFIX) {
                 @Override
                 public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
                     NExprNode a = args.get(0);
@@ -135,7 +136,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
             });
         }
 
-        addDefaultOp(new AbstractOp("++", NExprOpPrecedence.NOT, NExprOpAssociativity.LEFT, NExprOpType.PREFIX) {
+        addDefaultOp(new AbstractOp("++", NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, NExprOpType.PREFIX) {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
                 NExprNode a = args.get(0);
@@ -151,7 +152,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
             }
         });
 
-        addDefaultOp(new AbstractOp("++", NExprOpPrecedence.NOT, NExprOpAssociativity.LEFT, NExprOpType.POSTFIX) {
+        addDefaultOp(new AbstractOp("++", NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, NExprOpType.POSTFIX) {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
                 NExprNode a = args.get(0);
@@ -167,7 +168,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
             }
         });
 
-        addDefaultOp(new AbstractOp("--", NExprOpPrecedence.NOT, NExprOpAssociativity.LEFT, NExprOpType.PREFIX) {
+        addDefaultOp(new AbstractOp("--", NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, NExprOpType.PREFIX) {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
                 NExprNode a = args.get(0);
@@ -183,7 +184,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
             }
         });
 
-        addDefaultOp(new AbstractOp("--", NExprOpPrecedence.NOT, NExprOpAssociativity.LEFT, NExprOpType.POSTFIX) {
+        addDefaultOp(new AbstractOp("--", NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, NExprOpType.POSTFIX) {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
                 NExprNode a = args.get(0);
@@ -309,7 +310,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
     private abstract class NExprCommonOpFctNodeBase extends AbstractOp {
         protected NExprCommonOp op;
 
-        public NExprCommonOpFctNodeBase(NExprCommonOp op, int precedence, NExprOpAssociativity acc, NExprOpType type) {
+        public NExprCommonOpFctNodeBase(NExprCommonOp op, int precedence, NOperatorAssociativity acc, NExprOpType type) {
             super(op.id(), precedence, acc, type);
             this.op = op;
         }
@@ -327,7 +328,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
     }
 
     private class NExprCommonOpFctNodeInfix extends NExprCommonOpFctNodeBase {
-        public NExprCommonOpFctNodeInfix(NExprCommonOp op, int precedence, NExprOpAssociativity acc) {
+        public NExprCommonOpFctNodeInfix(NExprCommonOp op, int precedence, NOperatorAssociativity acc) {
             super(op, precedence, acc, NExprOpType.INFIX);
         }
 
@@ -347,7 +348,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
 
 
     private class NExprCommonOpFctNodePrefix extends NExprCommonOpFctNodeBase {
-        public NExprCommonOpFctNodePrefix(NExprCommonOp op, int precedence, NExprOpAssociativity acc) {
+        public NExprCommonOpFctNodePrefix(NExprCommonOp op, int precedence, NOperatorAssociativity acc) {
             super(op, precedence, acc, NExprOpType.PREFIX);
         }
 
@@ -365,7 +366,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
     }
 
     private class NExprCommonOpFctNodePostfix extends NExprCommonOpFctNodeBase {
-        public NExprCommonOpFctNodePostfix(NExprCommonOp op, int precedence, NExprOpAssociativity acc) {
+        public NExprCommonOpFctNodePostfix(NExprCommonOp op, int precedence, NOperatorAssociativity acc) {
             super(op, precedence, acc, NExprOpType.POSTFIX);
         }
 
