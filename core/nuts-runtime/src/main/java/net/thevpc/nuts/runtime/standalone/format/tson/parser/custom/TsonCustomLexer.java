@@ -180,7 +180,7 @@ public class TsonCustomLexer {
                 case '?':
                     return asChar123(c, NOperatorSymbol.INTERROGATION, NOperatorSymbol.INTERROGATION2, NOperatorSymbol.INTERROGATION3);
                 case '!': {
-                    return asChar123Eq(c, NOperatorSymbol.EXCLAMATION, NOperatorSymbol.EXCLAMATION2, NOperatorSymbol.EXCLAMATION3, NOperatorSymbol.EXCLAMATION_EQ, NOperatorSymbol.EXCLAMATION_EQ2);
+                    return asChar123Eq(c, NOperatorSymbol.NOT, NOperatorSymbol.NOT2, NOperatorSymbol.NOT3, NOperatorSymbol.NOT_EQ, NOperatorSymbol.NOT_EQ2);
                 }
                 case '~': {
                     return asChar123Eq(c, NOperatorSymbol.TILDE, NOperatorSymbol.TILDE2, NOperatorSymbol.TILDE3, NOperatorSymbol.TILDE_EQ, NOperatorSymbol.TILDE_EQ2);
