@@ -32,18 +32,40 @@ import java.util.function.Consumer;
 
 /**
  * @author thevpc
- * @since 0.8.9
  */
 public interface NExprElementBuilder extends NElementBuilder {
-    static NExprElementBuilder of() {
-        return NElement.ofExprBuilder();
-    }
-    NOptional<NElement> get(int index);
-    NExprElementBuilder setOp(int index, NOperatorSymbol op);
-    NExprElementBuilder setElement(int index, NElement element);
-    NExprElementBuilder addOp(NOperatorSymbol op);
-    NExprElementBuilder addElement(NElement element);
-    List<NElement> children();
+
+    List<NOperatorSymbol> symbols();
+
+    List<NElement> operands();
+
+    NOptional<NElement> operand(int index);
+
+    NOptional<NElement> first();
+
+    NExprElementBuilder second(NElement value);
+
+    NOptional<NElement> second();
+
+    NOptional<NElement> third();
+
+    NExprElementBuilder symbols(NOperatorSymbol... operators);
+
+    NExprElementBuilder operands(NElement... operands);
+
+    NExprElementBuilder addOperands(NElement... operands);
+
+    NExprElementBuilder addOperand(NElement operand);
+
+    NExprElementBuilder addSymbol(NOperatorSymbol operator);
+
+    NExprElementBuilder symbol(NOperatorSymbol value);
+
+    NExprElementBuilder position(NOperatorPosition operatorType);
+
+    NOperatorPosition position();
+
+    NOperatorSymbol symbol();
 
     NExprElement build();
 
@@ -92,6 +114,11 @@ public interface NExprElementBuilder extends NElementBuilder {
     NExprElementBuilder clearComments();
 
     NExprElementBuilder addComments(NElementComments comments);
+
+    NExprElementBuilder setOperand(int index, NElement operand);
+
+    NExprElementBuilder first(NElement value);
+
 
     NExprElementBuilder copyFrom(NElementBuilder other);
 
