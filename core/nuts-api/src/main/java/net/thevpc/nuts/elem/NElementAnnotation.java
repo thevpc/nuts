@@ -47,6 +47,8 @@ public interface NElementAnnotation extends NBlankable {
 
     boolean isCustomTree();
 
+    boolean isErrorTree();
+
     NElement param(int index);
 
     List<NElement> params();
@@ -56,5 +58,6 @@ public interface NElementAnnotation extends NBlankable {
     boolean isNamed();
 
     String toString(boolean compact);
+
     NElementAnnotationBuilder builder();
 }
