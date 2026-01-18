@@ -205,7 +205,7 @@ public class ElementTest {
         }) {
             TestUtils.println("=====================================");
             TestUtils.println("CHECKING : '" + tt.path + "'");
-            List<NElement> filtered1 = NElementPath.of(tt.path).filter(p);
+            List<NElement> filtered1 = NElementSelector.of(tt.path).filter(p);
             ss.println(filtered1);
             NText sexpected = NText.ofPlain(tt.expected.get(0));
             NText sresult = ss.format(filtered1);
