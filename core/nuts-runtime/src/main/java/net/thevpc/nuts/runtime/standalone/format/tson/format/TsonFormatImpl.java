@@ -5,6 +5,7 @@ import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
 import net.thevpc.nuts.io.WriterOutputStream;
 import net.thevpc.nuts.runtime.standalone.format.tson.util.Kmp;
+import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
@@ -212,10 +213,6 @@ public class TsonFormatImpl implements TsonFormat, Cloneable {
                     writer.append(element.asStringValue().get());
                     return;
                 }
-                case ALIAS: {
-                    writer.append("&").append(element.asStringValue().get());
-                    return;
-                }
                 case PAIR: {
                     NPairElement t = element.asPair().get();
                     format(t.key(), writer);
@@ -228,49 +225,47 @@ public class TsonFormatImpl implements TsonFormat, Cloneable {
                     }
                     return;
                 }
-                case UNARY_OPERATOR: {
-                    NUnaryOperatorElement t = element.asUnaryOperator().get();
+                case UNARY_OPERATOR:
+                case BINARY_OPERATOR:
+                case TERNARY_OPERATOR:
+                case NARY_OPERATOR:
+                {
+                    NExprElement t = element.asTernaryOperator().get();
+                    List<NElement> operands = t.operands();
+                    List<NOperatorSymbol> operatorSymbols = t.operatorSymbols();
                     switch (t.position()) {
-                        case SUFFIX: {
-                            format(t.first(), writer);
-                            writer.append(t.symbol().lexeme());
-                            break;
-                        }
                         case PREFIX: {
-                            writer.append(t.symbol().lexeme());
-                            format(t.first(), writer);
+                            String opSymbol = operatorSymbols.get(0).lexeme();
+                            writer.append(opSymbol);
+                            for (NElement operand : operands) {
+                                writer.append(" ");
+                                format(operand, writer);
+                            }
                             break;
                         }
-                    }
-                    break;
-                }
-                case BINARY_OPERATOR: {
-                    NBinaryOperatorElement t = element.asBinaryOperator().get();
-                    switch (t.position()) {
                         case SUFFIX: {
-                            format(t.first(), writer);
-                            writer.append(" ");
-                            format(t.second(), writer);
-                            writer.append(" ");
-                            writer.append(t.symbol().lexeme());
-                            break;
-                        }
-                        case PREFIX: {
-                            writer.append(t.symbol().lexeme());
-                            writer.append(" ");
-                            format(t.first(), writer);
-                            writer.append(" ");
-                            format(t.second(), writer);
+                            String opSymbol = operatorSymbols.get(0).lexeme();
+                            for (NElement operand : operands) {
+                                format(operand);
+                                writer.append(" ");
+                            }
+                            writer.append(opSymbol);
                             break;
                         }
                         case INFIX: {
-                            format(t.first(), writer);
-                            String vs = format(t.second());
-                            writer.append(config.afterKey);
-                            if (config.indent.length() > 0 && vs.indexOf("\n") > 0) {
-                                writer.append(t.symbol().lexeme()).append("\n").append(Kmp.TsonUtils.indent(vs, config.indent));
-                            } else {
-                                writer.append(t.symbol().lexeme()).append(config.beforeValue).append(vs);
+                            NStringBuilder sb = new NStringBuilder();
+                            for (int i = 0; i < operands.size(); i++) {
+                                if (i > 0) {
+                                    if (i < operatorSymbols.size()) {
+                                        sb.append(operatorSymbols.get(i));
+                                        sb.append(" ");
+                                    } else {
+                                        sb.append(operatorSymbols.size() - 1);
+                                        sb.append(" ");
+                                    }
+                                }
+                                NElement operand = operands.get(i);
+                                format(operand);
                             }
                             break;
                         }
@@ -278,12 +273,12 @@ public class TsonFormatImpl implements TsonFormat, Cloneable {
                     break;
                 }
                 case OPERATOR_SYMBOL: {
-                    NOperatorElement t = element.asOperator().get();
+                    NOperatorSymbolElement t = element.asOperatorSymbol().get();
                     writer.append(t.symbol().lexeme());
                     break;
                 }
-                case EXPR: {
-                    NExprElement t = (NExprElement) element;
+                case FLAT_EXPR: {
+                    NFlatExprElement t = (NFlatExprElement) element;
                     int index = 0;
                     for (NElement e : t) {
                         if (index > 0) {
