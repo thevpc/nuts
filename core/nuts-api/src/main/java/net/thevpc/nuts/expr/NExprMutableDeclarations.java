@@ -1,5 +1,7 @@
 package net.thevpc.nuts.expr;
 
+import net.thevpc.nuts.elem.NOperatorAssociativity;
+
 public interface NExprMutableDeclarations extends NExprDeclarations {
     NExprFctDeclaration declareFunction(String name, NExprFct fctImpl);
 
@@ -11,7 +13,7 @@ public interface NExprMutableDeclarations extends NExprDeclarations {
 
     NExprVarDeclaration declareVar(String name, NExprVar varImpl);
 
-    NExprOpDeclaration declareOperator(String name, NExprOpType type, int precedence, NExprOpAssociativity associativity, NExprConstruct impl);
+    NExprOpDeclaration declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprConstruct impl);
 
     NExprOpDeclaration declareOperator(String name, NExprConstruct impl);
 
