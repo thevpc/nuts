@@ -28,6 +28,7 @@ import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.text.NMsg;
@@ -69,6 +70,94 @@ public abstract class AbstractNElement implements NElement {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean isErrorTree() {
+        if (annotations != null) {
+            for (NElementAnnotation annotation : annotations) {
+                if (annotation.isErrorTree()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    public List<NElement> findErrors(){
+        class T implements NElementVisitor{
+            List<NElement> all = new ArrayList<>();
+
+            @Override
+            public NTreeVisitResult enter(NElement element) {
+                if(element instanceof NElement){}
+                return NTreeVisitResult.CONTINUE;
+            }
+        }
+    }
+
+    protected NTreeVisitResult traverseList(
+            NElementVisitor visitor,
+            List<? extends NElement> elements
+    ) {
+        if(elements==null){
+            return  NTreeVisitResult.CONTINUE;
+        }
+        for (NElement element : elements) {
+            NTreeVisitResult result = element.traverse(visitor);
+            if (result == NTreeVisitResult.TERMINATE) {
+                return result;
+            }
+            if (result == NTreeVisitResult.SKIP_SIBLINGS) {
+                break;
+            }
+        }
+        return NTreeVisitResult.CONTINUE;
+    }
+
+    protected NTreeVisitResult traverseChildren(NElementVisitor visitor) {
+        return NTreeVisitResult.CONTINUE;
+    }
+    public NTreeVisitResult traverse(NElementVisitor visitor) {
+        // 1. Enter current element
+        NTreeVisitResult selfResult = visitor.enter(this);
+        if (selfResult != NTreeVisitResult.CONTINUE) {
+            // TERMINATE, SKIP_SUBTREE, or SKIP_SIBLINGS
+            // Note: SKIP_SIBLINGS is typically handled by parent, but we return it anyway
+            return selfResult;
+        }
+
+        // 2. Traverse annotations (if any)
+        // Assume getAnnotations() returns List<NElementAnnotation>
+        for (NElementAnnotation ann : annotations()) {
+            NTreeVisitResult annResult = visitor.visitAnnotation(ann);
+            if (annResult == NTreeVisitResult.TERMINATE) {
+                return annResult;
+            }
+            if (annResult == NTreeVisitResult.SKIP_SIBLINGS) {
+                break; // stop visiting further annotations
+            }
+            if (annResult == NTreeVisitResult.SKIP_SUBTREE) {
+                continue; // skip this annotation's internals (e.g., expression)
+            }
+
+            // If annotation has an expression, traverse it
+            NTreeVisitResult exprResult = traverseList(visitor, ann.params());
+            if (exprResult != NTreeVisitResult.CONTINUE) {
+                return exprResult; // propagate TERMINATE, etc.
+            }
+        }
+
+        // 3. Traverse children (if any)
+        // Use your protected helper
+        NTreeVisitResult childrenResult=traverseChildren(visitor);
+        if (childrenResult != NTreeVisitResult.CONTINUE) {
+            return childrenResult;
+        }
+        // 4. Exit current element
+        visitor.exit(this);
+        return NTreeVisitResult.CONTINUE;
     }
 
     public NElementComments comments() {
@@ -502,9 +591,9 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public NOptional<NOperatorElement> asOperator() {
-        if (this instanceof NOperatorElement) {
-            return NOptional.of((NOperatorElement) this);
+    public NOptional<NExprElement> asOperator() {
+        if (this instanceof NExprElement) {
+            return NOptional.of((NExprElement) this);
         }
         return NOptional.ofEmpty(_expected("operator"));
     }
@@ -522,7 +611,7 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NBinaryOperatorElement) {
             return NOptional.of((NBinaryOperatorElement) this);
         }
-        return NOptional.ofEmpty(_expected("operator"));
+        return NOptional.ofEmpty(_expected("binary operator"));
     }
 
     @Override
@@ -530,15 +619,31 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NUnaryOperatorElement) {
             return NOptional.of((NUnaryOperatorElement) this);
         }
-        return NOptional.ofEmpty(_expected("operator"));
+        return NOptional.ofEmpty(_expected("unary operator"));
+    }
+
+    @Override
+    public NOptional<NAryOperatorElement> asNaryOperator() {
+        if (this instanceof NAryOperatorElement) {
+            return NOptional.of((NAryOperatorElement) this);
+        }
+        return NOptional.ofEmpty(_expected("n-ary operator"));
+    }
+
+    @Override
+    public NOptional<NTernaryOperatorElement> asTernaryOperator() {
+        if (this instanceof NTernaryOperatorElement) {
+            return NOptional.of((NTernaryOperatorElement) this);
+        }
+        return NOptional.ofEmpty(_expected("ternary operator"));
     }
 
     @Override
     public boolean isBinaryInfixOperator() {
         if (type() == NElementType.BINARY_OPERATOR) {
-            NOptional<NOperatorElement> o = asOperator();
+            NOptional<NExprElement> o = asOperator();
             if (o.isPresent()) {
-                NOperatorElement oo = o.get();
+                NExprElement oo = o.get();
                 return oo.position() == NOperatorPosition.INFIX;
             }
         }
@@ -548,9 +653,9 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public boolean isUnaryPrefixOperator() {
         if (type() == NElementType.UNARY_OPERATOR) {
-            NOptional<NOperatorElement> o = asOperator();
+            NOptional<NExprElement> o = asOperator();
             if (o.isPresent()) {
-                NOperatorElement oo = o.get();
+                NExprElement oo = o.get();
                 return oo.position() == NOperatorPosition.PREFIX;
             }
         }
@@ -565,10 +670,10 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public boolean isBinaryOperator(NOperatorSymbol type) {
         NAssert.requireTrue(type != null, () -> NMsg.ofC("required operator type, got %s", type));
-        NOptional<NOperatorElement> o = asOperator();
+        NOptional<NBinaryOperatorElement> o = asBinaryOperator();
         if (o.isPresent()) {
-            NOperatorElement oo = o.get();
-            return oo.symbol() == type;
+            NBinaryOperatorElement oo = o.get();
+            return oo.operatorSymbol() == type;
         }
         return false;
     }
@@ -579,8 +684,8 @@ public abstract class AbstractNElement implements NElement {
         NOptional<NBinaryOperatorElement> o = asBinaryOperator();
         if (o.isPresent()) {
             NBinaryOperatorElement oo = o.get();
-            if (oo.symbol() == type) {
-                NElement f = oo.first();
+            if (oo.operatorSymbol() == type) {
+                NElement f = oo.firstOperand();
                 return (f.isName() || f.isString());
             }
         }
@@ -594,8 +699,8 @@ public abstract class AbstractNElement implements NElement {
         NOptional<NBinaryOperatorElement> o = asBinaryOperator();
         if (o.isPresent()) {
             NBinaryOperatorElement oo = o.get();
-            if (oo.symbol() == type) {
-                NElement f = oo.first();
+            if (oo.operatorSymbol() == type) {
+                NElement f = oo.firstOperand();
                 return (f.isName() || f.isString()) && Objects.equals(f.asStringValue().orNull(), name);
             }
         }
@@ -1200,8 +1305,13 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public NElement[] transform(NElementTransform transform) {
-        return NElementTransformHelper.transform(this, transform);
+    public List<NElement> transform(NElementTransform transform) {
+        return NElementTransformHelper.transform(null, this, transform);
+    }
+
+    @Override
+    public List<NElement> transform(NElementPath path, NElementTransform transform) {
+        return NElementTransformHelper.transform(path, this, transform);
     }
 
     @Override
