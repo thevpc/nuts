@@ -28,6 +28,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathImpl;
 import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
 import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNPairElementBuilder;
+import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
@@ -64,6 +65,26 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
         }
         return false;
     }
+
+    protected NTreeVisitResult traverseChildren(NElementVisitor visitor) {
+        return traverseList(visitor, Arrays.asList(key,value));
+    }
+
+
+    @Override
+    public boolean isErrorTree() {
+        if(super.isErrorTree()){
+            return true;
+        }
+        if(key!=null && key.isCustomTree()){
+            return true;
+        }
+        if(value!=null && value.isCustomTree()){
+            return true;
+        }
+        return false;
+    }
+
 
     @Override
     public NOptional<String> name() {
