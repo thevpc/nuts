@@ -80,13 +80,13 @@ public interface NElementFactory extends NComponent {
 
     NPairElementBuilder ofPairBuilder(NElement key, NElement value);
 
-    NOperatorElementBuilder ofOpBuilder();
+    NExprElementBuilder ofOpBuilder();
 
-    NOperatorElement ofOp(NOperatorSymbol op, NOperatorPosition position, NElement first, NElement second);
+    NExprElement ofOp(NOperatorSymbol op, NOperatorPosition position, NElement first, NElement second);
 
-    NOperatorElement ofOp(NOperatorSymbol op, NElement first, NElement second);
+    NExprElement ofOp(NOperatorSymbol op, NElement first, NElement second);
 
-    NOperatorElement ofOp(NOperatorSymbol op, NElement first);
+    NExprElement ofOp(NOperatorSymbol op, NElement first);
 
     NOperatorSymbolElement ofOp(NOperatorSymbol op);
 
@@ -374,5 +374,7 @@ public interface NElementFactory extends NComponent {
 
     NPrimitiveElementBuilder ofPrimitiveBuilder();
 
-    NExprElementBuilder ofExprBuilder();
+    NFlatExprElementBuilder ofFlatExprBuilder();
+
+    NErrorElementBuilder ofErrorBuilder();
 }
