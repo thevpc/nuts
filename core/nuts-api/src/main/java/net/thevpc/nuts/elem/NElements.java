@@ -71,7 +71,7 @@ public interface NElements extends NComponent {
      * @param pathExpression element path expression
      * @return Element Path filter
      */
-    NElementPath compilePath(String pathExpression);
+    NElementSelector compileSelector(String pathExpression);
 
     /**
      * /**
@@ -112,4 +112,17 @@ public interface NElements extends NComponent {
 
     NElementType commonNumberType(NElementType aa, NElementType bb) ;
 
+    NExprElementReshaperBuilder createLogicalExprElementReshaperBuilder();
+
+    NExprElementReshaper createLeftAssociativeExprElementReshaper();
+
+    NExprElementReshaper createLogicalExprElementReshaper();
+
+    NExprElementReshaperBuilder createLeftAssociativeExprElementReshaperBuilder();
+
+    NExprElementReshaperBuilder createJavaExprElementReshaperBuilder();
+
+    NExprElementReshaper createJavaExprElementReshaper();
+
+    NExprElementReshaperBuilder createDefaultExprElementReshaperBuilder();
 }
