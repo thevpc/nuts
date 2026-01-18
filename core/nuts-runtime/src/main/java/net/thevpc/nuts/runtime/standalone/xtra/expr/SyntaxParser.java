@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.elem.NOperatorAssociativity;
 import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.text.NMsg;
@@ -398,7 +399,7 @@ public class SyntaxParser {
             }
             tokens.next();
             int nextPrecedence = op.getPrecedence();
-            if (op.getAssociativity() == NExprOpAssociativity.LEFT) {
+            if (op.getAssociativity() == NOperatorAssociativity.LEFT) {
                 nextPrecedence--;
             }
             NOptional<NExprNode> q = nextNonTerminal(nextPrecedence);
