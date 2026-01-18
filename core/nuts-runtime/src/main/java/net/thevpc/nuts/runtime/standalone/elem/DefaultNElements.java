@@ -3,10 +3,11 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.UserElementMapperStore;
-import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathFilter;
+import net.thevpc.nuts.runtime.standalone.elem.path.NElementSelectorFilters;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -37,8 +38,8 @@ public class DefaultNElements implements NElements {
     }
 
     @Override
-    public NElementPath compilePath(String pathExpression) {
-        return NElementPathFilter.compile(pathExpression);
+    public NElementSelector compileSelector(String pathExpression) {
+        return NElementSelectorFilters.compile(pathExpression);
     }
 
     @Override
@@ -194,4 +195,96 @@ public class DefaultNElements implements NElements {
         }
         return aa;
     }
+
+    @Override
+    public NExprElementReshaperBuilder createDefaultExprElementReshaperBuilder() {
+        return new DefaultNExprElementReshaperBuilder();
+    }
+
+    @Override
+    public NExprElementReshaperBuilder createLogicalExprElementReshaperBuilder() {
+        DefaultNExprElementReshaperBuilder r = new DefaultNExprElementReshaperBuilder();
+        r.addUnaryOperator(NOperatorSymbol.NOT);
+        r.addBinaryOperator(NOperatorSymbol.AND2, 2, NOperatorAssociativity.LEFT);
+        r.addBinaryOperator(NOperatorSymbol.PIPE2, 1, NOperatorAssociativity.LEFT);
+        r.addBinaryOperator(NOperatorSymbol.EQ2, 0, NOperatorAssociativity.LEFT);
+        r.addBinaryOperator(NOperatorSymbol.NOT_EQ, 0, NOperatorAssociativity.LEFT);
+        return r;
+    }
+
+    @Override
+    public NExprElementReshaper createLeftAssociativeExprElementReshaper() {
+        return NWorkspace.of().getOrComputeProperty(
+                NExprElementReshaper.class.getName() + "::Java",
+                () -> createLeftAssociativeExprElementReshaperBuilder().build()
+        );
+    }
+
+    @Override
+    public NExprElementReshaper createLogicalExprElementReshaper() {
+        return NWorkspace.of().getOrComputeProperty(
+                NExprElementReshaper.class.getName() + "::Java",
+                () -> createLogicalExprElementReshaperBuilder().build()
+        );
+    }
+
+    @Override
+    public NExprElementReshaperBuilder createLeftAssociativeExprElementReshaperBuilder() {
+        DefaultNExprElementReshaperBuilder r = new DefaultNExprElementReshaperBuilder();
+        // Add all known operators with same precedence
+        for (NOperatorSymbol op : NOperatorSymbol.values()) {
+            if (op == NOperatorSymbol.NOT || op == NOperatorSymbol.TILDE || op == NOperatorSymbol.MINUS || op == NOperatorSymbol.PLUS) {
+                r.addUnaryOperator(op);
+            } else {
+                r.addBinaryOperator(op, 1, NOperatorAssociativity.LEFT);
+            }
+        }
+        return r;
+    }
+
+    @Override
+    public NExprElementReshaperBuilder createJavaExprElementReshaperBuilder() {
+        return createDefaultExprElementReshaperBuilder()
+                // Unary operators (high precedence)
+                .addUnaryOperator(NOperatorSymbol.NOT)       // !
+                .addUnaryOperator(NOperatorSymbol.TILDE)     // ~
+                .addUnaryOperator(NOperatorSymbol.MINUS)     // -x
+                .addUnaryOperator(NOperatorSymbol.PLUS)      // +x
+                .addBinaryOperator(NOperatorSymbol.EQ, 0, NOperatorAssociativity.RIGHT) // lowest precedence
+
+                // Multiplicative
+                .addBinaryOperator(NOperatorSymbol.MUL, 30, NOperatorAssociativity.LEFT)      // *
+                .addBinaryOperator(NOperatorSymbol.DIV, 30, NOperatorAssociativity.LEFT)      // /
+                .addBinaryOperator(NOperatorSymbol.REM, 30, NOperatorAssociativity.LEFT)      // %
+
+                // Additive
+                .addBinaryOperator(NOperatorSymbol.PLUS, 20, NOperatorAssociativity.LEFT)     // a + b
+                .addBinaryOperator(NOperatorSymbol.MINUS, 20, NOperatorAssociativity.LEFT)    // a - b
+
+                // Relational
+                .addBinaryOperator(NOperatorSymbol.LT, 10, NOperatorAssociativity.LEFT)
+                .addBinaryOperator(NOperatorSymbol.GT, 10, NOperatorAssociativity.LEFT)
+                .addBinaryOperator(NOperatorSymbol.LTE, 10, NOperatorAssociativity.LEFT)
+                .addBinaryOperator(NOperatorSymbol.GTE, 10, NOperatorAssociativity.LEFT)
+
+                // Equality
+                .addBinaryOperator(NOperatorSymbol.EQ2, 5, NOperatorAssociativity.LEFT)        // ==
+                .addBinaryOperator(NOperatorSymbol.NOT_EQ, 5, NOperatorAssociativity.LEFT) // !=
+
+                // Logical AND
+                .addBinaryOperator(NOperatorSymbol.AND2, 3, NOperatorAssociativity.LEFT)       // &&
+
+                // Logical OR
+                .addBinaryOperator(NOperatorSymbol.PIPE2, 1, NOperatorAssociativity.LEFT)      // ||
+                ;
+    }
+
+    @Override
+    public NExprElementReshaper createJavaExprElementReshaper() {
+        return NWorkspace.of().getOrComputeProperty(
+                NExprElementReshaper.class.getName() + "::Java",
+                () -> createJavaExprElementReshaperBuilder().build()
+        );
+    }
+
 }
