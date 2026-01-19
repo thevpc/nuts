@@ -9,24 +9,25 @@ import net.thevpc.nuts.util.NStringUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
 public class DefaultNNumberElement extends DefaultNPrimitiveElement implements NNumberElement {
     private NNumberLayout layout;
     private String suffix;
 
     public DefaultNNumberElement(NElementType type, Number value) {
-        this(type, value, null, null, null, null);
+        this(type, value, null, null, null, null,null);
     }
 
     public DefaultNNumberElement(NElementType type, Number value, NNumberLayout layout, String suffix) {
-        this(type, value, layout, suffix, null, null);
+        this(type, value, layout, suffix, null, null,null);
     }
 
     public DefaultNNumberElement(NElementType type, Number value,
                                  NNumberLayout layout,
                                  String suffix,
-                                 NElementAnnotation[] annotations, NElementComments comments) {
-        super(type, value, annotations, comments);
+                                 List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+        super(type, value, annotations, comments,diagnostics);
         this.layout = layout == null ? NNumberLayout.DECIMAL : layout;
         this.suffix = NStringUtils.trimToNull(suffix);
     }
@@ -137,7 +138,7 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
                 type(), newValue.get(),
                 layout,
                 suffix,
-                annotations().toArray(new NElementAnnotation[0]), comments()));
+                annotations(), comments(), diagnostics()));
     }
 
     private String toStringPart(Number value, boolean compactMax) {
