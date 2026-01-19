@@ -111,6 +111,17 @@ public class CoreNUtils {
         _QUERY_EMPTY_ENV.put(NConstants.IdProperties.DESKTOP, null);
     }
 
+    public static <T> List<T> copyAndUnmodifiableList(List<T> other) {
+        return  (other == null || other.isEmpty())? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(other));
+    }
+
+    public static <T> List<T> copyAndUnmodifiableNullableList(List<T> other) {
+        if(other == null){
+            return null;
+        }
+        return  other.isEmpty()? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(other));
+    }
+
     public static String repeat(char txt, int count) {
         StringBuilder sb = new StringBuilder(count);
         for (int i = 0; i < count; i++) {
