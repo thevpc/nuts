@@ -25,6 +25,8 @@ public enum NOperatorSymbol implements NEnum {
     MUL_EQ2("*=="),
     DIV("/"),
     HAT("^"),
+    HAT_EQ("^="),
+    HAT_EQ2("^=="),
     HAT2("^^"),
     HAT3("^^^"),
     REM("%"),
