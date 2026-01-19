@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NUnsupportedEnumException;
@@ -15,18 +16,18 @@ public abstract class AbstractNOperatorElement extends AbstractNElement implemen
     private List<NOperatorSymbol> symbols;
     private List<NElement> operands;
 
-    public AbstractNOperatorElement(NOperatorSymbol[] symbols, NOperatorPosition position, NElement[] operands, NElementAnnotation[] annotations, NElementComments comments) {
-        super(operands.length == 1 ?
+    public AbstractNOperatorElement(List<NOperatorSymbol> symbols, NOperatorPosition position, List<NElement> operands, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+        super(operands.size() == 1 ?
                         NElementType.UNARY_OPERATOR
-                        : operands.length == 2 ?
+                        : operands.size() == 2 ?
                         NElementType.BINARY_OPERATOR
-                        : operands.length == 3 ?
+                        : operands.size() == 3 ?
                         NElementType.TERNARY_OPERATOR
                         : NElementType.NARY_OPERATOR
-                , annotations, comments);
+                , annotations, comments,diagnostics);
         this.position = position;
-        this.symbols = Collections.unmodifiableList(new ArrayList<>(Arrays.asList(symbols)));
-        this.operands = Collections.unmodifiableList(new ArrayList<>(Arrays.asList(operands)));
+        this.symbols = CoreNUtils.copyAndUnmodifiableNullableList(symbols);
+        this.operands = CoreNUtils.copyAndUnmodifiableList(operands);
     }
 
     @Override
