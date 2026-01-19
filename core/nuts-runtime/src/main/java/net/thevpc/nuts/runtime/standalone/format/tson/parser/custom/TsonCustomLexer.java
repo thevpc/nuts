@@ -28,8 +28,9 @@ import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPrimitiveElement;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNStringElement;
 import net.thevpc.nuts.runtime.standalone.elem.item.NElementCommentImpl;
-import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementToken;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenImpl;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenType;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NExceptions;
 
 public class TsonCustomLexer {
@@ -43,10 +44,10 @@ public class TsonCustomLexer {
         this.reader = new NPositionedCharReader(reader);
     }
 
-    public List<NElementToken> all() {
-        List<NElementToken> ret = new ArrayList<>();
+    public List<NElementTokenImpl> all() {
+        List<NElementTokenImpl> ret = new ArrayList<>();
         while (true) {
-            NElementToken u = next();
+            NElementTokenImpl u = next();
             if (u == null) {
                 break;
             }
@@ -55,7 +56,7 @@ public class TsonCustomLexer {
         return ret;
     }
 
-    public NElementToken next() {
+    public NElementTokenImpl next() {
         StringBuilder currentError = new StringBuilder();
         int errline = 0;
         int errcolumn = 0;
@@ -64,13 +65,13 @@ public class TsonCustomLexer {
             int c = reader.peek();
             if (c == -1) {
                 if (currentError.length() > 0) {
-                    return new NElementToken(
+                    return new NElementTokenImpl(
                             currentError.toString(),
                             NElementTokenType.UNKNOWN,
                             "",
                             0,
                             errline, errcolumn, errpos,
-                            currentError.length(), "unexpected token"
+                            currentError.length(), NMsg.ofC("unexpected token")
                     );
                 }
                 return null;
@@ -94,7 +95,7 @@ public class TsonCustomLexer {
                 case '#':
                     return continueReadRepeatedChar(c, NElementTokenType.ORDERED_LIST);
                 case '.': {
-                    int c1 = reader.peekChar(1);
+                    int c1 = reader.peekCharAt(1);
                     if (c1 != -1) {
                         if (Character.isDigit(c1)) {
                             return continueReadNumber();
@@ -111,7 +112,7 @@ public class TsonCustomLexer {
                         if (count >= 10) break; // safety
                     }
                     String s = image.toString();
-                    return new NElementToken(s, NElementTokenType.UNORDERED_LIST, String.valueOf(s.charAt(0)), count, line, column, pos, s, null);
+                    return new NElementTokenImpl(s, NElementTokenType.UNORDERED_LIST, String.valueOf(s.charAt(0)), count, line, column, pos, s, null);
                 }
                 case '¶': {
                     int c2 = reader.peek();
@@ -124,27 +125,27 @@ public class TsonCustomLexer {
                     int c2 = reader.peek();
                     if (c2 == ';') {
                         reader.read(2);
-                        return new NElementToken(";;", NElementTokenType.SEMICOLON2, ";;", 0, line, column, pos, c, null);
+                        return new NElementTokenImpl(";;", NElementTokenType.SEMICOLON2, ";;", 0, line, column, pos, c, null);
                     }
                     return asChar(c, NElementTokenType.SEMICOLON);
                 }
                 case ',':
                     return asChar(c, NElementTokenType.COMMA);
                 case ':': {
-                    int n = reader.peekChar(1);
+                    int n = reader.peekCharAt(1);
                     switch (n) {
                         case ':': {
                             reader.read(2);
-                            return new NElementToken("::", NElementTokenType.OP, "::", 0, line, column, pos, NOperatorSymbol.COLON2, null);
+                            return new NElementTokenImpl("::", NElementTokenType.OP, "::", 0, line, column, pos, NOperatorSymbol.COLON2, null);
                         }
                         case '=': {
-                            n = reader.peekChar(2);
+                            n = reader.peekCharAt(2);
                             if (n == '=') {
                                 reader.read(3);
-                                return new NElementToken(":==", NElementTokenType.OP, ":==", 0, line, column, pos, NOperatorSymbol.COLON_EQ2, null);
+                                return new NElementTokenImpl(":==", NElementTokenType.OP, ":==", 0, line, column, pos, NOperatorSymbol.COLON_EQ2, null);
                             }
                             reader.read(2);
-                            return new NElementToken(":=", NElementTokenType.OP, ":=", 0, line, column, pos, NOperatorSymbol.COLON_EQ, null);
+                            return new NElementTokenImpl(":=", NElementTokenType.OP, ":=", 0, line, column, pos, NOperatorSymbol.COLON_EQ, null);
                         }
                         default: {
                             return asChar(c, NElementTokenType.COLON);
@@ -152,7 +153,7 @@ public class TsonCustomLexer {
                     }
                 }
                 case '/': {
-                    int n = reader.peekChar(1);
+                    int n = reader.peekCharAt(1);
                     switch (n) {
                         case '/': {
                             return continueReadLineComments();
@@ -166,11 +167,11 @@ public class TsonCustomLexer {
                     }
                 }
                 case '\\': {
-                    int n = reader.peekChar(1);
+                    int n = reader.peekCharAt(1);
                     switch (n) {
                         case '\\': {
                             reader.read(2);
-                            return new NElementToken("\\", NElementTokenType.BACKSLASH2, "\\", 0, line, column, pos, c, null);
+                            return new NElementTokenImpl("\\", NElementTokenType.BACKSLASH2, "\\", 0, line, column, pos, c, null);
                         }
                         default: {
                             return asChar(c, NElementTokenType.BACKSLASH);
@@ -193,61 +194,61 @@ public class TsonCustomLexer {
                     return continueReadStream(c, line, column, pos);
                 }
                 case '@': {
-                    int n = reader.peekChar(1);
+                    int n = reader.peekCharAt(1);
                     if (n == c) {
-                        int n2 = reader.peekChar(2);
+                        int n2 = reader.peekCharAt(2);
                         char cc = (char) c;
                         if (n2 == c) {
                             reader.read(3);
                             String i = new String(new char[]{cc, cc, cc});
-                            return new NElementToken(i, NElementTokenType.OP, i, 0, line, column, pos, NOperatorSymbol.AT3, null);
+                            return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, NOperatorSymbol.AT3, null);
                         } else {
                             reader.read(2);
                             String i = new String(new char[]{cc, cc});
-                            return new NElementToken(i, NElementTokenType.OP, i, 0, line, column, pos, NOperatorSymbol.AT2, null);
+                            return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, NOperatorSymbol.AT2, null);
                         }
                     }
                     return asChar(c, NElementTokenType.AT);
                 }
                 case '<': {
-                    int c1 = reader.peekChar(1);
+                    int c1 = reader.peekCharAt(1);
                     if (c1 == '<') {
-                        if (reader.peekChar(2) == '<') {
+                        if (reader.peekCharAt(2) == '<') {
                             reader.read(3);
-                            return new NElementToken("<<<", NElementTokenType.OP, "<<<", 0, line, column, pos, NOperatorSymbol.LT3, null);
+                            return new NElementTokenImpl("<<<", NElementTokenType.OP, "<<<", 0, line, column, pos, NOperatorSymbol.LT3, null);
                         }
                         reader.read(2);
-                        return new NElementToken("<<", NElementTokenType.OP, "<<", 0, line, column, pos, NOperatorSymbol.LT2, null);
+                        return new NElementTokenImpl("<<", NElementTokenType.OP, "<<", 0, line, column, pos, NOperatorSymbol.LT2, null);
                     } else if (c1 == '>') {
                         reader.read(2);
-                        return new NElementToken("<>", NElementTokenType.OP, "<>", 0, line, column, pos, NOperatorSymbol.LT_GT, null);
+                        return new NElementTokenImpl("<>", NElementTokenType.OP, "<>", 0, line, column, pos, NOperatorSymbol.LT_GT, null);
                     } else if (c1 == '=') {
-                        int c2 = reader.peekChar(2);
+                        int c2 = reader.peekCharAt(2);
                         if (c2 == '=') {
                             reader.read(3);
-                            return new NElementToken("<==", NElementTokenType.OP, "<<<", 0, line, column, pos, NOperatorSymbol.LT_EQ2, null);
+                            return new NElementTokenImpl("<==", NElementTokenType.OP, "<<<", 0, line, column, pos, NOperatorSymbol.LT_EQ2, null);
                         }
                         reader.read(2);
-                        return new NElementToken("<=", NElementTokenType.OP, "<<", 0, line, column, pos, NOperatorSymbol.LTE, null);
+                        return new NElementTokenImpl("<=", NElementTokenType.OP, "<<", 0, line, column, pos, NOperatorSymbol.LTE, null);
                     } else if (c1 == '-') {
-                        int c2 = reader.peekChar(2);
+                        int c2 = reader.peekCharAt(2);
                         if (c2 == '-') {
                             reader.read(3); // <--x
-                            return new NElementToken("<--", NElementTokenType.OP, "<<<", 0, line, column, pos, NOperatorSymbol.LT_MINUS2, null);
+                            return new NElementTokenImpl("<--", NElementTokenType.OP, "<<<", 0, line, column, pos, NOperatorSymbol.LT_MINUS2, null);
                         } else if (Character.isDigit(c2)) {
                             //<-3
                             reader.read(); // <--x
-                            return new NElementToken("<", NElementTokenType.OP, "<", 0, line, column, pos, NOperatorSymbol.LT, null);
+                            return new NElementTokenImpl("<", NElementTokenType.OP, "<", 0, line, column, pos, NOperatorSymbol.LT, null);
                         }
                         reader.read(2);
-                        return new NElementToken("<=", NElementTokenType.OP, "<<", 0, line, column, pos, NOperatorSymbol.LT2, null);
+                        return new NElementTokenImpl("<=", NElementTokenType.OP, "<<", 0, line, column, pos, NOperatorSymbol.LT2, null);
                     }
                     reader.read();
-                    return new NElementToken("<", NElementTokenType.OP, "&", 0, line, column, pos, NOperatorSymbol.LT, null);
+                    return new NElementTokenImpl("<", NElementTokenType.OP, "&", 0, line, column, pos, NOperatorSymbol.LT, null);
                 }
 
                 case '-': {
-                    int c1 = reader.peekChar(1);
+                    int c1 = reader.peekCharAt(1);
                     if (Character.isDigit(c1)) {
                         return continueReadNumber();
                     }
@@ -255,7 +256,7 @@ public class TsonCustomLexer {
                 }
 
                 case '+': {
-                    int c1 = reader.peekChar(1);
+                    int c1 = reader.peekCharAt(1);
                     if (Character.isDigit(c1)) {
                         return continueReadNumber();
                     }
@@ -267,43 +268,43 @@ public class TsonCustomLexer {
                 }
 
                 case '=': {
-                    int c1 = reader.peekChar(1);
+                    int c1 = reader.peekCharAt(1);
                     if (c1 == '=') {
-                        int c2 = reader.peekChar(2);
+                        int c2 = reader.peekCharAt(2);
                         if (c2 == '=') {
                             reader.read(3);
-                            return new NElementToken("===", NElementTokenType.OP, "===", 0, line, column, pos, NOperatorSymbol.EQ3, null);
+                            return new NElementTokenImpl("===", NElementTokenType.OP, "===", 0, line, column, pos, NOperatorSymbol.EQ3, null);
                         } else if (c2 == '>') {
                             reader.read(3);
-                            return new NElementToken("==>", NElementTokenType.OP, "==>", 0, line, column, pos, NOperatorSymbol.EQ2_GT, null);
+                            return new NElementTokenImpl("==>", NElementTokenType.OP, "==>", 0, line, column, pos, NOperatorSymbol.EQ2_GT, null);
                         }
                         reader.read(2);
-                        return new NElementToken("==", NElementTokenType.OP, "==", 0, line, column, pos, NOperatorSymbol.EQ2, null);
+                        return new NElementTokenImpl("==", NElementTokenType.OP, "==", 0, line, column, pos, NOperatorSymbol.EQ2, null);
                     } else if (c1 == '>') {
                         reader.read(2);
-                        return new NElementToken("=>", NElementTokenType.OP, "=>", 0, line, column, pos, NOperatorSymbol.EQ_GT, null);
+                        return new NElementTokenImpl("=>", NElementTokenType.OP, "=>", 0, line, column, pos, NOperatorSymbol.EQ_GT, null);
                     }
                     reader.read();
-                    return new NElementToken("=", NElementTokenType.OP, "=", 0, line, column, pos, NOperatorSymbol.EQ, null);
+                    return new NElementTokenImpl("=", NElementTokenType.OP, "=", 0, line, column, pos, NOperatorSymbol.EQ, null);
                 }
                 case '>': {
-                    int c1 = reader.peekChar(1);
+                    int c1 = reader.peekCharAt(1);
                     if (c1 == '>') {
-                        if (reader.peekChar(2) == '>') {
+                        if (reader.peekCharAt(2) == '>') {
                             reader.read(3);
-                            return new NElementToken(">>>", NElementTokenType.OP, ">>>", 0, line, column, pos, NOperatorSymbol.GT3, null);
+                            return new NElementTokenImpl(">>>", NElementTokenType.OP, ">>>", 0, line, column, pos, NOperatorSymbol.GT3, null);
                         }
                         reader.read(2);
-                        return new NElementToken(">>", NElementTokenType.OP, ">>", 0, line, column, pos, NOperatorSymbol.GT2, null);
+                        return new NElementTokenImpl(">>", NElementTokenType.OP, ">>", 0, line, column, pos, NOperatorSymbol.GT2, null);
                     } else if (c1 == '=') {
                         reader.read(2);
-                        return new NElementToken(">=", NElementTokenType.OP, ">=", 0, line, column, pos, NOperatorSymbol.GTE, null);
+                        return new NElementTokenImpl(">=", NElementTokenType.OP, ">=", 0, line, column, pos, NOperatorSymbol.GTE, null);
                     }
                     reader.read();
-                    return new NElementToken(">", NElementTokenType.OP, ">", 0, line, column, pos, NOperatorSymbol.GT, null);
+                    return new NElementTokenImpl(">", NElementTokenType.OP, ">", 0, line, column, pos, NOperatorSymbol.GT, null);
                 }
                 case '"': {
-                    if (reader.canRead(2) && reader.peekChar(1) == c && reader.peekChar(2) == c) {
+                    if (reader.canRead(2) && reader.peekCharAt(1) == c && reader.peekCharAt(2) == c) {
                         reader.read(); // consume first "
                         reader.read(); // second
                         reader.read(); // third
@@ -313,7 +314,7 @@ public class TsonCustomLexer {
                     return continueReadDoubleQuoted1();
                 }
                 case '\'': {
-                    if (reader.canRead(2) && reader.peekChar(1) == c && reader.peekChar(2) == c) {
+                    if (reader.canRead(2) && reader.peekCharAt(1) == c && reader.peekCharAt(2) == c) {
                         reader.read(); // consume first "
                         reader.read(); // second
                         reader.read(); // third
@@ -323,7 +324,7 @@ public class TsonCustomLexer {
                     return continueReadSingleQuoted1();
                 }
                 case '`': {
-                    if (reader.canRead(2) && reader.peekChar(1) == c && reader.peekChar(2) == c) {
+                    if (reader.canRead(2) && reader.peekCharAt(1) == c && reader.peekCharAt(2) == c) {
                         reader.read(); // consume first "
                         reader.read(); // second
                         reader.read(); // third
@@ -337,26 +338,26 @@ public class TsonCustomLexer {
                     while (reader.peek() == ' ') {
                         sb.append((char) reader.read());
                     }
-                    return new NElementToken(sb.toString(), NElementTokenType.WHITESPACE, " ", 0, line, column, pos, c, null);
+                    return new NElementTokenImpl(sb.toString(), NElementTokenType.WHITESPACE, " ", 0, line, column, pos, c, null);
                 }
                 case '\t': {
                     StringBuilder sb = new StringBuilder();
                     while (reader.peek() == '\t') {
                         sb.append((char) reader.read());
                     }
-                    return new NElementToken(sb.toString(), NElementTokenType.WHITESPACE, "\t", 0, line, column, pos, c, null);
+                    return new NElementTokenImpl(sb.toString(), NElementTokenType.WHITESPACE, "\t", 0, line, column, pos, c, null);
                 }
                 case '\n': {
                     reader.read();
-                    return new NElementToken("\n", NElementTokenType.WHITESPACE, "\n", 0, line, column, pos, c, null);
+                    return new NElementTokenImpl("\n", NElementTokenType.WHITESPACE, "\n", 0, line, column, pos, c, null);
                 }
                 case '\r': {
                     reader.read();
                     if (reader.peek() == '\n') {
                         reader.read();
-                        return new NElementToken("\r\n", NElementTokenType.WHITESPACE, "\r\n", 0, line, column, pos, c, null);
+                        return new NElementTokenImpl("\r\n", NElementTokenType.WHITESPACE, "\r\n", 0, line, column, pos, c, null);
                     }
-                    return new NElementToken("\r", NElementTokenType.WHITESPACE, "\r", 0, line, column, pos, c, null);
+                    return new NElementTokenImpl("\r", NElementTokenType.WHITESPACE, "\r", 0, line, column, pos, c, null);
                 }
                 case '0':
                 case '1':
@@ -370,6 +371,10 @@ public class TsonCustomLexer {
                 case '9': {
                     return continueReadTemporalOrNumber();
                 }
+                case '_':
+                case '$': {
+                    return continueReadIdentifier();
+                }
                 default: {
                     if (Character.isWhitespace(c)) {
                         StringBuilder sb = new StringBuilder();
@@ -382,9 +387,9 @@ public class TsonCustomLexer {
                             }
                             sb.append((char) reader.read());
                         }
-                        return new NElementToken(sb.toString(), NElementTokenType.WHITESPACE, String.valueOf(c0), 0, line, column, pos, c, null);
+                        return new NElementTokenImpl(sb.toString(), NElementTokenType.WHITESPACE, String.valueOf(c0), 0, line, column, pos, c, null);
                     }
-                    if (Character.isAlphabetic(c)) {
+                    if (Character.isUnicodeIdentifierStart(c)) {
                         return continueReadIdentifier();
                     }
                     break;
@@ -395,190 +400,243 @@ public class TsonCustomLexer {
                 errcolumn = reader.column();
                 errpos = reader.pos();
             }
-            currentError.append((char) c);
+            char c0 = (char) reader.read();
+            currentError.append(c0);
         }
     }
 
 
-    private NElementToken continueReadStream(int c, int line, int column, long pos) {
-        StringBuilder image = new StringBuilder();
-        image.append((char) c);
-        int count = 1;
-        while (reader.peek() == '^' && count < 3) {
-            image.append((char) reader.read());
-            count++;
+    private NElementType readBinaryBlockStart(StringBuilder fillInto, StringBuilder image) {
+        int p0 = reader.peekCharAt(0);
+        if (p0 != '^') {
+            return null;
         }
-
-        // Peek for identifier
-        int p = reader.peek();
-        String id = "";
-        int idLen = 0;
-        if (Character.isAlphabetic(p)) {
-            while (true) {
-                int next = reader.peekChar(idLen);
-                if (Character.isLetterOrDigit(next)) {
-                    idLen++;
+        int p1 = reader.peekCharAt(1);
+        if (p1 == '[') {
+            String s = reader.read(2);
+            image.append(s);
+            return NElementType.BINARY_STREAM;
+        }
+        if (p1 == '{') {
+            String s = reader.read(2);
+            image.append(s);
+            return NElementType.CHAR_STREAM;
+        }
+        if (Character.isLetter(p1)) {
+            int max = 1024;
+            int i = 2;
+            while (i < max) {
+                int c = reader.peekCharAt(i);
+                if (c == '[') {
+                    String s = reader.read(i + 1);
+                    fillInto.append(s, 1, s.length() - 1);
+                    image.append(s);
+                    return NElementType.BINARY_STREAM;
+                } else if (c == '{') {
+                    String s = reader.read(i + 1);
+                    fillInto.append(s, 1, s.length() - 1);
+                    image.append(s);
+                    return NElementType.CHAR_STREAM;
+                } else if (Character.isLetterOrDigit(c)) {
+                    int c2 = reader.peekCharAt(i + 1);
+                    if (c2 == '[') {
+                        String s = reader.read(i + 2);
+                        fillInto.append(s, 1, s.length() - 1);
+                        image.append(s);
+                        return NElementType.BINARY_STREAM;
+                    }
+                    if (c2 == '{') {
+                        String s = reader.read(i + 2);
+                        fillInto.append(s, 1, s.length() - 1);
+                        image.append(s);
+                        return NElementType.CHAR_STREAM;
+                    }
+                    i++;
                 } else {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    private NElementTokenImpl continueReadStream(int c, int line, int column, long pos) {
+        StringBuilder n = new StringBuilder();
+        StringBuilder img = new StringBuilder();
+        NElementType r = readBinaryBlockStart(n, img);
+        if (r == NElementType.BINARY_STREAM) {
+            StringBuilder content = new StringBuilder();
+            StringBuilder image = new StringBuilder(img.toString());
+            while (true) {
+                int next = reader.read();
+                if (next == -1) break;
+                if (next == ']') {
+                    image.append(']');
                     break;
                 }
+                content.append((char) next);
+                image.append((char) next);
             }
-        }
-
-        int nextAfterId = reader.peekChar(idLen);
-        if (nextAfterId == '[' || nextAfterId == '{') {
-            // It's a stream! Consume identifier
-            if (idLen > 0) {
-                id = reader.read(idLen);
-                image.append(id);
-            }
-            if (nextAfterId == '[') {
-                image.append((char) reader.read()); // consume '['
-                StringBuilder content = new StringBuilder();
-                while (true) {
-                    int next = reader.read();
-                    if (next == -1) break;
-                    if (next == ']') {
-                        image.append(']');
-                        break;
-                    }
-                    content.append((char) next);
-                    image.append((char) next);
+            byte[] data = Base64.getDecoder().decode(content.toString().replaceAll("\\s", ""));
+            NInputStreamProvider provider = () -> new ByteArrayInputStream(data);
+            return new NElementTokenImpl(image.toString(), NElementTokenType.BINARY_STREAM, "stream-binary", 0, line, column, pos,
+                    NElement.ofBinaryStream(provider), null);
+        } else if (r == NElementType.CHAR_STREAM) {
+            StringBuilder content = new StringBuilder();
+            String endMarker = "^" + n + "}";
+            StringBuilder image = new StringBuilder(img.toString());
+            while (true) {
+                if (reader.peek(endMarker)) {
+                    reader.read(endMarker.length());
+                    image.append(endMarker);
+                    break;
                 }
-                byte[] data = Base64.getDecoder().decode(content.toString().replaceAll("\\s", ""));
-                NInputStreamProvider provider = () -> new ByteArrayInputStream(data);
-                return new NElementToken(image.toString(), NElementTokenType.UNKNOWN, "stream-binary", 0, line, column, pos,
-                        NElement.ofBinaryStream(provider), null);
-            } else {
-                image.append((char) reader.read()); // consume '{'
-                StringBuilder content = new StringBuilder();
-                String endMarker = "^" + id + "}";
-                while (true) {
-                    if (reader.peek(endMarker)) {
-                        reader.read(endMarker.length());
-                        image.append(endMarker);
-                        break;
-                    }
-                    int next = reader.read();
-                    if (next == -1) break;
-                    content.append((char) next);
-                    image.append((char) next);
-                }
-                NReaderProvider provider = () -> new StringReader(content.toString());
-                return new NElementToken(image.toString(), NElementTokenType.UNKNOWN, "stream-text", 0, line, column, pos,
-                        NElement.ofCharStream(provider)
-                        , null);
+                int next = reader.read();
+                if (next == -1) break;
+                content.append((char) next);
+                image.append((char) next);
             }
+            NReaderProvider provider = () -> new StringReader(content.toString());
+            return new NElementTokenImpl(image.toString(), NElementTokenType.CHAR_STREAM, "stream-text", 0, line, column, pos,
+                    NElement.ofCharStream(provider)
+                    , null);
         }
-
-        // Not a stream, just the operator
-        NOperatorSymbol type = NOperatorSymbol.HAT;
-        if (count == 2) type = NOperatorSymbol.HAT2;
-        if (count == 3) type = NOperatorSymbol.HAT3;
-        return new NElementToken(image.toString(), NElementTokenType.OP, image.toString(), 0, line, column, pos, type, null);
+        int p1 = reader.peekCharAt(1);
+        if (p1 == '^') {
+            int p2 = reader.peekCharAt(2);
+            if (p2 == '^') {
+                String op = reader.read(3);
+                return new NElementTokenImpl(op, NElementTokenType.OP, op, 0, line, column, pos, NOperatorSymbol.HAT3, null);
+            }
+            String op = reader.read(2);
+            return new NElementTokenImpl(op, NElementTokenType.OP, op, 0, line, column, pos, NOperatorSymbol.HAT2, null);
+        } else if (p1 == '=') {
+            int p2 = reader.peekCharAt(2);
+            if (p2 == '=') {
+                String op = reader.read(3);
+                return new NElementTokenImpl(op, NElementTokenType.OP, op, 0, line, column, pos, NOperatorSymbol.HAT_EQ2, null);
+            }
+            String op = reader.read(2);
+            return new NElementTokenImpl(op, NElementTokenType.OP, op, 0, line, column, pos, NOperatorSymbol.HAT_EQ, null);
+        }
+        String op = reader.read(1);
+        return new NElementTokenImpl(op, NElementTokenType.OP, op, 0, line, column, pos, NOperatorSymbol.HAT, null);
     }
 
-    private NElementToken continueReadLineComments() {
+    private NElementTokenImpl continueReadLineComments() {
         int line = reader.line();
         int column = reader.column();
         long pos = reader.pos();
-        StringBuilder image = new StringBuilder("//");
+        StringBuilder raw = new StringBuilder("//");
+        StringBuilder value = new StringBuilder("//");
         reader.read(2); // consume //
         while (true) {
             int c = reader.peek();
-            if (c == -1 || c == '\n' || c == '\r') {
+            if (c == -1) {
+                break;
+            } else if (c == '\n') {
+                char cc = (char) reader.read();
+                raw.append(cc);
+                value.append(cc);
+                break;
+            } else if (c == '\r') {
+                raw.append((char) reader.read());
+                c = reader.peek();
+                if (c == '\n') {
+                    raw.append((char) reader.read());
+                }
                 break;
             }
-            image.append((char) reader.read());
+            char cc = (char) reader.read();
+            raw.append(cc);
+            value.append(cc);
         }
-        return new NElementToken(image.toString(), NElementTokenType.LINE_COMMENT, "//", 0, line, column, pos,
-                new NElementCommentImpl(NElementCommentType.SINGLE_LINE,image.toString())
+        return new NElementTokenImpl(raw.toString(), NElementTokenType.LINE_COMMENT, "//", 0, line, column, pos,
+                new NElementCommentImpl(NElementCommentType.SINGLE_LINE, raw.toString(), value.toString())
                 , null);
     }
 
-    private NElementToken continueReadBlockComments() {
+    private NElementTokenImpl continueReadBlockComments() {
         int line = reader.line();
         int column = reader.column();
         long pos = reader.pos();
         StringBuilder image = new StringBuilder("/*");
-        StringBuilder value = new StringBuilder("");
         reader.read(2); // consume /*
         while (true) {
             int c = reader.peek();
             if (c == -1) {
                 break;
             }
-            if (c == '*' && reader.peekChar(1) == '/') {
+            if (c == '*' && reader.peekCharAt(1) == '/') {
                 image.append("*/");
                 reader.read(2);
                 break;
             }
             c = (char) reader.read();
-            value.append((char)c);
-            image.append((char)c);
+            image.append((char) c);
         }
-        return new NElementToken(image.toString(), NElementTokenType.BLOCK_COMMENT, "/*", 0, line, column, pos,
-                new NElementCommentImpl(NElementCommentType.MULTI_LINE,image.toString(),value.toString())
+        return new NElementTokenImpl(image.toString(), NElementTokenType.BLOCK_COMMENT, "/*", 0, line, column, pos,
+                new NElementCommentImpl(NElementCommentType.MULTI_LINE, image.toString(), TsonCommentsHelper.normalizeBlockComment(image.toString()))
                 , null);
     }
 
-    private NElementToken asChar123Eq(int c, NOperatorSymbol t1, NOperatorSymbol t2, NOperatorSymbol t3, NOperatorSymbol eq1, NOperatorSymbol eq2) {
+    private NElementTokenImpl asChar123Eq(int c, NOperatorSymbol t1, NOperatorSymbol t2, NOperatorSymbol t3, NOperatorSymbol eq1, NOperatorSymbol eq2) {
         int line = reader.line();
         int column = reader.column();
         long pos = reader.pos();
-        int n = reader.peekChar(1);
+        int n = reader.peekCharAt(1);
         if (n == c) {
-            int n2 = reader.peekChar(2);
+            int n2 = reader.peekCharAt(2);
             char cc = (char) c;
             if (n2 == c) {
                 reader.read(3);
                 String i = new String(new char[]{cc, cc, cc});
-                return new NElementToken(i, NElementTokenType.OP, i, 0, line, column, pos, t3, null);
+                return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, t3, null);
             } else {
                 reader.read(2);
                 String i = new String(new char[]{cc, cc});
-                return new NElementToken(i, NElementTokenType.OP, i, 0, line, column, pos, t2, null);
+                return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, t2, null);
             }
         } else if (n == '=') {
-            int n2 = reader.peekChar(2);
+            int n2 = reader.peekCharAt(2);
             char cc = (char) c;
             if (n2 == '=') {
                 reader.read(3);
                 String i = new String(new char[]{cc, cc, cc});
-                return new NElementToken(i, NElementTokenType.OP, i, 0, line, column, pos, eq2, null);
+                return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, eq2, null);
             } else {
                 reader.read(2);
                 String i = new String(new char[]{cc, cc});
-                return new NElementToken(i, NElementTokenType.OP, i, 0, line, column, pos, eq1, null);
+                return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, eq1, null);
             }
         } else {
             return asChar(c, t1);
         }
     }
 
-    private NElementToken asChar123(int c, NOperatorSymbol t1, NOperatorSymbol t2, NOperatorSymbol t3) {
-        int n = reader.peekChar(1);
+    private NElementTokenImpl asChar123(int c, NOperatorSymbol t1, NOperatorSymbol t2, NOperatorSymbol t3) {
+        int n = reader.peekCharAt(1);
         if (n == c) {
             int line = reader.line();
             int column = reader.column();
             long pos = reader.pos();
-            int n2 = reader.peekChar(2);
+            int n2 = reader.peekCharAt(2);
             char cc = (char) c;
             if (n2 == c) {
                 reader.read(3);
                 String i = new String(new char[]{cc, cc, cc});
-                return new NElementToken(i, NElementTokenType.OP, i, 0, line, column, pos, t3, null);
+                return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, t3, null);
             } else {
                 reader.read(2);
                 String i = new String(new char[]{cc, cc});
-                return new NElementToken(i, NElementTokenType.OP, i, 0, line, column, pos, t2, null);
+                return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, t2, null);
             }
         }
         return asChar(c, t1);
     }
 
 
-
-    private NElementToken continueReadDoubleQuoted1() {
+    private NElementTokenImpl continueReadDoubleQuoted1() {
         StringBuilder image = new StringBuilder("\"");
         StringBuilder value = new StringBuilder();
 
@@ -624,7 +682,7 @@ public class TsonCustomLexer {
             }
         }
 
-        return new NElementToken(
+        return new NElementTokenImpl(
                 image.toString(),
                 NElementTokenType.DOUBLE_QUOTED_STRING,
                 "\"",
@@ -640,17 +698,17 @@ public class TsonCustomLexer {
         );
     }
 
-    private NElementToken continueReadDoubleQuoted3() {
+    private NElementTokenImpl continueReadDoubleQuoted3() {
         StringBuilder image = new StringBuilder("\"\"\"");
         StringBuilder value = new StringBuilder();
 
         while (true) {
             // Check for \"""
             if (reader.canRead(4) &&
-                    reader.peekChar(0) == '\\' &&
-                    reader.peekChar(1) == '"' &&
-                    reader.peekChar(2) == '"' &&
-                    reader.peekChar(3) == '"') {
+                    reader.peekCharAt(0) == '\\' &&
+                    reader.peekCharAt(1) == '"' &&
+                    reader.peekCharAt(2) == '"' &&
+                    reader.peekCharAt(3) == '"') {
 
                 reader.read();
                 reader.read();
@@ -663,9 +721,9 @@ public class TsonCustomLexer {
 
             // Check for """
             if (reader.canRead(3) &&
-                    reader.peekChar(0) == '"' &&
-                    reader.peekChar(1) == '"' &&
-                    reader.peekChar(2) == '"') {
+                    reader.peekCharAt(0) == '"' &&
+                    reader.peekCharAt(1) == '"' &&
+                    reader.peekCharAt(2) == '"') {
 
                 reader.read();
                 reader.read();
@@ -682,7 +740,7 @@ public class TsonCustomLexer {
             value.append(ch);
         }
 
-        return new NElementToken(
+        return new NElementTokenImpl(
                 image.toString(),
                 NElementTokenType.TRIPLE_DOUBLE_QUOTED_STRING,
                 "\"\"\"",
@@ -698,7 +756,7 @@ public class TsonCustomLexer {
         );
     }
 
-    private NElementToken continueReadSingleQuoted1() {
+    private NElementTokenImpl continueReadSingleQuoted1() {
         StringBuilder image = new StringBuilder("'");
         StringBuilder value = new StringBuilder();
 
@@ -744,7 +802,7 @@ public class TsonCustomLexer {
             }
         }
 
-        return new NElementToken(
+        return new NElementTokenImpl(
                 image.toString(),
                 NElementTokenType.SINGLE_QUOTED_STRING,
                 "'",
@@ -760,17 +818,17 @@ public class TsonCustomLexer {
         );
     }
 
-    private NElementToken continueReadSingleQuoted3() {
+    private NElementTokenImpl continueReadSingleQuoted3() {
         StringBuilder image = new StringBuilder("'''");
         StringBuilder value = new StringBuilder();
 
         while (true) {
             // Check for \"""
             if (reader.canRead(4) &&
-                    reader.peekChar(0) == '\\' &&
-                    reader.peekChar(1) == '\'' &&
-                    reader.peekChar(2) == '\'' &&
-                    reader.peekChar(3) == '\'') {
+                    reader.peekCharAt(0) == '\\' &&
+                    reader.peekCharAt(1) == '\'' &&
+                    reader.peekCharAt(2) == '\'' &&
+                    reader.peekCharAt(3) == '\'') {
 
                 reader.read();
                 reader.read();
@@ -783,9 +841,9 @@ public class TsonCustomLexer {
 
             // Check for """
             if (reader.canRead(3) &&
-                    reader.peekChar(0) == '\'' &&
-                    reader.peekChar(1) == '\'' &&
-                    reader.peekChar(2) == '\'') {
+                    reader.peekCharAt(0) == '\'' &&
+                    reader.peekCharAt(1) == '\'' &&
+                    reader.peekCharAt(2) == '\'') {
 
                 reader.read();
                 reader.read();
@@ -802,7 +860,7 @@ public class TsonCustomLexer {
             value.append(ch);
         }
 
-        return new NElementToken(
+        return new NElementTokenImpl(
                 image.toString(),
                 NElementTokenType.TRIPLE_SINGLE_QUOTED_STRING,
                 "'''",
@@ -818,7 +876,7 @@ public class TsonCustomLexer {
         );
     }
 
-    private NElementToken continueReadBacktick1() {
+    private NElementTokenImpl continueReadBacktick1() {
         StringBuilder image = new StringBuilder("`");
         StringBuilder value = new StringBuilder();
 
@@ -864,7 +922,7 @@ public class TsonCustomLexer {
             }
         }
 
-        return new NElementToken(
+        return new NElementTokenImpl(
                 image.toString(),
                 NElementTokenType.BACKTICK_STR,
                 "`",
@@ -880,17 +938,17 @@ public class TsonCustomLexer {
         );
     }
 
-    private NElementToken continueReadBacktick3() {
+    private NElementTokenImpl continueReadBacktick3() {
         StringBuilder image = new StringBuilder("```");
         StringBuilder value = new StringBuilder();
 
         while (true) {
             // Check for \```
             if (reader.canRead(4) &&
-                    reader.peekChar(0) == '\\' &&
-                    reader.peekChar(1) == '`' &&
-                    reader.peekChar(2) == '`' &&
-                    reader.peekChar(3) == '`') {
+                    reader.peekCharAt(0) == '\\' &&
+                    reader.peekCharAt(1) == '`' &&
+                    reader.peekCharAt(2) == '`' &&
+                    reader.peekCharAt(3) == '`') {
 
                 reader.read();
                 reader.read();
@@ -903,9 +961,9 @@ public class TsonCustomLexer {
 
             // Check for """
             if (reader.canRead(3) &&
-                    reader.peekChar(0) == '`' &&
-                    reader.peekChar(1) == '`' &&
-                    reader.peekChar(2) == '`') {
+                    reader.peekCharAt(0) == '`' &&
+                    reader.peekCharAt(1) == '`' &&
+                    reader.peekCharAt(2) == '`') {
 
                 reader.read();
                 reader.read();
@@ -922,7 +980,7 @@ public class TsonCustomLexer {
             value.append(ch);
         }
 
-        return new NElementToken(
+        return new NElementTokenImpl(
                 image.toString(),
                 NElementTokenType.TRIPLE_BACKTICK_STRING,
                 "```",
@@ -938,7 +996,7 @@ public class TsonCustomLexer {
         );
     }
 
-    private NElementToken continueReadUserSingleLine() {
+    private NElementTokenImpl continueReadUserSingleLine() {
         StringBuilder image = new StringBuilder();
         StringBuilder content = new StringBuilder();
 
@@ -972,7 +1030,7 @@ public class TsonCustomLexer {
         }
         // If EOF, no newline to consume
 
-        return new NElementToken(
+        return new NElementTokenImpl(
                 image.toString(),           // e.g., "¶ hello\n"
                 NElementTokenType.LINE_STRING,
                 "¶",
@@ -990,7 +1048,7 @@ public class TsonCustomLexer {
         );
     }
 
-    private NElementToken continueReadUserMultiLine() {
+    private NElementTokenImpl continueReadUserMultiLine() {
         StringBuilder image = new StringBuilder();
         StringBuilder content = new StringBuilder();
 
@@ -1042,7 +1100,7 @@ public class TsonCustomLexer {
             if (!reader.canRead(2)) {
                 break;
             }
-            if (reader.peekChar(0) != '¶' || reader.peekChar(1) != '¶') {
+            if (reader.peekCharAt(0) != '¶' || reader.peekCharAt(1) != '¶') {
                 break;
             }
 
@@ -1058,7 +1116,7 @@ public class TsonCustomLexer {
             }
         }
 
-        return new NElementToken(
+        return new NElementTokenImpl(
                 image.toString(),           // ← exact source
                 NElementTokenType.BLOCK_STRING,
                 "¶¶",
@@ -1077,7 +1135,7 @@ public class TsonCustomLexer {
     }
 
 
-    private NElementToken continueReadIdentifier() {
+    private NElementTokenImpl continueReadIdentifier() {
         int line = reader.line();
         int column = reader.column();
         long pos = reader.pos();
@@ -1087,8 +1145,30 @@ public class TsonCustomLexer {
             if (c == -1) {
                 break;
             }
-            if (Character.isAlphabetic(c) || Character.isDigit(c) || c == '_' || c == '$' || c == 'ω' || c == 'π') {
+            if (Character.isUnicodeIdentifierPart(c) || c=='$') {
                 image.append((char) reader.read());
+            } else if (c == '.') {
+                if (image.length() > 0 && image.charAt(image.length() - 1) != '.') {
+                    int next = reader.peekCharAt(1);
+                    if(Character.isUnicodeIdentifierPart(next) || next=='$'){
+                        image.append((char) reader.read());
+                    }else{
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            } else if (c == '-') {
+                if (image.length() > 0 && image.charAt(image.length() - 1) != '-') {
+                    int next = reader.peekCharAt(1);
+                    if(Character.isUnicodeIdentifierPart(next)){
+                        image.append((char) reader.read());
+                    }else{
+                        break;
+                    }
+                } else {
+                    break;
+                }
             } else {
                 break;
             }
@@ -1110,10 +1190,10 @@ public class TsonCustomLexer {
                 value = NElement.ofNull();
                 break;
         }
-        return new NElementToken(s, type, "", 0, line, column, pos, value, null);
+        return new NElementTokenImpl(s, type, "", 0, line, column, pos, value, null);
     }
 
-    private NElementToken continueReadNumber() {
+    private NElementTokenImpl continueReadNumber() {
         int line = reader.line();
         int column = reader.column();
         long pos = reader.pos();
@@ -1128,13 +1208,13 @@ public class TsonCustomLexer {
         // 2. NOW check for Special vs Normal
         int p = reader.peek();
         if (p == '0') {
-            int next = reader.peekChar(1);
+            int next = reader.peekCharAt(1);
             String constantName = getConstantName(1);
             if (constantName != null) {
                 // image already has the sign +/-
                 image.append((char) reader.read()); // '0'
                 image.append(reader.read(constantName.length()));
-                return readSpecialLiteralConst(constantName,image, line,column,pos);
+                return readSpecialLiteralConst(constantName, image, line, column, pos);
             }
             if (next == 's' || next == 'u') {
                 return readSpecialLiteral(image, line, column, pos);
@@ -1146,21 +1226,25 @@ public class TsonCustomLexer {
     }
 
 
-
     private String getConstantName(int offset) {
-        if (reader.peekChar(offset) == 'm' || reader.peekChar(offset) == 'M') {
-            if ((reader.peekChar(offset + 1) == 'a' || reader.peekChar(offset + 1) == 'A') && (reader.peekChar(offset + 2) == 'x' || reader.peekChar(offset + 2) == 'X')) return "max";
-            if ((reader.peekChar(offset + 1) == 'i' || reader.peekChar(offset + 1) == 'I') && (reader.peekChar(offset + 2) == 'n' || reader.peekChar(offset + 2) == 'N')) return "min";
+        if (reader.peekCharAt(offset) == 'm' || reader.peekCharAt(offset) == 'M') {
+            if ((reader.peekCharAt(offset + 1) == 'a' || reader.peekCharAt(offset + 1) == 'A') && (reader.peekCharAt(offset + 2) == 'x' || reader.peekCharAt(offset + 2) == 'X'))
+                return "max";
+            if ((reader.peekCharAt(offset + 1) == 'i' || reader.peekCharAt(offset + 1) == 'I') && (reader.peekCharAt(offset + 2) == 'n' || reader.peekCharAt(offset + 2) == 'N'))
+                return "min";
         }
-        if ((reader.peekChar(offset) == 'p' || reader.peekChar(offset) == 'P') && (reader.peekChar(offset + 1) == 'i' || reader.peekChar(offset + 1) == 'I') && (reader.peekChar(offset + 2) == 'n' || reader.peekChar(offset + 2) == 'N') && (reader.peekChar(offset + 3) == 'f' || reader.peekChar(offset + 3) == 'F')) return "pinf";
-        if ((reader.peekChar(offset) == 'n' || reader.peekChar(offset) == 'N')) {
-            if ((reader.peekChar(offset + 1) == 'i' || reader.peekChar(offset + 1) == 'I') && (reader.peekChar(offset + 2) == 'n' || reader.peekChar(offset + 2) == 'N') && (reader.peekChar(offset + 3) == 'f' || reader.peekChar(offset + 3) == 'F')) return "ninf";
-            if ((reader.peekChar(offset + 1) == 'a' || reader.peekChar(offset + 1) == 'A') && (reader.peekChar(offset + 2) == 'n' || reader.peekChar(offset + 2) == 'N')) return "nan";
+        if ((reader.peekCharAt(offset) == 'p' || reader.peekCharAt(offset) == 'P') && (reader.peekCharAt(offset + 1) == 'i' || reader.peekCharAt(offset + 1) == 'I') && (reader.peekCharAt(offset + 2) == 'n' || reader.peekCharAt(offset + 2) == 'N') && (reader.peekCharAt(offset + 3) == 'f' || reader.peekCharAt(offset + 3) == 'F'))
+            return "pinf";
+        if ((reader.peekCharAt(offset) == 'n' || reader.peekCharAt(offset) == 'N')) {
+            if ((reader.peekCharAt(offset + 1) == 'i' || reader.peekCharAt(offset + 1) == 'I') && (reader.peekCharAt(offset + 2) == 'n' || reader.peekCharAt(offset + 2) == 'N') && (reader.peekCharAt(offset + 3) == 'f' || reader.peekCharAt(offset + 3) == 'F'))
+                return "ninf";
+            if ((reader.peekCharAt(offset + 1) == 'a' || reader.peekCharAt(offset + 1) == 'A') && (reader.peekCharAt(offset + 2) == 'n' || reader.peekCharAt(offset + 2) == 'N'))
+                return "nan";
         }
         return null;
     }
 
-    private NElementToken readSpecialLiteral(StringBuilder image, int line, int col, long pos) {
+    private NElementTokenImpl readSpecialLiteral(StringBuilder image, int line, int col, long pos) {
         TSONNumberInfo info = new TSONNumberInfo();
         info.specialNumber = true;
 
@@ -1219,28 +1303,47 @@ public class TsonCustomLexer {
             // We'll treat it as 0
             if (info.unsignedNumber) {
                 switch (info.bitWidth) {
-                    case 8: pb.setShort((short) 0); break;
-                    case 16: pb.setInt(0); break;
-                    case 32: pb.setLong(0L); break;
-                    case 64: pb.setBigInt(BigInteger.ZERO); break;
+                    case 8:
+                        pb.setShort((short) 0);
+                        break;
+                    case 16:
+                        pb.setInt(0);
+                        break;
+                    case 32:
+                        pb.setLong(0L);
+                        break;
+                    case 64:
+                        pb.setBigInt(BigInteger.ZERO);
+                        break;
                 }
             } else {
                 switch (info.bitWidth) {
-                    case 8: pb.setByte((byte) 0); break;
-                    case 16: pb.setShort((short) 0); break;
-                    case 32: pb.setInt(0); break;
-                    case 64: pb.setLong(0L); break;
-                    case -1: pb.setBigInt(BigInteger.ZERO); break;
+                    case 8:
+                        pb.setByte((byte) 0);
+                        break;
+                    case 16:
+                        pb.setShort((short) 0);
+                        break;
+                    case 32:
+                        pb.setInt(0);
+                        break;
+                    case 64:
+                        pb.setLong(0L);
+                        break;
+                    case -1:
+                        pb.setBigInt(BigInteger.ZERO);
+                        break;
                 }
             }
         } else {
             applyConstantValue(pb, info);
         }
 
-        return new NElementToken(image.toString(), NElementTokenType.NUMBER,
+        return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
                 image.toString(), 0, line, col, pos, pb.build(), null);
     }
-    private NElementToken readSpecialLiteralConst(String constName,StringBuilder image, int line, int col, long pos) {
+
+    private NElementTokenImpl readSpecialLiteralConst(String constName, StringBuilder image, int line, int col, long pos) {
         TSONNumberInfo info = new TSONNumberInfo();
         info.specialNumber = true;
         info.specialConst = true;
@@ -1291,7 +1394,7 @@ public class TsonCustomLexer {
             pb.numberSuffix(info.suffix);
         }
         applyConstantValue(pb, info);
-        return new NElementToken(image.toString(), NElementTokenType.NUMBER,
+        return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
                 image.toString(), 0, line, col, pos, pb.build(), null);
     }
 
@@ -1300,19 +1403,39 @@ public class TsonCustomLexer {
         if (info.floatingNumber) {
             if (info.bitWidth == 32) {
                 switch (name) {
-                    case "max": pb.setFloat(Float.MAX_VALUE); break;
-                    case "min": pb.setFloat(Float.MIN_VALUE); break;
-                    case "pinf": pb.setFloat(Float.POSITIVE_INFINITY); break;
-                    case "ninf": pb.setFloat(Float.NEGATIVE_INFINITY); break;
-                    case "nan": pb.setFloat(Float.NaN); break;
+                    case "max":
+                        pb.setFloat(Float.MAX_VALUE);
+                        break;
+                    case "min":
+                        pb.setFloat(Float.MIN_VALUE);
+                        break;
+                    case "pinf":
+                        pb.setFloat(Float.POSITIVE_INFINITY);
+                        break;
+                    case "ninf":
+                        pb.setFloat(Float.NEGATIVE_INFINITY);
+                        break;
+                    case "nan":
+                        pb.setFloat(Float.NaN);
+                        break;
                 }
             } else {
                 switch (name) {
-                    case "max": pb.setDouble(Double.MAX_VALUE); break;
-                    case "min": pb.setDouble(Double.MIN_VALUE); break;
-                    case "pinf": pb.setDouble(Double.POSITIVE_INFINITY); break;
-                    case "ninf": pb.setDouble(Double.NEGATIVE_INFINITY); break;
-                    case "nan": pb.setDouble(Double.NaN); break;
+                    case "max":
+                        pb.setDouble(Double.MAX_VALUE);
+                        break;
+                    case "min":
+                        pb.setDouble(Double.MIN_VALUE);
+                        break;
+                    case "pinf":
+                        pb.setDouble(Double.POSITIVE_INFINITY);
+                        break;
+                    case "ninf":
+                        pb.setDouble(Double.NEGATIVE_INFINITY);
+                        break;
+                    case "nan":
+                        pb.setDouble(Double.NaN);
+                        break;
                 }
             }
             return;
@@ -1404,15 +1527,15 @@ public class TsonCustomLexer {
         return c == 'i' || c == 'î';
     }
 
-    private NElementToken readNormalNumber(StringBuilder image, int line, int col, long pos) {
+    private NElementTokenImpl readNormalNumber(StringBuilder image, int line, int col, long pos) {
         TSONNumberInfo info = new TSONNumberInfo();
-        String errorMessage = null;
+        NMsg errorMessage = null;
 
         // --- 1. BASE DETECTION ---
         boolean isDecimal = true;
         NNumberLayout layout = NNumberLayout.DECIMAL;
         if (reader.peek() == '0') {
-            int next = reader.peekChar(1);
+            int next = reader.peekCharAt(1);
             if (next == 'x' || next == 'b' || next == 'o') {
                 isDecimal = false;
                 image.append((char) reader.read()); // consume '0'
@@ -1477,7 +1600,7 @@ public class TsonCustomLexer {
                 try {
                     info.bitWidth = Integer.parseInt(widthBuf.toString());
                 } catch (Exception ex) {
-                    errorMessage = NExceptions.getErrorMessage(ex);
+                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
                     info.bitWidth = 32;
                 }
             }
@@ -1508,21 +1631,21 @@ public class TsonCustomLexer {
                 try {
                     pb.setBigComplex(new NBigComplex(new BigDecimal(info.baseValue), new BigDecimal(info.imaginaryValue)));
                 } catch (Exception ex) {
-                    errorMessage = NExceptions.getErrorMessage(ex);
+                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
                     pb.setBigComplex(NBigComplex.ZERO);
                 }
             } else if (info.bitWidth <= 32) {
                 try {
                     pb.setFloatComplex(new NFloatComplex(Float.parseFloat(info.baseValue), Float.parseFloat(info.imaginaryValue)));
                 } catch (Exception ex) {
-                    errorMessage = NExceptions.getErrorMessage(ex);
+                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
                     pb.setFloatComplex(NFloatComplex.ZERO);
                 }
             } else {
                 try {
                     pb.setDoubleComplex(new NDoubleComplex(Double.parseDouble(info.baseValue), Double.parseDouble(info.imaginaryValue)));
                 } catch (Exception ex) {
-                    errorMessage = NExceptions.getErrorMessage(ex);
+                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
                     pb.setDoubleComplex(NDoubleComplex.ZERO);
                 }
             }
@@ -1532,7 +1655,7 @@ public class TsonCustomLexer {
                 try {
                     bi = parseBigInteger(info.baseValue, layout);
                 } catch (Exception ex) {
-                    errorMessage = NExceptions.getErrorMessage(ex);
+                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
                     bi = BigInteger.ZERO;
                 }
                 switch (info.bitWidth) {
@@ -1556,14 +1679,14 @@ public class TsonCustomLexer {
                         try {
                             pb.setBigDecimal(new BigDecimal(info.baseValue));
                         } catch (Exception ex) {
-                            errorMessage = NExceptions.getErrorMessage(ex);
+                            errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
                             pb.setBigDecimal(new BigDecimal(0));
                         }
                     } else {
                         try {
                             pb.setBigInt(new BigInteger(info.baseValue));
                         } catch (Exception ex) {
-                            errorMessage = NExceptions.getErrorMessage(ex);
+                            errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
                             pb.setBigInt(BigInteger.ZERO);
                         }
                     }
@@ -1573,7 +1696,7 @@ public class TsonCustomLexer {
                             try {
                                 pb.setByte(Byte.parseByte(info.baseValue));
                             } catch (Exception ex) {
-                                errorMessage = NExceptions.getErrorMessage(ex);
+                                errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
                                 pb.setByte((byte) 0);
                             }
                             break;
@@ -1582,7 +1705,7 @@ public class TsonCustomLexer {
                             try {
                                 pb.setShort(Short.parseShort(info.baseValue));
                             } catch (Exception ex) {
-                                errorMessage = NExceptions.getErrorMessage(ex);
+                                errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
                                 pb.setShort((short) 0);
                             }
                             break;
@@ -1592,7 +1715,7 @@ public class TsonCustomLexer {
                                 try {
                                     pb.setFloat(Float.parseFloat(info.baseValue));
                                 } catch (Exception ex) {
-                                    errorMessage = NExceptions.getErrorMessage(ex);
+                                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
                                     pb.setFloat(0.0f);
                                 }
 
@@ -1600,7 +1723,7 @@ public class TsonCustomLexer {
                                 try {
                                     pb.setInt(Integer.parseInt(info.baseValue));
                                 } catch (Exception ex) {
-                                    errorMessage = NExceptions.getErrorMessage(ex);
+                                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
                                     pb.setInt(0);
                                 }
                             }
@@ -1611,14 +1734,14 @@ public class TsonCustomLexer {
                                 try {
                                     pb.setDouble(Double.parseDouble(info.baseValue));
                                 } catch (Exception ex) {
-                                    errorMessage = NExceptions.getErrorMessage(ex);
+                                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
                                     pb.setDouble(0.0);
                                 }
                             } else {
                                 try {
                                     pb.setLong(Long.parseLong(info.baseValue));
                                 } catch (Exception ex) {
-                                    errorMessage = NExceptions.getErrorMessage(ex);
+                                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
                                     pb.setLong(0L);
                                 }
                             }
@@ -1627,7 +1750,7 @@ public class TsonCustomLexer {
                 }
             }
         }
-        return new NElementToken(image.toString(), NElementTokenType.NUMBER, "", 0, line, col, pos, pb.build(), errorMessage);
+        return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER, "", 0, line, col, pos, pb.build(), errorMessage);
     }
 
     private BigInteger parseBigInteger(String value, NNumberLayout layout) {
@@ -1648,12 +1771,12 @@ public class TsonCustomLexer {
 
     private boolean isImaginaryPartNext() {
         int offset = 1; // Start peeking after the +/-
-        int c = reader.peekChar(offset);
+        int c = reader.peekCharAt(offset);
 
         // Skip digits, underscores, and dots
         while (Character.isDigit(c) || c == '.' || c == '_') {
             offset++;
-            c = reader.peekChar(offset);
+            c = reader.peekCharAt(offset);
         }
 
         // If it ends in i or î, it's a complex literal!
@@ -1673,7 +1796,7 @@ public class TsonCustomLexer {
             } else if (acceptFloating && (c == 'e' || c == 'E')) {
                 wasFloating = true;
                 // Check if this is truly scientific notation (e followed by digit or +/-)
-                int next = reader.peekChar(1);
+                int next = reader.peekCharAt(1);
                 if (Character.isDigit(next) || next == '+' || next == '-') {
                     sb.append((char) reader.read()); // consume 'e'
                     int sign = reader.peek();
@@ -1711,100 +1834,100 @@ public class TsonCustomLexer {
     }
 
 
-    private NElementToken continueReadTemporalOrNumber() {
+    private NElementTokenImpl continueReadTemporalOrNumber() {
         int line = reader.line();
         int column = reader.column();
         long pos = reader.pos();
         if (reader.canRead(10)
-                && Character.isDigit(reader.peekChar(0))
-                && Character.isDigit(reader.peekChar(1))
-                && Character.isDigit(reader.peekChar(2))
-                && Character.isDigit(reader.peekChar(3))
-                && '-' == reader.peekChar(4)
-                && Character.isDigit(reader.peekChar(5))
-                && Character.isDigit(reader.peekChar(6))
-                && '-' == reader.peekChar(7)
-                && Character.isDigit(reader.peekChar(8))
-                && Character.isDigit(reader.peekChar(9))
+                && Character.isDigit(reader.peekCharAt(0))
+                && Character.isDigit(reader.peekCharAt(1))
+                && Character.isDigit(reader.peekCharAt(2))
+                && Character.isDigit(reader.peekCharAt(3))
+                && '-' == reader.peekCharAt(4)
+                && Character.isDigit(reader.peekCharAt(5))
+                && Character.isDigit(reader.peekCharAt(6))
+                && '-' == reader.peekCharAt(7)
+                && Character.isDigit(reader.peekCharAt(8))
+                && Character.isDigit(reader.peekCharAt(9))
         ) {
             if (reader.canRead(16)
-                    && ((reader.peekChar(10) == ' ' || reader.peekChar(10) == 'T')
-                    && Character.isDigit(reader.peekChar(11))
-                    && Character.isDigit(reader.peekChar(12))
-                    && ':' == reader.peekChar(13)
-                    && Character.isDigit(reader.peekChar(14))
-                    && Character.isDigit(reader.peekChar(15))
+                    && ((reader.peekCharAt(10) == 'T')
+                    && Character.isDigit(reader.peekCharAt(11))
+                    && Character.isDigit(reader.peekCharAt(12))
+                    && ':' == reader.peekCharAt(13)
+                    && Character.isDigit(reader.peekCharAt(14))
+                    && Character.isDigit(reader.peekCharAt(15))
             )) {
                 if (reader.canRead(19)
-                        && (reader.peekChar(16) == ':')
-                        && Character.isDigit(reader.peekChar(17))
-                        && Character.isDigit(reader.peekChar(18))
+                        && (reader.peekCharAt(16) == ':')
+                        && Character.isDigit(reader.peekCharAt(17))
+                        && Character.isDigit(reader.peekCharAt(18))
                 ) {
                     int h = 19;
-                    if (reader.canRead(h + 1) && reader.peekChar(h) == '.') {
+                    if (reader.canRead(h + 1) && reader.peekCharAt(h) == '.') {
                         h++;
-                        while (reader.canRead(h + 1) && Character.isDigit(reader.peekChar(h))) {
+                        while (reader.canRead(h + 1) && Character.isDigit(reader.peekCharAt(h))) {
                             h++;
                         }
                     }
-                    if (reader.canRead(h + 1) && reader.peekChar(h) == 'Z') {
+                    if (reader.canRead(h + 1) && reader.peekCharAt(h) == 'Z') {
                         h++;
                         String str = reader.read(h);
                         Instant i = Instant.parse(str);
-                        return new NElementToken(str, NElementTokenType.INSTANT, "", 0, line, column, pos,
-                                new DefaultNPrimitiveElement(NElementType.INSTANT, i, null, null)
+                        return new NElementTokenImpl(str, NElementTokenType.INSTANT, "", 0, line, column, pos,
+                                new DefaultNPrimitiveElement(NElementType.INSTANT, i)
 
                                 , null);
                     }
                     String str = reader.read(h);
-                    LocalDateTime i = LocalDateTime.parse(str.replace(' ', 'T'));
-                    return new NElementToken(str, NElementTokenType.DATETIME, "", 0, line, column, pos,
+                    LocalDateTime i = LocalDateTime.parse(str);
+                    return new NElementTokenImpl(str, NElementTokenType.DATETIME, "", 0, line, column, pos,
                             //should include raw image as well
-                            new DefaultNPrimitiveElement(NElementType.LOCAL_DATETIME, i, null, null)
+                            new DefaultNPrimitiveElement(NElementType.LOCAL_DATETIME, i)
                             , null);
                 } else {
                     String str = reader.read(16);
-                    LocalDateTime i = LocalDateTime.parse(str.replace(' ', 'T'));
-                    return new NElementToken(str, NElementTokenType.DATETIME, "", 0, line, column, pos,
-                            new DefaultNPrimitiveElement(NElementType.LOCAL_DATETIME, i, null, null)
+                    LocalDateTime i = LocalDateTime.parse(str);
+                    return new NElementTokenImpl(str, NElementTokenType.DATETIME, "", 0, line, column, pos,
+                            new DefaultNPrimitiveElement(NElementType.LOCAL_DATETIME, i)
 
                             , null);
                 }
             } else {
                 String str = reader.read(10);
                 LocalDate i = LocalDate.parse(str);
-                return new NElementToken(str, NElementTokenType.DATE, "", 0, line, column, pos,
-                        new DefaultNPrimitiveElement(NElementType.LOCAL_DATE, i, null, null)
+                return new NElementTokenImpl(str, NElementTokenType.DATE, "", 0, line, column, pos,
+                        new DefaultNPrimitiveElement(NElementType.LOCAL_DATE, i)
 
                         , null);
             }
         } else if (reader.canRead(8)
-                && Character.isDigit(reader.peekChar(0))
-                && Character.isDigit(reader.peekChar(1))
-                && ':' == reader.peekChar(2)
-                && Character.isDigit(reader.peekChar(3))
-                && Character.isDigit(reader.peekChar(4))
-                && ':' == reader.peekChar(5)
-                && Character.isDigit(reader.peekChar(6))
-                && Character.isDigit(reader.peekChar(7))
+                && Character.isDigit(reader.peekCharAt(0))
+                && Character.isDigit(reader.peekCharAt(1))
+                && ':' == reader.peekCharAt(2)
+                && Character.isDigit(reader.peekCharAt(3))
+                && Character.isDigit(reader.peekCharAt(4))
+                && ':' == reader.peekCharAt(5)
+                && Character.isDigit(reader.peekCharAt(6))
+                && Character.isDigit(reader.peekCharAt(7))
         ) {
             int h = 8;
-            if (reader.canRead(h + 1) && reader.peekChar(h) == '.') {
+            if (reader.canRead(h + 1) && reader.peekCharAt(h) == '.') {
                 h++;
-                while (reader.canRead(h + 1) && Character.isDigit(reader.peekChar(h))) {
+                while (reader.canRead(h + 1) && Character.isDigit(reader.peekCharAt(h))) {
                     h++;
                 }
             }
             String str = reader.read(h);
             LocalTime i = LocalTime.parse(str);
-            return new NElementToken(str, NElementTokenType.TIME, "", 0, line, column, pos,
-                    new DefaultNPrimitiveElement(NElementType.LOCAL_TIME, i, null, null)
+            return new NElementTokenImpl(str, NElementTokenType.TIME, "", 0, line, column, pos,
+                    new DefaultNPrimitiveElement(NElementType.LOCAL_TIME, i)
                     , null);
         }
         return continueReadNumber();
     }
 
-    private NElementToken continueReadRepeatedChar(int c, NElementTokenType tt) {
+    private NElementTokenImpl continueReadRepeatedChar(int c, NElementTokenType tt) {
         StringBuilder image = new StringBuilder();
         int count = 1;
         while (true) {
@@ -1816,18 +1939,18 @@ public class TsonCustomLexer {
             count++;
         }
         String s = image.toString();
-        return new NElementToken(s, tt, String.valueOf(s.charAt(0)), count, reader.line(), reader.column(), reader.pos(), s, null);
+        return new NElementTokenImpl(s, tt, String.valueOf(s.charAt(0)), count, reader.line(), reader.column(), reader.pos(), s, null);
     }
 
-    private NElementToken asChar(int c, NElementTokenType tt) {
+    private NElementTokenImpl asChar(int c, NElementTokenType tt) {
         String image = String.valueOf((char) c);
         reader.read();
-        return new NElementToken(image, tt, image, 0, reader.line(), reader.column(), reader.pos(), c, null);
+        return new NElementTokenImpl(image, tt, image, 0, reader.line(), reader.column(), reader.pos(), c, null);
     }
 
-    private NElementToken asChar(int c, NOperatorSymbol tt) {
+    private NElementTokenImpl asChar(int c, NOperatorSymbol tt) {
         String image = String.valueOf((char) c);
         reader.read();
-        return new NElementToken(image, NElementTokenType.OP, image, 0, reader.line(), reader.column(), reader.pos(), tt, null);
+        return new NElementTokenImpl(image, NElementTokenType.OP, image, 0, reader.line(), reader.column(), reader.pos(), tt, null);
     }
 }
