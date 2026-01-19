@@ -90,5 +90,10 @@ public interface NElementBuilder {
 
     NElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 
+    NElementBuilder addError(NElementDiagnostic error);
+    NElementBuilder removeError(NElementDiagnostic error);
+
+    List<NElementDiagnostic> diagnostics();
+
     NElement build();
 }
