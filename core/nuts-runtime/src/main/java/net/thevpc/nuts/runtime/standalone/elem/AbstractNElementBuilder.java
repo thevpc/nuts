@@ -8,18 +8,40 @@ import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractNElementBuilder implements NElementBuilder {
     private NElementCommentsBuilderImpl comments = new NElementCommentsBuilderImpl();
     private final List<NElementAnnotation> annotations = new ArrayList<>();
+    private final List<NElementDiagnostic> diagnostics = new ArrayList<>();
+
+
+    @Override
+    public NElementBuilder addError(NElementDiagnostic error) {
+        if (error != null) {
+            this.diagnostics.add(error);
+        }
+        return this;
+    }
+
+    @Override
+    public NElementBuilder removeError(NElementDiagnostic error) {
+        if (error != null) {
+            this.diagnostics.remove(error);
+        }
+        return this;
+    }
+
+    @Override
+    public List<NElementDiagnostic> diagnostics() {
+        return new ArrayList<>(diagnostics);
+    }
 
     @Override
     public boolean isCustomTree() {
-        if(annotations!=null){
+        if (annotations != null) {
             for (NElementAnnotation annotation : annotations) {
-                if(annotation.isCustomTree()){
+                if (annotation.isCustomTree()) {
                     return true;
                 }
             }
@@ -160,7 +182,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
 
     @Override
     public List<NElementAnnotation> annotations() {
-        return Collections.unmodifiableList(annotations);
+        return new ArrayList<>(annotations);
     }
 
 
@@ -172,7 +194,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
 
     @Override
     public NElementBuilder copyFrom(NElement other) {
-        if(other!=null){
+        if (other != null) {
             copyFrom(other.builder());
         }
         return this;
@@ -180,9 +202,10 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
 
     @Override
     public NElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
-        if(other==null){
+        if (other == null) {
             return this;
         }
+        this.diagnostics.addAll(other.diagnostics());
         this.comments.addLeading(other.leadingComments().toArray(new NElementComment[0]));
         this.comments.addTrailing(other.trailingComments().toArray(new NElementComment[0]));
         this.annotations.addAll(other.annotations());
@@ -191,10 +214,11 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
 
     @Override
     public NElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
-        if(other==null){
+        if (other == null) {
             return this;
         }
         NElementComments cmt = other.comments();
+        this.diagnostics.addAll(other.diagnostics());
         this.comments.addLeading(cmt.leadingComments().toArray(new NElementComment[0]));
         this.comments.addTrailing(cmt.trailingComments().toArray(new NElementComment[0]));
         this.annotations.addAll(other.annotations());
