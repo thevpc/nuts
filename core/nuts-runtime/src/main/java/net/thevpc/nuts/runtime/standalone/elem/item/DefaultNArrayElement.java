@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathImpl;
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.*;
@@ -40,36 +41,27 @@ import java.util.stream.Stream;
 public class DefaultNArrayElement extends AbstractNListContainerElement
         implements NArrayElement {
 
-    private final NElement[] values;
+    private final List<NElement> values;
     private String name;
     private List<NElement> params;
 
-    public DefaultNArrayElement(String name, List<NElement> params, Collection<NElement> values, NElementAnnotation[] annotations, NElementComments comments) {
+    public DefaultNArrayElement(String name, List<NElement> params, List<NElement> values) {
+        this(name,params,values,null,null,null);
+    }
+
+    public DefaultNArrayElement(String name, List<NElement> params, List<NElement> values, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
         super(
                 name == null && params == null ? NElementType.ARRAY
                         : name == null && params != null ? NElementType.PARAMETRIZED_ARRAY
                         : name != null && params == null ? NElementType.NAMED_ARRAY
                         : NElementType.NAMED_PARAMETRIZED_ARRAY,
-                annotations, comments);
+                annotations, comments,diagnostics);
         if (name != null) {
             NAssert.requireTrue(NElementUtils.isValidElementName(name), "valid name : "+name);
         }
-        this.values = values.toArray(new NElement[0]);
+        this.values = CoreNUtils.copyAndUnmodifiableList(values);
         this.name = name;
-        this.params = params;
-    }
-
-
-    public DefaultNArrayElement(String name, List<NElement> params, NElement[] values, NElementAnnotation[] annotations, NElementComments comments) {
-        super(
-                name == null && params == null ? NElementType.ARRAY
-                        : name == null && params != null ? NElementType.PARAMETRIZED_ARRAY
-                        : name != null && params == null ? NElementType.NAMED_ARRAY
-                        : NElementType.NAMED_PARAMETRIZED_ARRAY,
-                annotations, comments);
-        this.values = Arrays.copyOf(values, values.length);
-        this.name = name;
-        this.params = params;
+        this.params = CoreNUtils.copyAndUnmodifiableNullableList(params);
     }
 
     @Override
@@ -102,7 +94,7 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
         if(r==NTreeVisitResult.SKIP_SIBLINGS){
             return NTreeVisitResult.CONTINUE;
         }
-        r = traverseList(visitor, Arrays.asList(values)); // body
+        r = traverseList(visitor, values); // body
         return r;
     }
 
@@ -136,34 +128,34 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
 
     @Override
     public List<NElement> children() {
-        return Arrays.asList(values);
+        return values;
     }
 
     @Override
     public int size() {
-        return values.length;
+        return values.size();
     }
 
     @Override
     public Stream<NElement> stream() {
-        return Arrays.asList(values).stream();
+        return values.stream();
     }
 
     @Override
     public NOptional<NElement> get(int index) {
-        if (index >= 0 && index < values.length) {
-            return NOptional.of(values[index]);
+        if (index >= 0 && index < values.size()) {
+            return NOptional.of(values.get(index));
         }
-        return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, values.length));
+        return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, values.size()));
     }
 
 
     @Override
     public NOptional<NElement> getAt(int index) {
-        if (index >= 0 && index < values.length) {
-            return NOptional.of(values[index]);
+        if (index >= 0 && index < values.size()) {
+            return NOptional.of(values.get(index));
         }
-        return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, values.length));
+        return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, values.size()));
     }
 
 
@@ -175,7 +167,7 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
 
     @Override
     public Iterator<NElement> iterator() {
-        return Arrays.asList(values).iterator();
+        return values.iterator();
     }
 
     public String toString() {
@@ -207,17 +199,17 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Arrays.hashCode(values), name, params);
+        return Objects.hash(super.hashCode(), values.hashCode(), name, params);
     }
 
     @Override
     public boolean isEmpty() {
-        return values.length == 0;
+        return values.isEmpty();
     }
 
     @Override
     public boolean isBlank() {
-        return values.length == 0 && NBlankable.isBlank(name) && (params == null || params.isEmpty());
+        return values.isEmpty() && NBlankable.isBlank(name) && (params == null || params.isEmpty());
     }
 
 
