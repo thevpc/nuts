@@ -28,6 +28,7 @@ import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NLiteral;
@@ -51,13 +52,20 @@ import java.util.stream.Collectors;
 public abstract class AbstractNElement implements NElement {
 
     private NElementType type;
-    private NElementAnnotation[] annotations;
+    private List<NElementAnnotation> annotations;
+    private List<NElementDiagnostic> diagnostics;
     private NElementComments comments;
 
-    public AbstractNElement(NElementType type, NElementAnnotation[] annotations, NElementComments comments) {
+    public AbstractNElement(NElementType type, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
         this.type = type;
-        this.annotations = annotations == null ? new NElementAnnotation[0] : annotations;
-        this.comments = comments == null ? new NElementCommentsImpl() : comments;
+        this.annotations = CoreNUtils.copyAndUnmodifiableList(annotations);
+        this.diagnostics = CoreNUtils.copyAndUnmodifiableList(diagnostics);
+        this.comments = comments == null ? NElementCommentsImpl.EMPTY : comments;
+    }
+
+    @Override
+    public List<NElementDiagnostic> diagnostics() {
+        return diagnostics;
     }
 
     @Override
@@ -85,24 +93,24 @@ public abstract class AbstractNElement implements NElement {
     }
 
 
-    public List<NElement> findErrors(){
-        class T implements NElementVisitor{
-            List<NElement> all = new ArrayList<>();
-
+    public List<NElementDiagnostic> findDiagnostics() {
+        List<NElementDiagnostic> all = new ArrayList<>();
+        traverse(new NElementVisitor() {
             @Override
             public NTreeVisitResult enter(NElement element) {
-                if(element instanceof NElement){}
+                all.addAll(element.diagnostics());
                 return NTreeVisitResult.CONTINUE;
             }
-        }
+        });
+        return all;
     }
 
     protected NTreeVisitResult traverseList(
             NElementVisitor visitor,
             List<? extends NElement> elements
     ) {
-        if(elements==null){
-            return  NTreeVisitResult.CONTINUE;
+        if (elements == null) {
+            return NTreeVisitResult.CONTINUE;
         }
         for (NElement element : elements) {
             NTreeVisitResult result = element.traverse(visitor);
@@ -119,6 +127,7 @@ public abstract class AbstractNElement implements NElement {
     protected NTreeVisitResult traverseChildren(NElementVisitor visitor) {
         return NTreeVisitResult.CONTINUE;
     }
+
     public NTreeVisitResult traverse(NElementVisitor visitor) {
         // 1. Enter current element
         NTreeVisitResult selfResult = visitor.enter(this);
@@ -151,7 +160,7 @@ public abstract class AbstractNElement implements NElement {
 
         // 3. Traverse children (if any)
         // Use your protected helper
-        NTreeVisitResult childrenResult=traverseChildren(visitor);
+        NTreeVisitResult childrenResult = traverseChildren(visitor);
         if (childrenResult != NTreeVisitResult.CONTINUE) {
             return childrenResult;
         }
@@ -418,7 +427,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public List<NElementAnnotation> annotations() {
-        return annotations == null ? Collections.emptyList() : Arrays.asList(annotations);
+        return annotations;
     }
 
     @Override
@@ -455,6 +464,14 @@ public abstract class AbstractNElement implements NElement {
             return NOptional.of((NObjectElement) this);
         }
         return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to object: %s", type().id(), this));
+    }
+
+    @Override
+    public NOptional<NFlatExprElement> asFlatExpression() {
+        if (this instanceof NFlatExprElement) {
+            return NOptional.of((NFlatExprElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to flat expression: %s", type().id(), this));
     }
 
     @Override
@@ -639,6 +656,20 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public boolean isBinaryInfixOperator(NOperatorSymbol symbol) {
+        if (type() == NElementType.BINARY_OPERATOR) {
+            NOptional<NBinaryOperatorElement> o = asBinaryOperator();
+            if (o.isPresent()) {
+                NBinaryOperatorElement oo = o.get();
+                if (oo.position() == NOperatorPosition.INFIX) {
+                    return oo.operatorSymbol() == symbol;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean isBinaryInfixOperator() {
         if (type() == NElementType.BINARY_OPERATOR) {
             NOptional<NExprElement> o = asOperator();
@@ -657,6 +688,34 @@ public abstract class AbstractNElement implements NElement {
             if (o.isPresent()) {
                 NExprElement oo = o.get();
                 return oo.position() == NOperatorPosition.PREFIX;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isUnaryPrefixOperator(NOperatorSymbol symbol) {
+        if (type() == NElementType.UNARY_OPERATOR) {
+            NOptional<NUnaryOperatorElement> o = asUnaryOperator();
+            if (o.isPresent()) {
+                NUnaryOperatorElement oo = o.get();
+                if (oo.position() == NOperatorPosition.PREFIX) {
+                    return oo.operatorSymbol() == symbol;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isUnarySuffixOperator(NOperatorSymbol symbol) {
+        if (type() == NElementType.UNARY_OPERATOR) {
+            NOptional<NUnaryOperatorElement> o = asUnaryOperator();
+            if (o.isPresent()) {
+                NUnaryOperatorElement oo = o.get();
+                if (oo.position() == NOperatorPosition.SUFFIX) {
+                    return oo.operatorSymbol() == symbol;
+                }
             }
         }
         return false;
@@ -935,7 +994,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, Arrays.hashCode(annotations));
+        return Objects.hash(type, annotations.hashCode());
     }
 
     @Override
@@ -1193,7 +1252,10 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NOptional<String> asStringValue() {
-        return asLiteral().asString();
+        if (!isAnyString()) {
+            return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to string: %s", type().id(), this));
+        }
+        return asString().map(NStringElement::stringValue);
     }
 
     @Override
@@ -1253,6 +1315,7 @@ public abstract class AbstractNElement implements NElement {
     public NOptional<NFloatComplex> asFloatComplexValue() {
         return asLiteral().asFloatComplex();
     }
+
 
     @Override
     public NOptional<NDoubleComplex> asDoubleComplexValue() {
