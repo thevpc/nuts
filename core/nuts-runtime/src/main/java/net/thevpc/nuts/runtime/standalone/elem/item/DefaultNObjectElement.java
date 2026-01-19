@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathImpl;
 import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.*;
 
@@ -12,29 +13,27 @@ import java.util.stream.Stream;
 
 public class DefaultNObjectElement extends AbstractNListContainerElement implements NObjectElement {
 
-    private List<NElement> values = new ArrayList<>();
+    private List<NElement> values;
     private String name;
     private List<NElement> params;
 
-    public DefaultNObjectElement(String name, List<NElement> params, List<NElement> values, NElementAnnotation[] annotations, NElementComments comments) {
+    public DefaultNObjectElement(String name, List<NElement> params, List<NElement> values) {
+        this(name,params,values,null,null,null);
+    }
+
+    public DefaultNObjectElement(String name, List<NElement> params, List<NElement> values, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
         super(
                 name == null && params == null ? NElementType.OBJECT
                         : name == null && params != null ? NElementType.PARAMETRIZED_OBJECT
                         : name != null && params == null ? NElementType.NAMED_OBJECT
                         : NElementType.NAMED_PARAMETRIZED_OBJECT,
-                annotations, comments);
+                annotations, comments,diagnostics);
         if (name != null) {
             NAssert.requireTrue(NElementUtils.isValidElementName(name), "valid name : " + name);
         }
         this.name = name;
-        this.params = params;
-        if (values != null) {
-            for (NElement e : values) {
-                if (e != null) {
-                    this.values.add(e);
-                }
-            }
-        }
+        this.params = CoreNUtils.copyAndUnmodifiableNullableList(params);
+        this.values = CoreNUtils.copyAndUnmodifiableList(values);
     }
 
     protected NTreeVisitResult traverseChildren(NElementVisitor visitor) {
@@ -188,7 +187,7 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
 
     @Override
     public List<NElement> children() {
-        return new ArrayList<>(values);
+        return values;
     }
 
     @Override
