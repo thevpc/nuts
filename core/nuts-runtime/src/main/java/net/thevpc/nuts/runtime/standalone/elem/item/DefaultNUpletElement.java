@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathImpl;
 import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.*;
@@ -40,24 +41,17 @@ import java.util.stream.Stream;
 public class DefaultNUpletElement extends AbstractNListContainerElement
         implements NUpletElement {
 
-    private final NElement[] params;
+    private final List<NElement> params;
     private String name;
 
-    public DefaultNUpletElement(String name, Collection<NElement> params, NElementAnnotation[] annotations, NElementComments comments) {
+    public DefaultNUpletElement(String name, List<NElement> params, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
         super(name == null ? NElementType.UPLET
                         : NElementType.NAMED_UPLET,
-                annotations, comments);
+                annotations, comments, diagnostics);
         if(name!=null){
             NAssert.requireTrue(NElementUtils.isValidElementName(name), "valid name : " + name);
         }
-        this.params = params.toArray(new NElement[0]);
-        this.name = name;
-    }
-
-    public DefaultNUpletElement(String name, NElement[] params, NElementAnnotation[] annotations, NElementComments comments) {
-        super(name == null ? NElementType.UPLET
-                : NElementType.NAMED_UPLET, annotations, comments);
-        this.params = Arrays.copyOf(params, params.length);
+        this.params = CoreNUtils.copyAndUnmodifiableList(params);
         this.name = name;
     }
 
@@ -91,7 +85,7 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
     }
 
     protected NTreeVisitResult traverseChildren(NElementVisitor visitor) {
-        return traverseList(visitor, Arrays.asList(params));
+        return traverseList(visitor, params);
     }
 
 
@@ -125,39 +119,39 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
 
     @Override
     public List<NElement> params() {
-        return Arrays.asList(params);
+        return params;
     }
 
 
     @Override
     public List<NElement> children() {
-        return Arrays.asList(params);
+        return params;
     }
 
     @Override
     public int size() {
-        return params.length;
+        return params.size();
     }
 
     @Override
     public Stream<NElement> stream() {
-        return Arrays.asList(params).stream();
+        return params.stream();
     }
 
     @Override
     public NOptional<NElement> get(int index) {
-        if (index >= 0 && index < params.length) {
-            return NOptional.of(params[index]);
+        if (index >= 0 && index < params.size()) {
+            return NOptional.of(params.get(index));
         }
-        return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, params.length));
+        return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, params.size()));
     }
 
     @Override
     public NOptional<NElement> getAt(int index) {
-        if (index >= 0 && index < params.length) {
-            return NOptional.of(params[index]);
+        if (index >= 0 && index < params.size()) {
+            return NOptional.of(params.get(index));
         }
-        return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, params.length));
+        return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, params.size()));
     }
 
 
@@ -169,7 +163,7 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
 
     @Override
     public Iterator<NElement> iterator() {
-        return Arrays.asList(params).iterator();
+        return params.iterator();
     }
 
     public String toString() {
@@ -185,7 +179,7 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
         }
         if (params != null) {
             sb.append("(");
-            NElementToStringHelper.appendChildren(Arrays.asList(params), compact,
+            NElementToStringHelper.appendChildren(params, compact,
                     new NElementToStringHelper.SemiCompactInfo()
                             .setMaxChildren(3)
                             .setMaxLineSize(120)
@@ -208,17 +202,17 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Arrays.hashCode(params), name);
+        return Objects.hash(super.hashCode(), params.hashCode(), name);
     }
 
     @Override
     public boolean isEmpty() {
-        return params.length == 0;
+        return params.isEmpty();
     }
 
     @Override
     public boolean isBlank() {
-        return params.length == 0 && NBlankable.isBlank(name);
+        return params.isEmpty() && NBlankable.isBlank(name);
     }
 
     @Override
