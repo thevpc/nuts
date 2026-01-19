@@ -175,7 +175,7 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
 
     @Override
     public NPairElement build() {
-        return new DefaultNPairElement(key, value, annotations().toArray(new NElementAnnotation[0]), comments());
+        return new DefaultNPairElement(key, value, annotations(), comments(), diagnostics());
     }
 
     @Override
