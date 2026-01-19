@@ -8,7 +8,7 @@ import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.runtime.standalone.elem.builder.*;
 import net.thevpc.nuts.runtime.standalone.elem.item.*;
-import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementToken;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenImpl;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCustomLexer;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
@@ -37,8 +37,7 @@ public class DefaultNElementFactory implements NElementFactory {
     public NPairElement ofPair(NElement key, NElement value) {
         return new DefaultNPairElement(
                 key == null ? ofNull() : key,
-                value == null ? ofNull() : value,
-                new NElementAnnotation[0], null
+                value == null ? ofNull() : value
         );
     }
 
@@ -99,7 +98,7 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NOperatorSymbolElement ofOp(NOperatorSymbol op) {
-        return new DefaultNOperatorSymbolElement(op, new NElementAnnotation[0], null);
+        return new DefaultNOperatorSymbolElement(op);
     }
 
     @Override
@@ -132,8 +131,13 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
-    public NErrorElementBuilder ofErrorBuilder() {
-        return new  DefaultNErrorElementBuilder();
+    public NEmptyElementBuilder ofErrorBuilder() {
+        return new DefaultNEmptyElementBuilder();
+    }
+
+    @Override
+    public NElementDiagnosticBuilder ofDiagnosticBuilder() {
+        return new DefaultNElementDiagnosticBuilder();
     }
 
     @Override
@@ -373,9 +377,9 @@ public class DefaultNElementFactory implements NElementFactory {
     public NPrimitiveElement ofBoolean(boolean value) {
         //TODO: perhaps we can optimize this
         if (value) {
-            return new DefaultNPrimitiveElement(NElementType.BOOLEAN, true, null, null);
+            return new DefaultNPrimitiveElement(NElementType.BOOLEAN, true);
         } else {
-            return new DefaultNPrimitiveElement(NElementType.BOOLEAN, false, null, null);
+            return new DefaultNPrimitiveElement(NElementType.BOOLEAN, false);
         }
     }
 
@@ -402,13 +406,13 @@ public class DefaultNElementFactory implements NElementFactory {
             stringLayout = NElementType.DOUBLE_QUOTED_STRING;
         }
         if (stringLayout.isAnyStringOrName()) {
-            return new DefaultNStringElement(stringLayout, str, str, null, null);
+            return new DefaultNStringElement(stringLayout, str);
         }
         throw new NUnsupportedEnumException(stringLayout);
     }
 
     public NPrimitiveElement ofName(String str) {
-        return str == null ? ofNull() : new DefaultNStringElement(NElementType.NAME, str, str, null, null);
+        return str == null ? ofNull() : new DefaultNStringElement(NElementType.NAME, str);
     }
 
     @Override
@@ -416,15 +420,15 @@ public class DefaultNElementFactory implements NElementFactory {
         if (value == null) {
             return ofNull();
         }
-        return NElementUtils.isValidElementName(value) ? new DefaultNStringElement(NElementType.NAME, value, value, null, null)
-                : new DefaultNStringElement(NElementType.DOUBLE_QUOTED_STRING, value, value, null, null)
+        return NElementUtils.isValidElementName(value) ? new DefaultNStringElement(NElementType.NAME, value)
+                : new DefaultNStringElement(NElementType.DOUBLE_QUOTED_STRING, value)
                 ;
     }
 
     @Override
     public NCustomElement ofCustom(Object object) {
         NAssert.requireNonNull(object, "custom element");
-        return new DefaultNCustomElement(object, null, null);
+        return new DefaultNCustomElement(object);
     }
 
     @Override
@@ -439,22 +443,22 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NPrimitiveElement ofInstant(Instant instant) {
-        return instant == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.INSTANT, instant, null, null);
+        return instant == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.INSTANT, instant);
     }
 
     @Override
     public NPrimitiveElement ofLocalDate(LocalDate localDate) {
-        return localDate == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.LOCAL_DATE, localDate, null, null);
+        return localDate == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.LOCAL_DATE, localDate);
     }
 
     @Override
     public NPrimitiveElement ofLocalDateTime(LocalDateTime localDateTime) {
-        return localDateTime == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.LOCAL_DATE, localDateTime, null, null);
+        return localDateTime == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.LOCAL_DATE, localDateTime);
     }
 
     @Override
     public NPrimitiveElement ofLocalTime(LocalTime localTime) {
-        return localTime == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.LOCAL_TIME, localTime, null, null);
+        return localTime == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.LOCAL_TIME, localTime);
     }
 
     @Override
@@ -520,7 +524,7 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NElement ofBinaryStream(NInputStreamProvider value) {
-        return value == null ? ofNull() : new DefaultNBinaryStreamElement(value, null, null);
+        return value == null ? ofNull() : new DefaultNBinaryStreamElement(value);
     }
 
     @Override
@@ -530,7 +534,7 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NElement ofCharStream(NReaderProvider value, String blockIdentifier) {
-        return value == null ? ofNull() : new DefaultNCharStreamElement(NStringUtils.trim(blockIdentifier), value, null, null);
+        return value == null ? ofNull() : new DefaultNCharStreamElement(NStringUtils.trim(blockIdentifier), value);
     }
 
     @Override
@@ -590,8 +594,7 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NPrimitiveElement ofNull() {
-        //perhaps we can optimize this?
-        return new DefaultNPrimitiveElement(NElementType.NULL, null, null, null);
+        return DefaultNPrimitiveElement.NULL;
     }
 
     @Override
@@ -599,16 +602,16 @@ public class DefaultNElementFactory implements NElementFactory {
         if (NBlankable.isBlank(value)) {
             return ofNull();
         }
-        NElementToken next = new TsonCustomLexer(value).next();
-        if(next!=null){
+        NElementTokenImpl next = new TsonCustomLexer(value).next();
+        if (next != null) {
             Object v = next.value();
-            if(v instanceof NPrimitiveElement){
-                if(((NPrimitiveElement) v).isNumber()){
+            if (v instanceof NPrimitiveElement) {
+                if (((NPrimitiveElement) v).isNumber()) {
                     return (NPrimitiveElement) v;
                 }
             }
         }
-        throw new NIllegalArgumentException(NMsg.ofC("not a number %s",value));
+        throw new NIllegalArgumentException(NMsg.ofC("not a number %s", value));
 //        TsonNumberHelper parse;
 //        try {
 //            parse = TsonNumberHelper.parse(value);
@@ -652,7 +655,7 @@ public class DefaultNElementFactory implements NElementFactory {
         if (value == null) {
             return ofNull();
         }
-        return new DefaultNPrimitiveElement(NElementType.INSTANT, value.toInstant(), null, null);
+        return new DefaultNPrimitiveElement(NElementType.INSTANT, value.toInstant());
     }
 
     @Override
@@ -660,7 +663,7 @@ public class DefaultNElementFactory implements NElementFactory {
         if (value == null) {
             return ofNull();
         }
-        return new DefaultNPrimitiveElement(NElementType.INSTANT, DefaultNLiteral.parseInstant(value).get(), null, null);
+        return new DefaultNPrimitiveElement(NElementType.INSTANT, DefaultNLiteral.parseInstant(value).get());
     }
 
     @Override
@@ -746,7 +749,7 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NPrimitiveElement ofChar(Character value) {
-        return value == null ? ofNull() : new DefaultNStringElement(NElementType.CHAR, value, null, null);
+        return value == null ? ofNull() : new DefaultNStringElement(NElementType.CHAR, value);
     }
 
     @Override
@@ -956,4 +959,5 @@ public class DefaultNElementFactory implements NElementFactory {
     public NFlatExprElementBuilder ofFlatExprBuilder() {
         return new DefaultNFlatExprElementBuilder();
     }
+
 }
