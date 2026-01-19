@@ -96,12 +96,33 @@ Numbers can be explicitly typed or include custom suffixes (which can represent 
 
 ---
 
-## 2. Strings
+## 2. Identifiers
 
-TSON provides multiple ways to represent text, from simple identifiers to multi-line blocks.
+Identifiers are unquoted symbolic names used for keys, variables, or labels. They are not strings, but can be converted to strings when needed.
+Syntax Rules
+- Start: Must begin with a Unicode letter, _, or $.
+- Continue: May contain Unicode letters, digits, _, $, - (hyphen), and . (dot).
+- Constraints:
+  - Cannot start or end with - or ..
+  - Cannot contain consecutive separators like --, .., or -..
 
-### 2.1 Identifiers and Quoted Strings
-- **Identifiers**: Unquoted strings (e.g., `name`, `version`).
+```tson
+
+name
+user-id
+api.endpoint
+Ω
+π
+$var
+café.menu
+
+```
+
+## 3. Strings
+
+TSON provides multiple ways to represent text, from simple quoted strings to multi-line blocks.
+
+### 3.1 Quoted Strings
 - **Quoted Strings**: Support single (`'`), double (`"`), and backtick (`` ` ``) quotes. All quoted strings are **multi-line by design**.
 - **Triple Quotes**: Support `'''`, `"""`, and ` ``` `.
 - **Escaping**: Quoted strings only support escaping the **terminal quote** character with a backslash (e.g., `\"` in a double-quoted string, `\'''` in a triple-single-quoted string).
@@ -128,13 +149,13 @@ triple double quotes
 """
 ````
 
-### 2.2 Single-line Strings (`¶`)
+### 3.2 Single-line Strings (`¶`)
 A single `¶` starts a string that continues until the end of the line. **No escaping sequences** are supported.
 ```tson
 ¶ This is a single-line string.
 ```
 
-### 2.3 Multi-line Strings (`¶¶`)
+### 3.3 Multi-line Strings (`¶¶`)
 Use `¶¶` for multi-line text. The string continues as long as subsequent lines also start with `¶¶`. **No escaping sequences** are supported.
 ```tson
 ¶¶ Line 1 of a long text.
@@ -143,11 +164,11 @@ Use `¶¶` for multi-line text. The string continues as long as subsequent lines
 
 ---
 
-## 3. Expressions
+## 4. Expressions
 
 TSON is expression-oriented. Almost everything is an expression, and expressions can be combined using arbitrary operators.
 
-### 3.1 Operators
+### 4.1 Operators
 TSON supports a wide range of predefined **symbolic** operators (prefix, suffix, and infix).
 - **No Parse-time Precedence**: The TSON parser does **not** process operator priority or precedence.
 - **Order Preservation**: Expressions are parsed exactly in the order they appear. For example, `1+2*3` is parsed as a sequence of terms and operators. Precedence and refactoring (e.g., building an AST based on standard math rules) are handled at "use-time" by the application.
@@ -167,11 +188,11 @@ value ??? default   // Triple interrogation
 
 ---
 
-## 4. Structured Literals
+## 5. Structured Literals
 
 Structured literals in TSON include pairs, objects, arrays, and tuples. **Keys, values, and elements** in these structures can be complex expressions (including other objects, arrays, or functions).
 
-### 4.1 Pairs
+### 5.1 Pairs
 Pairs represent key-value associations using a colon `:` as a separator.
 
 ```tson
@@ -180,7 +201,7 @@ age: 30
 (a + b): (c * d)    // Complex key and value
 ```
 
-### 4.2 Separators
+### 5.2 Separators
 In structured literals (objects, arrays, tuples) and lists, elements are separated by **whitespace**, **commas** `,`, or **semicolons** `;`.
 - **Optional**: Commas and semicolons are entirely optional.
 - **Interchangeable**: Commas and semicolons are treated identically.
@@ -193,7 +214,7 @@ In structured literals (objects, arrays, tuples) and lists, elements are separat
 { a:1, b:2; c:3 }   // Mixed separation
 ```
 
-### 4.3 Objects (`{}`)
+### 5.3 Objects (`{}`)
 Objects contain **pairs** or standalone elements. They can have an optional **header** (name) and **parameters**.
 
 | Type | Syntax | Description |
@@ -214,7 +235,7 @@ rgba(255, 0, 0, 0.5){ label: "red" } // Full Object
 > [!NOTE]
 > The parameters `(args)` and the body `{}` can contain the same types of elements. An **element** in TSON is the fundamental building block and can be **anything**: a value (primitive, string, object, etc.), a pair, a list, or an annotated expression.
 
-### 4.4 Arrays (`[]`)
+### 5.4 Arrays (`[]`)
 Arrays are ordered collections. Like objects, they support names and parameters. **Elements** within an array can be any valid expression.
 
 | Type | Syntax | Description |
@@ -232,7 +253,7 @@ points[ 1, 2, 3 ]                   // Named Array
 matrix(rows: 2, cols: 2)[ 1, 0, 0, 1 ] // Full Array
 ```
 
-### 4.5 Tuples (`()`)
+### 5.5 Tuples (`()`)
 Tuples (or uplets) are fixed-size ordered collections. Like objects and arrays, they can be anonymous or named. **Elements** within a tuple can be any valid expression.
 
 | Type | Syntax | Description |
@@ -249,11 +270,11 @@ point(x: 10, y: 20)                 // Named Tuple with pairs
 
 ---
 
-## 5. Streams
+## 6. Streams
 
 Streams are used for large or binary data.
 
-### 5.1 Binary Streams
+### 6.1 Binary Streams
 Binary data is enclosed in `^[]`. An optional **encoding** can be specified before the brackets.
 - **Default Encoding**: `^[]` is equivalent to `^b64[]` (Base64).
 - **Supported Encodings**: Common encodings include `b64` (Base64), `hex` (Hexadecimal), and `b85` (Base85).
@@ -265,7 +286,7 @@ Binary data is enclosed in `^[]`. An optional **encoding** can be specified befo
 ^b85[He7W%DIdAh]         // Base85 encoding
 ```
 
-### 5.2 Character Streams
+### 6.2 Character Streams
 Character streams use a custom delimiter `^id{...^id}`.
 ```tson
 ^html{<div>Hello</div>^html}
@@ -273,7 +294,7 @@ Character streams use a custom delimiter `^id{...^id}`.
 
 ---
 
-## 6. Annotations
+## 7. Annotations
 
 Annotations add metadata to elements using the `@` symbol.
 
@@ -288,11 +309,11 @@ username: "admin"
 
 ---
 
-## 7. Lists (Depth-Driven Hierarchy)
+## 8. Lists (Depth-Driven Hierarchy)
 
 Lists are a core feature of TSON, using depth instead of indentation for hierarchy.
 
-### 7.1 Unordered Lists (`.`)
+### 8.1 Unordered Lists (`.`)
 The number of dots determines the depth.
 ```tson
 . Fruit
@@ -302,7 +323,7 @@ The number of dots determines the depth.
 .. Carrot
 ```
 
-### 7.2 Ordered Lists (`#`)
+### 8.2 Ordered Lists (`#`)
 ```tson
 # Step 1
 ## Substep A
@@ -310,7 +331,7 @@ The number of dots determines the depth.
 # Step 2
 ```
 
-### 7.3 Mixed Content
+### 8.3 Mixed Content
 Items can have a value and a sublist.
 ```tson
 . Server Config
@@ -320,7 +341,7 @@ Items can have a value and a sublist.
 ... logging
 ```
 
-### 7.4 Sparse Depth Jumps
+### 8.4 Sparse Depth Jumps
 Depth can jump arbitrarily. TSON attaches to the most recent shallower item.
 ```tson
 . Top
@@ -330,16 +351,16 @@ Depth can jump arbitrarily. TSON attaches to the most recent shallower item.
 
 ---
 
-## 8. Comments and Whitespace
+## 9. Comments and Whitespace
 
-### 8.1 Comments
+### 9.1 Comments
 ```tson
 // Inline comment
 /* Block 
    comment */
 ```
 
-### 8.2 Whitespace
+### 9.2 Whitespace
 Spaces and newlines are interchangeable outside literals.
 ```tson
 . A .. B . C   // Equivalent to multi-line
@@ -347,7 +368,7 @@ Spaces and newlines are interchangeable outside literals.
 
 ---
 
-## 9. Error Recovery (Fail-Never)
+## 10. Error Recovery (Fail-Never)
 
 TSON never fails to parse. Malformed constructs are preserved as "error elements".
 ```tson
@@ -382,9 +403,9 @@ TupleBody      -> '(' (Element (','? Element)*)? ')'
 Stream         -> '^' Name? '{' Content '^' Name? '}' | '^' Name? '[' Content ']'
 ```
 
-# 🧩 TSON Common Patterns / Examples
+## 🧩 TSON Common Patterns / Examples
 
-## 1. Application Configuration
+### 1. Application Configuration
 
 ```tson
 app {
@@ -408,7 +429,7 @@ app {
 > ✅ Uses named object, typed number (_u16), nested config, and array.
 > 🔧 Tooling can validate port is ≤ 65535 at runtime.
 
-## 2. CLI Command Definition (DSL Style)
+### 2. CLI Command Definition (DSL Style)
 
 ```tson
 @command("deploy")
@@ -425,7 +446,7 @@ deploy(image: string, env: string) {
 > 💡 Parsers can generate --help or ZSH completions from this.
 
 
-## 3. i18n / Localization Bundle
+### 3. i18n / Localization Bundle
 
 ```tson
 en {
@@ -446,7 +467,7 @@ fr {
 > ✅ Flat key hierarchy via . in keys (error.timeout).
 > 🔁 Round-trip safe: translators edit without breaking structure.
 
-## 4. Time-Series Data with Units
+### 4. Time-Series Data with Units
 
 ```tson
 cpu_usage [
@@ -459,7 +480,7 @@ cpu_usage [
 > ✅ Typed floats + suffix (%) + constants (0max_f32).
 > 📊 Plotting tools interpret % as unit; validation ensures value ≤ 100.
 
-## 5. Embedded SQL Query (Safe & Preserved)
+### 5. Embedded SQL Query (Safe & Preserved)
 
 ```tson
 query: ^sql{
@@ -473,7 +494,7 @@ query: ^sql{
 > ✅ Character stream with custom delimiter (^sql{...^sql}).
 > 🔒 No escaping needed; parser treats content as opaque blob.
 
-## 6. Error-Resilient Partial Config (Fail-Never in Action)
+### 6. Error-Resilient Partial Config (Fail-Never in Action)
 
 ```tson
 . database
@@ -488,7 +509,7 @@ query: ^sql{
 > ✅ Sparse depth + malformed object.
 > 🛠️ Editor shows red squiggle on { unclosed_brace but still parses ssl: true and ttl.
 
-## 7. Complex Math Expression (Deferred Evaluation)
+### 7. Complex Math Expression (Deferred Evaluation)
 
 ```tson
 formula: radius * π * 2
@@ -499,7 +520,7 @@ radius: 5.0_f64
 > ✅ Expression radius * π * 2 is parsed as [radius, *, π, *, 2].
 > 🧮 Evaluation engine applies precedence later — TSON stays neutral.
 
-## 8. Binary Asset Reference
+### 8. Binary Asset Reference
 ```tson
 logo: ^b64[iVBORw0KGgoAAAANSUhEUgAAASwAAACCCAMAAADQNkiAAAAA1BMVEW10NBjBBbqAAAAH0lEQVRo3u3BAQ0AAADCoPdPbQ43oAAAAAAAAIBLcQ8AAa0jZQAAAABJRU5ErkJggg==]
 ```
@@ -507,7 +528,7 @@ logo: ^b64[iVBORw0KGgoAAAANSUhEUgAAASwAAACCCAMAAADQNkiAAAAA1BMVEW10NBjBBbqAAAAH0
 > ✅ Base64 stream embedded inline.
 > 🖼️ UI loads it as image; config remains text-only.
 
-## 9. Feature Flags with Validation
+### 9. Feature Flags with Validation
 
 ```tson
 @range(1, 10)
@@ -524,7 +545,7 @@ ssl: true
 > ✅ Annotations drive external validation.
 > ⚠️ Linter warns on @deprecated; CI fails if max_retries < 1.
 
-## 10. Mixed List for Documentation Outline
+### 10. Mixed List for Documentation Outline
 
 ```tson
 
@@ -543,7 +564,7 @@ ssl: true
 > ✅ Depth-driven hierarchy mirrors NTF section structure.
 > 📚 Can be rendered as collapsible TOC in terminal (via NTF).
 
-## 11. REST API Contract
+### 11. REST API Contract
 
 ```tson
 @title("User Management API")
@@ -603,7 +624,7 @@ schemas {
 }
 ```
 
-## 12. Protocol Buffer–Style Message Definition
+### 12. Protocol Buffer–Style Message Definition
 
 ```tson
 @package("com.example.models")
@@ -651,7 +672,7 @@ ListUsersRequest {
 ```
 
 
-# Reference Implementation: Nuts
+## Reference Implementation: Nuts
 
 TSON is natively supported in [Nuts](https://github.com/thevpc/nuts)
 — a modular, dependency-free Java platform for CLI tools, package management, and structured I/O.
