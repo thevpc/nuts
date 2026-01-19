@@ -5,16 +5,13 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import net.thevpc.nuts.elem.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementReader;
-import net.thevpc.nuts.elem.NListElement;
-import net.thevpc.nuts.elem.NListItemElement;
-import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementToken;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenImpl;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenType;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCustomLexer;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCustomParser;
@@ -68,6 +65,14 @@ public class TsonTest {
     public void test06() {
         String tson = "ω=π+freq*g";
         NElement parsed = NElementReader.ofTson().read(tson);
+        NElement reshaped = parsed.asFlatExpression().get().reshape(NExprElementReshaper.ofJavaLike());
+        Assertions.assertTrue(reshaped.isBinaryInfixOperator(NOperatorSymbol.EQ));
+        Assertions.assertEquals("ω", reshaped.asBinaryOperator().get().firstOperand().asStringValue().get());
+        NElement so = reshaped.asBinaryOperator().get().secondOperand();
+        Assertions.assertTrue(so.isBinaryInfixOperator(NOperatorSymbol.PLUS));
+        Assertions.assertEquals("π", so.asBinaryOperator().get().firstOperand().asStringValue().get());
+        NElement m = so.asBinaryOperator().get().secondOperand();
+        Assertions.assertTrue(m.isBinaryInfixOperator(NOperatorSymbol.MUL));
         TestUtils.println(parsed.toString());
     }
 
@@ -84,8 +89,8 @@ public class TsonTest {
         String tson = "ω=π+f*g";
 //        String tson = "-1E-5hello";
         TsonCustomLexer parsed = new TsonCustomLexer(new StringReader(tson));
-        List<NElementToken> a = parsed.all();
-        Assertions.assertEquals(7,a.size());
+        List<NElementTokenImpl> a = parsed.all();
+        Assertions.assertEquals(7, a.size());
         Assertions.assertEquals("ω", a.get(0).image());
         Assertions.assertEquals("=", a.get(1).image());
         Assertions.assertEquals("π", a.get(2).image());
@@ -99,39 +104,40 @@ public class TsonTest {
     public void test09() {
         String tson = "-1E-5hello";
         TsonCustomLexer parsed = new TsonCustomLexer(new StringReader(tson));
-        List<NElementToken> a = parsed.all();
-        System.out.println(a);
-        Assertions.assertEquals(1,a.size());
+        List<NElementTokenImpl> a = parsed.all();
+        TestUtils.println(a);
+        Assertions.assertEquals(1, a.size());
         Assertions.assertEquals("-1E-5hello", a.get(0).image());
     }
 
     @Test
     public void test11_comments() {
-        String tson = "// line comment\n/* block\ncomment */";
+        String tson = "// line comment\n/* block\n comment */";
         TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
-        List<NElementToken> tokens = lexer.all();
-        // Comments are returned as WHITESPACE
-        for (NElementToken token : tokens) {
-            Assertions.assertEquals(NElementTokenType.WHITESPACE, token.type());
-        }
+        List<NElementTokenImpl> tokens = lexer.all();
+        Assertions.assertEquals(2, tokens.size());
+        Assertions.assertEquals(NElementTokenType.LINE_COMMENT, tokens.get(0).type());
+        Assertions.assertEquals(NElementTokenType.BLOCK_COMMENT, tokens.get(1).type());
     }
 
     @Test
     public void test12_unicode_identifiers() {
-        String tson = "ω π identifier_123 $var";
+        String tson = "ω π identifier_123 identifier-two  identifier.two $var";
         TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
-        List<NElementToken> tokens = lexer.all();
+        List<NElementTokenImpl> tokens = lexer.all();
         Assertions.assertEquals("ω", tokens.get(0).image());
         Assertions.assertEquals("π", tokens.get(2).image());
         Assertions.assertEquals("identifier_123", tokens.get(4).image());
-        Assertions.assertEquals("$var", tokens.get(6).image());
+        Assertions.assertEquals("identifier-two", tokens.get(6).image());
+        Assertions.assertEquals("identifier.two", tokens.get(8).image());
+        Assertions.assertEquals("$var", tokens.get(10).image());
     }
 
     @Test
     public void test13_numbers_bitwidth() {
         String tson = "123s8 456u16 789s32 1011u64 1213n";
         TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
-        List<NElementToken> tokens = lexer.all();
+        List<NElementTokenImpl> tokens = lexer.all();
         Assertions.assertEquals("123s8", tokens.get(0).image());
         Assertions.assertEquals("456u16", tokens.get(2).image());
         Assertions.assertEquals("789s32", tokens.get(4).image());
@@ -143,7 +149,7 @@ public class TsonTest {
     public void test14_complex_numbers() {
         String tson = "1+2i 3.5-4.2i 5i";
         TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
-        List<NElementToken> tokens = lexer.all();
+        List<NElementTokenImpl> tokens = lexer.all();
         Assertions.assertEquals("1+2i", tokens.get(0).image());
         Assertions.assertEquals("3.5-4.2i", tokens.get(2).image());
         Assertions.assertEquals("5i", tokens.get(4).image());
@@ -153,21 +159,51 @@ public class TsonTest {
     public void test15_temporal_types() {
         String tson = "2023-10-27 10:30:00 2023-10-27T10:30:00Z";
         TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
-        List<NElementToken> tokens = lexer.all();
+        List<NElementTokenImpl> tokens = lexer.all();
         Assertions.assertEquals(NElementTokenType.DATE, tokens.get(0).type());
         Assertions.assertEquals(NElementTokenType.TIME, tokens.get(2).type());
         Assertions.assertEquals(NElementTokenType.INSTANT, tokens.get(4).type());
     }
 
     @Test
-    public void test16_streams() {
-        String tson = "^[SGVsbG8=] ^myid{Hello World^myid} ^^ ^^^";
+    public void test16_streams1() {
+        String tson = "^[SGVsbG8=]";
         TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
-        List<NElementToken> tokens = lexer.all();
+        List<NElementTokenImpl> tokens = lexer.all();
         Assertions.assertEquals("^[SGVsbG8=]", tokens.get(0).image());
-        Assertions.assertEquals("^myid{Hello World^myid}", tokens.get(2).image());
-        Assertions.assertEquals("^^", tokens.get(4).image());
-        Assertions.assertEquals("^^^", tokens.get(6).image());
+    }
+
+    @Test
+    public void test16_streams2() {
+        String tson = "^b64[SGVsbG8=]";
+        TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
+        List<NElementTokenImpl> tokens = lexer.all();
+        Assertions.assertEquals("^b64[SGVsbG8=]", tokens.get(0).image());
+    }
+
+    @Test
+    public void test16_streams3() {
+        String tson = "^myid{Hello World^myid}";
+        TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
+        List<NElementTokenImpl> tokens = lexer.all();
+        Assertions.assertEquals("^myid{Hello World^myid}", tokens.get(0).image());
+    }
+
+    @Test
+    public void test16_streams4() {
+        String tson = "^m{Hello World^m}";
+        TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
+        List<NElementTokenImpl> tokens = lexer.all();
+        Assertions.assertEquals("^m{Hello World^m}", tokens.get(0).image());
+    }
+
+    @Test
+    public void test16_streams5() {
+        String tson = "^^ ^^^";
+        TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
+        List<NElementTokenImpl> tokens = lexer.all();
+        Assertions.assertEquals("^^", tokens.get(0).image());
+        Assertions.assertEquals("^^^", tokens.get(2).image());
     }
 
     @Test
@@ -348,7 +384,7 @@ public class TsonTest {
     public void testList_unordered_basic() {
         String tson = ". Apple\n.. Banana\n.. Cherry\n. Date";
         TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
-        List<NElementToken> tokens = lexer.all().stream().filter(x->x.type()!=NElementTokenType.WHITESPACE).collect(Collectors.toList());
+        List<NElementTokenImpl> tokens = lexer.all().stream().filter(x -> x.type() != NElementTokenType.WHITESPACE).collect(Collectors.toList());
         Assertions.assertEquals(".", tokens.get(0).image());
         Assertions.assertEquals("Apple", tokens.get(1).image());
         Assertions.assertEquals("..", tokens.get(2).image());
