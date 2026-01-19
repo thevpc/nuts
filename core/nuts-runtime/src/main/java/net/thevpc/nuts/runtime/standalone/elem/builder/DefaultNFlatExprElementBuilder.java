@@ -115,7 +115,7 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     @Override
     public NFlatExprElement build() {
         return new DefaultNFlatExprElement(values,
-                annotations().toArray(new NElementAnnotation[0]), comments()
+                annotations(), comments(), diagnostics()
         );
     }
 
