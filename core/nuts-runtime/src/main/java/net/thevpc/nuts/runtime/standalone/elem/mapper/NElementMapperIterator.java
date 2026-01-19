@@ -31,7 +31,7 @@ public class NElementMapperIterator implements NElementMapper<Iterator> {
         while (nl.hasNext()) {
             values.add(context.createElement(nl.next()));
         }
-        return new DefaultNArrayElement(null,null,values,new NElementAnnotation[0],null);
+        return new DefaultNArrayElement(null,null,values);
     }
 
     @Override
