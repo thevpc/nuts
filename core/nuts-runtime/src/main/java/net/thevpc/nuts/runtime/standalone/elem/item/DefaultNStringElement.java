@@ -7,26 +7,35 @@ import net.thevpc.nuts.elem.NElementUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
+import java.util.List;
+
 public class DefaultNStringElement extends DefaultNPrimitiveElement implements NStringElement {
     private String rawValue;
 
+    public DefaultNStringElement(NElementType type, String value) {
+        this(type, value, value, null, null,null);
+    }
+
     public DefaultNStringElement(NElementType type, String value, String rawValue) {
-        this(type, value, rawValue, null, null);
+        this(type, value, rawValue, null, null,null);
     }
 
     public DefaultNStringElement(NElementType type, String value,
                                  String rawValue,
-                                 NElementAnnotation[] annotations, NElementComments comments) {
-        super(type, value, annotations, comments);
+                                 List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+        super(type, value, annotations, comments,diagnostics);
         this.rawValue = rawValue;
         if (type == NElementType.NAME) {
             NAssert.requireTrue(NElementUtils.isValidElementName((String) value), "valid name : " + value);
         }
     }
 
+    public DefaultNStringElement(NElementType type, Character value) {
+        this(type, value, null, null,null);
+    }
     public DefaultNStringElement(NElementType type, Character value,
-                                 NElementAnnotation[] annotations, NElementComments comments) {
-        super(type, value, annotations, comments);
+                                 List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+        super(type, value, annotations, comments,diagnostics);
         if (type != NElementType.CHAR) {
             throw new NIllegalArgumentException(NMsg.ofC("expected character"));
         }
