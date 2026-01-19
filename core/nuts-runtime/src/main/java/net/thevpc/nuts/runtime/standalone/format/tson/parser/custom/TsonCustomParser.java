@@ -18,7 +18,7 @@ import net.thevpc.nuts.elem.NObjectElementBuilder;
 import net.thevpc.nuts.elem.NOperatorSymbol;
 import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNListElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNListItemElementBuilder;
-import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementToken;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenImpl;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenType;
 
 public class TsonCustomParser {
@@ -98,7 +98,8 @@ public class TsonCustomParser {
             NElementTokenInfo t = peekToken();
             if (all.isEmpty()) {
                 if (isOp(t)) {
-                    NElement e = withComments(NElement.ofOpSymbol(NOperatorSymbol.parse(t.token.type().name()).get()), t.comments);
+                    nextToken();
+                    NElement e = withComments(NElement.ofOpSymbol(NOperatorSymbol.parse(t.token.image()).get()), t.comments);
                     all.add(e);
                     wasOp = true;
                 } else {
@@ -112,7 +113,8 @@ public class TsonCustomParser {
                 }
             } else {
                 if (isOp(t)) {
-                    all.add(withComments(NElement.ofOpSymbol(NOperatorSymbol.parse(t.token.type().name()).get()), t.comments));
+                    nextToken();
+                    all.add(withComments(NElement.ofOpSymbol(NOperatorSymbol.parse(t.token.image()).get()), t.comments));
                     wasOp = true;
                 } else {
                     if (wasOp) {
@@ -255,10 +257,10 @@ public class TsonCustomParser {
         return NElement.ofAnnotation(name, params.toArray(new NElement[0]));
     }
 
-    private NElement object(String name, NElement[] params) {
+    private NElement object(String name, List<NElement> params) {
         NObjectElementBuilder builder = NElement.ofObjectBuilder(name);
         if (params != null) {
-            builder.addAll(Arrays.asList(params));
+            builder.addAll(params);
         }
         skipToken(NElementTokenType.LBRACE);
         while (!isToken(NElementTokenType.RBRACE)) {
@@ -276,10 +278,10 @@ public class TsonCustomParser {
         return builder.build();
     }
 
-    private NElement array(String name, NElement[] params) {
+    private NElement array(String name, List<NElement> params) {
         NArrayElementBuilder builder = NElement.ofArrayBuilder(name);
         if (params != null) {
-            builder.addAll(Arrays.asList(params));
+            builder.addAll(params);
         }
         skipToken(NElementTokenType.LBRACK);
         while (!isToken(NElementTokenType.RBRACK)) {
@@ -312,10 +314,10 @@ public class TsonCustomParser {
         NElementTokenInfo t = peekToken();
         if (t != null && t.token != null) {
             if (t.token.type() == NElementTokenType.LBRACE) {
-                return withComments(object(null, elements.toArray(new NElement[0])), t.comments);
+                return withComments(object(null, elements), t.comments);
             }
             if (t.token.type() == NElementTokenType.LBRACK) {
-                return withComments(array(null, elements.toArray(new NElement[0])), t.comments);
+                return withComments(array(null, elements), t.comments);
             }
         }
         return NElement.ofUplet(elements.toArray(new NElement[0]));
@@ -387,25 +389,36 @@ public class TsonCustomParser {
     private NElement named() {
         NElementTokenInfo nameToken = nextToken();
         String name = nameToken.token.image();
-        if (isToken(NElementTokenType.LPAREN)) {
-            nextToken();
-            List<NElement> params = new ArrayList<>();
-            while (!isToken(NElementTokenType.RPAREN)) {
-                params.add(exprOrPairElement());
-                if (isToken(NElementTokenType.COMMA) || isToken(NElementTokenType.SEMICOLON)) {
+        NElementTokenInfo t = peekToken();
+        if(t!=null && t.token!=null) {
+            switch (t.token.type()) {
+                case LPAREN:{
                     nextToken();
-                } else {
-                    break;
+                    List<NElement> params = new ArrayList<>();
+                    while (!isToken(NElementTokenType.RPAREN)) {
+                        params.add(exprOrPairElement());
+                        if (isToken(NElementTokenType.COMMA) || isToken(NElementTokenType.SEMICOLON)) {
+                            nextToken();
+                        } else {
+                            break;
+                        }
+                    }
+                    skipToken(NElementTokenType.RPAREN);
+                    // Check if followed by { or [
+                    if (isToken(NElementTokenType.LBRACE)) {
+                        return object(name, params); // Should handle name/params
+                    } else if (isToken(NElementTokenType.LBRACK)) {
+                        return array(name, params); // Should handle name/params
+                    }
+                    return NElement.ofUplet(name, params.toArray(new NElement[0]));
+                }
+                case LBRACE:{
+                    return object(name, null);
+                }
+                case LBRACK:{
+                    return array(name, null);
                 }
             }
-            skipToken(NElementTokenType.RPAREN);
-            // Check if followed by { or [
-            if (isToken(NElementTokenType.LBRACE)) {
-                return object(name, params.toArray(new NElement[0])); // Should handle name/params
-            } else if (isToken(NElementTokenType.LBRACK)) {
-                return array(name, params.toArray(new NElement[0])); // Should handle name/params
-            }
-            return NElement.ofUplet(name, params.toArray(new NElement[0]));
         }
         return NElement.ofString(name, NElementType.NAME);
     }
@@ -418,7 +431,7 @@ public class TsonCustomParser {
         }
         NElementTokenInfo ii = new NElementTokenInfo();
         while (true) {
-            NElementToken t = lexer.next();
+            NElementTokenImpl t = lexer.next();
             if (t == null) return ii;
             switch (t.type()) {
                 case WHITESPACE: {
@@ -463,7 +476,7 @@ public class TsonCustomParser {
         return isOp(t.token);
     }
 
-    private boolean isOp(NElementToken t) {
+    private boolean isOp(NElementTokenImpl t) {
         if (t == null) return false;
         switch (t.type()) {
             case OP:
@@ -473,8 +486,8 @@ public class TsonCustomParser {
     }
 
     private class NElementTokenInfo {
-        NElementToken token;
-        List<NElementToken> prefixes = new ArrayList<>();
+        NElementTokenImpl token;
+        List<NElementTokenImpl> prefixes = new ArrayList<>();
         List<NElementComment> comments = new ArrayList<>();
     }
 
