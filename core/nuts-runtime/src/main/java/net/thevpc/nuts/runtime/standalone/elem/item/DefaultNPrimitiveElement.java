@@ -41,10 +41,16 @@ import java.util.Objects;
  * @author thevpc
  */
 public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveElement {
+    public static final DefaultNPrimitiveElement NULL = new DefaultNPrimitiveElement(NElementType.NULL, null);
+
     private final Object value;
 
-    public DefaultNPrimitiveElement(NElementType type, Object value, NElementAnnotation[] annotations, NElementComments comments) {
-        super(type, annotations, comments);
+    public DefaultNPrimitiveElement(NElementType type, Object value) {
+        this(type,value,null,null,null);
+    }
+
+    public DefaultNPrimitiveElement(NElementType type, Object value, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+        super(type, annotations, comments, diagnostics);
         if (type == NElementType.NAME) {
             NAssert.requireTrue(NElementUtils.isValidElementName((String) value), "valid name : " + (String) value);
         }
