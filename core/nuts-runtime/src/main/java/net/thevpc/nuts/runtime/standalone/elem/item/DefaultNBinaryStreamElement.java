@@ -44,8 +44,12 @@ public class DefaultNBinaryStreamElement extends AbstractNElement implements NBi
 
     private final NInputStreamProvider value;
 
-    public DefaultNBinaryStreamElement(NInputStreamProvider value, NElementAnnotation[] annotations, NElementComments comments) {
-        super(NElementType.BINARY_STREAM, annotations, comments);
+    public DefaultNBinaryStreamElement(NInputStreamProvider value) {
+        this(value,null,null,null);
+    }
+
+    public DefaultNBinaryStreamElement(NInputStreamProvider value, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+        super(NElementType.BINARY_STREAM, annotations, comments,diagnostics);
         this.value = value;
     }
 
