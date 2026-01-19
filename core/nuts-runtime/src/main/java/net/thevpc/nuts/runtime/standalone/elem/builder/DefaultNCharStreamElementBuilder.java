@@ -65,7 +65,7 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
 
     @Override
     public NCharStreamElement build() {
-        return new DefaultNCharStreamElement(blockIdentifier,value, annotations().toArray(new NElementAnnotation[0]), comments());
+        return new DefaultNCharStreamElement(blockIdentifier,value, annotations(), comments(), diagnostics());
     }
 
     public String getBlockIdentifier() {
