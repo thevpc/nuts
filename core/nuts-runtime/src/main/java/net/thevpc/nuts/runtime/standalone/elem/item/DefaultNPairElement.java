@@ -46,8 +46,12 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
     private final NElement key;
     private final NElement value;
 
-    public DefaultNPairElement(NElement key, NElement value, NElementAnnotation[] annotations, NElementComments comments) {
-        super(NElementType.PAIR, annotations, comments);
+    public DefaultNPairElement(NElement key, NElement value) {
+        this(key,value,null,null,null);
+    }
+
+    public DefaultNPairElement(NElement key, NElement value, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+        super(NElementType.PAIR, annotations, comments,diagnostics);
         this.key = key;
         this.value = value;
     }
