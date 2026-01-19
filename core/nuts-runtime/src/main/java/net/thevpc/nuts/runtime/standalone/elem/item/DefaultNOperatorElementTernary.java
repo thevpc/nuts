@@ -2,16 +2,20 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DefaultNOperatorElementTernary extends AbstractNOperatorElement implements NTernaryOperatorElement {
     public DefaultNOperatorElementTernary(
             NElement first,
             NElement second,
             NElement third,
-            NOperatorSymbol[] symbols, NOperatorPosition position,
-            NElementAnnotation[] annotations, NElementComments comments) {
-        super(symbols, position, new NElement[]{
-                first, second, third,
-        }, annotations, comments);
+            List<NOperatorSymbol> symbols, NOperatorPosition position,
+            List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+        super(symbols, position, Arrays.asList(
+                first, second, third
+                ), annotations, comments, diagnostics
+        );
     }
 
     @Override
