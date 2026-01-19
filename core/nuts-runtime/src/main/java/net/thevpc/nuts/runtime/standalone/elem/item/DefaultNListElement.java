@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NTreeVisitResult;
 
 import java.util.*;
@@ -9,10 +10,14 @@ public class DefaultNListElement extends AbstractNElement implements NListElemen
     private int depth;
     private List<NListItemElement> children;
 
-    public DefaultNListElement(NElementType type, int depth, List<NListItemElement> children, NElementAnnotation[] annotations, NElementComments comments) {
-        super(type, annotations, comments);
+    public DefaultNListElement(NElementType type, int depth, List<NListItemElement> children) {
+        this(type,depth,children,null,null,null);
+    }
+
+    public DefaultNListElement(NElementType type, int depth, List<NListItemElement> children, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+        super(type, annotations, comments, diagnostics);
         this.depth = depth;
-        this.children = Collections.unmodifiableList(new ArrayList<>(children));
+        this.children = CoreNUtils.copyAndUnmodifiableList(children);
     }
 
     protected NTreeVisitResult traverseChildren(NElementVisitor visitor) {
