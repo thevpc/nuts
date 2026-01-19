@@ -75,7 +75,7 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
 
     @Override
     public NBinaryStreamElement build() {
-        return new DefaultNBinaryStreamElement(value, annotations().toArray(new NElementAnnotation[0]), comments());
+        return new DefaultNBinaryStreamElement(value, annotations(), comments(), diagnostics());
     }
 
     @Override
