@@ -155,11 +155,10 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             for (int i = 0; i < length; i++) {
                 preloaded.add(context.createElement(Array.get(array, i)));
             }
-            return new DefaultNArrayElement(null, null, preloaded, new NElementAnnotation[0], null);
+            return new DefaultNArrayElement(null, null, preloaded);
         } else {
             return new DefaultNArrayElement(null, null,
                     Arrays.stream((Object[]) array).map(x -> context.createElement(x)).collect(Collectors.toList())
-                    , new NElementAnnotation[0], null
             );
         }
     }
