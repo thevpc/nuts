@@ -3,7 +3,6 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.util.NExceptions;
 
 import java.io.*;
-import java.nio.CharBuffer;
 
 public class NCharReader extends Reader {
     private final Reader in;
@@ -41,11 +40,13 @@ public class NCharReader extends Reader {
             limit += n;
         }
     }
-    public int peekChar(int offset) {
+
+    public int peekCharAt(int offset) {
         fill(offset + 1);
         int index = pos + offset;
         return (index < limit) ? buffer[index] : -1;
     }
+
     public String read(int count) {
         char[] c = new char[count];
         int v = read(c);
