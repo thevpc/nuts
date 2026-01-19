@@ -42,8 +42,8 @@ public class DefaultNFlatExprElement extends AbstractNElement
 
     private final NElement[] values;
 
-    public DefaultNFlatExprElement(List<NElement> values, NElementAnnotation[] annotations, NElementComments comments) {
-        super(NElementType.FLAT_EXPR, annotations, comments);
+    public DefaultNFlatExprElement(List<NElement> values, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+        super(NElementType.FLAT_EXPR, annotations, comments, diagnostics);
         this.values = values.toArray(new NElement[0]);
     }
 
