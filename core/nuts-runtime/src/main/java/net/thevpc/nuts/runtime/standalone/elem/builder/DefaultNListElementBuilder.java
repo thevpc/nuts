@@ -29,7 +29,10 @@ public class DefaultNListElementBuilder extends AbstractNElementBuilder implemen
         }
         return new DefaultNListElement(
                 type == null ? NElementType.UNORDERED_LIST : type,
-                depth <= 0 ? 1 : depth, items, null, null
+                depth <= 0 ? 1 : depth, items,
+                annotations(),
+                comments(),
+                diagnostics()
         );
     }
 
