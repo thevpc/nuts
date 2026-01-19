@@ -11,6 +11,21 @@
 
 ---
 
+## TSON Data Model
+A TSON document is represented as a tree of TsonElement nodes. Every element is one of the following:
+
+    TsonPrimitive: A literal value (String, Number, Boolean, Null) optionally tagged with a Unit Suffix (e.g., 5%P) for numbers.
+    TsonName: A "naked" identifier that carries semantic meaning without a value (e.g., bold).
+    TsonPair: A Key-Value association where the key is a String and the value is any TsonElement.
+    TsonContainer: An ordered collection of TsonElement nodes. Containers can be:
+        Braced {}: Typically used for object-like mapping.
+        Bracketed []: Typically used for list-like sequences.
+        Parenthesized (): Typically used for tuples or function-like arguments.
+        Ordered Lists # : primarily used for readability in documentation or simple configurations.
+        Unordered Lists '.' (dot) : primarily used for readability in documentation or simple configurations.
+    TsonAnnotation: A special node (prefixed with @) that provides metadata to the element following it.
+
+
 ## 1. Primitive Literals
 
 TSON supports a wide range of primitive types, including booleans, null, and sophisticated number formats.
@@ -94,6 +109,8 @@ Numbers can be explicitly typed or include custom suffixes (which can represent 
 1.2i_s32% // Complex with type and suffix
 ```
 
+TSON is semantically neutral. While the syntax supports suffixes (e.g., 10ms, 50%) and unquoted identifiers (e.g., Blue), the TSON parser does not validate or convert these. It is the responsibility of the consuming application (e.g., a layout engine or scientific tool) to map these tokens to their respective domain-specific logic.
+
 ---
 
 ## 2. Identifiers
@@ -157,10 +174,20 @@ A single `¶` starts a string that continues until the end of the line. **No esc
 
 ### 3.3 Multi-line Strings (`¶¶`)
 Use `¶¶` for multi-line text. The string continues as long as subsequent lines also start with `¶¶`. **No escaping sequences** are supported.
+
+Multiline strings are defined by a repeating prefix at the start of each line.
+- Aggregation: Consecutive lines starting with ¶¶ are aggregated into a single TsonString element.
+- Newline Preservation: The newline character between lines is preserved in the resulting string.
+- Termination: The element terminates at the first line that does not start with the ¶¶ prefix.
+- Strip Rule: The leading ¶¶ prefix is stripped from each line before being added to the value.
+
+
 ```tson
 ¶¶ Line 1 of a long text.
 ¶¶ Line 2 of the same text.
 ```
+
+Rule: Does the ¶¶ have to be the very first character on the line, or can it be preceded by indentation?
 
 ---
 
@@ -312,8 +339,19 @@ username: "admin"
 ## 8. Lists (Depth-Driven Hierarchy)
 
 Lists are a core feature of TSON, using depth instead of indentation for hierarchy.
+TSON supports two types of implicit hierarchical lists:
+- Unordered Lists (.): Represent a collection of elements where the order may be secondary to the identity (Cardinality).
+- Ordered Lists (#): Represent a sequence where the position is semantically significant (Ordinality).
+Nesting Rules: Hierarchies are created by repeating the prefix. However, TSON allows Cross-Prefix Nesting. An ordered item (#) can contain unordered sub-items (..), and vice-versa.
+The depth of a node is determined by the total count of the prefix characters (. or #). A node at Level 3 (... or ###) is always a child of the most recent node at Level 2, regardless of whether the Level 2 node was ordered or unordered.
 
 ### 8.1 Unordered Lists (`.`)
+Each item in a dotted list is a full TsonElement. This allows list items to be primitives, complex objects, or even nested containers
+TSON supports a shorthand notation for hierarchical lists, primarily used for readability in documentation or simple configurations.
+Syntax: A line starting with one or more dots followed by a space.
+Nesting: The number of dots represents the nesting level.
+Mapping: A dotted list is parsed into a standard TsonContainer.
+
 The number of dots determines the depth.
 ```tson
 . Fruit
@@ -339,6 +377,16 @@ Items can have a value and a sublist.
 .. features
 ... auth
 ... logging
+```
+
+### Cross-Prefix Nesting
+Nesting Rules: Hierarchies are created by repeating the prefix. However, TSON allows Cross-Prefix Nesting. An ordered item (#) can contain unordered sub-items (..), and vice-versa.
+
+```tson
+# Step One
+.. Sub-task A
+.. Sub-task B
+# Step Two
 ```
 
 ### 8.4 Sparse Depth Jumps
@@ -712,3 +760,19 @@ NObjectElement updatedDoc = doc.asObject()
 NElementWriter.ofTson()
     .write(NPath.of("config.tson"), updatedDoc);
 ```
+
+
+## Implementation Requirements
+
+1. Concrete Syntax Tree (CST) Preservation
+
+To support refactoring tools and authoring environments, parsers should ideally be lossless. This means:
+- Whitespace, newlines, and comments are stored as "Trivia" nodes within the tree.
+- The sequence of elements must be preserved exactly as written (Ordered Maps).
+
+2. Error Recovery & Synchronization
+
+Parsers must not fail-fast on syntax errors. They should implement a "Synchronization Strategy":
+- Invalid Tokens: If a sequence cannot be parsed, it should be captured as a TsonErrorNode and the parser should resume at the next separator (,, ;) or closing brace (}, ], )).
+- Partial AST: The resulting tree should contain as much valid data as possible, with error nodes marking the gaps.
+- 
