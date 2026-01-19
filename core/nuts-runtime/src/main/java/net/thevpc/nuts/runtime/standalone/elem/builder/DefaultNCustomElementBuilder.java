@@ -68,7 +68,7 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NCustomElement build() {
-        return new DefaultNCustomElement(value, annotations().toArray(new NElementAnnotation[0]), comments());
+        return new DefaultNCustomElement(value, annotations(), comments(),diagnostics());
     }
 
     @Override
