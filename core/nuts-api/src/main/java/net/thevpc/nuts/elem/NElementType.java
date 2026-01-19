@@ -133,7 +133,7 @@ public enum NElementType implements NEnum {
     PARAMETRIZED_OBJECT,
     ORDERED_LIST,
     UNORDERED_LIST,
-    ERROR,
+    EMPTY,
     ;
 
     /**
