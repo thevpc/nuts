@@ -13,7 +13,7 @@ public class NElementCommentsImpl implements NElementComments {
     public static final NElementComments BLANK = new NElementCommentsImpl();
     private NElementComment[] leadingComments;
     private NElementComment[] trailingComments;
-    private static NElementCommentsImpl EMPTY=new NElementCommentsImpl();
+    public static NElementCommentsImpl EMPTY=new NElementCommentsImpl();
 
     private static NElementComment[] _trim(NElementComment[] all) {
         List<NElementComment> ok = new ArrayList<>();
