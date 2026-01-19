@@ -522,12 +522,12 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     @Override
     public NPrimitiveElement build() {
         if (type().isAnyNumber()) {
-            return new DefaultNNumberElement(type, (Number) value, numberLayout(), numberSuffix(), annotations().toArray(new NElementAnnotation[0]), comments());
+            return new DefaultNNumberElement(type, (Number) value, numberLayout(), numberSuffix(), annotations(), comments(), diagnostics());
         }
         if (type().isAnyStringOrName()) {
-            return new DefaultNStringElement(type, (String) value,(String) value, annotations().toArray(new NElementAnnotation[0]), comments());
+            return new DefaultNStringElement(type, (String) value,(String) value, annotations(), comments(), diagnostics());
         }
-        return new DefaultNPrimitiveElement(type, value, annotations().toArray(new NElementAnnotation[0]), comments());
+        return new DefaultNPrimitiveElement(type, value, annotations(), comments(), diagnostics());
     }
 
     @Override
