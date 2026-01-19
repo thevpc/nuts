@@ -715,9 +715,16 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
         return NElementFactory.of().ofFlatExprBuilder();
     }
 
-    static NErrorElementBuilder ofErrorBuilder() {
+    static NEmptyElementBuilder ofEmptyBuilder() {
         return NElementFactory.of().ofErrorBuilder();
     }
+
+    static NElementDiagnosticBuilder ofDiagnosticBuilder() {
+        return NElementFactory.of().ofDiagnosticBuilder();
+    }
+
+    List<NElementDiagnostic> diagnostics();
+
 
     /**
      * element type
@@ -735,6 +742,8 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
      * @return true if traversal completed fully, false if TERMINATE was returned
      */
     NTreeVisitResult traverse(NElementVisitor visitor);
+
+    List<NElementDiagnostic> findDiagnostics();
 
     boolean isCustomTree();
 
@@ -1082,6 +1091,7 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     NOptional<NDoubleComplex> asDoubleComplexValue();
 
     NOptional<NFloatComplex> asFloatComplexValue();
+    NOptional<NFlatExprElement> asFlatExpression();
 
     NOptional<LocalDate> asLocalDateValue();
 
@@ -1122,10 +1132,14 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     boolean isAnyOperator();
 
     boolean isBinaryInfixOperator();
+    boolean isBinaryInfixOperator(NOperatorSymbol symbol);
 
     boolean isUnaryOperator();
 
     boolean isUnaryPrefixOperator();
+
+    boolean isUnaryPrefixOperator(NOperatorSymbol symbol);
+    boolean isUnarySuffixOperator(NOperatorSymbol symbol);
 
     NOptional<NElement> asNumberType(NElementType elemType);
 
