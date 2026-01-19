@@ -56,26 +56,12 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
     }
 
 
-    protected NErrorElement createError(NMsg message, NElement token) {
-        // You'll implement NElement.ofError(...)
-        // For now, assume it exists
-        NErrorElementBuilder b = NElement.ofErrorBuilder()
-                .setMessage(message);
-        if (token != null) {
-            // If you have location/comments, attach them
-            b.addComments(token.comments());
-        }
-        return b.build();
-    }
-
-    protected NElement createErrorWrapper(NErrorElement error) {
-        return NElement.ofFlatExprBuilder().add(error).build();
-    }
-
     @Override
     public NElement reshape(NFlatExprElement flat) {
         if (flat.isEmpty()) {
-            return createErrorWrapper(createError(NMsg.ofC("Empty expression"), null));
+            return flat.builder()
+                    .addError(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Empty expression")).build())
+                    .build();
         }
 
         Deque<NElement> output = new ArrayDeque<>();
@@ -98,8 +84,10 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
                     int cmp = comparePrecedence(top, opToken);
                     if (cmp > 0 || (cmp == 0 && opToken.assoc == NOperatorAssociativity.LEFT)) {
                         NElement applied = popOperator(operatorStack.pop(), output);
-                        if (applied instanceof NErrorElement) {
-                            return createErrorWrapper((NErrorElement) applied);
+                        if (applied instanceof NEmptyElement) {
+                            return flat.builder()
+                                    .addError(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Empty token")).build())
+                                    .build();
                         }
                         output.push(applied);
                     } else {
@@ -117,19 +105,23 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
         while (!operatorStack.isEmpty()) {
             OperatorToken op = operatorStack.pop();
             if (op.isLeftParen()) {
-                NErrorElement err = createError(NMsg.ofC("Mismatched parentheses"), op.token);
-                return createErrorWrapper(err);
+                return flat.builder()
+                        .addError(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Mismatched parentheses")).build())
+                        .build();
             }
             NElement applied = popOperator(op, output);
-            if (applied instanceof NErrorElement) {
-                return createErrorWrapper((NErrorElement) applied);
+            if (applied instanceof NEmptyElement) {
+                return flat.builder()
+                        .addError(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Empty token")).build())
+                        .build();
             }
             output.push(applied);
         }
 
         if (output.size() != 1) {
-            NErrorElement err = createError(NMsg.ofC("Invalid expression: expected single result"), null);
-            return createErrorWrapper(err);
+            return flat.builder()
+                    .addError(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Invalid expression: expected single result")).build())
+                    .build();
         }
 
         return output.pop();
@@ -141,9 +133,9 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
         try {
             if (op.unary) {
                 if (output.isEmpty()) {
-                    return createError(
-                            NMsg.ofC("Missing operand for unary operator '%s'", op.symbol.lexeme())
-                            , op.token);
+                    return NElement.ofEmptyBuilder()
+                            .addError(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Missing operand for unary operator '%s'", op.symbol.lexeme())).build())
+                            .build();
                 }
                 NElement operand = output.pop();
                 return NElement.ofExprBuilder()
@@ -153,9 +145,9 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
                         .build();
             } else {
                 if (output.size() < 2) {
-                    return createError(
-                            NMsg.ofC("Missing operands for binary operator '%s'", op.symbol.lexeme())
-                            , op.token);
+                    return NElement.ofEmptyBuilder()
+                            .addError(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Missing operands for binary operator '%s'", op.symbol.lexeme())).build())
+                            .build();
                 }
                 NElement right = output.pop();
                 NElement left = output.pop();
@@ -167,9 +159,9 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
                         .build();
             }
         } catch (Exception ex) {
-            return createError(
-                    NMsg.ofC("Operator application failed: %s", ex)
-                    , op.token);
+            return NElement.ofEmptyBuilder()
+                    .addError(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Operator application failed: %s", ex)).build())
+                    .build();
         }
     }
 }
