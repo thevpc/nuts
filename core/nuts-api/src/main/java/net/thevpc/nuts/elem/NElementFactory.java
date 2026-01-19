@@ -376,5 +376,7 @@ public interface NElementFactory extends NComponent {
 
     NFlatExprElementBuilder ofFlatExprBuilder();
 
-    NErrorElementBuilder ofErrorBuilder();
+    NEmptyElementBuilder ofErrorBuilder();
+
+    NElementDiagnosticBuilder ofDiagnosticBuilder();
 }
