@@ -482,7 +482,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     @Override
     public NArrayElement build() {
         return new DefaultNArrayElement(name, params, values,
-                annotations().toArray(new NElementAnnotation[0]), comments());
+                annotations(), comments(), diagnostics());
     }
 
     @Override
