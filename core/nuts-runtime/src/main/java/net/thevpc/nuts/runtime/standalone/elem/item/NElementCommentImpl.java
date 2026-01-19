@@ -13,17 +13,24 @@ public class NElementCommentImpl implements NElementComment {
     private NElementCommentType type;
     private String raw;
     private List<String> lines = new ArrayList<>();
-    private static NElementCommentImpl EMPTY=new NElementCommentImpl(null,null,null);
+    private static NElementCommentImpl EMPTY_MULTI_LINE = new NElementCommentImpl(NElementCommentType.MULTI_LINE, null, null);
+    private static NElementCommentImpl EMPTY_SINGLE_LINE = new NElementCommentImpl(NElementCommentType.SINGLE_LINE, null, null);
 
     public static NElementComment of(String text) {
         return ofMultiLine(text);
     }
 
     public static NElementCommentImpl ofMultiLine(String... text) {
+        if (text == null || text.length == 0 || (text.length == 1 && (text[0] == null || text[0].isEmpty()))) {
+            return EMPTY_MULTI_LINE;
+        }
         return new NElementCommentImpl(NElementCommentType.MULTI_LINE, null, text);
     }
 
     public static NElementCommentImpl ofSingleLine(String... text) {
+        if (text == null || text.length == 0 || (text.length == 1 && (text[0] == null || text[0].isEmpty()))) {
+            return EMPTY_SINGLE_LINE;
+        }
         return new NElementCommentImpl(NElementCommentType.SINGLE_LINE, null, text);
     }
 
@@ -35,14 +42,14 @@ public class NElementCommentImpl implements NElementComment {
             }
         }
         if (raw == null) {
-            this.raw = "/*"+lines.stream().collect(Collectors.joining("\n"))+"*/";
+            this.raw = "/*" + lines.stream().collect(Collectors.joining("\n")) + "*/";
         } else {
             this.raw = raw;
         }
     }
 
     public static NElementComment of(NElementCommentType type, String text) {
-        return type==NElementCommentType.MULTI_LINE ? ofMultiLine(text) : ofSingleLine(text);
+        return type == NElementCommentType.MULTI_LINE ? ofMultiLine(text) : ofSingleLine(text);
     }
 
     @Override
