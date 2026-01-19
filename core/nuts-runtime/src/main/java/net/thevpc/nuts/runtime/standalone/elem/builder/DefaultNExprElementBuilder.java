@@ -20,7 +20,7 @@ public class DefaultNExprElementBuilder extends AbstractNElementBuilder implemen
     private List<NOperatorSymbol> symbols = new ArrayList<>();
     private NOperatorPosition position;
 
-    private List<NElement> operands;
+    private List<NElement> operands=new ArrayList<>();
 
 
     @Override
@@ -114,7 +114,7 @@ public class DefaultNExprElementBuilder extends AbstractNElementBuilder implemen
                 return this;
             }
         }
-        while (this.operands.size() < index) {
+        while (this.operands.size() < index+1) {
             this.operands.add(NElement.ofNull());
         }
         this.operands.set(index, operand == null ? NElement.ofNull() : operand);
@@ -210,7 +210,7 @@ public class DefaultNExprElementBuilder extends AbstractNElementBuilder implemen
                 }
                 return new DefaultNOperatorElementUnary(symbols.get(0),
                         position == null ? NOperatorPosition.PREFIX : position
-                        , operands.get(0), annotations().toArray(new NElementAnnotation[0]), comments());
+                        , operands.get(0), annotations(), comments(), diagnostics());
             }
             case 2: {
                 if (symbols.size() != 1) {
@@ -220,7 +220,7 @@ public class DefaultNExprElementBuilder extends AbstractNElementBuilder implemen
                         position == null ? NOperatorPosition.INFIX : position
                         , operands.get(0)
                         , operands.get(1)
-                        , annotations().toArray(new NElementAnnotation[0]), comments());
+                        , annotations(), comments(), diagnostics());
             }
             case 3: {
                 if (
@@ -232,16 +232,17 @@ public class DefaultNExprElementBuilder extends AbstractNElementBuilder implemen
                         operands.get(0)
                         , operands.get(1)
                         , operands.get(2)
-                        , symbols.toArray(new NOperatorSymbol[0])
+                        , symbols
                         , position == null ? NOperatorPosition.INFIX : position
-                        , annotations().toArray(new NElementAnnotation[0]), comments());
+                        , annotations(), comments(), diagnostics());
             }
         }
         return new DefaultNOperatorElementNary(
-                operands.toArray(new NElement[0]),
-                symbols.toArray(new NOperatorSymbol[0]),
+                operands,
+                symbols,
                 position == null ? NOperatorPosition.INFIX : position
-                , annotations().toArray(new NElementAnnotation[0]), comments()
+                , annotations(), comments()
+                , diagnostics()
         );
     }
 
