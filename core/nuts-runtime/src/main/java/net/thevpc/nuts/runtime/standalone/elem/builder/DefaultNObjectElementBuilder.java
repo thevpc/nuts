@@ -394,7 +394,7 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     private NPairElement pair(NElement k, NElement v) {
-        return new DefaultNPairElement(k, v, new NElementAnnotation[0], new NElementCommentsImpl());
+        return new DefaultNPairElement(k, v);
     }
 
     @Override
@@ -664,8 +664,9 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     @Override
     public NObjectElement build() {
         return new DefaultNObjectElement(name, params, values
-                , annotations().toArray(new NElementAnnotation[0])
+                , annotations()
                 , comments()
+                , diagnostics()
         );
     }
 
