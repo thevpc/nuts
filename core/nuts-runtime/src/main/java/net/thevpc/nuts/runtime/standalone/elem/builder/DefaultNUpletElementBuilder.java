@@ -454,7 +454,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     @Override
     public NUpletElement build() {
         return new DefaultNUpletElement(name, params,
-                annotations().toArray(new NElementAnnotation[0]), comments());
+                annotations(), comments(), diagnostics());
     }
 
     @Override
@@ -621,7 +621,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     private NPairElement pair(NElement k, NElement v) {
-        return new DefaultNPairElement(k, v, new NElementAnnotation[0], new NElementCommentsImpl());
+        return new DefaultNPairElement(k, v);
     }
 
     @Override
