@@ -9,6 +9,7 @@ import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsServiceType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
+import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
 
@@ -459,7 +460,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     private void createFileFromTemplate(String resource0, String file) {
         String resource = "/net/thevpc/nuts/runtime/svc/" + resource0;
         logVerbose(NMsg.ofC("[FILE] CREATE FILE %s",NMsg.ofStyledPath(resource)));
-        String lineSeparator = System.getProperty("line.separator");
+        String lineSeparator = NNewLineMode.system().value();
         if (getClass().getResource(resource) == null) {
             throw new RuntimeException("resource not found " + resource);
         }
