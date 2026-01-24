@@ -41,8 +41,6 @@ import java.util.function.Consumer;
  * @app.category Elements
  */
 public interface NUpletElementBuilder extends NElementBuilder {
-    NUpletElementBuilder doWith(Consumer<NUpletElementBuilder> con);
-
     static NUpletElementBuilder of() {
         return NElement.ofUpletBuilder();
     }
@@ -283,61 +281,6 @@ public interface NUpletElementBuilder extends NElementBuilder {
      */
     NUpletElementBuilder remove(int index);
 
-    /**
-     * reset this instance with the given array
-     *
-     * @param other array
-     * @return {@code this} instance
-     */
-    NUpletElementBuilder copyFrom(NUpletElementBuilder other);
-
-    /**
-     * create array with this instance elements
-     *
-     * @return new array instance
-     */
-    NUpletElement build();
-
-
-    NUpletElementBuilder addAnnotations(List<NElementAnnotation> annotations);
-
-    NUpletElementBuilder addAnnotation(String name, NElement... args);
-
-    NUpletElementBuilder addAnnotation(NElementAnnotation annotation);
-
-    NUpletElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
-
-    NUpletElementBuilder removeAnnotationAt(int index);
-
-    NUpletElementBuilder removeAnnotation(NElementAnnotation annotation);
-
-    NUpletElementBuilder clearAnnotations();
-
-    NUpletElementBuilder addLeadingComment(NElementCommentType type, String text);
-
-    NUpletElementBuilder addTrailingComment(NElementCommentType type, String text);
-
-    NUpletElementBuilder addLeadingComment(NElementComment comment);
-
-    NUpletElementBuilder addLeadingComments(NElementComment... comments);
-
-    NUpletElementBuilder addTrailingComment(NElementComment comment);
-
-    NUpletElementBuilder addTrailingComments(NElementComment... comments);
-
-    NUpletElementBuilder removeLeadingComment(NElementComment comment);
-
-    NUpletElementBuilder removeTrailingComment(NElementComment comment);
-
-    NUpletElementBuilder removeLeadingCommentAt(int index);
-
-    NUpletElementBuilder removeTrailingCommentAt(int index);
-
-    NUpletElementBuilder clearComments();
-
-    NUpletElementBuilder addComments(NElementComments comments);
-
-
     NUpletElementBuilder set(String name, NElement value);
 
     NUpletElementBuilder set(String name, boolean value);
@@ -374,6 +317,53 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     NUpletElementBuilder addAll(Map<NElement, NElement> other);
 
+    NUpletElementBuilder setParams(List<NElement> params);
+
+    NUpletElementBuilder doWith(Consumer<NUpletElementBuilder> con);
+
+
+    /**
+     * create array with this instance elements
+     *
+     * @return new array instance
+     */
+    NUpletElement build();
+
+    /// ///////////////////////////////////////////////
+    NUpletElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+
+    NUpletElementBuilder addAnnotation(NElementAnnotation annotation);
+
+    NUpletElementBuilder addAnnotation(String name, NElement... args);
+
+    NUpletElementBuilder addAffix(int index, NBoundAffix affix);
+
+    NUpletElementBuilder setAffix(int index, NBoundAffix affix);
+
+    NUpletElementBuilder addAffix(NBoundAffix affix);
+
+    NUpletElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NUpletElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NUpletElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
+
+    NUpletElementBuilder removeAffix(int index);
+
+    NUpletElementBuilder removeAnnotation(NElementAnnotation annotation);
+
+    NUpletElementBuilder clearAnnotations();
+
+    NUpletElementBuilder addLeadingComment(NElementComment comment);
+
+    NUpletElementBuilder addLeadingComments(NElementComment... comments);
+
+    NUpletElementBuilder addTrailingComments(NElementComment... comments);
+
+    NUpletElementBuilder addTrailingComment(NElementComment comment);
+
+    NUpletElementBuilder clearComments();
+
     NUpletElementBuilder copyFrom(NElementBuilder other);
 
     NUpletElementBuilder copyFrom(NElement other);
@@ -382,5 +372,9 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     NUpletElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 
-    NUpletElementBuilder setParams(List<NElement> params);
+    NUpletElementBuilder addDiagnostic(NElementDiagnostic error);
+
+    NUpletElementBuilder removeDiagnostic(NElementDiagnostic error);
+
+    NUpletElementBuilder addAffixes(List<NBoundAffix> affixes);
 }
