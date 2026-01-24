@@ -16,7 +16,6 @@ import java.time.temporal.Temporal;
 import java.util.Date;
 
 public abstract class NPrintStreamBase implements NPrintStream {
-    private static String LINE_SEP = System.getProperty("line.separator");
     protected Bindings bindings;
     protected OutputStream osWrapper;
     protected PrintStream psWrapper;
@@ -25,6 +24,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
     private NTerminalMode mode;
     protected NSystemTerminalBase term;
     private DefaultNContentMetadata md = new DefaultNContentMetadata();
+    private NStringWriter nStringWriter;
 
     public NPrintStreamBase(boolean autoFlash, NTerminalMode mode, Bindings bindings, NSystemTerminalBase term) {
         NAssert.requireNonNull(mode, "mode");
@@ -32,10 +32,32 @@ public abstract class NPrintStreamBase implements NPrintStream {
         this.bindings = bindings;
         this.autoFlash = autoFlash;
         this.mode = mode;
-        if(term==null && mode==NTerminalMode.ANSI){
-            term=new AnsiNPrintStreamTerminalBase(this);
+        if (term == null && mode == NTerminalMode.ANSI) {
+            term = new AnsiNPrintStreamTerminalBase(this);
         }
         this.term = term;
+        this.nStringWriter = new NStringWriter() {
+            @Override
+            public void write(char text) {
+                NPrintStreamBase.this.write(text);
+            }
+
+            @Override
+            public void write(String text) {
+                char[] c = text.toCharArray();
+                NPrintStreamBase.this.write(c, 0, c.length);
+            }
+
+            @Override
+            public void write(char[] text, int offset, int len) {
+                NPrintStreamBase.this.write(text, offset, len);
+            }
+        };
+    }
+
+    @Override
+    public NStringWriter asStringWriter() {
+        return nStringWriter;
     }
 
     public NContentMetadata getMetaData() {
@@ -278,7 +300,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
 
     @Override
     public NPrintStream println() {
-        this.print(LINE_SEP);
+        this.print(NNewLineMode.system().value());
         if (this.autoFlash) {
             flush();
         }
@@ -511,7 +533,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
         }
 
         public void setOrErr(NPrintStreamBase o, NTerminalMode mode) {
-            setIfNull(o,mode,true);
+            setIfNull(o, mode, true);
         }
 
         public void setIfNull(NPrintStreamBase o, NTerminalMode mode, boolean err) {
@@ -570,7 +592,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
                 case DEFAULT: {
                     if (this.raw == null) {
                         this.raw = o;
-                    }else {
+                    } else {
                         if (err) {
                             throw new IllegalArgumentException("already bound " + mode);
                         }
