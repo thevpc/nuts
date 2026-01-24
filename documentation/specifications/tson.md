@@ -21,8 +21,8 @@ A TSON document is represented as a tree of TsonElement nodes. Every element is 
         Braced {}: Typically used for object-like mapping.
         Bracketed []: Typically used for list-like sequences.
         Parenthesized (): Typically used for tuples or function-like arguments.
-        Ordered Lists # : primarily used for readability in documentation or simple configurations.
-        Unordered Lists '.' (dot) : primarily used for readability in documentation or simple configurations.
+        Ordered Lists [#] : primarily used for readability in documentation or simple configurations.
+        Unordered Lists [.] (dot) : primarily used for readability in documentation or simple configurations.
     TsonAnnotation: A special node (prefixed with @) that provides metadata to the element following it.
 
 
@@ -354,48 +354,55 @@ Mapping: A dotted list is parsed into a standard TsonContainer.
 
 The number of dots determines the depth.
 ```tson
-. Fruit
-.. Apple
-.. Banana
-. Vegetable
-.. Carrot
+[.] Fruit
+[..] Apple
+[..] Banana
+[.] Vegetable
+[..] Carrot
 ```
 
 ### 8.2 Ordered Lists (`#`)
 ```tson
-# Step 1
-## Substep A
-## Substep B
-# Step 2
-```
-
-### 8.3 Mixed Content
-Items can have a value and a sublist.
-```tson
-. Server Config
-.. port: 8080
-.. features
-... auth
-... logging
+[#] Step 1
+[##] Substep A
+[##] Substep B
+[#} Step 2
 ```
 
 ### Cross-Prefix Nesting
 Nesting Rules: Hierarchies are created by repeating the prefix. However, TSON allows Cross-Prefix Nesting. An ordered item (#) can contain unordered sub-items (..), and vice-versa.
 
 ```tson
-# Step One
-.. Sub-task A
-.. Sub-task B
-# Step Two
+[#] Step One
+[..] Sub-task A
+[..] Sub-task B
+[#] Step Two
 ```
 
 ### 8.4 Sparse Depth Jumps
 Depth can jump arbitrarily. TSON attaches to the most recent shallower item.
 ```tson
-. Top
-..... Deep Child       // depth 5 → child of "Top"
-.. Sibling             // depth 2 → also child of "Top"
+[.] Top
+[.....] Deep Child       // depth 5 → child of "Top"
+[..] Sibling             // depth 2 → also child of "Top"
 ```
+
+
+8.5 Variants and Array Disambiguation
+
+TSON supports two visual variants for list markers: ASCII and Unicode.
+- Unordered lists: [.] (ASCII) or [●] / ● (Unicode)
+- Ordered lists: [#] (ASCII) or [■] / ■ (Unicode)
+
+Repetition of the marker character indicates depth: e.g., [..] or ●● represents a child of the previous [.] or ●. 
+Both bracketed and plain repeated forms are equivalent and can be used interchangeably.
+Distinguishing from arrays: TSON treats a marker as a list prefix only when it matches the canonical marker patterns above. For example:
+
+- [.] → unordered list item
+- [ . ] → an array containing a single element .
+
+This allows TSON to safely parse lists while still permitting any valid TSON expression to be a node, including arrays or operators that resemble list markers. 
+Parser logic relies on marker shape and repetition to determine list type and depth, ensuring that lists and arrays are unambiguously differentiated.
 
 ---
 
