@@ -25,6 +25,7 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
 
@@ -39,25 +40,21 @@ import java.util.List;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NElementAnnotation extends NBlankable {
+public interface NElementAnnotation extends NAffix {
 
     String name();
 
+    List<NBoundAffix> affixes();
+
     int size();
 
-    boolean isCustomTree();
+    NOptional<NElement> param(int index);
 
-    boolean isErrorTree();
-
-    NElement param(int index);
-
-    List<NElement> params();
+    NOptional<List<NElement>> params();
 
     boolean isParametrized();
 
     boolean isNamed();
-
-    String toString(boolean compact);
 
     NElementAnnotationBuilder builder();
 }
