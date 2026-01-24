@@ -6,10 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DefaultNOperatorElementBinary extends AbstractNOperatorElement implements NBinaryOperatorElement {
-    public DefaultNOperatorElementBinary(NOperatorSymbol symbol, NOperatorPosition position, NElement first, NElement second, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+    public DefaultNOperatorElementBinary(NOperatorSymbol symbol, NOperatorPosition position, NElement first, NElement second, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
         super(Arrays.asList(symbol), position
                 , Arrays.asList(first, second)
-                , annotations, comments, diagnostics
+                , affixes, diagnostics
         );
     }
 
