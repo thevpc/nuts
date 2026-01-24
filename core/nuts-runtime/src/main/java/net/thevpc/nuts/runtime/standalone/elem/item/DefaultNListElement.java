@@ -11,11 +11,11 @@ public class DefaultNListElement extends AbstractNElement implements NListElemen
     private List<NListItemElement> children;
 
     public DefaultNListElement(NElementType type, int depth, List<NListItemElement> children) {
-        this(type,depth,children,null,null,null);
+        this(type,depth,children,null,null);
     }
 
-    public DefaultNListElement(NElementType type, int depth, List<NListItemElement> children, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
-        super(type, annotations, comments, diagnostics);
+    public DefaultNListElement(NElementType type, int depth, List<NListItemElement> children, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+        super(type, affixes, diagnostics);
         this.depth = depth;
         this.children = CoreNUtils.copyAndUnmodifiableList(children);
     }
@@ -49,45 +49,8 @@ public class DefaultNListElement extends AbstractNElement implements NListElemen
     }
 
     @Override
-    public List<NListItemElement> children() {
+    public List<NListItemElement> items() {
         return children;
-    }
-
-    @Override
-    public String toString(boolean compact) {
-        switch (type()) {
-            case ORDERED_LIST: {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < children.size(); i++) {
-                    NListItemElement child = children.get(i);
-                    if (i > 0) {
-                        sb.append("\n");
-                    }
-                    for (int j = 0; j < child.depth(); j++) {
-                        sb.append("#");
-                    }
-                    sb.append(" ");
-                    sb.append(child.toString());
-                }
-                return sb.toString();
-            }
-            case UNORDERED_LIST: {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < children.size(); i++) {
-                    NListItemElement child = children.get(i);
-                    if (i > 0) {
-                        sb.append("\n");
-                    }
-                    for (int j = 0; j < child.depth(); j++) {
-                        sb.append(".");
-                    }
-                    sb.append(" ");
-                    sb.append(child.toString());
-                }
-                return sb.toString();
-            }
-        }
-        return "";
     }
 
     @Override
@@ -106,10 +69,5 @@ public class DefaultNListElement extends AbstractNElement implements NListElemen
     @Override
     public int size() {
         return children.size();
-    }
-
-    @Override
-    public String toString() {
-        return toString(false);
     }
 }
