@@ -88,12 +88,6 @@ public class DefaultNExprElementBuilder extends AbstractNElementBuilder implemen
     }
 
     @Override
-    public NExprElementBuilder removeAnnotation(NElementAnnotation annotation) {
-        super.removeAnnotation(annotation);
-        return this;
-    }
-
-    @Override
     public NOperatorPosition position() {
         return position;
     }
@@ -186,7 +180,7 @@ public class DefaultNExprElementBuilder extends AbstractNElementBuilder implemen
     }
 
     public String toString(boolean compact) {
-        return build().toString(compact);
+        return build().toString();
     }
 
     @Override
@@ -210,7 +204,7 @@ public class DefaultNExprElementBuilder extends AbstractNElementBuilder implemen
                 }
                 return new DefaultNOperatorElementUnary(symbols.get(0),
                         position == null ? NOperatorPosition.PREFIX : position
-                        , operands.get(0), annotations(), comments(), diagnostics());
+                        , operands.get(0), affixes(), diagnostics());
             }
             case 2: {
                 if (symbols.size() != 1) {
@@ -220,7 +214,7 @@ public class DefaultNExprElementBuilder extends AbstractNElementBuilder implemen
                         position == null ? NOperatorPosition.INFIX : position
                         , operands.get(0)
                         , operands.get(1)
-                        , annotations(), comments(), diagnostics());
+                        , affixes(), diagnostics());
             }
             case 3: {
                 if (
@@ -234,35 +228,16 @@ public class DefaultNExprElementBuilder extends AbstractNElementBuilder implemen
                         , operands.get(2)
                         , symbols
                         , position == null ? NOperatorPosition.INFIX : position
-                        , annotations(), comments(), diagnostics());
+                        , affixes(), diagnostics());
             }
         }
         return new DefaultNOperatorElementNary(
                 operands,
                 symbols,
                 position == null ? NOperatorPosition.INFIX : position
-                , annotations(), comments()
+                , affixes()
                 , diagnostics()
         );
-    }
-
-    @Override
-    public NExprElementBuilder copyFrom(NExprElementBuilder element) {
-        if (element != null) {
-            super.copyFrom(element);
-            symbols(element.symbols().toArray(new NOperatorSymbol[0]));
-            operands(element.operands().toArray(new NElement[0]));
-            position = element.position();
-        }
-        return this;
-    }
-
-    @Override
-    public NExprElementBuilder copyFrom(NElementBuilder other) {
-        if (other instanceof NExprElementBuilder) {
-            return copyFrom((NExprElementBuilder) other);
-        }
-        return (NExprElementBuilder) super.copyFrom(other);
     }
 
     ///
@@ -272,108 +247,177 @@ public class DefaultNExprElementBuilder extends AbstractNElementBuilder implemen
         return this;
     }
 
-    @Override
-    public NExprElementBuilder addLeadingComment(NElementCommentType type, String text) {
-        return (NExprElementBuilder) super.addLeadingComment(type, text);
-    }
-
-    @Override
-    public NExprElementBuilder addTrailingComment(NElementCommentType type, String text) {
-        return (NExprElementBuilder) super.addTrailingComment(type, text);
-    }
-
-    @Override
-    public NExprElementBuilder addLeadingComment(NElementComment comment) {
-        return (NExprElementBuilder) super.addLeadingComment(comment);
-    }
-
-    @Override
-    public NExprElementBuilder addLeadingComments(NElementComment... comments) {
-        return (NExprElementBuilder) super.addLeadingComments(comments);
-    }
-
-    @Override
-    public NExprElementBuilder addTrailingComment(NElementComment comment) {
-        return (NExprElementBuilder) super.addTrailingComment(comment);
-    }
-
-    @Override
-    public NExprElementBuilder addTrailingComments(NElementComment... comments) {
-        return (NExprElementBuilder) super.addTrailingComments(comments);
-    }
-
-    @Override
-    public NExprElementBuilder clearComments() {
-        return (NExprElementBuilder) super.clearComments();
-    }
-
-    @Override
-    public NExprElementBuilder removeTrailingCommentAt(int index) {
-        return (NExprElementBuilder) super.removeTrailingCommentAt(index);
-    }
-
-    @Override
-    public NExprElementBuilder removeLeadingCommentAt(int index) {
-        return (NExprElementBuilder) super.removeLeadingCommentAt(index);
-    }
-
-    @Override
-    public NExprElementBuilder removeTrailingComment(NElementComment comment) {
-        return (NExprElementBuilder) super.removeTrailingComment(comment);
-    }
-
-    @Override
-    public NExprElementBuilder removeLeadingComment(NElementComment comment) {
-        return (NExprElementBuilder) super.removeLeadingComment(comment);
-    }
-
-    @Override
-    public NExprElementBuilder addComments(NElementComments comments) {
-        return (NExprElementBuilder) super.addComments(comments);
-    }
-
-    @Override
-    public NExprElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        return (NExprElementBuilder) super.addAnnotations(annotations);
-    }
-
-    @Override
-    public NExprElementBuilder addAnnotation(String name, NElement... args) {
-        return (NExprElementBuilder) super.addAnnotation(name, args);
-    }
-
-    @Override
-    public NExprElementBuilder addAnnotation(NElementAnnotation annotation) {
-        return (NExprElementBuilder) super.addAnnotation(annotation);
-    }
-
-    @Override
-    public NExprElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        return (NExprElementBuilder) super.addAnnotationAt(index, annotation);
-    }
-
-    @Override
-    public NExprElementBuilder removeAnnotationAt(int index) {
-        return (NExprElementBuilder) super.removeAnnotationAt(index);
-    }
-
-    @Override
-    public NExprElementBuilder clearAnnotations() {
-        return (NExprElementBuilder) super.clearAnnotations();
-    }
+    // ------------------------------------------
 
     @Override
     public NExprElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
-        return (NExprElementBuilder) super.copyFrom(other, assignmentPolicy);
+        super.copyFrom(other, assignmentPolicy);
+        if (other instanceof NExprElementBuilder) {
+            NExprElementBuilder b = (NExprElementBuilder) other;
+            symbols(b.symbols().toArray(new NOperatorSymbol[0]));
+            operands(b.operands().toArray(new NElement[0]));
+            position = b.position();
+        }
+        return this;
     }
 
     @Override
     public NExprElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
-        return (NExprElementBuilder) super.copyFrom(other, assignmentPolicy);
+        super.copyFrom(other, assignmentPolicy);
+        if (other instanceof NExprElement) {
+            NExprElement b = (NExprElement) other;
+            symbols(b.operatorSymbols().toArray(new NOperatorSymbol[0]));
+            operands(b.operands().toArray(new NElement[0]));
+            position = b.position();
+        }
+        return this;
+    }
+
+    // ------------------------------------------
+    // RETURN SIG
+    // ------------------------------------------
+
+    @Override
+    public NExprElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+        super.addAnnotations(annotations);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name, args);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder addAnnotation(NElementAnnotation annotation) {
+        super.addAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder addAffix(int index, NBoundAffix affix) {
+        super.addAffix(index, affix);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder removeAffix(int index) {
+        super.removeAffix(index);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder clearAnnotations() {
+        super.clearAnnotations();
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder clearComments() {
+        super.clearComments();
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder setAffix(int index, NBoundAffix affix) {
+        super.setAffix(index, affix);
+        return this;
+    }
+
+    public NExprElementBuilder addAffix(NBoundAffix affix){
+        super.addAffix(affix);
+        return this;
+    }
+
+
+    @Override
+    public NExprElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.setAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder removeDiagnostic(NElementDiagnostic error) {
+        super.removeDiagnostic(error);
+        return this;
+    }
+
+    public NExprElementBuilder addAffixes(List<NBoundAffix> affixes) {
+        super.addAffixes(affixes);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder addDiagnostic(NElementDiagnostic error) {
+        super.addDiagnostic(error);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder addAffixes(List<? extends NAffix> affixes, NAffixAnchor anchor) {
+        super.addAffixes(affixes, anchor);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder addAffix(NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor) {
+        super.removeAffixes(type, anchor);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder addLeadingComment(NElementComment comment) {
+        super.addLeadingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder addLeadingComments(NElementComment... comments) {
+        super.addLeadingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder addTrailingComment(NElementComment comment) {
+        super.addTrailingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder addTrailingComments(NElementComment... comments) {
+        super.addTrailingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NExprElementBuilder copyFrom(NElementBuilder other) {
+        super.copyFrom(other);
+        return this;
     }
 
     @Override
     public NExprElementBuilder copyFrom(NElement other) {
-        return (NExprElementBuilder) super.copyFrom(other);
+        super.copyFrom(other);
+        return this;
     }
+
 }
