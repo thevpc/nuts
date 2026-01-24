@@ -42,33 +42,19 @@ import java.util.function.Consumer;
  * @author thevpc
  */
 public interface NPrimitiveElementBuilder extends NElementBuilder {
-    NPrimitiveElementBuilder doWith(Consumer<NPrimitiveElementBuilder> con);
+    static NPrimitiveElementBuilder of() {
+        return NElement.ofPrimitiveBuilder();
+    }
 
     NNumberLayout numberLayout();
 
     NPrimitiveElementBuilder numberLayout(NNumberLayout numberLayout);
 
     String numberSuffix();
+    String image();
 
     NPrimitiveElementBuilder numberSuffix(String numberSuffix);
 
-    NPrimitiveElementBuilder addAnnotations(List<NElementAnnotation> annotations);
-
-    NPrimitiveElementBuilder addAnnotation(String name, NElement... args);
-
-    NPrimitiveElementBuilder addAnnotation(NElementAnnotation annotation);
-
-    NPrimitiveElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
-
-    NPrimitiveElementBuilder removeAnnotationAt(int index);
-
-    NPrimitiveElementBuilder removeAnnotation(NElementAnnotation annotation);
-
-    NPrimitiveElementBuilder clearAnnotations();
-
-    List<NElementAnnotation> annotations();
-
-    NPrimitiveElement build();
 
     Object value();
 
@@ -144,29 +130,43 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
 
     NPrimitiveElementBuilder setBigComplex(NBigComplex value);
 
-    NPrimitiveElementBuilder addLeadingComment(NElementCommentType type, String text);
+    NPrimitiveElementBuilder doWith(Consumer<NPrimitiveElementBuilder> con);
 
-    NPrimitiveElementBuilder addTrailingComment(NElementCommentType type, String text);
+    NPrimitiveElement build();
+
+    /// ///////////////////////////////////////////////
+    NPrimitiveElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+
+    NPrimitiveElementBuilder addAnnotation(NElementAnnotation annotation);
+
+    NPrimitiveElementBuilder addAnnotation(String name, NElement... args);
+
+    NPrimitiveElementBuilder addAffix(int index, NBoundAffix affix);
+
+    NPrimitiveElementBuilder setAffix(int index, NBoundAffix affix);
+    NPrimitiveElementBuilder addAffix(NBoundAffix affix);
+
+    NPrimitiveElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NPrimitiveElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NPrimitiveElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
+
+    NPrimitiveElementBuilder removeAffix(int index);
+
+    NPrimitiveElementBuilder removeAnnotation(NElementAnnotation annotation);
+
+    NPrimitiveElementBuilder clearAnnotations();
 
     NPrimitiveElementBuilder addLeadingComment(NElementComment comment);
 
     NPrimitiveElementBuilder addLeadingComments(NElementComment... comments);
 
-    NPrimitiveElementBuilder addTrailingComment(NElementComment comment);
-
     NPrimitiveElementBuilder addTrailingComments(NElementComment... comments);
 
-    NPrimitiveElementBuilder removeLeadingComment(NElementComment comment);
-
-    NPrimitiveElementBuilder removeTrailingComment(NElementComment comment);
-
-    NPrimitiveElementBuilder removeLeadingCommentAt(int index);
-
-    NPrimitiveElementBuilder removeTrailingCommentAt(int index);
+    NPrimitiveElementBuilder addTrailingComment(NElementComment comment);
 
     NPrimitiveElementBuilder clearComments();
-
-    NPrimitiveElementBuilder addComments(NElementComments comments);
 
     NPrimitiveElementBuilder copyFrom(NElementBuilder other);
 
@@ -175,4 +175,10 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
     NPrimitiveElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
     NPrimitiveElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
+
+    NPrimitiveElementBuilder addDiagnostic(NElementDiagnostic error);
+
+    NPrimitiveElementBuilder removeDiagnostic(NElementDiagnostic error);
+
+    NPrimitiveElementBuilder addAffixes(List<NBoundAffix> affixes);
 }
