@@ -67,58 +67,47 @@ public interface NExprElementBuilder extends NElementBuilder {
 
     NOperatorSymbol symbol();
 
-    NExprElement build();
+    NExprElementBuilder setOperand(int index, NElement operand);
 
-    /// /////////////
+    NExprElementBuilder first(NElement value);
 
     NExprElementBuilder doWith(Consumer<NExprElementBuilder> con);
 
-    NExprElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+    NExprElement build();
 
-    NExprElementBuilder addAnnotation(String name, NElement... args);
+    /// ///////////////////////////////////////////////
+    NExprElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
     NExprElementBuilder addAnnotation(NElementAnnotation annotation);
 
-    NExprElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
+    NExprElementBuilder addAnnotation(String name, NElement... args);
 
-    NExprElementBuilder removeAnnotationAt(int index);
+    NExprElementBuilder addAffix(int index, NBoundAffix affix);
+
+    NExprElementBuilder setAffix(int index, NBoundAffix affix);
+    NExprElementBuilder addAffix(NBoundAffix affix);
+
+    NExprElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NExprElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NExprElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
+
+    NExprElementBuilder removeAffix(int index);
 
     NExprElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NExprElementBuilder clearAnnotations();
 
-    List<NElementAnnotation> annotations();
-
-    NExprElementBuilder copyFrom(NExprElementBuilder element);
-
-    NExprElementBuilder addLeadingComment(NElementCommentType type, String text);
-
-    NExprElementBuilder addTrailingComment(NElementCommentType type, String text);
-
     NExprElementBuilder addLeadingComment(NElementComment comment);
 
     NExprElementBuilder addLeadingComments(NElementComment... comments);
 
-    NExprElementBuilder addTrailingComment(NElementComment comment);
-
     NExprElementBuilder addTrailingComments(NElementComment... comments);
 
-    NExprElementBuilder removeLeadingComment(NElementComment comment);
-
-    NExprElementBuilder removeTrailingComment(NElementComment comment);
-
-    NExprElementBuilder removeLeadingCommentAt(int index);
-
-    NExprElementBuilder removeTrailingCommentAt(int index);
+    NExprElementBuilder addTrailingComment(NElementComment comment);
 
     NExprElementBuilder clearComments();
-
-    NExprElementBuilder addComments(NElementComments comments);
-
-    NExprElementBuilder setOperand(int index, NElement operand);
-
-    NExprElementBuilder first(NElement value);
-
 
     NExprElementBuilder copyFrom(NElementBuilder other);
 
@@ -127,4 +116,10 @@ public interface NExprElementBuilder extends NElementBuilder {
     NExprElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
     NExprElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
+
+    NExprElementBuilder addDiagnostic(NElementDiagnostic error);
+
+    NExprElementBuilder removeDiagnostic(NElementDiagnostic error);
+
+    NExprElementBuilder addAffixes(List<NBoundAffix> affixes);
 }
