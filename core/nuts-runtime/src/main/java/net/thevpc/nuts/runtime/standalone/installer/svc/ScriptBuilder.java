@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.installer.svc;
 
+import net.thevpc.nuts.text.NNewLineMode;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +43,7 @@ class ScriptBuilder {
 
     public ScriptBuilder println(String s) {
         sb.append(s);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(NNewLineMode.system().value());
         return this;
     }
 
