@@ -8,5 +8,5 @@ import java.util.List;
 public interface NListElement extends NElement{
     int depth();
     int size();
-    List<NListItemElement> children();
+    List<NListItemElement> items();
 }
