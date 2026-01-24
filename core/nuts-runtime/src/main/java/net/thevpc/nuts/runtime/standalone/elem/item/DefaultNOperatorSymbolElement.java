@@ -8,26 +8,16 @@ public class DefaultNOperatorSymbolElement extends AbstractNElement implements N
     private NOperatorSymbol symbol;
 
     public DefaultNOperatorSymbolElement(NOperatorSymbol op) {
-        this(op,null,null,null);
+        this(op,null,null);
     }
 
-    public DefaultNOperatorSymbolElement(NOperatorSymbol op, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
-        super(NElementType.OPERATOR_SYMBOL, annotations, comments, diagnostics);
+    public DefaultNOperatorSymbolElement(NOperatorSymbol op, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+        super(NElementType.OPERATOR_SYMBOL, affixes, diagnostics);
         this.symbol = op;
     }
 
     @Override
     public NOperatorSymbol symbol() {
         return symbol;
-    }
-
-    @Override
-    public String toString(boolean compact) {
-        return symbol.lexeme();
-    }
-
-    @Override
-    public String toString() {
-        return symbol.lexeme();
     }
 }
