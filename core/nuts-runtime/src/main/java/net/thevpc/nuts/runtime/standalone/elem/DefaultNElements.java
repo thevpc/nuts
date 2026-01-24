@@ -27,6 +27,16 @@ public class DefaultNElements implements NElements {
         this.userElementMapperStore.setReflectRepository(NReflectRepository.of());
     }
 
+    @Override
+    public NElementFormatterBuilder createElementFormatterBuilder() {
+        return new DefaultNElementFormatterBuilder();
+    }
+
+    @Override
+    public NElementPath createRootPath() {
+        return DefaultNElementPath.ROOT;
+    }
+
     public boolean isNtf() {
         return ntf;
     }
@@ -118,10 +128,10 @@ public class DefaultNElements implements NElements {
 
     public NElementType commonNumberType(NElementType aa, NElementType bb) {
         if (aa != null) {
-            NAssert.requireEquals(NElementTypeGroup.NUMBER, aa.typeGroup(), "aa typeGroup");
+            NAssert.requireEquals(NElementTypeGroup.NUMBER, aa.group(), "aa typeGroup");
         }
         if (bb != null) {
-            NAssert.requireEquals(NElementTypeGroup.NUMBER, bb.typeGroup(), "bb typeGroup");
+            NAssert.requireEquals(NElementTypeGroup.NUMBER, bb.group(), "bb typeGroup");
         }
 
         if (aa == null && bb == null) {
