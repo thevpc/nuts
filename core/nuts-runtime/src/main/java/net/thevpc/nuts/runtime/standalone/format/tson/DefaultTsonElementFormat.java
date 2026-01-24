@@ -27,10 +27,8 @@ package net.thevpc.nuts.runtime.standalone.format.tson;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
-import net.thevpc.nuts.runtime.standalone.format.tson.format.DefaultTsonFormatConfig;
-import net.thevpc.nuts.runtime.standalone.format.tson.format.TsonFormatImplBuilder;
+import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCustomParser;
-import net.thevpc.nuts.util.NUtils;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -51,12 +49,9 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
         return parseElement(new StringReader(string), context, readerSource);
     }
 
-    public void write(NPrintStream out, NElement data, boolean compact) {
-        TsonFormatImplBuilder ts = new TsonFormatImplBuilder();
-        DefaultTsonFormatConfig c = new DefaultTsonFormatConfig();
-        c.setCompact(compact);
-        ts.setConfig(c);
-        out.print(ts.build().format(data));
+    public void write(NPrintStream out, NElement data, NElementFormatter formatter) {
+        DefaultTsonWriter d = new DefaultTsonWriter(out.asStringWriter());
+        d.write(data.format(formatter));
     }
 
     @Override
@@ -67,63 +62,13 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
 
     @Override
     public NElement parseElement(Reader reader, NElementFactoryContext context, Object readerSource) {
-        TsonCustomParser p=new TsonCustomParser(reader);
+        TsonCustomParser p = new TsonCustomParser(reader);
         return p.parseDocument();
-//        TsonStreamParserConfig config = new TsonStreamParserConfig();
-//        ElementBuilderTsonParserVisitor r = new ElementBuilderTsonParserVisitor();
-//        TsonStreamParser source = fromReader(reader, readerSource);
-//        config.setVisitor(r);
-//        source.setConfig(config);
-//        try {
-//            source.parseDocument();
-//        } catch (Exception e) {
-//            throw new TsonParseException(e, NUtils.firstNonNull(source.source(),readerSource));
-//        }
-//        NElement e = r.getDocument();
-//        return e;
     }
 
     @Override
-    public void printElement(NElement value, NPrintStream out, boolean compact, NElementFactoryContext context) {
-        write(out, value, compact);
+    public void printElement(NElement value, NPrintStream out, NElementFormatter formatter, NElementFactoryContext context) {
+        write(out, value, formatter);
     }
-
-
-//    public TsonStreamParser fromReader(Reader reader, Object source) {
-//        TsonStreamParserImpl p = new TsonStreamParserImpl(reader);
-//        p.source(source);
-//        return new TsonStreamParser() {
-//            @Override
-//            public Object source() {
-//                return source;
-//            }
-//
-//            @Override
-//            public void setConfig(TsonStreamParserConfig config) {
-//                p.setConfig(config);
-//            }
-//
-//            @Override
-//            public void parseElement() {
-//                try {
-//                    p.parseElement();
-//                } catch (TokenMgrError e) {
-//                    throw JavaccHelper.createTsonParseException(e, source);
-//                } catch (ParseException e) {
-//                    throw JavaccHelper.createTsonParseException(e, source);
-//                }
-//            }
-//
-//            @Override
-//            public void parseDocument() {
-//                try {
-//                    p.parseDocument();
-//                } catch (TokenMgrError e) {
-//                    throw JavaccHelper.createTsonParseException(e, source);
-//                } catch (ParseException e) {
-//                    throw JavaccHelper.createTsonParseException(e, source);
-//                }
-//            }
-//        };
-//    }
 }
+
