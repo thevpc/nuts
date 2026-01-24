@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -30,6 +30,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
+import net.thevpc.nuts.elem.NElementFormatter;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
@@ -60,20 +61,21 @@ public class DefaultXmlNElementStreamFormat implements NElementStreamFormat {
         }
         return context.createElement(doc, Document.class);
     }
+
     @Override
     public NElement normalize(NElement e) {
         return e;
     }
 
     @Override
-    public void printElement(NElement value, NPrintStream out, boolean compact, NElementFactoryContext context) {
+    public void printElement(NElement value, NPrintStream out, NElementFormatter formatter, NElementFactoryContext context) {
         Document doc = (Document) context.createObject(value, Document.class);
         if (out.isNtf()) {
             NPrintStream bos = NMemoryPrintStream.of();
-            XmlUtils.writeDocument(doc, new StreamResult(bos.asPrintStream()), compact, true);
+            XmlUtils.writeDocument(doc, new StreamResult(bos.asPrintStream()), true, true);
             out.print(NText.ofCode("xml", bos.toString()));
         } else {
-            XmlUtils.writeDocument(doc, new StreamResult(out.asPrintStream()), compact, true);
+            XmlUtils.writeDocument(doc, new StreamResult(out.asPrintStream()), true, true);
         }
     }
 
