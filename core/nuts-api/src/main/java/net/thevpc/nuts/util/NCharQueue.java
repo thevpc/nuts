@@ -96,6 +96,10 @@ public class NCharQueue implements CharSequence {
         content[to++] = c;
     }
 
+    public boolean isEmpty() {
+        return to - from <= 0;
+    }
+
     public int length() {
         return to - from;
     }
