@@ -28,7 +28,6 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNObjectElement;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPairElement;
-import net.thevpc.nuts.runtime.standalone.elem.item.NElementCommentsImpl;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
@@ -47,136 +46,6 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     private List<NElement> params;
 
     public DefaultNObjectElementBuilder() {
-    }
-
-    @Override
-    public NObjectElementBuilder removeAnnotation(NElementAnnotation annotation) {
-        super.removeAnnotation(annotation);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other, NAssignmentPolicy.ANY);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder copyFrom(NElement other) {
-        copyFrom(other, NAssignmentPolicy.ANY);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
-        if (other == null) {
-            return this;
-        }
-        super.copyFrom(other, assignmentPolicy);
-        if (other instanceof NPairElementBuilder) {
-            NPairElementBuilder from = (NPairElementBuilder) other;
-            add(from.key(), from.value());
-            return this;
-        }
-        if (other instanceof NUpletElementBuilder) {
-            NUpletElementBuilder from = (NUpletElementBuilder) other;
-            for (int i = 0; i < from.size(); i++) {
-                addParam(from.get(i).get());
-            }
-            return this;
-        }
-        if (other instanceof NObjectElementBuilder) {
-            NObjectElementBuilder from = (NObjectElementBuilder) other;
-            for (int i = 0; i < from.size(); i++) {
-                add(from.getAt(i).get());
-            }
-            List<NElement> p = from.params().orNull();
-            if (p != null) {
-                this.addParams(p);
-            }
-            name(from.name().orNull());
-            return this;
-        }
-        if (other instanceof NArrayElementBuilder) {
-            NArrayElementBuilder from = (NArrayElementBuilder) other;
-            for (int i = 0; i < from.size(); i++) {
-                add(from.get(i).get());
-            }
-            List<NElement> p = from.params().orNull();
-            if (p != null) {
-                this.addParams(p);
-            }
-            name(from.name().orNull());
-            return this;
-        }
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
-        if (other == null) {
-            return this;
-        }
-        super.copyFrom(other, assignmentPolicy);
-        if (other instanceof NPairElement) {
-            NPairElement from = (NPairElement) other;
-            add(from.key(), from.value());
-            return this;
-        }
-        if (other instanceof NUpletElement) {
-            NUpletElement from = (NUpletElement) other;
-            for (int i = 0; i < from.size(); i++) {
-                addParam(from.get(i).get());
-            }
-            return this;
-        }
-        if (other instanceof NObjectElement) {
-            NObjectElement from = (NObjectElement) other;
-            for (int i = 0; i < from.size(); i++) {
-                add(from.getAt(i).get());
-            }
-            List<NElement> p = from.params().orNull();
-            if (p != null) {
-                this.addParams(p);
-            }
-            name(from.name().orNull());
-            return this;
-        }
-        if (other instanceof NArrayElement) {
-            NArrayElement from = (NArrayElement) other;
-            for (int i = 0; i < from.size(); i++) {
-                add(from.get(i).get());
-            }
-            List<NElement> p = from.params().orNull();
-            if (p != null) {
-                this.addParams(p);
-            }
-            name(from.name().orNull());
-            return this;
-        }
-        return this;
-    }
-
-    @Override
-    public boolean isCustomTree() {
-        if (super.isCustomTree()) {
-            return true;
-        }
-        if (params != null) {
-            for (NElement value : params) {
-                if (value.isCustomTree()) {
-                    return true;
-                }
-            }
-        }
-        if (values != null) {
-            for (NElement value : values) {
-                if (value.isCustomTree()) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public NOptional<String> name() {
@@ -398,6 +267,12 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
+    public NObjectElementBuilder setAt(int i, NElement element) {
+        values.set(i, denull(element));
+        return this;
+    }
+
+    @Override
     public NObjectElementBuilder set(String name, NElement value) {
         return set(NElement.ofNameOrString(name), denull(value));
     }
@@ -565,20 +440,6 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NObjectElementBuilder copyFrom(NObjectElement other) {
-        if (other != null) {
-            addAnnotations(other.annotations());
-            addComments(other.comments());
-            if (other.isNamed()) {
-                this.name(other.name().get());
-            }
-            this.addParams(other.params().orNull());
-            this.addAll(other.children());
-        }
-        return this;
-    }
-
-    @Override
     public NObjectElementBuilder add(NElement entry) {
         if (entry != null) {
             values.add(entry);
@@ -664,8 +525,7 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     @Override
     public NObjectElement build() {
         return new DefaultNObjectElement(name, params, values
-                , annotations()
-                , comments()
+                , affixes()
                 , diagnostics()
         );
     }
@@ -698,118 +558,6 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
         return NElementType.OBJECT;
     }
 
-    // ------------------------------------------
-    // RETURN SIG
-    // ------------------------------------------
-
-    @Override
-    public NObjectElementBuilder addLeadingComment(NElementCommentType type, String text) {
-        super.addLeadingComment(type, text);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder addTrailingComment(NElementCommentType type, String text) {
-        super.addTrailingComment(type, text);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder addLeadingComment(NElementComment comment) {
-        super.addLeadingComment(comment);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder addLeadingComments(NElementComment... comments) {
-        super.addLeadingComments(comments);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder addTrailingComment(NElementComment comment) {
-        super.addTrailingComment(comment);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder addTrailingComments(NElementComment... comments) {
-        super.addTrailingComments(comments);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder removeTrailingCommentAt(int index) {
-        super.removeTrailingCommentAt(index);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder removeLeadingCommentAt(int index) {
-        super.removeLeadingCommentAt(index);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder removeTrailingComment(NElementComment comment) {
-        super.removeTrailingComment(comment);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder removeLeadingComment(NElementComment comment) {
-        super.removeLeadingComment(comment);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder addComments(NElementComments comments) {
-        super.addComments(comments);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        super.addAnnotations(annotations);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder addAnnotation(String name, NElement... args) {
-        super.addAnnotation(name, args);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder addAnnotation(NElementAnnotation annotation) {
-        super.addAnnotation(annotation);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        super.addAnnotationAt(index, annotation);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder removeAnnotationAt(int index) {
-        super.removeAnnotationAt(index);
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder clearAnnotations() {
-        super.clearAnnotations();
-        return this;
-    }
-
-    @Override
-    public NObjectElementBuilder clearComments() {
-        super.clearComments();
-        return this;
-    }
-
     @Override
     public NObjectElementBuilder addParam(String name, NElement value) {
         return addParam(NElement.ofPair(name, value));
@@ -839,4 +587,225 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     public NObjectElementBuilder addParam(String name, Boolean value) {
         return addParam(NElement.ofPair(name, value));
     }
+
+
+    // ------------------------------------------
+
+    @Override
+    public NObjectElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
+        if (other == null) {
+            return this;
+        }
+        super.copyFrom(other, assignmentPolicy);
+        if (other instanceof NPairElementBuilder) {
+            NPairElementBuilder from = (NPairElementBuilder) other;
+            add(from.key(), from.value());
+            return this;
+        }
+        if (other instanceof NUpletElementBuilder) {
+            NUpletElementBuilder from = (NUpletElementBuilder) other;
+            for (int i = 0; i < from.size(); i++) {
+                addParam(from.get(i).get());
+            }
+            return this;
+        }
+        if (other instanceof NObjectElementBuilder) {
+            NObjectElementBuilder from = (NObjectElementBuilder) other;
+            for (int i = 0; i < from.size(); i++) {
+                add(from.getAt(i).get());
+            }
+            List<NElement> p = from.params().orNull();
+            if (p != null) {
+                this.addParams(p);
+            }
+            name(from.name().orNull());
+            return this;
+        }
+        if (other instanceof NArrayElementBuilder) {
+            NArrayElementBuilder from = (NArrayElementBuilder) other;
+            for (int i = 0; i < from.size(); i++) {
+                add(from.get(i).get());
+            }
+            List<NElement> p = from.params().orNull();
+            if (p != null) {
+                this.addParams(p);
+            }
+            name(from.name().orNull());
+            return this;
+        }
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
+        if (other == null) {
+            return this;
+        }
+        super.copyFrom(other, assignmentPolicy);
+        if (other instanceof NPairElement) {
+            NPairElement from = (NPairElement) other;
+            add(from.key(), from.value());
+            return this;
+        }
+        if (other instanceof NListContainerElement) {
+            NListContainerElement from = (NListContainerElement) other;
+            addAll(from.children());
+            return this;
+        }
+        if (other instanceof NParametrizedContainerElement) {
+            NParametrizedContainerElement from = (NParametrizedContainerElement) other;
+            addParams(from.params().orNull());
+            return this;
+        }
+        return this;
+    }
+
+    // ------------------------------------------
+    // RETURN SIG
+    // ------------------------------------------
+
+    @Override
+    public NObjectElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+        super.addAnnotations(annotations);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name, args);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addAnnotation(NElementAnnotation annotation) {
+        super.addAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addAffix(int index, NBoundAffix affix) {
+        super.addAffix(index, affix);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder removeAffix(int index) {
+        super.removeAffix(index);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder clearAnnotations() {
+        super.clearAnnotations();
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder clearComments() {
+        super.clearComments();
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder setAffix(int index, NBoundAffix affix) {
+        super.setAffix(index, affix);
+        return this;
+    }
+
+    public NObjectElementBuilder addAffix(NBoundAffix affix) {
+        super.addAffix(affix);
+        return this;
+    }
+
+
+    @Override
+    public NObjectElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.setAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder removeDiagnostic(NElementDiagnostic error) {
+        super.removeDiagnostic(error);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addAffixes(List<NBoundAffix> affixes) {
+        super.addAffixes(affixes);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addDiagnostic(NElementDiagnostic error) {
+        super.addDiagnostic(error);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addAffixes(List<? extends NAffix> affixes, NAffixAnchor anchor) {
+        super.addAffixes(affixes, anchor);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addAffix(NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor) {
+        super.removeAffixes(type, anchor);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addLeadingComment(NElementComment comment) {
+        super.addLeadingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addLeadingComments(NElementComment... comments) {
+        super.addLeadingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addTrailingComment(NElementComment comment) {
+        super.addTrailingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addTrailingComments(NElementComment... comments) {
+        super.addTrailingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder copyFrom(NElementBuilder other) {
+        super.copyFrom(other);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder copyFrom(NElement other) {
+        super.copyFrom(other);
+        return this;
+    }
+
 }
