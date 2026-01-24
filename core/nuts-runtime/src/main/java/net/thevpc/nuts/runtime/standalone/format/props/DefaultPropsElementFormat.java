@@ -54,8 +54,8 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
         return e;
     }
 
-    public void write(NPrintStream out, NElement data, boolean compact) {
-        write(out, data, compact ? null : "");
+    public void write(NPrintStream out, NElement data, NElementFormatter formatter) {
+        write(out, data, "");
     }
 
     private void write(NPrintStream out, NElement data, String indent) {
@@ -177,7 +177,7 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
                             out.print(indent2);
                             write(out, e, indent2);
                         } else {
-                            write(out, e, null);
+                            write(out, e, (String)null);
                         }
                     }
                     if (indent != null) {
@@ -214,11 +214,11 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
                         } else {
                             if (e instanceof NPairElement) {
                                 NPairElement ee = (NPairElement) e;
-                                write(out, ee.key(), null);
+                                write(out, ee.key(), (String)null);
                                 out.print(':');
-                                write(out, ee.value(), null);
+                                write(out, ee.value(), (String)null);
                             } else {
-                                write(out, e, null);
+                                write(out, e, (String)null);
                             }
                         }
                     }
@@ -241,8 +241,8 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
     }
 
     @Override
-    public void printElement(NElement value, NPrintStream out, boolean compact, NElementFactoryContext context) {
-        write(out, value, compact);
+    public void printElement(NElement value, NPrintStream out, NElementFormatter formatter, NElementFactoryContext context) {
+        write(out, value, formatter);
     }
 
 }
