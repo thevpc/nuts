@@ -26,10 +26,8 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NInputStreamProvider;
-import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
 import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNBinaryStreamElementBuilder;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
@@ -43,14 +41,21 @@ import java.util.Objects;
 public class DefaultNBinaryStreamElement extends AbstractNElement implements NBinaryStreamElement {
 
     private final NInputStreamProvider value;
+    private final String blocIdentifier;
 
-    public DefaultNBinaryStreamElement(NInputStreamProvider value) {
-        this(value,null,null,null);
+    public DefaultNBinaryStreamElement(NInputStreamProvider value, String blocIdentifier) {
+        this(value, blocIdentifier, null, null);
     }
 
-    public DefaultNBinaryStreamElement(NInputStreamProvider value, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
-        super(NElementType.BINARY_STREAM, annotations, comments,diagnostics);
+    public DefaultNBinaryStreamElement(NInputStreamProvider value, String blocIdentifier, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+        super(NElementType.BINARY_STREAM, affixes, diagnostics);
         this.value = value;
+        this.blocIdentifier = NStringUtils.trim(blocIdentifier);
+    }
+
+    @Override
+    public String blocIdentifier() {
+        return blocIdentifier;
     }
 
     @Override
@@ -80,22 +85,6 @@ public class DefaultNBinaryStreamElement extends AbstractNElement implements NBi
     @Override
     public boolean isEmpty() {
         return false;
-    }
-
-
-    @Override
-    public String toString() {
-        return toString(true);
-    }
-
-    @Override
-    public String toString(boolean compact) {
-        NStringBuilder sb = new NStringBuilder();
-        sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
-        String svalue = String.valueOf(value);
-        sb.append(svalue);
-        sb.append(NElementToStringHelper.trailingComments(this, compact));
-        return sb.toString();
     }
 
     @Override
@@ -136,6 +125,6 @@ public class DefaultNBinaryStreamElement extends AbstractNElement implements NBi
 
     @Override
     public NBinaryStreamElementBuilder builder() {
-        return new DefaultNBinaryStreamElementBuilder().addAnnotations(annotations()).value(value);
+        return new DefaultNBinaryStreamElementBuilder().addAffixes(affixes()).value(value);
     }
 }
