@@ -37,10 +37,7 @@ import java.util.Map;
 import net.thevpc.nuts.io.NContentMetadata;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextArtTextRenderer;
-import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -60,7 +57,6 @@ public class FigletNTextArtTextRenderer implements NTextArtTextRenderer, Cloneab
     public static final int SM_SMUSH = 128;           // bit 7: Smushing
 
     private final static int CHARS_REGULAR = 102;
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private final static int[] CHARS_POS_MAPPER = new int[CHARS_REGULAR];
 
     static {
@@ -325,7 +321,7 @@ public class FigletNTextArtTextRenderer implements NTextArtTextRenderer, Cloneab
         for (int i = 0; i < rows.length; i++) {
             result.append(rows[i]);
             if (i < rows.length - 1) {
-                result.append(LINE_SEPARATOR);
+                result.append(NNewLineMode.system().value());
             }
         }
         return result.build();
