@@ -38,60 +38,56 @@ public interface NFlatExprElementBuilder extends NElementBuilder {
     static NFlatExprElementBuilder of() {
         return NElement.ofFlatExprBuilder();
     }
+
     NOptional<NElement> get(int index);
+
     NFlatExprElementBuilder set(int index, NOperatorSymbol op);
+
     NFlatExprElementBuilder set(int index, NElement element);
+
     NFlatExprElementBuilder add(NOperatorSymbol op);
+
     NFlatExprElementBuilder add(NElement element);
+
     List<NElement> children();
-
-    NFlatExprElement build();
-
-    /// /////////////
 
     NFlatExprElementBuilder doWith(Consumer<NFlatExprElementBuilder> con);
 
-    NFlatExprElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+    NFlatExprElement build();
 
-    NFlatExprElementBuilder addAnnotation(String name, NElement... args);
+    /// ///////////////////////////////////////////////
+    NFlatExprElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
     NFlatExprElementBuilder addAnnotation(NElementAnnotation annotation);
 
-    NFlatExprElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
+    NFlatExprElementBuilder addAnnotation(String name, NElement... args);
 
-    NFlatExprElementBuilder removeAnnotationAt(int index);
+    NFlatExprElementBuilder addAffix(int index, NBoundAffix affix);
+
+    NFlatExprElementBuilder setAffix(int index, NBoundAffix affix);
+    NFlatExprElementBuilder addAffix(NBoundAffix affix);
+
+    NFlatExprElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NFlatExprElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NFlatExprElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
+
+    NFlatExprElementBuilder removeAffix(int index);
 
     NFlatExprElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NFlatExprElementBuilder clearAnnotations();
 
-    List<NElementAnnotation> annotations();
-
-    NFlatExprElementBuilder copyFrom(NFlatExprElementBuilder element);
-
-    NFlatExprElementBuilder addLeadingComment(NElementCommentType type, String text);
-
-    NFlatExprElementBuilder addTrailingComment(NElementCommentType type, String text);
-
     NFlatExprElementBuilder addLeadingComment(NElementComment comment);
 
     NFlatExprElementBuilder addLeadingComments(NElementComment... comments);
 
-    NFlatExprElementBuilder addTrailingComment(NElementComment comment);
-
     NFlatExprElementBuilder addTrailingComments(NElementComment... comments);
 
-    NFlatExprElementBuilder removeLeadingComment(NElementComment comment);
-
-    NFlatExprElementBuilder removeTrailingComment(NElementComment comment);
-
-    NFlatExprElementBuilder removeLeadingCommentAt(int index);
-
-    NFlatExprElementBuilder removeTrailingCommentAt(int index);
+    NFlatExprElementBuilder addTrailingComment(NElementComment comment);
 
     NFlatExprElementBuilder clearComments();
-
-    NFlatExprElementBuilder addComments(NElementComments comments);
 
     NFlatExprElementBuilder copyFrom(NElementBuilder other);
 
@@ -100,4 +96,10 @@ public interface NFlatExprElementBuilder extends NElementBuilder {
     NFlatExprElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
     NFlatExprElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
+
+    NFlatExprElementBuilder addDiagnostic(NElementDiagnostic error);
+
+    NFlatExprElementBuilder removeDiagnostic(NElementDiagnostic error);
+
+    NFlatExprElementBuilder addAffixes(List<NBoundAffix> affixes);
 }
