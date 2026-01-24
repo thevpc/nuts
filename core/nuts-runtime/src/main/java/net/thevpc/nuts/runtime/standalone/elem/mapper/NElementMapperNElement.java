@@ -16,7 +16,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
     @Override
     public Object destruct(NElement src, Type typeOfSrc, NElementFactoryContext context) {
         switch (src.type()) {
-            case PAIR:{
+            case PAIR: {
                 NPairElement p = src.asPair().get();
                 return new AbstractMap.SimpleEntry<Object, Object>(
                         context.defaultDestruct(p.key(), NElement.class),
@@ -24,22 +24,19 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 );
             }
             case UPLET:
-            case NAMED_UPLET:
-            {
+            case NAMED_UPLET: {
                 return src.asUplet().get().params().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
             }
             case ARRAY:
             case NAMED_PARAMETRIZED_ARRAY:
             case NAMED_ARRAY:
-            case PARAMETRIZED_ARRAY:
-            {
+            case PARAMETRIZED_ARRAY: {
                 return src.asArray().get().children().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
             }
             case OBJECT:
             case PARAMETRIZED_OBJECT:
             case NAMED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
-            {
+            case NAMED_PARAMETRIZED_OBJECT: {
                 Set<Object> visited = new HashSet<>();
                 boolean map = true;
                 List<Object> all = new ArrayList<>();
@@ -94,15 +91,14 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                     NPairElementBuilder obj2 = NElement.ofPairBuilder();
                     obj2.key(k);
                     obj2.value(v);
+                    obj2.addAffixes(p.affixes());
                     obj2.addAnnotations(anns);
-                    obj2.addComments(p.comments());
                     return obj2.build();
                 }
                 return p;
             }
             case UPLET:
-            case NAMED_UPLET:
-            {
+            case NAMED_UPLET: {
                 NUpletElement arr = src.asUplet().get();
                 NBooleanRef someChange = NRef.ofBoolean(false);
                 List<NElement> params = convertList_objectToElement(arr.params(), src, typeOfSrc, context, someChange);
@@ -111,8 +107,8 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                     NUpletElementBuilder obj2 = NElement.ofUpletBuilder();
                     obj2.addAll(params.toArray(new NElement[0]));
                     obj2.name(arr.name().orNull());
+                    obj2.addAffixes(arr.affixes());
                     obj2.addAnnotations(anns);
-                    obj2.addComments(arr.comments());
                     return obj2.build();
                 }
                 return src;
@@ -120,8 +116,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
             case ARRAY:
             case NAMED_ARRAY:
             case NAMED_PARAMETRIZED_ARRAY:
-            case PARAMETRIZED_ARRAY:
-            {
+            case PARAMETRIZED_ARRAY: {
                 NArrayElement arr = src.asArray().get();
                 NBooleanRef someChange = NRef.ofBoolean(false);
                 List<NElement> children = convertList_objectToElement(arr.children(), src, typeOfSrc, context, someChange);
@@ -130,12 +125,12 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 if (someChange.get()) {
                     NArrayElementBuilder obj2 = NElement.ofArrayBuilder();
                     obj2.addAll(children.toArray(new NElement[0]));
-                    if(params!=null){
+                    if (params != null) {
                         obj2.addParams(params);
                     }
                     obj2.name(arr.name().orNull());
+                    obj2.addAffixes(arr.affixes());
                     obj2.addAnnotations(anns);
-                    obj2.addComments(arr.comments());
                     return obj2.build();
                 }
                 return src;
@@ -143,8 +138,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
             case OBJECT:
             case NAMED_OBJECT:
             case NAMED_PARAMETRIZED_OBJECT:
-            case PARAMETRIZED_OBJECT:
-            {
+            case PARAMETRIZED_OBJECT: {
                 NObjectElement obj = src.asObject().get();
                 NBooleanRef someChange = NRef.ofBoolean(false);
                 List<NElement> children = convertList_objectToElement(obj.children(), src, typeOfSrc, context, someChange);
@@ -153,12 +147,12 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 if (someChange.get()) {
                     NObjectElementBuilder obj2 = NElement.ofObjectBuilder();
                     obj2.addAll(children.toArray(new NElement[0]));
-                    if(params!=null){
+                    if (params != null) {
                         obj2.addParams(params);
                     }
                     obj2.name(obj.name().orNull());
+                    obj2.addAffixes(obj.affixes());
                     obj2.addAnnotations(anns);
-                    obj2.addComments(obj.comments());
                     return obj2.build();
                 }
                 return src;
@@ -174,41 +168,43 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
         return src;
     }
 
-    private List<NElementAnnotation> convertAnn_objectToElement(List<NElementAnnotation> oldList, NElement src, Type typeOfSrc, NElementFactoryContext context, NBooleanRef someChange){
+    private List<NElementAnnotation> convertAnn_objectToElement(List<NElementAnnotation> oldList, NElement src, Type typeOfSrc, NElementFactoryContext context, NBooleanRef someChange) {
         List<NElementAnnotation> newList = null;
-        if(oldList!=null){
-            newList=new ArrayList<>(oldList.size());
-            boolean anyChange00=false;
+        if (oldList != null) {
+            newList = new ArrayList<>(oldList.size());
+            boolean anyChange00 = false;
             for (NElementAnnotation e : oldList) {
-                NBooleanRef someChange0= NRef.ofBoolean(false);
-                List<NElement> sub = convertList_objectToElement(e.params(), src, typeOfSrc, context, someChange0);
-                if(someChange0.get()){
+                NBooleanRef someChange0 = NRef.ofBoolean(false);
+                List<NElement> oldParams = e.params().orNull();
+                List<NElement> sub = oldParams == null ? new ArrayList<>() : convertList_objectToElement(oldParams, src, typeOfSrc, context, someChange0);
+                if (someChange0.get()) {
                     newList.add(NElement.ofAnnotation(e.name(), sub.toArray(new NElement[0])));
                     someChange.set(true);
-                    anyChange00=true;
-                }else{
+                    anyChange00 = true;
+                } else {
                     newList.add(e);
                 }
             }
-            if(anyChange00){
+            if (anyChange00) {
                 return newList;
             }
         }
         return oldList;
     }
 
-    private NElement convertOne_objectToElement(NElement k, NElement src, Type typeOfSrc, NElementFactoryContext context, NBooleanRef someChange){
+    private NElement convertOne_objectToElement(NElement k, NElement src, Type typeOfSrc, NElementFactoryContext context, NBooleanRef someChange) {
         NElement k2 = context.createElement(k);
-        if(k2!=k){
+        if (k2 != k) {
             someChange.set();
             return k2;
         }
         return k;
     }
-    private List<NElement> convertList_objectToElement(List<NElement> oldParams, NElement src, Type typeOfSrc, NElementFactoryContext context, NBooleanRef someChange){
+
+    private List<NElement> convertList_objectToElement(List<NElement> oldParams, NElement src, Type typeOfSrc, NElementFactoryContext context, NBooleanRef someChange) {
         List<NElement> newParams = null;
-        if(oldParams!=null){
-            newParams=new ArrayList<>(oldParams.size());
+        if (oldParams != null) {
+            newParams = new ArrayList<>(oldParams.size());
             for (NElement e : oldParams) {
                 boolean someChange0;
                 NElement k2 = context.createElement(e);
