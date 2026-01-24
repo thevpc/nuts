@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DefaultNOperatorElementUnary extends AbstractNOperatorElement implements NUnaryOperatorElement {
-    public DefaultNOperatorElementUnary(NOperatorSymbol symbol, NOperatorPosition position, NElement first, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
-        super(Arrays.asList(symbol), position, Arrays.asList(first), annotations, comments,diagnostics);
+    public DefaultNOperatorElementUnary(NOperatorSymbol symbol, NOperatorPosition position, NElement first, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+        super(Arrays.asList(symbol), position, Arrays.asList(first), affixes,diagnostics);
     }
 
     @Override
