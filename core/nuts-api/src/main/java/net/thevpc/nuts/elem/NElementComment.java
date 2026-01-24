@@ -1,11 +1,10 @@
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.util.NBlankable;
-
-public interface NElementComment extends Comparable<NElementComment>, NBlankable {
+public interface NElementComment extends Comparable<NElementComment>, NAffix {
 
     /**
      * create some comments
+     *
      * @param text comment
      * @return NElementComment
      * @since 0.8.9
@@ -16,25 +15,28 @@ public interface NElementComment extends Comparable<NElementComment>, NBlankable
 
     /**
      * create some multiline comments
+     *
      * @param text comment
      * @return NElementComment
      * @since 0.8.9
      */
     static NElementComment ofMultiLine(String... text) {
-        return NElement.ofMultiLineComment(text);
+        return NElement.ofBlocComment(text);
     }
 
     /**
      * create some single comments
+     *
      * @param text comment
      * @return NElementComment
      * @since 0.8.9
      */
     static NElementComment ofSingleLine(String... text) {
-        return NElement.ofSingleLineComment(text);
+        return NElement.ofLineComment(text);
     }
 
-    NElementCommentType type();
 
-    String text() ;
+    String text();
+
+    String raw();
 }
