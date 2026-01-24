@@ -7,25 +7,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public interface NPairElementBuilder extends NElementBuilder {
-    NPairElementBuilder doWith(Consumer<NPairElementBuilder> con);
-
-    NPairElementBuilder addAnnotations(List<NElementAnnotation> annotations);
-
-    NPairElementBuilder addAnnotation(String name, NElement... args);
-
-    NPairElementBuilder addAnnotation(NElementAnnotation annotation);
-
-    NPairElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
-
-    NPairElementBuilder removeAnnotationAt(int index);
-
-    NPairElementBuilder removeAnnotation(NElementAnnotation annotation);
-
-    NPairElementBuilder clearAnnotations();
-
-    List<NElementAnnotation> annotations();
-
-    NPairElement build();
 
     NElement key();
 
@@ -39,27 +20,43 @@ public interface NPairElementBuilder extends NElementBuilder {
 
     NPairElementBuilder value(NElement value);
 
-    NPairElementBuilder addLeadingComment(NElementCommentType type, String text);
+    NPairElementBuilder doWith(Consumer<NPairElementBuilder> con);
 
-    NPairElementBuilder addTrailingComment(NElementCommentType type, String text);
+    NPairElement build();
+
+    /// ///////////////////////////////////////////////
+    NPairElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+
+    NPairElementBuilder addAnnotation(NElementAnnotation annotation);
+
+    NPairElementBuilder addAnnotation(String name, NElement... args);
+
+    NPairElementBuilder addAffix(int index, NBoundAffix affix);
+
+    NPairElementBuilder setAffix(int index, NBoundAffix affix);
+    NPairElementBuilder addAffix(NBoundAffix affix);
+
+    NPairElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NPairElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NPairElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
+
+    NPairElementBuilder removeAffix(int index);
+
+    NPairElementBuilder removeAnnotation(NElementAnnotation annotation);
+
+    NPairElementBuilder clearAnnotations();
 
     NPairElementBuilder addLeadingComment(NElementComment comment);
 
     NPairElementBuilder addLeadingComments(NElementComment... comments);
 
-    NPairElementBuilder addTrailingComment(NElementComment comment);
-
     NPairElementBuilder addTrailingComments(NElementComment... comments);
 
-    NPairElementBuilder removeLeadingComment(NElementComment comment);
+    NPairElementBuilder addTrailingComment(NElementComment comment);
 
-    NPairElementBuilder removeTrailingComment(NElementComment comment);
-
-    NPairElementBuilder removeLeadingCommentAt(int index);
-
-    NPairElementBuilder removeTrailingCommentAt(int index);
-
-    NPairElementBuilder addComments(NElementComments comments);
+    NPairElementBuilder clearComments();
 
     NPairElementBuilder copyFrom(NElementBuilder other);
 
@@ -68,4 +65,10 @@ public interface NPairElementBuilder extends NElementBuilder {
     NPairElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
     NPairElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
+
+    NPairElementBuilder addDiagnostic(NElementDiagnostic error);
+
+    NPairElementBuilder removeDiagnostic(NElementDiagnostic error);
+
+    NPairElementBuilder addAffixes(List<NBoundAffix> affixes);
 }
