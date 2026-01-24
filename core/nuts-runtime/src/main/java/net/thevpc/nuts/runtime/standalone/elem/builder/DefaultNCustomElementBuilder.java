@@ -16,34 +16,6 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NCustomElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other, NAssignmentPolicy.ANY);
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder removeAnnotation(NElementAnnotation annotation) {
-        super.removeAnnotation(annotation);
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder copyFrom(NElement other) {
-        copyFrom(other, NAssignmentPolicy.ANY);
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
-        return (NCustomElementBuilder) super.copyFrom(other, assignmentPolicy);
-    }
-
-    @Override
-    public NCustomElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
-        return (NCustomElementBuilder) super.copyFrom(other, assignmentPolicy);
-    }
-
-    @Override
     public boolean isCustomTree() {
         return true;
     }
@@ -68,7 +40,7 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NCustomElement build() {
-        return new DefaultNCustomElement(value, annotations(), comments(),diagnostics());
+        return new DefaultNCustomElement(value, affixes(), diagnostics());
     }
 
     @Override
@@ -76,20 +48,25 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
         return NElementType.CUSTOM;
     }
 
-    public NCustomElementBuilder copyFrom(NCustomElement element) {
-        if (element != null) {
-            addAnnotations(element.annotations());
-            addComments(element.comments());
-            value(element.value());
+
+    // ------------------------------------------
+
+    @Override
+    public NCustomElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
+        super.copyFrom(other, assignmentPolicy);
+        if (other instanceof NCustomElementBuilder) {
+            NCustomElementBuilder b = (NCustomElementBuilder) other;
+            this.value(b.value());
         }
         return this;
     }
 
-    public NCustomElementBuilder copyFrom(NCustomElementBuilder element) {
-        if (element != null) {
-            addAnnotations(element.annotations());
-            addComments(element.comments());
-            value(element.value());
+    @Override
+    public NCustomElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
+        super.copyFrom(other, assignmentPolicy);
+        if (other instanceof NCustomElement) {
+            NCustomElement b = (NCustomElement) other;
+            this.value(b.value());
         }
         return this;
     }
@@ -99,14 +76,102 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
     // ------------------------------------------
 
     @Override
-    public NCustomElementBuilder addLeadingComment(NElementCommentType type, String text) {
-        super.addLeadingComment(type, text);
+    public NCustomElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+        super.addAnnotations(annotations);
         return this;
     }
 
     @Override
-    public NCustomElementBuilder addTrailingComment(NElementCommentType type, String text) {
-        super.addTrailingComment(type, text);
+    public NCustomElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name, args);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addAnnotation(NElementAnnotation annotation) {
+        super.addAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addAffix(int index, NBoundAffix affix) {
+        super.addAffix(index, affix);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder removeAffix(int index) {
+        super.removeAffix(index);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder clearAnnotations() {
+        super.clearAnnotations();
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder clearComments() {
+        super.clearComments();
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder setAffix(int index, NBoundAffix affix) {
+        super.setAffix(index, affix);
+        return this;
+    }
+
+    public NCustomElementBuilder addAffix(NBoundAffix affix){
+        super.addAffix(affix);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.setAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder removeDiagnostic(NElementDiagnostic error) {
+        super.removeDiagnostic(error);
+        return this;
+    }
+
+    public NCustomElementBuilder addAffixes(List<NBoundAffix> affixes) {
+        super.addAffixes(affixes);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addDiagnostic(NElementDiagnostic error) {
+        super.addDiagnostic(error);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addAffixes(List<? extends NAffix> affixes, NAffixAnchor anchor) {
+        super.addAffixes(affixes, anchor);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder addAffix(NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor) {
+        super.removeAffixes(type, anchor);
         return this;
     }
 
@@ -135,74 +200,20 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NCustomElementBuilder removeTrailingCommentAt(int index) {
-        super.removeTrailingCommentAt(index);
+    public NCustomElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
         return this;
     }
 
     @Override
-    public NCustomElementBuilder removeLeadingCommentAt(int index) {
-        super.removeLeadingCommentAt(index);
+    public NCustomElementBuilder copyFrom(NElementBuilder other) {
+        super.copyFrom(other);
         return this;
     }
 
     @Override
-    public NCustomElementBuilder removeTrailingComment(NElementComment comment) {
-        super.removeTrailingComment(comment);
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder removeLeadingComment(NElementComment comment) {
-        super.removeLeadingComment(comment);
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder addComments(NElementComments comments) {
-        super.addComments(comments);
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        super.addAnnotations(annotations);
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder addAnnotation(String name, NElement... args) {
-        super.addAnnotation(name, args);
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder addAnnotation(NElementAnnotation annotation) {
-        super.addAnnotation(annotation);
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        super.addAnnotationAt(index, annotation);
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder removeAnnotationAt(int index) {
-        super.removeAnnotationAt(index);
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder clearAnnotations() {
-        super.clearAnnotations();
-        return this;
-    }
-
-    @Override
-    public NCustomElementBuilder clearComments() {
-        super.clearComments();
+    public NCustomElementBuilder copyFrom(NElement other) {
+        super.copyFrom(other);
         return this;
     }
 
