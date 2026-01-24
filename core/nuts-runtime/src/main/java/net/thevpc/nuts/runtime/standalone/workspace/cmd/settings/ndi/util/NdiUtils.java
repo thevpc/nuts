@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.util;
 
 
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.text.NMsg;
@@ -57,7 +58,6 @@ public class NdiUtils {
 
     public static void generateScript(String resourcePath, BufferedWriter w, Function<String, String> mapper) {
         try {
-            String lineSeparator = System.getProperty("line.separator");
             URL resource = AnyNixNdi.class.getResource(resourcePath);
             if (resource == null) {
                 throw new NIllegalArgumentException(NMsg.ofC("resource not found %s",resourcePath));
@@ -81,7 +81,7 @@ public class NdiUtils {
                 String line2 = null;
                 while ((line2 = br2.readLine()) != null) {
                     w.write(line2);
-                    w.write(lineSeparator);
+                    w.write(NNewLineMode.system().value());
                 }
             }
             w.flush();
