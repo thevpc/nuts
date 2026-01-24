@@ -4,6 +4,6 @@ import net.thevpc.nuts.io.NReaderProvider;
 
 public interface NCharStreamElement extends NElement{
     NReaderProvider value();
-    String getBlocIdentifier();
+    String blocIdentifier();
     NCharStreamElementBuilder builder();
 }
