@@ -26,11 +26,9 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathImpl;
-import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
 import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNPairElementBuilder;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
@@ -47,48 +45,18 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
     private final NElement value;
 
     public DefaultNPairElement(NElement key, NElement value) {
-        this(key,value,null,null,null);
+        this(key, value, null, null);
     }
 
-    public DefaultNPairElement(NElement key, NElement value, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
-        super(NElementType.PAIR, annotations, comments,diagnostics);
+    public DefaultNPairElement(NElement key, NElement value, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+        super(NElementType.PAIR, affixes, diagnostics);
         this.key = key;
         this.value = value;
     }
 
-    @Override
-    public boolean isCustomTree() {
-        if(super.isCustomTree()){
-            return true;
-        }
-        if(key!=null && key.isCustomTree()){
-            return true;
-        }
-        if(value!=null && value.isCustomTree()){
-            return true;
-        }
-        return false;
-    }
-
     protected NTreeVisitResult traverseChildren(NElementVisitor visitor) {
-        return traverseList(visitor, Arrays.asList(key,value));
+        return traverseList(visitor, Arrays.asList(key, value));
     }
-
-
-    @Override
-    public boolean isErrorTree() {
-        if(super.isErrorTree()){
-            return true;
-        }
-        if(key!=null && key.isCustomTree()){
-            return true;
-        }
-        if(value!=null && value.isCustomTree()){
-            return true;
-        }
-        return false;
-    }
-
 
     @Override
     public NOptional<String> name() {
@@ -124,35 +92,6 @@ public class DefaultNPairElement extends AbstractNElement implements NPairElemen
     @Override
     public NElement value() {
         return value;
-    }
-
-    public String toString() {
-        return toString(false);
-    }
-
-    @Override
-    public String toString(boolean compact) {
-        NStringBuilder sb = new NStringBuilder();
-        sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
-        String skey = key.toString(compact);
-        String svalue = value.toString(compact);
-        if (compact) {
-            sb.append(skey);
-            sb.append(" : ");
-            sb.append(svalue);
-        } else {
-            if (new NStringBuilder(skey).lines().count() > 1) {
-                sb.append(skey);
-                sb.append("\n : ");
-                sb.append(new NStringBuilder(svalue).indent("  ", true));
-            } else {
-                sb.append(skey);
-                sb.append(" : ");
-                sb.append(new NStringBuilder(svalue).indent("  ", true));
-            }
-        }
-        sb.append(NElementToStringHelper.trailingComments(this, compact));
-        return sb.toString();
     }
 
     @Override
