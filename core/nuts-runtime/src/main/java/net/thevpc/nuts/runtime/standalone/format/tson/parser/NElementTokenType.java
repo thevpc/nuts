@@ -71,7 +71,8 @@ public enum NElementTokenType implements NEnum {
     BINARY_STREAM,
     NAME,
     UNKNOWN,
-    WHITESPACE,
+    SPACE,
+    NEWLINE,
     LINE_COMMENT,
     BLOCK_COMMENT,
     ;
