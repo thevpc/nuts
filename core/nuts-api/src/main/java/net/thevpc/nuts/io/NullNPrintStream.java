@@ -12,9 +12,30 @@ import java.util.Date;
 
 public class NullNPrintStream implements NPrintStream {
 
+    public static final NStringWriter NULL_STRING_WRITER = new NStringWriter() {
+        @Override
+        public void write(char text) {
+
+        }
+
+        @Override
+        public void write(String text) {
+
+        }
+
+        @Override
+        public void write(char[] text, int offset, int len) {
+
+        }
+    };
     public static NPrintStream INSTANCE =new NullNPrintStream();
 
     private NullNPrintStream() {
+    }
+
+    @Override
+    public NStringWriter asStringWriter() {
+        return NULL_STRING_WRITER;
     }
 
     @Override
