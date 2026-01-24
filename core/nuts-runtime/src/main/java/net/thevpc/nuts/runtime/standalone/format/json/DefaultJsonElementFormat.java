@@ -51,8 +51,8 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         return parseElement(new StringReader(string), context, readerSource);
     }
 
-    public void write(NPrintStream out, NElement data, boolean compact) {
-        writeSafe(out, ensureJson(data), compact ? null : "");
+    public void write(NPrintStream out, NElement data, NElementFormatter formatter) {
+        writeSafe(out, ensureJson(data), "");
     }
 
     private void write(NPrintStream out, NElement data, String indent) {
@@ -250,10 +250,10 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
     private NElement _jsonAnnotation(NElementAnnotation a) {
         NObjectElementBuilder u = NElement.ofObjectBuilder()
                 .add("annotationName", a.name());
-        if (a.params() != null) {
+        if (a.params().isPresent()) {
             u.add("annotationParams",
                     NElement.ofArray(
-                            a.params().stream().map(x -> ensureJson(x)).toArray(NElement[]::new)
+                            a.params().get().stream().map(x -> ensureJson(x)).toArray(NElement[]::new)
                     )
             );
         }
@@ -310,17 +310,6 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 value1.name(null);
                 return value1.build();
             }
-            case NAME:
-            case INSTANT:
-            case BIG_COMPLEX:
-            case DOUBLE_COMPLEX:
-            case FLOAT_COMPLEX:
-            case CUSTOM:
-            case CHAR_STREAM:
-            case BINARY_STREAM:
-            case LOCAL_TIME:
-            case LOCAL_DATE:
-            case LOCAL_DATETIME:
             case CHAR:
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
@@ -334,6 +323,29 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 List<NElementAnnotation> a = e.annotations();
                 if (a.isEmpty()) {
                     return NElement.ofString(e.asStringValue().get());
+                } else {
+                    return NElement.ofObjectBuilder()
+                            .add("value", e.builder().clearAnnotations().build())
+                            .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
+                            .build();
+                }
+            }
+            case NAME:
+            case INSTANT:
+            case BIG_COMPLEX:
+            case DOUBLE_COMPLEX:
+            case FLOAT_COMPLEX:
+            case CUSTOM:
+            case CHAR_STREAM:
+            case BINARY_STREAM:
+            case LOCAL_TIME:
+            case LOCAL_DATE:
+            case LOCAL_DATETIME:
+                // TODO FIXE ME LATER
+            {
+                List<NElementAnnotation> a = e.annotations();
+                if (a.isEmpty()) {
+                    return NElement.ofString(e.toString());
                 } else {
                     return NElement.ofObjectBuilder()
                             .add("value", e.builder().clearAnnotations().build())
@@ -444,8 +456,8 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
     }
 
     @Override
-    public void printElement(NElement value, NPrintStream out, boolean compact, NElementFactoryContext context) {
-        write(out, value, compact);
+    public void printElement(NElement value, NPrintStream out, NElementFormatter formatter, NElementFactoryContext context) {
+        write(out, value, formatter);
     }
 
     private static class JsonElementParser {
