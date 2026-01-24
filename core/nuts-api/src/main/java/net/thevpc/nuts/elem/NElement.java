@@ -29,10 +29,9 @@ import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -659,28 +658,20 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
         return NElementFactory.of().ofParametrizedObject(name, params);
     }
 
-    static NElementComments ofMultiLineComments(String... comments) {
-        return NElementFactory.of().ofMultiLineComments();
+    static NElementComment ofBlocComment(String... comments) {
+        return NElementFactory.of().ofBlocComment(comments);
     }
 
-    static NElementComments ofSingleLineComments(String... comments) {
-        return NElementFactory.of().ofSingleLineComments(comments);
-    }
-
-    static NElementComments ofComments(NElementComment[] leading, NElementComment[] trailing) {
-        return NElementFactory.of().ofComments(leading, trailing);
-    }
-
-    static NElementComment ofMultiLineComment(String... comments) {
-        return NElementFactory.of().ofMultiLineComment(comments);
-    }
-
-    static NElementComment ofSingleLineComment(String... lines) {
-        return NElementFactory.of().ofSingleLineComment(lines);
+    static NElementComment ofLineComment(String... lines) {
+        return NElementFactory.of().ofLineComment(lines);
     }
 
     static NElement ofBinaryStream(NInputStreamProvider value) {
         return NElementFactory.of().ofBinaryStream(value);
+    }
+
+    static NElement ofBinaryStream(NInputStreamProvider value, String blocIdentifier) {
+        return NElementFactory.of().ofBinaryStream(value, blocIdentifier);
     }
 
     static NElement ofCharStream(NReaderProvider value) {
@@ -703,6 +694,39 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
         return NElementFactory.of().ofAnnotation(name, values);
     }
 
+    static NElementNewLine ofNewline() {
+        return NElementFactory.of().ofNewline("\n");
+    }
+
+    static NElementNewLine ofNewline(String value) {
+        return NElementFactory.of().ofNewline(value);
+    }
+
+    static NElementSpace ofSpace() {
+        return NElementFactory.of().ofSpace(" ");
+    }
+
+    static NElementSpace ofSpace(int count) {
+        NAssert.requireTrue(count > 0, () -> NMsg.ofC("spaces count should be positive"));
+        return NElementFactory.of().ofSpace(NStringUtils.repeat(' ', count));
+    }
+
+    static NElementSpace ofSpace(String value) {
+        return NElementFactory.of().ofSpace(value);
+    }
+
+    static NElementSeparator ofSeparator(String value) {
+        return NElementFactory.of().ofSeparator(value);
+    }
+
+    static NElementSeparator ofSeparator() {
+        return NElementFactory.of().ofSeparator(',');
+    }
+
+    static NElementSeparator ofSeparator(char value) {
+        return NElementFactory.of().ofSeparator(value);
+    }
+
     static NElementAnnotation ofAnnotation(String name) {
         return NElementFactory.of().ofAnnotation(name);
     }
@@ -723,6 +747,12 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
         return NElementFactory.of().ofDiagnosticBuilder();
     }
 
+    static NBoundAffix ofBoundAffix(NAffix affix, NAffixAnchor anchor) {
+        return NElementFactory.of().ofBoundAffix(affix, anchor);
+    }
+
+    boolean anyMatches(Predicate<NElement> predicate);
+
     List<NElementDiagnostic> diagnostics();
 
 
@@ -733,7 +763,7 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
      */
     NElementType type();
 
-    String toString(boolean compact);
+    String toString();
 
     /**
      * Traverse this element and its entire subtree (including annotations).
@@ -743,7 +773,7 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
      */
     NTreeVisitResult traverse(NElementVisitor visitor);
 
-    List<NElementDiagnostic> findDiagnostics();
+    List<NElementDiagnostic> treeDiagnostics();
 
     boolean isCustomTree();
 
@@ -863,6 +893,8 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     boolean isName(Predicate<String> nameCondition);
 
     boolean isNamed(String name);
+
+    List<NBoundAffix> affixes();
 
     List<NElementAnnotation> annotations();
 
@@ -1020,7 +1052,7 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
      */
     NOptional<NListContainerElement> toListContainer();
 
-    NElementComments comments();
+    List<NElementComment> comments();
 
     boolean isName();
 
@@ -1091,6 +1123,7 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     NOptional<NDoubleComplex> asDoubleComplexValue();
 
     NOptional<NFloatComplex> asFloatComplexValue();
+
     NOptional<NFlatExprElement> asFlatExpression();
 
     NOptional<LocalDate> asLocalDateValue();
@@ -1132,6 +1165,7 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     boolean isAnyOperator();
 
     boolean isBinaryInfixOperator();
+
     boolean isBinaryInfixOperator(NOperatorSymbol symbol);
 
     boolean isUnaryOperator();
@@ -1139,13 +1173,31 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     boolean isUnaryPrefixOperator();
 
     boolean isUnaryPrefixOperator(NOperatorSymbol symbol);
+
     boolean isUnarySuffixOperator(NOperatorSymbol symbol);
 
     NOptional<NElement> asNumberType(NElementType elemType);
 
     List<NElement> transform(NElementTransform transform);
 
-    List<NElement> transform(NElementPath path, NElementTransform transform);
+    List<NElement> transform(NElementTransformContext context, NElementTransform transform);
+
+    /**
+     * Transforms this element using the provided transformer and returns
+     * an optional result. Useful for 1:1 or 1:0 mappings.
+     */
+    default NOptional<NElement> transformOptional(NElementTransform transform) {
+        List<NElement> list = transform(transform);
+        if (list == null || list.isEmpty()) {
+            return NOptional.ofEmpty(() -> NMsg.ofC("Transformation returned no elements"));
+        }
+        return NOptional.of(list.get(0));
+    }
+
+    /**
+     * Semantic sugar for applying a formatter.
+     */
+    NElement format(NElementFormatter formatter);
 
     String snippet();
 
