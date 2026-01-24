@@ -4,46 +4,26 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNBinaryStreamElement;
-import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NAssignmentPolicy;
-import net.thevpc.nuts.util.NUnsupportedOperationException;
 
 import java.util.List;
 import java.util.function.Consumer;
 
 public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder implements NBinaryStreamElementBuilder {
     private NInputStreamProvider value;
+    private String blocIdentifier;
 
 
     public DefaultNBinaryStreamElementBuilder() {
     }
 
-    @Override
-    public NBinaryStreamElementBuilder removeAnnotation(NElementAnnotation annotation) {
-        super.removeAnnotation(annotation);
+    public String blocIdentifier() {
+        return blocIdentifier;
+    }
+
+    public NBinaryStreamElementBuilder blocIdentifier(String blocIdentifier) {
+        this.blocIdentifier = blocIdentifier;
         return this;
-    }
-
-    @Override
-    public NBinaryStreamElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other, NAssignmentPolicy.ANY);
-        return this;
-    }
-
-    @Override
-    public NBinaryStreamElementBuilder copyFrom(NElement other) {
-        copyFrom(other, NAssignmentPolicy.ANY);
-        return this;
-    }
-
-    @Override
-    public NBinaryStreamElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
-        return (NBinaryStreamElementBuilder) super.copyFrom(other, assignmentPolicy);
-    }
-
-    @Override
-    public NBinaryStreamElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
-        return (NBinaryStreamElementBuilder) super.copyFrom(other, assignmentPolicy);
     }
 
     @Override
@@ -54,17 +34,9 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
         return this;
     }
 
-    @Override
-    public NInputStreamProvider getValue() {
-        return value;
-    }
 
     public NInputStreamProvider value() {
         return value;
-    }
-
-    public NBinaryStreamElementBuilder setValue(NInputStreamProvider value) {
-        return value(value);
     }
 
     public NBinaryStreamElementBuilder value(NInputStreamProvider value) {
@@ -75,7 +47,7 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
 
     @Override
     public NBinaryStreamElement build() {
-        return new DefaultNBinaryStreamElement(value, annotations(), comments(), diagnostics());
+        return new DefaultNBinaryStreamElement(value, blocIdentifier, affixes(), diagnostics());
     }
 
     @Override
@@ -83,38 +55,132 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
         return NElementType.BINARY_STREAM;
     }
 
-    public NBinaryStreamElementBuilder copyFrom(NBinaryStreamElement element) {
-        if (element != null) {
-            addAnnotations(element.annotations());
-            addComments(element.comments());
-            value(element.value());
+
+    // ------------------------------------------
+
+    @Override
+    public NBinaryStreamElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
+        super.copyFrom(other, assignmentPolicy);
+        if (other instanceof NBinaryStreamElementBuilder) {
+            NBinaryStreamElementBuilder b = (NBinaryStreamElementBuilder) other;
+            blocIdentifier(b.blocIdentifier());
+            value(b.value());
         }
         return this;
     }
 
-    public NBinaryStreamElementBuilder copyFrom(NBinaryStreamElementBuilder element) {
-        if (element != null) {
-            addAnnotations(element.annotations());
-            addComments(element.comments());
-            value(element.value());
+    @Override
+    public NBinaryStreamElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
+        super.copyFrom(other, assignmentPolicy);
+        if (other instanceof NBinaryStreamElement) {
+            NBinaryStreamElement b = (NBinaryStreamElement) other;
+            blocIdentifier(b.blocIdentifier());
+            value(b.value());
         }
         return this;
     }
-
 
     // ------------------------------------------
     // RETURN SIG
     // ------------------------------------------
 
     @Override
-    public NBinaryStreamElementBuilder addLeadingComment(NElementCommentType type, String text) {
-        super.addLeadingComment(type, text);
+    public NBinaryStreamElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+        super.addAnnotations(annotations);
         return this;
     }
 
     @Override
-    public NBinaryStreamElementBuilder addTrailingComment(NElementCommentType type, String text) {
-        super.addTrailingComment(type, text);
+    public NBinaryStreamElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name, args);
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder addAnnotation(NElementAnnotation annotation) {
+        super.addAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder addAffix(int index, NBoundAffix affix) {
+        super.addAffix(index, affix);
+        return this;
+    }
+
+    public NBinaryStreamElementBuilder addAffix(NBoundAffix affix){
+        super.addAffix(affix);
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder removeAffix(int index) {
+        super.removeAffix(index);
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder clearAnnotations() {
+        super.clearAnnotations();
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder clearComments() {
+        super.clearComments();
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder setAffix(int index, NBoundAffix affix) {
+        super.setAffix(index, affix);
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.setAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder removeDiagnostic(NElementDiagnostic error) {
+        super.removeDiagnostic(error);
+        return this;
+    }
+
+    public NBinaryStreamElementBuilder addAffixes(List<NBoundAffix> affixes) {
+        super.addAffixes(affixes);
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder addDiagnostic(NElementDiagnostic error) {
+        super.addDiagnostic(error);
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder addAffixes(List<? extends NAffix> affixes, NAffixAnchor anchor) {
+        super.addAffixes(affixes, anchor);
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder addAffix(NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NBinaryStreamElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor) {
+        super.removeAffixes(type, anchor);
         return this;
     }
 
@@ -143,80 +209,21 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
     }
 
     @Override
-    public NBinaryStreamElementBuilder removeTrailingCommentAt(int index) {
-        super.removeTrailingCommentAt(index);
+    public NBinaryStreamElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
         return this;
     }
 
     @Override
-    public NBinaryStreamElementBuilder removeLeadingCommentAt(int index) {
-        super.removeLeadingCommentAt(index);
+    public NBinaryStreamElementBuilder copyFrom(NElementBuilder other) {
+        super.copyFrom(other);
         return this;
     }
 
     @Override
-    public NBinaryStreamElementBuilder removeTrailingComment(NElementComment comment) {
-        super.removeTrailingComment(comment);
+    public NBinaryStreamElementBuilder copyFrom(NElement other) {
+        super.copyFrom(other);
         return this;
     }
 
-    @Override
-    public NBinaryStreamElementBuilder removeLeadingComment(NElementComment comment) {
-        super.removeLeadingComment(comment);
-        return this;
-    }
-
-    @Override
-    public NBinaryStreamElementBuilder addComments(NElementComments comments) {
-        super.addComments(comments);
-        return this;
-    }
-
-    @Override
-    public NBinaryStreamElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        super.addAnnotations(annotations);
-        return this;
-    }
-
-    @Override
-    public NBinaryStreamElementBuilder addAnnotation(String name, NElement... args) {
-        super.addAnnotation(name, args);
-        return this;
-    }
-
-
-    @Override
-    public NBinaryStreamElementBuilder addAnnotation(NElementAnnotation annotation) {
-        super.addAnnotation(annotation);
-        return this;
-    }
-
-    @Override
-    public NBinaryStreamElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        super.addAnnotationAt(index, annotation);
-        return this;
-    }
-
-    @Override
-    public NBinaryStreamElementBuilder removeAnnotationAt(int index) {
-        super.removeAnnotationAt(index);
-        return this;
-    }
-
-    @Override
-    public NBinaryStreamElementBuilder clearAnnotations() {
-        super.clearAnnotations();
-        return this;
-    }
-
-    @Override
-    public NBinaryStreamElementBuilder clearComments() {
-        super.clearComments();
-        return this;
-    }
-
-    @Override
-    public NBinaryStreamElementBuilder writeBase64(String base64String) {
-        throw new NUnsupportedOperationException(NMsg.ofC("not yet implemented NBinaryStreamElementBuilder::writeBase64"));
-    }
 }
