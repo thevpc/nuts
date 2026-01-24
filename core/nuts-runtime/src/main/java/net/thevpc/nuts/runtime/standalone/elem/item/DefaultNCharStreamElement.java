@@ -26,12 +26,15 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NReaderProvider;
-import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
 import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNCharStreamElementBuilder;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,18 +48,18 @@ public class DefaultNCharStreamElement extends AbstractNElement implements NChar
     private final NReaderProvider value;
     private final String blockIdentifier;
 
-    public DefaultNCharStreamElement(String blockIdentifier,NReaderProvider value) {
-        this(blockIdentifier,value,null,null,null);
+    public DefaultNCharStreamElement(String blockIdentifier, NReaderProvider value) {
+        this(blockIdentifier, value, null, null);
     }
 
-    public DefaultNCharStreamElement(String blockIdentifier,NReaderProvider value, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
-        super(NElementType.CHAR_STREAM, annotations, comments,diagnostics);
+    public DefaultNCharStreamElement(String blockIdentifier, NReaderProvider value, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+        super(NElementType.CHAR_STREAM, affixes, diagnostics);
         this.value = value;
         this.blockIdentifier = NStringUtils.trim(blockIdentifier);
     }
 
     @Override
-    public String getBlocIdentifier() {
+    public String blocIdentifier() {
         return blockIdentifier;
     }
 
@@ -87,22 +90,6 @@ public class DefaultNCharStreamElement extends AbstractNElement implements NChar
     @Override
     public boolean isEmpty() {
         return false;
-    }
-
-
-    @Override
-    public String toString() {
-        return toString(true);
-    }
-
-    @Override
-    public String toString(boolean compact) {
-        NStringBuilder sb = new NStringBuilder();
-        sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
-        String svalue = String.valueOf(value);
-        sb.append(svalue);
-        sb.append(NElementToStringHelper.trailingComments(this, compact));
-        return sb.toString();
     }
 
     @Override
@@ -143,6 +130,6 @@ public class DefaultNCharStreamElement extends AbstractNElement implements NChar
 
     @Override
     public NCharStreamElementBuilder builder() {
-        return new DefaultNCharStreamElementBuilder().addAnnotations(annotations()).value(value);
+        return new DefaultNCharStreamElementBuilder().addAffixes(affixes()).value(value);
     }
 }
