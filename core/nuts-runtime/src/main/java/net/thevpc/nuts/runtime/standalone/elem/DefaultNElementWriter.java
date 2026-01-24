@@ -35,7 +35,7 @@ import java.util.function.Consumer;
 public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWriter> implements NElementWriter {
     private final DefaultNTextManagerModel model;
     private NContentType contentType = NContentType.JSON;
-    private boolean compact;
+    private NElementFormatter formatter;
     private boolean logProgress;
     private boolean traceProgress;
     private NProgressFactory progressFactory;
@@ -55,7 +55,7 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
 
     @Override
     public NElementWriter doWithMapperStore(Consumer<NElementMapperStore> doWith) {
-        if(doWith != null) {
+        if (doWith != null) {
             doWith.accept(mapperStore());
         }
         return this;
@@ -116,13 +116,31 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
 
 
     @Override
-    public boolean isCompact() {
-        return compact;
+    public NElementFormatter getFormatter() {
+        if (formatter != null) {
+            return formatter;
+        }
+        switch (contentType) {
+            case JSON:
+                return NElementFormatter.ofJsonPretty();
+            case TSON:
+                return NElementFormatter.ofTsonPretty();
+            case XML:
+                return NElementFormatter.ofXmlPretty();
+            case YAML:
+                return NElementFormatter.ofYamlPretty();
+            default:
+                return NElementFormatterBuilder.of()
+                        .setStyle(NElementFormatterStyle.COMPACT)
+                        .setContentType(contentType)
+                        .build()
+                ;
+        }
     }
 
     @Override
-    public NElementWriter setCompact(boolean compact) {
-        this.compact = compact;
+    public NElementWriter setFormatter(NElementFormatter formatter) {
+        this.formatter = formatter;
         return this;
     }
 
@@ -170,13 +188,13 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
     }
 
     private void print(Object aValue, NPrintStream out, NElementStreamFormat format) {
-        NElement elem = NElements.of().doWithMapperStore(d->d.copyFrom(mapperStore())).toElement(aValue);
+        NElement elem = NElements.of().doWithMapperStore(d -> d.copyFrom(mapperStore())).toElement(aValue);
         if (out.isNtf()) {
             NPrintStream bos = NMemoryPrintStream.of();
-            format.printElement(elem, bos, compact, createFactoryContext());
+            format.printElement(elem, bos, formatter, createFactoryContext());
             out.print(NText.ofCode(getContentType().id(), bos.toString()));
         } else {
-            format.printElement(elem, out, compact, createFactoryContext());
+            format.printElement(elem, out, formatter, createFactoryContext());
         }
         out.flush();
     }
@@ -186,7 +204,7 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
         if (contentType == NContentType.PLAIN) {
             print(aValue, out, model.getJsonMan());
         } else {
-            print(aValue, out, model.getStreamFormat(contentType==null?NContentType.JSON : contentType));
+            print(aValue, out, model.getStreamFormat(contentType == null ? NContentType.JSON : contentType));
         }
     }
 
