@@ -149,7 +149,7 @@ public class NLogRichFormatter extends Formatter {
                 NTexts.of()
                         .of(message);
         sb.append(msgStr);
-        sb.append(NLogUtils.LINE_SEPARATOR);
+        sb.append(NNewLineMode.system().value());
         lastMillis = wRecord.getMillis();
         if (wRecord.getThrown() != null) {
             sb.append(
