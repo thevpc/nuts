@@ -25,7 +25,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathImpl;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NMsg;
@@ -46,44 +45,22 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
     private List<NElement> params;
 
     public DefaultNArrayElement(String name, List<NElement> params, List<NElement> values) {
-        this(name,params,values,null,null,null);
+        this(name,params,values,null,null);
     }
 
-    public DefaultNArrayElement(String name, List<NElement> params, List<NElement> values, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+    public DefaultNArrayElement(String name, List<NElement> params, List<NElement> values, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
         super(
                 name == null && params == null ? NElementType.ARRAY
                         : name == null && params != null ? NElementType.PARAMETRIZED_ARRAY
                         : name != null && params == null ? NElementType.NAMED_ARRAY
                         : NElementType.NAMED_PARAMETRIZED_ARRAY,
-                annotations, comments,diagnostics);
+                affixes,diagnostics);
         if (name != null) {
             NAssert.requireTrue(NElementUtils.isValidElementName(name), "valid name : "+name);
         }
         this.values = CoreNUtils.copyAndUnmodifiableList(values);
         this.name = name;
         this.params = CoreNUtils.copyAndUnmodifiableNullableList(params);
-    }
-
-    @Override
-    public boolean isCustomTree() {
-        if(super.isCustomTree()){
-            return true;
-        }
-        if(params!=null){
-            for (NElement value : params) {
-                if(value.isCustomTree()){
-                    return true;
-                }
-            }
-        }
-        if(values!=null){
-            for (NElement value : values) {
-                if(value.isCustomTree()){
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     protected NTreeVisitResult traverseChildren(NElementVisitor visitor) {
@@ -98,28 +75,6 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
         return r;
     }
 
-
-    @Override
-    public boolean isErrorTree() {
-        if(super.isErrorTree()){
-            return true;
-        }
-        if(params!=null){
-            for (NElement value : params) {
-                if(value.isErrorTree()){
-                    return true;
-                }
-            }
-        }
-        if(values!=null){
-            for (NElement value : values) {
-                if(value.isErrorTree()){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     @Override
     public boolean isNamed(String name) {
@@ -168,22 +123,6 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
     @Override
     public Iterator<NElement> iterator() {
         return values.iterator();
-    }
-
-    public String toString() {
-        return toString(false);
-    }
-
-    @Override
-    public String toString(boolean compact) {
-        NStringBuilder sb = new NStringBuilder();
-        sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
-        NElementToStringHelper.appendUplet(name, params, compact, sb);
-        sb.append("[");
-        NElementToStringHelper.appendChildren(children(), compact, new NElementToStringHelper.SemiCompactInfo().setMaxChildren(10).setMaxLineSize(120), sb);
-        sb.append("]");
-        sb.append(NElementToStringHelper.trailingComments(this, compact));
-        return sb.toString();
     }
 
     @Override
