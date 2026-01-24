@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractNListContainerElement extends AbstractNElement implements NListContainerElement {
-    public AbstractNListContainerElement(NElementType type, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
-        super(type, annotations, comments, diagnostics);
+    public AbstractNListContainerElement(NElementType type, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+        super(type, affixes, diagnostics);
     }
 
     @Override
