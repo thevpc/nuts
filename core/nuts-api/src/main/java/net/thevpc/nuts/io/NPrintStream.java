@@ -198,4 +198,6 @@ public interface NPrintStream extends NOutputTarget, AutoCloseable {
     NSystemTerminalBase getTerminal();
 
     NPrintStream printProgressLine(NText b);
+
+    NStringWriter asStringWriter();
 }
