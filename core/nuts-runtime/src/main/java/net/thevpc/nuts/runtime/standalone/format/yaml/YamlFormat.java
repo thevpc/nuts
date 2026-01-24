@@ -151,7 +151,7 @@ public class YamlFormat {
     }
 
 
-    void formatNode(NElement value, NPrintStream out, boolean compact, NElementFactoryContext context, int indentLevel) {
+    void formatNode(NElement value, NPrintStream out, NElementFormatter formatter, NElementFactoryContext context, int indentLevel) {
         value = ensureYaml(value);
         String indent = NStringUtils.repeat("   ", indentLevel);
         switch (value.type()) {
@@ -187,26 +187,26 @@ public class YamlFormat {
                     if (isComplexType(key)) {
                         out.print(indent);
                         out.print("?\n");
-                        formatNode(key, out, compact, context, indentLevel + 1);
+                        formatNode(key, out, formatter, context, indentLevel + 1);
                         out.print(indent);
                         out.print(":");
                         if (isComplexType(val)) {
                             out.print("\n");
-                            formatNode(val, out, compact, context, indentLevel + 1);
+                            formatNode(val, out, formatter, context, indentLevel + 1);
                         } else {
                             out.print(" ");
-                            formatNode(val, out, compact, context, indentLevel + 1);
+                            formatNode(val, out, formatter, context, indentLevel + 1);
                         }
                     } else {
                         out.print(indent);
-                        formatNode(key, out, compact, context, indentLevel);
+                        formatNode(key, out, formatter, context, indentLevel);
                         out.print(":");
                         if (isComplexType(val)) {
                             out.print("\n");
-                            formatNode(val, out, compact, context, indentLevel + 1);
+                            formatNode(val, out, formatter, context, indentLevel + 1);
                         } else {
                             out.print(" ");
-                            formatNode(val, out, compact, context, indentLevel);
+                            formatNode(val, out, formatter, context, indentLevel);
                         }
                     }
                 }
@@ -224,9 +224,9 @@ public class YamlFormat {
                     out.print("- ");
                     if (a.type() == NElementType.OBJECT || a.type() == NElementType.ARRAY) {
                         out.print("\n");
-                        formatNode(a, out, compact, context, indentLevel + 1);
+                        formatNode(a, out, formatter, context, indentLevel + 1);
                     } else {
-                        formatNode(a, out, compact, context, indentLevel);
+                        formatNode(a, out, formatter, context, indentLevel);
                     }
                 }
                 break;
