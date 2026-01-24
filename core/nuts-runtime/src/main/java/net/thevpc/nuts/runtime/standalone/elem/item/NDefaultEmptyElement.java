@@ -6,21 +6,14 @@ import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNEmptyElementBuild
 import java.util.List;
 
 public class NDefaultEmptyElement extends AbstractNElement implements NEmptyElement {
-    public NDefaultEmptyElement(List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
-        super(NElementType.EMPTY, annotations, comments, diagnostics);
-    }
-
-    @Override
-    public String toString(boolean compact) {
-        return "<empty>";
+    public NDefaultEmptyElement(List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+        super(NElementType.EMPTY, affixes, diagnostics);
     }
 
     @Override
     public NEmptyElementBuilder builder() {
-        return (NEmptyElementBuilder)
-                new DefaultNEmptyElementBuilder()
-                        .addComments(comments())
-                        .addAnnotations(annotations())
-                ;
+        NEmptyElementBuilder b = new DefaultNEmptyElementBuilder();
+        b.addAffixes(affixes());
+        return b;
     }
 }
