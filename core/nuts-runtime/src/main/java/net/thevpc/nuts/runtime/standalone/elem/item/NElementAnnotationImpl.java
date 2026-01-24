@@ -1,54 +1,45 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementAnnotation;
-import net.thevpc.nuts.elem.NElementAnnotationBuilder;
-import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.builder.NElementAnnotationBuilderImpl;
+import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NStringBuilder;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.NOptional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class NElementAnnotationImpl implements NElementAnnotation {
     private final String name;
-    private final NElement[] params;
+    private final List<NBoundAffix> affixes;
+    private final List<NElement> params;
 
-    public NElementAnnotationImpl(String name, NElement[] params) {
+    public NElementAnnotationImpl(String name, List<NElement> params, List<NBoundAffix> affixes) {
         this.name = name;
-        this.params = params;
+        this.params = CoreNUtils.copyNonNullUnmodifiableList(params);
+        this.affixes = CoreNUtils.copyAndFilterUnmodifiableList(affixes, x -> {
+            if (x == null) {
+                return false;
+            }
+            return true;
+        });
     }
 
-    @Override
-    public boolean isCustomTree() {
-        if (params != null) {
-            for (NElement param : params) {
-                if (param.isCustomTree()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     @Override
-    public boolean isErrorTree() {
-        if (params != null) {
-            for (NElement param : params) {
-                if (param.isErrorTree()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public NAffixType type() {
+        return NAffixType.ANNOTATION;
+    }
+
+    public List<NBoundAffix> affixes() {
+        return affixes;
     }
 
     @Override
     public NElementAnnotationBuilder builder() {
-        return new NElementAnnotationBuilderImpl(name, params());
+        return new NElementAnnotationBuilderImpl(name, params().orNull(), affixes());
     }
 
     public boolean isParametrized() {
@@ -66,38 +57,29 @@ public class NElementAnnotationImpl implements NElementAnnotation {
 
     @Override
     public int size() {
-        return params == null ? 0 : params.length;
+        return params == null ? 0 : params.size();
     }
 
     @Override
-    public NElement param(int index) {
-        return params[index];
+    public NOptional<NElement> param(int index) {
+        if (index < 0 || index >= size()) {
+            return NOptional.ofNamedEmpty(NMsg.ofC("param %s", index));
+        }
+        return NOptional.of(params.get(index));
     }
 
     @Override
-    public List<NElement> params() {
-        return params == null ? null : Arrays.asList(params);
+    public NOptional<List<NElement>> params() {
+        return NOptional.ofNamed(params, "param");
     }
 
     @Override
     public boolean isBlank() {
-        return NBlankable.isBlank(name) && (params == null || params.length == 0);
+        return NBlankable.isBlank(name) && (params == null || params.size() == 0);
     }
 
     public String toString() {
-        return toString(false);
-    }
-
-    @Override
-    public String toString(boolean compact) {
-        NStringBuilder sb = new NStringBuilder();
-        NElementToStringHelper.appendUplet("@" + (NStringUtils.trim(name)), null, compact, sb);
-        if (params != null) {
-            sb.append("(");
-            NElementToStringHelper.appendChildren(params(), compact, new NElementToStringHelper.SemiCompactInfo().setMaxChildren(10).setMaxLineSize(120), sb);
-            sb.append(")");
-        }
-        return sb.toString();
+        return DefaultTsonWriter.formatTson(this);
     }
 
     @Override
@@ -109,6 +91,6 @@ public class NElementAnnotationImpl implements NElementAnnotation {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, Arrays.hashCode(params));
+        return Objects.hash(name, params);
     }
 }
