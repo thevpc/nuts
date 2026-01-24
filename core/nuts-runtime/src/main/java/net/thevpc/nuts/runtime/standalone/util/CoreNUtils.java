@@ -48,6 +48,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -111,15 +112,25 @@ public class CoreNUtils {
         _QUERY_EMPTY_ENV.put(NConstants.IdProperties.DESKTOP, null);
     }
 
+    public static <T> List<T> copyNonNullUnmodifiableList(List<T> other) {
+        return copyAndFilterUnmodifiableList(other, Objects::nonNull);
+    }
+
+    public static <T> List<T> copyAndFilterUnmodifiableList(List<T> other, Predicate<T> filter) {
+        return (other == null || other.isEmpty()) ? Collections.emptyList() : Collections.unmodifiableList(
+                other.stream().filter(x -> filter == null || filter.test(x)).collect(Collectors.toList())
+        );
+    }
+
     public static <T> List<T> copyAndUnmodifiableList(List<T> other) {
-        return  (other == null || other.isEmpty())? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(other));
+        return (other == null || other.isEmpty()) ? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(other));
     }
 
     public static <T> List<T> copyAndUnmodifiableNullableList(List<T> other) {
-        if(other == null){
+        if (other == null) {
             return null;
         }
-        return  other.isEmpty()? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(other));
+        return other.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(other));
     }
 
     public static String repeat(char txt, int count) {
