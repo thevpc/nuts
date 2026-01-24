@@ -13,17 +13,17 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
     private String rawValue;
 
     public DefaultNStringElement(NElementType type, String value) {
-        this(type, value, value, null, null,null);
+        this(type, value, value, null,null);
     }
 
     public DefaultNStringElement(NElementType type, String value, String rawValue) {
-        this(type, value, rawValue, null, null,null);
+        this(type, value, rawValue, null,null);
     }
 
     public DefaultNStringElement(NElementType type, String value,
                                  String rawValue,
-                                 List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
-        super(type, value, annotations, comments,diagnostics);
+                                 List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+        super(type, value, affixes,diagnostics);
         this.rawValue = rawValue;
         if (type == NElementType.NAME) {
             NAssert.requireTrue(NElementUtils.isValidElementName((String) value), "valid name : " + value);
@@ -31,11 +31,11 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
     }
 
     public DefaultNStringElement(NElementType type, Character value) {
-        this(type, value, null, null,null);
+        this(type, value, null,null);
     }
     public DefaultNStringElement(NElementType type, Character value,
-                                 List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
-        super(type, value, annotations, comments,diagnostics);
+                                 List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+        super(type, value, affixes,diagnostics);
         if (type != NElementType.CHAR) {
             throw new NIllegalArgumentException(NMsg.ofC("expected character"));
         }
