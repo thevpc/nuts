@@ -11,38 +11,10 @@ import java.util.function.Consumer;
 
 public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder implements NCharStreamElementBuilder {
     private NReaderProvider value;
-    private String blockIdentifier;
+    private String blocIdentifier;
 
 
     public DefaultNCharStreamElementBuilder() {
-    }
-
-    @Override
-    public NCharStreamElementBuilder removeAnnotation(NElementAnnotation annotation) {
-        super.removeAnnotation(annotation);
-        return this;
-    }
-
-    @Override
-    public NCharStreamElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other, NAssignmentPolicy.ANY);
-        return this;
-    }
-
-    @Override
-    public NCharStreamElementBuilder copyFrom(NElement other) {
-        copyFrom(other, NAssignmentPolicy.ANY);
-        return this;
-    }
-
-    @Override
-    public NCharStreamElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
-        return (NCharStreamElementBuilder) super.copyFrom(other, assignmentPolicy);
-    }
-
-    @Override
-    public NCharStreamElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
-        return (NCharStreamElementBuilder) super.copyFrom(other, assignmentPolicy);
     }
 
     @Override
@@ -65,15 +37,15 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
 
     @Override
     public NCharStreamElement build() {
-        return new DefaultNCharStreamElement(blockIdentifier,value, annotations(), comments(), diagnostics());
+        return new DefaultNCharStreamElement(blocIdentifier, value, affixes(), diagnostics());
     }
 
-    public String getBlockIdentifier() {
-        return blockIdentifier;
+    public String blocIdentifier() {
+        return blocIdentifier;
     }
 
-    public NCharStreamElementBuilder setBlockIdentifier(String blockIdentifier) {
-        this.blockIdentifier = blockIdentifier;
+    public NCharStreamElementBuilder blocIdentifier(String blocIdentifier) {
+        this.blocIdentifier = blocIdentifier;
         return this;
     }
 
@@ -82,38 +54,131 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
         return NElementType.CHAR_STREAM;
     }
 
-    public NCharStreamElementBuilder copyFrom(NCharStreamElement element) {
-        if (element != null) {
-            addAnnotations(element.annotations());
-            addComments(element.comments());
-            value(element.value());
+    // ------------------------------------------
+
+    @Override
+    public NCharStreamElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
+        super.copyFrom(other, assignmentPolicy);
+        if (other instanceof NCharStreamElementBuilder) {
+            NCharStreamElementBuilder b = (NCharStreamElementBuilder) other;
+            blocIdentifier(b.blocIdentifier());
+            value(b.value());
         }
         return this;
     }
 
-    public NCharStreamElementBuilder copyFrom(NCharStreamElementBuilder element) {
-        if (element != null) {
-            addAnnotations(element.annotations());
-            addComments(element.comments());
-            value(element.value());
+    @Override
+    public NCharStreamElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
+        super.copyFrom(other, assignmentPolicy);
+        if (other instanceof NCharStreamElement) {
+            NCharStreamElement b = (NCharStreamElement) other;
+            blocIdentifier(b.blocIdentifier());
+            value(b.value());
         }
         return this;
     }
-
 
     // ------------------------------------------
     // RETURN SIG
     // ------------------------------------------
 
     @Override
-    public NCharStreamElementBuilder addLeadingComment(NElementCommentType type, String text) {
-        super.addLeadingComment(type, text);
+    public NCharStreamElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+        super.addAnnotations(annotations);
         return this;
     }
 
     @Override
-    public NCharStreamElementBuilder addTrailingComment(NElementCommentType type, String text) {
-        super.addTrailingComment(type, text);
+    public NCharStreamElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name, args);
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder addAnnotation(NElementAnnotation annotation) {
+        super.addAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder addAffix(int index, NBoundAffix affix) {
+        super.addAffix(index, affix);
+        return this;
+    }
+
+    public NCharStreamElementBuilder addAffix(NBoundAffix affix){
+        super.addAffix(affix);
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder removeAffix(int index) {
+        super.removeAffix(index);
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder clearAnnotations() {
+        super.clearAnnotations();
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder clearComments() {
+        super.clearComments();
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder setAffix(int index, NBoundAffix affix) {
+        super.setAffix(index, affix);
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.setAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder removeDiagnostic(NElementDiagnostic error) {
+        super.removeDiagnostic(error);
+        return this;
+    }
+
+    public NCharStreamElementBuilder addAffixes(List<NBoundAffix> affixes) {
+        super.addAffixes(affixes);
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder addDiagnostic(NElementDiagnostic error) {
+        super.addDiagnostic(error);
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder addAffixes(List<? extends NAffix> affixes, NAffixAnchor anchor) {
+        super.addAffixes(affixes, anchor);
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder addAffix(NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor) {
+        super.removeAffixes(type, anchor);
         return this;
     }
 
@@ -142,75 +207,20 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
     }
 
     @Override
-    public NCharStreamElementBuilder removeTrailingCommentAt(int index) {
-        super.removeTrailingCommentAt(index);
+    public NCharStreamElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
         return this;
     }
 
     @Override
-    public NCharStreamElementBuilder removeLeadingCommentAt(int index) {
-        super.removeLeadingCommentAt(index);
+    public NCharStreamElementBuilder copyFrom(NElementBuilder other) {
+        super.copyFrom(other);
         return this;
     }
 
     @Override
-    public NCharStreamElementBuilder removeTrailingComment(NElementComment comment) {
-        super.removeTrailingComment(comment);
+    public NCharStreamElementBuilder copyFrom(NElement other) {
+        super.copyFrom(other);
         return this;
     }
-
-    @Override
-    public NCharStreamElementBuilder removeLeadingComment(NElementComment comment) {
-        super.removeLeadingComment(comment);
-        return this;
-    }
-
-    @Override
-    public NCharStreamElementBuilder addComments(NElementComments comments) {
-        super.addComments(comments);
-        return this;
-    }
-
-    @Override
-    public NCharStreamElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        super.addAnnotations(annotations);
-        return this;
-    }
-
-    @Override
-    public NCharStreamElementBuilder addAnnotation(String name, NElement... args) {
-        super.addAnnotation(name, args);
-        return this;
-    }
-
-    @Override
-    public NCharStreamElementBuilder addAnnotation(NElementAnnotation annotation) {
-        super.addAnnotation(annotation);
-        return this;
-    }
-
-    @Override
-    public NCharStreamElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        super.addAnnotationAt(index, annotation);
-        return this;
-    }
-
-    @Override
-    public NCharStreamElementBuilder removeAnnotationAt(int index) {
-        super.removeAnnotationAt(index);
-        return this;
-    }
-
-    @Override
-    public NCharStreamElementBuilder clearAnnotations() {
-        super.clearAnnotations();
-        return this;
-    }
-
-    @Override
-    public NCharStreamElementBuilder clearComments() {
-        super.clearComments();
-        return this;
-    }
-
 }
