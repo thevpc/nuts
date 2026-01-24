@@ -125,4 +125,8 @@ public interface NElements extends NComponent {
     NExprElementReshaper createJavaExprElementReshaper();
 
     NExprElementReshaperBuilder createDefaultExprElementReshaperBuilder();
+
+    NElementFormatterBuilder createElementFormatterBuilder();
+
+    NElementPath createRootPath();
 }
