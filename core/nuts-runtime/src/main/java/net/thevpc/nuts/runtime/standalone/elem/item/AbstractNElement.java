@@ -28,12 +28,11 @@ import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NTreeVisitResult;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -52,15 +51,13 @@ import java.util.stream.Collectors;
 public abstract class AbstractNElement implements NElement {
 
     private NElementType type;
-    private List<NElementAnnotation> annotations;
+    private List<NBoundAffix> affixes;
     private List<NElementDiagnostic> diagnostics;
-    private NElementComments comments;
 
-    public AbstractNElement(NElementType type, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+    public AbstractNElement(NElementType type, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
         this.type = type;
-        this.annotations = CoreNUtils.copyAndUnmodifiableList(annotations);
+        this.affixes = CoreNUtils.copyAndUnmodifiableList(affixes);
         this.diagnostics = CoreNUtils.copyAndUnmodifiableList(diagnostics);
-        this.comments = comments == null ? NElementCommentsImpl.EMPTY : comments;
     }
 
     @Override
@@ -68,32 +65,55 @@ public abstract class AbstractNElement implements NElement {
         return diagnostics;
     }
 
+    public boolean anyMatches(Predicate<NElement> predicate) {
+        if (predicate == null) {
+            return true;
+        }
+        NBooleanRef e = NBooleanRef.ofFalse();
+        traverse(new NElementVisitor() {
+            @Override
+            public NTreeVisitResult enter(NElement element) {
+                if (predicate.test(element)) {
+                    e.set(true);
+                    return NTreeVisitResult.TERMINATE;
+                }
+                return NTreeVisitResult.CONTINUE;
+            }
+        });
+        return e.get();
+    }
+
+    @Override
+    public List<NBoundAffix> affixes() {
+        return affixes;
+    }
+
     @Override
     public boolean isCustomTree() {
-        if (annotations != null) {
-            for (NElementAnnotation annotation : annotations) {
-                if (annotation.isCustomTree()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return anyMatches(element -> (element instanceof NCustomElement));
     }
 
     @Override
     public boolean isErrorTree() {
-        if (annotations != null) {
-            for (NElementAnnotation annotation : annotations) {
-                if (annotation.isErrorTree()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return anyMatches(element -> !element.diagnostics().isEmpty());
     }
 
+    public List<NElementComment> comments() {
+        return affixes().stream().filter(x ->
+                        x.affix().type() == NAffixType.BLOC_COMMENT
+                                || x.affix().type() == NAffixType.LINE_COMMENT
+                ).map(x -> (NElementComment) x.affix())
+                .collect(Collectors.toList());
+    }
 
-    public List<NElementDiagnostic> findDiagnostics() {
+    @Override
+    public List<NElementAnnotation> annotations() {
+        return affixes().stream().filter(x ->
+                        x.affix().type() == NAffixType.ANNOTATION)
+                .map(x -> (NElementAnnotation) x.affix()).collect(Collectors.toList());
+    }
+
+    public List<NElementDiagnostic> treeDiagnostics() {
         List<NElementDiagnostic> all = new ArrayList<>();
         traverse(new NElementVisitor() {
             @Override
@@ -152,7 +172,7 @@ public abstract class AbstractNElement implements NElement {
             }
 
             // If annotation has an expression, traverse it
-            NTreeVisitResult exprResult = traverseList(visitor, ann.params());
+            NTreeVisitResult exprResult = traverseList(visitor, ann.params().orNull());
             if (exprResult != NTreeVisitResult.CONTINUE) {
                 return exprResult; // propagate TERMINATE, etc.
             }
@@ -169,9 +189,6 @@ public abstract class AbstractNElement implements NElement {
         return NTreeVisitResult.CONTINUE;
     }
 
-    public NElementComments comments() {
-        return comments;
-    }
 
     @Override
     public boolean isName() {
@@ -313,7 +330,7 @@ public abstract class AbstractNElement implements NElement {
         if (size <= 0) {
             size = 100;
         }
-        String s = toString(true);
+        String s = toString();
         int u = s.indexOf("\n");
         boolean truncated = false;
         if (u >= 0) {
@@ -328,6 +345,11 @@ public abstract class AbstractNElement implements NElement {
             return s + "...";
         }
         return s;
+    }
+
+    @Override
+    public String toString() {
+        return DefaultTsonWriter.formatTson(this);
     }
 
     @Override
@@ -423,11 +445,6 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public NElementBuilder builder() {
         return null;
-    }
-
-    @Override
-    public List<NElementAnnotation> annotations() {
-        return annotations;
     }
 
     @Override
@@ -713,7 +730,7 @@ public abstract class AbstractNElement implements NElement {
             NOptional<NUnaryOperatorElement> o = asUnaryOperator();
             if (o.isPresent()) {
                 NUnaryOperatorElement oo = o.get();
-                if (oo.position() == NOperatorPosition.SUFFIX) {
+                if (oo.position() == NOperatorPosition.POSTFIX) {
                     return oo.operatorSymbol() == symbol;
                 }
             }
@@ -768,7 +785,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isAnyOperator() {
-        return type().typeGroup() == NElementTypeGroup.OPERATOR;
+        return type().group() == NElementTypeGroup.OPERATOR;
     }
 
     @Override
@@ -989,12 +1006,15 @@ public abstract class AbstractNElement implements NElement {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         AbstractNElement that = (AbstractNElement) o;
-        return type == that.type && Objects.deepEquals(annotations, that.annotations);
+        return type == that.type
+                && Objects.deepEquals(affixes, that.affixes)
+                && Objects.deepEquals(diagnostics, that.diagnostics)
+                ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, annotations.hashCode());
+        return Objects.hash(type, affixes.hashCode(), diagnostics.hashCode());
     }
 
     @Override
@@ -1369,13 +1389,26 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public List<NElement> transform(NElementTransform transform) {
-        return NElementTransformHelper.transform(null, this, transform);
+        return NElementTransformHelper.transform(NElementTransformHelper.context(this), transform);
     }
 
     @Override
-    public List<NElement> transform(NElementPath path, NElementTransform transform) {
-        return NElementTransformHelper.transform(path, this, transform);
+    public List<NElement> transform(NElementTransformContext context, NElementTransform transform) {
+        return NElementTransformHelper.transform(
+                context == null ? NElementTransformHelper.context(this) : context.withElement(this)
+                , transform
+        );
     }
+
+    /**
+     * Semantic sugar for applying a formatter.
+     */
+    public NElement format(NElementFormatter formatter) {
+        return NOptional.ofSingleton(
+                transform(new DefaultNElementFormatContext(this), formatter)
+        ).get();
+    }
+
 
     @Override
     public boolean isList() {
