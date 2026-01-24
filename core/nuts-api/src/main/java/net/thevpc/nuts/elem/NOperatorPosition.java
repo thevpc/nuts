@@ -8,7 +8,7 @@ import net.thevpc.nuts.util.NOptional;
 public enum NOperatorPosition implements NEnum {
     INFIX,
     PREFIX,
-    SUFFIX,
+    POSTFIX,
     ;
 
     /**
@@ -31,7 +31,7 @@ public enum NOperatorPosition implements NEnum {
                     return NOptional.of(NOperatorPosition.PREFIX);
                 case "POST":
                 case "SUFFIX":
-                    return NOptional.of(NOperatorPosition.SUFFIX);
+                    return NOptional.of(NOperatorPosition.POSTFIX);
             }
             return null;
         });
