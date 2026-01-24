@@ -11,10 +11,10 @@ public class DefaultNOperatorElementTernary extends AbstractNOperatorElement imp
             NElement second,
             NElement third,
             List<NOperatorSymbol> symbols, NOperatorPosition position,
-            List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+            List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
         super(symbols, position, Arrays.asList(
                 first, second, third
-                ), annotations, comments, diagnostics
+                ), affixes, diagnostics
         );
     }
 
