@@ -42,10 +42,10 @@ public class NPositionedCharReader extends NCharReader {
     }
 
     @Override
-    public int read(char[] dst, int offset, int count) {
-        int n = super.read(dst, offset, count);
+    public int read(char[] buffer, int offset, int count) {
+        int n = super.read(buffer, offset, count);
         for (int i = 0; i < n; i++) {
-            advance(dst[offset + i]);
+            advance(buffer[offset + i]);
         }
         return n;
     }
