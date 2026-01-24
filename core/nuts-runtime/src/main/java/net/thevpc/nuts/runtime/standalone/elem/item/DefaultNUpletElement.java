@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathImpl;
-import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
@@ -44,44 +43,15 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
     private final List<NElement> params;
     private String name;
 
-    public DefaultNUpletElement(String name, List<NElement> params, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+    public DefaultNUpletElement(String name, List<NElement> params, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
         super(name == null ? NElementType.UPLET
                         : NElementType.NAMED_UPLET,
-                annotations, comments, diagnostics);
+                affixes, diagnostics);
         if(name!=null){
             NAssert.requireTrue(NElementUtils.isValidElementName(name), "valid name : " + name);
         }
         this.params = CoreNUtils.copyAndUnmodifiableList(params);
         this.name = name;
-    }
-
-    @Override
-    public boolean isCustomTree() {
-        if(super.isCustomTree()){
-            return true;
-        }
-        if(params!=null){
-            for (NElement value : params) {
-                if(value.isCustomTree()){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    @Override
-    public boolean isErrorTree() {
-        if(super.isErrorTree()){
-            return true;
-        }
-        if(params!=null){
-            for (NElement value : params) {
-                if(value.isErrorTree()){
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     protected NTreeVisitResult traverseChildren(NElementVisitor visitor) {
@@ -166,29 +136,6 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
         return params.iterator();
     }
 
-    public String toString() {
-        return toString(false);
-    }
-
-    @Override
-    public String toString(boolean compact) {
-        NStringBuilder sb = new NStringBuilder();
-        sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
-        if (name != null) {
-            sb.append(name);
-        }
-        if (params != null) {
-            sb.append("(");
-            NElementToStringHelper.appendChildren(params, compact,
-                    new NElementToStringHelper.SemiCompactInfo()
-                            .setMaxChildren(3)
-                            .setMaxLineSize(120)
-                    , sb);
-            sb.append(")");
-        }
-        sb.append(NElementToStringHelper.trailingComments(this, compact));
-        return sb.toString();
-    }
 
     @Override
     public boolean equals(Object o) {
