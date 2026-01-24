@@ -17,16 +17,6 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
         key = NElement.ofNull();
         value = NElement.ofNull();
     }
-    @Override
-    public NPairElementBuilder removeAnnotation(NElementAnnotation annotation) {
-        super.removeAnnotation(annotation);
-        return this;
-    }
-    @Override
-    public NPairElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other, NAssignmentPolicy.ANY);
-        return this;
-    }
 
     @Override
     public NOptional<String> name() {
@@ -37,114 +27,8 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
     }
 
     @Override
-    public NPairElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
-        if(other==null){
-            return this;
-        }
-        super.copyFrom(other, assignmentPolicy);
-        if(other instanceof NPairElementBuilder){
-            NPairElementBuilder from = (NPairElementBuilder) other;
-            this.key = from.key();
-            this.value = from.value();
-            return this;
-        }
-        if(other instanceof NUpletElementBuilder){
-            NUpletElementBuilder from = (NUpletElementBuilder) other;
-            if(from.size()>0) {
-                this.key = from.get(0).get();
-            }
-            if(from.size()>1) {
-                this.value = from.get(1).get();
-            }
-            return this;
-        }
-        if(other instanceof NObjectElementBuilder){
-            NObjectElementBuilder from = (NObjectElementBuilder) other;
-            if(from.size()>0) {
-                this.key = from.getAt(0).get();
-            }
-            if(from.size()>1) {
-                this.value = from.getAt(1).get();
-            }
-            return this;
-        }
-        if(other instanceof NArrayElementBuilder){
-            NArrayElementBuilder from = (NArrayElementBuilder) other;
-            if(from.size()>0) {
-                this.key = from.get(0).get();
-            }
-            if(from.size()>1) {
-                this.value = from.get(1).get();
-            }
-            return this;
-        }
-        return this;
-    }
-
-    @Override
-    public NPairElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
-        if(other==null){
-            return this;
-        }
-        super.copyFrom(other, assignmentPolicy);
-        if(other instanceof NPairElement){
-            NPairElement from = (NPairElement) other;
-            this.key = from.key();
-            this.value = from.value();
-            return this;
-        }
-        if(other instanceof NUpletElement){
-            NUpletElement from = (NUpletElement) other;
-            if(from.size()>0) {
-                this.key = from.get(0).get();
-            }
-            if(from.size()>1) {
-                this.value = from.get(1).get();
-            }
-            return this;
-        }
-        if(other instanceof NObjectElement){
-            NObjectElement from = (NObjectElement) other;
-            if(from.size()>0) {
-                this.key = from.getAt(0).get();
-            }
-            if(from.size()>1) {
-                this.value = from.getAt(1).get();
-            }
-            return this;
-        }
-        if(other instanceof NArrayElement){
-            NArrayElement from = (NArrayElement) other;
-            if(from.size()>0) {
-                this.key = from.get(0).get();
-            }
-            if(from.size()>1) {
-                this.value = from.get(1).get();
-            }
-            return this;
-        }
-        return this;
-    }
-
-
-
-    @Override
-    public boolean isCustomTree() {
-        if(super.isCustomTree()){
-            return true;
-        }
-        if(key!=null && key.isCustomTree()){
-            return true;
-        }
-        if(value!=null && value.isCustomTree()){
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public NPairElementBuilder doWith(Consumer<NPairElementBuilder> con) {
-        if(con!=null){
+        if (con != null) {
             con.accept(this);
         }
         return this;
@@ -175,7 +59,7 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
 
     @Override
     public NPairElement build() {
-        return new DefaultNPairElement(key, value, annotations(), comments(), diagnostics());
+        return new DefaultNPairElement(key, value, affixes(), diagnostics());
     }
 
     @Override
@@ -193,20 +77,201 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
         return key;
     }
 
+    // ------------------------------------------
+
+    @Override
+    public NPairElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
+        if (other == null) {
+            return this;
+        }
+        super.copyFrom(other, assignmentPolicy);
+        if (other instanceof NPairElementBuilder) {
+            NPairElementBuilder from = (NPairElementBuilder) other;
+            this.key = from.key();
+            this.value = from.value();
+            return this;
+        }
+        if (other instanceof NUpletElementBuilder) {
+            NUpletElementBuilder from = (NUpletElementBuilder) other;
+            if (from.size() > 0) {
+                this.key = from.get(0).get();
+            }
+            if (from.size() > 1) {
+                this.value = from.get(1).get();
+            }
+            return this;
+        }
+        if (other instanceof NObjectElementBuilder) {
+            NObjectElementBuilder from = (NObjectElementBuilder) other;
+            if (from.size() > 0) {
+                this.key = from.getAt(0).get();
+            }
+            if (from.size() > 1) {
+                this.value = from.getAt(1).get();
+            }
+            return this;
+        }
+        if (other instanceof NArrayElementBuilder) {
+            NArrayElementBuilder from = (NArrayElementBuilder) other;
+            if (from.size() > 0) {
+                this.key = from.get(0).get();
+            }
+            if (from.size() > 1) {
+                this.value = from.get(1).get();
+            }
+            return this;
+        }
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
+        if (other == null) {
+            return this;
+        }
+        super.copyFrom(other, assignmentPolicy);
+        if (other instanceof NPairElement) {
+            NPairElement from = (NPairElement) other;
+            this.key = from.key();
+            this.value = from.value();
+            return this;
+        }
+        if (other instanceof NUpletElement) {
+            NUpletElement from = (NUpletElement) other;
+            if (from.size() > 0) {
+                this.key = from.get(0).get();
+            }
+            if (from.size() > 1) {
+                this.value = from.get(1).get();
+            }
+            return this;
+        }
+        if (other instanceof NObjectElement) {
+            NObjectElement from = (NObjectElement) other;
+            if (from.size() > 0) {
+                this.key = from.getAt(0).get();
+            }
+            if (from.size() > 1) {
+                this.value = from.getAt(1).get();
+            }
+            return this;
+        }
+        if (other instanceof NArrayElement) {
+            NArrayElement from = (NArrayElement) other;
+            if (from.size() > 0) {
+                this.key = from.get(0).get();
+            }
+            if (from.size() > 1) {
+                this.value = from.get(1).get();
+            }
+            return this;
+        }
+        return this;
+    }
 
     // ------------------------------------------
     // RETURN SIG
     // ------------------------------------------
 
     @Override
-    public NPairElementBuilder addLeadingComment(NElementCommentType type, String text) {
-        super.addLeadingComment(type, text);
+    public NPairElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+        super.addAnnotations(annotations);
         return this;
     }
 
     @Override
-    public NPairElementBuilder addTrailingComment(NElementCommentType type, String text) {
-        super.addTrailingComment(type, text);
+    public NPairElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name, args);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addAnnotation(NElementAnnotation annotation) {
+        super.addAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addAffix(int index, NBoundAffix affix) {
+        super.addAffix(index, affix);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder removeAffix(int index) {
+        super.removeAffix(index);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder clearAnnotations() {
+        super.clearAnnotations();
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder clearComments() {
+        super.clearComments();
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder setAffix(int index, NBoundAffix affix) {
+        super.setAffix(index, affix);
+        return this;
+    }
+
+    public NPairElementBuilder addAffix(NBoundAffix affix){
+        super.addAffix(affix);
+        return this;
+    }
+
+
+    @Override
+    public NPairElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.setAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder removeDiagnostic(NElementDiagnostic error) {
+        super.removeDiagnostic(error);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addAffixes(List<NBoundAffix> affixes) {
+        super.addAffixes(affixes);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addDiagnostic(NElementDiagnostic error) {
+        super.addDiagnostic(error);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addAffixes(List<? extends NAffix> affixes, NAffixAnchor anchor) {
+        super.addAffixes(affixes, anchor);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder addAffix(NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NPairElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor) {
+        super.removeAffixes(type, anchor);
         return this;
     }
 
@@ -235,80 +300,20 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
     }
 
     @Override
-    public NPairElementBuilder removeTrailingCommentAt(int index) {
-        super.removeTrailingCommentAt(index);
+    public NPairElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
         return this;
     }
 
     @Override
-    public NPairElementBuilder removeLeadingCommentAt(int index) {
-        super.removeLeadingCommentAt(index);
-        return this;
-    }
-
-    @Override
-    public NPairElementBuilder removeTrailingComment(NElementComment comment) {
-        super.removeTrailingComment(comment);
-        return this;
-    }
-
-    @Override
-    public NPairElementBuilder removeLeadingComment(NElementComment comment) {
-        super.removeLeadingComment(comment);
-        return this;
-    }
-
-    @Override
-    public NPairElementBuilder addComments(NElementComments comments) {
-        super.addComments(comments);
-        return this;
-    }
-
-    @Override
-    public NPairElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        super.addAnnotations(annotations);
-        return this;
-    }
-
-    @Override
-    public NPairElementBuilder addAnnotation(String name, NElement... args) {
-        super.addAnnotation(name,args);
-        return this;
-    }
-
-    @Override
-    public NPairElementBuilder addAnnotation(NElementAnnotation annotation) {
-        super.addAnnotation(annotation);
-        return this;
-    }
-
-    @Override
-    public NPairElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        super.addAnnotationAt(index, annotation);
-        return this;
-    }
-
-    @Override
-    public NPairElementBuilder removeAnnotationAt(int index) {
-        super.removeAnnotationAt(index);
-        return this;
-    }
-
-    @Override
-    public NPairElementBuilder clearAnnotations() {
-        super.clearAnnotations();
-        return this;
-    }
-
-    @Override
-    public NPairElementBuilder clearComments() {
-        super.clearComments();
+    public NPairElementBuilder copyFrom(NElementBuilder other) {
+        super.copyFrom(other);
         return this;
     }
 
     @Override
     public NPairElementBuilder copyFrom(NElement other) {
-        copyFrom(other, NAssignmentPolicy.ANY);
+        super.copyFrom(other);
         return this;
     }
 
