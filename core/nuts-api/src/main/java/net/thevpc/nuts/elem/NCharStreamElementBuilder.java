@@ -35,62 +35,52 @@ import java.util.function.Consumer;
  */
 public interface NCharStreamElementBuilder extends NElementBuilder {
 
-    String getBlockIdentifier();
+    String blocIdentifier();
 
-    NCharStreamElementBuilder setBlockIdentifier(String blockIdentifier);
-
-    NCharStreamElementBuilder doWith(Consumer<NCharStreamElementBuilder> con);
-
-    NCharStreamElementBuilder addAnnotations(List<NElementAnnotation> annotations);
-
-    NCharStreamElementBuilder addAnnotation(String name, NElement... args);
-
-    NCharStreamElementBuilder addAnnotation(NElementAnnotation annotation);
-
-    NCharStreamElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
-
-    NCharStreamElementBuilder removeAnnotationAt(int index);
-
-    NCharStreamElementBuilder removeAnnotation(NElementAnnotation annotation);
-
-    NCharStreamElementBuilder clearAnnotations();
-
-    List<NElementAnnotation> annotations();
-
-    NCharStreamElementBuilder copyFrom(NCharStreamElement element);
-
-    NCharStreamElementBuilder copyFrom(NCharStreamElementBuilder element);
-
-    NCharStreamElementBuilder addLeadingComment(NElementCommentType type, String text);
-
-    NCharStreamElementBuilder addTrailingComment(NElementCommentType type, String text);
-
-    NCharStreamElementBuilder addLeadingComment(NElementComment comment);
-
-    NCharStreamElementBuilder addLeadingComments(NElementComment... comments);
-
-    NCharStreamElementBuilder addTrailingComment(NElementComment comment);
-
-    NCharStreamElementBuilder addTrailingComments(NElementComment... comments);
-
-    NCharStreamElementBuilder removeLeadingComment(NElementComment comment);
-
-    NCharStreamElementBuilder removeTrailingComment(NElementComment comment);
-
-    NCharStreamElementBuilder removeLeadingCommentAt(int index);
-
-    NCharStreamElementBuilder removeTrailingCommentAt(int index);
-
-    NCharStreamElementBuilder clearComments();
-
-    NCharStreamElementBuilder addComments(NElementComments comments);
+    NCharStreamElementBuilder blocIdentifier(String blockIdentifier);
 
     NCharStreamElementBuilder value(NReaderProvider value);
 
     NReaderProvider value();
 
+    NCharStreamElementBuilder doWith(Consumer<NCharStreamElementBuilder> con);
+
     NCharStreamElement build();
 
+
+    /// ///////////////////////////////////////////////
+    NCharStreamElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+
+    NCharStreamElementBuilder addAnnotation(NElementAnnotation annotation);
+
+    NCharStreamElementBuilder addAnnotation(String name, NElement... args);
+
+    NCharStreamElementBuilder addAffix(int index, NBoundAffix affix);
+
+    NCharStreamElementBuilder setAffix(int index, NBoundAffix affix);
+    NCharStreamElementBuilder addAffix(NBoundAffix affix);
+
+    NCharStreamElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NCharStreamElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NCharStreamElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
+
+    NCharStreamElementBuilder removeAffix(int index);
+
+    NCharStreamElementBuilder removeAnnotation(NElementAnnotation annotation);
+
+    NCharStreamElementBuilder clearAnnotations();
+
+    NCharStreamElementBuilder addLeadingComment(NElementComment comment);
+
+    NCharStreamElementBuilder addLeadingComments(NElementComment... comments);
+
+    NCharStreamElementBuilder addTrailingComments(NElementComment... comments);
+
+    NCharStreamElementBuilder addTrailingComment(NElementComment comment);
+
+    NCharStreamElementBuilder clearComments();
 
     NCharStreamElementBuilder copyFrom(NElementBuilder other);
 
@@ -99,4 +89,10 @@ public interface NCharStreamElementBuilder extends NElementBuilder {
     NCharStreamElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
     NCharStreamElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
+
+    NCharStreamElementBuilder addDiagnostic(NElementDiagnostic error);
+
+    NCharStreamElementBuilder removeDiagnostic(NElementDiagnostic error);
+
+    NCharStreamElementBuilder addAffixes(List<NBoundAffix> affixes);
 }
