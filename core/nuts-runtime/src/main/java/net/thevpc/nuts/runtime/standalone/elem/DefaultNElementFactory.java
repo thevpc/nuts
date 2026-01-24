@@ -141,6 +141,38 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
+    public NElementDiagnostic ofDiagnostic(NMsg msg) {
+        return new DefaultNElementDiagnosticBuilder().setMessage(msg).build();
+    }
+
+    @Override
+    public NElementSeparator ofSeparator(String value) {
+        return DefaultNElementSeparator.of(value);
+    }
+
+    @Override
+    public NElementSeparator ofSeparator(char value) {
+        return DefaultNElementSeparator.of(value);
+    }
+
+    @Override
+    public NElementSpace ofSpace(String value) {
+        return DefaultNElementSpace.of(value);
+    }
+
+    @Override
+    public NElementNewLine ofNewline(String value) {
+        return DefaultNElementNewLine.of(value);
+    }
+
+    @Override
+    public NBoundAffix ofBoundAffix(NAffix affix, NAffixAnchor anchor) {
+        NAssert.requireNonNull(affix, "affix");
+        NAssert.requireNonNull(anchor, "position");
+        return DefaultNBoundAffix.of(affix, anchor);
+    }
+
+    @Override
     public NExprElement ofOp(NOperatorSymbol op, NElement operand) {
         return ofOp(op, null, operand, null);
     }
@@ -524,7 +556,12 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NElement ofBinaryStream(NInputStreamProvider value) {
-        return value == null ? ofNull() : new DefaultNBinaryStreamElement(value);
+        return value == null ? ofNull() : new DefaultNBinaryStreamElement(value, null);
+    }
+
+    @Override
+    public NElement ofBinaryStream(NInputStreamProvider value, String blockIdentifier) {
+        return value == null ? ofNull() : new DefaultNBinaryStreamElement(value, blockIdentifier);
     }
 
     @Override
@@ -544,12 +581,12 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NElementAnnotation ofAnnotation(String name, NElement... values) {
-        return new NElementAnnotationImpl(name, values);
+        return new NElementAnnotationImpl(name, values == null ? null : Arrays.asList(values), null);
     }
 
     @Override
     public NElementAnnotation ofAnnotation(String name) {
-        return new NElementAnnotationImpl(name, null);
+        return new NElementAnnotationImpl(name, null, null);
     }
 
     @Override
@@ -926,28 +963,12 @@ public class DefaultNElementFactory implements NElementFactory {
         return new DefaultNNumberElement(NElementType.FLOAT, value);
     }
 
-    public NElementComments ofMultiLineComments(String... lines) {
-        return new NElementCommentsImpl(new NElementComment[]{ofMultiLineComment(lines)}, null);
+    public NElementComment ofBlocComment(String... lines) {
+        return NElementCommentImpl.ofBloc(lines);
     }
 
-    public NElementComments ofSingleLineComments(String... lines) {
-        return new NElementCommentsImpl(
-                Arrays.stream(lines == null ? new String[0] : lines)
-                        .map(x -> ofSingleLineComment(x)).toArray(NElementComment[]::new)
-                , null);
-    }
-
-    public NElementComments ofComments(NElementComment[] leading, NElementComment[] trailing) {
-        return new NElementCommentsImpl(leading, trailing);
-    }
-
-
-    public NElementComment ofMultiLineComment(String... lines) {
-        return NElementCommentImpl.ofMultiLine(lines);
-    }
-
-    public NElementComment ofSingleLineComment(String... lines) {
-        return NElementCommentImpl.ofSingleLine(lines);
+    public NElementComment ofLineComment(String... lines) {
+        return NElementCommentImpl.ofLine(lines);
     }
 
     @Override
