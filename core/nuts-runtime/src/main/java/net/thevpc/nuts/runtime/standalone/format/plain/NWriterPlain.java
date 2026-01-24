@@ -132,7 +132,9 @@ public class NWriterPlain extends DefaultObjectWriterBase<NContentTypeWriter> im
     }
 
     private NElementWriter ew() {
-        return NElementWriter.of().setNtf(isNtf()).setCompact(isCompact()).configure(true, extraConfig.toArray(new String[0]));
+        return NElementWriter.of().setNtf(isNtf())
+                .setFormatter(isCompact()? NElementFormatter.ofJsonCompact() : NElementFormatter.ofJsonPretty())
+                .configure(true, extraConfig.toArray(new String[0]));
     }
 
     private void collectFlags(Object value, Flags flags, int depth) {
