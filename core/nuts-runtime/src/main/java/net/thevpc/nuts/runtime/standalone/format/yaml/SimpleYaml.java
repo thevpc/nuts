@@ -45,8 +45,8 @@ public class SimpleYaml implements NElementStreamFormat {
     }
 
     @Override
-    public void printElement(NElement value, NPrintStream out, boolean compact, NElementFactoryContext context) {
-        new YamlFormat().formatNode(value, out, compact, context, 0);
+    public void printElement(NElement value, NPrintStream out, NElementFormatter formatter, NElementFactoryContext context) {
+        new YamlFormat().formatNode(value, out, formatter, context, 0);
     }
 
 
