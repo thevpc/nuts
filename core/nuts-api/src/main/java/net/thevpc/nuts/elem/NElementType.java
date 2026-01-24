@@ -36,117 +36,135 @@ public enum NElementType implements NEnum {
     /**
      * null element
      */
-    NULL,
+    NULL(NElementTypeGroup.NULL),
 
-    BIG_COMPLEX,
-    DOUBLE_COMPLEX,
+    BIG_COMPLEX(NElementTypeGroup.NUMBER),
+    DOUBLE_COMPLEX(NElementTypeGroup.NUMBER),
     /**
      * float/double (number) element
      */
-    FLOAT_COMPLEX,
-    BIG_DECIMAL,
-
-    /**
-     * float/double (number) element
-     */
-    BIG_INT,
+    FLOAT_COMPLEX(NElementTypeGroup.NUMBER),
+    BIG_DECIMAL(NElementTypeGroup.NUMBER),
 
     /**
      * float/double (number) element
      */
-    DOUBLE,
+    BIG_INT(NElementTypeGroup.NUMBER),
+
     /**
      * float/double (number) element
      */
-    FLOAT,
+    DOUBLE(NElementTypeGroup.NUMBER),
+    /**
+     * float/double (number) element
+     */
+    FLOAT(NElementTypeGroup.NUMBER),
     /**
      * integer/long (number) element
      */
-    LONG,
+    LONG(NElementTypeGroup.NUMBER),
+    ULONG(NElementTypeGroup.NUMBER),
     /**
      * integer/long (number) element
      */
-    INT,
+    UINT(NElementTypeGroup.NUMBER),
+    INT(NElementTypeGroup.NUMBER),
     /**
      * integer/long (number) element
      */
-    SHORT,
+    SHORT(NElementTypeGroup.NUMBER),
+    USHORT(NElementTypeGroup.NUMBER),
     /**
      * integer/long (number) element
      */
-    BYTE,
+    UBYTE(NElementTypeGroup.NUMBER),
+    BYTE(NElementTypeGroup.NUMBER),
 
-    DOUBLE_QUOTED_STRING,
-    SINGLE_QUOTED_STRING,
-    BACKTICK_STRING,
-    TRIPLE_DOUBLE_QUOTED_STRING,
-    TRIPLE_SINGLE_QUOTED_STRING,
-    TRIPLE_BACKTICK_STRING,
-    LINE_STRING,
-    BLOCK_STRING,
+    DOUBLE_QUOTED_STRING(NElementTypeGroup.STRING),
+    SINGLE_QUOTED_STRING(NElementTypeGroup.STRING),
+    BACKTICK_STRING(NElementTypeGroup.STRING),
+    TRIPLE_DOUBLE_QUOTED_STRING(NElementTypeGroup.STRING),
+    TRIPLE_SINGLE_QUOTED_STRING(NElementTypeGroup.STRING),
+    TRIPLE_BACKTICK_STRING(NElementTypeGroup.STRING),
+    LINE_STRING(NElementTypeGroup.STRING),
+    BLOCK_STRING(NElementTypeGroup.STRING),
+    CHAR(NElementTypeGroup.STRING),
+    NAME(NElementTypeGroup.STRING),
 
-    NAME,
-    CHAR,
+
+    /**
+     * boolean element
+     */
+    BOOLEAN(NElementTypeGroup.BOOLEAN),
 
     /**
      * date element
      */
-    INSTANT,
-    /**
-     * boolean element
-     */
-    BOOLEAN,
+    INSTANT(NElementTypeGroup.TEMPORAL),
+    LOCAL_DATETIME(NElementTypeGroup.TEMPORAL),
+    LOCAL_DATE(NElementTypeGroup.TEMPORAL),
+    LOCAL_TIME(NElementTypeGroup.TEMPORAL),
+
+    BINARY_STREAM(NElementTypeGroup.STREAM),
+    CHAR_STREAM(NElementTypeGroup.STREAM),
+
+
+    OPERATOR_SYMBOL(NElementTypeGroup.OPERATOR),
+    BINARY_OPERATOR(NElementTypeGroup.OPERATOR),
+    TERNARY_OPERATOR(NElementTypeGroup.OPERATOR),
+    NARY_OPERATOR(NElementTypeGroup.OPERATOR),
+    UNARY_OPERATOR(NElementTypeGroup.OPERATOR),
+    FLAT_EXPR(NElementTypeGroup.OPERATOR),
+
     /**
      * array element
      */
-    ARRAY,
+    ARRAY(NElementTypeGroup.CONTAINER),
     /**
      * object (list of key/val) element
      */
-    OBJECT,
+    OBJECT(NElementTypeGroup.CONTAINER),
+    PAIR(NElementTypeGroup.CONTAINER),
+    UPLET(NElementTypeGroup.CONTAINER),
+    NAMED_ARRAY(NElementTypeGroup.CONTAINER),
+    NAMED_PARAMETRIZED_ARRAY(NElementTypeGroup.CONTAINER),
+    NAMED_OBJECT(NElementTypeGroup.CONTAINER),
+    NAMED_PARAMETRIZED_OBJECT(NElementTypeGroup.CONTAINER),
+    NAMED_UPLET(NElementTypeGroup.CONTAINER),
+    PARAMETRIZED_ARRAY(NElementTypeGroup.CONTAINER),
+    PARAMETRIZED_OBJECT(NElementTypeGroup.CONTAINER),
+    ORDERED_LIST(NElementTypeGroup.CONTAINER),
+    UNORDERED_LIST(NElementTypeGroup.CONTAINER),
+
     /**
      * custom object that is not destructed. Cannot be null or primitive
      */
-    CUSTOM,
-    PAIR,
-    LOCAL_DATETIME,
-    LOCAL_DATE,
-    LOCAL_TIME,
-    BINARY_STREAM,
-    CHAR_STREAM,
-    UPLET,
-
-
-    OPERATOR_SYMBOL,
-    BINARY_OPERATOR,
-    TERNARY_OPERATOR,
-    NARY_OPERATOR,
-    UNARY_OPERATOR,
-    FLAT_EXPR,
-
-    NAMED_ARRAY,
-    NAMED_PARAMETRIZED_ARRAY,
-    NAMED_OBJECT,
-    NAMED_PARAMETRIZED_OBJECT,
-    NAMED_UPLET,
-    PARAMETRIZED_ARRAY,
-    PARAMETRIZED_OBJECT,
-    ORDERED_LIST,
-    UNORDERED_LIST,
-    EMPTY,
+    CUSTOM(NElementTypeGroup.CUSTOM),
+    EMPTY(NElementTypeGroup.OTHER),
     ;
 
     /**
      * lower-cased identifier for the enum entry
      */
     private final String id;
+    private final NElementTypeGroup group;
 
-    NElementType() {
+    NElementType(NElementTypeGroup group) {
         this.id = NNameFormat.ID_NAME.format(name());
+        this.group=group;
     }
 
     public static NOptional<NElementType> parse(String value) {
         return NEnumUtils.parseEnum(value, NElementType.class);
+    }
+
+    /**
+     * lower cased identifier.
+     *
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
     }
 
     public boolean isAnyFloatingNumber() {
@@ -169,6 +187,10 @@ public enum NElementType implements NEnum {
             case INT:
             case LONG:
             case BIG_INT:
+            case UBYTE:
+            case USHORT:
+            case UINT:
+            case ULONG:
                 return true;
         }
         return false;
@@ -180,6 +202,10 @@ public enum NElementType implements NEnum {
             case SHORT:
             case INT:
             case LONG:
+            case UBYTE:
+            case USHORT:
+            case UINT:
+            case ULONG:
             case FLOAT:
             case DOUBLE:
             case DOUBLE_COMPLEX:
@@ -193,15 +219,6 @@ public enum NElementType implements NEnum {
     }
 
     /**
-     * lower cased identifier.
-     *
-     * @return lower cased identifier
-     */
-    public String id() {
-        return id;
-    }
-
-    /**
      * true if private type
      *
      * @return true if private type
@@ -212,6 +229,7 @@ public enum NElementType implements NEnum {
             case BINARY_OPERATOR:
             case UNARY_OPERATOR:
             case OPERATOR_SYMBOL:
+            case FLAT_EXPR:
                 return true;
         }
         return false;
@@ -483,63 +501,8 @@ public enum NElementType implements NEnum {
         return false;
     }
 
-    public NElementTypeGroup typeGroup() {
-        switch (this) {
-            case NULL:
-                return NElementTypeGroup.NULL;
-            case BOOLEAN:
-                return NElementTypeGroup.BOOLEAN;
-            case LONG:
-            case INT:
-            case SHORT:
-            case BYTE:
-            case FLOAT:
-            case BIG_INT:
-            case BIG_DECIMAL:
-            case DOUBLE:
-            case DOUBLE_COMPLEX:
-            case FLOAT_COMPLEX:
-            case BIG_COMPLEX:
-                return NElementTypeGroup.NUMBER;
-            case DOUBLE_QUOTED_STRING:
-            case SINGLE_QUOTED_STRING:
-            case BACKTICK_STRING:
-            case TRIPLE_DOUBLE_QUOTED_STRING:
-            case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_BACKTICK_STRING:
-            case LINE_STRING:
-            case CHAR:
-                return NElementTypeGroup.STRING;
-            case NAME:
-                return NElementTypeGroup.NAME;
-            case INSTANT:
-            case LOCAL_DATETIME:
-            case LOCAL_DATE:
-            case LOCAL_TIME:
-                return NElementTypeGroup.TEMPORAL;
-            case ARRAY:
-            case OBJECT:
-            case PAIR:
-            case UPLET:
-            case NAMED_ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY:
-            case NAMED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
-            case NAMED_UPLET:
-            case PARAMETRIZED_ARRAY:
-            case PARAMETRIZED_OBJECT:
-                return NElementTypeGroup.CONTAINER;
-            case BINARY_STREAM:
-            case CHAR_STREAM:
-                return NElementTypeGroup.STREAM;
-            case OPERATOR_SYMBOL:
-            case BINARY_OPERATOR:
-            case UNARY_OPERATOR:
-                return NElementTypeGroup.OPERATOR;
-            case CUSTOM:
-                return NElementTypeGroup.CUSTOM;
-        }
-        throw new UnsupportedOperationException("Not supported yet.");
+    public NElementTypeGroup group() {
+        return group;
     }
 
 }
