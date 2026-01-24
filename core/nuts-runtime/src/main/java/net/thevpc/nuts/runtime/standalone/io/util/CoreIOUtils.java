@@ -65,7 +65,6 @@ import java.util.stream.Stream;
 public class CoreIOUtils {
 
     public static final String MIME_TYPE_SHA1 = "text/sha-1";
-    public static String newLineString = null;
 
     public static final URL urlOf(String any) {
         try {
@@ -482,15 +481,6 @@ public class CoreIOUtils {
         }
         tempPaths.add(temp);
         return temp;
-    }
-
-    public static String getNewLine() {
-        if (newLineString == null) {
-            synchronized (CoreIOUtils.class) {
-                newLineString = System.getProperty("line.separator");
-            }
-        }
-        return newLineString;
     }
 
     public static boolean isObsoletePath(Path path) {
