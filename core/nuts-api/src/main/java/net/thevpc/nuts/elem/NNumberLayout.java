@@ -58,6 +58,6 @@ public enum NNumberLayout implements NEnum {
 
     @Override
     public String id() {
-        return id();
+        return id;
     }
 }
