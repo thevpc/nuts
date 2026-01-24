@@ -134,10 +134,6 @@
 //
 //    NMatrixElementBuilder removeTrailingComment(NElementComment comment);
 //
-//    NMatrixElementBuilder removeLeadingCommentAt(int index);
-//
-//    NMatrixElementBuilder removeTrailingCommentAt(int index);
-//
 //    NMatrixElementBuilder clearComments();
 //
 //    NMatrixElementBuilder addComments(NElementComments comments);
