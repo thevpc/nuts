@@ -12,13 +12,13 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
@@ -37,7 +37,6 @@ import net.thevpc.nuts.text.*;
 import org.junit.jupiter.api.*;
 
 /**
- *
  * @author thevpc
  */
 public class ElementTest {
@@ -45,6 +44,61 @@ public class ElementTest {
     @BeforeAll
     public static void init() {
         TestUtils.openNewMinTestWorkspace();
+    }
+
+    @Test
+    public void test01() {
+        String str = "{path:\"path1\" color:\"red\"}";
+        TestUtils.println(str);
+        NElement e = NElementReader.ofTson().read(str);
+        TestUtils.println(e);
+
+        String json0 = NElementWriter.ofTson().setFormatter(NElementFormatter.ofTsonCompact()).formatPlain(e);
+        TestUtils.println(json0);
+    }
+
+    @Test
+    public void test02() {
+        String str = "{path:\"path1\" color:\"red\"}";
+        NElement e = NElementReader.ofTson().read(str);
+        String json1 = NElementWriter.ofTson().setFormatter(NElementFormatter.ofTsonPretty()).formatPlain(e);
+        TestUtils.println("\n" + json1);
+    }
+
+    @Test
+    public void test03() {
+        String str = "{path:\"path1\" color1:\"red1\" color2:\"red2\" color3:\"red3\" color4:\"red4\" color5:\"red5\" color6:\"red6\" color7:\"red7\"}";
+        NElement e = NElementReader.ofTson().read(str);
+        String json1 = NElementWriter.ofTson().setFormatter(
+                NElementFormatter
+                        .ofTsonPrettyBuilder()
+                        .setComplexityThreshold(40)
+                        .setColumnLimit(200)
+                        .build()
+        ).formatPlain(e);
+        TestUtils.println("\njson1\n" + json1);
+        String json2 = NElementWriter.ofTson().setFormatter(
+                NElementFormatter
+                        .ofTsonPrettyBuilder()
+                        .setComplexityThreshold(20)
+                        .setColumnLimit(50)
+                        .build()
+        ).formatPlain(e);
+        TestUtils.println("\njson2\n" + json2);
+    }
+
+    @Test
+    public void test04() {
+        String str = "{path:\"path1\" {color1:\"red1\"}}";
+        NElement e = NElementReader.ofTson().read(str);
+        String json1 = NElementWriter.ofTson().setFormatter(
+                NElementFormatter
+                        .ofTsonPrettyBuilder()
+                        .setComplexityThreshold(4)
+                        .setColumnLimit(1024)
+                        .build()
+        ).formatPlain(e);
+        TestUtils.println("\njson1\n" + json1);
     }
 
     @Test
@@ -95,7 +149,13 @@ public class ElementTest {
                 .build();
         NObjectObjectWriter ss = NObjectObjectWriter.of().setNtf(false);
         ss.println(p);
-        String json = ss.formatPlain(p);
+        String json = NElementWriter.ofTson().setFormatter(
+                NElementFormatter
+                .ofTsonPrettyBuilder()
+                .setComplexityThreshold(10)
+                .setColumnLimit(200)
+                .build()).formatPlain(p);
+//        String json = ss.formatPlain(p);
         String EXPECTED = "[\n" +
                 "  {\n" +
                 "    first : {\n" +
@@ -118,9 +178,11 @@ public class ElementTest {
                 "      }\n" +
                 "  }\n" +
                 "]";
-        TestUtils.println(EXPECTED);
+        TestUtils.println("EXPECTED");
+        TestUtils.println("\n"+EXPECTED);
         TestUtils.println("-----------------------------------------------------");
-        TestUtils.println(json);
+        TestUtils.println("\n"+"RESULT");
+        TestUtils.println("\n"+json);
         Assertions.assertEquals(EXPECTED, json);
 
         class TT {
@@ -219,29 +281,29 @@ public class ElementTest {
         NElements e = NElements.of();
 
         //create a composite object with a styled element
-        Map<String,Object> h=new HashMap<>();
-        h.put("a","13");
+        Map<String, Object> h = new HashMap<>();
+        h.put("a", "13");
         h.put("b", styledText);
 
         //styled element are destructed to strings
         NElement q = e.toElement(h);
-        NElement expected= NElement.ofObjectBuilder()
-                .set("a","13")
-                .set("b","Hello").build();
-        Assertions.assertEquals(expected,q);
+        NElement expected = NElement.ofObjectBuilder()
+                .set("a", "13")
+                .set("b", "Hello").build();
+        Assertions.assertEquals(expected, q);
 
 
         //prevent styled element to be destructed
         e.mapperStore()
                 .removeAllIndestructibleTypesFilters()
-                .addIndestructibleTypesFilter(c->NTextStyled.class.isAssignableFrom((Class<?>) c));
+                .addIndestructibleTypesFilter(c -> NTextStyled.class.isAssignableFrom((Class<?>) c));
         q = e.toElement(h);
-        expected= NElement.ofObjectBuilder()
-                .set("a","13")
+        expected = NElement.ofObjectBuilder()
+                .set("a", "13")
                 .set("b",
                         NElement.ofCustom(NText.ofStyled("Hello", NTextStyle.success()))
-                        ).build();
-        Assertions.assertEquals(expected,q);
+                ).build();
+        Assertions.assertEquals(expected, q);
 
         //destruct custom elements
         e.mapperStore().removeAllIndestructibleTypesFilters();
@@ -252,10 +314,10 @@ public class ElementTest {
                 ).build();
 
         q = e.toElement(b);
-        expected= NElement.ofObjectBuilder()
-                .set("a","13")
-                .set("b","Hello").build();
-        Assertions.assertEquals(expected,q);
+        expected = NElement.ofObjectBuilder()
+                .set("a", "13")
+                .set("b", "Hello").build();
+        Assertions.assertEquals(expected, q);
     }
 
 }
