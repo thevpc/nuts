@@ -44,6 +44,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
         return NElement.ofObjectBuilder();
     }
 
+    NObjectElementBuilder setAt(int i, NElement element);
     /**
      * set value for property {@code name}
      *
@@ -95,8 +96,6 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder setAll(Map<NElement, NElement> other);
 
-    NObjectElementBuilder doWith(Consumer<NObjectElementBuilder> con);
-
     /**
      * remove all properties
      *
@@ -145,15 +144,6 @@ public interface NObjectElementBuilder extends NElementBuilder {
     int size();
 
     /**
-     * set all properties from the given {@code other} instance.
-     * all properties not found in {@code other} will be removed.
-     *
-     * @param other other instance
-     * @return this {@code this} instance
-     */
-    NObjectElementBuilder copyFrom(NObjectElement other);
-
-    /**
      * add entry key value binding
      *
      * @param entry other entry
@@ -163,16 +153,10 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder set(NPairElement entry);
 
-    /**
-     * create a immutable instance of {@link NObjectElement} representing
-     * this builder.
-     *
-     * @return new instance of {@link NObjectElement}
-     */
-    NObjectElement build();
 
     /**
      * remove child at index
+     *
      * @param index element index
      * @return this builder
      * @since 0.8.9
@@ -181,6 +165,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     /**
      * remove child pair when its key is the given name
+     *
      * @param name entry key
      * @return this builder
      * @since 0.8.9
@@ -189,7 +174,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     /**
      * @param index index to add to, may be negative
-     * @param item item to add
+     * @param item  item to add
      * @return this builder
      * @since 0.8.9
      */
@@ -230,21 +215,6 @@ public interface NObjectElementBuilder extends NElementBuilder {
      */
     NObjectElementBuilder addAll(NObjectElementBuilder other);
 
-    NObjectElementBuilder addAnnotations(List<NElementAnnotation> annotations);
-
-    NObjectElementBuilder addAnnotation(String name, NElement... args);
-
-    NObjectElementBuilder addAnnotation(NElementAnnotation annotation);
-
-    NObjectElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
-
-    NObjectElementBuilder removeAnnotationAt(int index);
-
-    NObjectElementBuilder removeAnnotation(NElementAnnotation annotation);
-
-    NObjectElementBuilder clearAnnotations();
-
-
     NObjectElementBuilder addParams(List<NElement> params);
 
     NObjectElementBuilder addParam(String name, NElement value);
@@ -277,29 +247,54 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder setParametrized(boolean parametrized);
 
-    NObjectElementBuilder addLeadingComment(NElementCommentType type, String text);
+    NObjectElementBuilder setParams(List<NElement> params);
 
-    NObjectElementBuilder addTrailingComment(NElementCommentType type, String text);
+    NObjectElementBuilder setChildren(List<NElement> params);
+
+    NObjectElementBuilder doWith(Consumer<NObjectElementBuilder> con);
+
+    /**
+     * create a immutable instance of {@link NObjectElement} representing
+     * this builder.
+     *
+     * @return new instance of {@link NObjectElement}
+     */
+    NObjectElement build();
+
+    /// ///////////////////////////////////////////////
+    NObjectElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+
+    NObjectElementBuilder addAnnotation(NElementAnnotation annotation);
+
+    NObjectElementBuilder addAnnotation(String name, NElement... args);
+
+    NObjectElementBuilder addAffix(int index, NBoundAffix affix);
+
+    NObjectElementBuilder setAffix(int index, NBoundAffix affix);
+
+    NObjectElementBuilder addAffix(NBoundAffix affix);
+
+    NObjectElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NObjectElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NObjectElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
+
+    NObjectElementBuilder removeAffix(int index);
+
+    NObjectElementBuilder removeAnnotation(NElementAnnotation annotation);
+
+    NObjectElementBuilder clearAnnotations();
 
     NObjectElementBuilder addLeadingComment(NElementComment comment);
 
     NObjectElementBuilder addLeadingComments(NElementComment... comments);
 
-    NObjectElementBuilder addTrailingComment(NElementComment comment);
-
     NObjectElementBuilder addTrailingComments(NElementComment... comments);
 
-    NObjectElementBuilder removeLeadingComment(NElementComment comment);
-
-    NObjectElementBuilder removeTrailingComment(NElementComment comment);
-
-    NObjectElementBuilder removeLeadingCommentAt(int index);
-
-    NObjectElementBuilder removeTrailingCommentAt(int index);
+    NObjectElementBuilder addTrailingComment(NElementComment comment);
 
     NObjectElementBuilder clearComments();
-
-    NObjectElementBuilder addComments(NElementComments comments);
 
     NObjectElementBuilder copyFrom(NElementBuilder other);
 
@@ -309,7 +304,10 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 
-    NObjectElementBuilder setParams(List<NElement> params);
+    NObjectElementBuilder addDiagnostic(NElementDiagnostic error);
 
-    NObjectElementBuilder setChildren(List<NElement> params);
+    NObjectElementBuilder removeDiagnostic(NElementDiagnostic error);
+
+    NObjectElementBuilder addAffixes(List<NBoundAffix> affixes);
+
 }
