@@ -1270,4 +1270,50 @@ public class NStringUtils {
         }
         return sb;
     }
+
+    public static String commonPrefix(List<String> all) {
+        return commonPrefix(all, null);
+    }
+
+    public interface CommonPrefixFilter{
+        boolean accept(String buffer, char c);
+    }
+
+    public static String commonPrefix(List<String> all, CommonPrefixFilter prefixFilter) {
+        if (all == null || all.isEmpty()) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        String pivot = all.get(0);
+        if (pivot == null) {
+            return "";
+        }
+        for (int i = 0; i < pivot.length(); i++) {
+            if (prefixFilter != null && !prefixFilter.accept(sb.toString(),pivot.charAt(i))) {
+                break;
+            }
+            boolean common = true;
+            for (int j = 1; j < all.size(); j++) {
+                String curr = all.get(j);
+                if (curr == null || curr.isEmpty()) {
+                    return "";
+                }
+                if (i >= curr.length() || curr.charAt(i) != curr.charAt(j)) {
+                    common = false;
+                    break;
+                }
+            }
+            if (common) {
+                sb.append(pivot.charAt(i));
+            } else {
+                break;
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String commonWhitespacePrefix(List<String> all) {
+        return commonPrefix(all, (b,c)->Character.isWhitespace(c));
+    }
+
 }
