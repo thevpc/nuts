@@ -13,27 +13,20 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementCommentType;
-import net.thevpc.nuts.elem.NElementType;
-import net.thevpc.nuts.elem.NNumberLayout;
-import net.thevpc.nuts.elem.NOperatorSymbol;
-import net.thevpc.nuts.elem.NPrimitiveElementBuilder;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NPositionedCharReader;
 import net.thevpc.nuts.io.NReaderProvider;
 import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
-import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPrimitiveElement;
-import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNStringElement;
-import net.thevpc.nuts.runtime.standalone.elem.item.NElementCommentImpl;
+import net.thevpc.nuts.runtime.standalone.elem.item.*;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenImpl;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenType;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.*;
 
-public class TsonCustomLexer {
+public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
     private NPositionedCharReader reader;
 
     public TsonCustomLexer(String reader) {
@@ -54,6 +47,29 @@ public class TsonCustomLexer {
             ret.add(u);
         }
         return ret;
+    }
+
+    public NElementTokenImpl continueReadBullet(NElementTokenType type, int line, int column, long pos) {
+        int c0 = reader.peek();
+
+        int c1 = reader.peekAt(1);
+        if (c1 != -1) {
+            if (Character.isDigit(c1)) {
+                return continueReadNumber();
+            }
+            if (c1 != '¶' && Character.isAlphabetic(c1)) {
+                return continueReadIdentifier();
+            }
+        }
+        StringBuilder image = new StringBuilder();
+        int count = 0;
+        while (reader.peek() == c0) {
+            image.append((char) reader.read());
+            count++;
+            if (count >= 10) break; // safety
+        }
+        String s = image.toString();
+        return new NElementTokenImpl(s, type, String.valueOf(s.charAt(0)), count, line, column, pos, s, null);
     }
 
     public NElementTokenImpl next() {
@@ -84,8 +100,13 @@ public class TsonCustomLexer {
                     return asChar(c, NElementTokenType.LBRACE);
                 case '}':
                     return asChar(c, NElementTokenType.RBRACE);
-                case '[':
+                case '[': {
+                    NElementTokenImpl b = asBullet(line, column, pos);
+                    if (b != null) {
+                        return b;
+                    }
                     return asChar(c, NElementTokenType.LBRACK);
+                }
                 case ']':
                     return asChar(c, NElementTokenType.RBRACK);
                 case '(':
@@ -93,26 +114,14 @@ public class TsonCustomLexer {
                 case ')':
                     return asChar(c, NElementTokenType.RPAREN);
                 case '#':
-                    return continueReadRepeatedChar(c, NElementTokenType.ORDERED_LIST);
-                case '.': {
-                    int c1 = reader.peekCharAt(1);
-                    if (c1 != -1) {
-                        if (Character.isDigit(c1)) {
-                            return continueReadNumber();
-                        }
-                        if (c1 != '¶' && Character.isAlphabetic(c1)) {
-                            return continueReadIdentifier();
-                        }
-                    }
-                    StringBuilder image = new StringBuilder();
-                    int count = 0;
-                    while (reader.peek() == '.') {
-                        image.append((char) reader.read());
-                        count++;
-                        if (count >= 10) break; // safety
-                    }
-                    String s = image.toString();
-                    return new NElementTokenImpl(s, NElementTokenType.UNORDERED_LIST, String.valueOf(s.charAt(0)), count, line, column, pos, s, null);
+                    return asChar123(c, NOperatorSymbol.HASH, NOperatorSymbol.HASH2, NOperatorSymbol.HASH3);
+                case '.':
+                    return asChar123(c, NOperatorSymbol.DOT, NOperatorSymbol.DOT2, NOperatorSymbol.DOT3);
+                case '●': {
+                    return continueReadBullet(NElementTokenType.UNORDERED_LIST, line, column, pos);
+                }
+                case '■': {
+                    return continueReadBullet(NElementTokenType.ORDERED_LIST, line, column, pos);
                 }
                 case '¶': {
                     int c2 = reader.peek();
@@ -132,14 +141,14 @@ public class TsonCustomLexer {
                 case ',':
                     return asChar(c, NElementTokenType.COMMA);
                 case ':': {
-                    int n = reader.peekCharAt(1);
+                    int n = reader.peekAt(1);
                     switch (n) {
                         case ':': {
                             reader.read(2);
                             return new NElementTokenImpl("::", NElementTokenType.OP, "::", 0, line, column, pos, NOperatorSymbol.COLON2, null);
                         }
                         case '=': {
-                            n = reader.peekCharAt(2);
+                            n = reader.peekAt(2);
                             if (n == '=') {
                                 reader.read(3);
                                 return new NElementTokenImpl(":==", NElementTokenType.OP, ":==", 0, line, column, pos, NOperatorSymbol.COLON_EQ2, null);
@@ -153,7 +162,7 @@ public class TsonCustomLexer {
                     }
                 }
                 case '/': {
-                    int n = reader.peekCharAt(1);
+                    int n = reader.peekAt(1);
                     switch (n) {
                         case '/': {
                             return continueReadLineComments();
@@ -167,7 +176,7 @@ public class TsonCustomLexer {
                     }
                 }
                 case '\\': {
-                    int n = reader.peekCharAt(1);
+                    int n = reader.peekAt(1);
                     switch (n) {
                         case '\\': {
                             reader.read(2);
@@ -194,9 +203,9 @@ public class TsonCustomLexer {
                     return continueReadStream(c, line, column, pos);
                 }
                 case '@': {
-                    int n = reader.peekCharAt(1);
+                    int n = reader.peekAt(1);
                     if (n == c) {
-                        int n2 = reader.peekCharAt(2);
+                        int n2 = reader.peekAt(2);
                         char cc = (char) c;
                         if (n2 == c) {
                             reader.read(3);
@@ -211,9 +220,9 @@ public class TsonCustomLexer {
                     return asChar(c, NElementTokenType.AT);
                 }
                 case '<': {
-                    int c1 = reader.peekCharAt(1);
+                    int c1 = reader.peekAt(1);
                     if (c1 == '<') {
-                        if (reader.peekCharAt(2) == '<') {
+                        if (reader.peekAt(2) == '<') {
                             reader.read(3);
                             return new NElementTokenImpl("<<<", NElementTokenType.OP, "<<<", 0, line, column, pos, NOperatorSymbol.LT3, null);
                         }
@@ -223,7 +232,7 @@ public class TsonCustomLexer {
                         reader.read(2);
                         return new NElementTokenImpl("<>", NElementTokenType.OP, "<>", 0, line, column, pos, NOperatorSymbol.LT_GT, null);
                     } else if (c1 == '=') {
-                        int c2 = reader.peekCharAt(2);
+                        int c2 = reader.peekAt(2);
                         if (c2 == '=') {
                             reader.read(3);
                             return new NElementTokenImpl("<==", NElementTokenType.OP, "<<<", 0, line, column, pos, NOperatorSymbol.LT_EQ2, null);
@@ -231,7 +240,7 @@ public class TsonCustomLexer {
                         reader.read(2);
                         return new NElementTokenImpl("<=", NElementTokenType.OP, "<<", 0, line, column, pos, NOperatorSymbol.LTE, null);
                     } else if (c1 == '-') {
-                        int c2 = reader.peekCharAt(2);
+                        int c2 = reader.peekAt(2);
                         if (c2 == '-') {
                             reader.read(3); // <--x
                             return new NElementTokenImpl("<--", NElementTokenType.OP, "<<<", 0, line, column, pos, NOperatorSymbol.LT_MINUS2, null);
@@ -248,7 +257,7 @@ public class TsonCustomLexer {
                 }
 
                 case '-': {
-                    int c1 = reader.peekCharAt(1);
+                    int c1 = reader.peekAt(1);
                     if (Character.isDigit(c1)) {
                         return continueReadNumber();
                     }
@@ -256,7 +265,7 @@ public class TsonCustomLexer {
                 }
 
                 case '+': {
-                    int c1 = reader.peekCharAt(1);
+                    int c1 = reader.peekAt(1);
                     if (Character.isDigit(c1)) {
                         return continueReadNumber();
                     }
@@ -268,9 +277,9 @@ public class TsonCustomLexer {
                 }
 
                 case '=': {
-                    int c1 = reader.peekCharAt(1);
+                    int c1 = reader.peekAt(1);
                     if (c1 == '=') {
-                        int c2 = reader.peekCharAt(2);
+                        int c2 = reader.peekAt(2);
                         if (c2 == '=') {
                             reader.read(3);
                             return new NElementTokenImpl("===", NElementTokenType.OP, "===", 0, line, column, pos, NOperatorSymbol.EQ3, null);
@@ -288,9 +297,9 @@ public class TsonCustomLexer {
                     return new NElementTokenImpl("=", NElementTokenType.OP, "=", 0, line, column, pos, NOperatorSymbol.EQ, null);
                 }
                 case '>': {
-                    int c1 = reader.peekCharAt(1);
+                    int c1 = reader.peekAt(1);
                     if (c1 == '>') {
-                        if (reader.peekCharAt(2) == '>') {
+                        if (reader.peekAt(2) == '>') {
                             reader.read(3);
                             return new NElementTokenImpl(">>>", NElementTokenType.OP, ">>>", 0, line, column, pos, NOperatorSymbol.GT3, null);
                         }
@@ -304,60 +313,60 @@ public class TsonCustomLexer {
                     return new NElementTokenImpl(">", NElementTokenType.OP, ">", 0, line, column, pos, NOperatorSymbol.GT, null);
                 }
                 case '"': {
-                    if (reader.canRead(2) && reader.peekCharAt(1) == c && reader.peekCharAt(2) == c) {
+                    if (reader.canRead(2) && reader.peekAt(1) == c && reader.peekAt(2) == c) {
                         reader.read(); // consume first "
                         reader.read(); // second
                         reader.read(); // third
-                        return continueReadDoubleQuoted3();
+                        return continueReadQ3('"', NElementTokenType.TRIPLE_DOUBLE_QUOTED_STRING, NElementType.TRIPLE_DOUBLE_QUOTED_STRING);
                     }
                     reader.read(); // third
-                    return continueReadDoubleQuoted1();
+                    return continueReadQ1('\"', NElementTokenType.DOUBLE_QUOTED_STRING, NElementType.DOUBLE_QUOTED_STRING);
                 }
                 case '\'': {
-                    if (reader.canRead(2) && reader.peekCharAt(1) == c && reader.peekCharAt(2) == c) {
+                    if (reader.canRead(2) && reader.peekAt(1) == c && reader.peekAt(2) == c) {
                         reader.read(); // consume first "
                         reader.read(); // second
                         reader.read(); // third
-                        return continueReadSingleQuoted3();
+                        return continueReadQ3('\'', NElementTokenType.TRIPLE_SINGLE_QUOTED_STRING, NElementType.TRIPLE_SINGLE_QUOTED_STRING);
                     }
                     reader.read(); // third
-                    return continueReadSingleQuoted1();
+                    return continueReadQ1('\'', NElementTokenType.SINGLE_QUOTED_STRING, NElementType.SINGLE_QUOTED_STRING);
                 }
                 case '`': {
-                    if (reader.canRead(2) && reader.peekCharAt(1) == c && reader.peekCharAt(2) == c) {
+                    if (reader.canRead(2) && reader.peekAt(1) == c && reader.peekAt(2) == c) {
                         reader.read(); // consume first "
                         reader.read(); // second
                         reader.read(); // third
-                        return continueReadBacktick3();
+                        return continueReadQ3('`', NElementTokenType.TRIPLE_BACKTICK_STRING, NElementType.TRIPLE_BACKTICK_STRING);
                     }
                     reader.read(); // third
-                    return continueReadBacktick1();
+                    return continueReadQ1('`', NElementTokenType.BACKTICK_STR, NElementType.BACKTICK_STRING);
                 }
                 case ' ': {
                     StringBuilder sb = new StringBuilder();
                     while (reader.peek() == ' ') {
                         sb.append((char) reader.read());
                     }
-                    return new NElementTokenImpl(sb.toString(), NElementTokenType.WHITESPACE, " ", 0, line, column, pos, c, null);
+                    return new NElementTokenImpl(sb.toString(), NElementTokenType.SPACE, " ", 0, line, column, pos, c, null);
                 }
                 case '\t': {
                     StringBuilder sb = new StringBuilder();
                     while (reader.peek() == '\t') {
                         sb.append((char) reader.read());
                     }
-                    return new NElementTokenImpl(sb.toString(), NElementTokenType.WHITESPACE, "\t", 0, line, column, pos, c, null);
+                    return new NElementTokenImpl(sb.toString(), NElementTokenType.SPACE, "\t", 0, line, column, pos, c, null);
                 }
                 case '\n': {
                     reader.read();
-                    return new NElementTokenImpl("\n", NElementTokenType.WHITESPACE, "\n", 0, line, column, pos, c, null);
+                    return new NElementTokenImpl("\n", NElementTokenType.NEWLINE, "\n", 0, line, column, pos, c, null);
                 }
                 case '\r': {
                     reader.read();
                     if (reader.peek() == '\n') {
                         reader.read();
-                        return new NElementTokenImpl("\r\n", NElementTokenType.WHITESPACE, "\r\n", 0, line, column, pos, c, null);
+                        return new NElementTokenImpl("\r\n", NElementTokenType.NEWLINE, "\r\n", 0, line, column, pos, c, null);
                     }
-                    return new NElementTokenImpl("\r", NElementTokenType.WHITESPACE, "\r", 0, line, column, pos, c, null);
+                    return new NElementTokenImpl("\r", NElementTokenType.NEWLINE, "\r", 0, line, column, pos, c, null);
                 }
                 case '0':
                 case '1':
@@ -387,7 +396,7 @@ public class TsonCustomLexer {
                             }
                             sb.append((char) reader.read());
                         }
-                        return new NElementTokenImpl(sb.toString(), NElementTokenType.WHITESPACE, String.valueOf(c0), 0, line, column, pos, c, null);
+                        return new NElementTokenImpl(sb.toString(), NElementTokenType.SPACE, String.valueOf(c0), 0, line, column, pos, c, null);
                     }
                     if (Character.isUnicodeIdentifierStart(c)) {
                         return continueReadIdentifier();
@@ -407,11 +416,11 @@ public class TsonCustomLexer {
 
 
     private NElementType readBinaryBlockStart(StringBuilder fillInto, StringBuilder image) {
-        int p0 = reader.peekCharAt(0);
+        int p0 = reader.peekAt(0);
         if (p0 != '^') {
             return null;
         }
-        int p1 = reader.peekCharAt(1);
+        int p1 = reader.peekAt(1);
         if (p1 == '[') {
             String s = reader.read(2);
             image.append(s);
@@ -426,7 +435,7 @@ public class TsonCustomLexer {
             int max = 1024;
             int i = 2;
             while (i < max) {
-                int c = reader.peekCharAt(i);
+                int c = reader.peekAt(i);
                 if (c == '[') {
                     String s = reader.read(i + 1);
                     fillInto.append(s, 1, s.length() - 1);
@@ -438,7 +447,7 @@ public class TsonCustomLexer {
                     image.append(s);
                     return NElementType.CHAR_STREAM;
                 } else if (Character.isLetterOrDigit(c)) {
-                    int c2 = reader.peekCharAt(i + 1);
+                    int c2 = reader.peekAt(i + 1);
                     if (c2 == '[') {
                         String s = reader.read(i + 2);
                         fillInto.append(s, 1, s.length() - 1);
@@ -501,9 +510,9 @@ public class TsonCustomLexer {
                     NElement.ofCharStream(provider)
                     , null);
         }
-        int p1 = reader.peekCharAt(1);
+        int p1 = reader.peekAt(1);
         if (p1 == '^') {
-            int p2 = reader.peekCharAt(2);
+            int p2 = reader.peekAt(2);
             if (p2 == '^') {
                 String op = reader.read(3);
                 return new NElementTokenImpl(op, NElementTokenType.OP, op, 0, line, column, pos, NOperatorSymbol.HAT3, null);
@@ -511,7 +520,7 @@ public class TsonCustomLexer {
             String op = reader.read(2);
             return new NElementTokenImpl(op, NElementTokenType.OP, op, 0, line, column, pos, NOperatorSymbol.HAT2, null);
         } else if (p1 == '=') {
-            int p2 = reader.peekCharAt(2);
+            int p2 = reader.peekAt(2);
             if (p2 == '=') {
                 String op = reader.read(3);
                 return new NElementTokenImpl(op, NElementTokenType.OP, op, 0, line, column, pos, NOperatorSymbol.HAT_EQ2, null);
@@ -523,37 +532,61 @@ public class TsonCustomLexer {
         return new NElementTokenImpl(op, NElementTokenType.OP, op, 0, line, column, pos, NOperatorSymbol.HAT, null);
     }
 
-    private NElementTokenImpl continueReadLineComments() {
-        int line = reader.line();
-        int column = reader.column();
-        long pos = reader.pos();
-        StringBuilder raw = new StringBuilder("//");
-        StringBuilder value = new StringBuilder("//");
-        reader.read(2); // consume //
+    private boolean readLineCommentStart(StringBuilder sb) {
         while (true) {
             int c = reader.peek();
             if (c == -1) {
                 break;
             } else if (c == '\n') {
                 char cc = (char) reader.read();
-                raw.append(cc);
-                value.append(cc);
-                break;
+                sb.append(cc);
+                readLineCommentSuite(sb);
+                return true;
             } else if (c == '\r') {
-                raw.append((char) reader.read());
+                sb.append((char) reader.read());
                 c = reader.peek();
                 if (c == '\n') {
-                    raw.append((char) reader.read());
+                    sb.append((char) reader.read());
                 }
-                break;
+                readLineCommentSuite(sb);
+                return true;
             }
             char cc = (char) reader.read();
-            raw.append(cc);
-            value.append(cc);
+            sb.append(cc);
         }
+        return true;
+    }
+
+    private boolean readLineCommentSuite(StringBuilder sb) {
+        int i = 0;
+        while (true) {
+            int c = reader.peekAt(i);
+            if (c == '\n') {
+                return false;
+            } else if (Character.isWhitespace(c)) {
+                i++;
+            } else if (c == '/') {
+                c = reader.peekAt(i + 1);
+                if (c == '/') {
+                    sb.append(reader.read(i + 1));
+                    return readLineCommentStart(sb);
+                }
+                return false;
+            }
+        }
+    }
+
+
+    private NElementTokenImpl continueReadLineComments() {
+        int line = reader.line();
+        int column = reader.column();
+        long pos = reader.pos();
+        StringBuilder raw = new StringBuilder("//");
+        reader.read(2); // consume //
+
+        readLineCommentStart(raw);
         return new NElementTokenImpl(raw.toString(), NElementTokenType.LINE_COMMENT, "//", 0, line, column, pos,
-                new NElementCommentImpl(NElementCommentType.SINGLE_LINE, raw.toString(), value.toString())
-                , null);
+                raw.toString(), null);
     }
 
     private NElementTokenImpl continueReadBlockComments() {
@@ -562,12 +595,14 @@ public class TsonCustomLexer {
         long pos = reader.pos();
         StringBuilder image = new StringBuilder("/*");
         reader.read(2); // consume /*
+        NMsg error = null;
         while (true) {
             int c = reader.peek();
             if (c == -1) {
+                error = NMsg.ofC("unclosed bloc comment. missing '*/'");
                 break;
             }
-            if (c == '*' && reader.peekCharAt(1) == '/') {
+            if (c == '*' && reader.peekAt(1) == '/') {
                 image.append("*/");
                 reader.read(2);
                 break;
@@ -576,17 +611,17 @@ public class TsonCustomLexer {
             image.append((char) c);
         }
         return new NElementTokenImpl(image.toString(), NElementTokenType.BLOCK_COMMENT, "/*", 0, line, column, pos,
-                new NElementCommentImpl(NElementCommentType.MULTI_LINE, image.toString(), TsonCommentsHelper.normalizeBlockComment(image.toString()))
-                , null);
+                image.toString()
+                , error);
     }
 
     private NElementTokenImpl asChar123Eq(int c, NOperatorSymbol t1, NOperatorSymbol t2, NOperatorSymbol t3, NOperatorSymbol eq1, NOperatorSymbol eq2) {
         int line = reader.line();
         int column = reader.column();
         long pos = reader.pos();
-        int n = reader.peekCharAt(1);
+        int n = reader.peekAt(1);
         if (n == c) {
-            int n2 = reader.peekCharAt(2);
+            int n2 = reader.peekAt(2);
             char cc = (char) c;
             if (n2 == c) {
                 reader.read(3);
@@ -598,7 +633,7 @@ public class TsonCustomLexer {
                 return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, t2, null);
             }
         } else if (n == '=') {
-            int n2 = reader.peekCharAt(2);
+            int n2 = reader.peekAt(2);
             char cc = (char) c;
             if (n2 == '=') {
                 reader.read(3);
@@ -615,12 +650,12 @@ public class TsonCustomLexer {
     }
 
     private NElementTokenImpl asChar123(int c, NOperatorSymbol t1, NOperatorSymbol t2, NOperatorSymbol t3) {
-        int n = reader.peekCharAt(1);
+        int n = reader.peekAt(1);
         if (n == c) {
             int line = reader.line();
             int column = reader.column();
             long pos = reader.pos();
-            int n2 = reader.peekCharAt(2);
+            int n2 = reader.peekAt(2);
             char cc = (char) c;
             if (n2 == c) {
                 reader.read(3);
@@ -635,48 +670,88 @@ public class TsonCustomLexer {
         return asChar(c, t1);
     }
 
+    private NElementTokenImpl continueReadQ1(char c0, NElementTokenType elementTokenType, NElementType elementType) {
+        StringBuilder image = new StringBuilder().append(c0);
+        StringBuilder value = new StringBuilder();
+        NMsg error = null;
+        while (true) {
+            int c = reader.read();
+            if (c == -1) {
+                // EOF without closing "
+                error = NMsg.ofC("EOF without closing %s", c0);
+                break;
+            }
+            if (c == c0) {
+                if (reader.peek() == c0) {
+                    // Found closing "
+                    reader.read(); // consume both
+                    value.append(c0);
+                    image.append(c0).append(c0);
+                } else {
+                    image.append(c0);
+                    break;
+                }
+            } else {
+                image.append((char) c);
+                value.append((char) c);
+            }
+        }
+        return new NElementTokenImpl(
+                image.toString(),
+                elementTokenType,
+                String.valueOf(c0),
+                0,
+                reader.line(),
+                reader.column(),
+                reader.pos(),
+                new DefaultNStringElement(
+                        elementType,
+                        value.toString(),
+                        image.toString()
+                ), error
+        );
+    }
 
-    private NElementTokenImpl continueReadDoubleQuoted1() {
-        StringBuilder image = new StringBuilder("\"");
+    private NElementTokenImpl continueReadQ3(char c0, NElementTokenType tokenType, NElementType elementType) {
+        StringBuilder image = new StringBuilder().append(c0).append(c0).append(c0);
         StringBuilder value = new StringBuilder();
 
         while (true) {
-            int c = reader.peek();
-            if (c == -1) {
-                // EOF without closing "
-                break;
-            }
-            if (c == '"') {
-                // Found closing "
-                reader.read(); // consume "
-                image.append('"');
-                break;
-            }
-            if (c == '\\') {
-                reader.read(); // consume \
-                image.append('\\');
+            // End delimiter """
+            if (reader.canRead(3)
+                    && reader.peekAt(0) == c0
+                    && reader.peekAt(1) == c0
+                    && reader.peekAt(2) == c0) {
 
-                // Peek next char
-                int c2 = reader.peek();
-                if (c2 == '"') {
-                    // Escaped quote: \"
-                    reader.read(); // consume "
-                    image.append('"');
-                    value.append('"'); // unescaped in value
-                } else {
-                    // Literal backslash + char
-                    if (c2 != -1) {
-                        char ch = (char) reader.read();
-                        image.append(ch);
-                        value.append('\\').append(ch);
-                    } else {
-                        // \ at EOF
-                        value.append('\\');
+                reader.read();
+                reader.read();
+                reader.read();
+                image.append(c0).append(c0).append(c0);
+
+                if (reader.canRead(1)
+                        && reader.peek() == c0) {
+                    //add the last 3 quotes
+                    value.append(c0).append(c0).append(c0);
+                    //drop this
+                    reader.read();
+                    image.append(c0);
+                    //drop add the rest
+                    while (reader.peek() == c0) {
+                        reader.read();
+                        image.append(c0);
+                        value.append(c0);
                     }
+
+                } else {
+                    image.append(c0).append(c0).append(c0);
+                    break;
                 }
             } else {
-                // Regular char
-                char ch = (char) reader.read();
+                // Regular character (verbatim)
+                int c = reader.read();
+                if (c == -1) break;
+
+                char ch = (char) c;
                 image.append(ch);
                 value.append(ch);
             }
@@ -684,315 +759,18 @@ public class TsonCustomLexer {
 
         return new NElementTokenImpl(
                 image.toString(),
-                NElementTokenType.DOUBLE_QUOTED_STRING,
-                "\"",
+                tokenType,
+                new String(new char[]{c0, c0, c0}),
                 0,
                 reader.line(),
                 reader.column(),
                 reader.pos(),
                 new DefaultNStringElement(
-                        NElementType.DOUBLE_QUOTED_STRING,
+                        elementType,
                         value.toString(),
                         image.toString()
-                ), null
-        );
-    }
-
-    private NElementTokenImpl continueReadDoubleQuoted3() {
-        StringBuilder image = new StringBuilder("\"\"\"");
-        StringBuilder value = new StringBuilder();
-
-        while (true) {
-            // Check for \"""
-            if (reader.canRead(4) &&
-                    reader.peekCharAt(0) == '\\' &&
-                    reader.peekCharAt(1) == '"' &&
-                    reader.peekCharAt(2) == '"' &&
-                    reader.peekCharAt(3) == '"') {
-
-                reader.read();
-                reader.read();
-                reader.read();
-                reader.read();
-                image.append("\\\"\"\"");
-                value.append("\"\"\"");
-                continue;
-            }
-
-            // Check for """
-            if (reader.canRead(3) &&
-                    reader.peekCharAt(0) == '"' &&
-                    reader.peekCharAt(1) == '"' &&
-                    reader.peekCharAt(2) == '"') {
-
-                reader.read();
-                reader.read();
-                reader.read();
-                image.append("\"\"\"");
-                break;
-            }
-
-            // Regular char
-            int c = reader.peek();
-            if (c == -1) break;
-            char ch = (char) reader.read();
-            image.append(ch);
-            value.append(ch);
-        }
-
-        return new NElementTokenImpl(
-                image.toString(),
-                NElementTokenType.TRIPLE_DOUBLE_QUOTED_STRING,
-                "\"\"\"",
-                0,
-                reader.line(),
-                reader.column(),
-                reader.pos(),
-                new DefaultNStringElement(
-                        NElementType.TRIPLE_DOUBLE_QUOTED_STRING,
-                        value.toString(),
-                        image.toString()
-                ), null
-        );
-    }
-
-    private NElementTokenImpl continueReadSingleQuoted1() {
-        StringBuilder image = new StringBuilder("'");
-        StringBuilder value = new StringBuilder();
-
-        while (true) {
-            int c = reader.peek();
-            if (c == -1) {
-                // EOF without closing "
-                break;
-            }
-            if (c == '\'') {
-                // Found closing "
-                reader.read(); // consume "
-                image.append('\'');
-                break;
-            }
-            if (c == '\\') {
-                reader.read(); // consume \
-                image.append('\\');
-
-                // Peek next char
-                int c2 = reader.peek();
-                if (c2 == '\'') {
-                    // Escaped quote: \"
-                    reader.read(); // consume "
-                    image.append('\'');
-                    value.append('\''); // unescaped in value
-                } else {
-                    // Literal backslash + char
-                    if (c2 != -1) {
-                        char ch = (char) reader.read();
-                        image.append(ch);
-                        value.append('\\').append(ch);
-                    } else {
-                        // \ at EOF
-                        value.append('\\');
-                    }
-                }
-            } else {
-                // Regular char
-                char ch = (char) reader.read();
-                image.append(ch);
-                value.append(ch);
-            }
-        }
-
-        return new NElementTokenImpl(
-                image.toString(),
-                NElementTokenType.SINGLE_QUOTED_STRING,
-                "'",
-                0,
-                reader.line(),
-                reader.column(),
-                reader.pos(),
-                new DefaultNStringElement(
-                        NElementType.SINGLE_QUOTED_STRING,
-                        value.toString(),
-                        image.toString()
-                ), null
-        );
-    }
-
-    private NElementTokenImpl continueReadSingleQuoted3() {
-        StringBuilder image = new StringBuilder("'''");
-        StringBuilder value = new StringBuilder();
-
-        while (true) {
-            // Check for \"""
-            if (reader.canRead(4) &&
-                    reader.peekCharAt(0) == '\\' &&
-                    reader.peekCharAt(1) == '\'' &&
-                    reader.peekCharAt(2) == '\'' &&
-                    reader.peekCharAt(3) == '\'') {
-
-                reader.read();
-                reader.read();
-                reader.read();
-                reader.read();
-                image.append("\\'");
-                value.append("'");
-                continue;
-            }
-
-            // Check for """
-            if (reader.canRead(3) &&
-                    reader.peekCharAt(0) == '\'' &&
-                    reader.peekCharAt(1) == '\'' &&
-                    reader.peekCharAt(2) == '\'') {
-
-                reader.read();
-                reader.read();
-                reader.read();
-                image.append("'''");
-                break;
-            }
-
-            // Regular char
-            int c = reader.peek();
-            if (c == -1) break;
-            char ch = (char) reader.read();
-            image.append(ch);
-            value.append(ch);
-        }
-
-        return new NElementTokenImpl(
-                image.toString(),
-                NElementTokenType.TRIPLE_SINGLE_QUOTED_STRING,
-                "'''",
-                0,
-                reader.line(),
-                reader.column(),
-                reader.pos(),
-                new DefaultNStringElement(
-                        NElementType.TRIPLE_SINGLE_QUOTED_STRING,
-                        value.toString(),
-                        image.toString()
-                ), null
-        );
-    }
-
-    private NElementTokenImpl continueReadBacktick1() {
-        StringBuilder image = new StringBuilder("`");
-        StringBuilder value = new StringBuilder();
-
-        while (true) {
-            int c = reader.peek();
-            if (c == -1) {
-                // EOF without closing "
-                break;
-            }
-            if (c == '`') {
-                // Found closing "
-                reader.read(); // consume "
-                image.append('`');
-                break;
-            }
-            if (c == '\\') {
-                reader.read(); // consume \
-                image.append('\\');
-
-                // Peek next char
-                int c2 = reader.peek();
-                if (c2 == '`') {
-                    // Escaped quote: \"
-                    reader.read(); // consume "
-                    image.append('`');
-                    value.append('`'); // unescaped in value
-                } else {
-                    // Literal backslash + char
-                    if (c2 != -1) {
-                        char ch = (char) reader.read();
-                        image.append(ch);
-                        value.append('\\').append(ch);
-                    } else {
-                        // \ at EOF
-                        value.append('\\');
-                    }
-                }
-            } else {
-                // Regular char
-                char ch = (char) reader.read();
-                image.append(ch);
-                value.append(ch);
-            }
-        }
-
-        return new NElementTokenImpl(
-                image.toString(),
-                NElementTokenType.BACKTICK_STR,
-                "`",
-                0,
-                reader.line(),
-                reader.column(),
-                reader.pos(),
-                new DefaultNStringElement(
-                        NElementType.BACKTICK_STRING,
-                        value.toString(),
-                        image.toString()
-                ), null
-        );
-    }
-
-    private NElementTokenImpl continueReadBacktick3() {
-        StringBuilder image = new StringBuilder("```");
-        StringBuilder value = new StringBuilder();
-
-        while (true) {
-            // Check for \```
-            if (reader.canRead(4) &&
-                    reader.peekCharAt(0) == '\\' &&
-                    reader.peekCharAt(1) == '`' &&
-                    reader.peekCharAt(2) == '`' &&
-                    reader.peekCharAt(3) == '`') {
-
-                reader.read();
-                reader.read();
-                reader.read();
-                reader.read();
-                image.append("\\'");
-                value.append("'");
-                continue;
-            }
-
-            // Check for """
-            if (reader.canRead(3) &&
-                    reader.peekCharAt(0) == '`' &&
-                    reader.peekCharAt(1) == '`' &&
-                    reader.peekCharAt(2) == '`') {
-
-                reader.read();
-                reader.read();
-                reader.read();
-                image.append("```");
-                break;
-            }
-
-            // Regular char
-            int c = reader.peek();
-            if (c == -1) break;
-            char ch = (char) reader.read();
-            image.append(ch);
-            value.append(ch);
-        }
-
-        return new NElementTokenImpl(
-                image.toString(),
-                NElementTokenType.TRIPLE_BACKTICK_STRING,
-                "```",
-                0,
-                reader.line(),
-                reader.column(),
-                reader.pos(),
-                new DefaultNStringElement(
-                        NElementType.TRIPLE_BACKTICK_STRING,
-                        value.toString(),
-                        image.toString()
-                ), null
+                ),
+                null
         );
     }
 
@@ -1100,7 +878,7 @@ public class TsonCustomLexer {
             if (!reader.canRead(2)) {
                 break;
             }
-            if (reader.peekCharAt(0) != '¶' || reader.peekCharAt(1) != '¶') {
+            if (reader.peekAt(0) != '¶' || reader.peekAt(1) != '¶') {
                 break;
             }
 
@@ -1145,14 +923,14 @@ public class TsonCustomLexer {
             if (c == -1) {
                 break;
             }
-            if (Character.isUnicodeIdentifierPart(c) || c=='$') {
+            if (Character.isUnicodeIdentifierPart(c) || c == '$') {
                 image.append((char) reader.read());
             } else if (c == '.') {
                 if (image.length() > 0 && image.charAt(image.length() - 1) != '.') {
-                    int next = reader.peekCharAt(1);
-                    if(Character.isUnicodeIdentifierPart(next) || next=='$'){
+                    int next = reader.peekAt(1);
+                    if (Character.isUnicodeIdentifierPart(next) || next == '$') {
                         image.append((char) reader.read());
-                    }else{
+                    } else {
                         break;
                     }
                 } else {
@@ -1160,10 +938,10 @@ public class TsonCustomLexer {
                 }
             } else if (c == '-') {
                 if (image.length() > 0 && image.charAt(image.length() - 1) != '-') {
-                    int next = reader.peekCharAt(1);
-                    if(Character.isUnicodeIdentifierPart(next)){
+                    int next = reader.peekAt(1);
+                    if (Character.isUnicodeIdentifierPart(next)) {
                         image.append((char) reader.read());
-                    }else{
+                    } else {
                         break;
                     }
                 } else {
@@ -1208,301 +986,643 @@ public class TsonCustomLexer {
         // 2. NOW check for Special vs Normal
         int p = reader.peek();
         if (p == '0') {
-            int next = reader.peekCharAt(1);
-            String constantName = getConstantName(1);
+            int next = reader.peekAt(1);
+            ConstAndType constantName = getConstantName(1);
             if (constantName != null) {
                 // image already has the sign +/-
                 image.append((char) reader.read()); // '0'
-                image.append(reader.read(constantName.length()));
-                return readSpecialLiteralConst(constantName, image, line, column, pos);
+                image.append(reader.read(constantName.image.length()));
+                TSONNumberInfo info = new TSONNumberInfo();
+                info.specialNumber = true;
+                info.specialConst = true;
+                // Capture Keyword (max, min, pinf, ninf, nan)
+                info.baseValue = constantName.constName.toLowerCase();
+                if (constantName.namedSize != null) {
+                    info.unsignedNumber = constantName.namedSize.floatingNumber;
+                    info.floatingNumber = constantName.namedSize.floating;
+                    info.bits = constantName.namedSize.bits; // BigNum
+                }
+                info.suffix = consumeSuffix(image);
+
+                info.numberLayout = NNumberLayout.DECIMAL;
+                NNumberElement v = applyConstantValue(info, image);
+                if (v != null) {
+                    return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
+                            image.toString(), 0, line, column, pos, v, null);
+                }
+                return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
+                        image.toString(), 0, line, column, pos, new DefaultNNumberElement(
+                        NElementType.INT, 0), null);
             }
-            if (next == 's' || next == 'u') {
-                return readSpecialLiteral(image, line, column, pos);
+            if (next == 's' || next == 'u' || next == 'f') {
+                // this is zero then size : 0f32, 0s8
+                NamedSize ns = getSize(1, true);
+                if (ns != null) {
+                    image.append((char) reader.read()); // '0'
+                    image.append(reader.read(ns.image.length()));
+
+                    TSONNumberInfo info = new TSONNumberInfo();
+                    info.specialNumber = false;
+                    info.specialConst = false;
+                    // Capture Keyword (max, min, pinf, ninf, nan)
+                    info.baseValue = "0";
+                    info.unsignedNumber = ns.floatingNumber;
+                    info.floatingNumber = ns.floating;
+                    info.bits = ns.bits; // BigNum
+                    info.suffix = consumeSuffix(image);
+                    info.numberLayout = NNumberLayout.DECIMAL;
+
+                    return applyZeroValue(info, image, line, column, pos);
+                }
             }
         }
-
         // 3. Normal Number Path (Decimal, Hex, Complex)
         return readNormalNumber(image, line, column, pos);
     }
 
 
-    private String getConstantName(int offset) {
-        if (reader.peekCharAt(offset) == 'm' || reader.peekCharAt(offset) == 'M') {
-            if ((reader.peekCharAt(offset + 1) == 'a' || reader.peekCharAt(offset + 1) == 'A') && (reader.peekCharAt(offset + 2) == 'x' || reader.peekCharAt(offset + 2) == 'X'))
-                return "max";
-            if ((reader.peekCharAt(offset + 1) == 'i' || reader.peekCharAt(offset + 1) == 'I') && (reader.peekCharAt(offset + 2) == 'n' || reader.peekCharAt(offset + 2) == 'N'))
-                return "min";
+    private static class NamedSize {
+        String image;
+        int bits;
+        boolean floatingNumber;
+        boolean floating;
+
+        public NamedSize(String image, int bits, boolean floatingNumber, boolean floating) {
+            this.image = image;
+            this.bits = bits;
+            this.floatingNumber = floatingNumber;
+            this.floating = floating;
         }
-        if ((reader.peekCharAt(offset) == 'p' || reader.peekCharAt(offset) == 'P') && (reader.peekCharAt(offset + 1) == 'i' || reader.peekCharAt(offset + 1) == 'I') && (reader.peekCharAt(offset + 2) == 'n' || reader.peekCharAt(offset + 2) == 'N') && (reader.peekCharAt(offset + 3) == 'f' || reader.peekCharAt(offset + 3) == 'F'))
-            return "pinf";
-        if ((reader.peekCharAt(offset) == 'n' || reader.peekCharAt(offset) == 'N')) {
-            if ((reader.peekCharAt(offset + 1) == 'i' || reader.peekCharAt(offset + 1) == 'I') && (reader.peekCharAt(offset + 2) == 'n' || reader.peekCharAt(offset + 2) == 'N') && (reader.peekCharAt(offset + 3) == 'f' || reader.peekCharAt(offset + 3) == 'F'))
-                return "ninf";
-            if ((reader.peekCharAt(offset + 1) == 'a' || reader.peekCharAt(offset + 1) == 'A') && (reader.peekCharAt(offset + 2) == 'n' || reader.peekCharAt(offset + 2) == 'N'))
-                return "nan";
+    }
+
+    private static class ConstAndType {
+        String image;
+        String constName;
+        NamedSize namedSize;
+
+        public ConstAndType(String image, String constName, NamedSize namedSize) {
+            this.image = image;
+            this.constName = constName;
+            this.namedSize = namedSize;
+        }
+    }
+
+    private NamedSize getSize(int offset, boolean acceptBig) {
+        int c0 = reader.peekAt(offset);
+        int o = 0;
+        StringBuilder sb = new StringBuilder();
+        if (c0 == '_') {
+            sb.append((char) c0);
+            offset++;
+            c0 = reader.peekAt(offset);
+        }
+        if (c0 == 'u' || c0 == 's' || c0 == 'f') {
+            sb.append((char) c0);
+            int c1 = reader.peekAt(offset + 1);
+            sb.append((char) c1);
+            int c2 = reader.peekAt(offset + 2);
+            switch (c1) {
+                case 'N': {
+                    if (acceptBig) {
+                        sb.append((char) c2);
+                        return new NamedSize(
+                                sb.toString(),
+                                -1,
+                                c0 == 'u',
+                                c0 == 'f'
+                        );
+                    }
+                    return null;
+                }
+                case '8': {
+                    if (c2 < '0' || c2 > '9') {
+                        return new NamedSize(
+                                sb.toString(),
+                                8,
+                                c0 == 'u',
+                                c0 == 'f'
+                        );
+                    }
+                    return null;
+                }
+                case '1': {
+                    if (c2 == '6') {
+                        int c3 = reader.peekAt(offset + 3);
+                        if (c3 < '0' || c3 > '9') {
+                            sb.append((char) c2);
+                            return new NamedSize(
+                                    sb.toString(),
+                                    16,
+                                    c0 == 'u',
+                                    c0 == 'f'
+                            );
+                        }
+                    }
+                    return null;
+                }
+                case '3': {
+                    if (c2 == '2') {
+                        int c3 = reader.peekAt(offset + 3);
+                        if (c3 < '0' || c3 > '9') {
+                            sb.append((char) c2);
+                            return new NamedSize(
+                                    sb.toString(),
+                                    32,
+                                    c0 == 'u',
+                                    c0 == 'f'
+                            );
+                        }
+                    }
+                    return null;
+                }
+                case '6': {
+                    if (c2 == '4') {
+                        int c3 = reader.peekAt(offset + 3);
+                        if (c3 < '0' || c3 > '9') {
+                            sb.append((char) c2);
+                            return new NamedSize(
+                                    sb.toString(),
+                                    64,
+                                    c0 == 'u',
+                                    c0 == 'f'
+                            );
+                        }
+                    }
+                    return null;
+                }
+            }
         }
         return null;
     }
 
-    private NElementTokenImpl readSpecialLiteral(StringBuilder image, int line, int col, long pos) {
-        TSONNumberInfo info = new TSONNumberInfo();
-        info.specialNumber = true;
-
-        // image already has the sign +/-
-        image.append((char) reader.read()); // '0'
-
-        // Capture Keyword (max, min, pinf, ninf, nan)
-
-        // Optional underscore
-        if (reader.peek() == '_') {
-            image.append((char) reader.read());
+    private ConstAndType getConstantName(int offset0) {
+        int offset = offset0;
+        int c0 = reader.peekAt(offset);
+        if (c0 == '_') {
+            offset++;
         }
-
-        // Capture Type (s8, s16, s32, s64, sN, u8, u16, u32, u64, f32, f64)
-        int p = reader.peek();
-        if (p == 'u' || p == 's') {
-            char typeChar = (char) reader.read();
-            image.append(typeChar);
-            info.unsignedNumber = (typeChar == 'u');
-            info.floatingNumber = (typeChar == 'f');
-
-            if (reader.peek() == 'N') {
-                image.append((char) reader.read());
-                info.bitWidth = -1; // BigNum
-            } else {
-                StringBuilder widthBuf = new StringBuilder();
-                while (true) {
-                    int nextChar = reader.peek();
-                    if (nextChar >= '0' && nextChar <= '9') {
-                        char digit = (char) reader.read();
-                        widthBuf.append(digit);
-                        image.append(digit);
-                    } else {
-                        break;
+        int c1 = reader.peekAt(offset + 1);
+        int c2 = reader.peekAt(offset + 2);
+        int c3 = reader.peekAt(offset + 3);
+        switch (c0) {
+            case 'm':
+            case 'M': {
+                if (
+                        (c1 == 'a' || c1 == 'A') && (c2 == 'x' || c2 == 'X')
+                                ||
+                                (c1 == 'i' || c1 == 'I') && (c2 == 'n' || c2 == 'N')
+                ) {
+                    NamedSize nsize = getSize(offset + 3, false);
+                    if (nsize != null) {
+                        return new ConstAndType(
+                                reader.peek(offset0, offset + 2 + nsize.image.length()),
+                                new String(new char[]{(char) c0, (char) c1, (char) c2}),
+                                nsize
+                        );
+                    }
+                    if (c3 <= 0 || c3 == '_') {
+                        return new ConstAndType(
+                                reader.peek(offset0, offset + 2),
+                                new String(new char[]{(char) c0, (char) c1, (char) c2}),
+                                nsize
+                        );
+                    }
+                    return null;
+                }
+                break;
+            }
+            case 'p':
+            case 'P': {
+                if ((c1 == 'i' || c1 == 'I') && (c2 == 'n' || c2 == 'N') && (c3 == 'f' || c3 == 'F')) {
+                    NamedSize nsize = getSize(offset + 4, false);
+                    if (nsize != null) {
+                        return new ConstAndType(
+                                reader.peek(offset0, offset + 3 + nsize.image.length()),
+                                new String(new char[]{(char) c0, (char) c1, (char) c2, (char) c3}),
+                                nsize
+                        );
+                    }
+                    int c4 = reader.peekAt(offset + 4);
+                    if (c4 <= 0 || c4 == '_') {
+                        return new ConstAndType(
+                                reader.peek(offset0, offset + 3),
+                                new String(new char[]{(char) c0, (char) c1, (char) c2, (char) c3}),
+                                nsize
+                        );
                     }
                 }
-                if (widthBuf.length() > 0) {
-                    info.bitWidth = Integer.parseInt(widthBuf.toString());
+                break;
+            }
+            case 'n':
+            case 'N': {
+                if ((c1 == 'i' || c1 == 'I') && (c2 == 'n' || c2 == 'N') && (c3 == 'f' || c3 == 'F')) {
+                    NamedSize nsize = getSize(offset + 4, false);
+                    if (nsize != null) {
+                        return new ConstAndType(
+                                reader.peek(offset0, offset + 3 + nsize.image.length()),
+                                new String(new char[]{(char) c0, (char) c1, (char) c2, (char) c3}),
+                                nsize
+                        );
+                    }
+                    int c4 = reader.peekAt(offset + 4);
+                    if (c4 <= 0 || c4 == '_') {
+                        return new ConstAndType(
+                                reader.peek(offset0, offset + 3),
+                                new String(new char[]{(char) c0, (char) c1, (char) c2, (char) c3}),
+                                nsize
+                        );
+                    }
                 }
+                if ((c1 == 'a' || c1 == 'A') && (c2 == 'n' || c2 == 'N')) {
+                    NamedSize nsize = getSize(offset + 3, false);
+                    if (nsize != null) {
+                        return new ConstAndType(
+                                reader.peek(offset0, offset + 2 + nsize.image.length()),
+                                new String(new char[]{(char) c0, (char) c1, (char) c2}),
+                                nsize
+                        );
+                    }
+                    if (c3 <= 0 || c3 == '_') {
+                        return new ConstAndType(
+                                reader.peek(offset0, offset + 2),
+                                new String(new char[]{(char) c0, (char) c1, (char) c2}),
+                                nsize
+                        );
+                    }
+                    return null;
+                }
+                break;
             }
         }
+        return null;
+    }
 
-        // Capture Suffix
-        int suffixStart = image.length();
-        consumeUnit(image);
-        info.suffix = image.substring(suffixStart);
-
-        NPrimitiveElementBuilder pb = NElement.ofPrimitiveBuilder();
-        pb.numberLayout(NNumberLayout.BINARY);
-        if (info.suffix != null && !info.suffix.isEmpty()) {
-            pb.numberSuffix(info.suffix);
-        }
-
+    private NElementTokenImpl applyZeroValue(TSONNumberInfo info, StringBuilder image, int line, int col, long pos) {
         if (info.baseValue == null) {
             // This was the old 0s32 style (no constant name)
             // We'll treat it as 0
             if (info.unsignedNumber) {
-                switch (info.bitWidth) {
+                switch (info.bits) {
                     case 8:
-                        pb.setShort((short) 0);
-                        break;
+                        return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
+                                image.toString(), 0, line, col, pos,
+                                new DefaultNNumberElement(NElementType.UBYTE, (short) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                , null);
                     case 16:
-                        pb.setInt(0);
-                        break;
+                        return new NElementTokenImpl(image.toString(),
+                                NElementTokenType.NUMBER,
+                                image.toString(), 0, line, col, pos,
+                                new DefaultNNumberElement(NElementType.USHORT, 0, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                , null);
                     case 32:
-                        pb.setLong(0L);
-                        break;
+                        return new NElementTokenImpl(image.toString(),
+                                NElementTokenType.NUMBER,
+                                image.toString(), 0, line, col, pos,
+                                new DefaultNNumberElement(NElementType.UINT, 0L, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                , null);
                     case 64:
-                        pb.setBigInt(BigInteger.ZERO);
-                        break;
+                        return new NElementTokenImpl(image.toString(),
+                                NElementTokenType.NUMBER,
+                                image.toString(), 0, line, col, pos,
+                                new DefaultNNumberElement(NElementType.ULONG, BigInteger.ZERO, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                , null);
                 }
             } else {
-                switch (info.bitWidth) {
+                switch (info.bits) {
                     case 8:
-                        pb.setByte((byte) 0);
-                        break;
+                        return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
+                                image.toString(), 0, line, col, pos,
+                                new DefaultNNumberElement(NElementType.BYTE, (byte) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                , null);
                     case 16:
-                        pb.setShort((short) 0);
-                        break;
+                        return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
+                                image.toString(), 0, line, col, pos,
+                                new DefaultNNumberElement(NElementType.SHORT, (short) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                , null);
                     case 32:
-                        pb.setInt(0);
-                        break;
+                        return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
+                                image.toString(), 0, line, col, pos,
+                                new DefaultNNumberElement(NElementType.INT, (int) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                , null);
                     case 64:
-                        pb.setLong(0L);
-                        break;
+                        return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
+                                image.toString(), 0, line, col, pos,
+                                new DefaultNNumberElement(NElementType.LONG, 0L, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                , null);
                     case -1:
-                        pb.setBigInt(BigInteger.ZERO);
-                        break;
-                }
-            }
-        } else {
-            applyConstantValue(pb, info);
-        }
-
-        return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
-                image.toString(), 0, line, col, pos, pb.build(), null);
-    }
-
-    private NElementTokenImpl readSpecialLiteralConst(String constName, StringBuilder image, int line, int col, long pos) {
-        TSONNumberInfo info = new TSONNumberInfo();
-        info.specialNumber = true;
-        info.specialConst = true;
-        // Capture Keyword (max, min, pinf, ninf, nan)
-        info.baseValue = constName.toLowerCase();
-        // Optional underscore
-        if (reader.peek() == '_') {
-            image.append((char) reader.read());
-        }
-
-        // Capture Type (s8, s16, s32, s64, sN, u8, u16, u32, u64, f32, f64)
-        int p = reader.peek();
-        if (p == 'u' || p == 's' || p == 'f') {
-            char typeChar = (char) reader.read();
-            image.append(typeChar);
-            info.unsignedNumber = (typeChar == 'u');
-            info.floatingNumber = (typeChar == 'f');
-
-            if (reader.peek() == 'N') {
-                image.append((char) reader.read());
-                info.bitWidth = -1; // BigNum
-            } else {
-                StringBuilder widthBuf = new StringBuilder();
-                while (true) {
-                    int nextChar = reader.peek();
-                    if (nextChar >= '0' && nextChar <= '9') {
-                        char digit = (char) reader.read();
-                        widthBuf.append(digit);
-                        image.append(digit);
-                    } else {
-                        break;
-                    }
-                }
-                if (widthBuf.length() > 0) {
-                    info.bitWidth = Integer.parseInt(widthBuf.toString());
+                        return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
+                                image.toString(), 0, line, col, pos,
+                                new DefaultNNumberElement(NElementType.BIG_INT, BigInteger.ZERO, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                , null);
                 }
             }
         }
-
-        // Capture Suffix
-        int suffixStart = image.length();
-        consumeUnit(image);
-        info.suffix = image.substring(suffixStart);
-
-        NPrimitiveElementBuilder pb = NElement.ofPrimitiveBuilder();
-        pb.numberLayout(NNumberLayout.DECIMAL);
-        if (info.suffix != null && !info.suffix.isEmpty()) {
-            pb.numberSuffix(info.suffix);
-        }
-        applyConstantValue(pb, info);
-        return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
-                image.toString(), 0, line, col, pos, pb.build(), null);
+        throw new NUnexpectedException(NMsg.ofC("should never happen"));
     }
 
-    private void applyConstantValue(NPrimitiveElementBuilder pb, TSONNumberInfo info) {
+    private NNumberElement applyConstantValue(TSONNumberInfo info, StringBuilder image) {
         String name = info.baseValue;
         if (info.floatingNumber) {
-            if (info.bitWidth == 32) {
+            if (info.bits == 32) {
                 switch (name) {
                     case "max":
-                        pb.setFloat(Float.MAX_VALUE);
-                        break;
+                        return new DefaultNNumberElement(
+                                NElementType.FLOAT,
+                                Float.MAX_VALUE,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
                     case "min":
-                        pb.setFloat(Float.MIN_VALUE);
-                        break;
+                        return new DefaultNNumberElement(
+                                NElementType.FLOAT,
+                                Float.MIN_VALUE,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
                     case "pinf":
-                        pb.setFloat(Float.POSITIVE_INFINITY);
-                        break;
+                        return new DefaultNNumberElement(
+                                NElementType.FLOAT,
+                                Float.POSITIVE_INFINITY,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
                     case "ninf":
-                        pb.setFloat(Float.NEGATIVE_INFINITY);
-                        break;
+                        return new DefaultNNumberElement(
+                                NElementType.FLOAT,
+                                Float.NEGATIVE_INFINITY,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
                     case "nan":
-                        pb.setFloat(Float.NaN);
-                        break;
+                        return new DefaultNNumberElement(
+                                NElementType.FLOAT,
+                                Float.NaN,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
                 }
             } else {
                 switch (name) {
                     case "max":
-                        pb.setDouble(Double.MAX_VALUE);
-                        break;
+                        return new DefaultNNumberElement(
+                                NElementType.DOUBLE,
+                                Double.MAX_VALUE,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
                     case "min":
-                        pb.setDouble(Double.MIN_VALUE);
-                        break;
+                        return new DefaultNNumberElement(
+                                NElementType.DOUBLE,
+                                Double.MIN_VALUE,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
                     case "pinf":
-                        pb.setDouble(Double.POSITIVE_INFINITY);
-                        break;
+                        return new DefaultNNumberElement(
+                                NElementType.DOUBLE,
+                                Double.POSITIVE_INFINITY,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
                     case "ninf":
-                        pb.setDouble(Double.NEGATIVE_INFINITY);
-                        break;
+                        return new DefaultNNumberElement(
+                                NElementType.DOUBLE,
+                                Double.NEGATIVE_INFINITY,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
                     case "nan":
-                        pb.setDouble(Double.NaN);
-                        break;
+                        return new DefaultNNumberElement(
+                                NElementType.DOUBLE,
+                                Double.NaN,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
                 }
             }
-            return;
         }
 
         if (info.unsignedNumber) {
-            switch (info.bitWidth) {
-                case 8:
-                    if ("max".equals(name) || "pinf".equals(name)) pb.setShort((short) 255);
-                    else if ("min".equals(name) || "ninf".equals(name)) pb.setShort((short) 0);
+            switch (info.bits) {
+                case 8: {
+                    if ("max".equals(name) || "pinf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.UBYTE,
+                                (short) 255,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    } else if ("min".equals(name) || "ninf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.UBYTE,
+                                (short) 0,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    }
                     break;
-                case 16:
-                    if ("max".equals(name) || "pinf".equals(name)) pb.setInt(65535);
-                    else if ("min".equals(name) || "ninf".equals(name)) pb.setInt(0);
+                }
+                case 16: {
+                    if ("max".equals(name) || "pinf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.USHORT,
+                                (int) 65535,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    } else if ("min".equals(name) || "ninf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.USHORT,
+                                (int) 0,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    }
                     break;
+                }
                 case 32:
-                    if ("max".equals(name) || "pinf".equals(name)) pb.setLong(4294967295L);
-                    else if ("min".equals(name) || "ninf".equals(name)) pb.setLong(0L);
+                    if ("max".equals(name) || "pinf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.UINT,
+                                4294967295L,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    } else if ("min".equals(name) || "ninf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.UINT,
+                                0L,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    }
                     break;
-                case 64:
-                    if ("max".equals(name) || "pinf".equals(name)) pb.setBigInt(new BigInteger("18446744073709551615"));
-                    else if ("min".equals(name) || "ninf".equals(name)) pb.setBigInt(BigInteger.ZERO);
+                case 64: {
+                    if ("max".equals(name) || "pinf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.ULONG,
+                                new BigInteger("18446744073709551615"),
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    } else if ("min".equals(name) || "ninf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.ULONG,
+                                BigInteger.ZERO,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    }
                     break;
+                }
             }
         } else {
-            switch (info.bitWidth) {
+            switch (info.bits) {
                 case -2: // no type defined
                 {
                     switch (name) {
                         case "max": {
-                            pb.setInt(Integer.MAX_VALUE);
-                            break;
+                            return new DefaultNNumberElement(
+                                    NElementType.INT,
+                                    Integer.MAX_VALUE,
+                                    info.numberLayout,
+                                    info.suffix,
+                                    image.toString(), null, null
+                            );
                         }
                         case "min": {
-                            pb.setInt(Integer.MIN_VALUE);
-                            break;
+                            return new DefaultNNumberElement(
+                                    NElementType.INT,
+                                    Integer.MIN_VALUE,
+                                    info.numberLayout,
+                                    info.suffix,
+                                    image.toString(), null, null
+                            );
                         }
                         case "nan": {
-                            pb.setDouble(Double.NaN);
-                            break;
+                            return new DefaultNNumberElement(
+                                    NElementType.DOUBLE,
+                                    Double.NaN,
+                                    info.numberLayout,
+                                    info.suffix,
+                                    image.toString(), null, null
+                            );
                         }
                         case "pinf": {
-                            pb.setDouble(Double.POSITIVE_INFINITY);
-                            break;
+                            return new DefaultNNumberElement(
+                                    NElementType.DOUBLE,
+                                    Double.POSITIVE_INFINITY,
+                                    info.numberLayout,
+                                    info.suffix,
+                                    image.toString(), null, null
+                            );
                         }
                         case "ninf": {
-                            pb.setDouble(Double.NEGATIVE_INFINITY);
-                            break;
+                            return new DefaultNNumberElement(
+                                    NElementType.DOUBLE,
+                                    Double.NEGATIVE_INFINITY,
+                                    info.numberLayout,
+                                    info.suffix,
+                                    image.toString(), null, null
+                            );
                         }
                     }
                     break;
                 }
-                case 8:
-                    if ("max".equals(name) || "pinf".equals(name)) pb.setByte(Byte.MAX_VALUE);
-                    else if ("min".equals(name) || "ninf".equals(name)) pb.setByte(Byte.MIN_VALUE);
+                case 8: {
+                    if ("max".equals(name) || "pinf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.BYTE,
+                                Byte.MAX_VALUE,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    } else if ("min".equals(name) || "ninf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.BYTE,
+                                Byte.MIN_VALUE,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    }
                     break;
+                }
                 case 16:
-                    if ("max".equals(name) || "pinf".equals(name)) pb.setShort(Short.MAX_VALUE);
-                    else if ("min".equals(name) || "ninf".equals(name)) pb.setShort(Short.MIN_VALUE);
+                    if ("max".equals(name) || "pinf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.SHORT,
+                                Short.MAX_VALUE,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    } else if ("min".equals(name) || "ninf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.SHORT,
+                                Short.MIN_VALUE,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    }
                     break;
                 case 32:
-                    if ("max".equals(name) || "pinf".equals(name)) pb.setInt(Integer.MAX_VALUE);
-                    else if ("min".equals(name) || "ninf".equals(name)) pb.setInt(Integer.MIN_VALUE);
+                    if ("max".equals(name) || "pinf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.INT,
+                                Integer.MAX_VALUE,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    } else if ("min".equals(name) || "ninf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.INT,
+                                Integer.MIN_VALUE,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    }
                     break;
                 case 64:
-                    if ("max".equals(name) || "pinf".equals(name)) pb.setLong(Long.MAX_VALUE);
-                    else if ("min".equals(name) || "ninf".equals(name)) pb.setLong(Long.MIN_VALUE);
+                    if ("max".equals(name) || "pinf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.LONG,
+                                Long.MAX_VALUE,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    } else if ("min".equals(name) || "ninf".equals(name)) {
+                        return new DefaultNNumberElement(
+                                NElementType.LONG,
+                                Long.MIN_VALUE,
+                                info.numberLayout,
+                                info.suffix,
+                                image.toString(), null, null
+                        );
+                    }
                     break;
                 case -1:
                     // BigInt doesn't have max/min in the same way, but we can support min=0 for unsigned?
@@ -1510,32 +1630,36 @@ public class TsonCustomLexer {
                     break;
             }
         }
+        return null;
     }
 
     private static class TSONNumberInfo {
         public boolean specialConst;      // e.g. "10" or "0x1A"
         public String baseValue;      // e.g. "10" or "0x1A"
         public String imaginaryValue; // e.g. "5" (if complex)
-        public int bitWidth = -2;     // e.g. 32, 64, -1 is big decimal, -2 is unknown yet
+        public int bits = -2;     // e.g. 32, 64, -1 is big decimal, -2 is unknown yet
         public boolean unsignedNumber;    // true if 'u'
         public boolean floatingNumber;    // true if 'u'
         public String suffix;           // e.g. "ohm"
+        public NNumberLayout numberLayout;           // e.g. "ohm"
         public boolean specialNumber;     // true if inf/nan
     }
 
-    private boolean isI(int c) {
+    private boolean isImaginaryNumberChar(int c) {
         return c == 'i' || c == 'î';
     }
 
     private NElementTokenImpl readNormalNumber(StringBuilder image, int line, int col, long pos) {
         TSONNumberInfo info = new TSONNumberInfo();
         NMsg errorMessage = null;
+        NElementType numberElementType = NElementType.INT;
+        Number numberValue = 0;
 
         // --- 1. BASE DETECTION ---
         boolean isDecimal = true;
         NNumberLayout layout = NNumberLayout.DECIMAL;
         if (reader.peek() == '0') {
-            int next = reader.peekCharAt(1);
+            int next = reader.peekAt(1);
             if (next == 'x' || next == 'b' || next == 'o') {
                 isDecimal = false;
                 image.append((char) reader.read()); // consume '0'
@@ -1574,10 +1698,10 @@ public class TsonCustomLexer {
             }
             info.imaginaryValue = image.substring(imagStart);
 
-            if (isI(reader.peek())) {
+            if (isImaginaryNumberChar(reader.peek())) {
                 image.append((char) reader.read());
             }
-        } else if (isDecimal && isI(p)) {
+        } else if (isDecimal && isImaginaryNumberChar(p)) {
             // Pure imaginary case: 5i
             info.imaginaryValue = info.baseValue;
             info.baseValue = "0";
@@ -1587,66 +1711,48 @@ public class TsonCustomLexer {
         // --- 4. TYPE SUFFIX (The Lock) ---
         p = reader.peek();
         if (p == 'u' || p == 's') {
-            info.unsignedNumber = (p == 'u');
-            image.append((char) reader.read());
-
-            StringBuilder widthBuf = new StringBuilder();
-            while (Character.isDigit(reader.peek())) {
-                char digit = (char) reader.read();
-                widthBuf.append(digit);
-                image.append(digit);
+            NamedSize ns = getSize(0, true);
+            if (ns != null) {
+                image.append(reader.read(ns.image.length()));
+                info.unsignedNumber = ns.floatingNumber;
+                info.floatingNumber = ns.floatingNumber;
+                info.bits = ns.bits;
             }
-            if (widthBuf.length() > 0) {
-                try {
-                    info.bitWidth = Integer.parseInt(widthBuf.toString());
-                } catch (Exception ex) {
-                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                    info.bitWidth = 32;
-                }
-            }
-        } else if (p == 'n' || p == 'N') {
-            image.append((char) reader.read());
-            info.bitWidth = -1; // Marker for BigNum
         } else {
-            if (info.floatingNumber) {
-                info.bitWidth = 64; // default to double
-            } else {
-                info.bitWidth = 32; // default to int
-            }
+//            if (info.floatingNumber) {
+//                info.bits = 64; // default to double
+//            } else {
+//                info.bits = 32; // default to int
+//            }
         }
 
         // --- 5. UNIT ---
-        int suffixStart = image.length();
-        consumeUnit(image);
-        info.suffix = image.substring(suffixStart);
-
-        NPrimitiveElementBuilder pb = NElement.ofPrimitiveBuilder();
-        pb.numberLayout(layout);
-        if (info.suffix != null) {
-            pb.numberSuffix(info.suffix);
-        }
+        info.suffix = consumeSuffix(image);
 
         if (info.imaginaryValue != null) {
-            if (info.bitWidth == -1) {
+            if (info.bits == -1) {
+                numberElementType = NElementType.BIG_COMPLEX;
                 try {
-                    pb.setBigComplex(new NBigComplex(new BigDecimal(info.baseValue), new BigDecimal(info.imaginaryValue)));
+                    numberValue = (new NBigComplex(new BigDecimal(info.baseValue), new BigDecimal(info.imaginaryValue)));
                 } catch (Exception ex) {
                     errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                    pb.setBigComplex(NBigComplex.ZERO);
+                    numberValue = (NBigComplex.ZERO);
                 }
-            } else if (info.bitWidth <= 32) {
+            } else if (info.bits <= 32) {
+                numberElementType = NElementType.FLOAT_COMPLEX;
                 try {
-                    pb.setFloatComplex(new NFloatComplex(Float.parseFloat(info.baseValue), Float.parseFloat(info.imaginaryValue)));
+                    numberValue = (new NFloatComplex(Float.parseFloat(info.baseValue), Float.parseFloat(info.imaginaryValue)));
                 } catch (Exception ex) {
                     errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                    pb.setFloatComplex(NFloatComplex.ZERO);
+                    numberValue = (NFloatComplex.ZERO);
                 }
             } else {
+                numberElementType = NElementType.DOUBLE_COMPLEX;
                 try {
-                    pb.setDoubleComplex(new NDoubleComplex(Double.parseDouble(info.baseValue), Double.parseDouble(info.imaginaryValue)));
+                    numberValue = (new NDoubleComplex(Double.parseDouble(info.baseValue), Double.parseDouble(info.imaginaryValue)));
                 } catch (Exception ex) {
                     errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                    pb.setDoubleComplex(NDoubleComplex.ZERO);
+                    numberValue = (NDoubleComplex.ZERO);
                 }
             }
         } else {
@@ -1658,99 +1764,152 @@ public class TsonCustomLexer {
                     errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
                     bi = BigInteger.ZERO;
                 }
-                switch (info.bitWidth) {
+                switch (info.bits) {
                     case 8:
-                        pb.setShort(bi.shortValue());
+                        numberElementType = NElementType.UBYTE;
+                        numberValue = (bi.shortValue());
                         break;
                     case 16:
-                        pb.setInt(bi.intValue());
+                        numberElementType = NElementType.USHORT;
+                        numberValue = (bi.intValue());
                         break;
                     case 32:
-                        pb.setLong(bi.longValue());
+                        numberElementType = NElementType.UINT;
+                        numberValue = (bi.longValue());
                         break;
                     case 64:
                     default:
-                        pb.setBigInt(bi);
+                        numberElementType = NElementType.ULONG;
+                        numberValue = (bi);
                         break;
                 }
             } else {
-                if (info.bitWidth == -1) {
+                if (info.bits == -1) {
                     if (info.baseValue.contains(".") || info.baseValue.contains("e") || info.baseValue.contains("E")) {
+                        numberElementType = NElementType.BIG_DECIMAL;
                         try {
-                            pb.setBigDecimal(new BigDecimal(info.baseValue));
+                            numberValue = (new BigDecimal(info.baseValue));
                         } catch (Exception ex) {
                             errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                            pb.setBigDecimal(new BigDecimal(0));
+                            numberValue = (new BigDecimal(0));
                         }
                     } else {
+                        numberElementType = NElementType.BIG_INT;
                         try {
-                            pb.setBigInt(new BigInteger(info.baseValue));
+                            numberValue = (new BigInteger(info.baseValue));
                         } catch (Exception ex) {
                             errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                            pb.setBigInt(BigInteger.ZERO);
+                            numberValue = (BigInteger.ZERO);
                         }
                     }
                 } else {
-                    switch (info.bitWidth) {
+                    switch (info.bits) {
                         case 8: {
+                            numberElementType = NElementType.BYTE;
                             try {
-                                pb.setByte(Byte.parseByte(info.baseValue));
+                                numberValue = (Byte.parseByte(info.baseValue));
                             } catch (Exception ex) {
                                 errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                                pb.setByte((byte) 0);
+                                numberValue = ((byte) 0);
                             }
                             break;
                         }
                         case 16: {
+                            numberElementType = NElementType.SHORT;
                             try {
-                                pb.setShort(Short.parseShort(info.baseValue));
+                                numberValue = (Short.parseShort(info.baseValue));
                             } catch (Exception ex) {
                                 errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                                pb.setShort((short) 0);
+                                numberValue = ((short) 0);
                             }
                             break;
                         }
                         case 32:
+                            numberElementType = NElementType.INT;
                             if (info.baseValue.contains(".") || info.baseValue.contains("e") || info.baseValue.contains("E")) {
                                 try {
-                                    pb.setFloat(Float.parseFloat(info.baseValue));
+                                    numberValue = (Float.parseFloat(info.baseValue));
                                 } catch (Exception ex) {
                                     errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                                    pb.setFloat(0.0f);
+                                    numberValue = (0.0f);
                                 }
 
                             } else {
                                 try {
-                                    pb.setInt(Integer.parseInt(info.baseValue));
+                                    numberValue = (Integer.parseInt(info.baseValue));
                                 } catch (Exception ex) {
                                     errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                                    pb.setInt(0);
+                                    numberValue = (0);
                                 }
                             }
                             break;
-                        case 64:
-                        default:
+                        case 64: {
+                            numberElementType = NElementType.LONG;
                             if (info.baseValue.contains(".") || info.baseValue.contains("e") || info.baseValue.contains("E")) {
                                 try {
-                                    pb.setDouble(Double.parseDouble(info.baseValue));
+                                    numberValue = (Double.parseDouble(info.baseValue));
                                 } catch (Exception ex) {
                                     errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                                    pb.setDouble(0.0);
+                                    numberValue = (0.0);
                                 }
                             } else {
                                 try {
-                                    pb.setLong(Long.parseLong(info.baseValue));
+                                    numberValue = (Long.parseLong(info.baseValue));
                                 } catch (Exception ex) {
                                     errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                                    pb.setLong(0L);
+                                    numberValue = (0L);
                                 }
                             }
                             break;
+                        }
+                        case -2: // auto detect
+                        default: {
+                            if (info.baseValue.contains(".") || info.baseValue.contains("e") || info.baseValue.contains("E")) {
+                                numberElementType = NElementType.DOUBLE;
+                                try {
+                                    numberValue = (Double.parseDouble(info.baseValue));
+                                } catch (Exception ex) {
+                                    try {
+                                        numberValue = new BigDecimal(info.baseValue);
+                                        numberElementType = NElementType.BIG_DECIMAL;
+                                    } catch (Exception ex2) {
+                                        errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                                        numberValue = (0.0);
+                                    }
+                                }
+                            } else {
+                                numberElementType = NElementType.INT;
+                                try {
+                                    numberValue = (Integer.parseInt(info.baseValue));
+                                } catch (Exception ex) {
+                                    try {
+                                        numberValue = (Long.parseLong(info.baseValue));
+                                        numberElementType = NElementType.LONG;
+                                    } catch (Exception ex2) {
+                                        try {
+                                            numberValue = new BigInteger(info.baseValue);
+                                            numberElementType = NElementType.BIG_INT;
+                                        } catch (Exception ex3) {
+                                            errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                                            numberValue = (0);
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        }
                     }
                 }
             }
         }
-        return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER, "", 0, line, col, pos, pb.build(), errorMessage);
+        return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER, "", 0, line, col, pos,
+                new DefaultNNumberElement(
+                        numberElementType, numberValue, layout, info.suffix,
+                        image.toString(),
+                        null, null
+                )
+                , errorMessage
+        );
     }
 
     private BigInteger parseBigInteger(String value, NNumberLayout layout) {
@@ -1771,12 +1930,12 @@ public class TsonCustomLexer {
 
     private boolean isImaginaryPartNext() {
         int offset = 1; // Start peeking after the +/-
-        int c = reader.peekCharAt(offset);
+        int c = reader.peekAt(offset);
 
         // Skip digits, underscores, and dots
         while (Character.isDigit(c) || c == '.' || c == '_') {
             offset++;
-            c = reader.peekCharAt(offset);
+            c = reader.peekAt(offset);
         }
 
         // If it ends in i or î, it's a complex literal!
@@ -1796,7 +1955,7 @@ public class TsonCustomLexer {
             } else if (acceptFloating && (c == 'e' || c == 'E')) {
                 wasFloating = true;
                 // Check if this is truly scientific notation (e followed by digit or +/-)
-                int next = reader.peekCharAt(1);
+                int next = reader.peekAt(1);
                 if (Character.isDigit(next) || next == '+' || next == '-') {
                     sb.append((char) reader.read()); // consume 'e'
                     int sign = reader.peek();
@@ -1807,7 +1966,7 @@ public class TsonCustomLexer {
                 } else {
                     break; // 'e' might be the start of a unit or keyword
                 }
-            } else if (!acceptFloating && isHexDigit(c)) {
+            } else if (!acceptFloating && NHex.isHexDigit((char) c)) {
                 sb.append((char) reader.read());
             } else {
                 break;
@@ -1816,21 +1975,23 @@ public class TsonCustomLexer {
         return wasFloating;
     }
 
-    private void consumeUnit(StringBuilder sb) {
+    private String consumeSuffix(StringBuilder sb) {
+        StringBuilder s = new StringBuilder();
         while (true) {
             int p = reader.peek();
             if (p == '%' || p == '_' || Character.isAlphabetic(p)) {
-                sb.append((char) reader.read());
+                char c = (char) reader.read();
+                sb.append(c);
+                s.append(c);
             } else {
                 break;
             }
         }
-    }
-
-    public static boolean isHexDigit(int current) {
-        return current >= '0' && current <= '9'
-                || current >= 'a' && current <= 'f'
-                || current >= 'A' && current <= 'F';
+        if (s.length() > 2 && s.charAt(0) == '_') {
+            //drop first _ in unit
+            s.deleteCharAt(0);
+        }
+        return s.toString();
     }
 
 
@@ -1839,38 +2000,38 @@ public class TsonCustomLexer {
         int column = reader.column();
         long pos = reader.pos();
         if (reader.canRead(10)
-                && Character.isDigit(reader.peekCharAt(0))
-                && Character.isDigit(reader.peekCharAt(1))
-                && Character.isDigit(reader.peekCharAt(2))
-                && Character.isDigit(reader.peekCharAt(3))
-                && '-' == reader.peekCharAt(4)
-                && Character.isDigit(reader.peekCharAt(5))
-                && Character.isDigit(reader.peekCharAt(6))
-                && '-' == reader.peekCharAt(7)
-                && Character.isDigit(reader.peekCharAt(8))
-                && Character.isDigit(reader.peekCharAt(9))
+                && Character.isDigit(reader.peekAt(0))
+                && Character.isDigit(reader.peekAt(1))
+                && Character.isDigit(reader.peekAt(2))
+                && Character.isDigit(reader.peekAt(3))
+                && '-' == reader.peekAt(4)
+                && Character.isDigit(reader.peekAt(5))
+                && Character.isDigit(reader.peekAt(6))
+                && '-' == reader.peekAt(7)
+                && Character.isDigit(reader.peekAt(8))
+                && Character.isDigit(reader.peekAt(9))
         ) {
             if (reader.canRead(16)
-                    && ((reader.peekCharAt(10) == 'T')
-                    && Character.isDigit(reader.peekCharAt(11))
-                    && Character.isDigit(reader.peekCharAt(12))
-                    && ':' == reader.peekCharAt(13)
-                    && Character.isDigit(reader.peekCharAt(14))
-                    && Character.isDigit(reader.peekCharAt(15))
+                    && ((reader.peekAt(10) == 'T')
+                    && Character.isDigit(reader.peekAt(11))
+                    && Character.isDigit(reader.peekAt(12))
+                    && ':' == reader.peekAt(13)
+                    && Character.isDigit(reader.peekAt(14))
+                    && Character.isDigit(reader.peekAt(15))
             )) {
                 if (reader.canRead(19)
-                        && (reader.peekCharAt(16) == ':')
-                        && Character.isDigit(reader.peekCharAt(17))
-                        && Character.isDigit(reader.peekCharAt(18))
+                        && (reader.peekAt(16) == ':')
+                        && Character.isDigit(reader.peekAt(17))
+                        && Character.isDigit(reader.peekAt(18))
                 ) {
                     int h = 19;
-                    if (reader.canRead(h + 1) && reader.peekCharAt(h) == '.') {
+                    if (reader.canRead(h + 1) && reader.peekAt(h) == '.') {
                         h++;
-                        while (reader.canRead(h + 1) && Character.isDigit(reader.peekCharAt(h))) {
+                        while (reader.canRead(h + 1) && Character.isDigit(reader.peekAt(h))) {
                             h++;
                         }
                     }
-                    if (reader.canRead(h + 1) && reader.peekCharAt(h) == 'Z') {
+                    if (reader.canRead(h + 1) && reader.peekAt(h) == 'Z') {
                         h++;
                         String str = reader.read(h);
                         Instant i = Instant.parse(str);
@@ -1902,19 +2063,19 @@ public class TsonCustomLexer {
                         , null);
             }
         } else if (reader.canRead(8)
-                && Character.isDigit(reader.peekCharAt(0))
-                && Character.isDigit(reader.peekCharAt(1))
-                && ':' == reader.peekCharAt(2)
-                && Character.isDigit(reader.peekCharAt(3))
-                && Character.isDigit(reader.peekCharAt(4))
-                && ':' == reader.peekCharAt(5)
-                && Character.isDigit(reader.peekCharAt(6))
-                && Character.isDigit(reader.peekCharAt(7))
+                && Character.isDigit(reader.peekAt(0))
+                && Character.isDigit(reader.peekAt(1))
+                && ':' == reader.peekAt(2)
+                && Character.isDigit(reader.peekAt(3))
+                && Character.isDigit(reader.peekAt(4))
+                && ':' == reader.peekAt(5)
+                && Character.isDigit(reader.peekAt(6))
+                && Character.isDigit(reader.peekAt(7))
         ) {
             int h = 8;
-            if (reader.canRead(h + 1) && reader.peekCharAt(h) == '.') {
+            if (reader.canRead(h + 1) && reader.peekAt(h) == '.') {
                 h++;
-                while (reader.canRead(h + 1) && Character.isDigit(reader.peekCharAt(h))) {
+                while (reader.canRead(h + 1) && Character.isDigit(reader.peekAt(h))) {
                     h++;
                 }
             }
@@ -1940,6 +2101,49 @@ public class TsonCustomLexer {
         }
         String s = image.toString();
         return new NElementTokenImpl(s, tt, String.valueOf(s.charAt(0)), count, reader.line(), reader.column(), reader.pos(), s, null);
+    }
+
+    private NElementTokenImpl asBullet(int line, int column, long pos) {
+        if (reader.peekAt(0) != '[') {
+            return null;
+        }
+        int c1 = reader.peekAt(1);
+        NElementTokenType type;
+        switch (c1) {
+            case '●':
+            case '.': {
+                type = NElementTokenType.UNORDERED_LIST;
+                break;
+            }
+            case '■':
+            case '#': {
+                type = NElementTokenType.ORDERED_LIST;
+                break;
+            }
+            default: {
+                return null;
+            }
+        }
+        int index = 2;
+        while (true) {
+            int c2 = reader.peekAt(index);
+            if (c2 == c1) {
+                index++;
+            } else if (c2 == ']') {
+                String image = reader.read(index + 1);
+                return new NElementTokenImpl(
+                        image,
+                        type,
+                        "[" + ((char) c1) + "]",
+                        image.length() - 2,
+                        line, column, pos,
+                        image,
+                        null
+                );
+            } else {
+                return null;
+            }
+        }
     }
 
     private NElementTokenImpl asChar(int c, NElementTokenType tt) {
