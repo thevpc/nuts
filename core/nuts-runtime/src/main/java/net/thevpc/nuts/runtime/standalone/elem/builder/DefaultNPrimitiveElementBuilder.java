@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder implements NPrimitiveElementBuilder {
@@ -28,62 +29,10 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     private String numberSuffix;
 
     private NElementType type;
+    private String image;
 
     public DefaultNPrimitiveElementBuilder() {
         this.type = NElementType.NULL;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder removeAnnotation(NElementAnnotation annotation) {
-        super.removeAnnotation(annotation);
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other, NAssignmentPolicy.ANY);
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder copyFrom(NElement other) {
-        copyFrom(other, NAssignmentPolicy.ANY);
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
-        if (other == null) {
-            return this;
-        }
-        super.copyFrom(other, assignmentPolicy);
-        if (other instanceof NPrimitiveElementBuilder) {
-            NPrimitiveElementBuilder from = (NPrimitiveElementBuilder) other;
-            this.type = from.type();
-            this.value = from.value();
-            this.numberLayout = from.numberLayout();
-            this.numberSuffix = from.numberSuffix();
-        }
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
-        if (other == null) {
-            return this;
-        }
-        super.copyFrom(other, assignmentPolicy);
-        if (other instanceof NPrimitiveElement) {
-            NPrimitiveElement from = (NPrimitiveElement) other;
-            this.type = from.type();
-            this.value = from.value();
-            if (other instanceof NNumberElement) {
-                NNumberElement nfrom = (NNumberElement) other;
-                this.numberLayout = nfrom.numberLayout();
-                this.numberSuffix = nfrom.numberSuffix();
-            }
-        }
-        return this;
     }
 
     public NNumberLayout numberLayout() {
@@ -111,8 +60,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
 
     public NPrimitiveElementBuilder value(Object value) {
         if (value == null) {
-            this.value = null;
-            this.type = NElementType.NULL;
+            setNull();
         } else {
             switch (value.getClass().getName()) {
                 case "java.lang.String": {
@@ -208,6 +156,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         this.type = NElementType.INSTANT;
         this.numberLayout = null;
         this.numberSuffix = null;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -220,6 +169,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         this.type = NElementType.LOCAL_DATE;
         this.numberLayout = null;
         this.numberSuffix = null;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -232,6 +182,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         this.type = NElementType.LOCAL_DATETIME;
         this.numberLayout = null;
         this.numberSuffix = null;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -244,6 +195,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         this.type = NElementType.LOCAL_TIME;
         this.numberLayout = null;
         this.numberSuffix = null;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -281,6 +233,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
             setNull();
         } else {
             this.value = value;
+            this.image = null;
             this.type = stringLayout;
             this.numberLayout = null;
             this.numberSuffix = null;
@@ -298,6 +251,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         this.type = NElementType.BOOLEAN;
         this.numberLayout = null;
         this.numberSuffix = null;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -305,6 +259,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     public NPrimitiveElementBuilder setBoolean(boolean value) {
         this.value = value;
         this.type = NElementType.BOOLEAN;
+        this.image = String.valueOf(value);
         this.numberLayout = null;
         this.numberSuffix = null;
         return this;
@@ -352,6 +307,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         }
         this.type = NElementType.INT;
         this.value = value;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -362,12 +318,14 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         }
         this.type = NElementType.LONG;
         this.value = value;
+        this.image = String.valueOf(value);
         return this;
     }
 
     @Override
     public NPrimitiveElementBuilder setNull() {
         this.value = null;
+        this.image = "null";
         this.type = NElementType.NULL;
         this.numberLayout = null;
         this.numberSuffix = null;
@@ -381,6 +339,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         }
         this.type = NElementType.BYTE;
         this.value = value;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -392,6 +351,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         this.type = NElementType.SHORT;
         this.value = value;
         this.numberLayout = NNumberLayout.DECIMAL;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -401,6 +361,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         this.value = value;
         this.numberLayout = null;
         this.numberSuffix = null;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -413,6 +374,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         this.value = value;
         this.numberLayout = null;
         this.numberSuffix = null;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -421,6 +383,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         this.type = NElementType.SHORT;
         this.value = value;
         this.numberLayout = NNumberLayout.DECIMAL;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -429,6 +392,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         this.type = NElementType.DOUBLE;
         this.value = value;
         this.numberLayout = NNumberLayout.DECIMAL;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -439,6 +403,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         }
         this.type = NElementType.FLOAT;
         this.value = value;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -450,6 +415,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         this.type = NElementType.DOUBLE;
         this.value = value;
         this.numberLayout = NNumberLayout.DECIMAL;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -460,6 +426,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         }
         this.type = NElementType.BIG_INT;
         this.value = value;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -471,18 +438,21 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         this.type = NElementType.BIG_DECIMAL;
         this.value = value;
         this.numberLayout = NNumberLayout.DECIMAL;
+        this.image = String.valueOf(value);
         return this;
     }
 
     public NPrimitiveElementBuilder setInt(int value) {
         this.type = NElementType.INT;
         this.value = value;
+        this.image = String.valueOf(value);
         return this;
     }
 
     public NPrimitiveElementBuilder setByte(byte value) {
         this.type = NElementType.BYTE;
         this.value = value;
+        this.image = String.valueOf(value);
         return this;
     }
 
@@ -492,6 +462,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
             return setNull();
         }
         this.value = value;
+        this.image = String.valueOf(value);
         this.type = NElementType.DOUBLE_COMPLEX;
         this.numberLayout = NNumberLayout.DECIMAL;
         return this;
@@ -502,6 +473,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         if (value == null) {
             return setNull();
         }
+        this.image = String.valueOf(value);
         this.value = value;
         this.type = NElementType.FLOAT_COMPLEX;
         this.numberLayout = NNumberLayout.DECIMAL;
@@ -513,6 +485,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         if (value == null) {
             return setNull();
         }
+        this.image = String.valueOf(value);
         this.value = value;
         this.type = NElementType.BIG_COMPLEX;
         this.numberLayout = NNumberLayout.DECIMAL;
@@ -522,12 +495,12 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     @Override
     public NPrimitiveElement build() {
         if (type().isAnyNumber()) {
-            return new DefaultNNumberElement(type, (Number) value, numberLayout(), numberSuffix(), annotations(), comments(), diagnostics());
+            return new DefaultNNumberElement(type, (Number) value, numberLayout(), numberSuffix(), image, affixes(), diagnostics());
         }
         if (type().isAnyStringOrName()) {
-            return new DefaultNStringElement(type, (String) value,(String) value, annotations(), comments(), diagnostics());
+            return new DefaultNStringElement(type, (String) value, image, affixes(), diagnostics());
         }
-        return new DefaultNPrimitiveElement(type, value, annotations(), comments(), diagnostics());
+        return new DefaultNPrimitiveElement(type, value, affixes(), diagnostics());
     }
 
     @Override
@@ -540,20 +513,157 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         return value;
     }
 
+    public NPrimitiveElementBuilder copyFrom(NPrimitiveElement element) {
+        return copyFrom(element, NAssignmentPolicy.ANY);
+    }
+
+    @Override
+    public NPrimitiveElementBuilder doWith(Consumer<NPrimitiveElementBuilder> con) {
+        if (con != null) {
+            con.accept(this);
+        }
+        return this;
+    }
+
+    // ------------------------------------------
+
+    @Override
+    public NPrimitiveElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
+        super.copyFrom(other, assignmentPolicy);
+        if (other instanceof NPrimitiveElementBuilder) {
+            NPrimitiveElementBuilder b = (NPrimitiveElementBuilder) other;
+            this.type = b.type();
+            this.value = b.value();
+            this.numberLayout = b.numberLayout();
+            this.numberSuffix = b.numberSuffix();
+            this.image = b.image();
+        }
+        return this;
+    }
+
+    public String image() {
+        return image;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
+        super.copyFrom(other, assignmentPolicy);
+        if (other instanceof NPrimitiveElement) {
+            NPrimitiveElement b = (NPrimitiveElement) other;
+            this.type = b.type();
+            this.value = b.value();
+            if (other instanceof NNumberElement) {
+                NNumberElement nfrom = (NNumberElement) other;
+                this.numberLayout = nfrom.numberLayout();
+                this.numberSuffix = nfrom.numberSuffix();
+                this.image = nfrom.image();
+            }
+        }
+        return this;
+    }
 
     // ------------------------------------------
     // RETURN SIG
     // ------------------------------------------
 
     @Override
-    public NPrimitiveElementBuilder addLeadingComment(NElementCommentType type, String text) {
-        super.addLeadingComment(type, text);
+    public NPrimitiveElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+        super.addAnnotations(annotations);
         return this;
     }
 
     @Override
-    public NPrimitiveElementBuilder addTrailingComment(NElementCommentType type, String text) {
-        super.addTrailingComment(type, text);
+    public NPrimitiveElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name, args);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addAnnotation(NElementAnnotation annotation) {
+        super.addAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addAffix(int index, NBoundAffix affix) {
+        super.addAffix(index, affix);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder removeAffix(int index) {
+        super.removeAffix(index);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder clearAnnotations() {
+        super.clearAnnotations();
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder clearComments() {
+        super.clearComments();
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder setAffix(int index, NBoundAffix affix) {
+        super.setAffix(index, affix);
+        return this;
+    }
+
+    public NPrimitiveElementBuilder addAffix(NBoundAffix affix){
+        super.addAffix(affix);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.setAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder removeDiagnostic(NElementDiagnostic error) {
+        super.removeDiagnostic(error);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addAffixes(List<NBoundAffix> affixes) {
+        super.addAffixes(affixes);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addDiagnostic(NElementDiagnostic error) {
+        super.addDiagnostic(error);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addAffixes(List<? extends NAffix> affixes, NAffixAnchor anchor) {
+        super.addAffixes(affixes, anchor);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder addAffix(NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor) {
+        super.removeAffixes(type, anchor);
         return this;
     }
 
@@ -582,98 +692,21 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NPrimitiveElementBuilder removeTrailingCommentAt(int index) {
-        super.removeTrailingCommentAt(index);
+    public NPrimitiveElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
         return this;
     }
 
     @Override
-    public NPrimitiveElementBuilder removeLeadingCommentAt(int index) {
-        super.removeLeadingCommentAt(index);
+    public NPrimitiveElementBuilder copyFrom(NElementBuilder other) {
+        super.copyFrom(other);
         return this;
     }
 
     @Override
-    public NPrimitiveElementBuilder removeTrailingComment(NElementComment comment) {
-        super.removeTrailingComment(comment);
+    public NPrimitiveElementBuilder copyFrom(NElement other) {
+        super.copyFrom(other);
         return this;
     }
 
-    @Override
-    public NPrimitiveElementBuilder removeLeadingComment(NElementComment comment) {
-        super.removeLeadingComment(comment);
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder addComments(NElementComments comments) {
-        super.addComments(comments);
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        super.addAnnotations(annotations);
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder addAnnotation(String name, NElement... args) {
-        super.addAnnotation(name, args);
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder addAnnotation(NElementAnnotation annotation) {
-        super.addAnnotation(annotation);
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        super.addAnnotationAt(index, annotation);
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder removeAnnotationAt(int index) {
-        super.removeAnnotationAt(index);
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder clearAnnotations() {
-        super.clearAnnotations();
-        return this;
-    }
-
-    @Override
-    public NPrimitiveElementBuilder clearComments() {
-        super.clearComments();
-        return this;
-    }
-
-    public NPrimitiveElementBuilder copyFrom(NPrimitiveElement element) {
-        if (element != null) {
-            addAnnotations(element.annotations());
-            addComments(element.comments());
-            this.value = element.value();
-            this.type = element.type();
-            if (element instanceof NNumberElement) {
-                NNumberElement ne = (NNumberElement) element;
-                numberLayout(ne.numberLayout());
-                numberSuffix(ne.numberSuffix());
-            }
-        }
-        return this;
-    }
-
-
-    @Override
-    public NPrimitiveElementBuilder doWith(Consumer<NPrimitiveElementBuilder> con) {
-        if (con != null) {
-            con.accept(this);
-        }
-        return this;
-    }
 }
