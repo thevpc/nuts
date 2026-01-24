@@ -14,8 +14,6 @@ public interface NElementAnnotationBuilder extends NBlankable {
 
     NElementAnnotationBuilder setName(String name);
 
-    String toString(boolean compact);
-
     NElementAnnotation build();
 
     List<NElement> params();
