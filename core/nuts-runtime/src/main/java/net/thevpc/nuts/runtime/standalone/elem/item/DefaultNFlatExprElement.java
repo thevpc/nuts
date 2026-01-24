@@ -25,7 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
+import net.thevpc.nuts.runtime.standalone.elem.builder.NBoundAffixList;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathImpl;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
@@ -42,42 +42,14 @@ public class DefaultNFlatExprElement extends AbstractNElement
 
     private final NElement[] values;
 
-    public DefaultNFlatExprElement(List<NElement> values, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
-        super(NElementType.FLAT_EXPR, annotations, comments, diagnostics);
+    public DefaultNFlatExprElement(List<NElement> values, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+        super(NElementType.FLAT_EXPR, affixes, diagnostics);
         this.values = values.toArray(new NElement[0]);
     }
 
 
-    @Override
-    public boolean isCustomTree() {
-        if (super.isCustomTree()) {
-            return true;
-        }
-        if (values != null) {
-            for (NElement value : values) {
-                if (value.isCustomTree()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
     protected NTreeVisitResult traverseChildren(NElementVisitor visitor) {
-        return traverseList(visitor,Arrays.asList(values));
-    }
-    @Override
-    public boolean isErrorTree() {
-        if(super.isErrorTree()){
-            return true;
-        }
-        if(values!=null){
-            for (NElement value : values) {
-                if(value.isErrorTree()){
-                    return true;
-                }
-            }
-        }
-        return false;
+        return traverseList(visitor, Arrays.asList(values));
     }
 
     @Override
@@ -119,24 +91,6 @@ public class DefaultNFlatExprElement extends AbstractNElement
         return Arrays.asList(values).iterator();
     }
 
-    public String toString() {
-        return toString(false);
-    }
-
-    @Override
-    public String toString(boolean compact) {
-        NStringBuilder sb = new NStringBuilder();
-        sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
-        for (int i = 0; i < values.length; i++) {
-            NElement value = values[i];
-            if (i > 0) {
-                sb.append(" ");
-            }
-            sb.append(value.toString(compact));
-        }
-        return sb.toString();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -158,7 +112,7 @@ public class DefaultNFlatExprElement extends AbstractNElement
 
     @Override
     public boolean isBlank() {
-        return values.length == 0 || values.length==1 && NBlankable.isBlank(values[0]);
+        return values.length == 0 || values.length == 1 && NBlankable.isBlank(values[0]);
     }
 
 
