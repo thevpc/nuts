@@ -68,54 +68,9 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
-    public NFlatExprElementBuilder removeAnnotation(NElementAnnotation annotation) {
-        super.removeAnnotation(annotation);
-        return this;
-    }
-
-    @Override
-    public NFlatExprElementBuilder copyFrom(NElementBuilder other) {
-        copyFrom(other, NAssignmentPolicy.ANY);
-        return this;
-    }
-
-    @Override
-    public NFlatExprElementBuilder copyFrom(NElement other) {
-        copyFrom(other, NAssignmentPolicy.ANY);
-        return this;
-    }
-
-    @Override
-    public NFlatExprElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
-        if (other == null) {
-            return this;
-        }
-        super.copyFrom(other, assignmentPolicy);
-        if (other instanceof NFlatExprElementBuilder) {
-            NFlatExprElementBuilder from = (NFlatExprElementBuilder) other;
-            this.values.addAll(from.children());
-        }
-        return this;
-    }
-
-    @Override
-    public NFlatExprElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
-        if (other == null) {
-            return this;
-        }
-        super.copyFrom(other, assignmentPolicy);
-        if (other instanceof NFlatExprElement) {
-            NFlatExprElement from = (NFlatExprElement) other;
-            this.values.addAll(from.children());
-        }
-        return this;
-    }
-
-
-    @Override
     public NFlatExprElement build() {
         return new DefaultNFlatExprElement(values,
-                annotations(), comments(), diagnostics()
+                affixes(), diagnostics()
         );
     }
 
@@ -124,20 +79,137 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
         return NElementType.FLAT_EXPR;
     }
 
+    @Override
+    public NFlatExprElementBuilder doWith(Consumer<NFlatExprElementBuilder> con) {
+        if (con != null) {
+            con.accept(this);
+        }
+        return this;
+    }
+
+    // ------------------------------------------
+
+    @Override
+    public NFlatExprElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
+        super.copyFrom(other, assignmentPolicy);
+        if(other instanceof NFlatExprElementBuilder){
+            NFlatExprElementBuilder b=(NFlatExprElementBuilder)other;
+            this.values.addAll(b.children());
+        }
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
+        super.copyFrom(other, assignmentPolicy);
+        if(other instanceof NFlatExprElement){
+            NFlatExprElement b=(NFlatExprElement)other;
+            this.values.addAll(b.children());
+        }
+        return this;
+    }
 
     // ------------------------------------------
     // RETURN SIG
     // ------------------------------------------
 
     @Override
-    public NFlatExprElementBuilder addLeadingComment(NElementCommentType type, String text) {
-        super.addLeadingComment(type, text);
+    public NFlatExprElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+        super.addAnnotations(annotations);
         return this;
     }
 
     @Override
-    public NFlatExprElementBuilder addTrailingComment(NElementCommentType type, String text) {
-        super.addTrailingComment(type, text);
+    public NFlatExprElementBuilder addAnnotation(String name, NElement... args) {
+        super.addAnnotation(name, args);
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder addAnnotation(NElementAnnotation annotation) {
+        super.addAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder addAffix(int index, NBoundAffix affix) {
+        super.addAffix(index, affix);
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder removeAffix(int index) {
+        super.removeAffix(index);
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder clearAnnotations() {
+        super.clearAnnotations();
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder clearComments() {
+        super.clearComments();
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder setAffix(int index, NBoundAffix affix) {
+        super.setAffix(index, affix);
+        return this;
+    }
+
+    public NFlatExprElementBuilder addAffix(NBoundAffix affix){
+        super.addAffix(affix);
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        super.setAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder removeDiagnostic(NElementDiagnostic error) {
+        super.removeDiagnostic(error);
+        return this;
+    }
+
+    public NFlatExprElementBuilder addAffixes(List<NBoundAffix> affixes) {
+        super.addAffixes(affixes);
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder addDiagnostic(NElementDiagnostic error) {
+        super.addDiagnostic(error);
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder addAffixes(List<? extends NAffix> affixes, NAffixAnchor anchor) {
+        super.addAffixes(affixes, anchor);
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder addAffix(NAffix affix, NAffixAnchor anchor) {
+        super.addAffix(affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor) {
+        super.removeAffixes(type, anchor);
         return this;
     }
 
@@ -166,92 +238,21 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
-    public NFlatExprElementBuilder removeTrailingCommentAt(int index) {
-        super.removeTrailingCommentAt(index);
+    public NFlatExprElementBuilder removeAnnotation(NElementAnnotation annotation) {
+        super.removeAnnotation(annotation);
         return this;
     }
 
     @Override
-    public NFlatExprElementBuilder removeLeadingCommentAt(int index) {
-        super.removeLeadingCommentAt(index);
+    public NFlatExprElementBuilder copyFrom(NElementBuilder other) {
+        super.copyFrom(other);
         return this;
     }
 
     @Override
-    public NFlatExprElementBuilder removeTrailingComment(NElementComment comment) {
-        super.removeTrailingComment(comment);
+    public NFlatExprElementBuilder copyFrom(NElement other) {
+        super.copyFrom(other);
         return this;
     }
 
-    @Override
-    public NFlatExprElementBuilder removeLeadingComment(NElementComment comment) {
-        super.removeLeadingComment(comment);
-        return this;
-    }
-
-    @Override
-    public NFlatExprElementBuilder addComments(NElementComments comments) {
-        super.addComments(comments);
-        return this;
-    }
-
-    @Override
-    public NFlatExprElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        super.addAnnotations(annotations);
-        return this;
-    }
-
-    @Override
-    public NFlatExprElementBuilder addAnnotation(String name, NElement... args) {
-        super.addAnnotation(name, args);
-        return this;
-    }
-
-    @Override
-    public NFlatExprElementBuilder addAnnotation(NElementAnnotation annotation) {
-        super.addAnnotation(annotation);
-        return this;
-    }
-
-    @Override
-    public NFlatExprElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        super.addAnnotationAt(index, annotation);
-        return this;
-    }
-
-    @Override
-    public NFlatExprElementBuilder removeAnnotationAt(int index) {
-        super.removeAnnotationAt(index);
-        return this;
-    }
-
-    @Override
-    public NFlatExprElementBuilder clearAnnotations() {
-        super.clearAnnotations();
-        return this;
-    }
-
-    @Override
-    public NFlatExprElementBuilder clearComments() {
-        super.clearComments();
-        return this;
-    }
-
-    public NFlatExprElementBuilder copyFrom(NFlatExprElementBuilder element) {
-        if (element != null) {
-            addAnnotations(element.annotations());
-            addComments(element.comments());
-            this.values.addAll(element.children());
-        }
-        return this;
-    }
-
-
-    @Override
-    public NFlatExprElementBuilder doWith(Consumer<NFlatExprElementBuilder> con) {
-        if (con != null) {
-            con.accept(this);
-        }
-        return this;
-    }
 }
