@@ -4,10 +4,15 @@ import java.util.Collections;
 import java.util.List;
 
 public interface NElementTransform {
-    default List<NElement> preTransform(NElementPath path, NElement element){
-        return Collections.singletonList(element);
+    default List<NElement> preTransform(NElementTransformContext context){
+        return Collections.singletonList(context.element());
     }
-    default List<NElement> postTransform(NElementPath path,NElement element){
-        return Collections.singletonList(element);
+
+    default NElementTransformContext prepareChildContext(NElement parent,NElementTransformContext childContext){
+        return childContext;
+    }
+
+    default List<NElement> postTransform(NElementTransformContext context){
+        return Collections.singletonList(context.element());
     }
 }
