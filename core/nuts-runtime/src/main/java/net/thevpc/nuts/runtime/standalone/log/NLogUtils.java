@@ -18,7 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 public class NLogUtils {
-    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static final Map<Level, String> logLevelCache = new HashMap<>();
     private static final Map<String, String> logVerbCache = new HashMap<>();
     private static final Map<String, String> classNameCache = new HashMap<>();
