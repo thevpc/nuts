@@ -1,23 +1,32 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.runtime.standalone.elem.builder.NElementCommentsBuilderImpl;
-import net.thevpc.nuts.runtime.standalone.elem.item.NElementAnnotationImpl;
-import net.thevpc.nuts.runtime.standalone.elem.item.NElementCommentImpl;
+import net.thevpc.nuts.runtime.standalone.elem.builder.NBoundAffixList;
+import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNBoundAffix;
+import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNElementNewLine;
+import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNElementSeparator;
+import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNElementSpace;
+import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NAssignmentPolicy;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractNElementBuilder implements NElementBuilder {
-    private NElementCommentsBuilderImpl comments = new NElementCommentsBuilderImpl();
-    private final List<NElementAnnotation> annotations = new ArrayList<>();
+    private final NBoundAffixList affixes = new NBoundAffixList();
     private final List<NElementDiagnostic> diagnostics = new ArrayList<>();
 
 
     @Override
-    public NElementBuilder addError(NElementDiagnostic error) {
+    public List<NBoundAffix> affixes() {
+        return affixes.list();
+    }
+
+    @Override
+    public NElementBuilder addDiagnostic(NElementDiagnostic error) {
         if (error != null) {
             this.diagnostics.add(error);
         }
@@ -25,7 +34,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
     }
 
     @Override
-    public NElementBuilder removeError(NElementDiagnostic error) {
+    public NElementBuilder removeDiagnostic(NElementDiagnostic error) {
         if (error != null) {
             this.diagnostics.remove(error);
         }
@@ -39,150 +48,89 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
 
     @Override
     public boolean isCustomTree() {
-        if (annotations != null) {
-            for (NElementAnnotation annotation : annotations) {
-                if (annotation.isCustomTree()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return build().isCustomTree();
     }
 
-    public NElementBuilder addLeadingComment(NElementCommentType type, String text) {
-        NAssert.requireNonNull(type, "comment type");
-        return addLeadingComment(NElementCommentImpl.of(type, text));
-    }
-
-    public NElementBuilder addTrailingComment(NElementCommentType type, String text) {
-        NAssert.requireNonNull(type, "comment type");
-        return addTrailingComment(NElementCommentImpl.of(type, text));
-    }
-
-    public NElementBuilder addLeadingComment(NElementComment comment) {
-        this.comments.addLeading(comment);
-        return this;
-    }
-
-    public NElementBuilder addLeadingComments(NElementComment... comments) {
-        this.comments.addLeading(comments);
-        return this;
-    }
-
-    public NElementBuilder addTrailingComment(NElementComment comment) {
-        this.comments.addTrailing(comment);
-        return this;
-    }
-
-    public NElementBuilder addTrailingComments(NElementComment... comments) {
-        this.comments.addTrailing(comments);
-        return this;
-    }
-
-    public NElementComments comments() {
-        return comments.build();
+    public List<NElementComment> comments() {
+        return affixes.comments();
     }
 
     @Override
     public NElementBuilder clearComments() {
-        comments.clear();
-        return this;
-    }
-
-    @Override
-    public NElementBuilder removeTrailingCommentAt(int index) {
-        comments.removeTrailingCommentAt(index);
-        return this;
-    }
-
-    @Override
-    public NElementBuilder removeLeadingCommentAt(int index) {
-        comments.removeLeadingCommentAt(index);
-        return this;
-    }
-
-    @Override
-    public NElementBuilder removeTrailingComment(NElementComment comment) {
-        comments.removeTrailingComment(comment);
-        return this;
-    }
-
-    @Override
-    public NElementBuilder removeLeadingComment(NElementComment comment) {
-        comments.removeLeading(comment);
+        affixes.clearComments();
         return this;
     }
 
     @Override
     public List<NElementComment> trailingComments() {
-        return comments.trailingComments();
+        return affixes.trailingComments();
     }
 
     @Override
     public List<NElementComment> leadingComments() {
-        return comments.leadingComments();
-    }
-
-    @Override
-    public NElementBuilder addComments(NElementComments comments) {
-        this.comments.addComments(comments);
-        return this;
+        return affixes.leadingComments();
     }
 
     @Override
     public NElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
-        if (annotations != null) {
-            for (NElementAnnotation a : annotations) {
-                if (a != null) {
-                    this.annotations.add(a);
-                }
-            }
-        }
+        this.affixes.addAnnotations(annotations);
+        return this;
+    }
+
+    public NElementBuilder addAffixes(List<NBoundAffix> affixes) {
+        this.affixes.addAffixes(affixes);
+        return this;
+    }
+
+    public NElementBuilder addAffixes(List<? extends NAffix> affixes, NAffixAnchor anchor) {
+        this.affixes.addAffixes(affixes, anchor);
+        return this;
+    }
+
+    public NElementBuilder addAffix(NAffix affix, NAffixAnchor anchor) {
+        this.affixes.addAffix(affix, anchor);
         return this;
     }
 
     @Override
     public NElementBuilder addAnnotation(String name, NElement... args) {
-        return addAnnotation(new NElementAnnotationImpl(name, args));
-    }
-
-    @Override
-    public NElementBuilder addAnnotation(NElementAnnotation annotation) {
-        if (annotation != null) {
-            annotations.add(annotation);
-        }
+        this.affixes.addAnnotation(name, args);
         return this;
     }
 
     @Override
-    public NElementBuilder addAnnotationAt(int index, NElementAnnotation annotation) {
-        if (annotation != null) {
-            annotations.add(index, annotation);
-        }
+    public NElementBuilder addAnnotation(NElementAnnotation annotation) {
+        this.affixes.addAnnotation(annotation);
+        return this;
+    }
+
+    @Override
+    public NElementBuilder addAffix(int index, NBoundAffix affix) {
+        this.affixes.addAffix(index, affix);
         return this;
     }
 
     @Override
     public NElementBuilder removeAnnotation(NElementAnnotation annotation) {
-        annotations.remove(annotation);
+        this.affixes.removeAnnotation(annotation);
         return this;
     }
 
     @Override
-    public NElementBuilder removeAnnotationAt(int index) {
-        annotations.remove(index);
+    public NElementBuilder removeAffix(int index) {
+        this.affixes.removeAffix(index);
         return this;
     }
 
     @Override
     public NElementBuilder clearAnnotations() {
-        annotations.clear();
+        affixes.clearAnnotations();
         return this;
     }
 
     @Override
     public List<NElementAnnotation> annotations() {
-        return new ArrayList<>(annotations);
+        return affixes.annotations();
     }
 
 
@@ -194,10 +142,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
 
     @Override
     public NElementBuilder copyFrom(NElement other) {
-        if (other != null) {
-            copyFrom(other.builder());
-        }
-        return this;
+        return copyFrom(other, NAssignmentPolicy.ANY);
     }
 
     @Override
@@ -206,9 +151,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
             return this;
         }
         this.diagnostics.addAll(other.diagnostics());
-        this.comments.addLeading(other.leadingComments().toArray(new NElementComment[0]));
-        this.comments.addTrailing(other.trailingComments().toArray(new NElementComment[0]));
-        this.annotations.addAll(other.annotations());
+        this.affixes.addAffixes(other.affixes());
         return this;
     }
 
@@ -217,12 +160,117 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
         if (other == null) {
             return this;
         }
-        NElementComments cmt = other.comments();
         this.diagnostics.addAll(other.diagnostics());
-        this.comments.addLeading(cmt.leadingComments().toArray(new NElementComment[0]));
-        this.comments.addTrailing(cmt.trailingComments().toArray(new NElementComment[0]));
-        this.annotations.addAll(other.annotations());
+        this.affixes.addAffixes(other.affixes());
         return this;
     }
 
+
+    @Override
+    public NElementBuilder setAffix(int index, NBoundAffix affix) {
+        this.affixes.setAffix(index, affix);
+        return this;
+    }
+
+    @Override
+    public NElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        this.affixes.addAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NElementBuilder addAffix(NBoundAffix affix) {
+        this.affixes.addAffix(affix);
+        return this;
+    }
+
+    @Override
+    public NElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
+        this.affixes.setAffix(index, affix, anchor);
+        return this;
+    }
+
+    @Override
+    public NElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor) {
+        this.affixes.removeAffixes(type, anchor);
+        return this;
+    }
+
+    @Override
+    public NElementBuilder addLeadingComment(NElementComment comment) {
+        this.affixes.addLeadingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NElementBuilder addLeadingComments(NElementComment... comments) {
+        this.affixes.addLeadingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NElementBuilder addTrailingComment(NElementComment comment) {
+        this.affixes.addTrailingComment(comment);
+        return this;
+    }
+
+    @Override
+    public NElementBuilder addTrailingComments(NElementComment... comments) {
+        this.affixes.addTrailingComments(comments);
+        return this;
+    }
+
+    @Override
+    public NElementBuilder addAffixSpace(String space, NAffixAnchor anchor) {
+        NAssert.requireNonNull(anchor, "anchor");
+        if (!NStringUtils.isEmpty(space)) {
+            addAffix(NBoundAffix.of(DefaultNElementSpace.of(space), anchor));
+        }
+        return this;
+    }
+
+    @Override
+    public NElementBuilder addAffixNewLine(NNewLineMode newLineMode, NAffixAnchor anchor) {
+        NAssert.requireNonNull(anchor, "anchor");
+        if (newLineMode != null) {
+            addAffix(NBoundAffix.of(DefaultNElementNewLine.of(newLineMode), anchor));
+        }
+        return this;
+    }
+
+    @Override
+    public NElementBuilder addAffixSeparator(String separator, NAffixAnchor anchor) {
+        NAssert.requireNonNull(anchor, "anchor");
+        if (!NStringUtils.isEmpty(separator)) {
+            addAffix(NBoundAffix.of(DefaultNElementSeparator.of(separator), anchor));
+        }
+        return this;
+    }
+
+    @Override
+    public NElementBuilder addAffixSpace(int index, String space, NAffixAnchor anchor) {
+        NAssert.requireNonNull(anchor, "anchor");
+        if (!NStringUtils.isEmpty(space)) {
+            addAffix(index, NBoundAffix.of(DefaultNElementSpace.of(space), anchor));
+        }
+        return this;
+    }
+
+    @Override
+    public NElementBuilder addAffixNewLine(int index, NNewLineMode newLineMode, NAffixAnchor anchor) {
+        NAssert.requireNonNull(anchor, "anchor");
+        if (newLineMode != null) {
+            addAffix(index, NBoundAffix.of(DefaultNElementNewLine.of(newLineMode), anchor));
+        }
+        return this;
+    }
+
+    @Override
+    public NElementBuilder addAffixSeparator(int index, String separator, NAffixAnchor anchor) {
+        NAssert.requireNonNull(anchor, "anchor");
+        if (!NStringUtils.isEmpty(separator)) {
+            addAffix(index, NBoundAffix.of(DefaultNElementSeparator.of(separator), anchor));
+        }
+        return this;
+    }
 }
