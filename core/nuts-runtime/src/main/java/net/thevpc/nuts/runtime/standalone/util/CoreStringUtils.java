@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.util;
 import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -369,7 +370,7 @@ public final class CoreStringUtils {
     }
 
     public static String prefixLinesOsNL(String str, String prefix) {
-        return prefixLines(str, prefix, System.getProperty("line.separator"));
+        return prefixLines(str, prefix, NNewLineMode.system().value());
     }
 
     public static String prefixLines(String str, String prefix, String nl) {
@@ -378,10 +379,7 @@ public final class CoreStringUtils {
         String line;
         boolean first = true;
         if (nl == null) {
-            nl = System.getProperty("line.separator");
-            if (nl == null) {
-                nl = "\n";
-            }
+            nl = NNewLineMode.system().value();
         }
         while (true) {
             try {
