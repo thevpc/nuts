@@ -12,7 +12,7 @@ public class NCharReader extends Reader {
     private int limit = 0;  // number of chars available in buffer
 
     public NCharReader(Reader reader) {
-        this(reader,1024,true);
+        this(reader, 1024, true);
     }
 
     public NCharReader(Reader reader, int bufferSize, boolean autoClose) {
@@ -41,7 +41,7 @@ public class NCharReader extends Reader {
         }
     }
 
-    public int peekCharAt(int offset) {
+    public int peekAt(int offset) {
         fill(offset + 1);
         int index = pos + offset;
         return (index < limit) ? buffer[index] : -1;
@@ -67,12 +67,12 @@ public class NCharReader extends Reader {
         return read(buffer, 0, buffer.length);
     }
 
-    public int read(char[] dst, int offset, int count) {
+    public int read(char[] buffer, int offset, int count) {
         fill(count);
         int available = Math.min(count, limit - pos);
         if (available <= 0) return -1;
 
-        System.arraycopy(buffer, pos, dst, offset, available);
+        System.arraycopy(this.buffer, pos, buffer, offset, available);
         pos += available;
         return available;
     }
@@ -111,6 +111,12 @@ public class NCharReader extends Reader {
             return -1;
         }
         return buffer[pos++];
+    }
+
+    public String peek(int offset, int count) {
+        fill(offset + count);
+        int available = Math.min(count, limit - pos - offset);
+        return new String(buffer, pos + offset, available);
     }
 
     public int peek() {
