@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 
 import java.util.List;
@@ -36,51 +37,55 @@ public interface NElementBuilder {
 
     boolean isCustomTree();
 
+    List<NBoundAffix> affixes();
+
+    List<NElementDiagnostic> diagnostics();
+
+    NElement build();
+
+    List<NElementComment> leadingComments();
+
+    List<NElementComment> trailingComments();
+
+    List<NElementComment> comments();
+
+    List<NElementAnnotation> annotations();
+
     NElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
     NElementBuilder addAnnotation(NElementAnnotation annotation);
 
     NElementBuilder addAnnotation(String name, NElement... args);
 
-    NElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
+    NElementBuilder addAffix(NBoundAffix affix);
 
-    NElementBuilder removeAnnotationAt(int index);
+    NElementBuilder addAffix(int index, NBoundAffix affix);
+
+    NElementBuilder setAffix(int index, NBoundAffix affix);
+
+    NElementBuilder addAffix(NAffix affix, NAffixAnchor anchor);
+
+    NElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
+
+    NElementBuilder removeAffix(int index);
 
     NElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NElementBuilder clearAnnotations();
 
-    NElementBuilder addLeadingComment(NElementCommentType type, String text);
-
-    NElementBuilder addTrailingComment(NElementCommentType type, String text);
-
     NElementBuilder addLeadingComment(NElementComment comment);
 
     NElementBuilder addLeadingComments(NElementComment... comments);
 
-    NElementBuilder addTrailingComment(NElementComment comment);
-
-    List<NElementComment> leadingComments();
-
-    List<NElementComment> trailingComments();
-
     NElementBuilder addTrailingComments(NElementComment... comments);
 
-    NElementBuilder removeLeadingComment(NElementComment comment);
-
-    NElementBuilder removeTrailingComment(NElementComment comment);
-
-    NElementBuilder removeLeadingCommentAt(int index);
-
-    NElementBuilder removeTrailingCommentAt(int index);
+    NElementBuilder addTrailingComment(NElementComment comment);
 
     NElementBuilder clearComments();
-
-    NElementBuilder addComments(NElementComments comments);
-
-    NElementComments comments();
-
-    List<NElementAnnotation> annotations();
 
     NElementBuilder copyFrom(NElementBuilder other);
 
@@ -90,10 +95,23 @@ public interface NElementBuilder {
 
     NElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 
-    NElementBuilder addError(NElementDiagnostic error);
-    NElementBuilder removeError(NElementDiagnostic error);
+    NElementBuilder addDiagnostic(NElementDiagnostic error);
 
-    List<NElementDiagnostic> diagnostics();
+    NElementBuilder removeDiagnostic(NElementDiagnostic error);
 
-    NElement build();
+    NElementBuilder addAffixes(List<NBoundAffix> affixes);
+
+    /// /////////////
+
+    NElementBuilder addAffixSpace(String space, NAffixAnchor anchor);
+
+    NElementBuilder addAffixNewLine(NNewLineMode newLineMode, NAffixAnchor anchor);
+
+    NElementBuilder addAffixSeparator(String separator, NAffixAnchor anchor);
+
+    NElementBuilder addAffixSpace(int index, String space, NAffixAnchor anchor);
+
+    NElementBuilder addAffixNewLine(int index, NNewLineMode newLineMode, NAffixAnchor anchor);
+
+    NElementBuilder addAffixSeparator(int index, String separator, NAffixAnchor anchor);
 }
