@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathImpl;
-import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.*;
@@ -18,16 +17,16 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
     private List<NElement> params;
 
     public DefaultNObjectElement(String name, List<NElement> params, List<NElement> values) {
-        this(name,params,values,null,null,null);
+        this(name,params,values,null,null);
     }
 
-    public DefaultNObjectElement(String name, List<NElement> params, List<NElement> values, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
+    public DefaultNObjectElement(String name, List<NElement> params, List<NElement> values, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
         super(
                 name == null && params == null ? NElementType.OBJECT
                         : name == null && params != null ? NElementType.PARAMETRIZED_OBJECT
                         : name != null && params == null ? NElementType.NAMED_OBJECT
                         : NElementType.NAMED_PARAMETRIZED_OBJECT,
-                annotations, comments,diagnostics);
+                affixes,diagnostics);
         if (name != null) {
             NAssert.requireTrue(NElementUtils.isValidElementName(name), "valid name : " + name);
         }
@@ -46,51 +45,6 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
         }
         r = traverseList(visitor, values); // body
         return r;
-    }
-
-
-    @Override
-    public boolean isCustomTree() {
-        if (super.isCustomTree()) {
-            return true;
-        }
-        if (params != null) {
-            for (NElement value : params) {
-                if (value.isCustomTree()) {
-                    return true;
-                }
-            }
-        }
-        if (values != null) {
-            for (NElement value : values) {
-                if (value.isCustomTree()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isErrorTree() {
-        if(super.isErrorTree()){
-            return true;
-        }
-        if(params!=null){
-            for (NElement value : params) {
-                if(value.isErrorTree()){
-                    return true;
-                }
-            }
-        }
-        if(values!=null){
-            for (NElement value : values) {
-                if(value.isErrorTree()){
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     @Override
@@ -235,36 +189,10 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
         return true;
     }
 
-    public String toString() {
-        return toString(false);
-    }
-
-    @Override
-    public String toString(boolean compact) {
-        NStringBuilder sb = new NStringBuilder();
-        sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
-        NElementToStringHelper.appendUplet(name, params, compact, sb);
-        sb.append("{");
-        NElementToStringHelper.appendChildren(children(), compact, new NElementToStringHelper.SemiCompactInfo().setMaxChildren(10).setMaxLineSize(120), sb);
-        sb.append("}");
-        sb.append(NElementToStringHelper.trailingComments(this, compact));
-        return sb.toString();
-    }
-
-
     @Override
     public boolean isBlank() {
         return values.isEmpty();
     }
-
-//    @Override
-//    public NOptional<Object> asObjectAt(int index) {
-//        if (index >= 0 && index < values.size()) {
-//            return NOptional.of(values.get(index));
-//        }
-//        return NOptional.ofEmpty(() -> NMsg.ofC("invalid object at %s", index));
-//    }
-
 
     public NOptional<String> name() {
         return NOptional.ofNamed(name, name);
