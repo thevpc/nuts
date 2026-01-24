@@ -33,45 +33,61 @@ import java.util.function.Consumer;
  * @author thevpc
  */
 public interface NCustomElementBuilder extends NElementBuilder {
+    NCustomElementBuilder value(Object value);
+
+    Object value();
+
     NCustomElementBuilder doWith(Consumer<NCustomElementBuilder> con);
+
+    NCustomElement build();
+
+    /// ///////////////////////////////////////////////
     NCustomElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
-    NCustomElementBuilder addAnnotation(String name,NElement ...args);
     NCustomElementBuilder addAnnotation(NElementAnnotation annotation);
 
-    NCustomElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
+    NCustomElementBuilder addAnnotation(String name, NElement... args);
 
-    NCustomElementBuilder removeAnnotationAt(int index);
+    NCustomElementBuilder addAffix(int index, NBoundAffix affix);
+
+    NCustomElementBuilder setAffix(int index, NBoundAffix affix);
+
+    NCustomElementBuilder addAffix(NBoundAffix affix);
+
+    NCustomElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NCustomElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NCustomElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
+
+    NCustomElementBuilder removeAffix(int index);
+
     NCustomElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NCustomElementBuilder clearAnnotations();
 
-    List<NElementAnnotation> annotations();
-    NCustomElementBuilder copyFrom(NCustomElement element);
-    NCustomElementBuilder copyFrom(NCustomElementBuilder element);
-
-
-    NCustomElementBuilder addLeadingComment(NElementCommentType type, String text);
-    NCustomElementBuilder addTrailingComment(NElementCommentType type, String text);
     NCustomElementBuilder addLeadingComment(NElementComment comment);
-    NCustomElementBuilder addLeadingComments(NElementComment... comments);
-    NCustomElementBuilder addTrailingComment(NElementComment comment);
-    NCustomElementBuilder addTrailingComments(NElementComment... comments);
-    NCustomElementBuilder removeLeadingComment(NElementComment comment);
-    NCustomElementBuilder removeTrailingComment(NElementComment comment);
-    NCustomElementBuilder removeLeadingCommentAt(int index);
-    NCustomElementBuilder removeTrailingCommentAt(int index);
-    NCustomElementBuilder clearComments();
-    NCustomElementBuilder addComments(NElementComments comments);
 
-    NCustomElementBuilder value(Object value);
-    Object value();
-    NCustomElement build();
+    NCustomElementBuilder addLeadingComments(NElementComment... comments);
+
+    NCustomElementBuilder addTrailingComments(NElementComment... comments);
+
+    NCustomElementBuilder addTrailingComment(NElementComment comment);
+
+    NCustomElementBuilder clearComments();
 
     NCustomElementBuilder copyFrom(NElementBuilder other);
 
     NCustomElementBuilder copyFrom(NElement other);
+
     NCustomElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
     NCustomElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
+
+    NCustomElementBuilder addDiagnostic(NElementDiagnostic error);
+
+    NCustomElementBuilder removeDiagnostic(NElementDiagnostic error);
+
+    NCustomElementBuilder addAffixes(List<NBoundAffix> affixes);
+
 }
