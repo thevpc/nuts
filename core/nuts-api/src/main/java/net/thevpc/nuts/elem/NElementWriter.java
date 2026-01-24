@@ -180,20 +180,9 @@ public interface NElementWriter extends NContentTypeWriter {
     @Override
     NElementWriter setNtf(boolean ntf);
 
-    /**
-     * true is compact json flag is armed
-     *
-     * @return true is compact json flag is armed
-     */
-    boolean isCompact();
+    NElementFormatter getFormatter();
 
-    /**
-     * enable compact json
-     *
-     * @param compact true to enable compact mode
-     * @return {@code this} instance
-     */
-    NElementWriter setCompact(boolean compact);
+    NElementWriter setFormatter(NElementFormatter formatter);
 
     NIterableFormat iter(NPrintStream out);
 
