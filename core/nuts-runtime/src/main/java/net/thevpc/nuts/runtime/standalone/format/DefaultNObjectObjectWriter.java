@@ -30,6 +30,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NElementFormatter;
 import net.thevpc.nuts.elem.NElementWriter;
 
 
@@ -187,7 +188,7 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
             case TSON:
             case YAML: {
                 NElementWriter ee = NElementWriter.of().setNtf(isNtf())
-                        .setCompact(isCompact())
+                        .setFormatter(isCompact()? NElementFormatter.ofJsonCompact() : NElementFormatter.ofJsonPretty())
                         .setContentType(session.getOutputFormat().orDefault());
                 Object aValue = null;
                 if (value instanceof NText) {
