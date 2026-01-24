@@ -25,10 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
 import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNCustomElementBuilder;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
@@ -41,19 +39,13 @@ public class DefaultNCustomElement extends AbstractNElement implements NCustomEl
     private final Object value;
 
     public DefaultNCustomElement(Object value) {
-        this(value,null,null,null);
+        this(value, null, null);
     }
 
-    public DefaultNCustomElement(Object value, List<NElementAnnotation> annotations, NElementComments comments, List<NElementDiagnostic> diagnostics) {
-        super(NElementType.CUSTOM, annotations, comments,diagnostics);
+    public DefaultNCustomElement(Object value, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+        super(NElementType.CUSTOM, affixes, diagnostics);
         this.value = value;
     }
-
-    @Override
-    public boolean isCustomTree() {
-        return true;
-    }
-
 
     @Override
     public NOptional<NElement> resolve(String pattern) {
@@ -84,51 +76,18 @@ public class DefaultNCustomElement extends AbstractNElement implements NCustomEl
         return false;
     }
 
-
     @Override
-    public String toString() {
-        return toString(true);
-    }
-
-    @Override
-    public String toString(boolean compact) {
-        NStringBuilder sb = new NStringBuilder();
-        sb.append(NElementToStringHelper.leadingCommentsAndAnnotations(this, compact));
-        String svalue = String.valueOf(value);
-        sb.append(svalue);
-        sb.append(NElementToStringHelper.trailingComments(this, compact));
-        return sb.toString();
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DefaultNCustomElement that = (DefaultNCustomElement) o;
+        return Objects.equals(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 47 * hash + Objects.hashCode(this.value);
-        return hash;
+        return Objects.hash(super.hashCode(), value);
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DefaultNCustomElement other = (DefaultNCustomElement) obj;
-        if (!Objects.equals(this.value, other.value)) {
-            return false;
-        }
-        return true;
-    }
-
-//    @Override
-//    public NOptional<Object> asObjectAt(int index) {
-//        return NLiteral.of(value).asObjectAt(index);
-//    }
 
     @Override
     public boolean isBlank() {
@@ -138,6 +97,6 @@ public class DefaultNCustomElement extends AbstractNElement implements NCustomEl
 
     @Override
     public NCustomElementBuilder builder() {
-        return new DefaultNCustomElementBuilder().addAnnotations(annotations()).value(value);
+        return new DefaultNCustomElementBuilder().addAffixes(affixes()).value(value);
     }
 }
