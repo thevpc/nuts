@@ -1,5 +1,7 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.io.NStringWriter;
+
 import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -29,6 +31,24 @@ public class NStringBuilder implements CharSequence, NBlankable {
         data = new StringBuilder(capacity);
     }
 
+    public NStringWriter asStringWriter() {
+        return new NStringWriter() {
+            @Override
+            public void write(char text) {
+                NStringBuilder.this.append(text);
+            }
+
+            @Override
+            public void write(String text) {
+                NStringBuilder.this.append(text);
+            }
+
+            @Override
+            public void write(char[] text, int offset, int len) {
+                NStringBuilder.this.append(text, offset, len);
+            }
+        };
+    }
     public NStringBuilder append(String value) {
         data.append(value);
         return this;
