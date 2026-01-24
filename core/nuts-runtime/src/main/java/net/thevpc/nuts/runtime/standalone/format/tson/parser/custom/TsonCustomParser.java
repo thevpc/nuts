@@ -2,27 +2,23 @@ package net.thevpc.nuts.runtime.standalone.format.tson.parser.custom;
 
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import net.thevpc.nuts.elem.NArrayElementBuilder;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementAnnotation;
-import net.thevpc.nuts.elem.NElementBuilder;
-import net.thevpc.nuts.elem.NElementComment;
-import net.thevpc.nuts.elem.NElementType;
-import net.thevpc.nuts.elem.NFlatExprElementBuilder;
-import net.thevpc.nuts.elem.NListElement;
-import net.thevpc.nuts.elem.NListItemElement;
-import net.thevpc.nuts.elem.NObjectElementBuilder;
-import net.thevpc.nuts.elem.NOperatorSymbol;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNListElementBuilder;
-import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNListItemElementBuilder;
+import net.thevpc.nuts.runtime.standalone.elem.item.*;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenImpl;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenType;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.DefaultNBufferedGenerator;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NBufferedGenerator;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 public class TsonCustomParser {
-    private TsonCustomLexer lexer;
+    private NBufferedGenerator<NElementTokenImpl> lexer;
     private Object source;
     private NElementTokenInfo current;
 
@@ -36,7 +32,7 @@ public class TsonCustomParser {
     }
 
     public TsonCustomParser(TsonCustomLexer lexer) {
-        this.lexer = lexer;
+        this.lexer = new DefaultNBufferedGenerator<>(lexer);
     }
 
     public Object source() {
@@ -50,7 +46,7 @@ public class TsonCustomParser {
     public NElement parseDocument() {
         List<NElement> elements = new ArrayList<>();
         while (true) {
-            NElement e = parseElement();
+            NElement e = parseElement(new ArrayList<>());
             if (e == null) {
                 break;
             }
@@ -66,18 +62,24 @@ public class TsonCustomParser {
     }
 
     public NElement parseElement() {
-        return exprOrPairElement();
+        return parseElement(new ArrayList<>());
     }
 
-    private NElement exprOrPairElement() {
-        NElement first = exprElement();
+    public NElement parseElement(List<NAffix> pendingAffixTokens) {
+        return exprOrPairElement(pendingAffixTokens);
+    }
+
+    private NElement exprOrPairElement(List<NAffix> pendingAffixTokens) {
+        pendingAffixTokens = new ArrayList<>(pendingAffixTokens);
+        NElement first = exprElement(pendingAffixTokens);
         if (first == null) {
             return null;
         }
+        pendingAffixTokens = new ArrayList<>();
         NElementTokenInfo t = peekToken();
         if (t != null && t.token != null && t.token.type() == NElementTokenType.COLON) {
             nextToken();
-            NElement second = exprElement();
+            NElement second = exprElement(pendingAffixTokens);
             return NElement.ofPair(first, second);
         }
         return first;
@@ -90,22 +92,70 @@ public class TsonCustomParser {
         return e.builder().addLeadingComments(comments.toArray(new NElementComment[0])).build();
     }
 
-    private NElement exprElement() {
+    private NBoundAffix tokenToBoundAffix(NElementTokenImpl x, NAffixAnchor anchor) {
+        return DefaultNBoundAffix.of(tokenToAffix(x), anchor);
+    }
+
+    private List<NAffix> tokenToAffixes(NElementTokenInfo token) {
+        return token.prefixes.stream().map(this::tokenToAffix).collect(Collectors.toList());
+    }
+
+    private NAffix tokenToAffix(NElementTokenImpl x) {
+        switch (x.type()) {
+            case SPACE:
+                return DefaultNElementSpace.of(x.image());
+            case NEWLINE:
+                return DefaultNElementNewLine.of(x.image());
+            case BLOCK_COMMENT: {
+                return new NElementCommentImpl(NAffixType.BLOC_COMMENT, x.image(), x.image());
+            }
+            case LINE_COMMENT: {
+                return new NElementCommentImpl(NAffixType.LINE_COMMENT, x.image(), x.image());
+            }
+            case COMMA:
+            case SEMICOLON2:
+                return new NElementCommentImpl(NAffixType.SEPARATOR, x.image(), x.image());
+        }
+        throw new NUnexpectedException(NMsg.ofC("unexpected token type"));
+    }
+
+    private List<NBoundAffix> tokensToBoundAffixes(List<NElementTokenImpl> prefixes, NAffixAnchor anchor) {
+        return prefixes.stream().map(x -> tokenToBoundAffix(x, anchor)).collect(Collectors.toList());
+    }
+
+    private List<NAffix> tokensToAffixes(List<NElementTokenImpl> prefixes) {
+        return prefixes.stream().map(x -> tokenToAffix(x)).collect(Collectors.toList());
+    }
+
+    private NElement exprElement(List<NAffix> pendingAffixTokens) {
         // shall read a list of element primitiveElement operator but never two successive elements
         List<NElement> all = new ArrayList<>();
         boolean wasOp = false;
         while (true) {
             NElementTokenInfo t = peekToken();
+            if (t == null) {
+                break;
+            }
+            if (t.token == null) {
+                //this is comment but no next element
+                if (!t.prefixes.isEmpty()) {
+                    all.add(new NDefaultEmptyElement(tokensToBoundAffixes(t.prefixes, NAffixAnchor.START), null));
+                }
+                nextToken(); // consume it
+                break;
+            }
             if (all.isEmpty()) {
                 if (isOp(t)) {
                     nextToken();
-                    NElement e = withComments(NElement.ofOpSymbol(NOperatorSymbol.parse(t.token.image()).get()), t.comments);
+                    NElement e = new DefaultNOperatorSymbolElement(NOperatorSymbol.parse(t.token.image()).get(),
+                            tokensToBoundAffixes(t.prefixes, NAffixAnchor.START), null
+                    );
                     all.add(e);
                     wasOp = true;
                 } else {
                     NElement operand = primitiveElement();
                     if (operand != null) {
-                        all.add(withComments(operand, t.comments));
+                        all.add(operand);
                         wasOp = false;
                     } else {
                         break;
@@ -114,13 +164,16 @@ public class TsonCustomParser {
             } else {
                 if (isOp(t)) {
                     nextToken();
-                    all.add(withComments(NElement.ofOpSymbol(NOperatorSymbol.parse(t.token.image()).get()), t.comments));
+                    NElement e = new DefaultNOperatorSymbolElement(NOperatorSymbol.parse(t.token.image()).get(),
+                            tokensToBoundAffixes(t.prefixes, NAffixAnchor.START), null
+                    );
+                    all.add(e);
                     wasOp = true;
                 } else {
                     if (wasOp) {
                         NElement operand = primitiveElement();
                         if (operand != null) {
-                            all.add(withComments(operand, t.comments));
+                            all.add(operand);
                             wasOp = false;
                         } else {
                             break;
@@ -145,15 +198,38 @@ public class TsonCustomParser {
     }
 
     private NElement primitiveElement() {
-        List<NElementAnnotation> annotations = new ArrayList<>();
-        while (isToken(NElementTokenType.AT)) {
-            annotations.add(annotation());
+        List<NBoundAffix> affixes = new ArrayList<>();
+        List<NElementDiagnostic> diagnostics = new ArrayList<>();
+        while (true) {
+            NElementTokenInfo t = peekToken();
+            if (t == null) {
+                break;
+            } else {
+                affixes.addAll(tokensToBoundAffixes(t.prefixes, NAffixAnchor.START));
+                if (t.token == null) {
+                    nextToken();
+                    return new NDefaultEmptyElement(tokensToBoundAffixes(t.prefixes, NAffixAnchor.START), null);
+                } else if (t.token.type() == NElementTokenType.AT) {
+                    affixes.add(DefaultNBoundAffix.of(annotation(diagnostics), NAffixAnchor.START));
+                } else {
+                    break;
+                }
+            }
         }
+        NElementTokenInfo t = peekToken();
+        if (t == null) {
+            return new NDefaultEmptyElement(affixes, null);
+        }
+        if (t.token == null) {
+            affixes.addAll(tokensToBoundAffixes(t.prefixes, NAffixAnchor.START));
+            return new NDefaultEmptyElement(affixes, null);
+        }
+
         NElement base = null;
-        List<NElementTokenInfo> unexpectedTokens = new ArrayList<>();
+//        List<NElementTokenInfo> unexpectedTokens = new ArrayList<>();
         while (true) {
             base = null;
-            NElementTokenInfo t = peekToken();
+            t = peekToken();
             if (t == null) {
                 break;
             }
@@ -178,42 +254,51 @@ public class TsonCustomParser {
                 case TRIPLE_SINGLE_QUOTED_STRING:
                 case TRIPLE_BACKTICK_STRING:
                 case CHAR_STREAM:
-                case BINARY_STREAM:
+                case BINARY_STREAM: {
                     nextToken();
                     base = (NElement) t.token.value();
+                    NElementBuilder b = base.builder();
+                    b.addAffixes(tokensToBoundAffixes(t.prefixes, NAffixAnchor.START));
+                    b.addAffixes(readPostComments());
+                    for (NElementDiagnostic diagnostic : diagnostics) {
+                        b.addDiagnostic(diagnostic);
+                    }
+                    base = b.build();
                     break;
+                }
                 case LBRACE:
-                    base = object(null, null);
+                    base = object(null, null, Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), new ArrayList<>());
                     break;
                 case LBRACK:
-                    base = array(null, null);
+                    base = array(null, null, Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), new ArrayList<>());
                     break;
                 case NAME:
-                    base = named();
+                    base = named(new ArrayList<>(), new ArrayList<>());
                     break;
                 case LPAREN:
-                    base = unnamed();
+                    base = unnamed(null, new ArrayList<>(), new ArrayList<>());
                     break;
                 case UNKNOWN: {
                     // TODO: handle error
                     // just ignore for now
-                    unexpectedTokens.add(nextToken());
+                    NElementTokenInfo t2 = nextToken();
+                    diagnostics.add(new DefaultNElementDiagnostic(t2.token, NMsg.ofC("unexpected token '%s'", t2.token.image())));
                     break;
                 }
                 case ORDERED_LIST: {
-                    base = list(true, 0);
+                    base = list(true, 0, new ArrayList<>(), new ArrayList<>());
                     break;
                 }
                 case UNORDERED_LIST: {
-                    base = list(false, 0);
+                    base = list(false, 0, new ArrayList<>(), new ArrayList<>());
                     break;
                 }
                 default: {
                     // TODO: handle error
                     // just ignore for now
-                    unexpectedTokens.add(nextToken());
+                    NElementTokenInfo t2 = nextToken();
+                    diagnostics.add(new DefaultNElementDiagnostic(t2.token, NMsg.ofC("unexpected token '%s'", t2.token.image())));
                     break;
-
                 }
             }
             if (base != null) {
@@ -222,22 +307,52 @@ public class TsonCustomParser {
         }
 
         if (base == null) {
+            if (
+                    !diagnostics.isEmpty()
+                            || !affixes.isEmpty()
+            ) {
+                return new NDefaultEmptyElement(
+                        affixes,
+                        diagnostics
+                );
+            }
             return null;
         }
-
-        if (!annotations.isEmpty() || !unexpectedTokens.isEmpty()) {
-            // NElement doesn't have a direct "withAnnotations" but some builders do
-            // For now, we just return the base.
-            NElementBuilder builder = base.builder().addAnnotations(annotations);
-            for (NElementTokenInfo unexpectedToken : unexpectedTokens) {
-                // builder.addError(NMsg.ofC("unexpected token %s", unexpectedToken));
-            }
-            base = builder.build();
-        }
+        // now read suffix nelements
         return base;
     }
 
-    private NElementAnnotation annotation() {
+    private List<NBoundAffix> readPostComments() {
+        int x = 0;
+        List<NElementTokenImpl> accepted = new ArrayList<>();
+        while (true) {
+            NElementTokenImpl e = lexer.peekAt(x);
+            if (e == null) {
+                break;
+            }
+            if (e.type() == NElementTokenType.SPACE || e.type() == NElementTokenType.BLOCK_COMMENT) {
+                accepted.add(e);
+                x++;
+            } else if (e.type() == NElementTokenType.LINE_COMMENT) {
+                accepted.add(e);
+                break;
+            } else if (e.type() == NElementTokenType.NEWLINE) {
+                accepted.add(e);
+                x++;
+                break;
+            } else {
+                accepted.clear();
+                break;
+            }
+        }
+        for (NElementTokenImpl e : accepted) {
+            lexer.next();
+        }
+        return tokensToBoundAffixes(accepted, NAffixAnchor.END);
+    }
+
+    private NElementAnnotation annotation(List<NElementDiagnostic> diagnostics) {
+        List<NBoundAffix> boundAffixes = new ArrayList<>();
         nextToken(); // @
         NElementTokenInfo nameToken = nextToken();
         String name = nameToken == null || nameToken.token == null ? null : nameToken.token.image();
@@ -245,118 +360,151 @@ public class TsonCustomParser {
         if (isToken(NElementTokenType.LPAREN)) {
             nextToken();
             while (!isToken(NElementTokenType.RPAREN)) {
-                params.add(exprOrPairElement());
-                if (isToken(NElementTokenType.COMMA) || isToken(NElementTokenType.SEMICOLON)) {
-                    nextToken();
-                } else {
+                NElement e = exprOrPairElement(new ArrayList<>());
+                if (e == null) {
+                    diagnostics.add(new DefaultNElementDiagnostic(null, NMsg.ofC("missing annotation ')'")));
                     break;
                 }
+                params.add(e);
             }
             skipToken(NElementTokenType.RPAREN);
         }
-        return NElement.ofAnnotation(name, params.toArray(new NElement[0]));
+        return new NElementAnnotationImpl(name, params, boundAffixes);
     }
 
-    private NElement object(String name, List<NElement> params) {
-        NObjectElementBuilder builder = NElement.ofObjectBuilder(name);
-        if (params != null) {
-            builder.addAll(params);
+    private List<NBoundAffix> bindAffixes(List<NAffix> affixes, NAffixAnchor anchor) {
+        return affixes.stream().map(x -> DefaultNBoundAffix.of(x, anchor)).collect(Collectors.toList());
+    }
+
+    private NElement object(String name,
+                            List<NElement> params,
+                            List<NAffix> beforeLparAffixes,
+                            List<NAffix> beforeRparAffixes,
+                            List<NAffix> pendingAffixTokens,
+                            List<NElementDiagnostic> diagnostics) {
+
+        List<NElement> oelements = new ArrayList<>();
+        List<NAffix> obeforeLparAffixes = new ArrayList<>();
+        List<NAffix> obeforeRparAffixes = new ArrayList<>();
+        readEnclosedAndSeparatedElements(NElementTokenType.RBRACE, oelements, obeforeLparAffixes, obeforeRparAffixes, diagnostics);
+
+        List<NBoundAffix> boundAffixes = new ArrayList<>();
+
+        boundAffixes.addAll(bindAffixes(pendingAffixTokens, NAffixAnchor.START));
+        if (NBlankable.isBlank(name)) {
+            boundAffixes.addAll(bindAffixes(beforeLparAffixes, NAffixAnchor.START));
+        } else {
+            boundAffixes.addAll(bindAffixes(beforeLparAffixes, NAffixAnchor.PRE_1));
         }
-        skipToken(NElementTokenType.LBRACE);
-        while (!isToken(NElementTokenType.RBRACE)) {
-            NElement e = exprOrPairElement();
-            if (e != null) {
-                builder.add(e);
-            }
-            if (isToken(NElementTokenType.COMMA) || isToken(NElementTokenType.SEMICOLON)) {
-                nextToken();
-            } else {
+        boundAffixes.addAll(bindAffixes(beforeRparAffixes, NAffixAnchor.POST_1));
+        boundAffixes.addAll(bindAffixes(obeforeLparAffixes, NAffixAnchor.PRE_2));
+        boundAffixes.addAll(bindAffixes(obeforeRparAffixes, NAffixAnchor.POST_2));
+        boundAffixes.addAll(readPostComments());
+        return new DefaultNObjectElement(
+                name, params, oelements, boundAffixes, diagnostics
+        );
+    }
+
+    private NElement array(String name, List<NElement> params, List<NAffix> beforeLparAffixes,
+                           List<NAffix> beforeRparAffixes, List<NAffix> pendingAffixTokens,
+                           List<NElementDiagnostic> diagnostics) {
+
+        List<NElement> oelements = new ArrayList<>();
+        List<NAffix> obeforeLparAffixes = new ArrayList<>();
+        List<NAffix> obeforeRparAffixes = new ArrayList<>();
+        readEnclosedAndSeparatedElements(NElementTokenType.LBRACK, oelements, obeforeLparAffixes, obeforeRparAffixes, diagnostics);
+
+        List<NBoundAffix> boundAffixes = new ArrayList<>();
+
+        boundAffixes.addAll(bindAffixes(pendingAffixTokens, NAffixAnchor.START));
+        if (NBlankable.isBlank(name)) {
+            boundAffixes.addAll(bindAffixes(beforeLparAffixes, NAffixAnchor.START));
+        } else {
+            boundAffixes.addAll(bindAffixes(beforeLparAffixes, NAffixAnchor.PRE_1));
+        }
+        boundAffixes.addAll(bindAffixes(beforeRparAffixes, NAffixAnchor.POST_1));
+        boundAffixes.addAll(bindAffixes(obeforeLparAffixes, NAffixAnchor.PRE_2));
+        boundAffixes.addAll(bindAffixes(obeforeRparAffixes, NAffixAnchor.POST_2));
+        boundAffixes.addAll(readPostComments());
+        return new DefaultNArrayElement(
+                name, params, oelements, boundAffixes, diagnostics
+        );
+    }
+
+    private <T> List<T> copyAndClear(List<T> other) {
+        if (other.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<T> result = new ArrayList<>(other);
+        other.clear();
+        return result;
+    }
+
+    private void readEnclosedAndSeparatedElements(NElementTokenType stopToken, List<NElement> elements, List<NAffix> beforeLparAffixes
+            , List<NAffix> beforeRparAffixes, List<NElementDiagnostic> diagnostics) {
+        NElementTokenInfo lpar = nextToken();
+        beforeLparAffixes.addAll(tokensToAffixes(lpar.prefixes));
+        List<NAffix> pendingCommaSeparators = new ArrayList<>();
+        while (true) {
+            NElementTokenInfo p = peekToken();
+            if (p == null) {
+                diagnostics.add(new DefaultNElementDiagnostic(null, NMsg.ofC("missing " + stopToken.id())));
                 break;
             }
-        }
-        skipToken(NElementTokenType.RBRACE);
-        return builder.build();
-    }
-
-    private NElement array(String name, List<NElement> params) {
-        NArrayElementBuilder builder = NElement.ofArrayBuilder(name);
-        if (params != null) {
-            builder.addAll(params);
-        }
-        skipToken(NElementTokenType.LBRACK);
-        while (!isToken(NElementTokenType.RBRACK)) {
-            NElement e = exprOrPairElement();
-            if (e != null) {
-                builder.add(e);
-            }
-            if (isToken(NElementTokenType.COMMA) || isToken(NElementTokenType.SEMICOLON)) {
-                nextToken();
-            } else {
+            if (p.token == null) {
+                diagnostics.add(new DefaultNElementDiagnostic(null, NMsg.ofC("missing " + stopToken.id())));
+                pendingCommaSeparators.addAll(tokenToAffixes(p));
                 break;
             }
-        }
-        skipToken(NElementTokenType.RBRACK);
-        return builder.build();
-    }
-
-    private NElement unnamed() {
-        skipToken(NElementTokenType.LPAREN);
-        List<NElement> elements = new ArrayList<>();
-        while (!isToken(NElementTokenType.RPAREN)) {
-            elements.add(exprOrPairElement());
-            if (isToken(NElementTokenType.COMMA) || isToken(NElementTokenType.SEMICOLON)) {
-                nextToken();
-            } else {
+            if (isToken(stopToken)) {
                 break;
             }
-        }
-        skipToken(NElementTokenType.RPAREN);
-        NElementTokenInfo t = peekToken();
-        if (t != null && t.token != null) {
-            if (t.token.type() == NElementTokenType.LBRACE) {
-                return withComments(object(null, elements), t.comments);
-            }
-            if (t.token.type() == NElementTokenType.LBRACK) {
-                return withComments(array(null, elements), t.comments);
+            elements.add(exprOrPairElement(copyAndClear(pendingCommaSeparators)));
+            if (isToken(NElementTokenType.COMMA) || isToken(NElementTokenType.SEMICOLON)) {
+                NElementTokenInfo t = nextToken();
+                pendingCommaSeparators.addAll(tokenToAffixes(t));
             }
         }
-        return NElement.ofUplet(elements.toArray(new NElement[0]));
+        NElementTokenInfo rpar = nextToken();
+        beforeRparAffixes.addAll(copyAndClear(pendingCommaSeparators));
+        beforeRparAffixes.addAll(tokenToAffixes(rpar));
     }
 
-    private NListItemElement listItem(boolean ordered, int depth) {
+    private NListItemElement listItem(boolean ordered, int depth, List<NAffix> pendingAffixTokens, List<NElementDiagnostic> diagnostics) {
         NElementTokenInfo t = peekToken();
         NElementTokenType tt = ordered ? NElementTokenType.ORDERED_LIST : NElementTokenType.UNORDERED_LIST;
-        if (t == null || t.token==null || t.token.type() != tt || t.token.level() <= depth) {
+        if (t == null || t.token == null || t.token.type() != tt || t.token.level() <= depth) {
             return null;
         }
         t = nextToken();
+        NElementType et = ordered ? NElementType.ORDERED_LIST : NElementType.UNORDERED_LIST;
         int currentDepth = t.token.level();
-        DefaultNListItemElementBuilder b1 = new DefaultNListItemElementBuilder(currentDepth);
         NElementTokenInfo t2 = peekToken();
+        List<NBoundAffix> itemAffixes = new ArrayList<>();
+        itemAffixes.addAll(tokensToBoundAffixes(t.prefixes,NAffixAnchor.START));
         if (t2 == null) {
-            return b1.build();
+            return new DefaultNListItemElement(et, t.token.image(), t.token.variant(), currentDepth, null, null,itemAffixes);
         }
         if (t2.token.type() == tt && t2.token.level() > currentDepth) {
             // there is no value;
-            NElement li = list(ordered, currentDepth);
-            b1.subList((NListElement) li);
+            NElement li = list(ordered, currentDepth, new ArrayList<>(), diagnostics);
+            return new DefaultNListItemElement(et, t.token.image(), t.token.variant(), currentDepth, null, (NListElement) li,itemAffixes);
         } else {
-            NElement p = exprOrPairElement();
-            b1.value(p);
+            NElement p = exprOrPairElement(new ArrayList<>());
+            //b1.value(p);
             NElementTokenInfo t3 = peekToken();
             if (t3 == null || t3.token == null) {
-                return b1.build();
+                return new DefaultNListItemElement(et, t.token.image(), t.token.variant(), currentDepth, p, null,itemAffixes);
             }
             if (t3.token.type() == tt && t3.token.level() > currentDepth) {
-                NElement li = list(ordered, currentDepth);
-                b1.subList((NListElement) li);
-                return b1.build();
+                NElement li = list(ordered, currentDepth, new ArrayList<>(), diagnostics);
+                return new DefaultNListItemElement(et, t.token.image(), t.token.variant(), currentDepth, p, (NListElement) li,itemAffixes);
             }
+            return new DefaultNListItemElement(et, t.token.image(), t.token.variant(), currentDepth, p, null,itemAffixes);
         }
-        return b1.build();
     }
 
-    private NElement list(boolean ordered, int depth) {
+    private NElement list(boolean ordered, int depth, List<NAffix> pendingAffixTokens, List<NElementDiagnostic> diagnostics) {
         NElementTokenInfo t = peekToken();
         if (t == null) {
             return null;
@@ -369,9 +517,9 @@ public class TsonCustomParser {
         List<NListItemElement> sub = new ArrayList<>();
         int minDepth = currentDepth;
         while (true) {
-            NListItemElement i = listItem(listIsOrdered, depth);
+            NListItemElement i = listItem(listIsOrdered, depth, new ArrayList<>(), diagnostics);
             if (i != null) {
-                if(i.depth()<minDepth) {
+                if (i.depth() < minDepth) {
                     minDepth = i.depth();
                 }
                 sub.add(i);
@@ -386,41 +534,87 @@ public class TsonCustomParser {
         return b.build();
     }
 
-    private NElement named() {
-        NElementTokenInfo nameToken = nextToken();
-        String name = nameToken.token.image();
+    private NElement unnamed(String seenName, List<NAffix> pendingAffixTokens, List<NElementDiagnostic> diagnostics) {
+        List<NElement> elements = new ArrayList<>();
+        List<NAffix> beforeLparAffixes = new ArrayList<>();
+        List<NAffix> beforeRparAffixes = new ArrayList<>();
+        readEnclosedAndSeparatedElements(NElementTokenType.RPAREN, elements, beforeLparAffixes, beforeRparAffixes, diagnostics);
+
         NElementTokenInfo t = peekToken();
-        if(t!=null && t.token!=null) {
-            switch (t.token.type()) {
-                case LPAREN:{
-                    nextToken();
-                    List<NElement> params = new ArrayList<>();
-                    while (!isToken(NElementTokenType.RPAREN)) {
-                        params.add(exprOrPairElement());
-                        if (isToken(NElementTokenType.COMMA) || isToken(NElementTokenType.SEMICOLON)) {
-                            nextToken();
-                        } else {
-                            break;
-                        }
-                    }
-                    skipToken(NElementTokenType.RPAREN);
-                    // Check if followed by { or [
-                    if (isToken(NElementTokenType.LBRACE)) {
-                        return object(name, params); // Should handle name/params
-                    } else if (isToken(NElementTokenType.LBRACK)) {
-                        return array(name, params); // Should handle name/params
-                    }
-                    return NElement.ofUplet(name, params.toArray(new NElement[0]));
-                }
-                case LBRACE:{
-                    return object(name, null);
-                }
-                case LBRACK:{
-                    return array(name, null);
-                }
+        if (t != null && t.token != null) {
+            if (t.token.type() == NElementTokenType.LBRACE) {
+                List<NAffix> c = new ArrayList<>();
+                c.addAll(pendingAffixTokens);
+                c.addAll(beforeLparAffixes);
+                return object(null, elements, c, beforeRparAffixes, Collections.emptyList(), diagnostics);
+            }
+            if (t.token.type() == NElementTokenType.LBRACK) {
+                List<NAffix> c = new ArrayList<>();
+                c.addAll(pendingAffixTokens);
+                c.addAll(beforeLparAffixes);
+                return array(null, elements, c, beforeRparAffixes, Collections.emptyList(), diagnostics);
             }
         }
-        return NElement.ofString(name, NElementType.NAME);
+
+        List<NBoundAffix> boundAffixes = new ArrayList<>();
+        boundAffixes.addAll(pendingAffixTokens.stream().map(x -> DefaultNBoundAffix.of(x, NAffixAnchor.START)).collect(Collectors.toList()));
+        boundAffixes.addAll(beforeRparAffixes.stream().map(x -> DefaultNBoundAffix.of(x, NAffixAnchor.POST_2)).collect(Collectors.toList()));
+        boundAffixes.addAll(readPostComments());
+        return new DefaultNUpletElement(
+                seenName, elements,
+                boundAffixes, diagnostics
+        );
+    }
+
+    private NElement named(List<NAffix> pendingAffixTokens, List<NElementDiagnostic> diagnostics) {
+        NElementTokenInfo nameToken = nextToken();
+        String name = nameToken.token.image();
+        pendingAffixTokens.addAll(tokensToAffixes(nameToken.prefixes));
+        NElementTokenInfo t = peekToken();
+        if (t == null) {
+            return new DefaultNStringElement(
+                    NElementType.NAME,
+                    name,
+                    name,
+                    bindAffixes(pendingAffixTokens, NAffixAnchor.START),
+                    diagnostics
+            );
+        }
+        if (t.token == null) {
+            List<NBoundAffix> boundAffixes = new ArrayList<>();
+            boundAffixes.addAll(bindAffixes(pendingAffixTokens, NAffixAnchor.START));
+
+            boundAffixes.addAll(tokensToBoundAffixes(t.prefixes, NAffixAnchor.END));
+            return new DefaultNStringElement(
+                    NElementType.NAME,
+                    name,
+                    name,
+                    boundAffixes,
+                    diagnostics
+            );
+        }
+
+        switch (t.token.type()) {
+            case LPAREN: {
+                return unnamed(name, pendingAffixTokens, diagnostics);
+            }
+            case LBRACE: {
+                return object(name, null, new ArrayList<>(), new ArrayList<>(), pendingAffixTokens, diagnostics);
+            }
+            case LBRACK: {
+                return array(name, null, new ArrayList<>(), new ArrayList<>(), pendingAffixTokens, diagnostics);
+            }
+        }
+
+        List<NBoundAffix> boundAffixes = new ArrayList<>(bindAffixes(pendingAffixTokens, NAffixAnchor.START));
+        boundAffixes.addAll(readPostComments());
+        return new DefaultNStringElement(
+                NElementType.NAME,
+                name,
+                name,
+                boundAffixes,
+                diagnostics
+        );
     }
 
     private NElementTokenInfo nextToken() {
@@ -434,14 +628,13 @@ public class TsonCustomParser {
             NElementTokenImpl t = lexer.next();
             if (t == null) return ii;
             switch (t.type()) {
-                case WHITESPACE: {
-                    ii.prefixes.add(t);
-                    break;
-                }
+                case SPACE:
+                case NEWLINE:
                 case LINE_COMMENT:
-                case BLOCK_COMMENT: {
+                case BLOCK_COMMENT:
+                case COMMA:
+                case SEMICOLON: {
                     ii.prefixes.add(t);
-                    ii.comments.add((NElementComment) t.value());
                     break;
                 }
                 default: {
@@ -488,7 +681,7 @@ public class TsonCustomParser {
     private class NElementTokenInfo {
         NElementTokenImpl token;
         List<NElementTokenImpl> prefixes = new ArrayList<>();
-        List<NElementComment> comments = new ArrayList<>();
+//        List<NElementComment> comments = new ArrayList<>();
     }
 
 }
