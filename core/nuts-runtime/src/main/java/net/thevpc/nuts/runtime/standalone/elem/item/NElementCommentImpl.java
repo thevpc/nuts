@@ -1,55 +1,66 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.NElementComment;
-import net.thevpc.nuts.elem.NElementCommentType;
+import net.thevpc.nuts.elem.NAffixType;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCommentsHelper;
 import net.thevpc.nuts.util.NStringBuilder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class NElementCommentImpl implements NElementComment {
-    private NElementCommentType type;
+    private NAffixType type;
     private String raw;
     private List<String> lines = new ArrayList<>();
-    private static NElementCommentImpl EMPTY_MULTI_LINE = new NElementCommentImpl(NElementCommentType.MULTI_LINE, null, null);
-    private static NElementCommentImpl EMPTY_SINGLE_LINE = new NElementCommentImpl(NElementCommentType.SINGLE_LINE, null, null);
+    private static NElementCommentImpl EMPTY_MULTI_LINE = new NElementCommentImpl(NAffixType.BLOC_COMMENT, "/**/", "");
+    private static NElementCommentImpl EMPTY_SINGLE_LINE = new NElementCommentImpl(NAffixType.LINE_COMMENT, "//", "");
 
     public static NElementComment of(String text) {
-        return ofMultiLine(text);
+        return ofBloc(text);
     }
 
-    public static NElementCommentImpl ofMultiLine(String... text) {
+    public static NElementCommentImpl ofBloc(String... text) {
         if (text == null || text.length == 0 || (text.length == 1 && (text[0] == null || text[0].isEmpty()))) {
             return EMPTY_MULTI_LINE;
         }
-        return new NElementCommentImpl(NElementCommentType.MULTI_LINE, null, text);
+        return new NElementCommentImpl(NAffixType.BLOC_COMMENT, null, text);
     }
 
-    public static NElementCommentImpl ofSingleLine(String... text) {
+    public static NElementCommentImpl ofLine(String... text) {
         if (text == null || text.length == 0 || (text.length == 1 && (text[0] == null || text[0].isEmpty()))) {
             return EMPTY_SINGLE_LINE;
         }
-        return new NElementCommentImpl(NElementCommentType.SINGLE_LINE, null, text);
+        return new NElementCommentImpl(NAffixType.LINE_COMMENT, null, text);
     }
 
-    public NElementCommentImpl(NElementCommentType type, String raw, String... texts) {
+    public NElementCommentImpl(NAffixType type, String raw, String... texts) {
         this.type = type;
-        if (texts != null) {
-            for (String text : texts) {
-                this.lines.addAll(new NStringBuilder(text).lines().toList());
+        if (type == NAffixType.LINE_COMMENT) {
+            this.lines.addAll(TsonCommentsHelper.normalizeLineComment(texts));
+            if (raw == null) {
+                this.raw = lines.stream().map(x -> "// " + x).collect(Collectors.joining("\n"));
+            } else {
+                this.raw = raw;
+            }
+        } else {
+            if (raw == null) {
+                this.raw = "/*" + lines.stream().collect(Collectors.joining("\n")) + "*/";
+            } else {
+                this.raw = raw;
             }
         }
-        if (raw == null) {
-            this.raw = "/*" + lines.stream().collect(Collectors.joining("\n")) + "*/";
-        } else {
-            this.raw = raw;
-        }
     }
 
-    public static NElementComment of(NElementCommentType type, String text) {
-        return type == NElementCommentType.MULTI_LINE ? ofMultiLine(text) : ofSingleLine(text);
+    public static NElementComment of(NAffixType type, String text) {
+        return type == NAffixType.BLOC_COMMENT ? ofBloc(text) : ofLine(text);
+    }
+
+    @Override
+    public String raw() {
+        return raw;
     }
 
     @Override
@@ -63,10 +74,10 @@ public class NElementCommentImpl implements NElementComment {
     @Override
     public String toString() {
         switch (type) {
-            case SINGLE_LINE: {
+            case LINE_COMMENT: {
                 return new NStringBuilder(text()).indent("// ").append("\n").toString();
             }
-            case MULTI_LINE: {
+            case BLOC_COMMENT: {
                 return "/*\n"
                         + new NStringBuilder(text()).indent("* ").toString()
                         + "*/"
@@ -76,7 +87,7 @@ public class NElementCommentImpl implements NElementComment {
         return new NStringBuilder(text()).indent("// ").toString();
     }
 
-    public NElementCommentType type() {
+    public NAffixType type() {
         return type;
     }
 
