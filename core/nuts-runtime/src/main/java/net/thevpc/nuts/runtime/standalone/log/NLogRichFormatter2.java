@@ -2,12 +2,8 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.Instant;
@@ -139,7 +135,7 @@ public class NLogRichFormatter2  {
                 NTexts.of()
                         .of(msg);
         sb.append(msgStr);
-        sb.append(NLogUtils.LINE_SEPARATOR);
+        sb.append(NNewLineMode.system().value());
         lastMillis = timestamp;
         if (msg.getThrowable() != null) {
             sb.append(
