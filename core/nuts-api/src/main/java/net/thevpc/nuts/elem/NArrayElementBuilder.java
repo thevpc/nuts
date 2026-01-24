@@ -45,7 +45,6 @@ public interface NArrayElementBuilder extends NElementBuilder {
         return NElement.ofArrayBuilder();
     }
 
-    NArrayElementBuilder doWith(Consumer<NArrayElementBuilder> con);
     /**
      * array items
      *
@@ -281,61 +280,24 @@ public interface NArrayElementBuilder extends NElementBuilder {
      */
     NArrayElementBuilder remove(int index);
 
+    NArrayElementBuilder addParams(List<NElement> params);
 
-    /**
-     * reset this instance with the given array
-     *
-     * @param other array builder
-     * @return {@code this} instance
-     */
-    NArrayElementBuilder copyFrom(NArrayElement other);
+    NArrayElementBuilder addParam(NElement param);
 
-    /**
-     * create array with this instance elements
-     *
-     * @return new array instance
-     */
-    NArrayElement build();
+    NArrayElementBuilder addParamAt(int index, NElement param);
 
-    NArrayElementBuilder copyFrom(NElementBuilder other);
+    NArrayElementBuilder removeParamAt(int index);
 
-    NArrayElementBuilder copyFrom(NElement other);
+    NArrayElementBuilder clearParams();
 
-    NArrayElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy condition);
-
-    NArrayElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
-
-    NArrayElementBuilder addAnnotations(List<NElementAnnotation> annotations);
-    NArrayElementBuilder addAnnotation(NElementAnnotation annotation);
-    NArrayElementBuilder addAnnotation(String name,NElement ...args);
-    NArrayElementBuilder addAnnotationAt(int index,NElementAnnotation annotation);
-    NArrayElementBuilder removeAnnotationAt(int index);
-    NArrayElementBuilder removeAnnotation(NElementAnnotation annotation);
-    NArrayElementBuilder clearAnnotations();
-
-    NArrayElementBuilder addLeadingComment(NElementCommentType type, String text);
-    NArrayElementBuilder addTrailingComment(NElementCommentType type, String text);
-    NArrayElementBuilder addLeadingComment(NElementComment comment);
-    NArrayElementBuilder addLeadingComments(NElementComment... comments);
-    NArrayElementBuilder addTrailingComment(NElementComment comment);
-    NArrayElementBuilder addTrailingComments(NElementComment... comments);
-    NArrayElementBuilder removeLeadingComment(NElementComment comment);
-    NArrayElementBuilder removeTrailingComment(NElementComment comment);
-    NArrayElementBuilder removeLeadingCommentAt(int index);
-    NArrayElementBuilder removeTrailingCommentAt(int index);
-    NArrayElementBuilder clearComments();
-    NArrayElementBuilder addComments(NElementComments comments);
-
-
-    NArrayElementBuilder addParams(List<NElement> params) ;
-    NArrayElementBuilder addParam(NElement param) ;
-    NArrayElementBuilder addParamAt(int index, NElement param) ;
-    NArrayElementBuilder removeParamAt(int index) ;
-    NArrayElementBuilder clearParams() ;
     NOptional<List<NElement>> params();
-    NOptional<String> name() ;
-    NArrayElementBuilder name(String name) ;
-    boolean isParametrized() ;
+
+    NOptional<String> name();
+
+    NArrayElementBuilder name(String name);
+
+    boolean isParametrized();
+
     NArrayElementBuilder setParametrized(boolean parametrized);
 
     NArrayElementBuilder addParam(String name, NElement value);
@@ -349,8 +311,66 @@ public interface NArrayElementBuilder extends NElementBuilder {
     NArrayElementBuilder addParam(String name, Double value);
 
     NArrayElementBuilder addParam(String name, Boolean value);
+
     NArrayElementBuilder setParams(List<NElement> params);
+
     NArrayElementBuilder setChildren(List<NElement> params);
 
     List<NElement> children();
+
+    NArrayElementBuilder doWith(Consumer<NArrayElementBuilder> con);
+    /**
+     * create array with this instance elements
+     *
+     * @return new array instance
+     */
+    NArrayElement build();
+
+    /// ///////////////////////////////////////////////
+    NArrayElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+
+    NArrayElementBuilder addAnnotation(NElementAnnotation annotation);
+
+    NArrayElementBuilder addAnnotation(String name, NElement... args);
+
+    NArrayElementBuilder addAffix(int index, NBoundAffix affix);
+
+    NArrayElementBuilder setAffix(int index, NBoundAffix affix);
+    NArrayElementBuilder addAffix(NBoundAffix affix);
+
+    NArrayElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NArrayElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NArrayElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
+
+    NArrayElementBuilder removeAffix(int index);
+
+    NArrayElementBuilder removeAnnotation(NElementAnnotation annotation);
+
+    NArrayElementBuilder clearAnnotations();
+
+    NArrayElementBuilder addLeadingComment(NElementComment comment);
+
+    NArrayElementBuilder addLeadingComments(NElementComment... comments);
+
+    NArrayElementBuilder addTrailingComments(NElementComment... comments);
+
+    NArrayElementBuilder addTrailingComment(NElementComment comment);
+
+    NArrayElementBuilder clearComments();
+
+    NArrayElementBuilder copyFrom(NElementBuilder other);
+
+    NArrayElementBuilder copyFrom(NElement other);
+
+    NArrayElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
+
+    NArrayElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
+
+    NArrayElementBuilder addDiagnostic(NElementDiagnostic error);
+
+    NArrayElementBuilder removeDiagnostic(NElementDiagnostic error);
+
+    NArrayElementBuilder addAffixes(List<NBoundAffix> affixes);
 }
