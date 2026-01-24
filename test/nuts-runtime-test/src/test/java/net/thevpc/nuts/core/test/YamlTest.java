@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.elem.NElementFormatter;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.utils.TestUtils;
@@ -107,19 +108,19 @@ public class YamlTest {
                 NTableModel.of(NText.of("JSON"))
         ));
         NElementWriter.ofJson()
-                .setCompact(false)
+                .setFormatter(NElementFormatter.ofJsonPretty())
                 .writeln(e);
         NOut.println(NTextArtTableRenderer.of().render(
                 NTableModel.of(NText.of("TSON"))
         ));
         NElementWriter.ofTson()
-                .setCompact(false)
+                .setFormatter(NElementFormatter.ofTsonCompact())
                 .writeln(e);
         NOut.println(NTextArtTableRenderer.of().render(
                 NTableModel.of(NText.of("YAML"))
         ));
         NElementWriter.ofYaml()
-                .setCompact(false)
+                .setFormatter(NElementFormatter.ofYamlCompact())
                 .writeln(e);
     }
 
