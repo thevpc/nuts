@@ -6,6 +6,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TsonCommentsHelper {
+    private static boolean isValidPrefix(String buffer, char currentChar) {
+        int len = buffer.length();
+        if (len == 0 || len == 1) {
+            return currentChar == '/';
+        }
+        if (buffer.charAt(len - 1) == '/') {
+            return currentChar == '/' || Character.isWhitespace(currentChar);
+        }
+        return Character.isWhitespace(currentChar);
+    }
+
+    private static void dropPrefixListInplace(List<String> allLines, int count) {
+        if (count <= 0) {
+            return;
+        }
+        for (int i = 0; i < allLines.size(); i++) {
+            allLines.set(i, allLines.get(i).substring(count));
+        }
+    }
+
+    public static List<String> normalizeLineComment(String[] raws) {
+        List<String> allLines = new ArrayList<>();
+        for (String raw : raws) {
+            allLines.addAll(NStringUtils.splitLines(raw));
+        }
+        allLines.replaceAll(String::trim);
+        String prefix = NStringUtils.commonPrefix(allLines, TsonCommentsHelper::isValidPrefix);
+        dropPrefixListInplace(allLines, prefix.length());
+        return allLines;
+    }
+
     public static String normalizeBlockComment(String raw) {
         if (raw == null || raw.isEmpty()) return "";
 
