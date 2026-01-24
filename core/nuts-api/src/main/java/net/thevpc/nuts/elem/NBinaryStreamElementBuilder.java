@@ -34,50 +34,64 @@ import java.util.function.Consumer;
  * @author thevpc
  */
 public interface NBinaryStreamElementBuilder extends NElementBuilder {
+
+    NBinaryStreamElementBuilder value(NInputStreamProvider value);
+
+    NInputStreamProvider value();
+
+    String blocIdentifier();
+
+    NBinaryStreamElementBuilder blocIdentifier(String blocIdentifier);
+
     NBinaryStreamElementBuilder doWith(Consumer<NBinaryStreamElementBuilder> con);
+
+    NBinaryStreamElement build();
+
+    /// ///////////////////////////////////////////////
     NBinaryStreamElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
-    NBinaryStreamElementBuilder addAnnotation(String name,NElement ...args);
     NBinaryStreamElementBuilder addAnnotation(NElementAnnotation annotation);
 
-    NBinaryStreamElementBuilder addAnnotationAt(int index, NElementAnnotation annotation);
+    NBinaryStreamElementBuilder addAnnotation(String name, NElement... args);
 
-    NBinaryStreamElementBuilder removeAnnotationAt(int index);
+    NBinaryStreamElementBuilder addAffix(int index, NBoundAffix affix);
+
+    NBinaryStreamElementBuilder setAffix(int index, NBoundAffix affix);
+    NBinaryStreamElementBuilder addAffix(NBoundAffix affix);
+
+    NBinaryStreamElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NBinaryStreamElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+
+    NBinaryStreamElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
+
+    NBinaryStreamElementBuilder removeAffix(int index);
+
     NBinaryStreamElementBuilder removeAnnotation(NElementAnnotation annotation);
 
     NBinaryStreamElementBuilder clearAnnotations();
 
-    List<NElementAnnotation> annotations();
-
-    NBinaryStreamElementBuilder copyFrom(NBinaryStreamElement element) ;
-
-    NBinaryStreamElementBuilder copyFrom(NBinaryStreamElementBuilder element) ;
-
-    NBinaryStreamElementBuilder addLeadingComment(NElementCommentType type, String text);
-    NBinaryStreamElementBuilder addTrailingComment(NElementCommentType type, String text);
     NBinaryStreamElementBuilder addLeadingComment(NElementComment comment);
-    NBinaryStreamElementBuilder addLeadingComments(NElementComment... comments);
-    NBinaryStreamElementBuilder addTrailingComment(NElementComment comment);
-    NBinaryStreamElementBuilder addTrailingComments(NElementComment... comments);
-    NBinaryStreamElementBuilder removeLeadingComment(NElementComment comment);
-    NBinaryStreamElementBuilder removeTrailingComment(NElementComment comment);
-    NBinaryStreamElementBuilder removeLeadingCommentAt(int index);
-    NBinaryStreamElementBuilder removeTrailingCommentAt(int index);
-    NBinaryStreamElementBuilder clearComments();
-    NBinaryStreamElementBuilder addComments(NElementComments comments);
 
-    NBinaryStreamElementBuilder setValue(NInputStreamProvider value);
-    NBinaryStreamElementBuilder value(NInputStreamProvider value);
-    NInputStreamProvider value();
-    NInputStreamProvider getValue();
-    NBinaryStreamElement build();
+    NBinaryStreamElementBuilder addLeadingComments(NElementComment... comments);
+
+    NBinaryStreamElementBuilder addTrailingComments(NElementComment... comments);
+
+    NBinaryStreamElementBuilder addTrailingComment(NElementComment comment);
+
+    NBinaryStreamElementBuilder clearComments();
 
     NBinaryStreamElementBuilder copyFrom(NElementBuilder other);
 
     NBinaryStreamElementBuilder copyFrom(NElement other);
+
     NBinaryStreamElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
     NBinaryStreamElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 
-    NBinaryStreamElementBuilder writeBase64(String base64String);
+    NBinaryStreamElementBuilder addDiagnostic(NElementDiagnostic error);
+
+    NBinaryStreamElementBuilder removeDiagnostic(NElementDiagnostic error);
+
+    NBinaryStreamElementBuilder addAffixes(List<NBoundAffix> affixes);
 }
