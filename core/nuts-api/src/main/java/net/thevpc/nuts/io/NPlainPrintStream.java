@@ -3,6 +3,7 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.util.NStringBuilder;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -11,10 +12,15 @@ import java.time.temporal.Temporal;
 import java.util.Date;
 
 public class NPlainPrintStream implements NPrintStream {
-    private StringBuilder sb = new StringBuilder();
+    private NStringBuilder sb = new NStringBuilder();
     private DefaultNContentMetadata md = new DefaultNContentMetadata();
 
     public NPlainPrintStream() {
+    }
+
+    @Override
+    public NStringWriter asStringWriter() {
+        return sb.asStringWriter();
     }
 
     @Override
