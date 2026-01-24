@@ -1,30 +1,31 @@
 package net.thevpc.nuts.runtime.standalone.elem.builder;
 
+import net.thevpc.nuts.elem.NBoundAffix;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementAnnotation;
 import net.thevpc.nuts.elem.NElementAnnotationBuilder;
-import net.thevpc.nuts.runtime.standalone.elem.NElementToStringHelper;
 import net.thevpc.nuts.runtime.standalone.elem.item.NElementAnnotationImpl;
+import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class NElementAnnotationBuilderImpl implements NElementAnnotationBuilder {
     private String name;
     private List<NElement> params;
+    private NBoundAffixList affixes = new NBoundAffixList();
 
     public NElementAnnotationBuilderImpl() {
 
     }
 
-    public NElementAnnotationBuilderImpl(String name, List<NElement> params) {
+    public NElementAnnotationBuilderImpl(String name, List<NElement> params, List<NBoundAffix> affixes) {
         this.name = NStringUtils.trim(name);
         this.params = params == null ? null : new ArrayList<>(params);
+        this.affixes.addAffixes(affixes);
     }
 
     @Override
@@ -51,7 +52,7 @@ public class NElementAnnotationBuilderImpl implements NElementAnnotationBuilder 
     }
 
     public NElementAnnotation build() {
-        return new NElementAnnotationImpl(NStringUtils.trim(name), params == null ? null : params.toArray(new NElement[0]));
+        return new NElementAnnotationImpl(NStringUtils.trim(name), params, affixes.list());
     }
 
     public boolean isParametrized() {
@@ -87,31 +88,20 @@ public class NElementAnnotationBuilderImpl implements NElementAnnotationBuilder 
         return NBlankable.isBlank(name) && (params == null || params.size() == 0);
     }
 
-    public String toString() {
-        return toString(false);
-    }
-
-    @Override
-    public String toString(boolean compact) {
-        NStringBuilder sb = new NStringBuilder();
-        NElementToStringHelper.appendUplet("@" + (NStringUtils.trim(name)), null, compact, sb);
-        if (params != null) {
-            sb.append("(");
-            NElementToStringHelper.appendChildren(params(), compact, new NElementToStringHelper.SemiCompactInfo().setMaxChildren(10).setMaxLineSize(120), sb);
-            sb.append(")");
-        }
-        return sb.toString();
-    }
-
     @Override
     public boolean equals(Object object) {
         if (object == null || getClass() != object.getClass()) return false;
         NElementAnnotationBuilderImpl that = (NElementAnnotationBuilderImpl) object;
-        return Objects.equals(name, that.name) && Objects.equals(params, that.params);
+        return Objects.equals(name, that.name) && Objects.equals(params, that.params) && Objects.equals(affixes, that.affixes);
+    }
+
+    @Override
+    public String toString() {
+        return build().toString();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, Objects.hashCode(params));
+        return Objects.hash(name, Objects.hashCode(params), Objects.hashCode(affixes));
     }
 }
