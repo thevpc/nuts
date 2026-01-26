@@ -188,7 +188,7 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
             case TSON:
             case YAML: {
                 NElementWriter ee = NElementWriter.of().setNtf(isNtf())
-                        .setFormatter(isCompact()? NElementFormatter.ofJsonCompact() : NElementFormatter.ofJsonPretty())
+                        .setCompact(isCompact())
                         .setContentType(session.getOutputFormat().orDefault());
                 Object aValue = null;
                 if (value instanceof NText) {
