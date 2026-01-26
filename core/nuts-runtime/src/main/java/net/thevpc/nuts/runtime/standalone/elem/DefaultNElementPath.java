@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.NElementPath;
+import net.thevpc.nuts.util.NAssert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class DefaultNElementPath implements NElementPath {
         return items.size();
     }
 
+    @Override
     public NElementPath child(String name) {
         ArrayList<Item> u = new ArrayList<>(items);
         u.add(new Item(null, name));
@@ -42,15 +44,30 @@ public class DefaultNElementPath implements NElementPath {
         return ann(String.valueOf(name + 1));
     }
 
+    @Override
     public NElementPath param(String name) {
         ArrayList<Item> u = new ArrayList<>(items);
         u.add(new Item("param", name));
         return new DefaultNElementPath(u);
     }
 
+    @Override
     public NElementPath ann(String name) {
         ArrayList<Item> u = new ArrayList<>(items);
         u.add(new Item("ann", name));
+        return new DefaultNElementPath(u);
+    }
+
+    @Override
+    public NElementPath group(String group, int index) {
+        return group(group,String.valueOf(index + 1));
+    }
+
+    @Override
+    public NElementPath group(String group, String name) {
+        NAssert.requireNonBlank(group,"group");
+        ArrayList<Item> u = new ArrayList<>(items);
+        u.add(new Item(group, name));
         return new DefaultNElementPath(u);
     }
 
