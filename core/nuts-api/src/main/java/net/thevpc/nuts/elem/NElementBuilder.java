@@ -28,6 +28,7 @@ import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * @author thevpc
@@ -87,18 +88,6 @@ public interface NElementBuilder {
 
     NElementBuilder clearComments();
 
-    NElementBuilder copyFrom(NElementBuilder other);
-
-    NElementBuilder copyFrom(NElement other);
-
-    NElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
-
-    NElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
-
-    NElementBuilder addDiagnostic(NElementDiagnostic error);
-
-    NElementBuilder removeDiagnostic(NElementDiagnostic error);
-
     NElementBuilder addAffixes(List<NBoundAffix> affixes);
 
     /// /////////////
@@ -114,4 +103,19 @@ public interface NElementBuilder {
     NElementBuilder addAffixNewLine(int index, NNewLineMode newLineMode, NAffixAnchor anchor);
 
     NElementBuilder addAffixSeparator(int index, String separator, NAffixAnchor anchor);
+
+    NElementBuilder removeAffixIf(Predicate<NBoundAffix> affixPredicate);
+
+    NElementBuilder copyFrom(NElementBuilder other);
+
+    NElementBuilder copyFrom(NElement other);
+
+    NElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
+
+    NElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
+
+    NElementBuilder addDiagnostic(NElementDiagnostic error);
+
+    NElementBuilder removeDiagnostic(NElementDiagnostic error);
+
 }
