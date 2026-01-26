@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 import net.thevpc.nuts.core.NWorkspace;
@@ -295,6 +296,28 @@ public class DefaultNElements implements NElements {
                 NExprElementReshaper.class.getName() + "::Java",
                 () -> createJavaExprElementReshaperBuilder().build()
         );
+    }
+
+    @Override
+    public NElementFormatter createElementFormatter(NElementFormatterStyle style) {
+        if (style == null) {
+            style = NElementFormatterStyle.PRETTY;
+        }
+        switch (style) {
+            case CUSTOM:
+            case PRETTY:
+                return DefaultNElementFormatter.PRETTY;
+            case COMPACT: {
+                return DefaultNElementFormatter.COMPACT;
+            }
+            case SAFE: {
+                return DefaultNElementFormatter.SAFE;
+            }
+            case VERBATIM: {
+                return DefaultNElementFormatter.VERBATIM;
+            }
+        }
+        return DefaultNElementFormatter.PRETTY;
     }
 
 }
