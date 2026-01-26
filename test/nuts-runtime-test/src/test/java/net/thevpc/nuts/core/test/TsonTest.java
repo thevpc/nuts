@@ -32,6 +32,42 @@ public class TsonTest {
     }
 
     @Test
+    public void test01c() {
+        String tson = "\n" +
+                "// load configuration from the following path. will ignore all the remaining\n" +
+                "{\n" +
+                " redirect : \"/home/install\"\n" +
+                "}\n" +
+                "\n";
+        NElement parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+    }
+
+    @Test
+    public void test01d() {
+        String tson = "\n" +
+                "// load configuration from the following path. will ignore all the remaining\n" +
+                "(redirect : \"/home/install\"\n)\n" +
+                "\n" +
+                "\n";
+        NElement parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+    }
+
+    @Test
+    public void test013() {
+        String tson = "\n" +
+                "// load configuration from the following path. will ignore all the remaining\n" +
+                "@a(/**/redirect : \"/home/install\"\n)\n" +
+                "// load configuration from the following path. will ignore all the remaining\n" +
+                "@b(redirect : \"/home/install\"\n)\n" +
+                "\n" +
+                "\n";
+        NElement parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+    }
+
+    @Test
     public void test01() {
         String tson = "a:b {a:b} @a a(b,c)[x]";
         NElement parsed = NElementReader.ofTson().read(tson);
