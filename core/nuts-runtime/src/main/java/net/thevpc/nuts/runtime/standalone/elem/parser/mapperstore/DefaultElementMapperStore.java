@@ -192,14 +192,14 @@ public class DefaultElementMapperStore {
         switch (element.type()) {
             case OBJECT:
             case NAMED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
-            case PARAMETRIZED_OBJECT: {
+            case FULL_OBJECT:
+            case PARAM_OBJECT: {
                 return store.getMapper(Map.class);
             }
             case ARRAY:
-            case PARAMETRIZED_ARRAY:
+            case PARAM_ARRAY:
             case NAMED_ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY:
+            case FULL_ARRAY:
             case UPLET:
             case NAMED_UPLET: {
                 return store.getMapper(List.class);
