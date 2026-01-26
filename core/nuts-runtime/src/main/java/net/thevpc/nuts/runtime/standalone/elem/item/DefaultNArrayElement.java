@@ -51,9 +51,9 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
     public DefaultNArrayElement(String name, List<NElement> params, List<NElement> values, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
         super(
                 name == null && params == null ? NElementType.ARRAY
-                        : name == null && params != null ? NElementType.PARAMETRIZED_ARRAY
+                        : name == null && params != null ? NElementType.PARAM_ARRAY
                         : name != null && params == null ? NElementType.NAMED_ARRAY
-                        : NElementType.NAMED_PARAMETRIZED_ARRAY,
+                        : NElementType.FULL_ARRAY,
                 affixes,diagnostics);
         if (name != null) {
             NAssert.requireTrue(NElementUtils.isValidElementName(name), "valid name : "+name);
