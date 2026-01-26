@@ -50,7 +50,7 @@ public class YamlFormat {
             case UNARY_OPERATOR:
             case NARY_OPERATOR:
             case FLAT_EXPR:{
-                NExprElement ope = (NExprElement) value;
+                NOperatorElement ope = (NOperatorElement) value;
                 NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(value);
                 value1.clearChildren();
                 value1.set("op", ope.type().id());
@@ -84,8 +84,8 @@ public class YamlFormat {
                 return NElement.ofPrimitiveBuilder().copyFrom(value).setString(s).build();
             }
             case NAMED_OBJECT:
-            case PARAMETRIZED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT: {
+            case PARAM_OBJECT:
+            case FULL_OBJECT: {
                 NObjectElementBuilder value1 = ((NObjectElement) value).builder();
                 if (value1.name().isPresent()) {
                     value1.set("$name", value1.name().get());
@@ -98,8 +98,8 @@ public class YamlFormat {
                 return value1.build();
             }
             case NAMED_ARRAY:
-            case PARAMETRIZED_ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY: {
+            case PARAM_ARRAY:
+            case FULL_ARRAY: {
                 NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(value);
                 if (value1.name().isPresent()) {
                     value1.set("$name", value1.name().get());
