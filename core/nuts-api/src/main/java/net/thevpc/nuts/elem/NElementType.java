@@ -116,23 +116,26 @@ public enum NElementType implements NEnum {
     UNARY_OPERATOR(NElementTypeGroup.OPERATOR),
     FLAT_EXPR(NElementTypeGroup.OPERATOR),
 
+    PAIR(NElementTypeGroup.CONTAINER),
     /**
      * array element
      */
     ARRAY(NElementTypeGroup.CONTAINER),
+    NAMED_ARRAY(NElementTypeGroup.CONTAINER),
+    PARAM_ARRAY(NElementTypeGroup.CONTAINER),
+    FULL_ARRAY(NElementTypeGroup.CONTAINER),
+
     /**
      * object (list of key/val) element
      */
     OBJECT(NElementTypeGroup.CONTAINER),
-    PAIR(NElementTypeGroup.CONTAINER),
-    UPLET(NElementTypeGroup.CONTAINER),
-    NAMED_ARRAY(NElementTypeGroup.CONTAINER),
-    NAMED_PARAMETRIZED_ARRAY(NElementTypeGroup.CONTAINER),
     NAMED_OBJECT(NElementTypeGroup.CONTAINER),
-    NAMED_PARAMETRIZED_OBJECT(NElementTypeGroup.CONTAINER),
+    PARAM_OBJECT(NElementTypeGroup.CONTAINER),
+    FULL_OBJECT(NElementTypeGroup.CONTAINER),
+
+    UPLET(NElementTypeGroup.CONTAINER),
     NAMED_UPLET(NElementTypeGroup.CONTAINER),
-    PARAMETRIZED_ARRAY(NElementTypeGroup.CONTAINER),
-    PARAMETRIZED_OBJECT(NElementTypeGroup.CONTAINER),
+
     ORDERED_LIST(NElementTypeGroup.CONTAINER),
     UNORDERED_LIST(NElementTypeGroup.CONTAINER),
 
@@ -345,9 +348,9 @@ public enum NElementType implements NEnum {
         switch (this) {
             case PAIR: // key may be the name
             case NAMED_ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY:
+            case FULL_ARRAY:
             case NAMED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
+            case FULL_OBJECT:
             case NAMED_UPLET:
             {
                 return true;
@@ -358,10 +361,10 @@ public enum NElementType implements NEnum {
 
     public boolean isAnyParametrized() {
         switch (this) {
-            case PARAMETRIZED_ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY:
-            case PARAMETRIZED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
+            case PARAM_ARRAY:
+            case FULL_ARRAY:
+            case PARAM_OBJECT:
+            case FULL_OBJECT:
             {
                 return true;
             }
@@ -406,7 +409,7 @@ public enum NElementType implements NEnum {
     public boolean isAnyNamedObject() {
         switch (this) {
             case NAMED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
+            case FULL_OBJECT:
                 return true;
         }
         return false;
@@ -415,25 +418,25 @@ public enum NElementType implements NEnum {
     public boolean isAnyNamedArray() {
         switch (this) {
             case NAMED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
+            case FULL_OBJECT:
                 return true;
         }
         return false;
     }
 
-    public boolean isAnyParametrizedObject() {
+    public boolean isAnyParamObject() {
         switch (this) {
-            case PARAMETRIZED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
+            case PARAM_OBJECT:
+            case FULL_OBJECT:
                 return true;
         }
         return false;
     }
 
-    public boolean isAnyParametrizedArray() {
+    public boolean isAnyParamArray() {
         switch (this) {
-            case PARAMETRIZED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
+            case PARAM_OBJECT:
+            case FULL_OBJECT:
                 return true;
         }
         return false;
@@ -443,7 +446,7 @@ public enum NElementType implements NEnum {
         switch (this) {
             case ARRAY:
             case NAMED_ARRAY:
-            case PARAMETRIZED_ARRAY:
+            case PARAM_ARRAY:
                 return true;
         }
         return false;
@@ -453,8 +456,8 @@ public enum NElementType implements NEnum {
         switch (this) {
             case OBJECT:
             case NAMED_OBJECT:
-            case PARAMETRIZED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
+            case PARAM_OBJECT:
+            case FULL_OBJECT:
                 return true;
         }
         return false;
@@ -475,11 +478,11 @@ public enum NElementType implements NEnum {
             case NAMED_UPLET:
             case OBJECT:
             case NAMED_OBJECT:
-            case PARAMETRIZED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
+            case PARAM_OBJECT:
+            case FULL_OBJECT:
             case ARRAY:
             case NAMED_ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY:
+            case FULL_ARRAY:
                 return true;
         }
         return false;
@@ -491,11 +494,11 @@ public enum NElementType implements NEnum {
             case NAMED_UPLET:
             case OBJECT:
             case NAMED_OBJECT:
-            case PARAMETRIZED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
+            case PARAM_OBJECT:
+            case FULL_OBJECT:
             case ARRAY:
             case NAMED_ARRAY:
-            case PARAMETRIZED_ARRAY:
+            case PARAM_ARRAY:
                 return true;
         }
         return false;
