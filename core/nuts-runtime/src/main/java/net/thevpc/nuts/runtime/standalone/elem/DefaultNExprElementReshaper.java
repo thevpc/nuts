@@ -139,7 +139,7 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
                 }
                 NElement operand = output.pop();
                 return NElement.ofExprBuilder()
-                        .symbol(op.symbol)
+                        .operator(op.symbol)
                         .position(NOperatorPosition.PREFIX)
                         .first(operand)
                         .build();
@@ -152,7 +152,7 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
                 NElement right = output.pop();
                 NElement left = output.pop();
                 return NElement.ofExprBuilder()
-                        .symbol(op.symbol)
+                        .operator(op.symbol)
                         .position(NOperatorPosition.INFIX)
                         .first(left)
                         .second(right)
