@@ -14,6 +14,7 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 public abstract class AbstractNElementBuilder implements NElementBuilder {
     private final NBoundAffixList affixes = new NBoundAffixList();
@@ -222,55 +223,48 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
 
     @Override
     public NElementBuilder addAffixSpace(String space, NAffixAnchor anchor) {
-        NAssert.requireNonNull(anchor, "anchor");
-        if (!NStringUtils.isEmpty(space)) {
-            addAffix(NBoundAffix.of(DefaultNElementSpace.of(space), anchor));
-        }
+        this.affixes.addAffixSpace(space, anchor);
         return this;
     }
 
     @Override
     public NElementBuilder addAffixNewLine(NNewLineMode newLineMode, NAffixAnchor anchor) {
-        NAssert.requireNonNull(anchor, "anchor");
-        if (newLineMode != null) {
-            addAffix(NBoundAffix.of(DefaultNElementNewLine.of(newLineMode), anchor));
-        }
+        this.affixes.addAffixNewLine(newLineMode, anchor);
         return this;
     }
 
     @Override
     public NElementBuilder addAffixSeparator(String separator, NAffixAnchor anchor) {
-        NAssert.requireNonNull(anchor, "anchor");
-        if (!NStringUtils.isEmpty(separator)) {
-            addAffix(NBoundAffix.of(DefaultNElementSeparator.of(separator), anchor));
-        }
+        this.affixes.addAffixSeparator(separator, anchor);
         return this;
     }
 
     @Override
     public NElementBuilder addAffixSpace(int index, String space, NAffixAnchor anchor) {
-        NAssert.requireNonNull(anchor, "anchor");
-        if (!NStringUtils.isEmpty(space)) {
-            addAffix(index, NBoundAffix.of(DefaultNElementSpace.of(space), anchor));
-        }
-        return this;
-    }
-
-    @Override
-    public NElementBuilder addAffixNewLine(int index, NNewLineMode newLineMode, NAffixAnchor anchor) {
-        NAssert.requireNonNull(anchor, "anchor");
-        if (newLineMode != null) {
-            addAffix(index, NBoundAffix.of(DefaultNElementNewLine.of(newLineMode), anchor));
-        }
+        this.affixes.addAffixSpace(index, space, anchor);
         return this;
     }
 
     @Override
     public NElementBuilder addAffixSeparator(int index, String separator, NAffixAnchor anchor) {
-        NAssert.requireNonNull(anchor, "anchor");
-        if (!NStringUtils.isEmpty(separator)) {
-            addAffix(index, NBoundAffix.of(DefaultNElementSeparator.of(separator), anchor));
-        }
+        this.affixes.addAffixSeparator(index, separator, anchor);
         return this;
+    }
+
+    @Override
+    public NElementBuilder addAffixNewLine(int index, NNewLineMode newLineMode, NAffixAnchor anchor) {
+        affixes.addAffixNewLine(index, newLineMode, anchor);
+        return this;
+    }
+
+    @Override
+    public NElementBuilder removeAffixIf(Predicate<NBoundAffix> affixPredicate) {
+        this.affixes.removeAffixIf(affixPredicate);
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return build().toString();
     }
 }
