@@ -3,39 +3,30 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNElementNewLine;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNElementSpace;
-import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class DefaultNElementFormatterBuilder implements NElementFormatterBuilder, NElementFormatOptions {
-    private int indent=1;
+    private List<NElementFormatterAction> actions;
+    private Map<String, Object> options;
 
-    private int maxWidth=120;
-
-    private int complexityThreshold=30;
-    private int columnLimit =80;
-    private NNewLineMode newLineMode = NNewLineMode.AUTO;
-    private NContentType contentType;
-    private NElementFormatterStyle style = NElementFormatterStyle.CUSTOM;
-    private List<NElementFormatterAction> actions = new ArrayList<>();
-
-
-    public int getColumnLimit() {
-        return columnLimit;
+    public DefaultNElementFormatterBuilder() {
+        this.actions = new ArrayList<>();
+        this.options = new HashMap<>();
     }
 
-    @Override
-    public NElementFormatterBuilder setColumnLimit(int columnLimit) {
-        this.columnLimit = columnLimit;
-        return this;
+    public DefaultNElementFormatterBuilder(List<NElementFormatterAction> actions, Map<String, Object> options) {
+        this.actions = new ArrayList<>(actions);
+        this.options = new HashMap<>(options);
     }
 
     public NElementFormatterBuilder addAction(NElementFormatterAction action) {
-        if(action!=null){
+        if (action != null) {
             actions.add(action);
         }
         return this;
@@ -46,38 +37,121 @@ public class DefaultNElementFormatterBuilder implements NElementFormatterBuilder
         return addSpace(elementType, anchor, " ");
     }
 
-    @Override
-    public NNewLineMode getNewLineMode() {
-        return newLineMode;
+    public int getColumnLimit() {
+        Object c = options.get("columns");
+        int i = NLiteral.of(c).asInt().orElse(-1);
+        if (i < 0) {
+            i = 80;
+        }
+        return i;
     }
 
-    public DefaultNElementFormatterBuilder setNewLineMode(NNewLineMode newLineMode) {
-        this.newLineMode = newLineMode == null ? NNewLineMode.AUTO : newLineMode;
+    @Override
+    public NElementFormatterBuilder setColumnLimit(int columnLimit) {
+        options.put("columns", columnLimit);
         return this;
     }
 
     @Override
-    public NElementFormatterBuilder clear(NElementType elementType, NAffixType affixType, NAffixAnchor anchor) {
-        addAction(new NElementFormatterAction() {
-            @Override
-            public void apply(NElementFormatContext context) {
-                NElementBuilder builder = context.builder();
-                if (elementType != null && elementType != builder.type()) {
-                    return;
-                }
-                List<NBoundAffix> all = builder.affixes();
-                for (int i = all.size() - 1; i >= 0; i--) {
-                    NBoundAffix a = all.get(i);
-                    if (affixType != null && affixType != a.affix().type()) {
-                        continue;
-                    }
-                    if (anchor != null && anchor != a.anchor()) {
-                        continue;
-                    }
-                    builder.removeAffix(i);
-                }
+    public NNewLineMode getNewLineMode() {
+        Object c = options.get("newline");
+        if (c instanceof NNewLineMode) {
+            return (NNewLineMode) c;
+        }
+        return NNewLineMode.parse(c == null ? null : String.valueOf(c)).orElse(NNewLineMode.AUTO);
+    }
+
+    public DefaultNElementFormatterBuilder setNewLineMode(NNewLineMode newLineMode) {
+        options.put("newline", newLineMode);
+        return this;
+    }
+
+    @Override
+    public int getIndent() {
+        Object c = options.get("indent");
+        int i = NLiteral.of(c).asInt().orElse(-1);
+        if (i < 0) {
+            i = 2;
+        }
+        return i;
+    }
+
+    @Override
+    public DefaultNElementFormatterBuilder setIndent(int indent) {
+        options.put("indent", indent);
+        return this;
+    }
+
+    @Override
+    public int getComplexityThreshold() {
+        Object c = options.get("indent");
+        int i = NLiteral.of(c).asInt().orElse(-1);
+        if (i < 0) {
+            i = 30;
+        }
+        return i;
+    }
+
+    @Override
+    public DefaultNElementFormatterBuilder setComplexityThreshold(int complexityThreshold) {
+        options.put("complexity", complexityThreshold);
+        return this;
+    }
+
+
+    @Override
+    public NElementFormatterBuilder removeWhitespaces() {
+        removeAffixes(null, x -> {
+            switch (x.affix().type()) {
+                case SPACE:
+                case NEWLINE:
+                    return true;
             }
+            return false;
         });
+        return this;
+    }
+
+    @Override
+    public NElementFormatterBuilder removeSeparators() {
+        removeAffixes(null, x -> {
+            switch (x.affix().type()) {
+                case SEPARATOR:
+                    return true;
+            }
+            return false;
+        });
+        return this;
+    }
+
+    @Override
+    public NElementFormatterBuilder removeNewlines() {
+        removeAffixes(null, x -> {
+            switch (x.affix().type()) {
+                case NEWLINE:
+                    return true;
+            }
+            return false;
+        });
+        return this;
+    }
+
+    @Override
+    public NElementFormatterBuilder removeComments() {
+        removeAffixes(null, x -> {
+            switch (x.affix().type()) {
+                case BLOC_COMMENT:
+                case LINE_COMMENT:
+                    return true;
+            }
+            return false;
+        });
+        return this;
+    }
+
+    @Override
+    public NElementFormatterBuilder removeAffixes(NElementType elementType, Predicate<NBoundAffix> affixPredicate) {
+        addAction(new RemovedAffixesElementFormatterAction(elementType, affixPredicate));
         return this;
     }
 
@@ -224,79 +298,12 @@ public class DefaultNElementFormatterBuilder implements NElementFormatterBuilder
         return this;
     }
 
-    @Override
-    public NContentType getContentType() {
-        return contentType;
-    }
-
-    @Override
-    public DefaultNElementFormatterBuilder setContentType(NContentType contentType) {
-        this.contentType = contentType;
-        return this;
-    }
-
-    @Override
-    public NElementFormatterStyle getStyle() {
-        return style;
-    }
-
-    @Override
-    public DefaultNElementFormatterBuilder setStyle(NElementFormatterStyle style) {
-        if (style == null) {
-            //do nothing
-        } else if (style != this.style) {
-            this.style = style;
-        }
-        return this;
-    }
-
-    @Override
-    public int getIndent() {
-        return indent;
-    }
-
-    @Override
-    public DefaultNElementFormatterBuilder setIndent(int indent) {
-        this.indent = indent;
-        return this;
-    }
-
-    @Override
-    public int getMaxWidth() {
-        return maxWidth;
-    }
-
-    @Override
-    public DefaultNElementFormatterBuilder setMaxWidth(int maxWidth) {
-        this.maxWidth = maxWidth;
-        return this;
-    }
-
-    @Override
-    public int getComplexityThreshold() {
-        return complexityThreshold;
-    }
-
-    @Override
-    public DefaultNElementFormatterBuilder setComplexityThreshold(int complexityThreshold) {
-        this.complexityThreshold = complexityThreshold;
-        return this;
-    }
 
     @Override
     public NElementFormatter build() {
-        switch (style) {
-            case COMPACT: {
-                clear(null, null, null);
-                break;
-            }
-            case PRETTY: {
-                clear(null, null, null);
-                addAction(new TsonFormatPrettyAction());
-                break;
-            }
-        }
-        return new DefaultNElementFormatter(actions, this);
+        HashMap<String, Object> o = new HashMap<>(options);
+        o.put("sanitize", true);
+        return new DefaultNElementFormatter(actions, o);
     }
 
 }
