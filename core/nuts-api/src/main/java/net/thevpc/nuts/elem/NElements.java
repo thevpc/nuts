@@ -110,7 +110,7 @@ public interface NElements extends NComponent {
 
     NElementMapperStore mapperStore();
 
-    NElementType commonNumberType(NElementType aa, NElementType bb) ;
+    NElementType commonNumberType(NElementType aa, NElementType bb);
 
     NExprElementReshaperBuilder createLogicalExprElementReshaperBuilder();
 
@@ -127,6 +127,8 @@ public interface NElements extends NComponent {
     NExprElementReshaperBuilder createDefaultExprElementReshaperBuilder();
 
     NElementFormatterBuilder createElementFormatterBuilder();
+
+    NElementFormatter createElementFormatter(NElementFormatterStyle style);
 
     NElementPath createRootPath();
 }
