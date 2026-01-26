@@ -32,7 +32,7 @@ package net.thevpc.nuts.elem;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NUnaryOperatorElement extends NExprElement {
+public interface NUnaryOperatorElement extends NOperatorElement {
     NOperatorSymbol operatorSymbol();
     NElement operand();
 }
