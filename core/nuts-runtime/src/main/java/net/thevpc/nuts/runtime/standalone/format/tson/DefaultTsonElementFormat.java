@@ -29,6 +29,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCustomParser;
+import net.thevpc.nuts.text.NContentType;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -51,7 +52,7 @@ public class DefaultTsonElementFormat implements NElementStreamFormat {
 
     public void write(NPrintStream out, NElement data, NElementFormatter formatter) {
         DefaultTsonWriter d = new DefaultTsonWriter(out.asStringWriter());
-        d.write(data.format(formatter));
+        d.write(data.format(NContentType.TSON, formatter));
     }
 
     @Override
