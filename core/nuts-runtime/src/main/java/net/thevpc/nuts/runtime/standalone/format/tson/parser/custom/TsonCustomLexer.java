@@ -572,6 +572,8 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     return readLineCommentStart(sb);
                 }
                 return false;
+            }else{
+                return false;
             }
         }
     }
