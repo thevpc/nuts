@@ -29,6 +29,7 @@ import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.*;
@@ -125,35 +126,35 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     }
 
 
-    static NExprElementBuilder ofExprBuilder() {
+    static NOperatorElementBuilder ofExprBuilder() {
         return NElementFactory.of().ofOpBuilder();
     }
 
-    static NExprElementBuilder ofExprBuilder(NOperatorSymbol op) {
-        return NElementFactory.of().ofOpBuilder().symbol(op);
+    static NOperatorElementBuilder ofExprBuilder(NOperatorSymbol op) {
+        return NElementFactory.of().ofOpBuilder().operator(op);
     }
 
-    static NExprElement ofOp(NOperatorSymbol op, NOperatorPosition operatorType, NElement first, NElement second) {
+    static NOperatorElement ofOp(NOperatorSymbol op, NOperatorPosition operatorType, NElement first, NElement second) {
         return NElementFactory.of().ofOp(op, operatorType, first, second);
     }
 
-    static NExprElement ofOp(NOperatorSymbol op, NElement first, NElement second) {
+    static NOperatorElement ofOp(NOperatorSymbol op, NElement first, NElement second) {
         return NElementFactory.of().ofOp(op, first, second);
     }
 
-    static NExprElement ofOp(NOperatorSymbol op, NElement first) {
+    static NOperatorElement ofOp(NOperatorSymbol op, NElement first) {
         return NElementFactory.of().ofOp(op, first);
     }
 
-    static NExprElementBuilder ofExprBuilder(NOperatorSymbol op, NOperatorPosition operatorType, NElement first, NElement second) {
-        return ofExprBuilder().symbol(op).position(operatorType).first(first).second(second);
+    static NOperatorElementBuilder ofExprBuilder(NOperatorSymbol op, NOperatorPosition operatorType, NElement first, NElement second) {
+        return ofExprBuilder().operator(op).position(operatorType).first(first).second(second);
     }
 
-    static NExprElementBuilder ofExprBuilder(NOperatorSymbol op, NElement first, NElement second) {
+    static NOperatorElementBuilder ofExprBuilder(NOperatorSymbol op, NElement first, NElement second) {
         return ofExprBuilder(op, null, first, second);
     }
 
-    static NExprElementBuilder ofExprBuilder(NOperatorSymbol op, NElement first) {
+    static NOperatorElementBuilder ofExprBuilder(NOperatorSymbol op, NElement first) {
         return ofExprBuilder(op, null, first, null);
     }
 
@@ -556,28 +557,28 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
         return NElementFactory.of().ofNamedArray(name, items);
     }
 
-    static NArrayElement ofNamedParametrizedArray(String name, NElement[] params, NElement... items) {
-        return NElementFactory.of().ofNamedParametrizedArray(name, items);
+    static NArrayElement ofFullArray(String name, NElement[] params, NElement... items) {
+        return NElementFactory.of().ofFullArray(name, items);
     }
 
     static NArrayElement ofArray(String name, NElement[] params, NElement... items) {
         return NElementFactory.of().ofArray(name, params, items);
     }
 
-    static NArrayElement ofParametrizedArray(NElement[] params, NElement... items) {
-        return NElementFactory.of().ofParametrizedArray(params, items);
+    static NArrayElement ofParamArray(NElement[] params, NElement... items) {
+        return NElementFactory.of().ofParamArray(params, items);
     }
 
-    static NArrayElement ofParametrizedArray(NElement... params) {
-        return NElementFactory.of().ofParametrizedArray(params);
+    static NArrayElement ofParamArray(NElement... params) {
+        return NElementFactory.of().ofParamArray(params);
     }
 
-    static NArrayElement ofParametrizedArray(String name, NElement[] params, NElement... items) {
-        return NElementFactory.of().ofParametrizedArray(name, params, items);
+    static NArrayElement ofParamArray(String name, NElement[] params, NElement... items) {
+        return NElementFactory.of().ofParamArray(name, params, items);
     }
 
-    static NArrayElement ofParametrizedArray(String name, NElement... params) {
-        return NElementFactory.of().ofParametrizedArray(name, params);
+    static NArrayElement ofParamArray(String name, NElement... params) {
+        return NElementFactory.of().ofParamArray(name, params);
     }
 
     static NArrayElement ofStringArray(String... items) {
@@ -634,28 +635,28 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
         return NElementFactory.of().ofNamedObject(name, items);
     }
 
-    static NObjectElement ofNamedParametrizedObject(String name, NElement[] params, NElement... items) {
-        return NElementFactory.of().ofNamedParametrizedObject(name, params, items);
+    static NObjectElement ofFullObject(String name, NElement[] params, NElement... items) {
+        return NElementFactory.of().ofFullObject(name, params, items);
     }
 
-    static NObjectElement ofParametrizedObject(NElement[] params, NElement... items) {
-        return NElementFactory.of().ofParametrizedObject(params, items);
+    static NObjectElement ofParamObject(NElement[] params, NElement... items) {
+        return NElementFactory.of().ofParamObject(params, items);
     }
 
-    static NObjectElement ofParametrizedObject(NElement... params) {
-        return NElementFactory.of().ofParametrizedObject(params);
+    static NObjectElement ofParamObject(NElement... params) {
+        return NElementFactory.of().ofParamObject(params);
     }
 
-    static NObjectElement ofParametrizedObject(String name, NElement[] params, NElement... items) {
-        return NElementFactory.of().ofParametrizedObject(name, params, items);
+    static NObjectElement ofParamObject(String name, NElement[] params, NElement... items) {
+        return NElementFactory.of().ofParamObject(name, params, items);
     }
 
     static NObjectElement ofObject(String name, NElement[] params, NElement... items) {
         return NElementFactory.of().ofObject(name, params, items);
     }
 
-    static NObjectElement ofParametrizedObject(String name, NElement... params) {
-        return NElementFactory.of().ofParametrizedObject(name, params);
+    static NObjectElement ofParamObject(String name, NElement... params) {
+        return NElementFactory.of().ofParamObject(name, params);
     }
 
     static NElementComment ofBlocComment(String... comments) {
@@ -856,13 +857,13 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     boolean isAnyNamedObject(String name);
 
-    boolean isParametrizedObject();
+    boolean isParamObject();
 
-    boolean isNamedParametrizedObject();
+    boolean isFullObject();
 
-    boolean isNamedParametrizedObject(Predicate<String> nameCondition);
+    boolean isFullObject(Predicate<String> nameCondition);
 
-    boolean isNamedParametrizedObject(String name);
+    boolean isFullObject(String name);
 
     boolean isNamedArray();
 
@@ -882,11 +883,11 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     boolean isAnyNamedArray(String name);
 
-    boolean isParametrizedArray();
+    boolean isParamArray();
 
-    boolean isNamedParametrizedArray();
+    boolean isFullArray();
 
-    boolean isNamedParametrizedArray(String name);
+    boolean isFullArray(String name);
 
     boolean isName(String name);
 
@@ -942,9 +943,9 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     NOptional<NParametrizedContainerElement> asParametrizedContainer();
 
-    NOptional<NObjectElement> asParametrizedObject();
+    NOptional<NObjectElement> asParamObject();
 
-    NOptional<NObjectElement> asNamedParametrizedObject(String name);
+    NOptional<NObjectElement> asFullObject(String name);
 
     NOptional<NNamedElement> asNamed();
 
@@ -1146,7 +1147,7 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     boolean isAnyDate();
 
-    NOptional<NExprElement> asOperator();
+    NOptional<NOperatorElement> asOperator();
 
     NOptional<NOperatorSymbolElement> asOperatorSymbol();
 
@@ -1197,7 +1198,7 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     /**
      * Semantic sugar for applying a formatter.
      */
-    NElement format(NElementFormatter formatter);
+    NElement format(NContentType contentType,NElementFormatter formatter);
 
     String snippet();
 
@@ -1224,4 +1225,8 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     NOptional<NTernaryOperatorElement> asTernaryOperator();
 
     NOptional<NAryOperatorElement> asNaryOperator();
+
+    List<NElement> filter(NElementSelector selector);
+
+    List<NElement> filter(String selector);
 }
