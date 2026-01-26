@@ -115,18 +115,18 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
-    public NExprElementBuilder ofOpBuilder() {
-        return new DefaultNExprElementBuilder();
+    public NOperatorElementBuilder ofOpBuilder() {
+        return new DefaultNOperatorElementBuilder();
     }
 
 
     @Override
-    public NExprElement ofOp(NOperatorSymbol op, NOperatorPosition type, NElement first, NElement second) {
-        return ofOpBuilder().symbol(op).position(type).first(first).second(second).build();
+    public NOperatorElement ofOp(NOperatorSymbol op, NOperatorPosition type, NElement first, NElement second) {
+        return ofOpBuilder().operator(op).position(type).first(first).second(second).build();
     }
 
     @Override
-    public NExprElement ofOp(NOperatorSymbol op, NElement first, NElement second) {
+    public NOperatorElement ofOp(NOperatorSymbol op, NElement first, NElement second) {
         return ofOp(op, null, first, second);
     }
 
@@ -173,7 +173,7 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
-    public NExprElement ofOp(NOperatorSymbol op, NElement operand) {
+    public NOperatorElement ofOp(NOperatorSymbol op, NElement operand) {
         return ofOp(op, null, operand, null);
     }
 
@@ -313,7 +313,7 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
-    public NArrayElement ofNamedParametrizedArray(String name, NElement[] params, NElement... items) {
+    public NArrayElement ofFullArray(String name, NElement[] params, NElement... items) {
         return ofArrayBuilder().name(name).addParams(params == null ? null : Arrays.asList(params)).addAll(items).build();
     }
 
@@ -323,18 +323,18 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
-    public NArrayElement ofParametrizedArray(NElement... params) {
+    public NArrayElement ofParamArray(NElement... params) {
         return ofArrayBuilder().addParams(params == null ? null : Arrays.asList(params)).build();
     }
 
 
     @Override
-    public NArrayElement ofParametrizedArray(NElement[] params, NElement... items) {
+    public NArrayElement ofParamArray(NElement[] params, NElement... items) {
         return ofArrayBuilder().addParams(params == null ? null : Arrays.asList(params)).addAll(items).build();
     }
 
     @Override
-    public NArrayElement ofParametrizedArray(String name, NElement[] params, NElement... items) {
+    public NArrayElement ofParamArray(String name, NElement[] params, NElement... items) {
         return ofArrayBuilder().name(name).addParams(params == null ? null : Arrays.asList(params)).addAll(items).build();
     }
 
@@ -344,7 +344,7 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
-    public NArrayElement ofParametrizedArray(String name, NElement... params) {
+    public NArrayElement ofParamArray(String name, NElement... params) {
         return ofArrayBuilder().name(name).addParams(params == null ? null : Arrays.asList(params)).build();
     }
 
@@ -354,12 +354,12 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
-    public NObjectElement ofParametrizedObject(NElement[] params, NElement... items) {
+    public NObjectElement ofParamObject(NElement[] params, NElement... items) {
         return ofObjectBuilder().addParams(params == null ? null : Arrays.asList(params)).addAll(items).build();
     }
 
     @Override
-    public NObjectElement ofParametrizedObject(String name, NElement[] params, NElement... items) {
+    public NObjectElement ofParamObject(String name, NElement[] params, NElement... items) {
         return ofObjectBuilder().name(name).addParams(params == null ? null : Arrays.asList(params)).addAll(items).build();
     }
 
@@ -374,17 +374,17 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
-    public NObjectElement ofNamedParametrizedObject(String name, NElement[] params, NElement... items) {
+    public NObjectElement ofFullObject(String name, NElement[] params, NElement... items) {
         return ofObjectBuilder().name(name).addParams(params == null ? null : Arrays.asList(params)).addAll(items).build();
     }
 
     @Override
-    public NObjectElement ofParametrizedObject(NElement... params) {
+    public NObjectElement ofParamObject(NElement... params) {
         return ofObjectBuilder().addParams(params == null ? null : Arrays.asList(params)).build();
     }
 
     @Override
-    public NObjectElement ofParametrizedObject(String name, NElement... params) {
+    public NObjectElement ofParamObject(String name, NElement... params) {
         return ofObjectBuilder().name(name).addParams(params == null ? null : Arrays.asList(params)).build();
     }
 
