@@ -261,7 +261,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
      * @throws IndexOutOfBoundsException if the index is out of range
      *                                   ({@code index < 0 || index >= size()})
      */
-    NArrayElementBuilder set(int index, NElement element);
+    NArrayElementBuilder setAt(int index, NElement element);
 
     /**
      * remove all elements from this array.
@@ -311,6 +311,8 @@ public interface NArrayElementBuilder extends NElementBuilder {
     NArrayElementBuilder addParam(String name, Double value);
 
     NArrayElementBuilder addParam(String name, Boolean value);
+
+    NArrayElementBuilder setParamAt(int i, NElement element);
 
     NArrayElementBuilder setParams(List<NElement> params);
 
@@ -373,4 +375,5 @@ public interface NArrayElementBuilder extends NElementBuilder {
     NArrayElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NArrayElementBuilder addAffixes(List<NBoundAffix> affixes);
+
 }
