@@ -1,13 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NUnsupportedOperationException;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.elem.NElementWriter;
-import net.thevpc.nuts.text.NContentType;
-import net.thevpc.nuts.text.NIterableFormat;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.reflect.NReflectRepository;
@@ -24,9 +23,7 @@ import net.thevpc.nuts.runtime.standalone.format.xml.DefaultSearchFormatXml;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NProgressFactory;
-import net.thevpc.nuts.text.NMsg;
 
 import java.lang.reflect.Type;
 import java.util.function.Consumer;
@@ -58,6 +55,31 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
         if (doWith != null) {
             doWith.accept(mapperStore());
         }
+        return this;
+    }
+
+
+    @Override
+    public NObjectWriter setFormatterCompact() {
+        return setFormatter(NElementFormatterStyle.COMPACT);
+    }
+
+    @Override
+    public NObjectWriter setFormatterPretty() {
+        return setFormatter(NElementFormatterStyle.PRETTY);
+    }
+
+    @Override
+    public NObjectWriter setFormatterVerbatim() {
+        return setFormatter(NElementFormatterStyle.VERBATIM);
+    }
+
+    @Override
+    public NObjectWriter setFormatter(NElementFormatterStyle style) {
+        setFormatter(
+                style == null ? null :
+                        NElementFormatter.of(style)
+        );
         return this;
     }
 
@@ -120,28 +142,18 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
         if (formatter != null) {
             return formatter;
         }
-        switch (contentType) {
-            case JSON:
-                return NElementFormatter.ofJsonPretty();
-            case TSON:
-                return NElementFormatter.ofTsonPretty();
-            case XML:
-                return NElementFormatter.ofXmlPretty();
-            case YAML:
-                return NElementFormatter.ofYamlPretty();
-            default:
-                return NElementFormatterBuilder.of()
-                        .setStyle(NElementFormatterStyle.COMPACT)
-                        .setContentType(contentType)
-                        .build()
-                ;
-        }
+        return NElementFormatter.ofPretty();
     }
 
     @Override
     public NElementWriter setFormatter(NElementFormatter formatter) {
         this.formatter = formatter;
         return this;
+    }
+
+    @Override
+    public NElementWriter setCompact(boolean compact) {
+        return setFormatter(NElementFormatter.ofCompact(compact));
     }
 
     @Override
