@@ -32,7 +32,6 @@ import java.util.Map;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.text.NObjectObjectWriter;
 import net.thevpc.nuts.text.*;
 import org.junit.jupiter.api.*;
 
@@ -53,7 +52,7 @@ public class ElementTest {
         NElement e = NElementReader.ofTson().read(str);
         TestUtils.println(e);
 
-        String json0 = NElementWriter.ofTson().setFormatter(NElementFormatter.ofTsonCompact()).formatPlain(e);
+        String json0 = NElementWriter.ofTson().setFormatter(NElementFormatter.ofCompact()).formatPlain(e);
         TestUtils.println(json0);
     }
 
@@ -61,7 +60,15 @@ public class ElementTest {
     public void test02() {
         String str = "{path:\"path1\" color:\"red\"}";
         NElement e = NElementReader.ofTson().read(str);
-        String json1 = NElementWriter.ofTson().setFormatter(NElementFormatter.ofTsonPretty()).formatPlain(e);
+        String json1 = NElementWriter.ofTson()
+                .setFormatter(
+                        NElementFormatter
+                                .ofPretty().builder()
+                                .setComplexityThreshold(40)
+                                .setColumnLimit(200)
+                                .build()
+                )
+                .formatPlain(e);
         TestUtils.println("\n" + json1);
     }
 
@@ -69,17 +76,19 @@ public class ElementTest {
     public void test03() {
         String str = "{path:\"path1\" color1:\"red1\" color2:\"red2\" color3:\"red3\" color4:\"red4\" color5:\"red5\" color6:\"red6\" color7:\"red7\"}";
         NElement e = NElementReader.ofTson().read(str);
-        String json1 = NElementWriter.ofTson().setFormatter(
-                NElementFormatter
-                        .ofTsonPrettyBuilder()
-                        .setComplexityThreshold(40)
-                        .setColumnLimit(200)
-                        .build()
-        ).formatPlain(e);
+        String json1 = NElementWriter.ofTson()
+                .setFormatter(
+                        NElementFormatter
+                                .ofPretty().builder()
+                                .setComplexityThreshold(40)
+                                .setColumnLimit(200)
+                                .build()
+                )
+                .formatPlain(e);
         TestUtils.println("\njson1\n" + json1);
         String json2 = NElementWriter.ofTson().setFormatter(
                 NElementFormatter
-                        .ofTsonPrettyBuilder()
+                        .ofPretty().builder()
                         .setComplexityThreshold(20)
                         .setColumnLimit(50)
                         .build()
@@ -93,7 +102,7 @@ public class ElementTest {
         NElement e = NElementReader.ofTson().read(str);
         String json1 = NElementWriter.ofTson().setFormatter(
                 NElementFormatter
-                        .ofTsonPrettyBuilder()
+                        .ofPretty().builder()
                         .setComplexityThreshold(4)
                         .setColumnLimit(1024)
                         .build()
@@ -101,10 +110,8 @@ public class ElementTest {
         TestUtils.println("\njson1\n" + json1);
     }
 
-    @Test
-    public void test1() {
-        NElement p
-                = NElement.ofArrayBuilder()
+    private NElement memExample() {
+        return NElement.ofArrayBuilder()
                 .add(
                         NElement.ofObjectBuilder().set("first",
                                         NElement.ofObjectBuilder()
@@ -147,44 +154,54 @@ public class ElementTest {
                                 .build()
                 ).build())
                 .build();
-        NObjectObjectWriter ss = NObjectObjectWriter.of().setNtf(false);
-        ss.println(p);
+    }
+
+    @Test
+    public void test1() {
+        NElement p = memExample();
+//        NObjectObjectWriter ss = NObjectObjectWriter.of().setNtf(false);
+        TestUtils.println(p);
         String json = NElementWriter.ofTson().setFormatter(
                 NElementFormatter
-                .ofTsonPrettyBuilder()
-                .setComplexityThreshold(10)
-                .setColumnLimit(200)
-                .build()).formatPlain(p);
+                        .ofPretty().builder()
+                        .setComplexityThreshold(10)
+                        .setColumnLimit(200)
+                        .build()).formatPlain(p);
 //        String json = ss.formatPlain(p);
         String EXPECTED = "[\n" +
                 "  {\n" +
                 "    first : {\n" +
-                "        name : \"first name\"  ,\n" +
-                "        valid : true  ,\n" +
-                "        children : [\n" +
-                "            {path : \"path1\", color : \"red\"}  ,\n" +
-                "            {path : \"path2\", color : \"green\"}\n" +
-                "          ]\n" +
-                "      }\n" +
-                "  }  ,\n" +
+                "      name : \"first name\" ,\n" +
+                "      valid : true ,\n" +
+                "      children : [\n" +
+                "        {path : \"path1\", color : \"red\"} ,\n" +
+                "        {path : \"path2\", color : \"green\"}\n" +
+                "      ]\n" +
+                "    }\n" +
+                "  } ,\n" +
                 "  {\n" +
                 "    second : {\n" +
-                "        name : \"second name\"  ,\n" +
-                "        valid : true  ,\n" +
-                "        children : [\n" +
-                "            {path : \"path3\", color : \"yellow\"}  ,\n" +
-                "            {path : \"path4\", color : \"magenta\"}\n" +
-                "          ]\n" +
-                "      }\n" +
+                "      name : \"second name\" ,\n" +
+                "      valid : true ,\n" +
+                "      children : [\n" +
+                "        {path : \"path3\", color : \"yellow\"} ,\n" +
+                "        {path : \"path4\", color : \"magenta\"}\n" +
+                "      ]\n" +
+                "    }\n" +
                 "  }\n" +
                 "]";
         TestUtils.println("EXPECTED");
-        TestUtils.println("\n"+EXPECTED);
+        TestUtils.println("\n" + EXPECTED);
         TestUtils.println("-----------------------------------------------------");
-        TestUtils.println("\n"+"RESULT");
-        TestUtils.println("\n"+json);
+        TestUtils.println("\n" + "RESULT");
+        TestUtils.println("\n" + json);
         Assertions.assertEquals(EXPECTED, json);
 
+
+    }
+
+    @Test
+    public void testPaths() {
         class TT {
 
             final String path;
@@ -195,84 +212,24 @@ public class ElementTest {
                 this.expected = Arrays.asList(expected);
             }
 
-            void check(List<NElement> a) {
-
-            }
         }
+        NElement p = memExample();
 
-        for (TT tt : new TT[]{
-                new TT("", "[[\n" +
-                        "  {\n" +
-                        "    first : {\n" +
-                        "        name : \"first name\"  ,\n" +
-                        "        valid : true  ,\n" +
-                        "        children : [\n" +
-                        "            {path : \"path1\", color : \"red\"}  ,\n" +
-                        "            {path : \"path2\", color : \"green\"}\n" +
-                        "          ]\n" +
-                        "      }\n" +
-                        "  }  ,\n" +
-                        "  {\n" +
-                        "    second : {\n" +
-                        "        name : \"second name\"  ,\n" +
-                        "        valid : true  ,\n" +
-                        "        children : [\n" +
-                        "            {path : \"path3\", color : \"yellow\"}  ,\n" +
-                        "            {path : \"path4\", color : \"magenta\"}\n" +
-                        "          ]\n" +
-                        "      }\n" +
-                        "  }\n" +
-                        "]]"),
-                new TT(".", "[{\n" +
-                        "  first : {\n" +
-                        "      name : \"first name\"  ,\n" +
-                        "      valid : true  ,\n" +
-                        "      children : [\n" +
-                        "          {path : \"path1\", color : \"red\"}  ,\n" +
-                        "          {path : \"path2\", color : \"green\"}\n" +
-                        "        ]\n" +
-                        "    }\n" +
-                        "}, {\n" +
-                        "  second : {\n" +
-                        "      name : \"second name\"  ,\n" +
-                        "      valid : true  ,\n" +
-                        "      children : [\n" +
-                        "          {path : \"path3\", color : \"yellow\"}  ,\n" +
-                        "          {path : \"path4\", color : \"magenta\"}\n" +
-                        "        ]\n" +
-                        "    }\n" +
-                        "}]"),
-                new TT("*", "[{\n" +
-                        "  first : {\n" +
-                        "      name : \"first name\"  ,\n" +
-                        "      valid : true  ,\n" +
-                        "      children : [\n" +
-                        "          {path : \"path1\", color : \"red\"}  ,\n" +
-                        "          {path : \"path2\", color : \"green\"}\n" +
-                        "        ]\n" +
-                        "    }\n" +
-                        "}, {\n" +
-                        "  second : {\n" +
-                        "      name : \"second name\"  ,\n" +
-                        "      valid : true  ,\n" +
-                        "      children : [\n" +
-                        "          {path : \"path3\", color : \"yellow\"}  ,\n" +
-                        "          {path : \"path4\", color : \"magenta\"}\n" +
-                        "        ]\n" +
-                        "    }\n" +
-                        "}]"),
-                new TT(".*.name", "[\"first name\", \"second name\"]"),
-                new TT("..name", "[\"first name\", \"second name\"]"),
-                new TT("*.*.name", "[\"first name\", \"second name\"]")
-        }) {
-            TestUtils.println("=====================================");
-            TestUtils.println("CHECKING : '" + tt.path + "'");
-            List<NElement> filtered1 = NElementSelector.of(tt.path).filter(p);
-            ss.println(filtered1);
-            NText sexpected = NText.ofPlain(tt.expected.get(0));
-            NText sresult = ss.format(filtered1);
-            Assertions.assertEquals(sexpected, sresult);
-        }
+        testSelectorHelper(p, "", "[[{first:{name:\"first name\" valid:true children:[{path:\"path1\" color:\"red\"}{path:\"path2\" color:\"green\"}]}}{second:{name:\"second name\" valid:true children:[{path:\"path3\" color:\"yellow\"}{path:\"path4\" color:\"magenta\"}]}}]]");
+        testSelectorHelper(p, ".", "[{first:{name:\"first name\" valid:true children:[{path:\"path1\" color:\"red\"}{path:\"path2\" color:\"green\"}]}}{second:{name:\"second name\" valid:true children:[{path:\"path3\" color:\"yellow\"}{path:\"path4\" color:\"magenta\"}]}}]");
+        testSelectorHelper(p, "*", "[{first:{name:\"first name\" valid:true children:[{path:\"path1\" color:\"red\"}{path:\"path2\" color:\"green\"}]}}{second:{name:\"second name\" valid:true children:[{path:\"path3\" color:\"yellow\"}{path:\"path4\" color:\"magenta\"}]}}]");
+        testSelectorHelper(p, ".*.name", "[\"first name\" \"second name\"]");
+        testSelectorHelper(p, "..name", "[\"first name\" \"second name\"]");
+        testSelectorHelper(p, "*.*.name", "[\"first name\" \"second name\"]");
+    }
+
+    private void testSelectorHelper(NElement p, String path, String expected) {
+        TestUtils.println("CHECKING : '" + path + "'");
+        List<NElement> filtered1 = p.filter(path);
+        String sresult = NElementWriter.ofTson().setFormatter(NElementFormatter.ofCompact()).formatPlain(filtered1);
+        TestUtils.println("EXPECTED  : " + expected);
+        TestUtils.println("FOUND     : " + sresult);
+        Assertions.assertEquals(expected, sresult);
     }
 
     @Test
