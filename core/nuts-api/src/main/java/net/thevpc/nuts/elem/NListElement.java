@@ -9,4 +9,6 @@ public interface NListElement extends NElement{
     int depth();
     int size();
     List<NListItemElement> items();
+
+    NListElementBuilder builder();
 }
