@@ -109,6 +109,20 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
+    public NArrayElementBuilder setParamAt(int index, NElement param) {
+        if (param != null) {
+            if (this.params == null) {
+                this.params = new ArrayList<>();
+            }
+            while (this.params.size() < index + 1) {
+                this.params.add(NElement.ofNull());
+            }
+            this.params.set(index,param);
+        }
+        return this;
+    }
+
+    @Override
     public NArrayElementBuilder addParamAt(int index, NElement param) {
         if (param != null) {
             if (this.params == null) {
@@ -213,7 +227,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NArrayElementBuilder set(int index, NElement e) {
+    public NArrayElementBuilder setAt(int index, NElement e) {
         values.set(index, denull(e));
         return this;
     }
@@ -345,11 +359,6 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
                 affixes(), diagnostics());
     }
 
-    @Override
-    public String toString() {
-        return "[" + items().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
-    }
-
     private NElement denull(NElement e) {
         if (e == null) {
             return NElement.ofNull();
@@ -360,13 +369,13 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     @Override
     public NElementType type() {
         if (name != null && params != null) {
-            return NElementType.NAMED_PARAMETRIZED_ARRAY;
+            return NElementType.FULL_ARRAY;
         }
         if (name != null) {
             return NElementType.NAMED_ARRAY;
         }
         if (params != null) {
-            return NElementType.PARAMETRIZED_ARRAY;
+            return NElementType.PARAM_ARRAY;
         }
         return NElementType.ARRAY;
     }
