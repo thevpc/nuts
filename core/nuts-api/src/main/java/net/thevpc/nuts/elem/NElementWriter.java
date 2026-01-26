@@ -31,6 +31,7 @@ import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NContentTypeWriter;
 import net.thevpc.nuts.text.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.text.NObjectWriter;
 import net.thevpc.nuts.time.NProgressFactory;
 
 import java.util.function.Consumer;
@@ -184,6 +185,8 @@ public interface NElementWriter extends NContentTypeWriter {
 
     NElementWriter setFormatter(NElementFormatter formatter);
 
+    NElementWriter setCompact(boolean compact);
+
     NIterableFormat iter(NPrintStream out);
 
     boolean isLogProgress();
@@ -201,4 +204,12 @@ public interface NElementWriter extends NContentTypeWriter {
     NElementMapperStore mapperStore();
 
     NElementWriter doWithMapperStore(Consumer<NElementMapperStore> doWith);
+
+    NObjectWriter setFormatterCompact();
+
+    NObjectWriter setFormatterPretty();
+
+    NObjectWriter setFormatterVerbatim();
+
+    NObjectWriter setFormatter(NElementFormatterStyle style);
 }
