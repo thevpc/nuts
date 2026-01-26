@@ -30,6 +30,7 @@ import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
@@ -240,18 +241,18 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public boolean isParametrizedObject() {
-        return type() == NElementType.PARAMETRIZED_OBJECT;
+    public boolean isParamObject() {
+        return type() == NElementType.PARAM_OBJECT;
     }
 
     @Override
-    public boolean isNamedParametrizedObject() {
-        return type().isAnyParametrizedObject();
+    public boolean isFullObject() {
+        return type().isAnyParamObject();
     }
 
     @Override
-    public boolean isNamedParametrizedObject(String name) {
-        return type() == NElementType.NAMED_PARAMETRIZED_OBJECT && isNamed(name);
+    public boolean isFullObject(String name) {
+        return type() == NElementType.FULL_OBJECT && isNamed(name);
     }
 
     @Override
@@ -311,8 +312,8 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public NOptional<NObjectElement> asParametrizedObject() {
-        if (isParametrizedObject()) {
+    public NOptional<NObjectElement> asParamObject() {
+        if (isParamObject()) {
             return NOptional.of((NObjectElement) this);
         }
         return NOptional.ofEmpty(_expected("parametrized object"));
@@ -349,12 +350,12 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public String toString() {
-        return DefaultTsonWriter.formatTson(this);
+        return DefaultTsonWriter.formatTson(this.format(NContentType.TSON, NElementFormatter.ofSafe()));
     }
 
     @Override
-    public NOptional<NObjectElement> asNamedParametrizedObject(String name) {
-        if (isNamedParametrizedObject(name)) {
+    public NOptional<NObjectElement> asFullObject(String name) {
+        if (isFullObject(name)) {
             return NOptional.of((NObjectElement) this);
         }
         return NOptional.ofEmpty(_expected("parametrized object " + name));
@@ -389,18 +390,18 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public boolean isParametrizedArray() {
-        return type() == NElementType.PARAMETRIZED_ARRAY;
+    public boolean isParamArray() {
+        return type() == NElementType.PARAM_ARRAY;
     }
 
     @Override
-    public boolean isNamedParametrizedArray() {
-        return type().isAnyParametrizedArray();
+    public boolean isFullArray() {
+        return type().isAnyParamArray();
     }
 
     @Override
-    public boolean isNamedParametrizedArray(String name) {
-        return type() == NElementType.NAMED_PARAMETRIZED_ARRAY && isNamed(name);
+    public boolean isFullArray(String name) {
+        return type() == NElementType.FULL_ARRAY && isNamed(name);
     }
 
     @Override
@@ -433,8 +434,8 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public boolean isNamedParametrizedObject(Predicate<String> nameCondition) {
-        return isNamedParametrizedObject() && isNamed(nameCondition);
+    public boolean isFullObject(Predicate<String> nameCondition) {
+        return isFullObject() && isNamed(nameCondition);
     }
 
     @Override
@@ -442,10 +443,10 @@ public abstract class AbstractNElement implements NElement {
         return Collections.emptyList();
     }
 
-    @Override
-    public NElementBuilder builder() {
-        return null;
-    }
+//    @Override
+//    public NElementBuilder builder() {
+//        return null;
+//    }
 
     @Override
     public List<NElementAnnotation> findAnnotations(String name) {
@@ -625,9 +626,9 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public NOptional<NExprElement> asOperator() {
-        if (this instanceof NExprElement) {
-            return NOptional.of((NExprElement) this);
+    public NOptional<NOperatorElement> asOperator() {
+        if (this instanceof NOperatorElement) {
+            return NOptional.of((NOperatorElement) this);
         }
         return NOptional.ofEmpty(_expected("operator"));
     }
@@ -689,9 +690,9 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public boolean isBinaryInfixOperator() {
         if (type() == NElementType.BINARY_OPERATOR) {
-            NOptional<NExprElement> o = asOperator();
+            NOptional<NOperatorElement> o = asOperator();
             if (o.isPresent()) {
-                NExprElement oo = o.get();
+                NOperatorElement oo = o.get();
                 return oo.position() == NOperatorPosition.INFIX;
             }
         }
@@ -701,9 +702,9 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public boolean isUnaryPrefixOperator() {
         if (type() == NElementType.UNARY_OPERATOR) {
-            NOptional<NExprElement> o = asOperator();
+            NOptional<NOperatorElement> o = asOperator();
             if (o.isPresent()) {
-                NExprElement oo = o.get();
+                NOperatorElement oo = o.get();
                 return oo.position() == NOperatorPosition.PREFIX;
             }
         }
@@ -1163,8 +1164,8 @@ public abstract class AbstractNElement implements NElement {
                 return NOptional.of((NObjectElement) this);
             }
             case NAMED_OBJECT:
-            case PARAMETRIZED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT: {
+            case PARAM_OBJECT:
+            case FULL_OBJECT: {
                 NObjectElement u = asObject().orNull();
                 return NOptional.of(NElement.ofObjectBuilder().name(u.name().orNull())
                         .addParams(u.params().orNull())
@@ -1172,8 +1173,8 @@ public abstract class AbstractNElement implements NElement {
             }
             case ARRAY:
             case NAMED_ARRAY:
-            case PARAMETRIZED_ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY: {
+            case PARAM_ARRAY:
+            case FULL_ARRAY: {
                 NArrayElement u = asArray().orNull();
                 return NOptional.of(NElement.ofObjectBuilder().name(u.name().orNull())
                         .addParams(u.params().orNull())
@@ -1206,8 +1207,8 @@ public abstract class AbstractNElement implements NElement {
             }
             case OBJECT:
             case NAMED_OBJECT:
-            case PARAMETRIZED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT: {
+            case PARAM_OBJECT:
+            case FULL_OBJECT: {
                 NObjectElement u = asObject().orNull();
                 return NOptional.of(NElement.ofArrayBuilder()
                         .addParams(u.params().orNull())
@@ -1217,8 +1218,8 @@ public abstract class AbstractNElement implements NElement {
                 return NOptional.of((NArrayElement) this);
             }
             case NAMED_ARRAY:
-            case PARAMETRIZED_ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY: {
+            case PARAM_ARRAY:
+            case FULL_ARRAY: {
                 NArrayElement u = asArray().orNull();
                 return NOptional.of(NElement.ofArrayBuilder()
                         .addAll(u.children().toArray(new NElement[0])).build());
@@ -1403,9 +1404,9 @@ public abstract class AbstractNElement implements NElement {
     /**
      * Semantic sugar for applying a formatter.
      */
-    public NElement format(NElementFormatter formatter) {
+    public NElement format(NContentType contentType, NElementFormatter formatter) {
         return NOptional.ofSingleton(
-                transform(new DefaultNElementFormatContext(this), formatter)
+                transform(new DefaultNElementFormatContext(this, contentType == null ? NContentType.TSON : contentType), formatter)
         ).get();
     }
 
@@ -1457,4 +1458,15 @@ public abstract class AbstractNElement implements NElement {
         }
         return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to name: %s", type().id(), this));
     }
+
+    public List<NElement> filter(NElementSelector selector) {
+        NAssert.requireNonNull(selector, "selector");
+        return selector.filter(this);
+    }
+
+    public List<NElement> filter(String selector) {
+        NAssert.requireNonNull(selector, "selector");
+        return filter(NElementSelector.of(selector));
+    }
+
 }
