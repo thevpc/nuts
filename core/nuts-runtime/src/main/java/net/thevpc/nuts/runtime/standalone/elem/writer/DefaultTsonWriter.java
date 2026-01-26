@@ -9,6 +9,7 @@ import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class DefaultTsonWriter {
         this.w = writer;
     }
 
-    public void append(NAffix affix) {
+    public void write(NAffix affix) {
         switch (affix.type()) {
             case LINE_COMMENT:
             case BLOC_COMMENT: {
@@ -36,7 +37,7 @@ public class DefaultTsonWriter {
             }
             case ANNOTATION: {
                 NElementAnnotation a = (NElementAnnotation) affix;
-                writeAnnotation(a);
+                appendAnnotation(a);
                 break;
             }
             case SEPARATOR: {
@@ -50,8 +51,8 @@ public class DefaultTsonWriter {
         }
     }
 
-    private void writeAnnotation(NElementAnnotation a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
+    private void appendAnnotation(NElementAnnotation a) {
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
         write("@");
         if (!NBlankable.isBlank(a.name())) {
             appendAnchored(a.name(), 1, a.affixes());
@@ -63,7 +64,7 @@ public class DefaultTsonWriter {
             }
             appendAnchored(")", 3, a.affixes());
         }
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     public void write(NElement element) {
@@ -155,24 +156,13 @@ public class DefaultTsonWriter {
                 writeBlocString((NStringElement) element);
                 break;
             }
-            case UNARY_OPERATOR: {
-                NUnaryOperatorElement a = (NUnaryOperatorElement) element;
-                writeUnaryOperatorElement(a);
-                break;
-            }
-            case BINARY_OPERATOR: {
-                NBinaryOperatorElement a = (NBinaryOperatorElement) element;
-                writeBinaryOperatorElement(a);
-                break;
-            }
-            case TERNARY_OPERATOR: {
-                NTernaryOperatorElement a = (NTernaryOperatorElement) element;
-                writeTernaryOperatorElement(a);
-                break;
-            }
-            case NARY_OPERATOR: {
-                NAryOperatorElement a = (NAryOperatorElement) element;
-                writeNAryOperatorElement(a);
+            case UNARY_OPERATOR:
+            case BINARY_OPERATOR:
+            case TERNARY_OPERATOR:
+            case NARY_OPERATOR:
+            {
+                NOperatorElement a = (NOperatorElement) element;
+                writeAnyOperatorElement(a);
                 break;
             }
             case CUSTOM: {
@@ -191,15 +181,15 @@ public class DefaultTsonWriter {
             }
             case OBJECT:
             case NAMED_OBJECT:
-            case PARAMETRIZED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT: {
+            case PARAM_OBJECT:
+            case FULL_OBJECT: {
                 writeObject((NObjectElement) element);
                 break;
             }
             case ARRAY:
             case NAMED_ARRAY:
-            case PARAMETRIZED_ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY: {
+            case PARAM_ARRAY:
+            case FULL_ARRAY: {
                 writeArray((NArrayElement) element);
                 break;
             }
@@ -216,7 +206,7 @@ public class DefaultTsonWriter {
     }
 
     private void writeUplet(NUpletElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
         String name = a.name().orNull();
         if (name != null) {
             appendAnchored(name, 1, a.affixes());
@@ -226,19 +216,24 @@ public class DefaultTsonWriter {
             write(e);
         }
         appendAnchored(")", 3, a.affixes());
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeFlatExpr(NFlatExprElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
-        for (NElement e : a.children()) {
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
+        List<NElement> children = a.children();
+        for (int i = 0; i < children.size(); i++) {
+            NElement e = children.get(i);
+            if (i > 0) {
+                write(a.affixes(), NAffixAnchor.SEP_1, acceptableWrapSep);
+            }
             write(e);
         }
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeObject(NObjectElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
         String name = a.name().orNull();
         if (name != null) {
             appendAnchored(name, 1, a.affixes());
@@ -249,7 +244,7 @@ public class DefaultTsonWriter {
             for (int i = 0; i < get.size(); i++) {
                 NElement e = get.get(i);
                 if (i > 0) {
-                    append(a.affixes(), NAffixAnchor.SEP_1, acceptableWrapSep);
+                    write(a.affixes(), NAffixAnchor.SEP_1, acceptableWrapSep);
                 }
                 write(e);
             }
@@ -260,16 +255,16 @@ public class DefaultTsonWriter {
         for (int i = 0; i < children.size(); i++) {
             NElement e = children.get(i);
             if (i > 0) {
-                append(a.affixes(), NAffixAnchor.SEP_2, acceptableWrapSep);
+                write(a.affixes(), NAffixAnchor.SEP_2, acceptableWrapSep);
             }
             write(e);
         }
         appendAnchored("}", 5, a.affixes());
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeArray(NArrayElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
         String name = a.name().orNull();
         if (name != null) {
             appendAnchored(name, 1, a.affixes());
@@ -280,7 +275,7 @@ public class DefaultTsonWriter {
             for (int i = 0; i < get.size(); i++) {
                 NElement e = get.get(i);
                 if (i > 0) {
-                    append(a.affixes(), NAffixAnchor.SEP_1, acceptableWrapSep);
+                    write(a.affixes(), NAffixAnchor.SEP_1, acceptableWrapSep);
                 }
                 write(e);
             }
@@ -291,23 +286,23 @@ public class DefaultTsonWriter {
         for (int i = 0; i < children.size(); i++) {
             NElement e = children.get(i);
             if (i > 0) {
-                append(a.affixes(), NAffixAnchor.SEP_2, acceptableWrapSep);
+                write(a.affixes(), NAffixAnchor.SEP_2, acceptableWrapSep);
             }
             write(e);
         }
         appendAnchored("]", 5, a.affixes());
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeList(NListElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
         List<NListItemElement> items = a.items();
         for (int i = 0; i < items.size(); i++) {
             NListItemElement item = items.get(i);
             if (i > 0) {
-                append(a.affixes(), NAffixAnchor.SEP_1, acceptableWrapSep);
+                write(a.affixes(), NAffixAnchor.SEP_1, acceptableWrapSep);
             }
-            append(a.affixes(), NAffixAnchor.PRE_1, acceptableWrapSep);
+            write(a.affixes(), NAffixAnchor.PRE_1, acceptableWrapSep);
             NElement v = item.value().orNull();
             String bullet = item.marker();
             appendAnchored(bullet, 2, a.affixes());
@@ -318,9 +313,9 @@ public class DefaultTsonWriter {
             if (sl != null) {
                 appendAnchored(sl, 4, a.affixes());
             }
-            append(a.affixes(), NAffixAnchor.POST_1, acceptableWrapSep);
+            write(a.affixes(), NAffixAnchor.POST_1, acceptableWrapSep);
         }
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeCustomElement(NCustomElement a) {
@@ -331,81 +326,8 @@ public class DefaultTsonWriter {
         writeQuotedString("\"", s);
     }
 
-    private void writeUnaryOperatorElement(NUnaryOperatorElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
-        switch (a.position()) {
-            case PREFIX: {
-                appendAnchored(a.operatorSymbol().lexeme(), 1, a.affixes());
-                appendAnchored(a.operand(), 2, a.affixes());
-                break;
-            }
-            case POSTFIX: {
-                appendAnchored(a.operand(), 2, a.affixes());
-                appendAnchored(a.operatorSymbol().lexeme(), 1, a.affixes());
-                break;
-            }
-        }
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
-    }
-
-    private void writeBinaryOperatorElement(NBinaryOperatorElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
-        switch (a.position()) {
-            case PREFIX: {
-                appendAnchored(a.operatorSymbol().lexeme(), 1, a.affixes());
-                appendAnchored(a.firstOperand(), 2, a.affixes());
-                appendAnchored(a.secondOperand(), 3, a.affixes());
-                break;
-            }
-            case INFIX: {
-                appendAnchored(a.firstOperand(), 2, a.affixes());
-                appendAnchored(a.operatorSymbol().lexeme(), 1, a.affixes());
-                appendAnchored(a.secondOperand(), 3, a.affixes());
-                break;
-            }
-            case POSTFIX: {
-                appendAnchored(a.firstOperand(), 2, a.affixes());
-                appendAnchored(a.secondOperand(), 3, a.affixes());
-                appendAnchored(a.operatorSymbol().lexeme(), 1, a.affixes());
-                break;
-            }
-        }
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
-    }
-
-    private void writeTernaryOperatorElement(NTernaryOperatorElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
-        switch (a.position()) {
-            case PREFIX: {
-                appendAnchored(a.operatorSymbol(0).get().lexeme(), 1, a.affixes());
-                appendAnchored(a.operatorSymbol(1).get().lexeme(), 2, a.affixes());
-                appendAnchored(a.firstOperand(), 3, a.affixes());
-                appendAnchored(a.secondOperand(), 4, a.affixes());
-                appendAnchored(a.thirdOperand(), 5, a.affixes());
-                break;
-            }
-            case INFIX: {
-                appendAnchored(a.firstOperand(), 3, a.affixes());
-                appendAnchored(a.operatorSymbol(0).get().lexeme(), 1, a.affixes());
-                appendAnchored(a.secondOperand(), 4, a.affixes());
-                appendAnchored(a.operatorSymbol(1).get().lexeme(), 2, a.affixes());
-                appendAnchored(a.thirdOperand(), 5, a.affixes());
-                break;
-            }
-            case POSTFIX: {
-                appendAnchored(a.firstOperand(), 3, a.affixes());
-                appendAnchored(a.secondOperand(), 4, a.affixes());
-                appendAnchored(a.thirdOperand(), 5, a.affixes());
-                appendAnchored(a.operatorSymbol(0).get().lexeme(), 1, a.affixes());
-                appendAnchored(a.operatorSymbol(1).get().lexeme(), 2, a.affixes());
-                break;
-            }
-        }
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
-    }
-
-    private void writeNAryOperatorElement(NAryOperatorElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
+    private void writeAnyOperatorElement(NOperatorElement a) {
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
         List<NOperatorSymbol> operatorSymbols = a.operatorSymbols();
         switch (a.position()) {
             case PREFIX: {
@@ -444,11 +366,11 @@ public class DefaultTsonWriter {
                 break;
             }
         }
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeCharStream(NCharStreamElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
         appendAnchored("^" + a.blocIdentifier() + "{", 1, a.affixes());
         try (Reader reader = a.value().getReader()) {
             char[] b = new char[1024];
@@ -460,11 +382,11 @@ public class DefaultTsonWriter {
             throw new NIllegalArgumentException(NMsg.ofC("unable to execute toString on CharStream"));
         }
         appendAnchored("^" + a.blocIdentifier() + "}", 2, a.affixes());
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeBinaryStream(NBinaryStreamElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
         appendAnchored("^" + a.blocIdentifier() + "[", 1, a.affixes());
         try (InputStream reader = a.value().getInputStream()) {
             try (OutputStream out = asBinaryOutputStream(a.blocIdentifier())) {
@@ -478,11 +400,11 @@ public class DefaultTsonWriter {
             throw new NIllegalArgumentException(NMsg.ofC("unable to execute toString on CharStream"));
         }
         appendAnchored("]", 2, a.affixes());
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeLineString(NStringElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
         appendAnchored("¶", 1, a.affixes());
         List<NBoundAffix> leadingSpaces = NBoundAffixList.filter(a.affixes(), NAffixAnchor.PRE_2, NAffixType.SPACE);
         if (leadingSpaces.isEmpty()) {
@@ -501,11 +423,11 @@ public class DefaultTsonWriter {
         if (trailingSpaces.isEmpty() || trailingSpaces.get(trailingSpaces.size() - 1).affix().type() != NAffixType.NEWLINE) {
             write("\n");
         }
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeBlocString(NStringElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
         List<String> strValues = NStringUtils.split(a.stringValue(), "\n", false, false);
         List<String> leadingSpaces = new ArrayList<>();
         for (NBoundAffix p : NBoundAffixList.filter(a.affixes(), NAffixAnchor.PRE_2, NAffixType.SPACE)) {
@@ -523,7 +445,7 @@ public class DefaultTsonWriter {
         for (int i = 0; i < strValues.size(); i++) {
             appendAnchored("¶¶", i, a.affixes());
             if (i > 0) {
-                append(a.affixes(), NAffixAnchor.SEP_1, acceptableWrapSep);
+                write(a.affixes(), NAffixAnchor.SEP_1, acceptableWrapSep);
             }
             if (i < leadingSpaces.size()) {
                 write(leadingSpaces.get(i));
@@ -538,7 +460,7 @@ public class DefaultTsonWriter {
             }
             write("\n");
         }
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeSimpleComment(NElementComment a) {
@@ -546,13 +468,13 @@ public class DefaultTsonWriter {
     }
 
     private void writeName(NStringElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
-        append(a.stringValue());
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
+        write(a.stringValue());
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeQuotedString(String quotes, NStringElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
         NCharReader sb = new NCharReader(new StringReader(a.stringValue()));
         int qlength = quotes.length();
         write(quotes);
@@ -594,25 +516,25 @@ public class DefaultTsonWriter {
             }
         }
         write(quotes);
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeOperatorSymbolElement(NOperatorSymbolElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
         write(a.symbol().lexeme());
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeEmpty(NElement element) {
-        append(element.affixes(), NAffixAnchor.START, acceptablePre);
-        append(element.affixes(), NAffixAnchor.END, acceptablePost);
+        write(element.affixes(), NAffixAnchor.START, acceptablePre);
+        write(element.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writePrimitive(NPrimitiveElement element) {
-        append(element.affixes(), NAffixAnchor.START, acceptablePre);
+        write(element.affixes(), NAffixAnchor.START, acceptablePre);
         switch (element.type()) {
             case NULL: {
-                append("null");
+                write("null");
                 break;
             }
             case UINT:
@@ -630,31 +552,31 @@ public class DefaultTsonWriter {
                 NNumberElement r = element.asNumber().get();
                 String img = r.image();
                 if (!NBlankable.isBlank(img)) {
-                    append(img);
+                    write(img);
                     return;
                 } else {
                     NNumberLayout layout = r.numberLayout();
                     String suffix = r.numberSuffix();
                     switch (layout) {
                         case DECIMAL: {
-                            append(String.valueOf(element.asNumberValue().get()));
+                            write(String.valueOf(element.asNumberValue().get()));
                             break;
                         }
                         case HEXADECIMAL: {
-                            append(element.asBigIntValue().get().toString(16));
+                            write(element.asBigIntValue().get().toString(16));
                             break;
                         }
                         case OCTAL: {
-                            append(element.asBigIntValue().get().toString(8));
+                            write(element.asBigIntValue().get().toString(8));
                             break;
                         }
                         case BINARY: {
-                            append(element.asBigIntValue().get().toString(2));
+                            write(element.asBigIntValue().get().toString(2));
                             break;
                         }
                     }
                     if (!NBlankable.isBlank(suffix)) {
-                        append(suffix);
+                        write(suffix);
                     }
                 }
                 break;
@@ -665,21 +587,21 @@ public class DefaultTsonWriter {
             case LOCAL_DATETIME:
             case BOOLEAN:
             default: {
-                append(String.valueOf(element.value()));
+                write(String.valueOf(element.value()));
                 break;
             }
         }
-        append(element.affixes(), NAffixAnchor.END, acceptablePost);
+        write(element.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writePair(NPairElement a) {
-        append(a.affixes(), NAffixAnchor.START, acceptablePre);
-        append(a.key().toString());
-        append(a.affixes(), NAffixAnchor.PRE_1, acceptableWrapSep);
-        append(":");
-        append(a.affixes(), NAffixAnchor.POST_1, acceptableWrapSep);
-        append(a.value().toString());
-        append(a.affixes(), NAffixAnchor.END, acceptablePost);
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
+        write(a.key().toString());
+        write(a.affixes(), NAffixAnchor.PRE_1, acceptableWrapSep);
+        write(":");
+        write(a.affixes(), NAffixAnchor.POST_1, acceptableWrapSep);
+        write(a.value().toString());
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private OutputStream asBinaryOutputStream(String type) {
@@ -697,53 +619,8 @@ public class DefaultTsonWriter {
     }
 
 
-    private void append(NBoundAffix a) {
-        append(a.affix());
-    }
-
-    private void append(NElement a) {
-        NStringBuilder sb2 = new NStringBuilder();
-        sb2.append(a);
-        concat(sb2);
-    }
-
-    private void append(String str) {
-        NStringBuilder sb2 = new NStringBuilder();
-        sb2.append(str);
-        concat(sb2);
-    }
-
-    private void concat(NStringBuilder sb2) {
-        if (!sb2.isEmpty()) {
-            if (!buffer.isEmpty()) {
-                char last = buffer.charAt(buffer.length() - 1);
-                char first = sb2.charAt(0);
-                if (Character.isWhitespace(last) || Character.isWhitespace(first)) {
-                    //nothing
-                } else if (isSeparator(last) || isSeparator(first)) {
-                    //nothing
-                } else {
-                    write(" ");
-                }
-            }
-            write(sb2.toString());
-        }
-    }
-
-    private boolean isSeparator(char c) {
-        switch (c) {
-            case ',':
-            case ';':
-            case '(':
-            case ')':
-            case '[':
-            case ']':
-            case '{':
-            case '}':
-            case ':':
-                return true;
-        }
-        return false;
+    private void write(NBoundAffix a) {
+        write(a.affix());
     }
 
     private NAffixAnchor pre(int index) {
@@ -779,21 +656,21 @@ public class DefaultTsonWriter {
     }
 
     private void appendAnchored(String str, int index, List<NBoundAffix> list) {
-        append(list, pre(index), acceptableWrapSep);
-        append(str);
-        append(list, pos(index), acceptableWrapSep);
+        write(list, pre(index), acceptableWrapSep);
+        write(str);
+        write(list, pos(index), acceptableWrapSep);
     }
 
 
     private void appendAnchored(NElement str, int index, List<NBoundAffix> list) {
-        append(list, pre(index), acceptableWrapSep);
-        append(str);
-        append(list, pos(index), acceptableWrapSep);
+        write(list, pre(index), acceptableWrapSep);
+        write(str);
+        write(list, pos(index), acceptableWrapSep);
     }
 
-    private void append(List<NBoundAffix> list, NAffixAnchor anchor, NAffixType[] acceptableTypes) {
+    private void write(List<NBoundAffix> list, NAffixAnchor anchor, NAffixType[] acceptableTypes) {
         for (NBoundAffix p : NBoundAffixList.filter(list, anchor, acceptableTypes)) {
-            append(p);
+            write(p);
         }
     }
 
@@ -812,6 +689,39 @@ public class DefaultTsonWriter {
         w.write(c);
     }
 
+    public static String formatTsonCompact(NElement e) {
+        NElement ee = e.transform(new NElementTransform() {
+            @Override
+            public List<NElement> postTransform(NElementTransformContext context) {
+                NElement e = context.element();
+                e = e.builder()
+                        .removeAffixIf(q -> {
+                            NAffixType type = q.affix().type();
+                            switch (type) {
+                                case SPACE:
+                                case NEWLINE:
+                                    return true;
+                            }
+                            return false;
+                        })
+                        .build();
+                return Arrays.asList(e);
+            }
+        }).get(0);
+        return formatTson(ee);
+    }
+
+//    public static String formatTsonPretty(NElement e) {
+//        NElement ee = e.format(
+//                new DefaultNElementFormatterBuilder()
+//                        .setContentType(NContentType.TSON)
+//                        .setComplexityThreshold(10)
+//                        .setColumnLimit(200)
+//                        .build()
+//        );
+//        return formatTson(ee);
+//    }
+
     public static String formatTson(NElement e) {
         NStringBuilder sb = new NStringBuilder();
         DefaultTsonWriter w = new DefaultTsonWriter(sb.asStringWriter());
@@ -822,7 +732,7 @@ public class DefaultTsonWriter {
     public static String formatTson(NElementAnnotation e) {
         NStringBuilder sb = new NStringBuilder();
         DefaultTsonWriter w = new DefaultTsonWriter(sb.asStringWriter());
-        w.writeAnnotation(e);
+        w.appendAnnotation(e);
         return sb.toString();
     }
 
