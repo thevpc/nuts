@@ -178,19 +178,20 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NUpletElementBuilder add(NElement e) {
-        params.add(denull(e));
+        if (e != null) {
+            params.add(e);
+        }
         return this;
     }
 
     @Override
-    public NUpletElementBuilder insert(int index, NElement e) {
-        params.add(index, denull(e));
-        return this;
-    }
-
-    @Override
-    public NUpletElementBuilder set(int index, NElement e) {
-        params.set(index, denull(e));
+    public NUpletElementBuilder setAt(int index, NElement element) {
+        if (element != null) {
+            while (this.params.size() < index + 1) {
+                this.params.add(NElement.ofNull());
+            }
+            params.set(index, element);
+        }
         return this;
     }
 
@@ -327,11 +328,6 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     public NUpletElement build() {
         return new DefaultNUpletElement(name, params,
                 affixes(), diagnostics());
-    }
-
-    @Override
-    public String toString() {
-        return "[" + params().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
     }
 
     private NElement denull(NElement e) {
@@ -550,7 +546,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
-    public NUpletElementBuilder addAffix(NBoundAffix affix){
+    public NUpletElementBuilder addAffix(NBoundAffix affix) {
         super.addAffix(affix);
         return this;
     }
