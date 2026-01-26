@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNListElementBuilder;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NTreeVisitResult;
 
@@ -11,7 +12,7 @@ public class DefaultNListElement extends AbstractNElement implements NListElemen
     private List<NListItemElement> children;
 
     public DefaultNListElement(NElementType type, int depth, List<NListItemElement> children) {
-        this(type,depth,children,null,null);
+        this(type, depth, children, null, null);
     }
 
     public DefaultNListElement(NElementType type, int depth, List<NListItemElement> children, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
@@ -69,5 +70,11 @@ public class DefaultNListElement extends AbstractNElement implements NListElemen
     @Override
     public int size() {
         return children.size();
+    }
+
+    @Override
+    public NListElementBuilder builder() {
+        return new DefaultNListElementBuilder(type(), depth)
+                .copyFrom(this);
     }
 }
