@@ -28,15 +28,15 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 return src.asUplet().get().params().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
             }
             case ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY:
+            case FULL_ARRAY:
             case NAMED_ARRAY:
-            case PARAMETRIZED_ARRAY: {
+            case PARAM_ARRAY: {
                 return src.asArray().get().children().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
             }
             case OBJECT:
-            case PARAMETRIZED_OBJECT:
+            case PARAM_OBJECT:
             case NAMED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT: {
+            case FULL_OBJECT: {
                 Set<Object> visited = new HashSet<>();
                 boolean map = true;
                 List<Object> all = new ArrayList<>();
@@ -115,8 +115,8 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
             }
             case ARRAY:
             case NAMED_ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY:
-            case PARAMETRIZED_ARRAY: {
+            case FULL_ARRAY:
+            case PARAM_ARRAY: {
                 NArrayElement arr = src.asArray().get();
                 NBooleanRef someChange = NRef.ofBoolean(false);
                 List<NElement> children = convertList_objectToElement(arr.children(), src, typeOfSrc, context, someChange);
@@ -137,8 +137,8 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
             }
             case OBJECT:
             case NAMED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
-            case PARAMETRIZED_OBJECT: {
+            case FULL_OBJECT:
+            case PARAM_OBJECT: {
                 NObjectElement obj = src.asObject().get();
                 NBooleanRef someChange = NRef.ofBoolean(false);
                 List<NElement> children = convertList_objectToElement(obj.children(), src, typeOfSrc, context, someChange);
