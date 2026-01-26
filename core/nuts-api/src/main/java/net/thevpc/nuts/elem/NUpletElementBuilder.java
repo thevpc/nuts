@@ -238,29 +238,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      */
     NUpletElementBuilder add(NElement element);
 
-    /**
-     * insert new element at the given index.
-     *
-     * @param index   index to insert into
-     * @param element element to add, should no be null
-     * @return {@code this} instance
-     * @throws NullPointerException      if {@code element==null}
-     * @throws IndexOutOfBoundsException if the index is out of range
-     *                                   ({@code index < 0 || index > size()})
-     */
-    NUpletElementBuilder insert(int index, NElement element);
-
-    /**
-     * update element at the given index.
-     *
-     * @param index   index to update
-     * @param element element to add, should no be null
-     * @return {@code this} instance
-     * @throws NullPointerException      if {@code element==null}
-     * @throws IndexOutOfBoundsException if the index is out of range
-     *                                   ({@code index < 0 || index >= size()})
-     */
-    NUpletElementBuilder set(int index, NElement element);
+    NUpletElementBuilder setAt(int index, NElement element);
 
     /**
      * remove all elements from this array.
@@ -377,4 +355,5 @@ public interface NUpletElementBuilder extends NElementBuilder {
     NUpletElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NUpletElementBuilder addAffixes(List<NBoundAffix> affixes);
+
 }
