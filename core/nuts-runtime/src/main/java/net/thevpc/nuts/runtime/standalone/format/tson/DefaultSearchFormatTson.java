@@ -72,7 +72,7 @@ public class DefaultSearchFormatTson extends DefaultSearchFormatBase {
             getWriter().print("  ");
         }
         String json = NElementWriter.ofTson()
-                .setFormatter(isCompact()? NElementFormatter.ofJsonCompact() : NElementFormatter.ofJsonPretty())
+                .setCompact(isCompact())
                 .formatPlain(object)
                 ;
         NText ee = codeFormat.stringToText(json, txt);
