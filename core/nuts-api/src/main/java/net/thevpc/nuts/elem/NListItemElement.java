@@ -18,4 +18,7 @@ public interface NListItemElement {
     NOptional<NElement> value();
 
     NOptional<NListElement> subList();
+
+    NListItemElementBuilder builder();
+
 }
