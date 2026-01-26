@@ -38,7 +38,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- *
  * @author thevpc
  */
 public class YamlTest {
@@ -103,24 +102,24 @@ public class YamlTest {
         Assertions.assertTrue(e.asObject().get().get("contentType").get().asStringValue().get().equals("ntf"));
     }
 
-    private void display(NElement e){
+    private void display(NElement e) {
         NOut.println(NTextArtTableRenderer.of().render(
                 NTableModel.of(NText.of("JSON"))
         ));
         NElementWriter.ofJson()
-                .setFormatter(NElementFormatter.ofJsonPretty())
+                .setFormatter(NElementFormatter.ofPretty())
                 .writeln(e);
         NOut.println(NTextArtTableRenderer.of().render(
                 NTableModel.of(NText.of("TSON"))
         ));
         NElementWriter.ofTson()
-                .setFormatter(NElementFormatter.ofTsonCompact())
+                .setFormatter(NElementFormatter.ofCompact())
                 .writeln(e);
         NOut.println(NTextArtTableRenderer.of().render(
                 NTableModel.of(NText.of("YAML"))
         ));
         NElementWriter.ofYaml()
-                .setFormatter(NElementFormatter.ofYamlCompact())
+                .setFormatter(NElementFormatter.ofCompact())
                 .writeln(e);
     }
 
