@@ -54,7 +54,7 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     @Override
     public NFlatExprElementBuilder add(NOperatorSymbol op) {
         if (op != null) {
-            values.add(NElement.ofOpSymbol(op));
+            add(NElement.ofOpSymbol(op));
         }
         return this;
     }
@@ -63,6 +63,25 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     public NFlatExprElementBuilder add(NElement element) {
         if (element != null) {
             values.add(element);
+        }
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder setAt(int index, NElement element) {
+        if (element != null) {
+            while (this.values.size() < index + 1) {
+                this.values.add(NElement.ofNull());
+            }
+            values.set(index, element);
+        }
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder setAt(int index, NOperatorSymbol element) {
+        if (element != null) {
+            setAt(index, NElement.ofOpSymbol(element));
         }
         return this;
     }
@@ -80,6 +99,11 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
+    public int size() {
+        return values.size();
+    }
+
+    @Override
     public NFlatExprElementBuilder doWith(Consumer<NFlatExprElementBuilder> con) {
         if (con != null) {
             con.accept(this);
@@ -92,8 +116,8 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     @Override
     public NFlatExprElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
         super.copyFrom(other, assignmentPolicy);
-        if(other instanceof NFlatExprElementBuilder){
-            NFlatExprElementBuilder b=(NFlatExprElementBuilder)other;
+        if (other instanceof NFlatExprElementBuilder) {
+            NFlatExprElementBuilder b = (NFlatExprElementBuilder) other;
             this.values.addAll(b.children());
         }
         return this;
@@ -102,8 +126,8 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     @Override
     public NFlatExprElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
         super.copyFrom(other, assignmentPolicy);
-        if(other instanceof NFlatExprElement){
-            NFlatExprElement b=(NFlatExprElement)other;
+        if (other instanceof NFlatExprElement) {
+            NFlatExprElement b = (NFlatExprElement) other;
             this.values.addAll(b.children());
         }
         return this;
@@ -161,7 +185,7 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
         return this;
     }
 
-    public NFlatExprElementBuilder addAffix(NBoundAffix affix){
+    public NFlatExprElementBuilder addAffix(NBoundAffix affix) {
         super.addAffix(affix);
         return this;
     }
