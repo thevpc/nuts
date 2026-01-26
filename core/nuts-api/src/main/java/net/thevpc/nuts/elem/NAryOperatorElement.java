@@ -24,8 +24,6 @@
  */
 package net.thevpc.nuts.elem;
 
-import java.util.List;
-
 /**
  * Array implementation of Nuts Element type. Nuts Element types are generic
  * JSON like parsable objects.
@@ -34,5 +32,5 @@ import java.util.List;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NAryOperatorElement extends NExprElement {
+public interface NAryOperatorElement extends NOperatorElement {
 }
