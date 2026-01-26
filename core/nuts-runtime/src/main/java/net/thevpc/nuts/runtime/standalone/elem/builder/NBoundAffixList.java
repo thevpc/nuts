@@ -1,8 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.elem.builder;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNBoundAffix;
-import net.thevpc.nuts.runtime.standalone.elem.item.NElementAnnotationImpl;
+import net.thevpc.nuts.runtime.standalone.elem.item.*;
+import net.thevpc.nuts.text.NNewLineMode;
+import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -25,6 +27,11 @@ public class NBoundAffixList {
 
     public Predicate<NBoundAffix> filter() {
         return filter;
+    }
+
+    public NBoundAffixList setFilter(Predicate<NBoundAffix> filter) {
+        this.filter = filter;
+        return this;
     }
 
     public NBoundAffixList filterAcceptAnchors(NAffixAnchor... anchors) {
@@ -191,6 +198,14 @@ public class NBoundAffixList {
         return addAffix(annotation, NAffixAnchor.START);
     }
 
+    public NBoundAffixList addAffixNewLine(int index, NNewLineMode newLineMode, NAffixAnchor anchor) {
+        NAssert.requireNonNull(anchor, "anchor");
+        if (newLineMode != null) {
+            addAffix(index, NBoundAffix.of(DefaultNElementNewLine.of(newLineMode), anchor));
+        }
+        return this;
+    }
+
     public NBoundAffixList addAffix(int index, NBoundAffix affix) {
         if (affix != null) {
             if (filter == null || filter.test(affix)) {
@@ -221,14 +236,12 @@ public class NBoundAffixList {
                 .map(x -> (NElementAnnotation) x.affix()).collect(Collectors.toList());
     }
 
-
     public NBoundAffixList setAffix(int index, NBoundAffix affix) {
         if (filter == null || filter.test(affix)) {
             affixes.set(index, affix);
         }
         return this;
     }
-
 
     public NBoundAffixList addAffix(int index, NAffix affix, NAffixAnchor anchor) {
         DefaultNBoundAffix a = DefaultNBoundAffix.of(affix, anchor);
@@ -238,7 +251,6 @@ public class NBoundAffixList {
         return this;
     }
 
-
     public NBoundAffixList setAffix(int index, NAffix affix, NAffixAnchor anchor) {
         DefaultNBoundAffix a = DefaultNBoundAffix.of(affix, anchor);
         if (filter == null || filter.test(a)) {
@@ -246,7 +258,6 @@ public class NBoundAffixList {
         }
         return this;
     }
-
 
     public NBoundAffixList removeAffixes(NAffixType type, NAffixAnchor anchor) {
         affixes.removeIf(x ->
@@ -256,11 +267,9 @@ public class NBoundAffixList {
         return this;
     }
 
-
     public NBoundAffixList addLeadingComment(NElementComment comment) {
         return addAffix(comment, NAffixAnchor.START);
     }
-
 
     public NBoundAffixList addLeadingComments(NElementComment... comments) {
         if (comments == null) {
@@ -269,17 +278,55 @@ public class NBoundAffixList {
         return addAffixes(Arrays.asList(comments), NAffixAnchor.START);
     }
 
-
     public NBoundAffixList addTrailingComment(NElementComment comment) {
         return addAffix(comment, NAffixAnchor.END);
     }
-
 
     public NBoundAffixList addTrailingComments(NElementComment... comments) {
         if (comments == null) {
             return this;
         }
         return addAffixes(Arrays.asList(comments), NAffixAnchor.END);
+    }
+
+    public NBoundAffixList addAffixSpace(String space, NAffixAnchor anchor) {
+        NAssert.requireNonNull(anchor, "anchor");
+        if (!NStringUtils.isEmpty(space)) {
+            addAffix(NBoundAffix.of(DefaultNElementSpace.of(space), anchor));
+        }
+        return this;
+    }
+
+    public NBoundAffixList addAffixNewLine(NNewLineMode newLineMode, NAffixAnchor anchor) {
+        NAssert.requireNonNull(anchor, "anchor");
+        if (newLineMode != null) {
+            addAffix(NBoundAffix.of(DefaultNElementNewLine.of(newLineMode), anchor));
+        }
+        return this;
+    }
+
+    public NBoundAffixList addAffixSeparator(String separator, NAffixAnchor anchor) {
+        NAssert.requireNonNull(anchor, "anchor");
+        if (!NStringUtils.isEmpty(separator)) {
+            addAffix(NBoundAffix.of(DefaultNElementSeparator.of(separator), anchor));
+        }
+        return this;
+    }
+
+    public NBoundAffixList addAffixSpace(int index, String space, NAffixAnchor anchor) {
+        NAssert.requireNonNull(anchor, "anchor");
+        if (!NStringUtils.isEmpty(space)) {
+            addAffix(index, NBoundAffix.of(DefaultNElementSpace.of(space), anchor));
+        }
+        return this;
+    }
+
+    public NBoundAffixList addAffixSeparator(int index, String separator, NAffixAnchor anchor) {
+        NAssert.requireNonNull(anchor, "anchor");
+        if (!NStringUtils.isEmpty(separator)) {
+            addAffix(index, NBoundAffix.of(DefaultNElementSeparator.of(separator), anchor));
+        }
+        return this;
     }
 
     @Override
@@ -300,5 +347,10 @@ public class NBoundAffixList {
                 x.anchor() == anchor
                         && at.contains(x.affix().type())
         ).collect(Collectors.toList());
+    }
+
+    public void removeAffixIf(Predicate<NBoundAffix> predicate) {
+        NAssert.requireNonNull(predicate, "predicate");
+        affixes.removeIf(predicate);
     }
 }
