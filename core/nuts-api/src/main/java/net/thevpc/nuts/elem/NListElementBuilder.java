@@ -10,9 +10,11 @@ public interface NListElementBuilder extends NElementBuilder {
 
     NListElementBuilder addItem(NListItemElement item);
 
-    NListItemElement getItem(int index);
+    NListItemElement get(int index);
 
     List<NListItemElement> items();
+
+    NListElementBuilder setItemAt(int index, NListItemElement other);
 
     int size();
 
@@ -31,6 +33,7 @@ public interface NListElementBuilder extends NElementBuilder {
     NListElementBuilder addAffix(int index, NBoundAffix affix);
 
     NListElementBuilder setAffix(int index, NBoundAffix affix);
+
     NListElementBuilder addAffix(NBoundAffix affix);
 
     NListElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
