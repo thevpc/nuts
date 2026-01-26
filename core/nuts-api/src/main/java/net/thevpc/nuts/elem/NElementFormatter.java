@@ -1,124 +1,25 @@
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.text.NContentType;
-
 public interface NElementFormatter extends NElementTransform {
-    static NElementFormatter ofTsonPretty() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.TSON)
-                .setStyle(NElementFormatterStyle.PRETTY)
-                .build()
-                ;
+    static NElementFormatter of(NElementFormatterStyle style) {
+        return NElements.of().createElementFormatter(style);
     }
 
-    static NElementFormatter ofTsonCompact() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.TSON)
-                .setStyle(NElementFormatterStyle.COMPACT)
-                .build()
-                ;
+    static NElementFormatter ofPretty() {
+        return of(NElementFormatterStyle.PRETTY);
     }
 
-    static NElementFormatter ofJsonPretty() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.JSON)
-                .setStyle(NElementFormatterStyle.PRETTY)
-                .build()
-                ;
+    static NElementFormatter ofCompact(boolean compact) {
+        return compact ? of(NElementFormatterStyle.COMPACT) : of(NElementFormatterStyle.PRETTY);
     }
 
-    static NElementFormatter ofJsonCompact() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.JSON)
-                .setStyle(NElementFormatterStyle.COMPACT)
-                .build()
-                ;
+    static NElementFormatter ofCompact() {
+        return of(NElementFormatterStyle.COMPACT);
     }
 
-    static NElementFormatter ofXmlPretty() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.XML)
-                .setStyle(NElementFormatterStyle.PRETTY)
-                .build()
-                ;
+    static NElementFormatter ofSafe() {
+        return of(NElementFormatterStyle.SAFE);
     }
 
-    static NElementFormatter ofXmlCompact() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.XML)
-                .setStyle(NElementFormatterStyle.COMPACT)
-                .build()
-                ;
-    }
-
-    static NElementFormatter ofYamlPretty() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.YAML)
-                .setStyle(NElementFormatterStyle.PRETTY)
-                .build()
-                ;
-    }
-
-    static NElementFormatter ofYamlCompact() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.YAML)
-                .setStyle(NElementFormatterStyle.COMPACT)
-                .build()
-                ;
-    }
-    static NElementFormatterBuilder ofTsonPrettyBuilder() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.TSON)
-                .setStyle(NElementFormatterStyle.PRETTY)
-                ;
-    }
-
-    static NElementFormatterBuilder ofTsonCompactBuilder() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.TSON)
-                .setStyle(NElementFormatterStyle.COMPACT)
-                ;
-    }
-
-    static NElementFormatterBuilder ofJsonPrettyBuilder() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.JSON)
-                .setStyle(NElementFormatterStyle.PRETTY)
-                ;
-    }
-
-    static NElementFormatterBuilder ofJsonCompactBuilder() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.JSON)
-                .setStyle(NElementFormatterStyle.COMPACT)
-                ;
-    }
-
-    static NElementFormatterBuilder ofXmlPrettyBuilder() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.XML)
-                .setStyle(NElementFormatterStyle.PRETTY)
-                ;
-    }
-
-    static NElementFormatterBuilder ofXmlCompactBuilder() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.XML)
-                .setStyle(NElementFormatterStyle.COMPACT)
-                ;
-    }
-
-    static NElementFormatterBuilder ofYamlPrettyBuilder() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.YAML)
-                .setStyle(NElementFormatterStyle.PRETTY)
-                ;
-    }
-
-    static NElementFormatterBuilder ofYamlCompactBuilder() {
-        return NElementFormatterBuilder.of()
-                .setContentType(NContentType.YAML)
-                .setStyle(NElementFormatterStyle.COMPACT)
-                ;
-    }
+    NElementFormatterBuilder builder();
 }
