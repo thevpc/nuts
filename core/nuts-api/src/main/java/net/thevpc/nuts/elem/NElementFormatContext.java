@@ -1,7 +1,11 @@
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.text.NContentType;
+
 public interface NElementFormatContext extends NElementTransformContext {
     String indent();
+
+    NContentType contentType();
 
     NElementFormatOptions options();
 
