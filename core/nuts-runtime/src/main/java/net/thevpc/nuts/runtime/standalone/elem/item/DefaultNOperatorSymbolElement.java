@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNOperatorSymbolElementBuilder;
 
 import java.util.List;
 
@@ -16,8 +17,18 @@ public class DefaultNOperatorSymbolElement extends AbstractNElement implements N
         this.symbol = op;
     }
 
+    public static NElement of(NOperatorSymbol operator) {
+        return new  DefaultNOperatorSymbolElement(operator);
+    }
+
     @Override
     public NOperatorSymbol symbol() {
         return symbol;
+    }
+
+    @Override
+    public NOperatorSymbolElementBuilder builder() {
+        return new DefaultNOperatorSymbolElementBuilder()
+                .copyFrom(this);
     }
 }
