@@ -530,12 +530,6 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
         );
     }
 
-    @Override
-    public String toString() {
-        return "{" + children().stream().map(x
-                -> x.toString()
-        ).collect(Collectors.joining(", ")) + "}";
-    }
 
     private NElement denull(NElement e) {
         if (e == null) {
@@ -547,13 +541,13 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     @Override
     public NElementType type() {
         if (name != null && params != null) {
-            return NElementType.NAMED_PARAMETRIZED_OBJECT;
+            return NElementType.FULL_OBJECT;
         }
         if (name != null) {
             return NElementType.NAMED_OBJECT;
         }
         if (params != null) {
-            return NElementType.PARAMETRIZED_OBJECT;
+            return NElementType.PARAM_OBJECT;
         }
         return NElementType.OBJECT;
     }
