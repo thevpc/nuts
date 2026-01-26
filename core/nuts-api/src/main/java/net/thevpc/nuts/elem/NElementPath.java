@@ -7,9 +7,19 @@ public interface NElementPath {
 
     int size();
 
+    NElementPath param(String name);
+
+    NElementPath ann(String name);
+
+    NElementPath group(String group, int index);
+
+    NElementPath group(String group, String name);
+
     NElementPath parent();
 
     boolean isRoot();
+
+    NElementPath child(String name);
 
     NElementPath child(int i);
 
