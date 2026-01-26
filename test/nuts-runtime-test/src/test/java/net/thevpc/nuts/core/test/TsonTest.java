@@ -24,6 +24,12 @@ public class TsonTest {
         TestUtils.openNewMinTestWorkspace();
     }
 
+    @Test
+    public void test01b() {
+        String tson = "a:b b";
+        NElement parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+    }
 
     @Test
     public void test01() {
