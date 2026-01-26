@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNListItemElementBuilder;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.util.NOptional;
 
@@ -87,5 +88,10 @@ public class DefaultNListItemElement implements NListItemElement {
             }
         }
         return sb.toString();
+    }
+
+    @Override
+    public NListItemElementBuilder builder() {
+        return new DefaultNListItemElementBuilder(marker, markerVariant, depth, value, subList, listType, affixes);
     }
 }
