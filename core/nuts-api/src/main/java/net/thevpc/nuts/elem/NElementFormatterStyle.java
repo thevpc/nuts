@@ -7,7 +7,9 @@ import net.thevpc.nuts.util.NOptional;
 
 public enum NElementFormatterStyle implements NEnum {
     COMPACT,
+    SAFE,
     PRETTY,
+    VERBATIM,
     CUSTOM,
     ;
     /**
