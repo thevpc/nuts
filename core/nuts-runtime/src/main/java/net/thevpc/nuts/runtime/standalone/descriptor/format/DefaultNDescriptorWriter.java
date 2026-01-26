@@ -4,7 +4,6 @@ import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NDescriptorStyle;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NElementFormatter;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.NPrintStream;
@@ -293,13 +292,13 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
                 if (isNtf()) {
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
                     NElementWriter.ofJson().setNtf(true)
-                            .setFormatter(isCompact()? NElementFormatter.ofJsonCompact() : NElementFormatter.ofJsonPretty())
+                            .setCompact(isCompact())
                             .write(desc, os);
                     NTextCode r = NText.ofCode("json", os.toString());
                     out.print(r);
                 } else {
                     NElementWriter.ofJson()
-                            .setFormatter(isCompact()? NElementFormatter.ofJsonCompact() : NElementFormatter.ofJsonPretty())
+                            .setCompact(isCompact())
                             .write(desc, out);
                 }
                 break;
