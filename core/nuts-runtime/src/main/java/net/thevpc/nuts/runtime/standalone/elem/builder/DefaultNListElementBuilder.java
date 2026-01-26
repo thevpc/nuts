@@ -28,7 +28,20 @@ public class DefaultNListElementBuilder extends AbstractNElementBuilder implemen
     }
 
     public NListElementBuilder addItem(NListItemElement item) {
-        this.items.add(item);
+        if (item != null) {
+            this.items.add(item);
+        }
+        return this;
+    }
+
+    public NListElementBuilder addItems(NListItemElement[] items) {
+        if (items != null) {
+            for (NListItemElement item : items) {
+                if (item != null) {
+                    this.items.add(item);
+                }
+            }
+        }
         return this;
     }
 
@@ -55,7 +68,7 @@ public class DefaultNListElementBuilder extends AbstractNElementBuilder implemen
     }
 
     @Override
-    public NListItemElement getItem(int index) {
+    public NListItemElement get(int index) {
         return items.get(index);
     }
 
@@ -69,8 +82,15 @@ public class DefaultNListElementBuilder extends AbstractNElementBuilder implemen
         return new ArrayList<>(items);
     }
 
+    @Override
+    public NListElementBuilder setItemAt(int index, NListItemElement other) {
+        if (other != null) {
+            items.set(index, other);
+        }
+        return this;
+    }
 
-    // ------------------------------------------
+// ------------------------------------------
 
     @Override
     public NListElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
@@ -148,7 +168,7 @@ public class DefaultNListElementBuilder extends AbstractNElementBuilder implemen
         return this;
     }
 
-    public NListElementBuilder addAffix(NBoundAffix affix){
+    public NListElementBuilder addAffix(NBoundAffix affix) {
         super.addAffix(affix);
         return this;
     }
@@ -235,12 +255,24 @@ public class DefaultNListElementBuilder extends AbstractNElementBuilder implemen
     @Override
     public NListElementBuilder copyFrom(NElementBuilder other) {
         super.copyFrom(other);
+        if (other instanceof NListElementBuilder) {
+            NListElementBuilder olist = (NListElementBuilder) other;
+            depth = olist.depth();
+            type = olist.type();
+            items.addAll(olist.items());
+        }
         return this;
     }
 
     @Override
     public NListElementBuilder copyFrom(NElement other) {
         super.copyFrom(other);
+        if (other instanceof NListElement) {
+            NListElement olist = (NListElement) other;
+            depth = olist.depth();
+            type = olist.type();
+            items.addAll(olist.items());
+        }
         return this;
     }
 }
