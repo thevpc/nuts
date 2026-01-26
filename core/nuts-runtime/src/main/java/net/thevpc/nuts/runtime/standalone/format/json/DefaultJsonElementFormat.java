@@ -300,7 +300,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             case UNARY_OPERATOR:
             case NARY_OPERATOR:
             case FLAT_EXPR:{
-                NExprElement ope = (NExprElement) e;
+                NOperatorElement ope = (NOperatorElement) e;
                 NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(e);
                 value1.clearChildren();
                 value1.set("op", ope.type().id());
@@ -386,8 +386,8 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             }
             case ARRAY:
             case NAMED_ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY:
-            case PARAMETRIZED_ARRAY: {
+            case FULL_ARRAY:
+            case PARAM_ARRAY: {
                 List<NElementAnnotation> a = e.annotations();
 
                 NArrayElement p0 = e.asArray().get();
@@ -407,8 +407,8 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             }
             case OBJECT:
             case NAMED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
-            case PARAMETRIZED_OBJECT: {
+            case FULL_OBJECT:
+            case PARAM_OBJECT: {
                 List<NElementAnnotation> a = e.annotations();
 
                 NObjectElement p0 = e.asObject().get();
