@@ -81,13 +81,13 @@ public interface NElementFactory extends NComponent {
 
     NPairElementBuilder ofPairBuilder(NElement key, NElement value);
 
-    NExprElementBuilder ofOpBuilder();
+    NOperatorElementBuilder ofOpBuilder();
 
-    NExprElement ofOp(NOperatorSymbol op, NOperatorPosition position, NElement first, NElement second);
+    NOperatorElement ofOp(NOperatorSymbol op, NOperatorPosition position, NElement first, NElement second);
 
-    NExprElement ofOp(NOperatorSymbol op, NElement first, NElement second);
+    NOperatorElement ofOp(NOperatorSymbol op, NElement first, NElement second);
 
-    NExprElement ofOp(NOperatorSymbol op, NElement first);
+    NOperatorElement ofOp(NOperatorSymbol op, NElement first);
 
     NOperatorSymbolElement ofOp(NOperatorSymbol op);
 
@@ -303,17 +303,17 @@ public interface NElementFactory extends NComponent {
 
     NArrayElement ofNamedArray(String name, NElement... items);
 
-    NArrayElement ofNamedParametrizedArray(String name, NElement[] params, NElement... items);
+    NArrayElement ofFullArray(String name, NElement[] params, NElement... items);
 
     NArrayElement ofArray(String name, NElement[] params, NElement... items);
 
-    NArrayElement ofParametrizedArray(NElement[] params, NElement... items);
+    NArrayElement ofParamArray(NElement[] params, NElement... items);
 
-    NArrayElement ofParametrizedArray(NElement... params);
+    NArrayElement ofParamArray(NElement... params);
 
-    NArrayElement ofParametrizedArray(String name, NElement[] params, NElement... items);
+    NArrayElement ofParamArray(String name, NElement[] params, NElement... items);
 
-    NArrayElement ofParametrizedArray(String name, NElement... params);
+    NArrayElement ofParamArray(String name, NElement... params);
 
     NArrayElement ofStringArray(String... items);
 
@@ -339,17 +339,17 @@ public interface NElementFactory extends NComponent {
 
     NObjectElement ofNamedObject(String name, NElement... items);
 
-    NObjectElement ofNamedParametrizedObject(String name, NElement[] params, NElement... items);
+    NObjectElement ofFullObject(String name, NElement[] params, NElement... items);
 
-    NObjectElement ofParametrizedObject(NElement[] params, NElement... items);
+    NObjectElement ofParamObject(NElement[] params, NElement... items);
 
-    NObjectElement ofParametrizedObject(NElement... params);
+    NObjectElement ofParamObject(NElement... params);
 
-    NObjectElement ofParametrizedObject(String name, NElement[] params, NElement... items);
+    NObjectElement ofParamObject(String name, NElement[] params, NElement... items);
 
     NObjectElement ofObject(String name, NElement[] params, NElement... items);
 
-    NObjectElement ofParametrizedObject(String name, NElement... params);
+    NObjectElement ofParamObject(String name, NElement... params);
 
     NElementComment ofBlocComment(String... a);
 
