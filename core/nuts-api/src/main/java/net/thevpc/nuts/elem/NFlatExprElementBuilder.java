@@ -49,9 +49,15 @@ public interface NFlatExprElementBuilder extends NElementBuilder {
 
     NFlatExprElementBuilder add(NElement element);
 
+    NFlatExprElementBuilder setAt(int index, NElement element);
+
+    NFlatExprElementBuilder setAt(int index, NOperatorSymbol element);
+
     List<NElement> children();
 
     NFlatExprElementBuilder doWith(Consumer<NFlatExprElementBuilder> con);
+
+    int size();
 
     NFlatExprElement build();
 
@@ -65,6 +71,7 @@ public interface NFlatExprElementBuilder extends NElementBuilder {
     NFlatExprElementBuilder addAffix(int index, NBoundAffix affix);
 
     NFlatExprElementBuilder setAffix(int index, NBoundAffix affix);
+
     NFlatExprElementBuilder addAffix(NBoundAffix affix);
 
     NFlatExprElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
@@ -102,4 +109,5 @@ public interface NFlatExprElementBuilder extends NElementBuilder {
     NFlatExprElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NFlatExprElementBuilder addAffixes(List<NBoundAffix> affixes);
+
 }
