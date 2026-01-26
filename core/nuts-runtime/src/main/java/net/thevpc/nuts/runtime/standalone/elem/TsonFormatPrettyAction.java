@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.text.NTreeVisitResult;
 
 public class TsonFormatPrettyAction implements NElementFormatterAction {
@@ -10,12 +11,12 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
         switch (parent.type()) {
             case OBJECT:
             case NAMED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
-            case PARAMETRIZED_OBJECT:
+            case FULL_OBJECT:
+            case PARAM_OBJECT:
             case ARRAY:
             case NAMED_ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY:
-            case PARAMETRIZED_ARRAY: {
+            case FULL_ARRAY:
+            case PARAM_ARRAY: {
                 Stats score = calculateStats(parent); // Peek at the result
                 if (score.isComplex(options)) {
                     return childContext.withIndent(childContext.indent() + getIndentUnit());
@@ -32,17 +33,21 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
 
     public void apply(NElementFormatContext context) {
         NElementBuilder builder = context.builder();
+        builder.removeAffixIf(x ->
+                x.affix().type() == NAffixType.SPACE
+                        || x.affix().type() == NAffixType.NEWLINE
+        );
         NElement element = builder.build();
         Stats score = calculateStats(element); // Peek at the result
         switch (builder.type()) {
             case OBJECT:
             case NAMED_OBJECT:
-            case NAMED_PARAMETRIZED_OBJECT:
-            case PARAMETRIZED_OBJECT:
+            case FULL_OBJECT:
+            case PARAM_OBJECT:
             case ARRAY:
             case NAMED_ARRAY:
-            case NAMED_PARAMETRIZED_ARRAY:
-            case PARAMETRIZED_ARRAY: {
+            case FULL_ARRAY:
+            case PARAM_ARRAY: {
                 applyObjectOrArray(builder, score, context);
                 return;
             }
@@ -131,6 +136,8 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
             builder.addAffixSeparator(",", NAffixAnchor.SEP_1);
             builder.addAffixSpace(" ", NAffixAnchor.SEP_1); // Optional trailing space after comma
 
+            builder.addAffixSpace(" ", NAffixAnchor.SEP_2);
+            builder.addAffixSeparator(",", NAffixAnchor.SEP_2);
             builder.addAffixNewLine(options.getNewLineMode(), NAffixAnchor.SEP_2);
             builder.addAffixSpace(indent + unit, NAffixAnchor.SEP_2);
 
@@ -139,10 +146,15 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
             builder.addAffixSpace(indent, NAffixAnchor.PRE_5);
         } else {
             // Simple mode: One-liner with single spaces
-            builder.addAffixSpace(" ", NAffixAnchor.POST_4);
+//            builder.addAffixSpace(" ", NAffixAnchor.POST_4);
+
             builder.addAffixSeparator(",", NAffixAnchor.SEP_1);
+            builder.addAffixSpace(" ", NAffixAnchor.SEP_1);
+
+            builder.addAffixSeparator(",", NAffixAnchor.SEP_2);
             builder.addAffixSpace(" ", NAffixAnchor.SEP_2);
-            builder.addAffixSpace(" ", NAffixAnchor.PRE_5);
+
+//            builder.addAffixSpace(" ", NAffixAnchor.PRE_5);
         }
     }
 
@@ -151,9 +163,13 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
 //        builder.addAffixSpace(" ", NAffixAnchor.START);
     }
 
+    private String formatCompact(NElement element) {
+        return DefaultTsonWriter.formatTsonCompact(element);
+    }
+
     private Stats calculateStats(NElement element) {
         Stats s = new Stats();
-        s.charSize = element.toString().length();
+        s.charSize = formatCompact(element).length();
         element.traverse(
                 new NElementVisitor() {
                     @Override
