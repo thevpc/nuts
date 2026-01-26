@@ -1,26 +1,29 @@
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NNewLineMode;
+
+import java.util.function.Predicate;
 
 public interface NElementFormatterBuilder {
     static NElementFormatterBuilder of() {
         return NElements.of().createElementFormatterBuilder();
     }
 
-    NElementFormatterBuilder setContentType(NContentType contentType);
-
-    NElementFormatterBuilder setStyle(NElementFormatterStyle style);
-
     NElementFormatterBuilder setIndent(int spaces);
-
-    NElementFormatterBuilder setMaxWidth(int width);
 
     NElementFormatterBuilder setComplexityThreshold(int score);
 
     NElementFormatterBuilder setColumnLimit(int lineWidth);
 
-    NElementFormatterBuilder clear(NElementType elementType, NAffixType affixType, NAffixAnchor anchor);
+    NElementFormatterBuilder removeComments();
+
+    NElementFormatterBuilder removeWhitespaces();
+
+    NElementFormatterBuilder removeSeparators();
+
+    NElementFormatterBuilder removeNewlines();
+
+    NElementFormatterBuilder removeAffixes(NElementType elementType, Predicate<NBoundAffix> affixPredicate);
 
     NElementFormatterBuilder addAction(NElementFormatterAction action);
 
@@ -48,13 +51,7 @@ public interface NElementFormatterBuilder {
 
     NElementFormatterBuilder addNewline(NElementType elementType, NAffixAnchor anchor);
 
-    NElementFormatterStyle getStyle();
-
-    NContentType getContentType();
-
     int getIndent();
-
-    int getMaxWidth();
 
     int getComplexityThreshold();
 
