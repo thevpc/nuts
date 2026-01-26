@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Map;
@@ -10,9 +11,11 @@ public class DefaultNElementFormatContext extends DefaultNElementTransformContex
     private String indent = "";
     private NElementFormatOptions options;
     private NElementBuilder builder;
+    private NContentType contentType;
 
-    public DefaultNElementFormatContext(NElement element) {
+    public DefaultNElementFormatContext(NElement element,NContentType contentType) {
         super(element);
+        this.contentType=contentType;
     }
 
     public DefaultNElementFormatContext(NElement element, NElementPath path, Map<String, Object> properties, Map<String, Object> sharedConfig, String indent, NElementFormatOptions options, NElementBuilder builder) {
@@ -20,6 +23,10 @@ public class DefaultNElementFormatContext extends DefaultNElementTransformContex
         this.indent = NStringUtils.firstNonNull(indent, "");
         this.options = options;
         this.builder = builder;
+    }
+
+    public NContentType contentType() {
+        return contentType;
     }
 
     @Override
