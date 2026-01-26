@@ -4,11 +4,11 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNExprElementBuilder;
+import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNOperatorElementBuilder;
 
 import java.util.*;
 
-public abstract class AbstractNOperatorElement extends AbstractNElement implements NExprElement {
+public abstract class AbstractNOperatorElement extends AbstractNElement implements NOperatorElement {
     private NOperatorPosition position;
     private List<NOperatorSymbol> symbols;
     private List<NElement> operands;
@@ -64,10 +64,10 @@ public abstract class AbstractNOperatorElement extends AbstractNElement implemen
     }
 
     @Override
-    public NExprElementBuilder builder() {
-        return new DefaultNExprElementBuilder()
+    public NOperatorElementBuilder builder() {
+        return new DefaultNOperatorElementBuilder()
                 .operands(operands.toArray(new NElement[0]))
-                .symbols(symbols.toArray(new NOperatorSymbol[0]))
+                .operators(symbols.toArray(new NOperatorSymbol[0]))
                 .position(position())
                 .addAffixes(affixes())
                 ;
