@@ -324,7 +324,7 @@ public class TsonTest {
 
     @Test
     public void testUnorderedList_depthDriven_roundTrip() {
-        String tson = "   [.]   A   [.....]   B   [..]   C";
+        String tson = "/*01*/[.]/*02*/A   [.....]   B   [..]   C";
         TsonCustomParser parser = new TsonCustomParser(tson);
         NElement element = parser.parseDocument();
         TestUtils.println(element);
