@@ -277,13 +277,11 @@ public class TsonCustomParser {
                     break;
                 }
                 case LBRACE: {
-                    affixes.addAll(tokensToAffixes(t.prefixes));
                     base = object(null, null, Collections.emptyList(), Collections.emptyList(), new ArrayList<>(affixes), new ArrayList<>());
                     affixes.clear();
                     break;
                 }
                 case LBRACK: {
-                    affixes.addAll(tokensToAffixes(t.prefixes));
                     base = array(null, null, Collections.emptyList(), Collections.emptyList(), new ArrayList<>(affixes), new ArrayList<>());
                     affixes.clear();
                     break;
@@ -295,7 +293,6 @@ public class TsonCustomParser {
                     break;
                 }
                 case LPAREN: {
-                    affixes.addAll(tokensToAffixes(t.prefixes));
                     base = unnamed(null, new ArrayList<>(affixes), new ArrayList<>());
                     affixes.clear();
                     break;
@@ -447,7 +444,7 @@ public class TsonCustomParser {
         List<NElement> oelements = new ArrayList<>();
         List<NAffix> beforeLbracketAffixes = new ArrayList<>();
         List<NAffix> beforeRbracketAffixes = new ArrayList<>();
-        readEnclosedAndSeparatedElements(NElementTokenType.LBRACK, oelements, beforeLbracketAffixes, beforeRbracketAffixes, diagnostics);
+        readEnclosedAndSeparatedElements(NElementTokenType.RBRACK, oelements, beforeLbracketAffixes, beforeRbracketAffixes, diagnostics);
 
         List<NBoundAffix> boundAffixes = new ArrayList<>();
 
