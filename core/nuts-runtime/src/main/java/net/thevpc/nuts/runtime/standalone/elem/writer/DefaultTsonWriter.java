@@ -24,11 +24,11 @@ public class DefaultTsonWriter {
         this.w = writer;
     }
 
-    public void write(NAffix affix) {
+    public void writeAffix(NAffix affix) {
         switch (affix.type()) {
             case LINE_COMMENT:
             case BLOC_COMMENT: {
-                writeSimpleComment((NElementComment) affix);
+                writeComment((NElementComment) affix);
                 break;
             }
             case SPACE: {
@@ -37,7 +37,7 @@ public class DefaultTsonWriter {
             }
             case ANNOTATION: {
                 NElementAnnotation a = (NElementAnnotation) affix;
-                appendAnnotation(a);
+                writeAnnotation(a);
                 break;
             }
             case SEPARATOR: {
@@ -51,7 +51,7 @@ public class DefaultTsonWriter {
         }
     }
 
-    private void appendAnnotation(NElementAnnotation a) {
+    private void writeAnnotation(NElementAnnotation a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
         write("@");
         if (!NBlankable.isBlank(a.name())) {
@@ -159,8 +159,7 @@ public class DefaultTsonWriter {
             case UNARY_OPERATOR:
             case BINARY_OPERATOR:
             case TERNARY_OPERATOR:
-            case NARY_OPERATOR:
-            {
+            case NARY_OPERATOR: {
                 NOperatorElement a = (NOperatorElement) element;
                 writeAnyOperatorElement(a);
                 break;
@@ -302,21 +301,26 @@ public class DefaultTsonWriter {
             if (i > 0) {
                 write(a.affixes(), NAffixAnchor.SEP_1, acceptableWrapSep);
             }
-            write(a.affixes(), NAffixAnchor.PRE_1, acceptableWrapSep);
-            NElement v = item.value().orNull();
-            String bullet = item.marker();
-            appendAnchored(bullet, 2, a.affixes());
-            if (v != null) {
-                appendAnchored(v, 3, a.affixes());
-            }
-            NListElement sl = item.subList().orNull();
-            if (sl != null) {
-                appendAnchored(sl, 4, a.affixes());
-            }
-            write(a.affixes(), NAffixAnchor.POST_1, acceptableWrapSep);
+            writeListItem(item);
         }
         write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
+
+    private void writeListItem(NListItemElement item) {
+        write(item.affixes(), NAffixAnchor.START, acceptableWrapSep);
+        NElement v = item.value().orNull();
+        String bullet = item.marker();
+        appendAnchored(bullet, 1, item.affixes());
+        if (v != null) {
+            appendAnchored(v, 2, item.affixes());
+        }
+        NListElement sl = item.subList().orNull();
+        if (sl != null) {
+            appendAnchored(sl, 3, item.affixes());
+        }
+        write(item.affixes(), NAffixAnchor.END, acceptableWrapSep);
+    }
+
 
     private void writeCustomElement(NCustomElement a) {
         NStringElement s = (NStringElement) NPrimitiveElementBuilder.of()
@@ -463,7 +467,7 @@ public class DefaultTsonWriter {
         write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
-    private void writeSimpleComment(NElementComment a) {
+    private void writeComment(NElementComment a) {
         write(a.raw());
     }
 
@@ -620,7 +624,7 @@ public class DefaultTsonWriter {
 
 
     private void write(NBoundAffix a) {
-        write(a.affix());
+        writeAffix(a.affix());
     }
 
     private NAffixAnchor pre(int index) {
@@ -729,10 +733,16 @@ public class DefaultTsonWriter {
         return sb.toString();
     }
 
-    public static String formatTson(NElementAnnotation e) {
+//    public static String formatTson(NElementAnnotation e) {
+//        NStringBuilder sb = new NStringBuilder();
+//        DefaultTsonWriter w = new DefaultTsonWriter(sb.asStringWriter());
+//        w.writeAnnotation(e);
+//        return sb.toString();
+//    }
+    public static String formatTson(NAffix e) {
         NStringBuilder sb = new NStringBuilder();
         DefaultTsonWriter w = new DefaultTsonWriter(sb.asStringWriter());
-        w.appendAnnotation(e);
+        w.writeAffix(e);
         return sb.toString();
     }
 
