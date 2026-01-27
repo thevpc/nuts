@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.NElementComment;
 import net.thevpc.nuts.elem.NAffixType;
+import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCommentsHelper;
 import net.thevpc.nuts.util.NStringBuilder;
 
@@ -73,18 +74,7 @@ public class NElementCommentImpl implements NElementComment {
      ****/
     @Override
     public String toString() {
-        switch (type) {
-            case LINE_COMMENT: {
-                return new NStringBuilder(text()).indent("// ").append("\n").toString();
-            }
-            case BLOC_COMMENT: {
-                return "/*\n"
-                        + new NStringBuilder(text()).indent("* ").toString()
-                        + "*/"
-                        ;
-            }
-        }
-        return new NStringBuilder(text()).indent("// ").toString();
+        return DefaultTsonWriter.formatTson(this);
     }
 
     public NAffixType type() {
