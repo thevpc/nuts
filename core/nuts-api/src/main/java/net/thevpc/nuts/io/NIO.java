@@ -123,100 +123,13 @@ public interface NIO extends NComponent {
      */
     NIO setDefaultTerminal(NTerminal terminal);
 
-    /**
-     * expand path to Workspace Location
-     *
-     * @param path path to expand
-     * @return expanded path
-     */
-    NPath createPath(String path);
-
-    NPath createPath(File path);
-
-    NPath createPath(Path path);
-
-    NPath createPath(URL path);
-
-    NPath createPath(String path, ClassLoader classLoader);
-
-    NPath createPath(NPathSPI path);
-
     NIO addPathFactory(NPathFactorySPI pathFactory);
 
     NIO removePathFactory(NPathFactorySPI pathFactory);
 
-    /**
-     * create temp file in the repositoryId's temp folder
-     *
-     * @param name file name
-     * @return newly created file path
-     */
-    NPath ofTempFile(String name);
-
-    /**
-     * create temp file in the repositoryId's temp folder
-     *
-     * @return newly created file path
-     */
-    NPath ofTempFile();
-
-    /**
-     * create temp folder in the workspace's temp folder
-     *
-     * @param name folder name
-     * @return newly created temp folder
-     */
-    NPath ofTempFolder(String name);
-
-    /**
-     * create temp folder in the workspace's temp folder
-     *
-     * @return newly created temp folder
-     */
-    NPath ofTempFolder();
-
-    /**
-     * create temp file in the repositoryId's temp folder
-     *
-     * @param name file name
-     * @return newly created file path
-     */
-    NPath ofTempRepositoryFile(String name, NRepository repository);
-
-    /**
-     * create temp file in the repositoryId's temp folder
-     *
-     * @return newly created file path
-     */
-    NPath ofTempRepositoryFile(NRepository repository);
-
-    /**
-     * create temp folder in the repository's temp folder
-     *
-     * @param name folder name
-     * @return newly created temp folder
-     */
-    NPath ofTempRepositoryFolder(String name, NRepository repository);
-
-    /**
-     * create temp folder in the repository's temp folder
-     *
-     * @return newly created temp folder
-     */
-    NPath ofTempRepositoryFolder(NRepository repository);
-
-
     String probeContentType(URL path);
 
     String probeContentType(File path);
-
-    NPath ofTempIdFile(String name, NId repository);
-
-    NPath ofTempIdFolder(String name, NId repository);
-
-    NPath ofTempIdFile(NId repository);
-
-    NPath ofTempIdFolder(NId repository);
 
     String probeContentType(Path path);
 
@@ -226,7 +139,7 @@ public interface NIO extends NComponent {
 
     String probeContentType(byte[] stream);
 
-    ////////
+    /// /////
     String probeCharset(URL path);
 
     String probeCharset(File path);
@@ -245,6 +158,7 @@ public interface NIO extends NComponent {
 
     /**
      * returns a memory or file (depending on size) output stream
+     *
      * @return a memory or file (depending on size) output stream
      */
     NTempOutputStream ofTempOutputStream();
