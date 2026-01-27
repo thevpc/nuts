@@ -294,6 +294,11 @@ public abstract class AbstractNElement implements NElement {
         return NOptional.ofEmpty(_expected("list container"));
     }
 
+    public List<NElement> toMany() {
+        return toListContainer()
+                .map(NListContainerElement::children)
+                .orElseGet(() -> Collections.singletonList(this));
+    }
 
     @Override
     public NOptional<NParametrizedContainerElement> asParametrizedContainer() {
@@ -964,27 +969,9 @@ public abstract class AbstractNElement implements NElement {
         if (isListContainer()) {
             return asListContainer();
         }
-        if (isNamedPair()) {
-            NArrayElementBuilder ab = NElement.ofArrayBuilder();
-            ab.name(asNamed().get().name().orNull());
-            NPairElement pair = asPair().get();
-            NElement value = pair.value();
-            if (value.isListContainer()) {
-                NListContainerElement cc = value.asListContainer().get();
-                if (cc.isNamed() || cc.isParametrized()) {
-                    ab.add(cc);
-                } else {
-                    ab.addAll(cc.children());
-                }
-            } else {
-                ab.add(value);
-            }
-            return NOptional.of(ab.build());
-        } else {
-            NArrayElementBuilder ab = NElement.ofArrayBuilder();
-            ab.add(this);
-            return NOptional.of(ab.build());
-        }
+        NArrayElementBuilder ab = NElement.ofArrayBuilder();
+        ab.add(this);
+        return NOptional.of(ab.build());
     }
 
     @Override
