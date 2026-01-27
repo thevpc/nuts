@@ -14,7 +14,6 @@ import java.util.Base64;
 import java.util.List;
 
 public class DefaultTsonWriter {
-    protected NCharQueue buffer = new NCharQueue(64);
     protected NStringWriter w;
     private NAffixType[] acceptablePost = new NAffixType[]{NAffixType.NEWLINE, NAffixType.SPACE, NAffixType.BLOC_COMMENT, NAffixType.LINE_COMMENT};
     private NAffixType[] acceptablePre = NAffixType.values();
@@ -55,14 +54,14 @@ public class DefaultTsonWriter {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
         write("@");
         if (!NBlankable.isBlank(a.name())) {
-            appendAnchored(a.name(), 1, a.affixes());
+            writeBoundedString(a.name(), 1, a.affixes());
         }
         if (a.params().isPresent()) {
-            appendAnchored("(", 2, a.affixes());
+            writeBoundedString("(", 2, a.affixes());
             for (NElement e : a.params().get()) {
                 write(e);
             }
-            appendAnchored(")", 3, a.affixes());
+            writeBoundedString(")", 3, a.affixes());
         }
         write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
@@ -208,13 +207,13 @@ public class DefaultTsonWriter {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
         String name = a.name().orNull();
         if (name != null) {
-            appendAnchored(name, 1, a.affixes());
+            writeBoundedString(name, 1, a.affixes());
         }
-        appendAnchored("(", 2, a.affixes());
+        writeBoundedString("(", 2, a.affixes());
         for (NElement e : a.params()) {
             write(e);
         }
-        appendAnchored(")", 3, a.affixes());
+        writeBoundedString(")", 3, a.affixes());
         write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
@@ -235,10 +234,10 @@ public class DefaultTsonWriter {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
         String name = a.name().orNull();
         if (name != null) {
-            appendAnchored(name, 1, a.affixes());
+            writeBoundedString(name, 1, a.affixes());
         }
         if (a.params().isPresent()) {
-            appendAnchored("(", 2, a.affixes());
+            writeBoundedString("(", 2, a.affixes());
             List<NElement> get = a.params().get();
             for (int i = 0; i < get.size(); i++) {
                 NElement e = get.get(i);
@@ -247,9 +246,9 @@ public class DefaultTsonWriter {
                 }
                 write(e);
             }
-            appendAnchored(")", 3, a.affixes());
+            writeBoundedString(")", 3, a.affixes());
         }
-        appendAnchored("{", 4, a.affixes());
+        writeBoundedString("{", 4, a.affixes());
         List<NElement> children = a.children();
         for (int i = 0; i < children.size(); i++) {
             NElement e = children.get(i);
@@ -258,7 +257,7 @@ public class DefaultTsonWriter {
             }
             write(e);
         }
-        appendAnchored("}", 5, a.affixes());
+        writeBoundedString("}", 5, a.affixes());
         write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
@@ -266,10 +265,10 @@ public class DefaultTsonWriter {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
         String name = a.name().orNull();
         if (name != null) {
-            appendAnchored(name, 1, a.affixes());
+            writeBoundedString(name, 1, a.affixes());
         }
         if (a.params().isPresent()) {
-            appendAnchored("(", 2, a.affixes());
+            writeBoundedString("(", 2, a.affixes());
             List<NElement> get = a.params().get();
             for (int i = 0; i < get.size(); i++) {
                 NElement e = get.get(i);
@@ -278,9 +277,9 @@ public class DefaultTsonWriter {
                 }
                 write(e);
             }
-            appendAnchored(")", 3, a.affixes());
+            writeBoundedString(")", 3, a.affixes());
         }
-        appendAnchored("[", 4, a.affixes());
+        writeBoundedString("[", 4, a.affixes());
         List<NElement> children = a.children();
         for (int i = 0; i < children.size(); i++) {
             NElement e = children.get(i);
@@ -289,7 +288,7 @@ public class DefaultTsonWriter {
             }
             write(e);
         }
-        appendAnchored("]", 5, a.affixes());
+        writeBoundedString("]", 5, a.affixes());
         write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
@@ -310,13 +309,13 @@ public class DefaultTsonWriter {
         write(item.affixes(), NAffixAnchor.START, acceptableWrapSep);
         NElement v = item.value().orNull();
         String bullet = item.marker();
-        appendAnchored(bullet, 1, item.affixes());
+        writeBoundedString(bullet, 1, item.affixes());
         if (v != null) {
-            appendAnchored(v, 2, item.affixes());
+            writeBoundedElement(v, 2, item.affixes());
         }
         NListElement sl = item.subList().orNull();
         if (sl != null) {
-            appendAnchored(sl, 3, item.affixes());
+            writeBoundedElement(sl, 3, item.affixes());
         }
         write(item.affixes(), NAffixAnchor.END, acceptableWrapSep);
     }
@@ -336,10 +335,10 @@ public class DefaultTsonWriter {
         switch (a.position()) {
             case PREFIX: {
                 for (int i = 0; i < operatorSymbols.size(); i++) {
-                    appendAnchored(a.operatorSymbol(i).get().lexeme(), 1, a.affixes());
+                    writeBoundedString(a.operatorSymbol(i).get().lexeme(), 1, a.affixes());
                 }
                 for (NElement operand : a.operands()) {
-                    appendAnchored(operand, 2, a.affixes());
+                    writeBoundedElement(operand, 2, a.affixes());
                 }
                 break;
             }
@@ -349,23 +348,23 @@ public class DefaultTsonWriter {
                     NElement operand = operands.get(i);
                     if (i > 0) {
                         if (i < operatorSymbols.size()) {
-                            appendAnchored(operatorSymbols.get(i).lexeme(), 1, a.affixes());
+                            writeBoundedString(operatorSymbols.get(i).lexeme(), 1, a.affixes());
                         } else if (!operatorSymbols.isEmpty()) {
-                            appendAnchored(operatorSymbols.get(operatorSymbols.size() - 1).lexeme(), 1, a.affixes());
+                            writeBoundedString(operatorSymbols.get(operatorSymbols.size() - 1).lexeme(), 1, a.affixes());
                         } else {
-                            appendAnchored("?", 1, a.affixes());
+                            writeBoundedString("?", 1, a.affixes());
                         }
                     }
-                    appendAnchored(operand, 2, a.affixes());
+                    writeBoundedElement(operand, 2, a.affixes());
                 }
                 break;
             }
             case POSTFIX: {
                 for (NElement operand : a.operands()) {
-                    appendAnchored(operand, 2, a.affixes());
+                    writeBoundedElement(operand, 2, a.affixes());
                 }
                 for (NOperatorSymbol s : operatorSymbols) {
-                    appendAnchored(s.lexeme(), 1, a.affixes());
+                    writeBoundedString(s.lexeme(), 1, a.affixes());
                 }
                 break;
             }
@@ -375,7 +374,7 @@ public class DefaultTsonWriter {
 
     private void writeCharStream(NCharStreamElement a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
-        appendAnchored("^" + a.blocIdentifier() + "{", 1, a.affixes());
+        writeBoundedString("^" + a.blocIdentifier() + "{", 1, a.affixes());
         try (Reader reader = a.value().getReader()) {
             char[] b = new char[1024];
             int c;
@@ -385,13 +384,13 @@ public class DefaultTsonWriter {
         } catch (IOException e) {
             throw new NIllegalArgumentException(NMsg.ofC("unable to execute toString on CharStream"));
         }
-        appendAnchored("^" + a.blocIdentifier() + "}", 2, a.affixes());
+        writeBoundedString("^" + a.blocIdentifier() + "}", 2, a.affixes());
         write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeBinaryStream(NBinaryStreamElement a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
-        appendAnchored("^" + a.blocIdentifier() + "[", 1, a.affixes());
+        writeBoundedString("^" + a.blocIdentifier() + "[", 1, a.affixes());
         try (InputStream reader = a.value().getInputStream()) {
             try (OutputStream out = asBinaryOutputStream(a.blocIdentifier())) {
                 byte[] b = new byte[1024];
@@ -403,13 +402,13 @@ public class DefaultTsonWriter {
         } catch (IOException e) {
             throw new NIllegalArgumentException(NMsg.ofC("unable to execute toString on CharStream"));
         }
-        appendAnchored("]", 2, a.affixes());
+        writeBoundedString("]", 2, a.affixes());
         write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
     private void writeLineString(NStringElement a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
-        appendAnchored("¶", 1, a.affixes());
+        writeBoundedString("¶", 1, a.affixes());
         List<NBoundAffix> leadingSpaces = NBoundAffixList.filter(a.affixes(), NAffixAnchor.PRE_2, NAffixType.SPACE);
         if (leadingSpaces.isEmpty()) {
             write(" ");
@@ -447,7 +446,7 @@ public class DefaultTsonWriter {
             strValues.add("");
         }
         for (int i = 0; i < strValues.size(); i++) {
-            appendAnchored("¶¶", i, a.affixes());
+            writeBoundedString("¶¶", i, a.affixes());
             if (i > 0) {
                 write(a.affixes(), NAffixAnchor.SEP_1, acceptableWrapSep);
             }
@@ -659,14 +658,14 @@ public class DefaultTsonWriter {
         throw new IndexOutOfBoundsException("index=" + index);
     }
 
-    private void appendAnchored(String str, int index, List<NBoundAffix> list) {
+    private void writeBoundedString(String str, int index, List<NBoundAffix> list) {
         write(list, pre(index), acceptableWrapSep);
         write(str);
         write(list, pos(index), acceptableWrapSep);
     }
 
 
-    private void appendAnchored(NElement str, int index, List<NBoundAffix> list) {
+    private void writeBoundedElement(NElement str, int index, List<NBoundAffix> list) {
         write(list, pre(index), acceptableWrapSep);
         write(str);
         write(list, pos(index), acceptableWrapSep);
@@ -678,18 +677,15 @@ public class DefaultTsonWriter {
         }
     }
 
-    private void write(char[] text, int offset, int len) {
-        buffer.write(text, offset, len);
-        w.write(text, offset, len);
+    private void write(char[] buffer, int offset, int len) {
+        w.write(buffer, offset, len);
     }
 
     private void write(String text) {
-        buffer.write(text);
         w.write(text);
     }
 
     private void write(char c) {
-        buffer.write(c);
         w.write(c);
     }
 
@@ -715,16 +711,6 @@ public class DefaultTsonWriter {
         return formatTson(ee);
     }
 
-//    public static String formatTsonPretty(NElement e) {
-//        NElement ee = e.format(
-//                new DefaultNElementFormatterBuilder()
-//                        .setContentType(NContentType.TSON)
-//                        .setComplexityThreshold(10)
-//                        .setColumnLimit(200)
-//                        .build()
-//        );
-//        return formatTson(ee);
-//    }
 
     public static String formatTson(NElement e) {
         NStringBuilder sb = new NStringBuilder();
@@ -733,12 +719,6 @@ public class DefaultTsonWriter {
         return sb.toString();
     }
 
-//    public static String formatTson(NElementAnnotation e) {
-//        NStringBuilder sb = new NStringBuilder();
-//        DefaultTsonWriter w = new DefaultTsonWriter(sb.asStringWriter());
-//        w.writeAnnotation(e);
-//        return sb.toString();
-//    }
     public static String formatTson(NAffix e) {
         NStringBuilder sb = new NStringBuilder();
         DefaultTsonWriter w = new DefaultTsonWriter(sb.asStringWriter());
