@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.util.NAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -71,6 +72,17 @@ public class TsonTest {
     public void test01() {
         String tson = "a:b {a:b} @a a(b,c)[x]";
         NElement parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(parsed);
+    }
+    @Test
+    public void test014() {
+//        String tson = "github(\"thevpc/nsh\" , \"/xprojects/nuts-world/nuts-companions\"   , tag:[\"nuts-world\",\"nuts\"] , mvnDeploy:\"thevpc\" )";
+        String tson = "[1,2] b:3";
+        NElement parsed = NElementReader.ofTson().read(tson);
+        NObjectElement o = parsed.asObject().get();
+        Assertions.assertEquals(2, o.size());
+        NArrayElement a = o.get(0).get().asArray().get();
+        NPairElement b = o.get(1).get().asPair().get();
         TestUtils.println(parsed);
     }
 
