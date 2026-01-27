@@ -114,7 +114,7 @@ public class TsonCustomParser {
             }
             case COMMA:
             case SEMICOLON2:
-                return new NElementCommentImpl(NAffixType.SEPARATOR, x.image(), x.image());
+                return DefaultNElementSeparator.of(x.image());
         }
         throw new NUnexpectedException(NMsg.ofC("unexpected token type"));
     }
@@ -307,13 +307,11 @@ public class TsonCustomParser {
                     break;
                 }
                 case ORDERED_LIST: {
-                    affixes.addAll(tokensToAffixes(t.prefixes));
                     base = list(true, 0, new ArrayList<>(affixes), new ArrayList<>());
                     affixes.clear();
                     break;
                 }
                 case UNORDERED_LIST: {
-                    affixes.addAll(tokensToAffixes(t.prefixes));
                     base = list(false, 0, new ArrayList<>(affixes), new ArrayList<>());
                     affixes.clear();
                     break;
@@ -525,6 +523,7 @@ public class TsonCustomParser {
         int currentDepth = t.token.level();
         NElementTokenInfo t2 = peekToken();
         List<NBoundAffix> itemAffixes = new ArrayList<>();
+        itemAffixes.addAll(bindAffixes(pendingAffixTokens, NAffixAnchor.START));
         itemAffixes.addAll(tokensToBoundAffixes(t.prefixes, NAffixAnchor.START));
         if (t2 == null) {
             return new DefaultNListItemElement(et, t.token.image(), t.token.variant(), currentDepth, null, null, itemAffixes);
@@ -572,6 +571,7 @@ public class TsonCustomParser {
             }
         }
         DefaultNListElementBuilder b = new DefaultNListElementBuilder(t.token.type() == NElementTokenType.ORDERED_LIST ? NElementType.ORDERED_LIST : NElementType.UNORDERED_LIST, minDepth);
+        b.addAffixes(bindAffixes(pendingAffixTokens,NAffixAnchor.START));
         for (NListItemElement e : sub) {
             b.addItem(e);
         }
