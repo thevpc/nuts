@@ -1052,6 +1052,7 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
      * @return NListContainerElement
      */
     NOptional<NListContainerElement> toListContainer();
+    List<NElement> toMany();
 
     List<NElementComment> comments();
 
