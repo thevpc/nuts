@@ -208,6 +208,9 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
     }
 
     public static boolean isCollision(String before, String after) {
+        if (before.isEmpty() || after.isEmpty()) {
+            return false;
+        }
         char bc = before.charAt(before.length() - 1);
         char ac = after.charAt(0);
         // If either is a separator (space, comma, brace), no collision possible
