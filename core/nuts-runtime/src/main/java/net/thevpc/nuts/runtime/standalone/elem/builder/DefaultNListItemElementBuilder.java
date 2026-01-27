@@ -154,7 +154,7 @@ public class DefaultNListItemElementBuilder implements NListItemElementBuilder {
                 listType,
                 validMarker,
                 markerVariant,
-                depth, value, subList, new ArrayList<>()
+                depth, value, subList, affixes.list()
         );
     }
 }
