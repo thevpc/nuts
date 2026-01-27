@@ -1,23 +1,29 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
-import net.thevpc.nuts.core.NBootOptions;
+import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.*;
 
 import net.thevpc.nuts.command.NExecutionEntry;
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
+import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
+import net.thevpc.nuts.runtime.standalone.io.path.spi.FilePath;
+import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
 import net.thevpc.nuts.runtime.standalone.io.printstream.*;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFrom;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractNInputSource;
 import net.thevpc.nuts.runtime.standalone.io.util.NInputStreamSource;
 import net.thevpc.nuts.runtime.standalone.text.SimpleWriterOutputStream;
+import net.thevpc.nuts.runtime.standalone.util.DefaultNTextCursorTracker;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
+import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
@@ -26,8 +32,10 @@ import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -169,7 +177,7 @@ public class DefaultNIORPI implements NIORPI {
         if (inputStream instanceof NInputSource) {
             return (NInputSource) inputStream;
         }
-        return ofInputSource(new ReaderInputStream(inputStream,null), metadata);
+        return ofInputSource(new ReaderInputStream(inputStream, null), metadata);
     }
 
     @Override
@@ -188,7 +196,7 @@ public class DefaultNIORPI implements NIORPI {
             return null;
         }
         if (inputStreamProvider instanceof NInputSource) {
-            if(metadata==null){
+            if (metadata == null) {
                 return (NInputSource) inputStreamProvider;
             }
             NInputSource o = (NInputSource) inputStreamProvider;
@@ -219,7 +227,7 @@ public class DefaultNIORPI implements NIORPI {
                 }
             };
         }
-        if(metadata==null){
+        if (metadata == null) {
             DefaultNContentMetadata metadata2 = new DefaultNContentMetadata(NMsg.ofPlain("Provider"), null, null, null, null);
             return new InputStreamProviderToNInputSourceAdapter(metadata2, inputStreamProvider);
         }
@@ -232,7 +240,7 @@ public class DefaultNIORPI implements NIORPI {
             return null;
         }
         if (readerProvider instanceof NInputSource) {
-            if(metadata==null){
+            if (metadata == null) {
                 return (NInputSource) readerProvider;
             }
             NInputSource o = (NInputSource) readerProvider;
@@ -263,7 +271,7 @@ public class DefaultNIORPI implements NIORPI {
                 }
             };
         }
-        if(metadata==null){
+        if (metadata == null) {
             DefaultNContentMetadata metadata2 = new DefaultNContentMetadata(NMsg.ofPlain("Provider"), null, null, null, null);
             return new ReaderProviderToNInputSourceAdapter(metadata2, readerProvider);
         }
@@ -344,10 +352,10 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NOutputTarget ofOutputTarget(Writer writer, NContentMetadata metadata) {
-        if(writer==null){
+        if (writer == null) {
             return null;
         }
-        if(writer instanceof NOutputTarget){
+        if (writer instanceof NOutputTarget) {
             return (NOutputTarget) writer;
         }
         return ofOutputTarget(new WriterOutputStream(writer, StandardCharsets.UTF_8), metadata);
@@ -444,6 +452,206 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     @Override
+    public NTextCursorTracker createTextCursorTracker() {
+        return new DefaultNTextCursorTracker();
+    }
+
+    @Override
+    public NTextCursorTracker createTextCursorTracker(int tabSize, int maxRewindDepth) {
+        return new DefaultNTextCursorTracker(tabSize, maxRewindDepth);
+    }
+
+    public NPath ofTempFile(String name) {
+        return createAnyTempFile(name, false, null);
+    }
+
+    @Override
+    public NPath ofTempFolder(String name) {
+        return createAnyTempFile(name, true, null);
+    }
+
+    @Override
+    public NPath ofTempFile() {
+        return createAnyTempFile(null, false, null);
+    }
+
+    @Override
+    public NPath ofTempFolder() {
+        return createAnyTempFile(null, true, null);
+    }
+
+
+    public NPath ofTempRepositoryFile(String name, NRepository repository) {
+        return createAnyTempFile(name, false, resolveRootPath(repository));
+    }
+
+    @Override
+    public NPath ofTempRepositoryFolder(String name, NRepository repository) {
+        return createAnyTempFile(name, true, resolveRootPath(repository));
+    }
+
+    @Override
+    public NPath ofTempRepositoryFile(NRepository repository) {
+        return createAnyTempFile(null, false, resolveRootPath(repository));
+    }
+
+    @Override
+    public NPath ofTempRepositoryFolder(NRepository repository) {
+        return createAnyTempFile(null, true, resolveRootPath(repository));
+    }
+
+
+    @Override
+    public NPath ofTempIdFile(String name, NId repository) {
+        return createAnyTempFile(name, false, resolveRootPath(repository));
+    }
+
+    @Override
+    public NPath ofTempIdFolder(String name, NId repository) {
+        return createAnyTempFile(name, true, resolveRootPath(repository));
+    }
+
+    @Override
+    public NPath ofTempIdFile(NId repository) {
+        return createAnyTempFile(null, false, resolveRootPath(repository));
+    }
+
+    @Override
+    public NPath ofTempIdFolder(NId repository) {
+        return createAnyTempFile(null, true, resolveRootPath(repository));
+    }
+
+    private NPath resolveRootPath(NRepository repositoryId) {
+        if (repositoryId == null) {
+            return NPath.ofWorkspaceStore(NStoreType.TEMP);
+        } else {
+            return repositoryId.config().getStoreLocation(NStoreType.TEMP);
+        }
+    }
+
+    private NPath resolveRootPath(NId nId) {
+        if (nId == null) {
+            return NPath.ofWorkspaceStore(NStoreType.TEMP);
+        } else {
+            return NPath.ofIdStore(nId, NStoreType.TEMP);
+        }
+    }
+
+    public NPath createAnyTempFile(String name, boolean folder, NPath rootFolder) {
+        if (rootFolder == null) {
+            rootFolder = NPath.ofWorkspaceStore(NStoreType.TEMP);
+        }
+        NId appId = NApp.of().getId().orElseGet(() -> NWorkspace.of().getRuntimeId());
+        if (appId != null) {
+            rootFolder = rootFolder.resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(appId));
+        }
+        if (name == null) {
+            name = "";
+        }
+        rootFolder.mkdirs();
+        NStringBuilder ext = new NStringBuilder(NIOUtils.getFileExtension(name, false, true));
+        NStringBuilder prefix = new NStringBuilder((ext.length() > 0) ? name.substring(0, name.length() - ext.length()) : name);
+        if (ext.isEmpty() && prefix.isEmpty()) {
+            prefix.append("nuts-");
+            if (!folder) {
+                ext.append(".tmp");
+            }
+        } else if (ext.isEmpty()) {
+            if (!folder) {
+                ext.append("-tmp");
+            }
+        } else if (prefix.isEmpty()) {
+            prefix.append(ext);
+            ext.clear();
+            ext.append("-tmp");
+        }
+        if (!prefix.endsWith("-")) {
+            prefix.append('-');
+        }
+        if (prefix.length() < 3) {
+            if (prefix.length() < 3) {
+                prefix.append('A');
+                if (prefix.length() < 3) {
+                    prefix.append('B');
+                }
+            }
+        }
+
+        if (folder) {
+            for (int i = 0; i < 15; i++) {
+                File temp = null;
+                try {
+                    temp = File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().get());
+                    if (temp.delete() && temp.mkdir()) {
+                        return NPath.of(temp.toPath())
+                                .setUserTemporary(true);
+                    }
+                } catch (IOException ex) {
+                    //
+                }
+            }
+            throw new NIOException(NMsg.ofC("could not create temp directory: %s*%s", rootFolder + File.separator + prefix, ext));
+        } else {
+            try {
+                return NPath.of(File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().get()).toPath())
+                        .setUserTemporary(true);
+            } catch (IOException e) {
+                throw new NIOException(e);
+            }
+        }
+    }
+
+    @Override
+    public NPath createPath(String path) {
+        return createPath(path, null);
+    }
+
+    @Override
+    public NPath createPath(File path) {
+        if (path == null) {
+            return null;
+        }
+        return createPath(new FilePath(path.toPath()));
+    }
+
+    @Override
+    public NPath createPath(Path path) {
+        if (path == null) {
+            return null;
+        }
+        return createPath(new FilePath(path));
+    }
+
+    @Override
+    public NPath createPath(URL path) {
+        if (path == null) {
+            return null;
+        }
+        return createPath(new URLPath(path));
+    }
+
+    @Override
+    public NPath createPath(String path, ClassLoader classLoader) {
+        if (path == null || path.trim().isEmpty()) {
+            return null;
+        }
+        NPath p = cmodel.resolve(path, classLoader);
+        if (p == null) {
+            throw new NIllegalArgumentException(NMsg.ofC("unable to resolve path from %s", path));
+        }
+        return p;
+    }
+
+    @Override
+    public NPath createPath(NPathSPI path) {
+        if (path == null) {
+            return null;
+        }
+        return new NPathFromSPI(path);
+    }
+
+
+    @Override
     public List<NExecutionEntry> parseExecutionEntries(InputStream inputStream, String type, String sourceName) {
         if ("jar".equals(type)) {
             return JavaJarUtils.parseJarExecutionEntries(inputStream);
@@ -489,6 +697,7 @@ public class DefaultNIORPI implements NIORPI {
             return inputStreamProvider.getInputStream();
         }
     }
+
     private class ReaderProviderToNInputSourceAdapter extends AbstractNInputSource {
         private final NContentMetadata metadata2;
         private final NReaderProvider inputStreamProvider;
@@ -521,7 +730,7 @@ public class DefaultNIORPI implements NIORPI {
 
         @Override
         public InputStream getInputStream() {
-            return new ReaderInputStream(inputStreamProvider.getReader(),null);
+            return new ReaderInputStream(inputStreamProvider.getReader(), null);
         }
 
         @Override
