@@ -46,10 +46,6 @@ public class DefaultNListElementBuilder extends AbstractNElementBuilder implemen
     }
 
     public NListElement build() {
-        List<NListItemElement> builtItems = new ArrayList<>();
-        for (NListItemElement item : items) {
-            builtItems.add(item);
-        }
         return new DefaultNListElement(
                 type == null ? NElementType.UNORDERED_LIST : type,
                 depth <= 0 ? 1 : depth, items,
@@ -255,24 +251,12 @@ public class DefaultNListElementBuilder extends AbstractNElementBuilder implemen
     @Override
     public NListElementBuilder copyFrom(NElementBuilder other) {
         super.copyFrom(other);
-        if (other instanceof NListElementBuilder) {
-            NListElementBuilder olist = (NListElementBuilder) other;
-            depth = olist.depth();
-            type = olist.type();
-            items.addAll(olist.items());
-        }
         return this;
     }
 
     @Override
     public NListElementBuilder copyFrom(NElement other) {
         super.copyFrom(other);
-        if (other instanceof NListElement) {
-            NListElement olist = (NListElement) other;
-            depth = olist.depth();
-            type = olist.type();
-            items.addAll(olist.items());
-        }
         return this;
     }
 }
