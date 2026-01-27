@@ -189,13 +189,34 @@ public class ElementTest {
                 "      ]\n" +
                 "    }\n" +
                 "  }\n" +
+                "]";        String EXPECTED2 = "[\n" +
+                "  {\n" +
+                "    first : {\n" +
+                "      name : \"first name\"  ,\n" +
+                "      valid : true  ,\n" +
+                "      children : [\n" +
+                "        {path : \"path1\" , color : \"red\"} ,\n" +
+                "        {path : \"path2\" , color : \"green\"}\n" +
+                "      ]\n" +
+                "    }\n" +
+                "  } ,\n" +
+                "  {\n" +
+                "    second : {\n" +
+                "      name : \"second name\"  ,\n" +
+                "      valid : true  ,\n" +
+                "      children : [\n" +
+                "        {path : \"path3\" , color : \"yellow\"} ,\n" +
+                "        {path : \"path4\" , color : \"magenta\"}\n" +
+                "      ]\n" +
+                "    }\n" +
+                "  }\n" +
                 "]";
         TestUtils.println("EXPECTED");
-        TestUtils.println("\n" + EXPECTED);
+        TestUtils.println("\n" + EXPECTED2);
         TestUtils.println("-----------------------------------------------------");
         TestUtils.println("\n" + "RESULT");
         TestUtils.println("\n" + json);
-        Assertions.assertEquals(EXPECTED, json);
+        Assertions.assertEquals(EXPECTED2, json);
 
 
     }
