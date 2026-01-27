@@ -29,6 +29,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.internal.util.NBootPlatformHome;
 import net.thevpc.nuts.core.NLocationKey;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NRepository;
@@ -153,7 +154,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return a new {@code NPath} instance representing the URL
      */
     static NPath of(URL path) {
-        return NIO.of().createPath(path);
+        return NIORPI.of().createPath(path);
     }
 
     /**
@@ -167,7 +168,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return a new {@code NPath} instance representing the connection string
      */
     static NPath of(NConnectionString path) {
-        return NIO.of().createPath(path == null ? null : path.toString());
+        return NIORPI.of().createPath(path == null ? null : path.toString());
     }
 
     /**
@@ -179,7 +180,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return a new {@code NPath} instance
      */
     static NPath of(String path, ClassLoader classLoader) {
-        return NIO.of().createPath(path, classLoader);
+        return NIORPI.of().createPath(path, classLoader);
     }
 
     /**
@@ -190,7 +191,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return an {@code NPath} instance pointing to the file
      */
     static NPath of(File path) {
-        return NIO.of().createPath(path);
+        return NIORPI.of().createPath(path);
     }
 
     /**
@@ -200,7 +201,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return an {@code NPath} instance representing the underlying path
      */
     static NPath of(Path path) {
-        return NIO.of().createPath(path);
+        return NIORPI.of().createPath(path);
     }
 
     /**
@@ -215,7 +216,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return an {@code NPath} for the location
      */
     static NPath of(String path) {
-        return NIO.of().createPath(path);
+        return NIORPI.of().createPath(path);
     }
 
     /**
@@ -225,7 +226,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return the public {@code NPath} wrapper
      */
     static NPath of(NPathSPI path) {
-        return NIO.of().createPath(path);
+        return NIORPI.of().createPath(path);
     }
 
     /**
@@ -338,7 +339,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created file path
      */
     static NPath ofTempFile(String name) {
-        return NIO.of().ofTempFile(name);
+        return NIORPI.of().ofTempFile(name);
     }
 
     /**
@@ -347,7 +348,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created file path
      */
     static NPath ofTempFile() {
-        return NIO.of().ofTempFile();
+        return NIORPI.of().ofTempFile();
     }
 
     /**
@@ -357,7 +358,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created temp folder
      */
     static NPath ofTempFolder(String name) {
-        return NIO.of().ofTempFolder(name);
+        return NIORPI.of().ofTempFolder(name);
     }
 
     /**
@@ -366,7 +367,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created temp folder
      */
     static NPath ofTempFolder() {
-        return NIO.of().ofTempFolder();
+        return NIORPI.of().ofTempFolder();
     }
 
     /**
@@ -376,7 +377,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created file path
      */
     static NPath ofTempRepositoryFile(String name, NRepository repository) {
-        return NIO.of().ofTempRepositoryFile(name, repository);
+        return NIORPI.of().ofTempRepositoryFile(name, repository);
     }
 
     /**
@@ -385,7 +386,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created file path
      */
     static NPath ofTempRepositoryFile(NRepository repository) {
-        return NIO.of().ofTempRepositoryFile(repository);
+        return NIORPI.of().ofTempRepositoryFile(repository);
     }
 
     /**
@@ -395,7 +396,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created temp folder
      */
     static NPath ofTempRepositoryFolder(String name, NRepository repository) {
-        return NIO.of().ofTempRepositoryFolder(name, repository);
+        return NIORPI.of().ofTempRepositoryFolder(name, repository);
     }
 
     /**
@@ -404,7 +405,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created temp folder
      */
     static NPath ofTempRepositoryFolder(NRepository repository) {
-        return NIO.of().ofTempRepositoryFolder(repository);
+        return NIORPI.of().ofTempRepositoryFolder(repository);
     }
 
 
@@ -415,7 +416,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created file path
      */
     static NPath ofTempIdFile(String name, NId id) {
-        return NIO.of().ofTempIdFile(name, id);
+        return NIORPI.of().ofTempIdFile(name, id);
     }
 
     /**
@@ -424,7 +425,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created file path
      */
     static NPath ofTempIdFile(NId id) {
-        return NIO.of().ofTempIdFile(id);
+        return NIORPI.of().ofTempIdFile(id);
     }
 
     /**
@@ -434,7 +435,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created temp folder
      */
     static NPath ofTempIdFolder(String name, NId id) {
-        return NIO.of().ofTempIdFolder(name, id);
+        return NIORPI.of().ofTempIdFolder(name, id);
     }
 
     /**
@@ -443,7 +444,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created temp folder
      */
     static NPath ofTempIdFolder(NId id) {
-        return NIO.of().ofTempIdFolder(id);
+        return NIORPI.of().ofTempIdFolder(id);
     }
 
     /**
