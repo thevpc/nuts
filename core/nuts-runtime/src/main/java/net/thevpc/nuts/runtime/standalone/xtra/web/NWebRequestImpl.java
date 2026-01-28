@@ -269,17 +269,17 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest trace() {
+    public NWebRequest TRACE() {
         return setMethod(NHttpMethod.TRACE);
     }
 
     @Override
-    public NWebRequest trace(String url) {
-        return trace().setUrl(url);
+    public NWebRequest TRACE(String url) {
+        return TRACE().setUrl(url);
     }
 
     @Override
-    public NWebRequest connect() {
+    public NWebRequest CONNECT() {
         return setMethod(NHttpMethod.CONNECT);
     }
 
@@ -319,8 +319,8 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest connect(String url) {
-        return connect().setUrl(url);
+    public NWebRequest CONNECT(String url) {
+        return CONNECT().setUrl(url);
     }
 
     @Override
@@ -674,6 +674,19 @@ public class NWebRequestImpl implements NWebRequest {
             authorizationBearer = "Bearer " + authorizationBearer;
         }
         return setAuthorization(authorizationBearer);
+    }
+
+    @Override
+    public NWebRequest setAuthorizationBasic(String username, String password) {
+        return setAuthorization("Basic "
+                + Base64.getEncoder()
+                .encodeToString(
+                        (NStringUtils.firstNonNull(username, "")
+                                + ":"
+                                + NStringUtils.firstNonNull(password, "")
+                        ).getBytes()
+                )
+        );
     }
 
     @Override
