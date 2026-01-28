@@ -1163,10 +1163,16 @@ public class NStringUtils {
             for (String item : items) {
                 if (item != null && !item.isEmpty()) {
                     int length = builder.length();
-                    if (length > 0 && !(builder.substring(length - delimiter.length(), length).equals(delimiter) || item.startsWith(delimiter))) {
+                    boolean o = length > 0 && builder.substring(length - delimiter.length(), length).equals(delimiter);
+                    boolean n = item.startsWith(delimiter);
+                    if (!o && !n) {
                         builder.append(delimiter);
+                        builder.append(item);
+                    } else if (o && n) {
+                        builder.append(item.substring(delimiter.length()));
+                    } else {
+                        builder.append(item);
                     }
-                    builder.append(item);
                 }
             }
         }
@@ -1275,7 +1281,7 @@ public class NStringUtils {
         return commonPrefix(all, null);
     }
 
-    public interface CommonPrefixFilter{
+    public interface CommonPrefixFilter {
         boolean accept(String buffer, char c);
     }
 
@@ -1289,7 +1295,7 @@ public class NStringUtils {
             return "";
         }
         for (int i = 0; i < pivot.length(); i++) {
-            if (prefixFilter != null && !prefixFilter.accept(sb.toString(),pivot.charAt(i))) {
+            if (prefixFilter != null && !prefixFilter.accept(sb.toString(), pivot.charAt(i))) {
                 break;
             }
             boolean common = true;
@@ -1313,7 +1319,7 @@ public class NStringUtils {
     }
 
     public static String commonWhitespacePrefix(List<String> all) {
-        return commonPrefix(all, (b,c)->Character.isWhitespace(c));
+        return commonPrefix(all, (b, c) -> Character.isWhitespace(c));
     }
 
 }
