@@ -49,6 +49,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
             }
         };
     }
+
     public NStringBuilder append(String value) {
         data.append(value);
         return this;
@@ -873,5 +874,54 @@ public class NStringBuilder implements CharSequence, NBlankable {
 
     public boolean isMultiLine() {
         return lines().count() > 1;
+    }
+
+    public NStringBuilder print(String s) {
+        return append(s);
+    }
+
+    public NStringBuilder print(Object value) {
+        append(value);
+        return this;
+    }
+
+    public NStringBuilder print(int value) {
+        append(value);
+        return this;
+    }
+
+    public NStringBuilder print(boolean value) {
+        append(value);
+        return this;
+    }
+
+    public NStringBuilder print(byte value) {
+        append(value);
+        return this;
+    }
+
+    public NStringBuilder print(short value) {
+        append(value);
+        return this;
+    }
+
+    public NStringBuilder print(long value) {
+        append(value);
+        return this;
+    }
+
+    public NStringBuilder print(float value) {
+        append(value);
+        return this;
+    }
+
+    public NStringBuilder print(double value) {
+        append(value);
+        return this;
+    }
+
+    public NStringBuilder print(char value) {
+        append(value);
+        return this;
     }
 }
