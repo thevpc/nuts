@@ -121,4 +121,8 @@ public class StringTest {
         Assertions.assertEquals(3, NStringUtils.readLines(new StringBuilder("\ra\r\n\r\n")).size());
     }
 
+    @Test
+    public void test10() {
+        Assertions.assertEquals("", NStringUtils.pjoin("/", "", "/"));
+    }
 }
