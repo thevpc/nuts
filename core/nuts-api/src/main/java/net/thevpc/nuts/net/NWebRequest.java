@@ -34,11 +34,11 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest HEAD();
 
-    NWebRequest connect();
+    NWebRequest CONNECT();
 
-    NWebRequest trace();
+    NWebRequest TRACE();
 
-    NWebRequest trace(String url);
+    NWebRequest TRACE(String url);
 
     NWebRequest PUT();
 
@@ -54,7 +54,7 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest HEAD(String url);
 
-    NWebRequest connect(String url);
+    NWebRequest CONNECT(String url);
 
     NWebRequest PUT(String url);
 
@@ -115,6 +115,7 @@ public interface NWebRequest extends NMsgFormattable {
     NWebRequest setContentLanguage(String contentLanguage);
 
     NWebRequest setAuthorizationBearer(String authorizationBearer);
+    NWebRequest setAuthorizationBasic(String username,String password);
 
     NWebRequest setAuthorization(String authorization);
 
