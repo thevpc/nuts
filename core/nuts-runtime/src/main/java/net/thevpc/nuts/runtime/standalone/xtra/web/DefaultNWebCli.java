@@ -458,9 +458,13 @@ public class DefaultNWebCli implements NWebCli {
                     throw new NIOException(NMsg.ofC("error loading %s (%s)", spec, seenError), seenError);
                 }
 
+                String rm = NStringUtils.trim(uc.getResponseMessage());
+                if(rCode!=null && !rCode.isOk() && rm.isEmpty()){
+                    rm="Error "+rCode;
+                }
                 NWebResponse httpResponse = new NWebResponseImpl(
                         rCode,
-                        NMsg.ofPlain(NStringUtils.trim(uc.getResponseMessage())),
+                        NMsg.ofPlain(rm),
                         uc.getHeaderFields(),
                         () -> {
                             NInputSource bytes = null;
