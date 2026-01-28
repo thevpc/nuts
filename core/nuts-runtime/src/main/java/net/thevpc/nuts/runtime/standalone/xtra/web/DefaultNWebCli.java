@@ -265,12 +265,12 @@ public class DefaultNWebCli implements NWebCli {
 
     @Override
     public NWebRequest CONNECT() {
-        return req().connect();
+        return req().CONNECT();
     }
 
     @Override
     public NWebRequest TRACE() {
-        return req().trace();
+        return req().TRACE();
     }
 
     @Override
@@ -310,12 +310,12 @@ public class DefaultNWebCli implements NWebCli {
 
     @Override
     public NWebRequest CONNECT(String path) {
-        return req().connect(path);
+        return req().CONNECT(path);
     }
 
     @Override
     public NWebRequest TRACE(String path) {
-        return req().trace(path);
+        return req().TRACE(path);
     }
 
     public String formatURL(NWebRequest r, boolean safe) {
