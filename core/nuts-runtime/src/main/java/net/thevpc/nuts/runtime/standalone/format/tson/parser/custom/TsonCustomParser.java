@@ -587,18 +587,19 @@ public class TsonCustomParser {
                 List<NAffix> c = new ArrayList<>();
                 c.addAll(pendingAffixTokens);
                 c.addAll(beforeLparAffixes);
-                return object(null, elements, c, beforeRparAffixes, Collections.emptyList(), diagnostics);
+                return object(seenName, elements, c, beforeRparAffixes, Collections.emptyList(), diagnostics);
             }
             if (t.token.type() == NElementTokenType.LBRACK) {
                 List<NAffix> c = new ArrayList<>();
                 c.addAll(pendingAffixTokens);
                 c.addAll(beforeLparAffixes);
-                return array(null, elements, c, beforeRparAffixes, Collections.emptyList(), diagnostics);
+                return array(seenName, elements, c, beforeRparAffixes, Collections.emptyList(), diagnostics);
             }
         }
 
         List<NBoundAffix> boundAffixes = new ArrayList<>();
         boundAffixes.addAll(pendingAffixTokens.stream().map(x -> DefaultNBoundAffix.of(x, NAffixAnchor.START)).collect(Collectors.toList()));
+        boundAffixes.addAll(beforeLparAffixes.stream().map(x -> DefaultNBoundAffix.of(x, NAffixAnchor.START)).collect(Collectors.toList()));
         boundAffixes.addAll(beforeRparAffixes.stream().map(x -> DefaultNBoundAffix.of(x, NAffixAnchor.POST_2)).collect(Collectors.toList()));
         boundAffixes.addAll(readPostComments());
         return new DefaultNUpletElement(
