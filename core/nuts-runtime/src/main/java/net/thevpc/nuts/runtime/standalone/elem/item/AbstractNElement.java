@@ -359,11 +359,19 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<NObjectElement> asNamedObject(String name) {
+        if (isNamedObject(name)) {
+            return NOptional.of((NObjectElement) this);
+        }
+        return NOptional.ofEmpty(_expected("named object " + name));
+    }
+
+    @Override
     public NOptional<NObjectElement> asFullObject(String name) {
         if (isFullObject(name)) {
             return NOptional.of((NObjectElement) this);
         }
-        return NOptional.ofEmpty(_expected("parametrized object " + name));
+        return NOptional.ofEmpty(_expected("full object " + name));
     }
 
     @Override
@@ -372,6 +380,27 @@ public abstract class AbstractNElement implements NElement {
             return NOptional.of((NNamedElement) this);
         }
         return NOptional.ofEmpty(_expected("named element"));
+    }
+
+    @Override
+    public boolean isNamedArray(String name) {
+        return type() == NElementType.NAMED_OBJECT && isNamed(name);
+    }
+
+    @Override
+    public NOptional<NObjectElement> asNamedArray(String name) {
+        if (isNamedArray(name)) {
+            return NOptional.of((NObjectElement) this);
+        }
+        return NOptional.ofEmpty(_expected("named array " + name));
+    }
+
+    @Override
+    public NOptional<NObjectElement> asFullArray(String name) {
+        if (isFullArray(name)) {
+            return NOptional.of((NObjectElement) this);
+        }
+        return NOptional.ofEmpty(_expected("full array " + name));
     }
 
     @Override
@@ -495,6 +524,11 @@ public abstract class AbstractNElement implements NElement {
             return NOptional.of((NFlatExprElement) this);
         }
         return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to flat expression: %s", type().id(), this));
+    }
+
+    @Override
+    public boolean isFlatExpression() {
+        return this instanceof NFlatExprElement;
     }
 
     @Override
@@ -647,6 +681,57 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<NOperatorSymbolElement> asOperatorSymbol(NOperatorSymbol symbol) {
+        if (this instanceof NOperatorSymbolElement) {
+            NOperatorSymbolElement a = (NOperatorSymbolElement) this;
+            if (symbol == a.symbol()) {
+                return NOptional.of((NOperatorSymbolElement) this);
+            }
+        }
+        return NOptional.ofEmpty(_expected("operator " + (symbol == null ? "null" : symbol.lexeme())));
+    }
+
+    @Override
+    public NOptional<NBinaryOperatorElement> asBinaryOperator(NOperatorSymbol symbol) {
+        if (isBinaryOperator(symbol)) {
+            return NOptional.of((NBinaryOperatorElement) this);
+        }
+        return NOptional.ofEmpty(_expected("binary operator " + (symbol == null ? "null" : symbol.lexeme())));
+    }
+
+    @Override
+    public NOptional<NBinaryOperatorElement> asBinaryInfixOperator(NOperatorSymbol symbol) {
+        if (isBinaryInfixOperator(symbol)) {
+            return NOptional.of((NBinaryOperatorElement) this);
+        }
+        return NOptional.ofEmpty(_expected("binary infix operator " + (symbol == null ? "null" : symbol.lexeme())));
+    }
+
+    @Override
+    public NOptional<NUnaryOperatorElement> asUnaryPrefixOperator(NOperatorSymbol symbol) {
+        if (isUnaryPrefixOperator(symbol)) {
+            return NOptional.of((NUnaryOperatorElement) this);
+        }
+        return NOptional.ofEmpty(_expected("unary prefix operator " + (symbol == null ? "null" : symbol.lexeme())));
+    }
+
+    @Override
+    public NOptional<NUnaryOperatorElement> asUnaryPostfixOperator(NOperatorSymbol symbol) {
+        if (isUnaryPostfixOperator(symbol)) {
+            return NOptional.of((NUnaryOperatorElement) this);
+        }
+        return NOptional.ofEmpty(_expected("unary postfix operator " + (symbol == null ? "null" : symbol.lexeme())));
+    }
+
+    @Override
+    public NOptional<NUnaryOperatorElement> asUnaryOperator(NOperatorSymbol symbol) {
+        if (isUnaryOperator(symbol)) {
+            return NOptional.of((NUnaryOperatorElement) this);
+        }
+        return NOptional.ofEmpty(_expected("unary operator " + (symbol == null ? "null" : symbol.lexeme())));
+    }
+
+    @Override
     public NOptional<NBinaryOperatorElement> asBinaryOperator() {
         if (this instanceof NBinaryOperatorElement) {
             return NOptional.of((NBinaryOperatorElement) this);
@@ -731,7 +816,7 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public boolean isUnarySuffixOperator(NOperatorSymbol symbol) {
+    public boolean isUnaryPostfixOperator(NOperatorSymbol symbol) {
         if (type() == NElementType.UNARY_OPERATOR) {
             NOptional<NUnaryOperatorElement> o = asUnaryOperator();
             if (o.isPresent()) {
@@ -751,10 +836,21 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isBinaryOperator(NOperatorSymbol type) {
-        NAssert.requireTrue(type != null, () -> NMsg.ofC("required operator type, got %s", type));
+        NAssert.requireNonNull(type, () -> NMsg.ofC("required operator type, got %s", type));
         NOptional<NBinaryOperatorElement> o = asBinaryOperator();
         if (o.isPresent()) {
             NBinaryOperatorElement oo = o.get();
+            return oo.operatorSymbol() == type;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isUnaryOperator(NOperatorSymbol type) {
+        NAssert.requireNonNull(type, () -> NMsg.ofC("required operator type, got %s", type));
+        NOptional<NUnaryOperatorElement> o = asUnaryOperator();
+        if (o.isPresent()) {
+            NUnaryOperatorElement oo = o.get();
             return oo.operatorSymbol() == type;
         }
         return false;
@@ -907,6 +1003,20 @@ public abstract class AbstractNElement implements NElement {
         }
         NElement key = asPair().get().key();
         return key.isAnyString();
+    }
+
+    @Override
+    public NOptional<NPairElement> asNamedPair(String name) {
+        if (isPair()) {
+            NOptional<NPairElement> p = asPair();
+            NElement key = p.get().key();
+            if (key.isAnyString()) {
+                if (Objects.equals(name, key.asStringValue().orNull())) {
+                    return p;
+                }
+            }
+        }
+        return NOptional.ofEmpty(_expected("named pair"));
     }
 
     @Override
