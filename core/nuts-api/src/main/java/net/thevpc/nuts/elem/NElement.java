@@ -945,9 +945,17 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     NOptional<NObjectElement> asParamObject();
 
+    NOptional<NObjectElement> asNamedObject(String name);
+
     NOptional<NObjectElement> asFullObject(String name);
 
     NOptional<NNamedElement> asNamed();
+
+    boolean isNamedArray(String name);
+
+    NOptional<NObjectElement> asNamedArray(String name);
+
+    NOptional<NObjectElement> asFullArray(String name);
 
     /**
      * cast this element to {@link NCustomElement} or throw
@@ -1052,6 +1060,7 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
      * @return NListContainerElement
      */
     NOptional<NListContainerElement> toListContainer();
+
     List<NElement> toMany();
 
     List<NElementComment> comments();
@@ -1126,6 +1135,8 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     NOptional<NFloatComplex> asFloatComplexValue();
 
+    boolean isFlatExpression();
+
     NOptional<NFlatExprElement> asFlatExpression();
 
     NOptional<LocalDate> asLocalDateValue();
@@ -1152,6 +1163,18 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     NOptional<NOperatorSymbolElement> asOperatorSymbol();
 
+    NOptional<NOperatorSymbolElement> asOperatorSymbol(NOperatorSymbol symbol);
+
+    NOptional<NBinaryOperatorElement> asBinaryOperator(NOperatorSymbol symbol);
+
+    NOptional<NBinaryOperatorElement> asBinaryInfixOperator(NOperatorSymbol symbol);
+
+    NOptional<NUnaryOperatorElement> asUnaryOperator(NOperatorSymbol symbol);
+
+    NOptional<NUnaryOperatorElement> asUnaryPrefixOperator(NOperatorSymbol symbol);
+
+    NOptional<NUnaryOperatorElement> asUnaryPostfixOperator(NOperatorSymbol symbol);
+
     NOptional<NBinaryOperatorElement> asBinaryOperator();
 
     NOptional<NUnaryOperatorElement> asUnaryOperator();
@@ -1159,6 +1182,8 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     boolean isBinaryOperator();
 
     boolean isBinaryOperator(NOperatorSymbol type);
+
+    boolean isUnaryOperator(NOperatorSymbol type);
 
     boolean isLeftNamedBinaryOperator(NOperatorSymbol type);
 
@@ -1176,7 +1201,7 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
 
     boolean isUnaryPrefixOperator(NOperatorSymbol symbol);
 
-    boolean isUnarySuffixOperator(NOperatorSymbol symbol);
+    boolean isUnaryPostfixOperator(NOperatorSymbol symbol);
 
     NOptional<NElement> asNumberType(NElementType elemType);
 
@@ -1199,13 +1224,15 @@ public interface NElement extends NElementDescribable, NBlankable/*, NLiteral*/ 
     /**
      * Semantic sugar for applying a formatter.
      */
-    NElement format(NContentType contentType,NElementFormatter formatter);
+    NElement format(NContentType contentType, NElementFormatter formatter);
 
     String snippet();
 
     String snippet(int size);
 
     NOptional<NPairElement> asNamedPair();
+
+    NOptional<NPairElement> asNamedPair(String name);
 
     NOptional<NPairElement> asSimplePair();
 
