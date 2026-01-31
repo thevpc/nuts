@@ -22,6 +22,15 @@ public class NEnvAsCmd extends NEnvBase {
         this.envCmdSPI = (NEnvCmdSPI) criteria;
     }
 
+    private NEnvAsCmd(NEnvCmdSPI envCmdSPI) {
+        this.envCmdSPI = envCmdSPI;
+    }
+
+    @Override
+    public NEnv refresh() {
+        return new NEnvAsCmd(envCmdSPI);
+    }
+
     public NConnectionString getConnectionString() {
         return envCmdSPI.getTargetConnectionString();
     }
