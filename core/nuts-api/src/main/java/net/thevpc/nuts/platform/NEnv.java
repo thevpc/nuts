@@ -98,5 +98,34 @@ public interface NEnv extends NComponent {
 
     Map<String, String> getEnv();
 
+    /**
+     * Network/DNS hostname (what other machines resolve)
+     * @return
+     */
     String getHostName();
+
+    /**
+     * OS-level friendly/computer name (what user sees in System Settings)
+     * @return
+     */
+    String getMachineName();
+
+    /**
+     * Returns a fresh NEnv instance with current runtime values.
+     *
+     * <p>This performs a full re-initialization (may involve SSH commands,
+     * process spawns, etc.) and is significantly more expensive than cached
+     * property access. Use sparingly when environment state is known to have
+     * changed (e.g., after hostname reconfiguration via DHCP).
+     *
+     * <p>Existing NEnv instances remain valid snapshots — this returns a NEW
+     * instance. Replace your reference to use the refreshed values:
+     * <pre>
+     * env = env.refresh();  // ← Must reassign!
+     * </pre>
+     *
+     * @return new NEnv instance reflecting current environment state
+     * @since 0.8.9
+     */
+    NEnv refresh();
 }
