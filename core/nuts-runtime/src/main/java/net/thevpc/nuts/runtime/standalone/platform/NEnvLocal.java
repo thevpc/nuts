@@ -19,6 +19,11 @@ public class NEnvLocal extends NEnvBase {
 
     protected boolean initialized;
 
+    @Override
+    public NEnv refresh() {
+        return new NEnvLocal();
+    }
+
     private void init() {
         if (!this.initialized) {
             this.os = NId.get(CorePlatformUtils.getPlatformOs()).get();
