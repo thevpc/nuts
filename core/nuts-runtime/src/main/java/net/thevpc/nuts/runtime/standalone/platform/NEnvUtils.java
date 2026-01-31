@@ -268,27 +268,51 @@ public class NEnvUtils {
     }
 
     public static String getHostName(NEnv env) {
-        String hostName=null;
+        // Primary: Java's network-aware lookup (returns DNS-resolved hostname)
+        try {
+            java.net.InetAddress localHost = java.net.InetAddress.getLocalHost();
+            String hostName = localHost.getCanonicalHostName(); // FQDN if resolvable
+
+            // Fallback to simple hostname if canonical lookup fails/returns IP
+            if (hostName == null || hostName.equals(localHost.getHostAddress())) {
+                hostName = localHost.getHostName();
+            }
+
+            if (!NBlankable.isBlank(hostName) && !hostName.equals("localhost")) {
+                return NStringUtils.trim(hostName);
+            }
+        } catch (Exception ignored) {
+            // Fall through to OS-specific methods
+        }
+        String hostName = null;
         switch (env.getOsFamily()) {
             case WINDOWS: {
-                String computername = NEnv.of().getEnv("COMPUTERNAME").orNull();
-                if (computername != null) {
-                    hostName = computername;
-                } else {
-                    try {
-                        String hostname = NExec.of(
-                                ).addCommand("hostname")
-                                .failFast()
-                                .getGrabbedOutOnlyString();
-                        hostName = NStringUtils.trim(hostname);
-                    } catch (Exception any) {
-                        //
+                // Windows: Query network hostname from registry (not COMPUTERNAME!)
+                try {
+                    String regQuery = NExec.of()
+                            .addCommand("reg", "query",
+                                    "HKLM\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters",
+                                    "/v", "Hostname")
+                            .failFast()
+                            .getGrabbedOutOnlyString();
+                    // Parse: "    Hostname    REG_SZ    MYPC"
+                    java.util.regex.Matcher m = java.util.regex.Pattern
+                            .compile("Hostname\\s+REG_SZ\\s+(\\S+)")
+                            .matcher(regQuery);
+                    if (m.find()) {
+                        return NStringUtils.trim(m.group(1));
                     }
+                } catch (Exception ignored) {
+                    // Fallback to 'hostname' command
                 }
-                if (hostName == null) {
-                    hostName = "";
+
+                try {
+                    return NStringUtils.trim(
+                            NExec.of().addCommand("hostname").failFast().getGrabbedOutOnlyString()
+                    );
+                } catch (Exception ignored) {
+                    return "";
                 }
-                break;
             }
             case UNIX:
             case LINUX:
@@ -314,4 +338,50 @@ public class NEnvUtils {
         return hostName;
     }
 
+    public static String getMachineName(NEnv env) {
+        switch (env.getOsFamily()) {
+            case WINDOWS: {
+                // Windows "Computer name" from System Properties
+                String computerName = env.getEnv("COMPUTERNAME").orNull();
+                return NBlankable.isBlank(computerName) ? env.getHostName() : computerName;
+            }
+            case MACOS: {
+                // macOS "Computer Name" (friendly name shown in System Settings)
+                try {
+                    String name = NExec.of()
+                            .addCommand("/usr/sbin/scutil", "--get", "ComputerName")
+                            .failFast()
+                            .getGrabbedOutOnlyString();
+                    String trimmed = NStringUtils.trim(name);
+                    if (!NBlankable.isBlank(trimmed)) {
+                        return trimmed;
+                    }
+                } catch (Exception ignored) {
+                    // fallback below
+                }
+                // Fallback: use hostname without domain suffix
+                String host = env.getHostName();
+                return host != null ? host.split("\\.")[0] : "";
+            }
+            case LINUX: {
+                // systemd "Pretty Hostname" if available
+                try {
+                    String pretty = NExec.of()
+                            .addCommand("hostnamectl", "--pretty")
+                            .failFast()
+                            .getGrabbedOutOnlyString();
+                    String trimmed = NStringUtils.trim(pretty);
+                    if (!NBlankable.isBlank(trimmed) && !"n/a".equalsIgnoreCase(trimmed)) {
+                        return trimmed;
+                    }
+                } catch (Exception ignored) {
+                    // fallback below
+                }
+                // Fallback: static hostname (same as getHostName())
+                return env.getHostName();
+            }
+            default:
+                return env.getHostName(); // No distinction on other OSes
+        }
+    }
 }
