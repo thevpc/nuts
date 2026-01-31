@@ -19,6 +19,15 @@ public class NEnvSshImpl implements NEnv {
         init(context.getCriteria());
     }
 
+    public NEnvSshImpl(NConnectionString connectionString) {
+        init(connectionString);
+    }
+
+    @Override
+    public NEnv refresh() {
+        return new NEnvSshImpl(connectionString);
+    }
+
     @NScore
     public static int getScore(NScorableContext context) {
         Object c = context.getCriteria();
@@ -45,6 +54,11 @@ public class NEnvSshImpl implements NEnv {
             }
         };
         defEnv = NExtensions.of().createSupported(NEnv.class, commander).get();
+    }
+
+    @Override
+    public String getMachineName() {
+        return defEnv.getMachineName();
     }
 
     @Override
