@@ -644,7 +644,10 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
         if (other instanceof NListContainerElement) {
             NListContainerElement from = (NListContainerElement) other;
             addAll(from.children());
-            return this;
+        }
+        if(other instanceof NNamedElement){
+            NNamedElement nfrom = (NNamedElement) other;
+            name(nfrom.name().orNull());
         }
         if (other instanceof NParametrizedContainerElement) {
             NParametrizedContainerElement from = (NParametrizedContainerElement) other;
