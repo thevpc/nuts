@@ -19,6 +19,7 @@ public abstract class NEnvBase implements NEnv {
     protected NId osDist;
     protected NArchFamily archFamily;
     protected String hostName;
+    protected String machineName;
     protected NDesktopEnvironmentFamily osDesktopEnvironmentFamily;
     protected NId shell;
 
@@ -232,6 +233,13 @@ public abstract class NEnvBase implements NEnv {
         return NEnvUtils.getDesktopPath(this);
     }
 
+
+    public final String getMachineName() {
+        if (machineName == null) {
+            machineName = NEnvUtils.getMachineName(this);
+        }
+        return machineName;
+    }
 
     public final String getHostName() {
         if (hostName == null) {
