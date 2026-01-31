@@ -41,6 +41,7 @@ public class TsonTest {
                 "}\n" +
                 "\n";
         NElement parsed = NElementReader.ofTson().read(tson);
+        Assertions.assertTrue(parsed.asObject().get().get("redirect").get().asStringValue().get().equals("/home/install"));
         TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
     }
 
@@ -52,7 +53,60 @@ public class TsonTest {
                 "\n" +
                 "\n";
         NElement parsed = NElementReader.ofTson().read(tson);
+        String s = NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed);
+        TestUtils.println(s);
+        String expected = "// load configuration from the following path. will ignore all the remaining\n" +
+                "(redirect:\"/home/install\")";
+        Assertions.assertEquals(expected, s);
+    }
+
+    @Test
+    public void test010() {
+        String tson = "// This is the main nops config file\n" +
+                "// update paths accordingly\n" +
+                "\n" +
+                "env{\n" +
+                "//    JAVA8_HOME  : \"/home/vpc/.jdks/corretto-1.8.0_442\"\n" +
+                "\n" +
+                "    JAVA8_HOME  : \"/home/vpc/programs/dev/jdk/jdk8u472-b08/\"\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "    NUTS_INSTALLER_TARGET: \"linux-x64\"\n" +
+                "}\n" +
+                "\n" +
+                "\n" +
+                "\n";
+        NElement parsed = NElementReader.ofTson().read(tson);
+        Assertions.assertEquals("env", parsed.asObject().get().name().get());
         TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+    }
+
+    @Test
+    public void test011() {
+        String tson = "env{\n" +
+                "    MACHINE=\"DESKTOP\"\n" +
+                "\n" +
+                "    if(MACHINE==\"DESKTOP\"){\n" +
+                "        JAVA8_HOME  : \"/home/vpc/.jdks/corretto-1.8.0_442\"\n" +
+                "    }\n" +
+                "\n" +
+                "    if(MACHINE==\"LAPTOP\"){\n" +
+                "        JAVA8_HOME  : \"/home/vpc/programs/dev/jdk/jdk8u472-b08/\"\n" +
+                "    }\n" +
+                "\n" +
+                "    MVN_HOME                       : \"${IDEA_HOME}/plugins/maven/lib/maven3\"\n" +
+                "}\n";
+        NElement parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+
+        NObjectElement env = parsed.asNamedObject("env").get();
+        NBinaryOperatorElement assign1 = env.get(0).get().asFlatExpression().get().reshape(NExprElementReshaper.ofJavaLike()).asBinaryOperator(NOperatorSymbol.EQ).get();
+        NObjectElement if1 = env.get(1).get().asFullObject("if").get();
+        NObjectElement if2 = env.get(2).get().asFullObject("if").get();
+        NPairElement assign2 = env.get(3).get().asNamedPair("MVN_HOME").get();
+        Assertions.assertEquals("env", env.name().get());
+
     }
 
     @Test
@@ -69,11 +123,19 @@ public class TsonTest {
     }
 
     @Test
+    public void test015() {
+        NObjectElement b1 = NElement.ofObjectBuilder().name("a").addParam("a", "a").add("b", "b").build();
+        NObjectElement b2 = b1.builder().build();
+        Assertions.assertEquals(b1, b2);
+    }
+
+    @Test
     public void test01() {
         String tson = "a:b {a:b} @a a(b,c)[x]";
         NElement parsed = NElementReader.ofTson().read(tson);
         TestUtils.println(parsed);
     }
+
     @Test
     public void test014() {
 //        String tson = "github(\"thevpc/nsh\" , \"/xprojects/nuts-world/nuts-companions\"   , tag:[\"nuts-world\",\"nuts\"] , mvnDeploy:\"thevpc\" )";
