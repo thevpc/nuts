@@ -37,7 +37,7 @@ public class NScorableNScorableQueryImpl<T extends NScorable> implements NScorab
     }
 
     public NScorableNScorableQueryImpl(NScorableContext context) {
-        NAssert.requireNonNull(context, "context");
+        NAssert.requireNamedNonNull(context, "context");
         this.context = context;
     }
 
