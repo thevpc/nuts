@@ -70,7 +70,7 @@ public interface NExecutionEntry extends Comparable<NExecutionEntry> {
      * @throws NullPointerException if {@code path} is null
      */
     static List<NExecutionEntry> parse(NPath path) {
-        NAssert.requireNonNull(path, "path");
+        NAssert.requireNamedNonNull(path, "path");
         return NIORPI.of().parseExecutionEntries(path);
     }
 
