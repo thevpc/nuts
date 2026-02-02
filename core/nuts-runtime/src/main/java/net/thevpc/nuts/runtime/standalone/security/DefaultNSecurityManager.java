@@ -395,8 +395,8 @@ public class DefaultNSecurityManager implements NSecurityManager {
 
     @Override
     public NSecurityManager addUser(NUserSpec query) {
-        NAssert.requireNonNull(query, "add user query");
-        NAssert.requireNonNull(query.getUsername(), "add user query");
+        NAssert.requireNamedNonNull(query, "add user query");
+        NAssert.requireNamedNonNull(query.getUsername(), "add user query");
         if (!query.getUsername().matches("[a-zA-Z]+[a-zA-Z0-9_-]*")) {
             throw new NIllegalArgumentException(NMsg.ofC("invalid username %s", query.getUsername()));
         }
@@ -414,8 +414,8 @@ public class DefaultNSecurityManager implements NSecurityManager {
 
     @Override
     public NSecurityManager updateUser(NUserSpec query) {
-        NAssert.requireNonNull(query, "query user query");
-        NAssert.requireNonNull(query.getUsername(), "add user query");
+        NAssert.requireNamedNonNull(query, "query user query");
+        NAssert.requireNamedNonNull(query.getUsername(), "add user query");
         if (!query.getUsername().matches("[a-zA-Z]+[a-zA-Z0-9_-]*")) {
             throw new NIllegalArgumentException(NMsg.ofC("invalid username %s", query.getUsername()));
         }
