@@ -72,11 +72,11 @@ public class DefaultNPush extends AbstractDefaultNPush {
             NDefinition file = NFetch.of(id)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .setTransitive(false).getResultDefinition();
-            NAssert.requireNonNull(file, "content to push");
+            NAssert.requireNamedNonNull(file, "content to push");
             toProcess.put(id, file);
         }
         NWorkspaceExt dws = NWorkspaceExt.of();
-        NAssert.requireNonBlank(toProcess, "package tp push");
+        NAssert.requireNamedNonBlank(toProcess, "package tp push");
         for (Map.Entry<NId, NDefinition> entry : toProcess.entrySet()) {
             NId id = entry.getKey();
             NDefinition file = entry.getValue();
