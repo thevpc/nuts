@@ -19,7 +19,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnexpectedException;
 
@@ -94,7 +94,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
         NSession session = NSession.of();
         if (session.isDry()) {
             if (autoInstall && !def.getInstallInformation().get().getInstallStatus().isInstalled()) {
-                NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.AUTO_INSTALL, commandName);
+                NSecurityManager.of().checkAllowed(NConstants.Permissions.AUTO_INSTALL, commandName);
                 NPrintStream out = session.out();
                 out.println(NMsg.ofC("[dry] ==install== %s", def.getId().getLongName()));
             }
