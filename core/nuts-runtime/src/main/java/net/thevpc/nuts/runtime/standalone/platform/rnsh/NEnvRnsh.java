@@ -20,6 +20,14 @@ public class NEnvRnsh implements NEnv {
     public NEnvRnsh(NScorableContext context) {
         init(context.getCriteria());
     }
+    public NEnvRnsh(NConnectionString connectionString) {
+        init(connectionString);
+    }
+
+    @Override
+    public NEnv refresh() {
+        return new NEnvRnsh(connectionString);
+    }
 
     @NScore
     public static int getScore(NScorableContext context) {
@@ -163,6 +171,11 @@ public class NEnvRnsh implements NEnv {
     @Override
     public String getHostName() {
         return defEnv.getHostName();
+    }
+
+    @Override
+    public String getMachineName() {
+        return defEnv.getMachineName();
     }
 
     private static boolean isSupportedProtocol(String protocol) {
