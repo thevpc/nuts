@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 public abstract class NUnsafeCallableBase<T> implements NUnsafeCallable<T> {
     @Override
-    public NUnsafeCallable<T> redescribe(Supplier<NElement> description) {
+    public NUnsafeCallable<T> withDescription(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }
