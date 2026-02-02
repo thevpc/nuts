@@ -162,7 +162,7 @@ public class MavenNDependencySolver implements NDependencySolver {
             if (def != null) {
                 dependency = def.getId().toDependency();
             } else {
-                NAssert.requireNonNull(dependency, "dependency");
+                NAssert.requireNamedNonNull(dependency, "dependency");
             }
         }
         NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(this, null, dependency, def, 0);
