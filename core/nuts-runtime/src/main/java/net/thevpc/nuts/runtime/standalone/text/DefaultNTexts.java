@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NExec;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -855,7 +855,7 @@ public class DefaultNTexts implements NTexts {
                 refactorNext();
                 return queue.remove();
             }
-        }).instanceOf(NNormalizedText.class).redescribe(NElementDescribables.ofDesc("flattened text"));
+        }).instanceOf(NNormalizedText.class).withDescription(NDescribables.ofDesc("flattened text"));
     }
 
     @Override
