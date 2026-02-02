@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  * A {@link Callable} extension that integrates with the Nuts element description system.
  * <p>
  * {@code NCallable} behaves like a standard {@link Callable} but adds
- * support for structured self-description through {@link NElementRedescribable}.
+ * support for structured self-description through {@link NRedescribable}.
  * This allows callables to carry semantic metadata that can be serialized,
  * logged, or analyzed at runtime.
  * </p>
@@ -64,12 +64,12 @@ import java.util.function.Supplier;
  * </p>
  *
  * @param <T> the result type returned by this callable
- * @see NElementRedescribable
+ * @see NRedescribable
  * @see NElement
  * @see NExceptions
  * @since 0.8.0
  */
-public interface NCallable<T> extends NElementRedescribable<NCallable<T>>, Callable<T> {
+public interface NCallable<T> extends NRedescribable<NCallable<T>>, Callable<T> {
 
     /**
      * Wraps a standard {@link Callable} into an {@code NCallable}.
@@ -130,7 +130,7 @@ public interface NCallable<T> extends NElementRedescribable<NCallable<T>>, Calla
      * @param description supplier of the {@link NElement} description
      * @return a new {@code NCallable} instance with the given description
      */
-    default NCallable<T> redescribe(Supplier<NElement> description) {
+    default NCallable<T> withDescription(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }
