@@ -167,8 +167,8 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NBoundAffix ofBoundAffix(NAffix affix, NAffixAnchor anchor) {
-        NAssert.requireNonNull(affix, "affix");
-        NAssert.requireNonNull(anchor, "position");
+        NAssert.requireNamedNonNull(affix, "affix");
+        NAssert.requireNamedNonNull(anchor, "position");
         return DefaultNBoundAffix.of(affix, anchor);
     }
 
@@ -459,7 +459,7 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NCustomElement ofCustom(Object object) {
-        NAssert.requireNonNull(object, "custom element");
+        NAssert.requireNamedNonNull(object, "custom element");
         return new DefaultNCustomElement(object);
     }
 
