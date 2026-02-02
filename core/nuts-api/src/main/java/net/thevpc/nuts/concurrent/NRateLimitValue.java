@@ -1,6 +1,6 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.time.NDuration;
 
 /**
@@ -16,7 +16,7 @@ import net.thevpc.nuts.time.NDuration;
  *
  * @since 0.8.8
  */
-public interface NRateLimitValue extends NElementDescribable {
+public interface NRateLimitValue extends NDescribable {
     /**
      * Creates a builder for a new {@link NRateLimitValue} using the default
      * (in-memory) {@link NRateLimitValueFactory}.
