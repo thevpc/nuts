@@ -67,8 +67,8 @@ public class NRepositorySelector {
     }
 
     public NRepositorySelector(NSelectorOp op, NRepositoryLocation location) {
-        NAssert.requireNonNull(op, "operator");
-        NAssert.requireNonNull(location, "location");
+        NAssert.requireNamedNonNull(op, "operator");
+        NAssert.requireNamedNonNull(location, "location");
         this.op = op;
         this.location = location;
     }
