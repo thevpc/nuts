@@ -170,8 +170,8 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
 
     @Override
     public NSysEditorSupportCmd run() {
-        NAssert.requireNonBlank(source, "source");
-        NAssert.requireNonEmpty(editorKinds, "editorKinds");
+        NAssert.requireNamedNonBlank(source, "source");
+        NAssert.requireNamedNonEmpty(editorKinds, "editorKinds");
         Info info = prepareSource(source);
         for (NSysEditorFamily editorKind : editorKinds) {
             switch (editorKind) {
@@ -332,11 +332,11 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                 info.languageVersion = forcedInfo.languageVersion;
             }
         }
-        NAssert.requireNonBlank(info.languageId, "languageId");
-        NAssert.requireNonBlank(info.languageVersion, "languageVersion");
-        NAssert.requireNonBlank(info.languageGroupId, "languageGroupId");
-        NAssert.requireNonBlank(info.fileExtension, "fileExtension");
-        NAssert.requireNonBlank(info.fileName, "fileName");
+        NAssert.requireNamedNonBlank(info.languageId, "languageId");
+        NAssert.requireNamedNonBlank(info.languageVersion, "languageVersion");
+        NAssert.requireNamedNonBlank(info.languageGroupId, "languageGroupId");
+        NAssert.requireNamedNonBlank(info.fileExtension, "fileExtension");
+        NAssert.requireNamedNonBlank(info.fileName, "fileName");
         return info;
     }
 
