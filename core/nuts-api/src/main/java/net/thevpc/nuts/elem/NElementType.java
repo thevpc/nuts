@@ -227,7 +227,7 @@ public enum NElementType implements NEnum {
      * @return true if private type
      */
 
-    public boolean isAnyOp() {
+    public boolean isAnyOperator() {
         switch (this) {
             case BINARY_OPERATOR:
             case UNARY_OPERATOR:
