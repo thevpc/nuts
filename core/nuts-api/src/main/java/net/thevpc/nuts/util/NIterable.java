@@ -36,12 +36,12 @@ import java.util.function.Supplier;
  * Describable Iterable
  * @param <T> Type
  */
-public interface NIterable<T> extends Iterable<T>, NElementRedescribable<NIterable<T>> {
+public interface NIterable<T> extends Iterable<T>, NRedescribable<NIterable<T>> {
     static <T> NIterable<T> of(Iterable<T> o){
         return NCollectionsRPI.of().toIterable(o);
     }
 
-    default NIterable<T> redescribe(Supplier<NElement> description) {
+    default NIterable<T> withDescription(Supplier<NElement> description) {
         if(description==null) {
             return this;
         }
