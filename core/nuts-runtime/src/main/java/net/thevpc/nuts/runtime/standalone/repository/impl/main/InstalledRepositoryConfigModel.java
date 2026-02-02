@@ -222,16 +222,6 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
     }
 
     @Override
-    public NUserConfig[] findUsers() {
-        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : findUsers"));
-    }
-
-    @Override
-    public NOptional<NUserConfig> findUser(String userId) {
-        return NOptional.ofError(()->NMsg.ofPlain("not supported : findUser"));
-    }
-
-    @Override
     public NRepositoryConfig getStoredConfig() {
         throw new NIllegalArgumentException(NMsg.ofPlain("not supported : getStoredConfig"));
     }
@@ -239,16 +229,6 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
     @Override
     public void fireConfigurationChanged(String configName) {
         throw new NIllegalArgumentException(NMsg.ofPlain("not supported : fireConfigurationChanged"));
-    }
-
-    @Override
-    public void setUser(NUserConfig user) {
-        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : setUser"));
-    }
-
-    @Override
-    public void removeUser(String userId) {
-        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : removeUser"));
     }
 
     @Override
