@@ -19,7 +19,7 @@ import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.extension.NExtensionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.NInternalCommand;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.spi.NExecTargetSPI;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
@@ -888,7 +888,7 @@ public class DefaultNExec extends AbstractNExec {
     ) {
         //TODO ! one of the sessions needs to be removed!
         NSession session = NSession.of();
-        NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.EXEC, commandName);
+        NSecurityManager.of().checkAllowed(NConstants.Permissions.EXEC, commandName);
         if (def != null && def.getContent().isPresent()) {
             NDescriptor descriptor = def.getDescriptor();
             if (!descriptor.isExecutable()) {
