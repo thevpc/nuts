@@ -5,6 +5,8 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.concurrent.NRunnable;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -17,6 +19,24 @@ public class NIteratorUtils {
     //    public static FileDepthFirstIterator dsf(File file) {
 //        return new FileDepthFirstIterator(file);
 //    }
+
+    private static class NIteratorOnClose<T> extends NIteratorOnFinish<T> {
+        public NIteratorOnClose(Iterator<T> base, NRunnable r) {
+            super(base, r);
+        }
+    }
+
+    public static <T> NIterator<T> autoClosable(NIterator<T> t,NRunnable close) {
+        if(close==null){
+            return t;
+        }
+        if(t instanceof NIteratorOnClose){
+            if(((NIteratorOnClose<T>) t).getCloseRunnable()==close){
+                return t;
+            }
+        }
+        return new NIteratorOnClose<>(t, close);
+    }
 
     public static <T> NIterator<T> safe(NIteratorErrorHandlerType type, NIterator<T> t) {
         return new NErrorHandlerIterator(type, t);
