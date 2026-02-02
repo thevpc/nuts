@@ -18,7 +18,7 @@ public class NPlatformSignatureMap<V> {
     }
 
     public void putMulti(NPlatformArgsSignature sig, V value, NPlatformArgsSignature... sigs) {
-        NAssert.requireNonNull(sig);
+        NAssert.requireNamedNonNull(sig);
         synchronized (map) {
             int usize = sig.size();
             NSigMapBySize<V> m = map.get(usize);
@@ -38,7 +38,7 @@ public class NPlatformSignatureMap<V> {
     }
 
     public void put(NPlatformArgsSignature sig, V value) {
-        NAssert.requireNonNull(sig);
+        NAssert.requireNamedNonNull(sig);
         synchronized (map) {
             int usize = sig.size();
             NSigMapBySize<V> m = map.get(usize);
@@ -51,7 +51,7 @@ public class NPlatformSignatureMap<V> {
     }
 
     public NOptional<V> get(NPlatformArgsSignature sig) {
-        NAssert.requireNonNull(sig);
+        NAssert.requireNamedNonNull(sig);
         synchronized (map) {
             NSigMapBySize<V> m = map.get(sig.size());
             if (m == null) {
@@ -62,7 +62,7 @@ public class NPlatformSignatureMap<V> {
     }
 
     public void remove(NPlatformArgsSignature sig) {
-        NAssert.requireNonNull(sig);
+        NAssert.requireNamedNonNull(sig);
         synchronized (map) {
             NSigMapBySize<V> m = map.get(sig.size());
             if (m == null) {
