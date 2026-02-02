@@ -1253,9 +1253,9 @@ public class DefaultNTexts implements NTexts {
 
     public <T> NOptional<NTextFormat<T>> createTextFormat(String type, String pattern, Class<T> expectedType) {
         Class<T> finalExpectedType = expectedType;
-        NAssert.requireNonNull(type, "type");
-        NAssert.requireNonNull(expectedType, "expectedType");
-        NAssert.requireNonNull(pattern, "pattern");
+        NAssert.requireNamedNonNull(type, "type");
+        NAssert.requireNamedNonNull(expectedType, "expectedType");
+        NAssert.requireNamedNonNull(pattern, "pattern");
         if (expectedType.isPrimitive()) {
             expectedType = (Class) NReflectUtils.toBoxedType(expectedType).get();
         }
