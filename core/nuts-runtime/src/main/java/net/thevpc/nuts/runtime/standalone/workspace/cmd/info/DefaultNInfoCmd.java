@@ -23,7 +23,7 @@ import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
@@ -357,7 +357,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         }
         props.put("nuts-open-mode", () -> NWorkspace.of().getBootOptions().getOpenMode().orNull());
         props.put("nuts-isolation-level", () -> NWorkspace.of().getBootOptions().getIsolationLevel().orNull());
-        props.put("nuts-secure", () -> (NWorkspaceSecurityManager.of().isSecureMode()));
+        props.put("nuts-secure", () -> (NSecurityManager.of().isSecureMode()));
         props.put("nuts-gui", () -> NWorkspace.of().getBootOptions().getGui().orNull());
         props.put("nuts-inherited", () -> NWorkspace.of().getBootOptions().getInherited().orNull());
         props.put("nuts-recover", () -> NWorkspace.of().getBootOptions().getRecover().orNull());
@@ -549,7 +549,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         }
         props.put("nuts-open-mode", options.getOpenMode().orNull());
         props.put("nuts-isolation-level", options.getIsolationLevel().orNull());
-        props.put("nuts-secure", (NWorkspaceSecurityManager.of().isSecureMode()));
+        props.put("nuts-secure", (NSecurityManager.of().isSecureMode()));
         props.put("nuts-gui", options.getGui().orNull());
         props.put("nuts-inherited", options.getInherited().orNull());
         props.put("nuts-recover", options.getRecover().orNull());
