@@ -128,8 +128,8 @@ public abstract class AbstractNDeployRepositoryCmd extends NRepositoryCmdBase<ND
     protected void checkParameters() {
         NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.DEPLOY, "deploy");
         CoreNIdUtils.checkLongId(getId());
-        NAssert.requireNonNull(this.getContent(), "content");
-        NAssert.requireNonNull(this.getDescriptor(), "descriptor");
+        NAssert.requireNamedNonNull(this.getContent(), "content");
+        NAssert.requireNamedNonNull(this.getDescriptor(), "descriptor");
         if (this.getId().getVersion().isReleaseVersion()
                 || this.getId().getVersion().isLatestVersion()
         ) {
