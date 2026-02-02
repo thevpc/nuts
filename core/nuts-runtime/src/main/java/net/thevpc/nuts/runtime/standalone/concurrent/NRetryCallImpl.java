@@ -5,7 +5,6 @@ import net.thevpc.nuts.util.NCancelException;
 import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.util.NIllegalStateException;
 import net.thevpc.nuts.concurrent.*;
-import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.text.NMsg;
@@ -33,7 +32,7 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
             NCallable<?> oldCaller = model.getCaller();
             NRetryCallModel m = store.load(oldId);
             if (m == null) {
-                NAssert.requireNonNull(oldCaller, "caller");
+                NAssert.requireNamedNonNull(oldCaller, "caller");
                 m = new NRetryCallModel(oldId);
                 m.setCaller(oldCaller);
                 store.save(m);
