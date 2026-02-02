@@ -29,7 +29,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NIsolationLevel;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
@@ -46,7 +46,7 @@ import java.util.concurrent.locks.Lock;
  * @app.category Input Output
  * @since 0.5.8
  */
-public interface NLock extends Lock, NElementDescribable {
+public interface NLock extends Lock, NDescribable {
     static NLock of(Object source) {
         return NLockBuilder.of().setSource(source).build();
     }
