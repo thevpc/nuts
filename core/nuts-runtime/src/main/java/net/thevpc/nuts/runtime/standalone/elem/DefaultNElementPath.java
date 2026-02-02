@@ -65,7 +65,7 @@ public class DefaultNElementPath implements NElementPath {
 
     @Override
     public NElementPath group(String group, String name) {
-        NAssert.requireNonBlank(group,"group");
+        NAssert.requireNamedNonBlank(group,"group");
         ArrayList<Item> u = new ArrayList<>(items);
         u.add(new Item(group, name));
         return new DefaultNElementPath(u);
