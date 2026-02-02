@@ -20,7 +20,7 @@ public abstract class NPredicateDelegate<T> extends AbstractNPredicate<T> {
     }
 
     @Override
-    public NPredicate<T> redescribe(Supplier<NElement> description) {
+    public NPredicate<T> withDescription(Supplier<NElement> description) {
         if(description==null){
             return this;
         }
