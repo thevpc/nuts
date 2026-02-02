@@ -890,7 +890,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isLeftNamedBinaryOperator(NOperatorSymbol type, String name) {
-        NAssert.requireNonNull(name, "name");
+        NAssert.requireNamedNonNull(name, "name");
         NAssert.requireTrue(type != null, () -> NMsg.ofC("required operator type, got %s", type));
         NOptional<NBinaryOperatorElement> o = asBinaryOperator();
         if (o.isPresent()) {
@@ -1589,12 +1589,12 @@ public abstract class AbstractNElement implements NElement {
     }
 
     public List<NElement> filter(NElementSelector selector) {
-        NAssert.requireNonNull(selector, "selector");
+        NAssert.requireNamedNonNull(selector, "selector");
         return selector.filter(this);
     }
 
     public List<NElement> filter(String selector) {
-        NAssert.requireNonNull(selector, "selector");
+        NAssert.requireNamedNonNull(selector, "selector");
         return filter(NElementSelector.of(selector));
     }
 
