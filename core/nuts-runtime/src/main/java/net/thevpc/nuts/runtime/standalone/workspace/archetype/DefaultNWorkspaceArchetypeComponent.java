@@ -39,7 +39,8 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.security.NSecurityManager;
+import net.thevpc.nuts.security.NUserSpec;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -142,22 +143,32 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
                 "net.thevpc"
         );
 
-        NWorkspaceSecurityManager.of().updateUser(NConstants.Users.ANONYMOUS)
-                .resetPermissions()
-                //.addRights(NutsConstants.Rights.FETCH_DESC, NutsConstants.Rights.FETCH_CONTENT)
-                .run();
+//        NSecurityManager.of().updateUser(
+//                NSecurityManager.of().findUser(NConstants.Users.ANONYMOUS).get()
+//                        .toSpec()
+//                        .setPermissions(new ArrayList<>())
+//        );
 
         //has read rights
-        NWorkspaceSecurityManager.of().addUser("user")
-                .setCredentials("user".toCharArray()).addPermissions(
-                        NConstants.Permissions.FETCH_DESC,
-                        NConstants.Permissions.FETCH_CONTENT,
-                        NConstants.Permissions.DEPLOY,
-                        NConstants.Permissions.UNDEPLOY,
-                        NConstants.Permissions.PUSH,
-                        NConstants.Permissions.SAVE
-                ).setRemoteIdentity("contributor")
-                .run();
+        NSecurityManager.of().addUser(
+                NUserSpec.of("user")
+                        .setCredential(
+                                NSecurityManager.of().addOneWayCredential("user".toCharArray())
+                        )
+                        .setPermissions(
+                                Arrays.asList(
+                                        NConstants.Permissions.FETCH_DESC,
+                                        NConstants.Permissions.FETCH_CONTENT,
+                                        NConstants.Permissions.DEPLOY,
+                                        NConstants.Permissions.UNDEPLOY,
+                                        NConstants.Permissions.PUSH,
+                                        NConstants.Permissions.SAVE
+                                )
+                        )
+        );
+//        NWorkspaceSecurityManager.of().setRepositoryRemoteUserName()
+//        .setRemoteIdentity("contributor")
+//                .run();
     }
 
     @Override
@@ -167,7 +178,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         if (nIsolationLevel == NIsolationLevel.MEMORY) {
             return;
         }
-        boolean isolated = nIsolationLevel!=null && nIsolationLevel.ordinal() >= NIsolationLevel.CONFINED.ordinal();
+        boolean isolated = nIsolationLevel != null && nIsolationLevel.ordinal() >= NIsolationLevel.CONFINED.ordinal();
 //        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
 //        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
         boolean initializeScripts = workspace.getBootOptions().getInitScripts().orElse(!isolated);
