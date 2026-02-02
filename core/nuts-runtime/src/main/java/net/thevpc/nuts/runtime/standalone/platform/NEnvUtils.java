@@ -147,7 +147,7 @@ public class NEnvUtils {
     }
 
     public static NSupportMode getDesktopIntegrationSupport(NEnv env, NDesktopIntegrationItem item) {
-        NAssert.requireNonBlank(item, "item");
+        NAssert.requireNamedNonBlank(item, "item");
 
         switch (item) {
             case DESKTOP: {
