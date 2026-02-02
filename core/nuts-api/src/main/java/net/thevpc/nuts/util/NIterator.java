@@ -36,7 +36,7 @@ import java.util.*;
  *
  * @param <T> T
  */
-public interface NIterator<T> extends Iterator<T>, NElementRedescribable<NIterator<T>> {
+public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>, AutoCloseable{
     static <T> NIterator<T> of(Iterator<T> o) {
         return NCollectionsRPI.of().toIterator(o);
     }
@@ -55,5 +55,11 @@ public interface NIterator<T> extends Iterator<T>, NElementRedescribable<NIterat
             list.add(next());
         }
         return list;
+    }
+
+    NIterator<T> onClose(Runnable closeHandler);
+
+    default void close(){
+
     }
 }
