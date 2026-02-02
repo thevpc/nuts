@@ -25,7 +25,7 @@ public abstract class AbstractNPredicate<T> implements NPredicate<T> {
     }
 
     @Override
-    public NPredicate<T> redescribe(Supplier<NElement> description) {
+    public NPredicate<T> withDescription(Supplier<NElement> description) {
         if(description==null){
             return this;
         }
