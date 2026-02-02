@@ -1,6 +1,6 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.time.NDuration;
 
 import java.util.function.Supplier;
@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  * @param <T> the type of cached value
  * @since 0.8.6
  */
-public interface NCachedValue<T> extends Supplier<T>, NElementDescribable {
+public interface NCachedValue<T> extends Supplier<T>, NDescribable {
 
     /**
      * Creates a new cached value that uses the given supplier.
