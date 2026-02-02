@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.Iterator;
@@ -56,14 +56,14 @@ public class NFilteredIterator<T> extends NIteratorBase<T> {
     public NElement describe() {
         return NElement.ofObjectBuilder()
                 .name("Filter")
-                .set("base", NElementDescribables.describeResolveOrDestruct(base))
-                .set("accept", NElementDescribables.describeResolveOrToString(filter))
+                .set("base", NDescribables.describeResolveOrDestruct(base))
+                .set("accept", NDescribables.describeResolveOrToString(filter))
                 .build()
                 ;
     }
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNextImpl() {
         while (true) {
             if (base.hasNext()) {
                 last = base.next();
