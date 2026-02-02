@@ -118,7 +118,7 @@ public final class NLogScopeImpl implements NLogScope {
 
     @Override
     public NLogScopeImpl withPlaceholder(String key, Object value) {
-        NAssert.requireNonNull(key, "key");
+        NAssert.requireNamedNonNull(key, "key");
         if (value != null) {
             Map<String, Supplier<?>> properties2 = new HashMap<>(properties);
             properties2.put(key, new ConstSupplier<>(value));
@@ -136,7 +136,7 @@ public final class NLogScopeImpl implements NLogScope {
 
     @Override
     public NLogScope withPlaceholderSupplier(String key, Supplier<?> supplier) {
-        NAssert.requireNonNull(key, "key");
+        NAssert.requireNamedNonNull(key, "key");
         if (supplier != null) {
             Map<String, Supplier<?>> properties2 = new HashMap<>(properties);
             properties2.put(key, supplier);
