@@ -227,7 +227,7 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
         }
 
         public synchronized int read(byte[] buffer, int off, int len, int pointer) {
-            NAssert.requireNonNull(buffer, "buffer");
+            NAssert.requireNamedNonNull(buffer, "buffer");
             if (off < 0 || len < 0 || len > buffer.length - off) {
                 throw new IndexOutOfBoundsException();
             }
