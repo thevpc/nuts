@@ -6,9 +6,9 @@ import net.thevpc.nuts.util.NOptional;
 public interface NStringFormat<T> {
     static <T> NOptional<NStringFormat<T>> of(String type, Class<T> expectedType, String pattern) {
         NTexts texts = NTexts.of();
-        NAssert.requireNonNull(type, "type");
-        NAssert.requireNonNull(expectedType, "expectedType");
-        NAssert.requireNonNull(pattern, "pattern");
+        NAssert.requireNamedNonNull(type, "type");
+        NAssert.requireNamedNonNull(expectedType, "expectedType");
+        NAssert.requireNamedNonNull(pattern, "pattern");
         return texts.createStringFormat(type, pattern, expectedType);
     }
 
