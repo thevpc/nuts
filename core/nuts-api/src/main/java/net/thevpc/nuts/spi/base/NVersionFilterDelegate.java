@@ -52,8 +52,8 @@ public abstract class NVersionFilterDelegate extends AbstractVersionFilter {
     }
 
     @Override
-    public NFilter redescribe(Supplier<NElement> description) {
-        return baseVersionFilter().redescribe(description);
+    public NFilter withDescription(Supplier<NElement> description) {
+        return baseVersionFilter().withDescription(description);
     }
 
     @Override
