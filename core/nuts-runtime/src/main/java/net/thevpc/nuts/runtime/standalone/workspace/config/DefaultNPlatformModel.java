@@ -34,10 +34,10 @@ public class DefaultNPlatformModel {
     public boolean add0(NExecutionEngineLocation location, boolean notify) {
 //        session = CoreNutsUtils.validate(session, workspace);
         if (location != null) {
-            NAssert.requireNonBlank(location.getProduct(), "platform location product");
-            NAssert.requireNonBlank(location.getName(), "platform location product");
-            NAssert.requireNonBlank(location.getVersion(), "platform location version");
-            NAssert.requireNonBlank(location.getVersion(), "platform location path");
+            NAssert.requireNamedNonBlank(location.getProduct(), "platform location product");
+            NAssert.requireNamedNonBlank(location.getName(), "platform location product");
+            NAssert.requireNamedNonBlank(location.getVersion(), "platform location version");
+            NAssert.requireNamedNonBlank(location.getVersion(), "platform location path");
             List<NExecutionEngineLocation> list = getPlatforms().get(location.getExecutionEngineFamily());
             if (list == null) {
                 list = new ArrayList<>();
@@ -107,7 +107,7 @@ public class DefaultNPlatformModel {
     }
 
     public NOptional<NExecutionEngineLocation> findPlatformByPath(NExecutionEngineFamily type, NPath path) {
-        NAssert.requireNonNull(path, "path");
+        NAssert.requireNamedNonNull(path, "path");
         return findOneExecutionEngine(type, location -> location.getPath() != null && location.getPath().equals(path.toString()));
     }
 
