@@ -114,9 +114,9 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 case ')':
                     return asChar(c, NElementTokenType.RPAREN);
                 case '#':
-                    return asChar123(c, NOperatorSymbol.HASH, NOperatorSymbol.HASH2, NOperatorSymbol.HASH3);
+                    return asOperator123(c, NOperatorSymbol.HASH, NOperatorSymbol.HASH2, NOperatorSymbol.HASH3);
                 case '.':
-                    return asChar123(c, NOperatorSymbol.DOT, NOperatorSymbol.DOT2, NOperatorSymbol.DOT3);
+                    return asOperator123(c, NOperatorSymbol.DOT, NOperatorSymbol.DOT2, NOperatorSymbol.DOT3);
                 case '●': {
                     return continueReadBullet(NElementTokenType.UNORDERED_LIST, line, column, pos);
                 }
@@ -176,29 +176,20 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     }
                 }
                 case '\\': {
-                    int n = reader.peekAt(1);
-                    switch (n) {
-                        case '\\': {
-                            reader.read(2);
-                            return new NElementTokenImpl("\\", NElementTokenType.BACKSLASH2, "\\", 0, line, column, pos, c, null);
-                        }
-                        default: {
-                            return asChar(c, NElementTokenType.BACKSLASH);
-                        }
-                    }
+                    return asOperator123(c, NOperatorSymbol.BACKSLASH, NOperatorSymbol.BACKSLASH2, NOperatorSymbol.BACKSLASH3);
                 }
                 case '?':
-                    return asChar123(c, NOperatorSymbol.INTERROGATION, NOperatorSymbol.INTERROGATION2, NOperatorSymbol.INTERROGATION3);
+                    return asOperator123(c, NOperatorSymbol.INTERROGATION, NOperatorSymbol.INTERROGATION2, NOperatorSymbol.INTERROGATION3);
                 case '!': {
-                    return asChar123Eq(c, NOperatorSymbol.NOT, NOperatorSymbol.NOT2, NOperatorSymbol.NOT3, NOperatorSymbol.NOT_EQ, NOperatorSymbol.NOT_EQ2);
+                    return asOperator123Eq(c, NOperatorSymbol.NOT, NOperatorSymbol.NOT2, NOperatorSymbol.NOT3, NOperatorSymbol.NOT_EQ, NOperatorSymbol.NOT_EQ2);
                 }
                 case '~': {
-                    return asChar123Eq(c, NOperatorSymbol.TILDE, NOperatorSymbol.TILDE2, NOperatorSymbol.TILDE3, NOperatorSymbol.TILDE_EQ, NOperatorSymbol.TILDE_EQ2);
+                    return asOperator123Eq(c, NOperatorSymbol.TILDE, NOperatorSymbol.TILDE2, NOperatorSymbol.TILDE3, NOperatorSymbol.TILDE_EQ, NOperatorSymbol.TILDE_EQ2);
                 }
                 case '%':
-                    return asChar123(c, NOperatorSymbol.REM, NOperatorSymbol.REM2, NOperatorSymbol.REM3);
+                    return asOperator123(c, NOperatorSymbol.REM, NOperatorSymbol.REM2, NOperatorSymbol.REM3);
                 case '&':
-                    return asChar123(c, NOperatorSymbol.AND, NOperatorSymbol.AND2, NOperatorSymbol.AND3);
+                    return asOperator123(c, NOperatorSymbol.AND, NOperatorSymbol.AND2, NOperatorSymbol.AND3);
                 case '^': {
                     return continueReadStream(c, line, column, pos);
                 }
@@ -258,22 +249,25 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
 
                 case '-': {
                     int c1 = reader.peekAt(1);
+                    if (c1==':') {
+                        String s = reader.read(2);
+                        return new NElementTokenImpl(s, NElementTokenType.OP,s, 0, line, column, pos, NOperatorSymbol.MINUS_COLON, null);
+                    }
                     if (Character.isDigit(c1)) {
                         return continueReadNumber();
                     }
-                    return asChar123Eq(c, NOperatorSymbol.MINUS, NOperatorSymbol.MINUS2, NOperatorSymbol.MINUS3, NOperatorSymbol.MINUS_EQ, NOperatorSymbol.MINUS_EQ2);
+                    return asOperator123Eq(c, NOperatorSymbol.MINUS, NOperatorSymbol.MINUS2, NOperatorSymbol.MINUS3, NOperatorSymbol.MINUS_EQ, NOperatorSymbol.MINUS_EQ2);
                 }
-
                 case '+': {
                     int c1 = reader.peekAt(1);
                     if (Character.isDigit(c1)) {
                         return continueReadNumber();
                     }
-                    return asChar123Eq(c, NOperatorSymbol.PLUS, NOperatorSymbol.PLUS2, NOperatorSymbol.PLUS3, NOperatorSymbol.PLUS_EQ, NOperatorSymbol.PLUS_EQ2);
+                    return asOperator123Eq(c, NOperatorSymbol.PLUS, NOperatorSymbol.PLUS2, NOperatorSymbol.PLUS3, NOperatorSymbol.PLUS_EQ, NOperatorSymbol.PLUS_EQ2);
                 }
 
                 case '*': {
-                    return asChar123Eq(c, NOperatorSymbol.MUL, NOperatorSymbol.MUL2, NOperatorSymbol.MUL3, NOperatorSymbol.MUL_EQ, NOperatorSymbol.MUL_EQ2);
+                    return asOperator123Eq(c, NOperatorSymbol.MUL, NOperatorSymbol.MUL2, NOperatorSymbol.MUL3, NOperatorSymbol.MUL_EQ, NOperatorSymbol.MUL_EQ2);
                 }
 
                 case '=': {
@@ -400,6 +394,39 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     }
                     if (Character.isUnicodeIdentifierStart(c)) {
                         return continueReadIdentifier();
+                    }
+                    int codePoint = c;
+                    // 2. Handle Surrogate Pairs to support 4-byte Unicode
+                    if (Character.isHighSurrogate((char) c) && reader.canRead()) {
+                        int next = reader.peek();
+                        if (Character.isLowSurrogate((char) next)) {
+                            // Combine them into a single 32-bit Code Point
+                            codePoint = Character.toCodePoint((char) c, (char) reader.read());
+                        }
+                    }
+
+                    // Convert the full Code Point to a String for mapping
+                    String symbolStr = Character.isSupplementaryCodePoint(codePoint)
+                            ? new String(Character.toChars(codePoint))
+                            : String.valueOf((char) codePoint);
+
+                    NOptional<NOperatorSymbol> cc = NOperatorSymbol.parse(symbolStr);
+                    if (cc.isPresent()) {
+                        return new NElementTokenImpl(String.valueOf(c), NElementTokenType.OP, String.valueOf(c), 0, line, column, pos,
+                                cc.get(), null
+                        );
+                    }
+                    if (codePoint < 128) {
+                        break;
+                    }
+                    int type = Character.getType(c);
+                    if (type == Character.MATH_SYMBOL||
+                            type == Character.OTHER_SYMBOL ||
+                            type == Character.DASH_PUNCTUATION ||
+                            type == Character.MODIFIER_SYMBOL) {
+                        return new NElementTokenImpl(String.valueOf(c), NElementTokenType.OP, String.valueOf(c), 0, line, column, pos,
+                                NOperatorSymbol.UNKNOWN, null
+                        );
                     }
                     break;
                 }
@@ -617,7 +644,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 , error);
     }
 
-    private NElementTokenImpl asChar123Eq(int c, NOperatorSymbol t1, NOperatorSymbol t2, NOperatorSymbol t3, NOperatorSymbol eq1, NOperatorSymbol eq2) {
+    private NElementTokenImpl asOperator123Eq(int c, NOperatorSymbol t1, NOperatorSymbol t2, NOperatorSymbol t3, NOperatorSymbol eq1, NOperatorSymbol eq2) {
         int line = reader.line();
         int column = reader.column();
         long pos = reader.pos();
@@ -651,7 +678,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         }
     }
 
-    private NElementTokenImpl asChar123(int c, NOperatorSymbol t1, NOperatorSymbol t2, NOperatorSymbol t3) {
+    private NElementTokenImpl asOperator123(int c, NOperatorSymbol t1, NOperatorSymbol t2, NOperatorSymbol t3) {
         int n = reader.peekAt(1);
         if (n == c) {
             int line = reader.line();
