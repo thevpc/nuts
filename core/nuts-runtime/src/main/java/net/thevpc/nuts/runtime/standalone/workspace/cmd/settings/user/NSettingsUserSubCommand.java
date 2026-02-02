@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -13,14 +14,12 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.security.NUser;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
-import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,19 +45,20 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
             } else {
                 if (cmdLine.next("--repo", "-r").isPresent()) {
                     repository = NWorkspace.of().findRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId"))
-                            .get().image())
+                                    .get().image())
                             .get();
                 }
             }
-            if (repository == null) {
-                String user = cmdLine.nextNonOption(NArgName.of("Username")).get().image();
-                char[] password = cmdLine.nextNonOption(NArgName.of("Password")).get().image().toCharArray();
-                if (cmdLine.isExecMode()) {
-                    NWorkspaceSecurityManager.of().addUser(user).setCredentials(password).run();
-                }
-            } else {
-                String user = cmdLine.nextNonOption(NArgName.of("Username")).get().image();
-                char[] password = cmdLine.nextNonOption(NArgName.of("Password")).get().image().toCharArray();
+            String user = cmdLine.nextNonOption(NArgName.of("Username")).get().image();
+            char[] password = cmdLine.nextNonOption(NArgName.of("Password")).get().image().toCharArray();
+            if (cmdLine.isExecMode()) {
+                NSecurityManager.of().updateUser(
+                        NSecurityManager.of().findUser(user)
+                                .get().toSpec()
+                                .setCredential(NSecurityManager.of().addOneWayCredential(password))
+                );
+            }
+            if (repository != null) {
                 String mappedUser = null;
                 char[] remotePassword = null;
                 if (!cmdLine.isEmpty()) {
@@ -66,7 +66,12 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     remotePassword = cmdLine.nextNonOption(NArgName.of("RemotePassword")).get().image().toCharArray();
                 }
                 if (cmdLine.isExecMode()) {
-                    repository.security().addUser(user).setCredentials(password).setRemoteIdentity(mappedUser).setRemoteCredentials(remotePassword).run();
+                    NSecurityManager.of().updateRepositoryAccess(NSecurityManager.of().findRepositoryAccess(
+                                    user, repository.getUuid()).get()
+                            .toSpec()
+                            .setRemoteUserName(mappedUser)
+                            .setRemoteCredential(NSecurityManager.of().addSecret(remotePassword))
+                            );
                 }
             }
             if (cmdLine.isExecMode()) {
@@ -76,7 +81,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
         } else {
             NSession session = NSession.of();
             NPrintStream out = session.out();
-            if (cmdLine.next("list users","list user","user list", "lu").isPresent()) {
+            if (cmdLine.next("list users", "list user", "user list", "lu").isPresent()) {
                 NRepository repository = null;
                 if (editedRepo != null) {
                     repository = editedRepo;
@@ -91,16 +96,9 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 }
                 if (cmdLine.isExecMode()) {
                     List<NUser> security;
-                    if (repository == null) {
-                        security = NWorkspaceSecurityManager.of().findUsers();
-                    } else {
-                        security = repository.security().findUsers();
-                    }
+                    security = NSecurityManager.of().findUsers();
                     for (NUser u : security) {
-                        out.println(NMsg.ofC("User: %s", u.getUser()));
-                        if (!NBlankable.isBlank(u.getRemoteIdentity())) {
-                            out.println(NMsg.ofC("   Mapper to  : %s", u.getRemoteIdentity()));
-                        }
+                        out.println(NMsg.ofC("User: %s", u.getUsername()));
                         out.println(NMsg.ofC("   Password   : %s", (u.hasCredentials() ? "Set" : "None")));
                         out.println(NMsg.ofC("   Groups     : %s", (u.getGroups().size() == 0 ? "None" : u.getGroups())));
                         out.println(NMsg.ofC("   Rights     : %s", (u.getPermissions().size() == 0 ? "None" : u.getPermissions())));
@@ -137,9 +135,9 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 if (cmdLine.isExecMode()) {
                     boolean admin;
                     if (repository == null) {
-                        admin = NWorkspaceSecurityManager.of().isAllowed(NConstants.Permissions.ADMIN);
+                        admin = NSecurityManager.of().isAllowed(NConstants.Permissions.ADMIN);
                     } else {
-                        admin = repository.security().isAllowed(NConstants.Permissions.ADMIN);
+                        admin = NSecurityManager.of().isRepositoryAllowed(repository.getUuid(), NConstants.Permissions.ADMIN);
                     }
 
                     if (oldPassword == null && !admin) {
@@ -148,12 +146,12 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     if (password == null) {
                         password = session.getTerminal().readPassword(NMsg.ofPlain("Password:"));
                     }
+                    NSecurityManager.of().updateUser(
+                            NSecurityManager.of().findUser(user)
+                                    .get().toSpec()
+                                    .setCredential(NSecurityManager.of().addOneWayCredential(password))
+                    );
 
-                    if (repository == null) {
-                        NWorkspaceSecurityManager.of().updateUser(user).setCredentials(password).setOldCredentials(oldPassword).run();
-                    } else {
-                        repository.security().updateUser(user).setCredentials(password).setOldCredentials(oldPassword).run();
-                    }
                     NWorkspace.of().saveConfig();
                 }
                 return true;
@@ -173,11 +171,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 String user = cmdLine.nextNonOption(NArgName.of("Username")).get().image();
                 if (cmdLine.isExecMode()) {
                     NUser u = null;
-                    if (repository == null) {
-                        u = NWorkspaceSecurityManager.of().findUser(user);
-                    } else {
-                        u = repository.security().getEffectiveUser(user);
-                    }
+                    u = NSecurityManager.of().findUser(user).orNull();
                     if (u == null) {
                         throw new NElementNotFoundException(NMsg.ofC("no such user %s", user));
                     }
@@ -194,6 +188,8 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 //                }
                 //            }
                 String lastOption = "";
+                String remoteUser = null;
+                String remotePassword = null;
                 while (cmdLine.hasNext()) {
                     if (cmdLine.next("--add-group").isPresent()) {
                         lastOption = "--add-group";
@@ -203,8 +199,8 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                         lastOption = "--add-right";
                     } else if (cmdLine.next("--remove-right").isPresent()) {
                         lastOption = "--remove-right";
-                    } else if (cmdLine.next("--mapped-user").isPresent()) {
-                        lastOption = "--mapped-user";
+                    } else if (cmdLine.next("--remote-user").isPresent()) {
+                        lastOption = "--remote-user";
                     } else if (cmdLine.next("--password").isPresent()) {
                         lastOption = "--password";
                     } else {
@@ -212,22 +208,22 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                             case "--add-group": {
                                 String a = cmdLine.nextNonOption(NArgName.of("Group")).get().image();
                                 if (cmdLine.isExecMode()) {
-                                    if (repository != null) {
-                                        repository.security().updateUser(user).addGroup(a).run();
-                                    } else {
-                                        NWorkspaceSecurityManager.of().updateUser(user).addGroup(a).run();
-                                    }
+                                    NSecurityManager.of().updateUser(
+                                            NSecurityManager.of().findUser(user)
+                                                    .get().toSpec()
+                                                    .addGroups(a)
+                                    );
                                 }
                                 break;
                             }
                             case "--remove-group": {
                                 String a = cmdLine.nextNonOption(NArgName.of("Group")).get().image();
                                 if (cmdLine.isExecMode()) {
-                                    if (repository != null) {
-                                        repository.security().updateUser(user).removeGroup(a).run();
-                                    } else {
-                                        NWorkspaceSecurityManager.of().updateUser(user).removeGroup(a).run();
-                                    }
+                                    NSecurityManager.of().updateUser(
+                                            NSecurityManager.of().findUser(user)
+                                                    .get().toSpec()
+                                                    .removeGroups(a)
+                                    );
                                 }
                                 break;
                             }
@@ -235,9 +231,13 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 String a = cmdLine.nextNonOption(NArgName.of("Right")).get().image();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
-                                        repository.security().updateUser(user).addPermission(a).run();
+                                        NSecurityManager.of().addRepositoryPermissions(user, repository.getUuid(), a);
                                     } else {
-                                        NWorkspaceSecurityManager.of().updateUser(user).addPermission(a).run();
+                                        NSecurityManager.of().updateUser(
+                                                NSecurityManager.of().findUser(user)
+                                                        .get().toSpec()
+                                                        .addPermissions(a)
+                                        );
                                     }
                                 }
                                 break;
@@ -246,20 +246,31 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 String a = cmdLine.nextNonOption(NArgName.of("Right")).get().image();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
-                                        repository.security().updateUser(user).removePermission(a).run();
+                                        NSecurityManager.of().removeRepositoryPermissions(user, repository.getUuid(), a);
                                     } else {
-                                        NWorkspaceSecurityManager.of().updateUser(user).removePermission(a).run();
+                                        NSecurityManager.of().updateUser(
+                                                NSecurityManager.of().findUser(user).get()
+                                                        .toSpec()
+                                                        .removePermissions(a)
+                                        );
                                     }
                                 }
                                 break;
                             }
-                            case "--mapped-user": {
+                            case "--remote-user": {
                                 String a = cmdLine.nextNonOption(NArgName.of("RemoteIdentity")).get().image();
-                                if (cmdLine.isExecMode()) {
-                                    if (repository != null) {
-                                        repository.security().updateUser(user).setRemoteIdentity(a).run();
-                                    } else {
-                                        NWorkspaceSecurityManager.of().updateUser(user).setRemoteIdentity(a).run();
+                                NOptional<NArg> bb = cmdLine.peek();
+                                if (bb.isPresent() && bb.get().key().equals("--remote-password")) {
+                                    String b = cmdLine.nextNonOption(NArgName.of("RemotePassword")).get().image();
+                                    if (cmdLine.isExecMode()) {
+                                        if (repository != null) {
+                                            NSecurityManager.of().updateRepositoryAccess(NSecurityManager.of().findRepositoryAccess(
+                                                            user, repository.getUuid()).get()
+                                                    .toSpec()
+                                                    .setRemoteUserName(a)
+                                                    .setRemoteCredential(NSecurityManager.of().addSecret(b.toCharArray()))
+                                                    );
+                                        }
                                     }
                                 }
                                 break;
@@ -268,11 +279,13 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 char[] pwd = (cmdLine.nextNonOption(NArgName.of("password", "Password")).get().image()).toCharArray();
                                 char[] old = (cmdLine.nextNonOption(NArgName.of("password", "OldPassword")).get().image()).toCharArray();
                                 if (cmdLine.isExecMode()) {
-                                    if (repository != null) {
-                                        repository.security().updateUser(user).setCredentials(pwd).setOldCredentials(old).run();
-                                    } else {
-                                        NWorkspaceSecurityManager.of().updateUser(user).setCredentials(pwd).setOldCredentials(old).run();
-                                    }
+                                    NSecurityManager.of().updateUser(
+                                            NSecurityManager.of().findUser(user)
+                                                    .get().toSpec()
+                                                    .setCredential(NSecurityManager.of().addOneWayCredential(pwd))
+                                    );
+//                                                .setOldCredentials(old)
+
                                 }
                                 Arrays.fill(pwd, '\0');
                                 Arrays.fill(old, '\0');
@@ -302,10 +315,10 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 //unsecure-box
                 if (cmdLine.isExecMode()) {
                     char[] credentials = null;
-                    if (!NWorkspaceSecurityManager.of().isAdmin()) {
+                    if (!NSecurityManager.of().isAdmin()) {
                         credentials = session.getTerminal().readPassword(NMsg.ofPlain("Enter password : "));
                     }
-                    if (NWorkspaceSecurityManager.of().setSecureMode(false, credentials)) {
+                    if (NSecurityManager.of().setSecureMode(false, credentials)) {
                         out.println("<<unsecure box activated.Anonymous has all rights.>>");
                     } else {
                         out.println("<<unsecure box is already activated.>>");
@@ -318,7 +331,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 return true;
             } else if (cmdLine.next("secure").isPresent()) {
                 char[] credentials = null;
-                if (!NWorkspaceSecurityManager.of().isAdmin()) {
+                if (!NSecurityManager.of().isAdmin()) {
                     credentials = session.getTerminal().readPassword(NMsg.ofPlain("Enter password : "));
                 }
                 NRepository repository = null;
@@ -333,7 +346,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 }
                 //secure-box
                 if (cmdLine.isExecMode()) {
-                    if (NWorkspaceSecurityManager.of().setSecureMode(true, credentials)) {
+                    if (NSecurityManager.of().setSecureMode(true, credentials)) {
                         out.println("\"\"secure box activated.\"\"");
                     } else {
                         out.println("\"\"secure box already activated.\"\"");
