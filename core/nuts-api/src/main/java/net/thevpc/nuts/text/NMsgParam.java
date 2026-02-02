@@ -13,8 +13,8 @@ public class NMsgParam {
     }
 
     public NMsgParam(String name, Supplier<?> value) {
-        this.name = NAssert.requireNonBlank(name, "name");
-        this.value = NAssert.requireNonNull(value, "value");
+        this.name = NAssert.requireNamedNonBlank(name, "name");
+        this.value = NAssert.requireNamedNonNull(value, "value");
     }
 
     public String getName() {
