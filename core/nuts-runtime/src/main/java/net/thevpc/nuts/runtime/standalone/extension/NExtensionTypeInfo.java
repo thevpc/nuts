@@ -1,15 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceFactory;
-import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
@@ -67,7 +64,7 @@ public class NExtensionTypeInfo<T> {
     }
 
     public static <T> T getOrComputeCachedBean(Class<? extends T> implType, Class<T> apiType, NScopeType scope, Supplier<T> supplier) {
-        NAssert.requireNonNull(scope, "scope");
+        NAssert.requireNamedNonNull(scope, "scope");
         String beansKey = NWorkspaceFactory.class.getName() + "::beans";
         switch (scope) {
             case PROTOTYPE:
