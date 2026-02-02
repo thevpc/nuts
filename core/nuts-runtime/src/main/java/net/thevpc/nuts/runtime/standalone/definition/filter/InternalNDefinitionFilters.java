@@ -279,7 +279,7 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
             return null;
         }
         NDefinitionFilter t = as(a);
-        NAssert.requireNonNull(t, "DefinitionFilter");
+        NAssert.requireNamedNonNull(t, "DefinitionFilter");
         return t;
     }
 
