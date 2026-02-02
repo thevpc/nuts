@@ -9,6 +9,7 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.spi.NPushRepositoryCmd;
@@ -35,7 +36,7 @@ public class DefaultNPushRepositoryCmd extends AbstractNPushRepositoryCmd {
 
     @Override
     public NPushRepositoryCmd run() {
-        getRepo().security().checkAllowed(NConstants.Permissions.PUSH, "push");
+        NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.PUSH, "push");
         try {
             NRepositoryExt.of(getRepo()).pushImpl(this);
             _LOG()
