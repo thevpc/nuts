@@ -334,7 +334,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active && options != null) {
                             String v = NBootUtils.firstNonNull(a.getStringValue(), "");
-                            options.setCredentials(v.toCharArray());
+                            options.setCredential(v.toCharArray());
                         }
                         return (Collections.singletonList(a));
                     }
