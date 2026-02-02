@@ -13,8 +13,8 @@ public class NCredentialId implements Serializable {
     private final String payload;   // encrypted ciphertext (agent-specific format)
 
     public NCredentialId(String agentId, String payload) {
-        NAssert.requireNonBlank(agentId, "agentId");
-        NAssert.requireNonNull(payload, "payload");
+        NAssert.requireNamedNonBlank(agentId, "agentId");
+        NAssert.requireNamedNonNull(payload, "payload");
         if (agentId.contains(":")) {
             throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("agentId must not contain '#' or ':'"));
         }
