@@ -38,8 +38,8 @@ public class NBigComplex extends Number implements Serializable, Comparable<NBig
     }
 
     public NBigComplex(BigDecimal real, BigDecimal imag) {
-        this.real = NAssert.requireNonNull(real, "real");
-        this.imag = NAssert.requireNonNull(imag, "imag");
+        this.real = NAssert.requireNamedNonNull(real, "real");
+        this.imag = NAssert.requireNamedNonNull(imag, "imag");
     }
 
     public BigDecimal real() {
