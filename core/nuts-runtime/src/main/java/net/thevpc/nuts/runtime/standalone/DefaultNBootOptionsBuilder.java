@@ -494,7 +494,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
                 getSystem().orNull(), getGui().orNull(), getDry().orNull(), getShowStacktrace().orNull(), getRecover().orNull(), getReset().orNull(), getResetHard().orNull(), getCommandVersion().orNull(), getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(), getCached().orNull(), getTransitive().orNull(), getBot().orNull(),
                 getIsolationLevel().orNull(), getInitLaunchers().orNull(), getInitScripts().orNull(), getInitPlatforms().orNull(),
                 getInitJava().orNull(), getExcludedExtensions().orNull(), getRepositories().orNull(), getUserName().orNull(),
-                getCredentials().orNull(), getTerminalMode().orNull(), getReadOnly().orNull(), getTrace().orNull(), getProgressOptions().orNull(),
+                getCredential().orNull(), getTerminalMode().orNull(), getReadOnly().orNull(), getTrace().orNull(), getProgressOptions().orNull(),
                 getDependencySolver().orNull(), getLogConfig().orNull(), getConfirm().orNull(), getOutputFormat().orNull(),
                 getApplicationArguments().orNull(), getOpenMode().orNull(), getCreationTime().orNull(),
                 getClassLoaderSupplier().orNull(), getExecutorOptions().orNull(),
@@ -526,7 +526,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.setSystem(other.getSystem().orNull());
         this.setGui(other.getGui().orNull());
         this.setUserName(other.getUserName().orNull());
-        this.setCredentials(other.getCredentials().orNull());
+        this.setCredential(other.getCredential().orNull());
         this.setTerminalMode(other.getTerminalMode().orNull());
         this.setReadOnly(other.getReadOnly().orNull());
         this.setTrace(other.getTrace().orNull());
@@ -611,7 +611,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.setSystem(other.getSystem().orNull());
         this.setGui(other.getGui().orNull());
         this.setUserName(other.getUserName().orNull());
-        this.setCredentials(other.getCredentials().orNull());
+        this.setCredential(other.getCredential().orNull());
         this.setTerminalMode(other.getTerminalMode().orNull());
         this.setReadOnly(other.getReadOnly().orNull());
         this.setTrace(other.getTrace().orNull());
@@ -706,7 +706,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.setSystem(other.getSystem().orNull());
         this.setGui(other.getGui().orNull());
         this.setUserName(other.getUserName().orNull());
-        this.setCredentials(other.getCredentials().orNull());
+        this.setCredential(other.getCredential().orNull());
         this.setTerminalMode(other.getTerminalMode().orNull());
         this.setReadOnly(other.getReadOnly().orNull());
         this.setTrace(other.getTrace().orNull());
@@ -924,8 +924,8 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         if (other.getUserName().isPresent()) {
             this.setUserName(other.getUserName().orNull());
         }
-        if (other.getCredentials().isPresent()) {
-            this.setCredentials(other.getCredentials().orNull());
+        if (other.getCredential().isPresent()) {
+            this.setCredential(other.getCredential().orNull());
         }
         if (other.getTerminalMode().isPresent()) {
             this.setTerminalMode(other.getTerminalMode().orNull());
@@ -1152,8 +1152,8 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         if (other.getUserName().isPresent()) {
             this.setUserName(other.getUserName().orNull());
         }
-        if (other.getCredentials().isPresent()) {
-            this.setCredentials(other.getCredentials().orNull());
+        if (other.getCredential().isPresent()) {
+            this.setCredential(other.getCredential().orNull());
         }
         if (other.getTerminalMode().isPresent()) {
             this.setTerminalMode(other.getTerminalMode().orNull());
@@ -1380,7 +1380,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         r.setSystem(this.getSystem().orNull());
         r.setGui(this.getGui().orNull());
         r.setUserName(this.getUserName().orNull());
-        r.setCredentials(this.getCredentials().orNull());
+        r.setCredential(this.getCredential().orNull());
         r.setTerminalMode(this.getTerminalMode().map(x -> x.id()).orNull());
         r.setReadOnly(this.getReadOnly().orNull());
         r.setTrace(this.getTrace().orNull());
@@ -1907,7 +1907,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     }
 
     @Override
-    public NOptional<char[]> getCredentials() {
+    public NOptional<char[]> getCredential() {
         return NOptional.ofNamed(credentials, "credentials");
     }
 
@@ -1918,7 +1918,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
      * @return {@code this} instance
      */
     @Override
-    public NBootOptionsBuilder setCredentials(char[] credentials) {
+    public NBootOptionsBuilder setCredential(char[] credentials) {
         this.credentials = credentials;
         return this;
     }
@@ -2540,7 +2540,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.setSystem(other.getSystem());
         this.setGui(other.getGui());
         this.setUserName(other.getUserName());
-        this.setCredentials(other.getCredentials());
+        this.setCredential(other.getCredential());
         this.setTerminalMode(NTerminalMode.parse(other.getTerminalMode()).orNull());
         this.setReadOnly(other.getReadOnly());
         this.setTrace(other.getTrace());
@@ -2868,7 +2868,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         setJavaOptions(null);
         setWorkspace(null);
         setUserName(null);
-        setCredentials(null);
+        setCredential(null);
         setApiVersion(null);
         setRuntimeId(null);
         setTerminalMode(null);
