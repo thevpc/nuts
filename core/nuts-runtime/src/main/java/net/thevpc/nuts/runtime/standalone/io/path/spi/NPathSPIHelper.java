@@ -102,7 +102,7 @@ public class NPathSPIHelper {
         }
 
         @Override
-        public boolean hasNext() {
+        public boolean hasNextImpl() {
             return !stack.isEmpty();
         }
 
