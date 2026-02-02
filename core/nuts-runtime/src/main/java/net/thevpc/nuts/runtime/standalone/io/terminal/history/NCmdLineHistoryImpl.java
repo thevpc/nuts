@@ -55,7 +55,7 @@ public class NCmdLineHistoryImpl implements NCmdLineHistory {
     @Override
     public void load() {
         entries.clear();
-        NAssert.requireNonNull(path, "path");
+        NAssert.requireNamedNonNull(path, "path");
         if (path.exists()) {
             try (InputStream in = path.getInputStream()) {
                 load(in);
@@ -67,7 +67,7 @@ public class NCmdLineHistoryImpl implements NCmdLineHistory {
 
     @Override
     public void save() {
-        NAssert.requireNonNull(path, "path");
+        NAssert.requireNamedNonNull(path, "path");
         path.mkParentDirs();
         try (OutputStream out = path.getOutputStream()) {
             save(out);
