@@ -114,12 +114,12 @@ public interface NOptional<T> extends NBlankable, NDescribable {
     }
 
     static <T> NOptional<T> ofCallable(NCallable<T> value) {
-        NAssert.requireNonNull(value, "callable");
+        NAssert.requireNamedNonNull(value, "callable");
         return new NReservedOptionalValidCallable<>(() -> NOptional.of(value.call()), null);
     }
 
     static <T> NOptional<T> ofSupplier(Supplier<T> value) {
-        NAssert.requireNonNull(value, "supplier");
+        NAssert.requireNamedNonNull(value, "supplier");
         return new NReservedOptionalValidCallable<>(() -> NOptional.of(value.get()), null);
     }
 
