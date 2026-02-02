@@ -42,7 +42,7 @@ public interface NUnsafeFunction<T, R> extends UnsafeFunction<T, R>, NRedescriba
     }
 
     static <T, V> NUnsafeFunction<T, V> of(UnsafeFunction<T, V> o, NElement defaultDescription) {
-        NAssert.requireNonNull(o, "function");
+        NAssert.requireNamedNonNull(o, "function");
         if (o instanceof NUnsafeFunction) {
             return (NUnsafeFunction<T, V>) o;
         }
