@@ -6,10 +6,11 @@ import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
+import net.thevpc.nuts.runtime.standalone.util.stream.NStreamBase;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPsInfo;
@@ -23,8 +24,6 @@ import java.util.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 
-import net.thevpc.nuts.runtime.standalone.util.stream.NStreamEmpty;
-import net.thevpc.nuts.runtime.standalone.util.stream.NStreamFromNIterator;
 import net.thevpc.nuts.util.*;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
@@ -195,7 +194,7 @@ public class DefaultNPs implements NPs {
         if (isFailFast()) {
             throw new NIllegalArgumentException(NMsg.ofC("unsupported list processes of type : %s", processType));
         }
-        return new NStreamEmpty<>("process-" + processType.id());
+        return NStreamBase.ofEmpty("process-" + processType.id());
     }
 
     private NStream<NPsInfo> getResultListOS(NEnv target, NOsFamily cmdOsFamily) {
@@ -239,7 +238,7 @@ public class DefaultNPs implements NPs {
         if (isFailFast()) {
             throw new NIllegalArgumentException(NMsg.ofC("unsupported list processes of type : OS"));
         }
-        return new NStreamEmpty<>("process");
+        return NStreamBase.ofEmpty("process");
     }
 
 
@@ -304,8 +303,8 @@ public class DefaultNPs implements NPs {
                                     .setCmdLine(cmdLineString)
                                     .setCmdLineArgs(parsedCmdLine);
                             return p.build();
-                        }).redescribe(NElementDescribables.ofDesc("processInfo"))).build();
-        return new NStreamFromNIterator<>("process-" + getPlatformFamily(), it);
+                        }).withDescription(NDescribables.ofDesc("processInfo"))).build();
+        return NStreamBase.ofIterator("process-" + getPlatformFamily(), it);
     }
 
     private String[] betterArgs(String pid, NEnv target) {
