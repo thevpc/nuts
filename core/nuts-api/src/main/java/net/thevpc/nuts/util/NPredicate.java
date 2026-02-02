@@ -29,21 +29,43 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.spi.base.NPredicateBase;
 
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
  * Describable Predicate
+ *
  * @param <T> Type
  */
-public interface NPredicate<T> extends Predicate<T>, NElementRedescribable<NPredicate<T>> {
-    static <T> NPredicate<T> of(Predicate<T> o){
-        if(o==null){
+public interface NPredicate<T> extends Predicate<T>, NRedescribable<NPredicate<T>> {
+    static <T> NPredicate<T> ofNonNull() {
+        return of(Objects::nonNull, NElement.ofName("nonNull"));
+    }
+
+    static <T> NPredicate<T> ofNull() {
+        return of(Objects::isNull, NElement.ofName("nonNull"));
+    }
+
+    static <T> NPredicate<T> ofNonBlank() {
+        return of(NBlankable::isNonBlank, NElement.ofName("nonNull"));
+    }
+
+    static <T> NPredicate<T> ofBlank() {
+        return of(NBlankable::isBlank, NElement.ofName("nonNull"));
+    }
+
+    static <T> NPredicate<T> of(Predicate<T> o) {
+        return of(o, null);
+    }
+
+    static <T> NPredicate<T> of(Predicate<T> o, NElement description) {
+        if (o == null) {
             return null;
         }
-        if(o instanceof NPredicate<?>){
+        if (o instanceof NPredicate<?>) {
             return (NPredicate<T>) o;
         }
-        return new NPredicateBase<>(o);
+        return new NPredicateBase<>(o, description);
     }
 
 
