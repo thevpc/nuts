@@ -16,7 +16,7 @@ public class DefaultNElementNewLine implements NElementNewLine {
     private NNewLineMode value;
 
     public static DefaultNElementNewLine of(NNewLineMode newlineToken) {
-        NAssert.requireNonNull(newlineToken, "newlineToken");
+        NAssert.requireNamedNonNull(newlineToken, "newlineToken");
         switch (newlineToken) {
             case LF:
                 return LF;
@@ -31,7 +31,7 @@ public class DefaultNElementNewLine implements NElementNewLine {
     }
 
     public static DefaultNElementNewLine of(String newlineToken) {
-        NAssert.requireNonNull(newlineToken, "newlineToken");
+        NAssert.requireNamedNonNull(newlineToken, "newlineToken");
         switch (newlineToken) {
             case "\n":
                 return LF;
@@ -44,7 +44,7 @@ public class DefaultNElementNewLine implements NElementNewLine {
     }
 
     private DefaultNElementNewLine(String newlineToken) {
-        NAssert.requireNonNull(newlineToken, "newlineToken");
+        NAssert.requireNamedNonNull(newlineToken, "newlineToken");
         switch (newlineToken) {
             case "\n": {
                 this.value = NNewLineMode.LF;
@@ -65,7 +65,7 @@ public class DefaultNElementNewLine implements NElementNewLine {
     }
 
     private DefaultNElementNewLine(NNewLineMode newlineToken) {
-        NAssert.requireNonNull(newlineToken, "newlineToken");
+        NAssert.requireNamedNonNull(newlineToken, "newlineToken");
         this.value = newlineToken;
     }
 
