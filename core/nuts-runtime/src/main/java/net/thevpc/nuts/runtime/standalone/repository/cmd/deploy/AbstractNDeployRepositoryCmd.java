@@ -33,6 +33,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCmdBase;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.spi.NDeployRepositoryCmd;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIllegalArgumentException;
@@ -125,7 +126,7 @@ public abstract class AbstractNDeployRepositoryCmd extends NRepositoryCmdBase<ND
     }
 
     protected void checkParameters() {
-        getRepo().security().checkAllowed(NConstants.Permissions.DEPLOY, "deploy");
+        NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.DEPLOY, "deploy");
         CoreNIdUtils.checkLongId(getId());
         NAssert.requireNonNull(this.getContent(), "content");
         NAssert.requireNonNull(this.getDescriptor(), "descriptor");
