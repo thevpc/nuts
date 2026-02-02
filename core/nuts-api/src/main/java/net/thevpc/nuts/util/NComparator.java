@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  *
  * @param <T> Type
  */
-public interface NComparator<T> extends Comparator<T>, NElementRedescribable<NComparator<T>> {
+public interface NComparator<T> extends Comparator<T>, NRedescribable<NComparator<T>> {
     static <T> NComparator<T> of(Comparator<T> o) {
         if (o == null) {
             return null;
@@ -48,7 +48,7 @@ public interface NComparator<T> extends Comparator<T>, NElementRedescribable<NCo
     }
 
     @Override
-    default NComparator<T> redescribe(Supplier<NElement> description) {
+    default NComparator<T> withDescription(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }
