@@ -270,8 +270,8 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @see NStoreType
      */
     static NPath ofIdStore(NId id, NStoreType storeType) {
-        NAssert.requireNonBlank(id, "id");
-        NAssert.requireNonBlank(storeType, "storeType");
+        NAssert.requireNamedNonBlank(id, "id");
+        NAssert.requireNamedNonBlank(storeType, "storeType");
         return NWorkspace.of().getStoreLocation(id, storeType);
     }
 
@@ -282,7 +282,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return the workspace’s store path
      */
     static NPath ofWorkspaceStore(NStoreType storeType) {
-        NAssert.requireNonBlank(storeType, "storeType");
+        NAssert.requireNamedNonBlank(storeType, "storeType");
         return NWorkspace.of().getStoreLocation(storeType);
     }
 
@@ -293,7 +293,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return the resolved store directory
      */
     static NPath ofStore(NLocationKey locationKey) {
-        NAssert.requireNonBlank(locationKey, "locationKey");
+        NAssert.requireNamedNonBlank(locationKey, "locationKey");
         return NWorkspace.of().getStoreLocation(locationKey);
     }
 
@@ -308,7 +308,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return user store path
      */
     static NPath ofUserStore(NStoreType storeType) {
-        NAssert.requireNonBlank(storeType, "storeType");
+        NAssert.requireNamedNonBlank(storeType, "storeType");
         return NPath.of(NBootPlatformHome.of(null).getStore(storeType.id()));
     }
 
@@ -319,7 +319,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return system store path
      */
     static NPath ofSystemStore(NStoreType storeType) {
-        NAssert.requireNonBlank(storeType, "storeType");
+        NAssert.requireNamedNonBlank(storeType, "storeType");
         return NPath.of(NBootPlatformHome.ofSystem(null).getStore(storeType.id()));
     }
 
