@@ -37,31 +37,27 @@ import java.util.Objects;
  * @app.category Config
  * @since 0.5.4
  */
-public final class NUserConfig extends NConfigItem implements Cloneable{
+public final class NUserConfig extends NConfigItem implements Cloneable {
 
     private static final long serialVersionUID = 2;
-    private String user;
-    private String credentials;
+    private String userName;
+    private String credential;
     private List<String> groups;
     private List<String> permissions;
-    private String remoteIdentity;
-    private String remoteCredentials;
 
     public NUserConfig() {
     }
 
     public NUserConfig(NUserConfig other) {
-        this.user = other.getUser();
-        this.credentials = other.getCredentials();
-        this.remoteIdentity = other.getRemoteIdentity();
-        this.remoteCredentials = other.getRemoteCredentials();
+        this.userName = other.getUserName();
+        this.credential = other.getCredential();
         setGroups(other.getGroups());
         setPermissions(other.getPermissions());
     }
 
-    public NUserConfig(String user, String credentials, List<String> groups, List<String> permissions) {
-        this.user = (user);
-        this.credentials = (credentials);
+    public NUserConfig(String userName, String credential, List<String> groups, List<String> permissions) {
+        this.userName = (userName);
+        this.credential = (credential);
         setGroups(groups);
         setPermissions(permissions);
     }
@@ -73,9 +69,9 @@ public final class NUserConfig extends NConfigItem implements Cloneable{
     @Override
     protected NUserConfig clone() {
         try {
-            NUserConfig o =(NUserConfig) super.clone();
-            if(o.groups!=null) {
-                o.groups=new ArrayList<>(o.groups);
+            NUserConfig o = (NUserConfig) super.clone();
+            if (o.groups != null) {
+                o.groups = new ArrayList<>(o.groups);
             }
             if (o.permissions != null) {
                 o.permissions = new ArrayList<>(o.permissions);
@@ -86,36 +82,20 @@ public final class NUserConfig extends NConfigItem implements Cloneable{
         }
     }
 
-    public String getRemoteIdentity() {
-        return remoteIdentity;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setRemoteIdentity(String remoteIdentity) {
-        this.remoteIdentity = remoteIdentity;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getRemoteCredentials() {
-        return remoteCredentials;
+    public String getCredential() {
+        return credential;
     }
 
-    public void setRemoteCredentials(String remoteCredentials) {
-        this.remoteCredentials = remoteCredentials;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getCredentials() {
-        return credentials;
-    }
-
-    public void setCredentials(String credentials) {
-        this.credentials = credentials;
+    public void setCredential(String credential) {
+        this.credential = credential;
     }
 
     public List<String> getPermissions() {
@@ -136,7 +116,7 @@ public final class NUserConfig extends NConfigItem implements Cloneable{
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(user, credentials, remoteIdentity, remoteCredentials,groups,permissions);
+        int result = Objects.hash(userName, credential,groups, permissions);
         return result;
     }
 
@@ -145,23 +125,20 @@ public final class NUserConfig extends NConfigItem implements Cloneable{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NUserConfig that = (NUserConfig) o;
-        return Objects.equals(user, that.user) &&
-                Objects.equals(credentials, that.credentials) &&
+        return Objects.equals(userName, that.userName) &&
+                Objects.equals(credential, that.credential) &&
                 Objects.equals(groups, that.groups) &&
-                Objects.equals(permissions, that.permissions) &&
-                Objects.equals(remoteIdentity, that.remoteIdentity) &&
-                Objects.equals(remoteCredentials, that.remoteCredentials);
+                Objects.equals(permissions, that.permissions)
+                ;
     }
 
     @Override
     public String toString() {
         return "NutsUserConfig{" +
-                "user='" + user + '\'' +
-                ", credentials='" + credentials + '\'' +
+                "user='" + userName + '\'' +
+                ", credentials='" + credential + '\'' +
                 ", groups=" + groups +
                 ", permissions=" + permissions +
-                ", remoteIdentity='" + remoteIdentity + '\'' +
-                ", remoteCredentials='" + remoteCredentials + '\'' +
                 '}';
     }
 }
