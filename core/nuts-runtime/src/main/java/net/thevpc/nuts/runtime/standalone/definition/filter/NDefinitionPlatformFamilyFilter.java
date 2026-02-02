@@ -28,9 +28,9 @@ public class NDefinitionPlatformFamilyFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition def) {
-        List<NExecutionEngineFamily> current = NStream.ofIterable(def.getDescriptor().getCondition().getPlatform()).filterNonBlank()
+        List<NExecutionEngineFamily> current = NStream.ofIterable(def.getDescriptor().getCondition().getPlatform()).nonBlank()
                 .map(x -> NExecutionEngineFamily.parse(x).orNull())
-                .filterNonBlank()
+                .nonBlank()
                 .toList();
         if (current.isEmpty() || accepted.isEmpty()) {
             return true;
