@@ -6,7 +6,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.concurrent.NRunnable;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NObjectElement;
 
@@ -62,7 +62,7 @@ public class NIteratorBuilder<T> {
 //    }
 
     public static <T> NIteratorBuilder<T> ofRunnable(Runnable t, String n) {
-        return ofRunnable(NRunnable.of(t).redescribe(NElementDescribables.ofDesc(n)));
+        return ofRunnable(NRunnable.of(t).withDescription(NDescribables.ofDesc(n)));
     }
 //
 //    public static <T> IteratorBuilder<T> ofSupplier(Supplier<NutsIterator<T>> from) {
@@ -70,7 +70,7 @@ public class NIteratorBuilder<T> {
 //    }
 
     public static <T> NIteratorBuilder<T> ofSupplier(Supplier<Iterator<T>> from, Supplier<NElement> name) {
-        return of(new NSupplierIteratorJ<T>(from,name).redescribe(name));
+        return of(new NSupplierIteratorJ<T>(from,name).withDescription(name));
     }
 
     public static <T> NIteratorBuilder<T> ofArrayValues(T[] t, NElement n) {
@@ -107,7 +107,7 @@ public class NIteratorBuilder<T> {
         if (t == null) {
             return this;
         }
-        return of(new NFilteredIterator<>(it, NPredicate.of(t).redescribe(e)));
+        return of(new NFilteredIterator<>(it, NPredicate.of(t).withDescription(e)));
     }
 
     public NIteratorBuilder<T> filter(NPredicate<? super T> t) {
