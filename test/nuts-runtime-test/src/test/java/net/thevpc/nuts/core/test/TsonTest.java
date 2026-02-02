@@ -101,7 +101,7 @@ public class TsonTest {
         TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
 
         NObjectElement env = parsed.asNamedObject("env").get();
-        NBinaryOperatorElement assign1 = env.get(0).get().asFlatExpression().get().reshape(NExprElementReshaper.ofJavaLike()).asBinaryOperator(NOperatorSymbol.EQ).get();
+        NBinaryOperatorElement assign1 = env.get(0).get().asFlatExpression().get().reshape().asBinaryOperator(NOperatorSymbol.EQ).get();
         NObjectElement if1 = env.get(1).get().asFullObject("if").get();
         NObjectElement if2 = env.get(2).get().asFullObject("if").get();
         NPairElement assign2 = env.get(3).get().asNamedPair("MVN_HOME").get();
@@ -181,7 +181,7 @@ public class TsonTest {
     public void test06() {
         String tson = "ω=π+freq*g";
         NElement parsed = NElementReader.ofTson().read(tson);
-        NElement reshaped = parsed.asFlatExpression().get().reshape(NExprElementReshaper.ofJavaLike());
+        NElement reshaped = parsed.asFlatExpression().get().reshape();
         Assertions.assertTrue(reshaped.isBinaryInfixOperator(NOperatorSymbol.EQ));
         Assertions.assertEquals("ω", reshaped.asBinaryOperator().get().firstOperand().asStringValue().get());
         NElement so = reshaped.asBinaryOperator().get().secondOperand();
