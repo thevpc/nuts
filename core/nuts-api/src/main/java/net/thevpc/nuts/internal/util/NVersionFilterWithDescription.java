@@ -1,7 +1,7 @@
 package net.thevpc.nuts.internal.util;
 
 import net.thevpc.nuts.artifact.NVersionFilter;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.NVersionFilterDelegate;
 import net.thevpc.nuts.util.NFilter;
@@ -24,13 +24,13 @@ public class NVersionFilterWithDescription extends NVersionFilterDelegate {
     }
 
     @Override
-    public NFilter redescribe(Supplier<NElement> description) {
+    public NFilter withDescription(Supplier<NElement> description) {
         this.description=description;
         return this;
     }
 
     @Override
     public NElement describe() {
-        return NElementDescribables.safeDescribeOfBase(description, baseVersionFilter);
+        return NDescribables.safeDescribeOfBase(description, baseVersionFilter);
     }
 }
