@@ -39,8 +39,8 @@ public class NTalkServer implements Closeable{
         this.port = port <= 0 ? NTalkConstants.DEFAULT_PORT : port;
         this.service = service;
         this.action = action;
-        NAssert.requireNonNull(service, "service");
-        NAssert.requireNonNull(action, "action");
+        NAssert.requireNamedNonNull(service, "service");
+        NAssert.requireNamedNonNull(action, "action");
     }
 
     public ExecutorService getThreadPool() {
