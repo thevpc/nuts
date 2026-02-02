@@ -373,7 +373,7 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
         }
         fillOption("--workspace", "-w", wsString, arguments, false);
         fillOption("--user", "-u", options.getUserName().orNull(), arguments, false);
-        fillOption("--password", "-p", options.getCredentials().orNull(), arguments, false);
+        fillOption("--password", "-p", options.getCredential().orNull(), arguments, false);
         fillOption("--boot-version", "-V", options.getApiVersion().map(Object::toString).orNull(), arguments, false);
         fillOption("--boot-runtime", null, options.getRuntimeId().map(Object::toString).orNull(), arguments, false);
 
