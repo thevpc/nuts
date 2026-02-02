@@ -74,7 +74,7 @@ public class DefaultNWorkspaceLocationModel {
 
 
     public void setStoreLocation(NStoreType folderType, String location) {
-        NAssert.requireNonNull(folderType, "store root folder");
+        NAssert.requireNamedNonNull(folderType, "store root folder");
         cfg().onPreUpdateConfig("store-location");
         cfg().getStoreModelBoot().setStoreLocations(new NStoreLocationsMap(cfg().getStoreModelBoot().getStoreLocations()).set(folderType, location).toMapOrNull());
         cfg().onPostUpdateConfig("store-location");
@@ -203,7 +203,7 @@ public class DefaultNWorkspaceLocationModel {
 
 
     public String getDefaultIdContentExtension(String packaging) {
-        NAssert.requireNonBlank(packaging, "packaging");
+        NAssert.requireNamedNonBlank(packaging, "packaging");
         switch (packaging) {
             case "jar":
             case "bundle":
