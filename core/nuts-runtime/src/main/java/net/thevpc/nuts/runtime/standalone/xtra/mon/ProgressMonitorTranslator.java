@@ -18,7 +18,7 @@ public class ProgressMonitorTranslator implements NProgressHandler {
 
     public ProgressMonitorTranslator(NProgressMonitor baseMonitor, double factor, double start) {
         this.delegate = baseMonitor;
-        NAssert.requireNonNull(baseMonitor, "baseMonitor");
+        NAssert.requireNamedNonNull(baseMonitor, "baseMonitor");
         this.factor = factor;
         this.start = start;
     }
