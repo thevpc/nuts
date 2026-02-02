@@ -35,7 +35,7 @@ public class NUtils {
     }
 
     public static <T> T firstMatchingLazy(Predicate<? super T> filter, T first, Supplier<? extends T>... suppliers) {
-        NAssert.requireNonNull(filter, "filter");
+        NAssert.requireNamedNonNull(filter, "filter");
         if (filter.test(first)) {
             return first;
         }
@@ -43,7 +43,7 @@ public class NUtils {
     }
 
     public static <T> T firstMatchingLazy(Predicate<? super T> filter, Supplier<? extends T>... suppliers) {
-        NAssert.requireNonNull(filter, "filter");
+        NAssert.requireNamedNonNull(filter, "filter");
         if (suppliers != null) {
             for (Supplier<? extends T> supplier : suppliers) {
                 if (supplier != null) {
