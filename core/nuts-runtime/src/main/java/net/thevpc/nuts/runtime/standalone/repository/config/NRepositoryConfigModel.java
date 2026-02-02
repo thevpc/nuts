@@ -128,17 +128,17 @@ public interface NRepositoryConfigModel {
 
     NPath getMirrorsRoot();
 
-    NUserConfig[] findUsers();
-
-    NOptional<NUserConfig> findUser(String userId);
+//    NUserConfig[] findUsers();
+//
+//    NOptional<NUserConfig> findUser(String userId);
 
     NRepositoryConfig getStoredConfig();
 
     void fireConfigurationChanged(String configName);
 
-    void setUser(NUserConfig user);
-
-    void removeUser(String userId);
+//    void setUser(NUserConfig user);
+//
+//    void removeUser(String userId);
 
     NRepositoryConfig getConfig();
 
