@@ -26,7 +26,7 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementRedescribable;
+import net.thevpc.nuts.elem.NRedescribable;
 import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
 
 import java.util.*;
@@ -42,38 +42,38 @@ import java.util.stream.*;
  * @see NSearch#getResultIds()
  * @since 0.5.4
  */
-public interface NStream<T> extends Iterable<T>, NElementRedescribable<NStream<T>>, AutoCloseable {
+public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, AutoCloseable {
 
     static <T> NStream<T> ofArray(T... str) {
         return NCollectionsRPI.of().arrayToStream(str);
     }
 
     static <T> NStream<T> ofArray(int... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).redescribe(() -> NElement.ofIntArray(items));
+        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofIntArray(items));
     }
 
     static <T> NStream<T> ofArray(long... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).redescribe(() -> NElement.ofLongArray(items));
+        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofLongArray(items));
     }
 
     static <T> NStream<T> ofArray(boolean... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).redescribe(() -> NElement.ofBooleanArray(items));
+        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofBooleanArray(items));
     }
 
     static <T> NStream<T> ofArray(byte... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).redescribe(() -> NElement.ofByteArray(items));
+        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofByteArray(items));
     }
 
     static <T> NStream<T> ofArray(short... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).redescribe(() -> NElement.ofShortArray(items));
+        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofShortArray(items));
     }
 
     static <T> NStream<T> ofArray(float... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).redescribe(() -> NElement.ofFloatArray(items));
+        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofFloatArray(items));
     }
 
     static <T> NStream<T> ofArray(double... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).redescribe(() -> NElement.ofDoubleArray(items));
+        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofDoubleArray(items));
     }
 
     static <T> NStream<T> ofOptional(NOptional<T> str) {
@@ -200,13 +200,9 @@ public interface NStream<T> extends Iterable<T>, NElementRedescribable<NStream<T
 
     NStream<T> filter(Predicate<? super T> predicate);
 
-    NStream<T> filterNonNull();
+    NStream<T> concat(Iterator<? extends T> other);
 
-    NStream<T> filterNonBlank();
-
-    NStream<T> concat(NIterator<? extends T> other);
-
-    NStream<T> coalesce(NIterator<? extends T> other);
+    NStream<T> coalesce(Iterator<? extends T> other);
 
     NStream<T> concat(NStream<? extends T> other);
 
@@ -290,4 +286,6 @@ public interface NStream<T> extends Iterable<T>, NElementRedescribable<NStream<T
     NOptional<T> max(Comparator<? super T> comparator);
 
     void close();
+
+    NStream<T> onClose(Runnable closeHandler);
 }
