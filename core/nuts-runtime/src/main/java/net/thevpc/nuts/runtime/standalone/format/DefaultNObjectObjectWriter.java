@@ -29,8 +29,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.elem.NElementDescribables;
-import net.thevpc.nuts.elem.NElementFormatter;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElementWriter;
 
 
@@ -202,7 +201,7 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
                                         return (Object) x.filteredText();
                                     }
 
-                            ).redescribe(NElementDescribables.ofDesc("filteredText"))
+                            ).withDescription(NDescribables.ofDesc("filteredText"))
                     ).toArray(Object[]::new);
                     aValue = r;
                 } else {
