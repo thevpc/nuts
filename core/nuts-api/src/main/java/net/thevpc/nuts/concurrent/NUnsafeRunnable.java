@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  *
  * @since 0.8.7
  */
-public interface NUnsafeRunnable extends NElementRedescribable<NUnsafeRunnable> {
+public interface NUnsafeRunnable extends NRedescribable<NUnsafeRunnable> {
     /**
      * Returns the given {@link NUnsafeRunnable} instance or {@code null} if the input is null.
      *
@@ -60,7 +60,7 @@ public interface NUnsafeRunnable extends NElementRedescribable<NUnsafeRunnable> 
      * @return a new {@link NUnsafeRunnable} with the given description
      */
     @Override
-    default NUnsafeRunnable redescribe(Supplier<NElement> description) {
+    default NUnsafeRunnable withDescription(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }
@@ -76,7 +76,7 @@ public interface NUnsafeRunnable extends NElementRedescribable<NUnsafeRunnable> 
      */
     @Override
     default NElement describe() {
-        return NElementDescribables.ofLateToString(this).get();
+        return NDescribables.ofLateToString(this).get();
     }
 
     /**
