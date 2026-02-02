@@ -32,20 +32,25 @@ import java.util.function.Supplier;
 
 /**
  * Unsafe function is a function that can throw any arbitrary exception
+ *
  * @param <T> In
  * @param <R> Out
  */
-public interface NUnsafeFunction<T, R> extends UnsafeFunction<T, R>, NElementRedescribable<NUnsafeFunction<T, R>> {
+public interface NUnsafeFunction<T, R> extends UnsafeFunction<T, R>, NRedescribable<NUnsafeFunction<T, R>> {
     static <T, V> NUnsafeFunction<T, V> of(UnsafeFunction<T, V> o) {
+        return of(o, null);
+    }
+
+    static <T, V> NUnsafeFunction<T, V> of(UnsafeFunction<T, V> o, NElement defaultDescription) {
         NAssert.requireNonNull(o, "function");
-        if (o instanceof NFunction) {
+        if (o instanceof NUnsafeFunction) {
             return (NUnsafeFunction<T, V>) o;
         }
-        return new NUnsafeFunctionFromJavaUnsafeFunction<>(o,null);
+        return new NUnsafeFunctionFromJavaUnsafeFunction<>(o, defaultDescription == null ? null : () -> defaultDescription);
     }
 
     @Override
-    default NUnsafeFunction<T, R> redescribe(Supplier<NElement> description) {
+    default NUnsafeFunction<T, R> withDescription(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }
