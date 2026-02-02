@@ -10,7 +10,7 @@ public abstract class AbstractNWorkspaceStore implements NWorkspaceStore{
 
     @Override
     public <T> T supplyWithCache(NLocationKey k, Class<T> type, Supplier<T> supplier) {
-        NAssert.requireTrue(k.getStoreType() == NStoreType.CACHE, "cache");
+        NAssert.requireNamedTrue(k.getStoreType() == NStoreType.CACHE, "cache");
         T t = null;
         try {
             t = (T) loadLocationKey(k, type);
