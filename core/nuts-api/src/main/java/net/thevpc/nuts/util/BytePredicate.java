@@ -1,7 +1,5 @@
 package net.thevpc.nuts.util;
 
-import java.util.Objects;
-
 /**
  * Represents a predicate (boolean-valued function) of one {@code byte}-valued argument.
  * <p>
@@ -28,7 +26,7 @@ public interface BytePredicate {
      * @throws NullPointerException if {@code other} is null
      */
     default BytePredicate and(BytePredicate other) {
-        NAssert.requireNonNull(other, "other");
+        NAssert.requireNamedNonNull(other, "other");
         return b -> test(b) && other.test(b);
     }
 
@@ -51,7 +49,7 @@ public interface BytePredicate {
      * @throws NullPointerException if {@code other} is null
      */
     default BytePredicate or(BytePredicate other) {
-        NAssert.requireNonNull(other, "other");
+        NAssert.requireNamedNonNull(other, "other");
         return b -> test(b) || other.test(b);
     }
 }
