@@ -33,9 +33,8 @@ import net.thevpc.nuts.command.NFetchModeNotSupportedException;
 import net.thevpc.nuts.net.NWebCli;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.security.NUser;
-import net.thevpc.nuts.security.NUserConfig;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.net.NWebRequest;
+import net.thevpc.nuts.security.*;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
@@ -47,13 +46,12 @@ import net.thevpc.nuts.runtime.standalone.repository.util.NIdLocationUtils;
 import net.thevpc.nuts.util.NIteratorBase;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NCachedRepository;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.util.NIteratorBuilder;
@@ -64,7 +62,7 @@ import net.thevpc.nuts.util.*;
 
 public class NHttpSrvRepository extends NCachedRepository {
 
-//    private final NLog LOG;
+    //    private final NLog LOG;
     private NId remoteId;
 
     public NHttpSrvRepository(NAddRepositoryOptions options, NRepository parentRepository) {
@@ -122,7 +120,7 @@ public class NHttpSrvRepository extends NCachedRepository {
 
     @Override
     public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode) {
-        NSession session=getWorkspace().currentSession();
+        NSession session = getWorkspace().currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
             throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
@@ -144,7 +142,7 @@ public class NHttpSrvRepository extends NCachedRepository {
 
     @Override
     public NIterator<NId> searchVersionsCore(NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
-        NSession session=getWorkspace().currentSession();
+        NSession session = getWorkspace().currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
             throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
@@ -171,12 +169,12 @@ public class NHttpSrvRepository extends NCachedRepository {
         if (fetchMode != NFetchMode.REMOTE) {
             return null;
         }
-        NSession session=getWorkspace().currentSession();
+        NSession session = getWorkspace().currentSession();
 
         session.getTerminal().printProgress(NMsg.ofC("search into %s ", Arrays.toString(basePaths)));
         boolean transitive = session.isTransitive();
         InputStream ret = null;
-        String[] ulp = resolveEncryptedAuth();
+        Creds ulp = resolveEncryptedAuth();
         if (filter instanceof NExprIdFilter) {
             String js = ((NExprIdFilter) filter).toExpr();
             if (js != null) {
@@ -184,8 +182,7 @@ public class NHttpSrvRepository extends NCachedRepository {
                 ret = nWebCli.req().POST()
                         .setUrl(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
                         .addPart("root", "/")
-                        .addPart("ul", ulp[0])
-                        .addPart("up", ulp[1])
+                        .doWith(r->prepareNWebRequest(r,ulp))
                         .addPart("js").setFileName("search.js").setBody(
                                 NInputSource.of(js.getBytes())).end()
                         .run()
@@ -197,8 +194,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             ret = nWebCli.req().POST()
                     .setUrl(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
                     .addPart("root", "/")
-                    .addPart("ul", ulp[0])
-                    .addPart("up", ulp[1])
+                    .doWith(r->prepareNWebRequest(r,ulp))
                     .addPart("pattern", ("*"))
                     .addPart("transitive", String.valueOf(transitive))
                     .run()
@@ -208,7 +204,21 @@ public class NHttpSrvRepository extends NCachedRepository {
             return new NamedNIdFromStreamIterator(ret);
         }
         return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(NDefinitionFilterUtils.toIdPredicate(filter)).iterator();
+    }
 
+    private NWebRequest prepareNWebRequest(NWebRequest r, Creds c) {
+        if (c.password == null) {
+            return r;
+        }
+        NSecurityManager.of().runWithSecret(c.password, new NSecretRunner() {
+            @Override
+            public void run(NCredentialId id, char[] secretm, Function<String, String> env) {
+                r.addPart("ul", c.login)
+                        .addPart("up", new String(secretm));
+
+            }
+        });
+        return r;
     }
 
     @Override
@@ -217,8 +227,8 @@ public class NHttpSrvRepository extends NCachedRepository {
         if (fetchMode != NFetchMode.REMOTE) {
             throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
-        NPath localPath=NIdLocationUtils.fetch(id, descriptor.getLocations(), this);
-        if (localPath!=null) {
+        NPath localPath = NIdLocationUtils.fetch(id, descriptor.getLocations(), this);
+        if (localPath != null) {
             return localPath;
         }
         boolean transitive = session.isTransitive();
@@ -243,7 +253,7 @@ public class NHttpSrvRepository extends NCachedRepository {
 
     private String httpGetString(String url) {
         LOG().log(NMsg.ofJ("get URL{0}", url)
-                        .withLevel(Level.FINEST).withIntent(NMsgIntent.START));
+                .withLevel(Level.FINEST).withIntent(NMsgIntent.START));
         return NIOUtils.loadString(NPath.of(url).getInputStream(), true);
     }
 
@@ -252,48 +262,49 @@ public class NHttpSrvRepository extends NCachedRepository {
         return super.toString() + ((this.remoteId == null ? "" : " ; desc=" + this.remoteId));
     }
 
-    private String[] resolveEncryptedAuth() {
-        String login = NWorkspaceSecurityManager.of().getCurrentUsername();
-        NUserConfig security = NRepositoryConfigManagerExt.of(config()).getModel().findUser(login).orNull();
+    private static class Creds {
+        String login;
+        NCredentialId password;
+
+        public Creds(String login, NCredentialId password) {
+            this.login = login;
+            this.password = password;
+        }
+    }
+
+    private Creds resolveEncryptedAuth() {
+        String login = NSecurityManager.of().getCurrentUsername();
+        NRepositoryAccess security = NSecurityManager.of().findRepositoryAccess(getUuid(), login).get();
         String newLogin = "";
-        char[] credentials = new char[0];
+        NCredentialId credentials = null;
         if (security == null) {
             newLogin = "anonymous";
-            credentials = "anonymous".toCharArray();
         } else {
-            newLogin = security.getRemoteIdentity();
+            newLogin = security.getRemoteUserName();
             if (NBlankable.isBlank(newLogin)) {
-                NUser security2 = NWorkspaceSecurityManager.of().findUser(login);
-                if (security2 != null) {
-                    newLogin = security2.getRemoteIdentity();
-                }
+                newLogin = login;
             }
             if (NBlankable.isBlank(newLogin)) {
                 newLogin = login;
-            } else {
-                security = NRepositoryConfigManagerExt.of(config()).getModel().findUser(newLogin).orNull();
-                if (security == null) {
-                    newLogin = "anonymous";
-                    credentials = "anonymous".toCharArray();
-                }
             }
-            if (security != null) {
-                credentials = security.getRemoteCredentials() == null ? null : security.getRemoteCredentials().toCharArray();
-                credentials = NWorkspaceSecurityManager.of().getCredentials(credentials);
-            }
+            credentials = security.getRemoteCredential();
         }
-
-        String passphrase = config().getConfigProperty(CoreSecurityUtils.ENV_KEY_PASSPHRASE)
-                .flatMap(NLiteral::asString)
-                .orElse(CoreSecurityUtils.DEFAULT_PASSPHRASE);
-        newLogin = new String(CoreSecurityUtils.INSTANCE.defaultEncryptChars(NStringUtils.trim(newLogin).toCharArray(), passphrase));
-        credentials = CoreSecurityUtils.INSTANCE.defaultEncryptChars(credentials, passphrase);
-        return new String[]{newLogin, new String(credentials)};
+        return new Creds(newLogin, credentials);
     }
 
     private String resolveAuthURLPart() {
-        String[] auth = resolveEncryptedAuth();
-        return "ul=" + CoreIOUtils.urlEncodeString(auth[0]) + "&up=" + CoreIOUtils.urlEncodeString(auth[0]);
+        Creds auth = resolveEncryptedAuth();
+        NRef<String> s = NRef.of();
+        if (auth.password == null) {
+            return "";
+        }
+        NSecurityManager.of().runWithSecret(auth.password, new NSecretRunner() {
+            @Override
+            public void run(NCredentialId id, char[] secretm, Function<String, String> env) {
+                s.set("ul=" + CoreIOUtils.urlEncodeString(auth.login) + "&up=" + CoreIOUtils.urlEncodeString(new String(secretm)));
+            }
+        });
+        return s.get();
     }
 
     //    @Override
@@ -328,7 +339,7 @@ public class NHttpSrvRepository extends NCachedRepository {
 
 
         @Override
-        public boolean hasNext() {
+        public boolean hasNextImpl() {
             while (true) {
                 try {
                     line = br.readLine();
@@ -347,7 +358,8 @@ public class NHttpSrvRepository extends NCachedRepository {
             }
         }
 
-        private void close() {
+        public void close() {
+            super.close();
             try {
                 br.close();
             } catch (IOException ex) {
