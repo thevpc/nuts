@@ -1,9 +1,8 @@
 package net.thevpc.nuts.internal.optional;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.function.Supplier;
@@ -46,7 +45,7 @@ public class NReservedOptionalValidValue<T> extends NReservedOptionalValid<T> im
                 .add("evaluated", true)
                 .add("empty", false)
                 .add("error", false)
-                .add("value", NElementDescribables.describeResolveOrDestruct(value))
+                .add("value", NDescribables.describeResolveOrDestruct(value))
                 .build()
                 ;
     }
