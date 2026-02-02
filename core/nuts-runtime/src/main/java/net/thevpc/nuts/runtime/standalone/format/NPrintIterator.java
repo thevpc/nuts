@@ -43,14 +43,14 @@ public class NPrintIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElementDescribables.describeResolveOrDestructAsObject(curr)
+        return NDescribables.describeResolveOrDestructAsObject(curr)
                 .builder()
                 .set("print", NElement.ofObjectBuilder().set("format",listFormat.getOutputFormat().id()).build())
                 .build();
     }
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNextImpl() {
         boolean p = curr.hasNext();
         if (!p) {
             listFormat.complete(count);
