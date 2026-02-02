@@ -19,7 +19,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.install.*;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.*;
 
@@ -42,7 +42,7 @@ public class DefaultNUninstall extends AbstractNUninstall {
     @Override
     public NUninstall run() {
         NWorkspaceUtils.of().checkReadOnly();
-        NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.UNINSTALL, "uninstall");
+        NSecurityManager.of().checkAllowed(NConstants.Permissions.UNINSTALL, "uninstall");
         InstallIdList list = new InstallIdList();
         List<NId> nutsIds = this.getIds();
         NAssert.requireNonBlank(nutsIds, "packages to uninstall");
