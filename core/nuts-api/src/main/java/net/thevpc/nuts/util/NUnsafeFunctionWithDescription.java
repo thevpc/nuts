@@ -1,6 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.function.Supplier;
@@ -21,7 +21,7 @@ public class NUnsafeFunctionWithDescription<T, V> implements NUnsafeFunction<T, 
     }
 
     @Override
-    public NUnsafeFunction<T, V> redescribe(Supplier<NElement> description) {
+    public NUnsafeFunction<T, V> withDescription(Supplier<NElement> description) {
         if (description == null) {
             return base;
         }
@@ -35,6 +35,6 @@ public class NUnsafeFunctionWithDescription<T, V> implements NUnsafeFunction<T, 
 
     @Override
     public NElement describe() {
-        return NElementDescribables.safeDescribe(description, NElementDescribables.ofLateToString(this));
+        return NDescribables.safeDescribe(description, NDescribables.ofLateToString(this));
     }
 }
