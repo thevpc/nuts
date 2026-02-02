@@ -277,31 +277,9 @@ public class NIdFormatHelper {
             NUserConfig[] users = NWorkspaceExt.of(workspace).getConfigModel().getStoredConfigSecurity().getUsers();
             if (users != null) {
                 for (NUserConfig user : users) {
-                    String s = user.getUser();
+                    String s = user.getUserName();
                     if (s != null) {
                         z = Math.max(s.length(), z);
-                    }
-                }
-            }
-            Stack<NRepository> stack = new Stack<>();
-            for (NRepository repository : workspace.getRepositories()) {
-                stack.push(repository);
-            }
-            while (!stack.isEmpty()) {
-                NRepository r = stack.pop();
-                NRepositoryConfigManagerExt rc = NRepositoryConfigManagerExt.of(r.config());
-                NUserConfig[] users1 = rc.getModel().findUsers();
-                if (users1 != null) {
-                    for (NUserConfig user : users1) {
-                        String s = user.getUser();
-                        if (s != null) {
-                            z = Math.max(s.length(), z);
-                        }
-                    }
-                }
-                if (r.config().isSupportedMirroring()) {
-                    for (NRepository repository : r.config().getMirrors()) {
-                        stack.push(repository);
                     }
                 }
             }
