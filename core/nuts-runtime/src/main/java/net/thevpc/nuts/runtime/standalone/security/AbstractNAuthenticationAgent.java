@@ -18,8 +18,8 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
     private final NVersion version;
 
     public AbstractNAuthenticationAgent(String name, NVersion version) {
-        this.name = NAssert.requireNonBlank(name, "name");
-        this.version = NAssert.requireNonBlank(version, "version");
+        this.name = NAssert.requireNamedNonBlank(name, "name");
+        this.version = NAssert.requireNamedNonBlank(version, "version");
     }
 
     @Override
@@ -124,7 +124,7 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
     }
 
     private void checkValidCredentialId(NCredentialId id) {
-        NAssert.requireNonBlank(id, "id");
+        NAssert.requireNamedNonBlank(id, "id");
         String a = id.getAgentId();
         if (a != null && !a.isEmpty()) {
             int h = a.indexOf("#");
