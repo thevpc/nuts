@@ -47,11 +47,11 @@ public class NLocationKey {
         if (NBlankable.isBlank(name)) {
             this.name = null;
         } else {
-            NAssert.requireTrue(name.matches("[a-zA-Z0-9._-]+"), "name matches [a-zA-Z0-9._-]+");
+            NAssert.requireNamedTrue(name.matches("[a-zA-Z0-9._-]+"), "name matches [a-zA-Z0-9._-]+");
             this.name = name;
         }
-        this.id = NAssert.requireNonBlank(id, "id");
-        this.storeType = NAssert.requireNonNull(storeType, "storeType");
+        this.id = NAssert.requireNamedNonBlank(id, "id");
+        this.storeType = NAssert.requireNamedNonNull(storeType, "storeType");
         this.repoUuid = NStringUtils.trimToNull(repoUuid);
     }
 
