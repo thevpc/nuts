@@ -58,8 +58,8 @@ public abstract class NIdFilterDelegate extends AbstractIdFilter {
     }
 
     @Override
-    public NFilter redescribe(Supplier<NElement> description) {
-        return baseNIdFilter().redescribe(description);
+    public NFilter withDescription(Supplier<NElement> description) {
+        return baseNIdFilter().withDescription(description);
     }
 
     @Override
