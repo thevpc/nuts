@@ -30,7 +30,6 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfigManager;
 import net.thevpc.nuts.core.NRepositoryListener;
-import net.thevpc.nuts.core.NRepositorySecurityManager;
 import net.thevpc.nuts.util.NObservableMapListener;
 
 import java.util.List;
@@ -86,13 +85,6 @@ public interface NRepositorySPI {
      * @return repository configuration manager
      */
     NRepositoryConfigManager config();
-
-    /**
-     * return repository security manager
-     *
-     * @return repository security manager
-     */
-    NRepositorySecurityManager security();
 
     /**
      * create deploy command
