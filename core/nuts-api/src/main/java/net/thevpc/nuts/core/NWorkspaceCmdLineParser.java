@@ -105,7 +105,7 @@ public final class NWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry().get();
                         if (active && options != null) {
                             String v = a.getStringValue().orElse("");
-                            options.setCredentials(v.toCharArray());
+                            options.setCredential(v.toCharArray());
                         }
                         return NOptional.of(Collections.singletonList(a));
                     }
