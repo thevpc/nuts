@@ -1117,7 +1117,7 @@ public class DefaultNLiteral implements NLiteral {
 
     @Override
     public <ET> NOptional<ET> asType(Class<ET> type) {
-        NAssert.requireNonNull(type, "type");
+        NAssert.requireNamedNonNull(type, "type");
         switch (type.getName()) {
             case "java.lang.String":
                 return (NOptional<ET>) NOptional.of(value);
@@ -1259,7 +1259,7 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     private static Object getDefaultValue(Class<?> anyType) {
-        NAssert.requireNonNull(anyType, "type");
+        NAssert.requireNamedNonNull(anyType, "type");
         switch (anyType.getName()) {
             case "boolean":
                 return false;
