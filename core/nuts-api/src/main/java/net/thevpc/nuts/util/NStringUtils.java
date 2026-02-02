@@ -34,6 +34,12 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.function.Function;
@@ -1163,15 +1169,19 @@ public class NStringUtils {
             for (String item : items) {
                 if (item != null && !item.isEmpty()) {
                     int length = builder.length();
-                    boolean o = length > 0 && builder.substring(length - delimiter.length(), length).equals(delimiter);
-                    boolean n = item.startsWith(delimiter);
-                    if (!o && !n) {
-                        builder.append(delimiter);
+                    if(length==0){
                         builder.append(item);
-                    } else if (o && n) {
-                        builder.append(item.substring(delimiter.length()));
-                    } else {
-                        builder.append(item);
+                    }else {
+                        boolean o = length > 0 && builder.substring(length - delimiter.length(), length).equals(delimiter);
+                        boolean n = item.startsWith(delimiter);
+                        if (!o && !n) {
+                            builder.append(delimiter);
+                            builder.append(item);
+                        } else if (o && n) {
+                            builder.append(item.substring(delimiter.length()));
+                        } else {
+                            builder.append(item);
+                        }
                     }
                 }
             }
@@ -1322,4 +1332,46 @@ public class NStringUtils {
         return commonPrefix(all, (b, c) -> Character.isWhitespace(c));
     }
 
+    /**
+     * Convert char[] to UTF-8 bytes.
+     * Caller MUST zero the returned byte array after use.
+     */
+    public static byte[] charsToUtf8Bytes(char[] chars) {
+        if (chars == null || chars.length == 0) {
+            return new byte[0];
+        }
+        CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
+        CharBuffer charBuffer = CharBuffer.wrap(chars);
+        ByteBuffer byteBuffer;
+        try {
+            byteBuffer = encoder.encode(charBuffer);
+        } catch (CharacterCodingException e) {
+            throw new IllegalArgumentException("Invalid UTF-8 sequence", e);
+        }
+        byte[] bytes = new byte[byteBuffer.remaining()];
+        byteBuffer.get(bytes);
+        return bytes;
+        // WARNING: Returns NEW array — caller must zero it!
+    }
+
+    /**
+     * Convert UTF-8 bytes to char[].
+     * Caller MUST zero the returned char array after use.
+     */
+    public static char[] utf8BytesToChars(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return new char[0];
+        }
+        CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder();
+        ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+        CharBuffer charBuffer;
+        try {
+            charBuffer = decoder.decode(byteBuffer);
+        } catch (CharacterCodingException e) {
+            throw new IllegalArgumentException("Invalid UTF-8 sequence", e);
+        }
+        char[] chars = new char[charBuffer.remaining()];
+        charBuffer.get(chars);
+        return chars;
+    }
 }
