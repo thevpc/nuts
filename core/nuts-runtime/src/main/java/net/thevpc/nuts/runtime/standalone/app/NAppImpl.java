@@ -8,7 +8,6 @@ import net.thevpc.nuts.cmdline.*;
 
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
@@ -558,7 +557,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     }
 
     public <T> T getOrComputeProperty(String name, NScopeType scope, Supplier<T> supplier) {
-        NAssert.requireNonNull(supplier);
+        NAssert.requireNamedNonNull(supplier);
         if (scope == null) {
             scope = NScopeType.SHARED_SESSION;
         }
