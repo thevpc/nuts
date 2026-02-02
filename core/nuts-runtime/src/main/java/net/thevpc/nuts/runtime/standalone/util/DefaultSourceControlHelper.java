@@ -10,7 +10,7 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NDeploy;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
@@ -42,7 +42,7 @@ public class DefaultSourceControlHelper {
 
     //    @Override
     public NId commit(Path folder) {
-        NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.DEPLOY, "commit");
+        NSecurityManager.of().checkAllowed(NConstants.Permissions.DEPLOY, "commit");
         if (folder == null || !Files.isDirectory(folder)) {
             throw new NIllegalArgumentException(NMsg.ofC("not a directory %s", folder));
         }
@@ -84,7 +84,7 @@ public class DefaultSourceControlHelper {
 
     //    @Override
     public NDefinition checkout(NId id, Path folder) {
-        NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "checkout");
+        NSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "checkout");
         NDefinition nutToInstall = NFetch.of(id)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultDefinition();
