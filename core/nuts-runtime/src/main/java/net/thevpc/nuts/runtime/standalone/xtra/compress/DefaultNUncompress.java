@@ -194,7 +194,7 @@ public class DefaultNUncompress implements NUncompress {
     @Override
     public NUncompress run() {
         CompressType compressType = toCompressType(getPackaging());
-        NAssert.requireNonNull(source, "source");
+        NAssert.requireNamedNonNull(source, "source");
 
         NInputSource _source = source;
         if (options.contains(NPathOption.LOG)
@@ -210,7 +210,7 @@ public class DefaultNUncompress implements NUncompress {
         }
 
         if (visitor == null && target == null) {
-            NAssert.requireNonNull(target, "target");
+            NAssert.requireNamedNonNull(target, "target");
         } else if (visitor != null && target != null) {
             throw new NIllegalArgumentException(NMsg.ofC("invalid target %s when visitor is specified", target));
         } else if (visitor != null) {
