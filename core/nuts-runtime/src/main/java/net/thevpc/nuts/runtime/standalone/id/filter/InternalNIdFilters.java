@@ -79,7 +79,7 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
             return null;
         }
         NIdFilter t = as(a);
-        NAssert.requireNonNull(t, "IdFilter");
+        NAssert.requireNamedNonNull(t, "IdFilter");
         return t;
     }
 
