@@ -28,12 +28,12 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.util.stream.NStreamFromList;
+import net.thevpc.nuts.runtime.standalone.util.stream.NStreamBase;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 
@@ -120,17 +120,17 @@ public class DefaultNInstall extends AbstractNInstall {
         if (result == null) {
             run();
         }
-        return new NStreamFromList<NDefinition>(
+        return NStreamBase.ofCollection(
                 ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
                 Arrays.asList(result)
-        ).redescribe(NElementDescribables.ofDesc("InstallResult"));
+        ).withDescription(NDescribables.ofDesc("InstallResult"));
     }
 
     @Override
     public NInstall run() {
         NWorkspace ws = NWorkspace.of();
         NWorkspaceExt dws = NWorkspaceExt.of();
-        NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "install");
+        NSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "install");
         InstallIdList list = new InstallIdList();
         for (Map.Entry<NId, InstallFlags> idAndStrategy : ids.entrySet()) {
             if (!list.isVisited(idAndStrategy.getKey())) {
