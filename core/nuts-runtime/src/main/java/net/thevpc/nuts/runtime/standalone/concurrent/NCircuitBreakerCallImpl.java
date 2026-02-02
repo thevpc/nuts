@@ -1,13 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
-import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.concurrent.NCallable;
 
-import java.time.Duration;
 import java.util.function.IntFunction;
 
 public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
@@ -30,7 +28,7 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
             NCallable<NCircuitBreakerCallModel> cc = () -> {
                 NCircuitBreakerCallModel m = store.load(oldId);
                 if (m == null) {
-                    NAssert.requireNonNull(oldCaller,"caller");
+                    NAssert.requireNamedNonNull(oldCaller,"caller");
                     m = new NCircuitBreakerCallModel(oldId);
                     m.setCaller(oldCaller);
                     store.save(m);
