@@ -49,7 +49,9 @@ public class FilePath implements NPathSPI {
             try {
                 try (Stream<Path> files = Files.list(value)) {
                     //ensure closed!!
-                    return NStream.ofIterable(files.collect(Collectors.toList())).map(x -> fastPath(x));
+                    return NStream.ofIterable(files.collect(Collectors.toList())).map(
+                            NFunction.of(x -> fastPath(x),NElement.ofName("fastPath"))
+                    );
                 }
             } catch (IOException e) {
                 //
@@ -932,7 +934,7 @@ public class FilePath implements NPathSPI {
 
     }
 
-    private static class ReverseLineReaderIterator implements NIterator<String>, AutoCloseable {
+    private static class ReverseLineReaderIterator implements Iterator<String>, AutoCloseable {
         private final Charset actualCharset;
         private long pointer;
         private byte[] buffer;
@@ -1040,11 +1042,6 @@ public class FilePath implements NPathSPI {
         @Override
         public String next() {
             return nextLine;
-        }
-
-        @Override
-        public NIterator<String> redescribe(Supplier<NElement> description) {
-            return this;
         }
     }
 
