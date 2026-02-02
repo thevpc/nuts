@@ -718,7 +718,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public NStringBuilder toNameFormat(NNameFormat format) {
-        NAssert.requireNonNull(format, "format");
+        NAssert.requireNamedNonNull(format, "format");
         return setContent(format.format(toString()));
     }
 
@@ -745,8 +745,8 @@ public class NStringBuilder implements CharSequence, NBlankable {
 
     public NStringBuilder appendRandom(int count, String patternChars) {
         if (count > 0) {
-            NAssert.requireNonNull(patternChars, "patternChars");
-            NAssert.requireTrue(!patternChars.isEmpty(), "patternChars.length>0");
+            NAssert.requireNamedNonNull(patternChars, "patternChars");
+            NAssert.requireNamedTrue(!patternChars.isEmpty(), "patternChars.length>0");
             SecureRandom random = new SecureRandom();
             for (int i = 0; i < count; i++) {
                 int randomIndex = random.nextInt(patternChars.length());
