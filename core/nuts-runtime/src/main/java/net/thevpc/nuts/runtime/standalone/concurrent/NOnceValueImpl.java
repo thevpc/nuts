@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NUpletElementBuilder;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.util.NAssert;
@@ -161,9 +161,9 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
         if (errorState != null) {
             u.add("success", !errorState);
             if (errorState) {
-                u.add("error", NElementDescribables.describeResolveOrDestruct(model.getValue()));
+                u.add("error", NDescribables.describeResolveOrDestruct(model.getValue()));
             } else {
-                u.add("value", NElementDescribables.describeResolveOrDestruct(model.getThrowable()));
+                u.add("value", NDescribables.describeResolveOrDestruct(model.getThrowable()));
             }
         }
         return u.build();
