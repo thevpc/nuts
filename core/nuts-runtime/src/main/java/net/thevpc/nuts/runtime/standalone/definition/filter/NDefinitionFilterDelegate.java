@@ -22,8 +22,8 @@ public abstract class NDefinitionFilterDelegate extends AbstractDefinitionFilter
     }
 
     @Override
-    public NFilter redescribe(Supplier<NElement> description) {
-        return baseDefinitionFilter().redescribe(description);
+    public NFilter withDescription(Supplier<NElement> description) {
+        return baseDefinitionFilter().withDescription(description);
     }
 
     @Override
