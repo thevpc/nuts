@@ -35,7 +35,7 @@ public class NBeanRef {
     }
 
     public <T> T as(Class<T> type) {
-        NAssert.requireNonNull(type, "type");
+        NAssert.requireNamedNonNull(type, "type");
         return (T) Proxy.newProxyInstance(
                 type.getClassLoader(),
                 new Class<?>[]{type, NBeanRefHolder.class},
