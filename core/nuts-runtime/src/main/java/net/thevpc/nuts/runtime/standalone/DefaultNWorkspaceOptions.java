@@ -544,7 +544,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         r.setSystem(this.getSystem().orNull());
         r.setGui(this.getGui().orNull());
         r.setUserName(this.getUserName().orNull());
-        r.setCredentials(this.getCredentials().orNull());
+        r.setCredential(this.getCredential().orNull());
         r.setTerminalMode(this.getTerminalMode().map(x -> x.id()).orNull());
         r.setReadOnly(this.getReadOnly().orNull());
         r.setTrace(this.getTrace().orNull());
@@ -803,7 +803,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     }
 
     @Override
-    public NOptional<char[]> getCredentials() {
+    public NOptional<char[]> getCredential() {
         return NOptional.ofNamed(credentials == null ? null : Arrays.copyOf(credentials, credentials.length), "credentials");
     }
 
