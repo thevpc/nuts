@@ -272,8 +272,8 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
 
     @Override
     public void add(Instant time, String line) {
-        NAssert.requireNonNull(time);
-        NAssert.requireNonNull(line);
+        NAssert.requireNamedNonNull(time);
+        NAssert.requireNamedNonNull(line);
 
         if (getBoolean(reader, LineReader.DISABLE_HISTORY, false)) {
             return;
