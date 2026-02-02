@@ -55,7 +55,7 @@ public class RemoteConnectionStringInfo {
 
 
     public static RemoteConnectionStringInfo of(NConnectionString target) {
-        NAssert.requireNonBlank(target, "target");
+        NAssert.requireNamedNonBlank(target, "target");
         Map<NConnectionString, RemoteConnectionStringInfo> m = NWorkspace.of().getOrComputeProperty(RemoteConnectionStringInfo.class.getName() + "Map",
                 () -> new HashMap<>()
         );
