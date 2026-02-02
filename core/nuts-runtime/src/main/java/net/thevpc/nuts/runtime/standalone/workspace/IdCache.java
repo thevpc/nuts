@@ -31,10 +31,10 @@ class IdCache {
     }
 
     public IdCache(NId id, URL url, ClassLoader bootClassLoader, NLog LOG, Class<?>[] extensionPoints, NWorkspace workspace) {
-        NAssert.requireNonBlank(extensionPoints, "extensionPoints");
+        NAssert.requireNamedNonBlank(extensionPoints, "extensionPoints");
         if ((id == null) != (url == null)) {
-            NAssert.requireNonNull(id, "id");
-            NAssert.requireNonNull(url, "url");
+            NAssert.requireNamedNonNull(id, "id");
+            NAssert.requireNamedNonNull(url, "url");
         }
         Set<String> extensionPointStrings = Arrays.stream(extensionPoints).map(x -> x.getName()).collect(Collectors.toSet());
         this.id = id;
