@@ -207,7 +207,7 @@ public final class NBootOptionsInfo {
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private char[] credentials;
+    private char[] credential;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -884,19 +884,19 @@ public final class NBootOptionsInfo {
     }
 
 
-    public char[] getCredentials() {
-        return credentials;
+    public char[] getCredential() {
+        return credential;
     }
 
     /**
      * set password
      *
-     * @param credentials new value
+     * @param credential new value
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setCredentials(char[] credentials) {
-        this.credentials = credentials;
+    public NBootOptionsInfo setCredential(char[] credential) {
+        this.credential = credential;
         return this;
     }
 
@@ -1515,7 +1515,7 @@ public final class NBootOptionsInfo {
         this.setSystem(other.getSystem());
         this.setGui(other.getGui());
         this.setUserName(other.getUserName());
-        this.setCredentials(other.getCredentials());
+        this.setCredential(other.getCredential());
         this.setTerminalMode(other.getTerminalMode());
         this.setReadOnly(other.getReadOnly());
         this.setTrace(other.getTrace());
@@ -1633,8 +1633,8 @@ public final class NBootOptionsInfo {
             if (o.getUserName() != null) {
                 this.setUserName(o.getUserName());
             }
-            if (o.getCredentials() != null) {
-                this.setCredentials(o.getCredentials());
+            if (o.getCredential() != null) {
+                this.setCredential(o.getCredential());
             }
             if (o.getTerminalMode() != null) {
                 this.setTerminalMode(o.getTerminalMode());
@@ -2034,7 +2034,7 @@ public final class NBootOptionsInfo {
         setJavaOptions(null);
         setWorkspace(null);
         setUserName(null);
-        setCredentials(null);
+        setCredential(null);
         setApiVersion(null);
         setRuntimeId(null);
         setTerminalMode(null);
@@ -2195,7 +2195,7 @@ public final class NBootOptionsInfo {
         repositories = null;
         userName = null;
         sharedInstance = null;
-        credentials = null;
+        credential = null;
         terminalMode = null;
         readOnly = null;
         trace = null;
