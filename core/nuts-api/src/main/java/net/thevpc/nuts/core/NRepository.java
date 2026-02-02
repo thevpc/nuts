@@ -80,13 +80,6 @@ public interface NRepository {
     NRepositoryConfigManager config();
 
     /**
-     * return repository security manager
-     *
-     * @return repository security manager
-     */
-    NRepositorySecurityManager security();
-
-    /**
      * remove repository listener
      *
      * @param listener listener
