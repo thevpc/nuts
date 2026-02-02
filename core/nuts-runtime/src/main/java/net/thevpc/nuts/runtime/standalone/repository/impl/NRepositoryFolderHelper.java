@@ -13,7 +13,7 @@ import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NObjectElement;
 
@@ -337,7 +337,7 @@ public class NRepositoryFolderHelper {
         NPath file = getLocalGroupAndArtifactFile(id);
         if (file.exists()) {
             NPath[] versionFolders = file.stream().filter(NPath::isDirectory)
-                    .redescribe(NElementDescribables.ofDesc("idDirectory"))
+                    .withDescription(NDescribables.ofDesc("idDirectory"))
                     .toArray(NPath[]::new);
             if (versionFolders != null) {
                 for (NPath versionFolder : versionFolders) {
