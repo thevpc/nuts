@@ -59,7 +59,7 @@ public abstract class AbstractDependencyFilter extends AbstractNFilter implement
     }
 
     @Override
-    public NFilter redescribe(Supplier<NElement> description) {
+    public NFilter withDescription(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }
