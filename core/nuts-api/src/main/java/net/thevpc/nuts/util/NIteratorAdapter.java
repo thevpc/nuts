@@ -1,6 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.Iterator;
@@ -20,8 +20,12 @@ public class NIteratorAdapter<T> extends NIteratorBase<T> {
     }
 
     @Override
-    public boolean hasNext() {
-        return base.hasNext();
+    public boolean hasNextImpl() {
+        boolean b = base.hasNext();
+        if(!b){
+            close();
+        }
+        return b;
     }
 
     @Override
@@ -35,7 +39,7 @@ public class NIteratorAdapter<T> extends NIteratorBase<T> {
         if(!a.isObject()){
             a= NElement.ofObjectBuilder().set("name",a).build();
         }
-        return NElementDescribables.describeResolveOrDestructAsObject(base)
+        return NDescribables.describeResolveOrDestructAsObject(base)
                 .builder()
                         .addAll(a.asObject().get().children().toArray(new NElement[0]))
                 .build();
