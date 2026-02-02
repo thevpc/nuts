@@ -945,7 +945,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NOptional<char[]> getCredentials() {
+    public NOptional<char[]> getCredential() {
         return NOptional.ofNamed(credentials, "credentials");
     }
 
@@ -956,7 +956,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setCredentials(char[] credentials) {
+    public NWorkspaceOptionsBuilder setCredential(char[] credentials) {
         this.credentials = credentials;
         return this;
     }
@@ -1583,7 +1583,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setSystem(other.getSystem().orNull());
         this.setGui(other.getGui().orNull());
         this.setUserName(other.getUserName().orNull());
-        this.setCredentials(other.getCredentials().orNull());
+        this.setCredential(other.getCredential().orNull());
         this.setTerminalMode(other.getTerminalMode().orNull());
         this.setReadOnly(other.getReadOnly().orNull());
         this.setTrace(other.getTrace().orNull());
@@ -1669,7 +1669,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setSystem(other.getSystem().orNull());
         this.setGui(other.getGui().orNull());
         this.setUserName(other.getUserName().orNull());
-        this.setCredentials(other.getCredentials().orNull());
+        this.setCredential(other.getCredential().orNull());
         this.setTerminalMode(other.getTerminalMode().orNull());
         this.setReadOnly(other.getReadOnly().orNull());
         this.setTrace(other.getTrace().orNull());
@@ -1757,7 +1757,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setSystem(other.getSystem());
         this.setGui(other.getGui());
         this.setUserName(other.getUserName());
-        this.setCredentials(other.getCredentials());
+        this.setCredential(other.getCredential());
         this.setTerminalMode(NTerminalMode.parse(other.getTerminalMode()).orNull());
         this.setReadOnly(other.getReadOnly());
         this.setTrace(other.getTrace());
@@ -1881,7 +1881,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             assignmentPolicy.applyOptionalValue(this::getSystem, other::getSystem, this::setSystem);
             assignmentPolicy.applyOptionalValue(this::getGui, other::getGui, this::setGui);
             assignmentPolicy.applyOptionalValue(this::getUserName, other::getUserName, this::setUserName);
-            assignmentPolicy.applyOptionalValue(this::getCredentials, other::getCredentials, this::setCredentials);
+            assignmentPolicy.applyOptionalValue(this::getCredential, other::getCredential, this::setCredential);
             assignmentPolicy.applyOptionalValue(this::getTerminalMode, other::getTerminalMode, this::setTerminalMode);
             assignmentPolicy.applyOptionalValue(this::getReadOnly, other::getReadOnly, this::setReadOnly);
             assignmentPolicy.applyOptionalValue(this::getTrace, other::getTrace, this::setTrace);
@@ -2073,7 +2073,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 getApiVersion().orNull(), getRuntimeId().orNull(), getWorkspace().orNull(),
                 getName().orNull(), getJavaCommand().orNull(), getJavaOptions().orNull(),
                 getOutLinePrefix().orNull(), getErrLinePrefix().orNull(), getUserName().orNull(),
-                getCredentials().orNull(), getProgressOptions().orNull(), getDependencySolver().orNull(),
+                getCredential().orNull(), getProgressOptions().orNull(), getDependencySolver().orNull(),
                 getDebug().orNull(), getArchetype().orNull(), getLocale().orNull(), getTheme().orNull(),
                 getLogConfig().orNull(), getConfirm().orNull(), getOutputFormat().orNull(), getOpenMode().orNull(),
                 getExecutionType().orNull(), getStoreStrategy().orNull(), getRepositoryStoreStrategy().orNull(),
@@ -2171,7 +2171,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         setJavaOptions(null);
         setWorkspace(null);
         setUserName(null);
-        setCredentials(null);
+        setCredential(null);
         setApiVersion(null);
         setRuntimeId(null);
         setTerminalMode(null);
