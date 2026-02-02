@@ -9,7 +9,7 @@ public abstract class NIteratorDelegate<T> extends NIteratorBase<T> {
     public abstract NIterator<T> baseIterator();
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNextImpl() {
         return baseIterator().hasNext();
     }
 
