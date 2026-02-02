@@ -20,42 +20,39 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
     public <T> NStream<T> arrayToStream(T[] str) {
         String name = null;
         if (str == null) {
-            return new NStreamEmpty<T>(name);
+            return NStreamBase.ofEmpty(name);
         }
-        return iterableToStream((Iterable<T>) Arrays.asList(str)).redescribe(() -> NElement.ofString("array"));
+        return iterableToStream((Iterable<T>) Arrays.asList(str)).withDescription(() -> NElement.ofString("array"));
     }
 
     @Override
     public <T> NStream<T> iterableToStream(Iterable<T> str) {
         String name = null;
         if (str == null) {
-            return new NStreamEmpty<T>(name);
-        }
-        if (str instanceof List) {
-            return new NStreamFromList<T>(name, (List<T>) str);
+            return NStreamBase.ofEmpty(name);
         }
         if (str instanceof Collection) {
-            return new NStreamFromCollection<T>(name, (Collection<T>) str);
+            return NStreamBase.ofCollection(name, (Collection<T>) str);
         }
 
-        return new NStreamFromNIterable<>(name, NIterable.of(str));
+        return NStreamBase.ofIterable(name, NIterable.of(str));
     }
 
     @Override
     public <T> NStream<T> iteratorToStream(Iterator<T> str) {
-        return new NStreamFromNIterator<T>(null,
+        return NStreamBase.ofIterator(null,
                 NIterator.of(str)
         );
     }
 
     @Override
     public <T> NStream<T> toStream(Stream<T> str) {
-        return new NStreamFromJavaStream<>(null, str);
+        return NStreamBase.ofJavaStream(null, str);
     }
 
     @Override
     public <T> NStream<T> emptyStream() {
-        return new NStreamEmpty<T>(null);
+        return NStreamBase.ofEmpty(null);
     }
 
     @Override
