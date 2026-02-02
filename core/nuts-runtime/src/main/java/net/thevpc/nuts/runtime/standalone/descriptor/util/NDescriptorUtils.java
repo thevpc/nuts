@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.descriptor.util;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -99,7 +98,7 @@ public class NDescriptorUtils {
     }
 
     public static void checkValidEffectiveDescriptor(NDescriptor effectiveDescriptor) {
-        NAssert.requireNonNull(effectiveDescriptor, "effective descriptor");
+        NAssert.requireNamedNonNull(effectiveDescriptor, "effective descriptor");
         boolean topException = false;
         try {
             for (NId parent : effectiveDescriptor.getParents()) {
