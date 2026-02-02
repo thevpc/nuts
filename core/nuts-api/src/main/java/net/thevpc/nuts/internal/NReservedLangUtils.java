@@ -143,14 +143,14 @@ public final class NReservedLangUtils {
         if (other == null) {
             return new ArrayList<>();
         }
-        return new ArrayList<>(other);
+        return other.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     public static <T> Set<T> nonNullSet(Collection<T> other) {
         if (other == null) {
             return new LinkedHashSet<>();
         }
-        return new LinkedHashSet<>(other);
+        return other.stream().filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     public static List<String> addUniqueNonBlankList(List<String> list, String... values) {
@@ -259,7 +259,7 @@ public final class NReservedLangUtils {
             return line;
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            bLog.log( NMsg.ofC("[Graphical Environment Unsupported] %s", title).withLevel(Level.OFF).withIntent(NMsgIntent.ALERT));
+            bLog.log(NMsg.ofC("[Graphical Environment Unsupported] %s", title).withLevel(Level.OFF).withIntent(NMsgIntent.ALERT));
             if (in == null) {
                 return new Scanner(System.in).nextLine();
             }
@@ -275,7 +275,7 @@ public final class NReservedLangUtils {
             javax.swing.JOptionPane.showMessageDialog(null, message);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            bLog.log( NMsg.ofC("[Graphical Environment Unsupported] %s", title).withLevel(Level.OFF).withIntent(NMsgIntent.ALERT));
+            bLog.log(NMsg.ofC("[Graphical Environment Unsupported] %s", title).withLevel(Level.OFF).withIntent(NMsgIntent.ALERT));
         }
     }
 
