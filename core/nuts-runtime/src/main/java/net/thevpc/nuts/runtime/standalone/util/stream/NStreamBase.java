@@ -788,7 +788,7 @@ public class NStreamBase<T> implements NStream<T> {
 
     @Override
     public <V> NStream<V> instanceOf(Class<V> type) {
-        NAssert.requireNonNull(type, "type");
+        NAssert.requireNamedNonNull(type, "type");
         return map(a -> {
             if (type.isInstance(a)) {
                 return (V) a;
