@@ -353,7 +353,7 @@ public class NBootWorkspaceCmdLineFormatter {
         }
         fillOption("--workspace", "-w", wsString, arguments, false);
         fillOption("--user", "-u", options.getUserName(), arguments, false);
-        fillOption("--password", "-p", options.getCredentials(), arguments, false);
+        fillOption("--password", "-p", options.getCredential(), arguments, false);
         fillOption("--boot-version", "-V", options.getApiVersion(), arguments, false);
         fillOption("--boot-runtime", null, options.getRuntimeId(), arguments, false);
 
