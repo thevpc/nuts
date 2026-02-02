@@ -14,16 +14,15 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceUpdateResult;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.install.*;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
@@ -818,7 +817,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
         DefaultNUpdateResult defaultNutsUpdateResult = new DefaultNUpdateResult(id, oldFile, newFile,
                 newFile == null ? null : newFile.getDependencies().get().transitive()
                         .map(NDependency::toId)
-                        .redescribe(NElementDescribables.ofDesc("toId"))
+                        .withDescription(NDescribables.ofDesc("toId"))
                         .toList(),
                 false);
         if (cnewId != null && newFile != null && coldId != null && cnewId.getVersion().compareTo(coldId.getVersion()) > 0) {
@@ -847,7 +846,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
         NDefinition d0 = r.getInstalled();
         NDefinition d1 = r.getAvailable();
         if (d0 == null) {
-            NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.UPDATE, "update");
+            NSecurityManager.of().checkAllowed(NConstants.Permissions.UPDATE, "update");
             applyRegularUpdate0(d1, new String[0]);
             r.setUpdateApplied(true);
         } else if (d1 == null) {
@@ -858,7 +857,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
             if (v1.compareTo(v0) <= 0) {
                 //no update needed!
                 if (/*session.isYes() || */r.isUpdateForced()) {
-                    NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.UPDATE, "update");
+                    NSecurityManager.of().checkAllowed(NConstants.Permissions.UPDATE, "update");
                     applyRegularUpdate0(d1, new String[0]);
                     r.setUpdateApplied(true);
                     r.setUpdateForced(true);
@@ -866,7 +865,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
                     dws.getInstalledRepository().setDefaultVersion(d1.getId());
                 }
             } else {
-                NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.UPDATE, "update");
+                NSecurityManager.of().checkAllowed(NConstants.Permissions.UPDATE, "update");
                 applyRegularUpdate0(d1, new String[0]);
                 r.setUpdateApplied(true);
             }
