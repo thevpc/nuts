@@ -5,6 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.security;
 
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
+import net.thevpc.nuts.security.NUserSpec;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.security.NUser;
 import net.thevpc.nuts.security.NUserConfig;
@@ -13,22 +15,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultNUser implements NUser {
 
-    private final String remoteIdentity;
-    private final String user;
+    private final String username;
     private final boolean credentials;
     private final List<String> permissions;
     private final List<String> inheritedPermissions;
     private final List<String> groups;
 
+    public DefaultNUser(String username, boolean credentials, List<String> permissions, List<String> inheritedPermissions, List<String> groups) {
+        this.username = username;
+        this.credentials = credentials;
+        this.permissions = CoreNUtils.copyNonNullUnmodifiableList(permissions);
+        this.inheritedPermissions = CoreNUtils.copyNonNullUnmodifiableList(inheritedPermissions);
+        this.groups = CoreNUtils.copyNonNullUnmodifiableList(groups);
+    }
+
     public DefaultNUser(NUserConfig config, List<String> inheritedPermissions) {
-        user = config.getUser();
-        remoteIdentity = config.getRemoteIdentity();
-        credentials = !NBlankable.isBlank(config.getCredentials());
+        username = config.getUserName();
+        credentials = !NBlankable.isBlank(config.getCredential());
 
         permissions = new ArrayList<>(config.getPermissions());
         groups = new ArrayList<>(config.getGroups());
@@ -41,13 +48,8 @@ public class DefaultNUser implements NUser {
     }
 
     @Override
-    public String getRemoteIdentity() {
-        return remoteIdentity;
-    }
-
-    @Override
-    public String getUser() {
-        return user;
+    public String getUsername() {
+        return username;
     }
 
     @Override
@@ -65,4 +67,8 @@ public class DefaultNUser implements NUser {
         return groups;
     }
 
+    @Override
+    public NUserSpec toSpec() {
+        return new DefaultNUserSpec(username, null, new ArrayList<>(permissions), new ArrayList<>(groups));
+    }
 }
