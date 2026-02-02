@@ -21,7 +21,7 @@ public interface NFunction<T, V> extends Function<T, V>, NRedescribable<NFunctio
     }
 
     static <T, V> NFunction<T, V> ofUnsafe(UnsafeFunction<T, V> o, Function<Exception, ? extends V> onError) {
-        NAssert.requireNonNull(o, "function");
+        NAssert.requireNamedNonNull(o, "function");
         if (o instanceof NFunction) {
             return (NFunction<T, V>) o;
         }
