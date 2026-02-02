@@ -1,7 +1,5 @@
 package net.thevpc.nuts.util;
 
-import java.util.Objects;
-
 /**
  * Represents a predicate (boolean-valued function) of one {@code char}-valued argument.
  * This is the primitive type specialization of {@link java.util.function.Predicate}
@@ -28,7 +26,7 @@ public interface CharPredicate {
      * @throws NullPointerException if {@code other} is null
      */
     default CharPredicate and(CharPredicate other) {
-        NAssert.requireNonNull(other, "other");
+        NAssert.requireNamedNonNull(other, "other");
         return c -> test(c) && other.test(c);
     }
 
@@ -51,7 +49,7 @@ public interface CharPredicate {
      * @throws NullPointerException if {@code other} is null
      */
     default CharPredicate or(CharPredicate other) {
-        NAssert.requireNonNull(other, "other");
+        NAssert.requireNamedNonNull(other, "other");
         return c -> test(c) || other.test(c);
     }
 }
