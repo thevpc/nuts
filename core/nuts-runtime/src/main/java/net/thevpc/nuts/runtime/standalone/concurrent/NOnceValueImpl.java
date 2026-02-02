@@ -15,9 +15,9 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
     private NOnceValueModel model;
 
     NOnceValueImpl(String id, Supplier<T> supplier, NOnceValueStore store) {
-        NAssert.requireNonNull(supplier, "supplier");
+        NAssert.requireNamedNonNull(supplier, "supplier");
         this.store = store;
-        this.model = new NOnceValueModel(NAssert.requireNonNull(id, "id"), supplier);
+        this.model = new NOnceValueModel(NAssert.requireNamedNonNull(id, "id"), supplier);
         reload();
     }
 
