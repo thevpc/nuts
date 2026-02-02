@@ -30,7 +30,7 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementReader;
 
@@ -119,7 +119,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                 ()-> NElement
                         .ofObjectBuilder().name("SearchIndexPackages")
                         .set("source", getIndexURL().resolve(NConstants.Folders.ID).toString())
-                        .set("filter", NElementDescribables.describeResolveOrToString(filter))
+                        .set("filter", NDescribables.describeResolveOrToString(filter))
                         .build()
         ).build();
     }
