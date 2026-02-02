@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NElementRedescribable;
+import net.thevpc.nuts.elem.NRedescribable;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ import java.util.List;
  *
  * @app.category Base
  */
-public interface NFilter extends NElementRedescribable<NFilter> {
+public interface NFilter extends NRedescribable<NFilter> {
 
     NFilterOp getFilterOp();
 
