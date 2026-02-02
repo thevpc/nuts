@@ -38,18 +38,11 @@ import java.util.List;
 public interface NUser {
 
     /**
-     * return remote identity if applicable
-     *
-     * @return remote identity if applicable
-     */
-    String getRemoteIdentity();
-
-    /**
      * return user name
      *
      * @return return user name
      */
-    String getUser();
+    String getUsername();
 
     /**
      * true if the use has some credentials
@@ -78,4 +71,6 @@ public interface NUser {
      * @return user groups
      */
     List<String> getGroups();
+
+    NUserSpec toSpec();
 }
