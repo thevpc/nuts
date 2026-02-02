@@ -220,7 +220,7 @@ public class DefaultFileNLock extends AbstractNLock {
 
     @Override
     public synchronized boolean tryLock(long time, TimeUnit unit) {
-        NAssert.requireNonNull(unit, "unit");
+        NAssert.requireNamedNonNull(unit, "unit");
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);
         do {
@@ -236,7 +236,7 @@ public class DefaultFileNLock extends AbstractNLock {
     }
 
     public synchronized boolean tryLockInterruptibly(long time, TimeUnit unit) throws InterruptedException {
-        NAssert.requireNonNull(unit, "unit");
+        NAssert.requireNamedNonNull(unit, "unit");
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);
         do {
