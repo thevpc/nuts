@@ -2,27 +2,37 @@ package net.thevpc.nuts.runtime.standalone.security;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.io.NErr;
 import net.thevpc.nuts.security.NAuthenticationAgent;
-import net.thevpc.nuts.security.NSecurityException;
-import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.security.NCredentialId;
+import net.thevpc.nuts.security.NSecretCaller;
+import net.thevpc.nuts.security.NSecretRunner;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
 
-class WrapperNAuthenticationAgent {
+public class WrapperNAuthenticationAgent {
 
     protected NWorkspace ws;
     protected NAuthenticationAgentProvider provider;
-    protected Supplier<Map<String,String>> envProvider;
+    protected Supplier<Function<String, String>> envProvider;
     private final Map<String, NAuthenticationAgent> cache = new HashMap<>();
 
-    public WrapperNAuthenticationAgent(NWorkspace ws, Supplier<Map<String,String>> envProvider, NAuthenticationAgentProvider agentProvider) {
+    public WrapperNAuthenticationAgent(NWorkspace ws, Supplier<Function<String, String>> envProvider, NAuthenticationAgentProvider agentProvider) {
         this.envProvider = envProvider;
         this.provider = agentProvider;
         this.ws = ws;
+    }
+
+    public NAuthenticationAgent getCachedAuthenticationAgent(NCredentialId name) {
+        if (name == null) {
+            return getCachedAuthenticationAgent("");
+        }
+        return getCachedAuthenticationAgent(name.getAgentId());
     }
 
     public NAuthenticationAgent getCachedAuthenticationAgent(String name) {
@@ -38,37 +48,53 @@ class WrapperNAuthenticationAgent {
         return a;
     }
 
-    public boolean removeCredentials(char[] credentialsId) {
-        return getCachedAuthenticationAgent(extractId(credentialsId)).removeCredentials(credentialsId, envProvider.get());
-    }
-
-    public void checkCredentials(char[] credentialsId, char[] password) {
-        getCachedAuthenticationAgent(extractId(credentialsId)).checkCredentials(credentialsId, password, envProvider.get());
-    }
-
-    protected String extractId(char[] a) {
-        String b = new String(a);
-        int x = b.indexOf(':');
-        if (x <= 0) {
-            if (NWorkspace.of().getBootOptions().getRecover().orElse(false)) {
-                //All stored passwords will be reset to 'secret'
-                NErr.println("```error RECOVER MODE : Password could no be parsed due a change in encryption spec. WIll use new default agent```");
+    public void runWithSecret(NCredentialId id, NSecretRunner consumer) {
+        getCachedAuthenticationAgent(id).withSecret(id, new NSecretCaller<Object>() {
+            @Override
+            public Object call(NCredentialId id, char[] secretm, Function<String, String> env) {
+                consumer.run(id, secretm, env);
                 return null;
             }
-            throw new NSecurityException(NMsg.ofPlain("credential id must start with authentication agent id"));
-        }
-        return b.substring(0, x);
+        }, envProvider.get());
     }
 
-    public char[] getCredentials(char[] credentialsId) {
-        return getCachedAuthenticationAgent(extractId(credentialsId)).getCredentials(credentialsId, envProvider.get());
+    public <T> T callWithSecret(NCredentialId id, NSecretCaller<T> consumer) {
+        return getCachedAuthenticationAgent(id).withSecret(id, consumer, envProvider.get());
     }
 
-    public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId) {
-        if (credentialId != null) {
-            return getCachedAuthenticationAgent(extractId(credentialId)).createCredentials(credentials, allowRetrieve, credentialId, envProvider.get());
+    public boolean verify(NCredentialId credentialsId, char[] candidate) {
+        return getCachedAuthenticationAgent(credentialsId).verify(credentialsId, candidate, envProvider.get());
+    }
+
+    public boolean removeCredentials(NCredentialId credentialsId) {
+        return getCachedAuthenticationAgent(credentialsId).removeCredentials(credentialsId, envProvider.get());
+    }
+
+    public NCredentialId storeSecret(char[] credentials, String agent) {
+        return getCachedAuthenticationAgent(agent).addSecret(credentials, envProvider.get());
+    }
+
+    public NCredentialId updateSecret(NCredentialId old, char[] credentials, String agent) {
+        if (NBlankable.isBlank(agent) || Objects.equals(old.getAgentId(), agent)) {
+            return getCachedAuthenticationAgent(old).updateSecret(old, credentials, envProvider.get());
         } else {
-            return getCachedAuthenticationAgent("").createCredentials(credentials, allowRetrieve, credentialId, envProvider.get());
+            NAuthenticationAgent na = getCachedAuthenticationAgent(agent);
+            getCachedAuthenticationAgent(old).removeCredentials(old, envProvider.get());
+            return na.addSecret(credentials, envProvider.get());
+        }
+    }
+
+    public NCredentialId storeOneWay(char[] password, String agent) {
+        return getCachedAuthenticationAgent(agent).addOneWayCredential(password, envProvider.get());
+    }
+
+    public NCredentialId updateOneWay(NCredentialId old, char[] credentials, String agent) {
+        if (NBlankable.isBlank(agent) || Objects.equals(old.getAgentId(), agent)) {
+            return getCachedAuthenticationAgent(old).updateOneWay(old, credentials, envProvider.get());
+        } else {
+            NAuthenticationAgent na = getCachedAuthenticationAgent(agent);
+            getCachedAuthenticationAgent(old).removeCredentials(old, envProvider.get());
+            return na.addOneWayCredential(credentials, envProvider.get());
         }
     }
 }
