@@ -33,7 +33,6 @@ import net.thevpc.nuts.core.NWorkspaceListener;
 import net.thevpc.nuts.security.NUser;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.security.*;
 import net.thevpc.nuts.text.NMsg;
@@ -53,13 +52,13 @@ public class DefaultNWorkspaceSecurityModel {
 
     private final ThreadLocal<Stack<DefaultNLoginContext>> loginContextStack = new ThreadLocal<>();
     private final DefaultNWorkspace workspace;
-    private final WrapperNAuthenticationAgent agent;
+    private final WrapperNAuthenticationAgent agentMapper;
     private final Map<String, NAuthorizations> authorizations = new HashMap<>();
     private NLog LOG;
 
     public DefaultNWorkspaceSecurityModel(final DefaultNWorkspace ws) {
         this.workspace = ws;
-        this.agent = new WrapperNAuthenticationAgent(ws, () -> NWorkspace.of().getConfigMap(), (x) -> getAuthenticationAgent(x));
+        this.agentMapper = new WrapperNAuthenticationAgent(ws, () -> s -> NWorkspace.of().getConfigMap().get(s), (x) -> getAuthenticationAgent(x));
         workspace.addWorkspaceListener(new ClearAuthOnWorkspaceChange());
     }
 
@@ -73,18 +72,20 @@ public class DefaultNWorkspaceSecurityModel {
                 .getUser(username);
         if (registeredUser != null) {
             try {
-                checkCredentials(registeredUser.getCredentials().toCharArray(), password);
-                Stack<DefaultNLoginContext> r = loginContextStack.get();
-                if(r==null){
-                    r=new Stack<>();
+                NCredentialId chars = NCredentialId.parse(registeredUser.getCredential());
+                if (agentMapper.verify(chars, password)) {
+                    Stack<DefaultNLoginContext> r = loginContextStack.get();
+                    if (r == null) {
+                        r = new Stack<>();
+                    }
+                    r.push(new DefaultNLoginContext(username));
+                    return;
                 }
-                r.push(new DefaultNLoginContext(username));
-                return;
             } catch (Exception ex) {
                 //
             }
         }
-        throw new NLoginException(NMsg.ofC("Authentication failed for %s",username));
+        throw new NLoginException(NMsg.ofC("Authentication failed for %s", username));
     }
 
 
@@ -100,15 +101,15 @@ public class DefaultNWorkspaceSecurityModel {
         if (adminPassword == null) {
             adminPassword = new char[0];
         }
-        NUser adminSecurity = findUser(NConstants.Users.ADMIN);
+        NUser adminSecurity = findUser(NConstants.Users.ADMIN).orNull();
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (_LOG().isLoggable(Level.CONFIG)) {
                 _LOG()
                         .log(NMsg.ofC("%s user has no credentials. reset to default", NConstants.Users.ADMIN).asConfig().withIntent(NMsgIntent.ALERT));
             }
             NUserConfig u = NWorkspaceExt.of(workspace).getConfigModel().getUser(NConstants.Users.ADMIN);
-            u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null)));
-            NWorkspaceExt.of(workspace).getConfigModel().setUser(u);
+            u.setCredential(agentMapper().storeOneWay("admin".toCharArray(), null).toString());
+            NWorkspaceExt.of(workspace).getConfigModel().addOrUpdateUser(u);
         }
 
         char[] credentials = NDigestUtils.evalSHA1(adminPassword);
@@ -145,6 +146,22 @@ public class DefaultNWorkspaceSecurityModel {
     }
 
 
+    public void requiredAdminOrUser(String user) {
+        if (!isAdminOrUser(user)) {
+            throw new NSecurityException(NMsg.ofPlain("admin privileges required"));
+        }
+    }
+
+    public boolean isAdminOrUser(String user) {
+        if (isAdmin()) {
+            return true;
+        }
+        if (Objects.equals(user, getCurrentUsername())) {
+            return true;
+        }
+        return false;
+    }
+
     public boolean isAdmin() {
         return NConstants.Users.ADMIN.equals(getCurrentUsername());
     }
@@ -163,7 +180,7 @@ public class DefaultNWorkspaceSecurityModel {
     }
 
 
-    public NUser findUser(String username) {
+    public NOptional<NUser> findUser(String username) {
         NUserConfig security = NWorkspaceExt.of(workspace).getConfigModel().getUser(username);
         Stack<String> inherited = new Stack<>();
         if (security != null) {
@@ -185,31 +202,19 @@ public class DefaultNWorkspaceSecurityModel {
                 }
             }
         }
-        return security == null ? null : new DefaultNUser(security, inherited);
+        return NOptional.ofNamed(security == null ? null : new DefaultNUser(security, inherited), username);
     }
 
 
     public List<NUser> findUsers() {
         List<NUser> all = new ArrayList<>();
         for (NUserConfig secu : NWorkspaceExt.of(workspace).getConfigModel().getUsers()) {
-            all.add(findUser(secu.getUser()));
+            NOptional<NUser> user = findUser(secu.getUserName());
+            if (user.isPresent()) {
+                all.add(user.get());
+            }
         }
         return all;
-    }
-
-
-    public NAddUserCmd addUser(String name) {
-        return NAddUserCmd.of().setUsername(name);
-    }
-
-
-    public NUpdateUserCmd updateUser(String name) {
-        return NUpdateUserCmd.of().setUsername(name);
-    }
-
-
-    public NRemoveUserCmd removeUser(String name) {
-        return NRemoveUserCmd.of().setUsername(name);
     }
 
 
@@ -223,20 +228,14 @@ public class DefaultNWorkspaceSecurityModel {
         }
     }
 
-    private NAuthorizations getAuthorizations(String n) {
-        NAuthorizations aa = authorizations.get(n);
-        if (aa != null) {
-            return aa;
+    public void checkRepositoryAllowed(String repository, String permission, String operationName) {
+        if (!isRepositoryAllowed(permission, repository)) {
+            if (NBlankable.isBlank(operationName)) {
+                throw new NSecurityException(NMsg.ofC("%s not allowed!", permission));
+            } else {
+                throw new NSecurityException(NMsg.ofC("%s : %s not allowed!", operationName, permission));
+            }
         }
-        NUserConfig s = NWorkspaceExt.of(workspace).getConfigModel().getUser(n);
-        if (s != null) {
-            List<String> rr = s.getPermissions();
-            aa = new NAuthorizations(NCollections.nonNullList(rr));
-            authorizations.put(n, aa);
-        } else {
-            aa = new NAuthorizations(Collections.emptyList());
-        }
-        return aa;
     }
 
 
@@ -275,6 +274,115 @@ public class DefaultNWorkspaceSecurityModel {
         return false;
     }
 
+    public boolean isRepositoryAllowed(String permission, String repository) {
+        if (!isSecure()) {
+            return true;
+        }
+        String name = getCurrentUsername();
+        if (NBlankable.isBlank(name)) {
+            return false;
+        }
+        if (NConstants.Users.ADMIN.equals(name)) {
+            return true;
+        }
+        Stack<String> items = new Stack<>();
+        Set<String> visitedGroups = new HashSet<>();
+        visitedGroups.add(name);
+        items.push(name);
+        while (!items.isEmpty()) {
+            String n = items.pop();
+            NAuthorizations s = getAuthorizations(n, repository);
+            Boolean ea = s.explicitAccept(permission);
+            if (ea != null) {
+                return ea;
+            }
+            NUserConfig uc = NWorkspaceExt.of(workspace).getConfigModel().getUser(repository);
+            if (uc != null) {
+                for (String g : uc.getGroups()) {
+                    if (!visitedGroups.contains(g)) {
+                        visitedGroups.add(g);
+                        items.push(g);
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private NAuthorizations getAuthorizations(String n) {
+        String k = "*/" + n;
+        NAuthorizations aa = authorizations.get(k);
+        if (aa != null) {
+            return aa;
+        }
+        NUserConfig s = NWorkspaceExt.of(workspace).getConfigModel().getUser(n);
+        if (s != null) {
+            List<String> rr = s.getPermissions();
+            aa = new NAuthorizations(
+                    NCollections.nonNullList(rr)
+            );
+            authorizations.put(k, aa);
+        } else {
+            aa = new NAuthorizations(Collections.emptyList());
+        }
+        return aa;
+    }
+
+    private NAuthorizations getAuthorizations(String user, String repository) {
+        String k = repository + "/" + user;
+        NAuthorizations aa = authorizations.get(k);
+        if (aa != null) {
+            return aa;
+        }
+        NUserConfig s = NWorkspaceExt.of(workspace).getConfigModel().getUser(repository);
+        if (s != null) {
+            List<String> rr = s.getPermissions();
+            aa = new NAuthorizations(
+                    NCollections.nonNullList(rr)
+            );
+            authorizations.put(k, aa);
+        } else {
+            aa = new NAuthorizations(Collections.emptyList());
+        }
+        return aa;
+    }
+
+
+//    public boolean isAllowed(String right) {
+//        NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of();
+//        if (!sec.isSecureMode()) {
+//            return true;
+//        }
+//        String name = sec.getCurrentUsername();
+//        if (NConstants.Users.ADMIN.equals(name)) {
+//            return true;
+//        }
+//        Stack<String> items = new Stack<>();
+//        Set<String> visitedGroups = new HashSet<>();
+//        visitedGroups.add(name);
+//        items.push(name);
+//        while (!items.isEmpty()) {
+//            String n = items.pop();
+//            NAuthorizations s = getAuthorizations(n);
+//            Boolean ea = s.explicitAccept(right);
+//            if (ea != null) {
+//                return ea;
+//            }
+//            NUserConfig uc = NRepositoryConfigManagerExt.of(repository.config())
+//                    .getModel()
+//                    .findUser(n).orNull();
+//            if (uc != null && uc.getGroups() != null) {
+//                for (String g : uc.getGroups()) {
+//                    if (!visitedGroups.contains(g)) {
+//                        visitedGroups.add(g);
+//                        items.push(g);
+//                    }
+//                }
+//            }
+//        }
+//        return sec
+//                .isAllowed(right);
+//    }
 
     public String[] getCurrentLoginStack() {
         List<String> logins = new ArrayList<String>();
@@ -312,7 +420,6 @@ public class DefaultNWorkspaceSecurityModel {
     }
 
 
-
     private DefaultNLoginContext getLoginContext() {
         Stack<DefaultNLoginContext> c = loginContextStack.get();
         if (c == null) {
@@ -324,6 +431,9 @@ public class DefaultNWorkspaceSecurityModel {
         return c.peek();
     }
 
+    public WrapperNAuthenticationAgent agentMapper() {
+        return agentMapper;
+    }
 
     public NAuthenticationAgent getAuthenticationAgent(String authenticationAgentId) {
         authenticationAgentId = NStringUtils.trim(authenticationAgentId);
@@ -358,25 +468,6 @@ public class DefaultNWorkspaceSecurityModel {
         return NWorkspaceExt.of(workspace).getConfigModel().getStoredConfigSecurity().isSecure();
     }
 
-
-    public void checkCredentials(char[] credentialsId, char[] password) throws NSecurityException {
-        agent.checkCredentials(credentialsId, password);
-    }
-
-
-    public char[] getCredentials(char[] credentialsId) {
-        return agent.getCredentials(credentialsId);
-    }
-
-
-    public boolean removeCredentials(char[] credentialsId) {
-        return agent.removeCredentials(credentialsId);
-    }
-
-
-    public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId) {
-        return agent.createCredentials(credentials, allowRetrieve, credentialId);
-    }
 
     public NWorkspace getWorkspace() {
         return workspace;
