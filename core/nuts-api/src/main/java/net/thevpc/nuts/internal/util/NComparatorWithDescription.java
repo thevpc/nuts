@@ -1,6 +1,6 @@
 package net.thevpc.nuts.internal.util;
 
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NComparator;
 
@@ -16,14 +16,14 @@ public class NComparatorWithDescription<T> implements NComparator<T> {
     }
 
     @Override
-    public NComparator<T> redescribe(Supplier<NElement> description) {
+    public NComparator<T> withDescription(Supplier<NElement> description) {
         this.description = description;
         return this;
     }
 
     @Override
     public NElement describe() {
-        return NElementDescribables.safeDescribeOfBase(description, comparator);
+        return NDescribables.safeDescribeOfBase(description, comparator);
     }
 
     @Override
