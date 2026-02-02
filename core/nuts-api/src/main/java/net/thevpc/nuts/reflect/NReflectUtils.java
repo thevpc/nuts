@@ -140,7 +140,7 @@ public class NReflectUtils {
     }
 
     public static Object getJavaDefaultValue(Class<?> anyType) {
-        NAssert.requireNonNull(anyType, "type");
+        NAssert.requireNamedNonNull(anyType, "type");
         switch (anyType.getName()) {
             case "boolean":
                 return false;
