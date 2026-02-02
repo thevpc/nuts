@@ -27,13 +27,13 @@ public class NTextRegionImpl implements NTextRegion {
         this.charColumns = charColumns;
         this.charLines = charLines;
         for (NPrimitiveText[] r : rendered) {
-            NAssert.requireTrue(charColumns >= r.length, "charColumns>=" + r.length);
+            NAssert.requireNamedTrue(charColumns >= r.length, "charColumns>=" + r.length);
         }
-        NAssert.requireTrue(charLines == rendered.length, "charLines==" + rendered.length);
+        NAssert.requireNamedTrue(charLines == rendered.length, "charLines==" + rendered.length);
     }
 
     NTextRegionImpl(NPrimitiveText a, int charColumns, int charLines) {
-        NAssert.requireTrue(a.length() == 1, "length==" + 1);
+        NAssert.requireNamedTrue(a.length() == 1, "length==" + 1);
         this.rendered = new NPrimitiveText[charLines][charColumns];
         this.charColumns = charColumns;
         this.charLines = charLines;
