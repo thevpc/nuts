@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 import net.thevpc.nuts.concurrent.NCachedValue;
 import net.thevpc.nuts.concurrent.NCachedValueModel;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NUpletElementBuilder;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NDuration;
@@ -258,23 +258,23 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
     @Override
     public NElement describe() {
         NUpletElementBuilder b = NElement.ofUpletBuilder("CachedValue")
-                .add("supplier", NElementDescribables.describeResolveOrDestruct(supplier));
+                .add("supplier", NDescribables.describeResolveOrDestruct(supplier));
 
         if (model.getExpiry() != null) {
-            b.add("expiry", NElementDescribables.describeResolveOrDestruct(model.getExpiry().toMillis()));
+            b.add("expiry", NDescribables.describeResolveOrDestruct(model.getExpiry().toMillis()));
         }
         if (model.getRetryPeriod() != null) {
-            b.add("retryPeriod", NElementDescribables.describeResolveOrDestruct(model.getRetryPeriod().toMillis()));
+            b.add("retryPeriod", NDescribables.describeResolveOrDestruct(model.getRetryPeriod().toMillis()));
         }
-        b.add("maxRetries", NElementDescribables.describeResolveOrDestruct(model.getMaxRetries()));
+        b.add("maxRetries", NDescribables.describeResolveOrDestruct(model.getMaxRetries()));
         Boolean ev = model.getErrorState();
         b.add("evaluated", ev != null);
         if (ev != null) {
             b.add("success", !ev);
             if (!ev) {
-                b.add("value", NElementDescribables.describeResolveOrDestruct(model.getValue()));
+                b.add("value", NDescribables.describeResolveOrDestruct(model.getValue()));
             } else {
-                b.add("error", NElementDescribables.describeResolveOrDestruct(model.getThrowable()));
+                b.add("error", NDescribables.describeResolveOrDestruct(model.getThrowable()));
             }
         }
         return b
