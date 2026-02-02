@@ -41,7 +41,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
 
     @Override
     public void runWithAll(Runnable[] runnables, double[] weights) {
-        NAssert.requireEquals(runnables.length, weights.length, "runWithAll");
+        NAssert.requireNamedEquals(runnables.length, weights.length, "runWithAll");
         int count = 0;
         for (int i = 0; i < runnables.length; i++) {
             if (runnables[i] != null) {
@@ -503,7 +503,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     @Override
     public final NProgressMonitor inc(NMsg message) {
         NProgressMonitorInc incrementor = this.incrementor;
-        NAssert.requireNonNull(incrementor, "incrementor");
+        NAssert.requireNamedNonNull(incrementor, "incrementor");
         double oldProgress = getProgress();
         double newProgress = incrementor.inc(oldProgress);
         setProgress(newProgress, message);
@@ -568,7 +568,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     @Override
     public NProgressMonitor stepInto(NMsg message) {
         final NProgressMonitorInc incrementor = getIncrementor();
-        NAssert.requireNonNull(incrementor, "incrementor");
+        NAssert.requireNamedNonNull(incrementor, "incrementor");
         double a = getProgress();
         double b = incrementor.inc(a);
         if (message != null) {
