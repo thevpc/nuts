@@ -289,7 +289,7 @@ public class UserElementMapperStore implements NElementMapperStore {
 
 
     public <T> NElementMapper<T> getMapper(NElement element, boolean defaultOnly) {
-        NAssert.requireNonNull(element, "element");
+        NAssert.requireNamedNonNull(element, "element");
         if (!defaultOnly) {
             for (NElementKeyResolverEntry e : lvl2_customMappersByKey) {
                 Object k = e.resolver.keyOf(element);
