@@ -56,9 +56,9 @@ public class CompatUtils {
                 NUserConfig r2 = new NUserConfig();
                 r2.setGroups(r.getGroups());
                 r2.setPermissions(r.getPermissions());
-                r2.setRemoteCredentials(r.getRemoteCredentials());
-                r2.setRemoteIdentity(r.getRemoteIdentity());
-                r2.setUser(r.getUser());
+//                r2.setRemoteCredentials(r.getRemoteCredentials());
+//                r2.setRemoteIdentity(r.getRemoteIdentity());
+                r2.setUserName(r.getUserName());
                 list.add(r2);
             }
         }
@@ -77,9 +77,9 @@ public class CompatUtils {
                 NUserConfig r2 = new NUserConfig();
                 r2.setGroups(r.getGroups());
                 r2.setPermissions(r.getPermissions());
-                r2.setRemoteCredentials(r.getRemoteCredentials());
-                r2.setRemoteIdentity(r.getRemoteIdentity());
-                r2.setUser(r.getUser());
+//                r2.setRemoteCredentials(r.getRemoteCredentials());
+//                r2.setRemoteIdentity(r.getRemoteIdentity());
+                r2.setUserName(r.getUserName());
                 list.add(r2);
             }
         }
