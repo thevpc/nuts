@@ -31,6 +31,8 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
+import net.thevpc.nuts.security.NSecurityManager;
+import net.thevpc.nuts.security.NUserSpec;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.artifact.*;
@@ -41,7 +43,6 @@ import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.security.NUserConfig;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.text.NVersionWriter;
 import net.thevpc.nuts.log.NLogFactorySPI;
@@ -131,10 +132,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     /**
      * using currentApp so that we can change NApp when calling embedded apps
      */
-    public NApp currentApp=new NAppImpl();
+    public NApp currentApp = new NAppImpl();
 
     public DefaultNWorkspace(NBootOptionsInfo callerBootOptionsInfo, NBootOptions info) {
-        this.callerBootOptionsInfo=callerBootOptionsInfo;
+        this.callerBootOptionsInfo = callerBootOptionsInfo;
         initWorkspace(info);
     }
 
@@ -396,11 +397,11 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             }
         }
         if (data.effectiveBootOptions.getUserName().orElse("").trim().length() > 0) {
-            char[] password = data.effectiveBootOptions.getCredentials().orNull();
+            char[] password = data.effectiveBootOptions.getCredential().orNull();
             if (password == null || NBlankable.isBlank(new String(password))) {
                 password = data.terminals.getDefaultTerminal().readPassword(NMsg.ofPlain("Password : "));
             }
-            NWorkspaceSecurityManager.of().login(data.effectiveBootOptions.getUserName().get(), password);
+            NSecurityManager.of().login(data.effectiveBootOptions.getUserName().get(), password);
         }
         wsModel.configModel.setEndCreateTime(Instant.now());
         wsModel.LOG
@@ -1045,7 +1046,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
         //has all rights (by default)
         //no right nor group is needed for admin user
-        NWorkspaceSecurityManager.of().updateUser(NConstants.Users.ADMIN).setCredentials("admin".toCharArray()).run();
+        if (!NSecurityManager.of().findUser(NConstants.Users.ADMIN).isEmpty()) {
+            NSecurityManager.of().addUser(
+                    NUserSpec.of(NConstants.Users.ADMIN)
+                            .setCredential(NSecurityManager.of().addOneWayCredential("admin".toCharArray()))
+            );
+        }
 
         archetypeInstance.initializeWorkspace();
         //now that all repos are created we need to update boot repositories
@@ -1074,9 +1080,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
         return null;
     }
-
-
-
 
 
     public String resolveCommandName(NId id) {
@@ -1126,16 +1129,27 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             }
             NUserConfig adminSecurity = getConfigModel()
                     .getUser(NConstants.Users.ADMIN);
-            if (adminSecurity == null || NBlankable.isBlank(adminSecurity.getCredentials())) {
+            if (adminSecurity == null) {
+                if (wsModel.LOG.isLoggable(Level.CONFIG)) {
+                    wsModel.LOG
+                            .log(NMsg.ofC("%s user is missing. reset to default", NConstants.Users.ADMIN)
+                                    .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL)
+                            );
+                }
+                adminSecurity = new NUserConfig();
+                adminSecurity.setUserName(NConstants.Users.ADMIN);
+                adminSecurity.setCredential(NSecurityManager.of().addOneWayCredential("admin".toCharArray()).toString());
+                getConfigModel().addOrUpdateUser(adminSecurity);
+            } else if (NBlankable.isBlank(adminSecurity.getCredential())) {
                 if (wsModel.LOG.isLoggable(Level.CONFIG)) {
                     wsModel.LOG
                             .log(NMsg.ofC("%s user has no credentials. reset to default", NConstants.Users.ADMIN)
                                     .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL)
                             );
                 }
-                NWorkspaceSecurityManager.of()
-                        .updateUser(NConstants.Users.ADMIN).credentials("admin".toCharArray())
-                        .run();
+                adminSecurity = adminSecurity.copy();
+                adminSecurity.setCredential(NSecurityManager.of().addOneWayCredential("admin".toCharArray()).toString());
+                getConfigModel().addOrUpdateUser(adminSecurity);
             }
             for (NCommandFactoryConfig commandFactory : this.getCommandFactories()) {
                 try {
@@ -1339,7 +1353,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
 
-
     /**
      * true when core extension is required for running this workspace. A
      * default implementation should be as follow, but developers may implements
@@ -1454,7 +1467,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             a.put("id", id.getLongName());
             a.put("dependencies", m.getDependencies().get().transitive()
                     .map(NDependency::getLongName)
-                    .redescribe(NElementDescribables.ofDesc("getLongName"))
+                    .withDescription(NDescribables.ofDesc("getLongName"))
                     .collect(Collectors.joining(";")));
             defs.put(m.getId().getLongId(), m);
             if (withDependencies) {
@@ -1490,12 +1503,16 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 pr.put("project.dependencies.compile",
                         String.join(";",
                                 def.getDependencies().get().transitive()
-                                        .filter(x -> !x.isOptional()
-                                                && dependencyRunFilter
-                                                .acceptDependency(x, def.getId())
-                                        ).redescribe(NElementDescribables.ofDesc("isOptional && runnable"))
+                                        .filter(
+                                                NPredicate.of(
+                                                        x -> !x.isOptional()
+                                                                && dependencyRunFilter
+                                                                .acceptDependency(x, def.getId())
+                                                        , NElement.ofName("optionalAndRunnable")
+                                                )
+                                        )
                                         .map(x -> x.toId().getLongName())
-                                        .redescribe(NElementDescribables.ofDesc("toId.getLongName"))
+                                        .withDescription(NDescribables.ofDesc("toId.getLongName"))
                                         .toList()
                         )
                 );
@@ -1699,7 +1716,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
 
-
     @Override
     public Map<String, Object> getProperties() {
         return wsModel.getProperties();
@@ -1712,14 +1728,14 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public <T> NOptional<T> getProperty(Class<T> propertyTypeAndName) {
-        if(propertyTypeAndName==null){
+        if (propertyTypeAndName == null) {
             return NOptional.ofNamedEmpty("<empty-type>");
         }
         return getProperty(propertyTypeAndName.getName()).instanceOf(propertyTypeAndName);
     }
 
     public <T> T getOrComputeProperty(Class<T> property, Supplier<T> supplier) {
-        return getOrComputeProperty(property==null?null:property.getName(), supplier);
+        return getOrComputeProperty(property == null ? null : property.getName(), supplier);
     }
 
     public <T> T getOrComputeProperty(String property, Supplier<T> supplier) {
