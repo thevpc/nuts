@@ -82,7 +82,7 @@ public class CoreNIdUtils {
     }
 
     public static void checkShortId(NId id) {
-        NAssert.requireNonBlank(id, "id");
+        NAssert.requireNamedNonBlank(id, "id");
         NAssert.requireNonBlank(id.getGroupId(), () -> NMsg.ofC("missing groupId for %s", id));
         NAssert.requireNonBlank(id.getArtifactId(), () -> NMsg.ofC("missing artifactId for %s", id));
     }
@@ -98,7 +98,7 @@ public class CoreNIdUtils {
     }
 
     public static void checkValidEffectiveId(NId id) {
-        NAssert.requireNonBlank(id, "id");
+        NAssert.requireNamedNonBlank(id, "id");
         if (id.toString().contains("${")) {
             throw new NIllegalArgumentException(NMsg.ofC("unable to evaluate effective id %s", id));
         }
@@ -120,7 +120,7 @@ public class CoreNIdUtils {
     }
 
     public static NId apiId(String apiVersion) {
-        NAssert.requireNonBlank(apiVersion, "version");
+        NAssert.requireNamedNonBlank(apiVersion, "version");
         NWorkspace workspace = NWorkspace.of();
         if (apiVersion.equals(workspace.getApiVersion().toString())) {
             return workspace.getApiId();
@@ -129,7 +129,7 @@ public class CoreNIdUtils {
     }
 
     public static NId runtimeId(String runtimeVersion) {
-        NAssert.requireNonBlank(runtimeVersion, "runtimeVersion");
+        NAssert.requireNamedNonBlank(runtimeVersion, "runtimeVersion");
         NWorkspace workspace = NWorkspace.of();
         if (runtimeVersion.equals(workspace.getApiVersion().toString())) {
             return workspace.getApiId();
@@ -138,7 +138,7 @@ public class CoreNIdUtils {
     }
 
     public static NId findRuntimeForApi(String apiVersion) {
-        NAssert.requireNonBlank(apiVersion, "apiVersion");
+        NAssert.requireNamedNonBlank(apiVersion, "apiVersion");
         NWorkspace workspace = NWorkspace.of();
         if (apiVersion.equals(workspace.getApiVersion().toString())) {
             return workspace.getRuntimeId();
