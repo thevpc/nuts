@@ -339,8 +339,8 @@ public class DefaultNCp implements NCp {
 
     @Override
     public NCp run() {
-        NAssert.requireNonBlank(source, "source");
-        NAssert.requireNonBlank(target, "target");
+        NAssert.requireNamedNonBlank(source, "source");
+        NAssert.requireNamedNonBlank(target, "target");
 
         NInputSource _source = source;
         if ((_source instanceof NPath) && ((NPath) _source).isDirectory()) {
@@ -613,7 +613,7 @@ public class DefaultNCp implements NCp {
 
     private long transferTo(InputStream in, OutputStream out) throws IOException {
         int DEFAULT_BUFFER_SIZE = 8192;
-        NAssert.requireNonNull(out, "out");
+        NAssert.requireNamedNonNull(out, "out");
         long transferred = 0;
         byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
         int read;
@@ -662,8 +662,8 @@ public class DefaultNCp implements NCp {
     }
 
     private void copyStream() {
-        NAssert.requireNonBlank(source, "source");
-        NAssert.requireNonBlank(target, "target");
+        NAssert.requireNamedNonBlank(source, "source");
+        NAssert.requireNamedNonBlank(target, "target");
         boolean safe = options.contains(NPathOption.SAFE);
         if (safe) {
             copyStreamSafe(source, target);
@@ -736,8 +736,8 @@ public class DefaultNCp implements NCp {
 
     private void copyStreamOnce(NInputSource source, NOutputTarget target) {
         NSession session = workspace.currentSession();
-        NAssert.requireNonNull(source, "source");
-        NAssert.requireNonNull(target, "target");
+        NAssert.requireNamedNonNull(source, "source");
+        NAssert.requireNamedNonNull(target, "target");
         NOutputTarget2 _target2 = new NOutputTarget2(target);
         NInputSource2 _source2 = new NInputSource2(source);
         boolean safe = options.contains(NPathOption.SAFE);
