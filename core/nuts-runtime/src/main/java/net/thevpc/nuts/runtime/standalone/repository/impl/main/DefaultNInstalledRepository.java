@@ -35,11 +35,10 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NRepositorySecurityManager;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NIOException;
@@ -126,7 +125,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                     }
                     return null;
                 })
-                .filter(Objects::nonNull)
+                .filter(NPredicate.ofNonNull())
                 .iterator();
     }
 
@@ -311,7 +310,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     @Override
     public void unrequire(NId requiredId, NId requestorId, NDependencyScope scope) {
         Instant now = Instant.now();
-        String user = NWorkspaceSecurityManager.of().getCurrentUsername();
+        String user = NSecurityManager.of().getCurrentUsername();
         boolean succeeded = false;
         try {
             if (scope == null) {
@@ -521,7 +520,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     private void saveCreate(InstallInfoConfig ii) {
         Instant now = Instant.now();
-        String user = NWorkspaceSecurityManager.of().getCurrentUsername();
+        String user = NSecurityManager.of().getCurrentUsername();
         if (ii.getCreationUser() == null) {
             ii.setCreationUser(user);
         }
@@ -534,7 +533,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     private void saveUpdate(InstallInfoConfig ii, InstallInfoConfig ii0) {
         Instant now = Instant.now();
-        String user = NWorkspaceSecurityManager.of().getCurrentUsername();
+        String user = NSecurityManager.of().getCurrentUsername();
         if (ii.getCreationUser() == null) {
             ii.setCreationUser(user);
         }
@@ -579,10 +578,6 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     // implementation of repository
 
     /// //////////////////////////////////////////////////////////////////////////////////////////
-    @Override
-    public NRepositorySecurityManager security() {
-        throw new IllegalArgumentException("unsupported security() for " + getName() + " repository");
-    }
 
     @Override
     public NDeployRepositoryCmd deploy() {
@@ -670,7 +665,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             public NSearchRepositoryCmd run() {
                 NIterator<InstallInfoConfig> installIter = searchInstallConfig();
                 NIterator<NId> idIter = NIteratorBuilder.of(installIter)
-                        .map(NFunction.of(InstallInfoConfig::getId).redescribe(NElementDescribables.ofDesc("NutsInstallInformation->Id")))
+                        .map(NFunction.of(InstallInfoConfig::getId).withDescription(NDescribables.ofDesc("NutsInstallInformation->Id")))
                         .build();
                 NDefinitionFilter ff = getFilter();
                 if (ff != null) {
@@ -693,13 +688,15 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             public NSearchVersionsRepositoryCmd run() {
                 final NVersionFilter filter0 = getId().getVersion().filter();
                 result = NStream.ofIterator(_wstore().searchInstalledVersions(getId()))
-                        .map(vv -> {
+                        .map(NFunction.of(vv -> {
                             NId newId = getId().builder().setVersion(vv).build();
                             if (filter0.acceptVersion(vv) && (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(newId, repo, "DefaultNInstalledRepository")))) {
                                 return newId;
                             }
                             return null;
-                        }).nonNull().redescribe(NElementDescribables.ofDesc("FileToVersion")).iterator();
+                        }, NElement.ofNamedUplet("filter",
+                                NDescribables.describeResolveOrDestruct(filter0)
+                        ))).nonNull().iterator();
                 return this;
             }
         };
@@ -731,7 +728,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         InstallLogItemTable.of(workspace)
                 .add(new NInstallLogRecord(
                         Instant.now(),
-                        NWorkspaceSecurityManager.of().getCurrentUsername(),
+                        NSecurityManager.of().getCurrentUsername(),
                         action,
                         id, requestor, message, succeeded
                 ));
