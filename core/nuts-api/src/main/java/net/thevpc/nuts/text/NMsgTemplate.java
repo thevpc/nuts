@@ -32,8 +32,8 @@ public class NMsgTemplate {
     }
 
     public NMsgTemplate(String message, NTextFormatType format) {
-        NAssert.requireNonNull(message,"message");
-        NAssert.requireNonNull(format,"format");
+        NAssert.requireNamedNonNull(message,"message");
+        NAssert.requireNamedNonNull(format,"format");
         switch (format) {
             case CFORMAT:
             case JFORMAT:
