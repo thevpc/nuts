@@ -31,6 +31,7 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.log.NLog;
 
@@ -59,7 +60,7 @@ public class DefaultNDeployRepositoryCmd extends AbstractNDeployRepositoryCmd {
     @Override
     public NDeployRepositoryCmd run() {
         NSession session = repo.getWorkspace().currentSession();
-        getRepo().security().checkAllowed(NConstants.Permissions.DEPLOY, "deploy");
+        NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.DEPLOY, "deploy");
         checkParameters();
         try {
             NRepositoryExt xrepo = NRepositoryExt.of(repo);
