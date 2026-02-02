@@ -27,7 +27,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
     private NStringWriter nStringWriter;
 
     public NPrintStreamBase(boolean autoFlash, NTerminalMode mode, Bindings bindings, NSystemTerminalBase term) {
-        NAssert.requireNonNull(mode, "mode");
+        NAssert.requireNamedNonNull(mode, "mode");
         bindings.setOrErr(this, mode);
         this.bindings = bindings;
         this.autoFlash = autoFlash;
@@ -483,8 +483,8 @@ public abstract class NPrintStreamBase implements NPrintStream {
         protected NPrintStreamBase formatted;
 
         public void set(NPrintStreamBase o, NTerminalMode mode) {
-            NAssert.requireNonNull(o, "terminal");
-            NAssert.requireNonNull(mode, "mode");
+            NAssert.requireNamedNonNull(o, "terminal");
+            NAssert.requireNamedNonNull(mode, "mode");
             switch (mode) {
                 case ANSI: {
                     this.ansi = o;
@@ -516,7 +516,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
         }
 
         public NPrintStreamBase get(NTerminalMode mode) {
-            NAssert.requireNonNull(mode, "mode");
+            NAssert.requireNamedNonNull(mode, "mode");
             switch (mode) {
                 case FILTERED:
                     return this.filtered;
@@ -537,8 +537,8 @@ public abstract class NPrintStreamBase implements NPrintStream {
         }
 
         public void setIfNull(NPrintStreamBase o, NTerminalMode mode, boolean err) {
-            NAssert.requireNonNull(o, "terminal");
-            NAssert.requireNonNull(mode, "mode");
+            NAssert.requireNamedNonNull(o, "terminal");
+            NAssert.requireNamedNonNull(mode, "mode");
             switch (mode) {
                 case ANSI: {
                     if (this.ansi == null) {
