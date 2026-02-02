@@ -105,7 +105,7 @@ public class NPropertiesHolder {
     }
 
     public <T> T getOrComputeProperty(String key, Supplier<T> supplier, NScopeType scope) {
-        NAssert.requireNonNull(supplier, "supplier");
+        NAssert.requireNamedNonNull(supplier, "supplier");
         NScopedPropertyValue v = properties.get(key);
         if (v != null) {
             return (T) v.value;
