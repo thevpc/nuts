@@ -154,9 +154,9 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
     @Override
     public int exec(NExecTargetCommandContext context) {
         NConnectionString target = context.getConnectionString();
-        NAssert.requireNonBlank(target, "target");
+        NAssert.requireNamedNonBlank(target, "target");
         NConnectionStringBuilder z = target.builder();
-        NAssert.requireNonBlank(z, "target");
+        NAssert.requireNamedNonBlank(z, "target");
         NLog log = NLog.of(SshNExecTargetSPI.class);
         log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
         NExecutionType executionType = context.getExecCommand().getExecutionType();
@@ -197,9 +197,9 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
 
     public int exec0(NExecTargetCommandContext context) {
         NConnectionString target = context.getConnectionString();
-        NAssert.requireNonBlank(target, "target");
+        NAssert.requireNamedNonBlank(target, "target");
         NConnectionStringBuilder z = target.builder();
-        NAssert.requireNonBlank(z, "target");
+        NAssert.requireNamedNonBlank(z, "target");
         NLog log = NLog.of(SshNExecTargetSPI.class);
         log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
         try (SshConnection c = SshConnectionPool.of().acquire(target)) {
