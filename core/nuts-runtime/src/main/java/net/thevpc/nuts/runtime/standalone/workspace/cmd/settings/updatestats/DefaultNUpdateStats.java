@@ -51,7 +51,7 @@ public class DefaultNUpdateStats extends AbstractNUpdateStats {
         }
         for (Path repositoryPath : getPaths()) {
             processed = true;
-            NAssert.requireNonBlank(repositoryPath, "location");
+            NAssert.requireNamedNonBlank(repositoryPath, "location");
             if (!Files.isDirectory(repositoryPath)) {
                 throw new NIllegalArgumentException(NMsg.ofC("expected folder at location %s",repositoryPath));
             }
@@ -103,7 +103,7 @@ public class DefaultNUpdateStats extends AbstractNUpdateStats {
 
     @Override
     public void add(String repo) {
-        NAssert.requireNonBlank(repo, "repository or path");
+        NAssert.requireNamedNonBlank(repo, "repository or path");
         if (repo.equals(".") || repo.equals("..") || repo.contains("/") || repo.contains("\\")) {
             addPath(Paths.get(repo));
         } else {
