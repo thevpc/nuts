@@ -14,13 +14,13 @@ public class NIteratorBaseFromJavaIterator<T> extends NIteratorBase<T> {
     }
 
     @Override
-    public NIterator<T> redescribe(Supplier<NElement> description) {
+    public NIterator<T> withDescription(Supplier<NElement> description) {
         this.description = description;
         return this;
     }
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNextImpl() {
         return base.hasNext();
     }
 
@@ -36,7 +36,7 @@ public class NIteratorBaseFromJavaIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        NObjectElement b = NElementDescribables.describeResolveOr(base, () -> NElement.ofObjectBuilder().build())
+        NObjectElement b = NDescribables.describeResolveOr(base, () -> NElement.ofObjectBuilder().build())
                 .asObject().get();
         NElement a = description==null?null:description.get();
         if(a==null){
