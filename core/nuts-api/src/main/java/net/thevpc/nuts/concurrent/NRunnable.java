@@ -40,7 +40,7 @@ import java.util.function.Supplier;
  *
  * @since 0.8.7
  */
-public interface NRunnable extends NElementRedescribable<NRunnable>, Runnable {
+public interface NRunnable extends NRedescribable<NRunnable>, Runnable {
     /**
      * Wraps a standard {@link Runnable} into an {@link NRunnable}.
      * <p>
@@ -71,7 +71,7 @@ public interface NRunnable extends NElementRedescribable<NRunnable>, Runnable {
      * @return a new {@link NRunnable} wrapping this instance with the custom description
      */
     @Override
-    default NRunnable redescribe(Supplier<NElement> description) {
+    default NRunnable withDescription(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }
