@@ -37,6 +37,7 @@ import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.spi.NFetchDescriptorRepositoryCmd;
 import net.thevpc.nuts.log.NLog;
 
@@ -67,7 +68,7 @@ public class DefaultNFetchDescriptorRepositoryCmd extends AbstractNFetchDescript
     public NFetchDescriptorRepositoryCmd run() {
 //        NutsWorkspace ws = getRepo().getWorkspace();
         CoreNIdUtils.checkLongId(id);
-        getRepo().security().checkAllowed(NConstants.Permissions.FETCH_DESC, "fetch-descriptor");
+        NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.FETCH_DESC, "fetch-descriptor");
         Map<String, String> queryMap = id.getProperties();
         queryMap.remove(NConstants.IdProperties.OPTIONAL);
         queryMap.remove(NConstants.IdProperties.SCOPE);
