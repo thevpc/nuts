@@ -772,7 +772,7 @@ public class NStringUtils {
     }
 
     public static Stream<NToken> parsePlaceHolder(String text, Pattern pattern, String patternVarName) {
-        NAssert.requireNonNull(pattern, "pattern");
+        NAssert.requireNamedNonNull(pattern, "pattern");
         if (text == null) {
             return Stream.empty();
         }
@@ -824,7 +824,7 @@ public class NStringUtils {
 
             @Override
             public NToken next() {
-                NAssert.requireTrue(ready(), "token ready");
+                NAssert.requireNamedTrue(ready(), "token ready");
                 return buffer.remove(0);
             }
         });
@@ -944,7 +944,7 @@ public class NStringUtils {
 
             @Override
             public NToken next() {
-                NAssert.requireTrue(ready(), "token ready");
+                NAssert.requireNamedTrue(ready(), "token ready");
                 return buffer.remove(0);
             }
         });
@@ -1212,9 +1212,9 @@ public class NStringUtils {
     }
 
     public static String replaceTail(String s, String oldTail, String newTail) {
-        NAssert.requireNonNull(s, "string");
-        NAssert.requireNonNull(s, "oldTail");
-        NAssert.requireTrue(!oldTail.isEmpty(), "oldTail not empty");
+        NAssert.requireNamedNonNull(s, "string");
+        NAssert.requireNamedNonNull(s, "oldTail");
+        NAssert.requireNamedTrue(!oldTail.isEmpty(), "oldTail not empty");
         if (s.endsWith(oldTail)) {
             return s.substring(0, s.length() - oldTail.length()) + (newTail == null ? "" : newTail);
         } else {
@@ -1223,9 +1223,9 @@ public class NStringUtils {
     }
 
     public static String replaceHead(String s, String oldHead, String newHead) {
-        NAssert.requireNonNull(s, "string");
-        NAssert.requireNonNull(s, "oldTail");
-        NAssert.requireTrue(!oldHead.isEmpty(), "oldHead not empty");
+        NAssert.requireNamedNonNull(s, "string");
+        NAssert.requireNamedNonNull(s, "oldTail");
+        NAssert.requireNamedTrue(!oldHead.isEmpty(), "oldHead not empty");
         if (s.startsWith(oldHead)) {
             return newHead + s.substring(oldHead.length());
         } else {
