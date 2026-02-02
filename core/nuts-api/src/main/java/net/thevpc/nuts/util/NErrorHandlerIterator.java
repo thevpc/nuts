@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.text.NMsg;
@@ -29,7 +29,7 @@ public class NErrorHandlerIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElementDescribables.describeResolveOrDestructAsObject(base)
+        return NDescribables.describeResolveOrDestructAsObject(base)
                 .builder()
                 .set("onError",type.toString().toLowerCase())
                 .build();
@@ -37,7 +37,7 @@ public class NErrorHandlerIterator<T> extends NIteratorBase<T> {
 
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNextImpl() {
         try {
             boolean v = base.hasNext();
             ex = null;
