@@ -32,8 +32,8 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.security.NUpdateUserCmd;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.security.NSecurityManager;
+import net.thevpc.nuts.security.NUserSpec;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.util.NScore;
@@ -63,14 +63,7 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
             workspace.addRepository(s.toString());
         }
         //simple rights for minimal utilization
-        NUpdateUserCmd uu = NWorkspaceSecurityManager.of()
-                .updateUser(NConstants.Users.ANONYMOUS);
-//        for (String right : NutsConstants.Rights.RIGHTS) {
-//            if (!NutsConstants.Rights.ADMIN.equals(right)) {
-//                uu.addRights(right);
-//            }
-//        }
-        uu.run();
+        NSecurityManager.of().addUser(NUserSpec.of(NConstants.Users.ANONYMOUS));
     }
 
     @Override
