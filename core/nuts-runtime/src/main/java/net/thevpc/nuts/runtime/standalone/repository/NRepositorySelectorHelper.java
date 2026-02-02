@@ -69,7 +69,7 @@ public class NRepositorySelectorHelper {
 
     public static NAddRepositoryOptions createCustomRepositoryOptions(String name, String url, boolean requireName) {
         if ((name == null || name.isEmpty()) && requireName) {
-            NAssert.requireNonBlank(name, "repository name (<name>=<url>)");
+            NAssert.requireNamedNonBlank(name, "repository name (<name>=<url>)");
         }
         if (name == null || name.isEmpty()) {
             name = url;
@@ -87,8 +87,8 @@ public class NRepositorySelectorHelper {
                 name = name.substring(1);
             }
         }
-        NAssert.requireNonBlank(name, "repository name (<name>=<url>)");
-        NAssert.requireNonBlank(url, "repository url (<name>=<url>)");
+        NAssert.requireNamedNonBlank(name, "repository name (<name>=<url>)");
+        NAssert.requireNamedNonBlank(url, "repository url (<name>=<url>)");
 
         NRepositoryLocation loc = NRepositoryLocation.of(url);
         NPath nPath = NPath.of(loc.getPath());
