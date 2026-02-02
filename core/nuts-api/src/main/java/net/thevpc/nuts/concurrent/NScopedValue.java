@@ -30,7 +30,7 @@ public class NScopedValue<T> {
      * @param defaultSupplier the supplier used to provide a default value
      */
     public static <T> NScopedValue<T> ofSupplier(Supplier<T> defaultSupplier) {
-        NAssert.requireNonNull(defaultSupplier, "supplier supplier");
+        NAssert.requireNamedNonNull(defaultSupplier, "supplier supplier");
         return new NScopedValue<T>(defaultSupplier);
     }
 
