@@ -1,6 +1,6 @@
 package net.thevpc.nuts.internal.util;
 
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.concurrent.NCallable;
 
@@ -12,7 +12,7 @@ public class NCallableWithDescription<T> implements NCallable<T> {
 
     public NCallableWithDescription(NCallable<T> base, Supplier<NElement> description) {
         this.base = base;
-        this.description = description == null ? NElementDescribables.ofDesc("callable") : description;
+        this.description = description == null ? NDescribables.ofDesc("callable") : description;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class NCallableWithDescription<T> implements NCallable<T> {
     }
 
     @Override
-    public NCallable<T> redescribe(Supplier<NElement> description) {
+    public NCallable<T> withDescription(Supplier<NElement> description) {
         this.description=description;
         return this;
     }
