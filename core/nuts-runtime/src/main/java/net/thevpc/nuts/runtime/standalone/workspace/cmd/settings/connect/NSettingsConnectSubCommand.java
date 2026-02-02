@@ -59,7 +59,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
             }
             String login = null;
             int port = -1;
-            NAssert.requireNonBlank(server, "server");
+            NAssert.requireNamedNonBlank(server, "server");
             if (server.contains("@")) {
                 login = server.substring(0, server.indexOf("@"));
                 server = server.substring(server.indexOf("@") + 1);
