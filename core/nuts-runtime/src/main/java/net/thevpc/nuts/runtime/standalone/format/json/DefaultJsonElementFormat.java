@@ -475,7 +475,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         }
 
         public NElement parseElement(Reader reader) {
-            NAssert.requireNonNull(reader, "reader");
+            NAssert.requireNamedNonNull(reader, "reader");
             this.reader = (reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
             fileOffset = 0;
             lineNumber = 1;
