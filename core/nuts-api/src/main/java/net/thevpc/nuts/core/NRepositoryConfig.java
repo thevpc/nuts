@@ -26,6 +26,7 @@
 package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.security.NNamedCredentialConfig;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 
@@ -49,7 +50,6 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
     private String groups;
     private Map<String, String> env;
     private List<NRepositoryRef> mirrors;
-    private List<NUserConfig> users;
     private boolean indexEnabled;
     private String authenticationAgent;
     private String[] tags;
@@ -76,9 +76,6 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
             }
             if(o.mirrors!=null) {
                 o.mirrors=o.mirrors.stream().map(NRepositoryRef::copy).collect(Collectors.toList());
-            }
-            if(o.users!=null) {
-                o.users=o.users.stream().map(NUserConfig::copy).collect(Collectors.toList());
             }
             if(o.tags!=null) {
                 o.tags=Arrays.copyOf(tags,tags.length);
@@ -170,15 +167,6 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
         return this;
     }
 
-    public List<NUserConfig> getUsers() {
-        return users;
-    }
-
-    public NRepositoryConfig setUsers(List<NUserConfig> users) {
-        this.users = users;
-        return this;
-    }
-
     public boolean isIndexEnabled() {
         return indexEnabled;
     }
@@ -218,7 +206,6 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
         hash = 53 * hash + Objects.hashCode(this.groups);
         hash = 53 * hash + Objects.hashCode(this.env);
         hash = 53 * hash + Objects.hashCode(this.mirrors);
-        hash = 53 * hash + Objects.hashCode(this.users);
         hash = 53 * hash + (this.indexEnabled ? 1 : 0);
         hash = 53 * hash + Objects.hashCode(this.authenticationAgent);
         hash = 53 * hash + Arrays.hashCode(this.tags);
@@ -273,15 +260,15 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
         if (!Arrays.equals(this.tags, other.tags)) {
             return false;
         }
-        return Objects.equals(this.users, other.users);
+        return true;
     }
 
     @Override
     public String toString() {
         return "NutsRepositoryConfig{" + ", uuid=" + uuid + ", name=" + name
 //                + ", type=" + type
-                + ", location=" + location + ", storeLocations=" + (storeLocations == null ? "null" : storeLocations.toString()) + ", storeStrategy=" + storeStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users="
-                + users + ", indexEnabled=" + indexEnabled
+                + ", location=" + location + ", storeLocations=" + (storeLocations == null ? "null" : storeLocations.toString()) + ", storeStrategy=" + storeStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors
+                + ", indexEnabled=" + indexEnabled
                 + ", authenticationAgent=" + authenticationAgent
                 + ", tags=" + (tags==null?"[]":Arrays.toString(tags))
                 + '}';
