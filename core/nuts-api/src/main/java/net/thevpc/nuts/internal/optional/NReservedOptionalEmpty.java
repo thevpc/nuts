@@ -6,7 +6,6 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.internal.NApiUtilsRPI;
 import net.thevpc.nuts.text.NMsg;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -56,7 +55,7 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
     }
 
     public <V> NOptional<V> then(Function<T, V> mapper) {
-        NAssert.requireNonNull(mapper);
+        NAssert.requireNamedNonNull(mapper);
         return NOptional.ofEmpty(getMessage());
     }
 
