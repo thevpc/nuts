@@ -95,7 +95,7 @@ public final class NApplications {
     }
 
     public static NApplication createApplicationInstanceFromAnnotatedInstance(Object appInstance) {
-        NAssert.requireNonNull(appInstance, "appInstance");
+        NAssert.requireNamedNonNull(appInstance, "appInstance");
         if (appInstance instanceof NApplication) {
             return (NApplication) appInstance;
         }
@@ -104,7 +104,7 @@ public final class NApplications {
         if (appAnnotation == null) {
             throw new NBootException(NBootMsg.ofC("class %s is missing annotation @"+NAppDefinition.class.getSimpleName(), appClass.getName()));
         }
-        NAssert.requireNonNull(appAnnotation, "@NAppDefinition annotation");
+        NAssert.requireNamedNonNull(appAnnotation, "@NAppDefinition annotation");
         List<Method> runMethods = new ArrayList<>();
         List<Method> installMethods = new ArrayList<>();
         List<Method> uninstallMethods = new ArrayList<>();
