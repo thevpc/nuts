@@ -90,7 +90,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         return NElement.ofObjectBuilder()
                 .name("ScanPath")
                 .set("repository", repository == null ? null : repository.getName())
-                .set("filter", NElementDescribables.describeResolveOrDestruct(filter))
+                .set("filter", NDescribables.describeResolveOrDestruct(filter))
                 .add(basePath == null ? null : NElement.ofPair("path", NElements.of().toElement(basePath)))
                 .set("root", NElements.of().toElement(rootFolder))
                 .add((maxDepth < 0 || maxDepth == Integer.MAX_VALUE) ? null : NElement.ofPair("maxDepth", maxDepth))
@@ -99,7 +99,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
     }
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNextImpl() {
         last = null;
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.remove();
