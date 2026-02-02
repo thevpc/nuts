@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.log.NLog;
@@ -42,7 +43,7 @@ public class DefaultNRepositoryUndeployCmd extends AbstractNRepositoryUndeployCm
     @Override
     public NRepositoryUndeployCmd run() {
         NSession session = getRepo().getWorkspace().currentSession();
-        getRepo().security().checkAllowed(NConstants.Permissions.UNDEPLOY, "undeploy");
+        NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.UNDEPLOY, "undeploy");
         try {
             NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
             xrepo.undeployImpl(this);
