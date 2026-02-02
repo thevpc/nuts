@@ -1,134 +1,219 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import java.util.Arrays;
-import java.util.Map;
+import java.util.function.Function;
 
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
-import net.thevpc.nuts.security.NAuthenticationAgent;
-import net.thevpc.nuts.security.NSecurityException;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.security.*;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.text.NMsg;
 
+/**
+ * abstract base implementation with no external storage, the secret is bundled with NCredentialId
+ */
 public abstract class AbstractNAuthenticationAgent implements NAuthenticationAgent {
 
     private final String name;
+    private final NVersion version;
 
-    public AbstractNAuthenticationAgent(String name) {
-        this.name = name;
+    public AbstractNAuthenticationAgent(String name, NVersion version) {
+        this.name = NAssert.requireNonBlank(name, "name");
+        this.version = NAssert.requireNonBlank(version, "version");
     }
 
     @Override
     public String getId() {
-        return name;
+        return name + "#" + version;
     }
 
     @Override
-    public boolean removeCredentials(char[] credentialsId, Map<String, String> envProvider) {
-        extractId(credentialsId);
+    public boolean removeCredentials(NCredentialId credentialsId, Function<String, String> envProvider) {
+        checkValidCredentialId(credentialsId);
+        //not really stored elsewhere so just return true....
         return true;
     }
 
     @Override
-    public void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider) {
-        if (password==null || NBlankable.isBlank(new String(password))) {
-            throw new NSecurityException(NMsg.ofPlain("missing old password"));
-        }
-        CredentialsId iid = extractId(credentialsId);
-        switch (iid.type) {
-            case 'H': {
-                if (Arrays.equals(iid.value, hashChars(password, getPassphrase(envProvider)))) {
-                    return;
-                }
-                break;
-            }
-            case 'B': {
-                char[] encPwd = encryptChars(password, getPassphrase(envProvider));
-                if (Arrays.equals(iid.value, encPwd)) {
-                    return;
-                }
-            }
-        }
-        throw new NSecurityException(NMsg.ofPlain("invalid login or password"));
-    }
-
-    private static class CredentialsId {
-
-        char type;
-        char[] value;
-
-        public CredentialsId(char type, char[] value) {
-            this.type = type;
-            this.value = value;
-        }
-
-    }
-
-    private CredentialsId extractId(char[] a) {
-        if (!(a==null || NBlankable.isBlank(new String(a)))) {
-            char[] idc = (getId() + ":").toCharArray();
-            if (a.length > idc.length + 1) {
-                boolean ok = true;
-                for (int i = 0; i < idc.length; i++) {
-                    if (a[i] != idc[i]) {
-                        ok = false;
-                        break;
-                    }
-                }
-                if (ok) {
-                    if (a[idc.length] == 'H' || a[idc.length] == 'B') {
-                        return new CredentialsId(a[idc.length], Arrays.copyOfRange(a, idc.length + 1, a.length));
-                    }
-                }
-            }
-        }
-        throw new NSecurityException(NMsg.ofC("credential id must start with '%s:'",getId()));
-    }
-
-    @Override
-    public char[] getCredentials(char[] credentialsId, Map<String, String> envProvider) {
+    public <T> T withSecret(NCredentialId id, NSecretCaller<T> consumer, Function<String, String> env) {
         //credentials are already encrypted with default passphrase!
-        CredentialsId validCredentialsId = extractId(credentialsId);
-        if (validCredentialsId.type == 'B') {
-            return decryptChars(validCredentialsId.value, getPassphrase(envProvider));
+        checkValidCredentialId(id);
+        String p = id.getPayload();
+        T result = null;
+        if (p != null && !p.isEmpty()) {
+            if (p.charAt(0) == 'B') {
+                char[] buffer = new char[p.length() - 1];
+                char[] chars = new char[p.length() - 1];
+                try {
+                    p.getChars(1, p.length(), buffer, 0);
+                    chars = decryptChars(buffer, env);
+                    result = consumer.call(id, chars, env);
+                } finally {
+                    Arrays.fill(chars, '\0');
+                    Arrays.fill(buffer, '\0');
+                }
+                return result;
+            }
         }
-        throw new NSecurityException(NMsg.ofPlain("credential is hashed and cannot be retrived"));
+        throw new NSecurityException(NMsg.ofC("invalid secret %s", id));
+    }
+
+    protected boolean verifyOneWayImpl(char[] candidate, char[] storedHash, Function<String, String> env) {
+        try {
+            char[] rehashed = oneWayChars(candidate, env);
+            if (constantTimeEquals(storedHash, rehashed)) {
+                return true;
+            }
+        } finally {
+            Arrays.fill(storedHash, '\0');
+        }
+        return false;
     }
 
     @Override
-    public char[] createCredentials(
-            char[] credentials,
-            boolean allowRetrieve,
-            char[] credentialId,
-            Map<String, String> envProvider) {
-        if (credentials==null || NBlankable.isBlank(new String(credentials))) {
-            return null;
-        } else {
-            char[] val;
-            char type;
-            if (allowRetrieve) {
-                val = encryptChars(credentials, getPassphrase(envProvider));
-                type = 'B';
-            } else {
-                val = hashChars(credentials, getPassphrase(envProvider));
-                type = 'H';
+    public boolean verify(NCredentialId id, char[] candidate, Function<String, String> env) {
+        if (candidate == null) {
+            candidate = new char[0];
+        }
+        try {
+            //credentials are already encrypted with default passphrase!
+            checkValidCredentialId(id);
+            String p = id.getPayload();
+            if (p != null && !p.isEmpty()) {
+                if (p.charAt(0) == 'H') {
+                    char[] storeHashed = new char[p.length() - 1];
+                    try {
+                        p.getChars(1, p.length(), storeHashed, 0);
+                        return verifyOneWayImpl(candidate, storeHashed, env);
+                    } finally {
+                        Arrays.fill(storeHashed, '\0');
+                    }
+                } else if (p.charAt(0) == 'B') {
+                    char[] storedSecret = new char[p.length() - 1];
+                    char[] decryptedChars=null;
+                    try {
+                        p.getChars(1, p.length(), storedSecret, 0);
+                        decryptedChars = decryptChars(storedSecret, env);
+                        if (constantTimeEquals(candidate, decryptedChars)) {
+                            return true;
+                        }
+                    } finally {
+                        Arrays.fill(storedSecret, '\0');
+                        if(decryptedChars!=null){
+                            Arrays.fill(decryptedChars, '\0');
+                        }
+                    }
+                    return false;
+                }
             }
-            String id = getId();
-            char[] r = new char[id.length() + 2 + val.length];
-            System.arraycopy(id.toCharArray(), 0, r, 0, id.length());
-            r[id.length()] = ':';
-            r[id.length() + 1] = type;
-            System.arraycopy(val, 0, r, id.length() + 2, val.length);
-            return r;
+            throw new NSecurityException(NMsg.ofC("invalid credential %s", id));
+        } finally {
+            Arrays.fill(candidate, '\0');
         }
     }
 
-    public String getPassphrase(Map<String,String> envProvider) {
+    protected boolean isSupportedVersion(NVersion version) {
+        if (version == null) {
+            return false;
+        }
+        if (version.compareTo(this.version) > 0) {
+            return false;
+        }
+        //suppose backward compatibility by default!
+        return true;
+    }
+
+    private void checkValidCredentialId(NCredentialId id) {
+        NAssert.requireNonBlank(id, "id");
+        String a = id.getAgentId();
+        if (a != null && !a.isEmpty()) {
+            int h = a.indexOf("#");
+            if (h >= 0) {
+                String b = a.substring(0, h).trim();
+                if (name.equals(b)) {
+                    NVersion v = NVersion.of(a.substring(h + 1).trim());
+                    if (version.equals(v)) {
+                        return;
+                    }
+                    if (isSupportedVersion(version)) {
+                        return;
+                    } else {
+                        throw new NSecurityException(NMsg.ofC("unsupported credential version : %s", id));
+                    }
+                }
+            }
+        }
+        throw new NSecurityException(NMsg.ofC("invalid credential id %s", id));
+    }
+
+    @Override
+    public NCredentialId addSecret(char[] credentials, Function<String, String> env) {
+        if (credentials == null) {
+            credentials = new char[0];
+        }
+        char[] val = null;
+        char[] result = null;
+        NCredentialId r;
+        try {
+            val = encryptChars(credentials, env);
+            result = new char[val.length + 1];
+            result[0] = 'B';
+            System.arraycopy(val, 0, result, 1, val.length);
+            r = new NCredentialId(getId(), new String(result));
+        } finally {
+            if (val != null) {
+                Arrays.fill(val, '\0');
+            }
+            if (result != null) {
+                Arrays.fill(result, '\0');
+            }
+        }
+        return r;
+    }
+
+    @Override
+    public NCredentialId updateSecret(NCredentialId old, char[] credentials, Function<String, String> envProvider) {
+        removeCredentials(old, envProvider);
+        return addSecret(credentials, envProvider);
+    }
+
+    @Override
+    public NCredentialId addOneWayCredential(char[] credentials, Function<String, String> env) {
+        if (credentials == null) {
+            credentials = new char[0];
+        }
+        char[] val = null;
+        char[] result = null;
+        NCredentialId r;
+        try {
+            val = oneWayChars(credentials, env);
+            result = new char[val.length + 1];
+            result[0] = 'H';
+            System.arraycopy(val, 0, result, 1, val.length);
+            r = new NCredentialId(getId(), new String(result));
+        } finally {
+            if (val != null) {
+                Arrays.fill(val, '\0');
+            }
+            if (result != null) {
+                Arrays.fill(result, '\0');
+            }
+        }
+        return r;
+    }
+
+    @Override
+    public NCredentialId updateOneWay(NCredentialId old, char[] credentials, Function<String, String> envProvider) {
+        removeCredentials(old, envProvider);
+        return addOneWayCredential(credentials, envProvider);
+    }
+
+    public String getPassphrase(Function<String, String> envProvider) {
         String defVal = CoreSecurityUtils.DEFAULT_PASSPHRASE;
         if (envProvider != null) {
-            String r = envProvider.get("nuts.authentication-agent.simple.passphrase");
+            String r = envProvider.apply("nuts.authentication-agent.simple.passphrase");
             if (r == null) {
-                r=defVal;
+                r = defVal;
             }
             if (r == null || r.isEmpty()) {
                 r = defVal;
@@ -138,10 +223,21 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
         return defVal;
     }
 
-    protected abstract char[] decryptChars(char[] data, String passphrase);
+    private static boolean constantTimeEquals(char[] a, char[] b) {
+        if (a == null || b == null) {
+            return false;
+        }
+        int diff = a.length ^ b.length;
+        for (int i = 0; i < a.length && i < b.length; i++) {
+            diff |= a[i] ^ b[i];
+        }
+        return diff == 0;
+    }
 
-    protected abstract char[] encryptChars(char[] data, String passphrase);
+    protected abstract char[] decryptChars(char[] data, Function<String, String> env);
 
-    protected abstract char[] hashChars(char[] data, String passphrase);
+    protected abstract char[] encryptChars(char[] data, Function<String, String> env);
+
+    protected abstract char[] oneWayChars(char[] data, Function<String, String> env);
 
 }
