@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.function.Consumer;
 
 import net.thevpc.nuts.core.NWorkspace;
@@ -130,10 +129,10 @@ public class DefaultNElements implements NElements {
 
     public NElementType commonNumberType(NElementType aa, NElementType bb) {
         if (aa != null) {
-            NAssert.requireEquals(NElementTypeGroup.NUMBER, aa.group(), "aa typeGroup");
+            NAssert.requireNamedEquals(NElementTypeGroup.NUMBER, aa.group(), "aa typeGroup");
         }
         if (bb != null) {
-            NAssert.requireEquals(NElementTypeGroup.NUMBER, bb.group(), "bb typeGroup");
+            NAssert.requireNamedEquals(NElementTypeGroup.NUMBER, bb.group(), "bb typeGroup");
         }
 
         if (aa == null && bb == null) {
