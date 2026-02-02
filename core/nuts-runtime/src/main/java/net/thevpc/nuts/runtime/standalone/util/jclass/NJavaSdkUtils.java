@@ -592,7 +592,7 @@ public class NJavaSdkUtils {
     }
 
     public NExecutionEngineLocation resolveJdkLocation(NPath path, String preferredName) {
-        NAssert.requireNonBlank(path, "path");
+        NAssert.requireNamedNonBlank(path, "path");
         String appSuffix = NEnv.of().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
         NPath bin = path.resolve("bin");
         NPath javaExePath = bin.resolve("java" + appSuffix);
@@ -701,7 +701,7 @@ public class NJavaSdkUtils {
     }
 
     public NId createJdkId(String version) {
-        NAssert.requireNonBlank(version, "version");
+        NAssert.requireNamedNonBlank(version, "version");
         NVersion jv = NVersion.get(version).get();
         long n1 = jv.getNumberLiteralAt(0).flatMap(NLiteral::asLong).orElse(0L);
         long n2 = jv.getNumberLiteralAt(1).flatMap(NLiteral::asLong).orElse(0L);
