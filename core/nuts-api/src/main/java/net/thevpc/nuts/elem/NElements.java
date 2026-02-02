@@ -112,19 +112,9 @@ public interface NElements extends NComponent {
 
     NElementType commonNumberType(NElementType aa, NElementType bb);
 
-    NExprElementReshaperBuilder createLogicalExprElementReshaperBuilder();
+    NExprElementReshaper createExprElementReshaper(NExprElementReshaperType type);
 
-    NExprElementReshaper createLeftAssociativeExprElementReshaper();
-
-    NExprElementReshaper createLogicalExprElementReshaper();
-
-    NExprElementReshaperBuilder createLeftAssociativeExprElementReshaperBuilder();
-
-    NExprElementReshaperBuilder createJavaExprElementReshaperBuilder();
-
-    NExprElementReshaper createJavaExprElementReshaper();
-
-    NExprElementReshaperBuilder createDefaultExprElementReshaperBuilder();
+    NExprElementReshaperBuilder createExprElementReshaperBuilder(NExprElementReshaperType type);
 
     NElementFormatterBuilder createElementFormatterBuilder();
 
