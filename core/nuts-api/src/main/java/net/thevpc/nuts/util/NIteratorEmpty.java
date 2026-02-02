@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 public class NIteratorEmpty<E> extends NIteratorBase<E> {
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNextImpl() {
         return false;
     }
 
