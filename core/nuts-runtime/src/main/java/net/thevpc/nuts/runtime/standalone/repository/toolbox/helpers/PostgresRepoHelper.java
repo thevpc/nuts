@@ -2,21 +2,14 @@ package net.thevpc.nuts.runtime.standalone.repository.toolbox.helpers;
 
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.command.NFetchMode;
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
-import net.thevpc.nuts.platform.NEnv;
-import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepoHelper;
-import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.util.SingleBaseIdFilterHelper;
-import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.spi.NDefinitionFactory;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
@@ -25,10 +18,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -116,7 +107,7 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
                 ids.add(id0);
             }
         }
-        return NIterator.of(ids.iterator()).redescribe(NElementDescribables.ofDesc("NIterator of iterator"));
+        return NIterator.of(ids.iterator()).withDescription(NDescribables.ofDesc("NIterator of iterator"));
         /*return NPath.of("https://www.postgresql.org/ftp/source", session)
                 .stream()
                 .filter(x -> *//*x.isDirectory() &&*//* x.getName().matches("v([0-9][1-9]?\\.){1,2}([0-9][1-9]?)?"), "directory && postgresql")
