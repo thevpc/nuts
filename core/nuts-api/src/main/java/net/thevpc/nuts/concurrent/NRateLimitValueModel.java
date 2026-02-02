@@ -1,7 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.elem.NUpletElementBuilder;
 
 import java.io.Serializable;
@@ -21,7 +21,7 @@ import java.util.Objects;
  *
  * @since 0.8.7
  */
-public class NRateLimitValueModel implements Serializable, NElementDescribable {
+public class NRateLimitValueModel implements Serializable, NDescribable {
     /**
      * Unique identifier of this rate-limited value.
      */
