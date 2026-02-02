@@ -1,6 +1,6 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.elem.NDescribable;
 
 import java.util.function.Supplier;
 
@@ -9,11 +9,11 @@ import java.util.function.Supplier;
  * <p>
  * A {@code NOnceValue} may hold a computed value, indicate whether it has been evaluated,
  * and track its validity or error state. It extends {@link Supplier} to provide standard
- * access to the value and {@link NElementDescribable} for descriptive capabilities.
+ * access to the value and {@link NDescribable} for descriptive capabilities.
  *
  * @param <T> the type of the value
  */
-public interface NOnceValue<T> extends Supplier<T>, NElementDescribable {
+public interface NOnceValue<T> extends Supplier<T>, NDescribable {
 
     /**
      * Creates a stable value from a supplier.
