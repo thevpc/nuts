@@ -8,9 +8,11 @@ import java.util.function.Function;
 
 public class NFunctionFromJavaFunction<T, V> implements NFunction<T, V> {
     private final Function<? super T, V> base;
+    private final NElement description;
 
-    public NFunctionFromJavaFunction(Function<? super T, V> base) {
+    public NFunctionFromJavaFunction(Function<? super T, V> base, NElement description) {
         this.base = base;
+        this.description = description;
     }
 
     @Override
@@ -25,6 +27,7 @@ public class NFunctionFromJavaFunction<T, V> implements NFunction<T, V> {
 
     @Override
     public NElement describe() {
-        return NElements.of().toElement(NMsg.ofC("function %s", base).toString());
+        return description == null ? NElements.of().toElement(NMsg.ofC("function %s", base).toString())
+                : description;
     }
 }
