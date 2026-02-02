@@ -217,7 +217,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
 
     protected NEnumSet(Set<T> values, Class<T> type, NFunction2<Set<T>, Class<T>, NEnumSet<T>> ctr) {
         this.ctr = ctr;
-        NAssert.requireNonNull(ctr, "ctr");
+        NAssert.requireNamedNonNull(ctr, "ctr");
         this.maxSize = type.getEnumConstants().length;
         this.values = EnumSet.noneOf(type);
         this.type = type;
@@ -429,9 +429,9 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     private static <T extends Enum<T>> NEnumSet<T> newInstance(NFunction2<Set<T>, Class<T>, NEnumSet<T>> ctr, Set<T> set, Class<T> cls) {
-        NAssert.requireNonNull(ctr, "constructor");
+        NAssert.requireNamedNonNull(ctr, "constructor");
         NEnumSet<T> a = ctr.apply(set, cls);
-        NAssert.requireNonNull(a, "instance");
+        NAssert.requireNamedNonNull(a, "instance");
         return a;
     }
 
@@ -445,7 +445,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     private static <T extends Enum<T>, V extends NEnumSet<T>> NFunction2<Set<T>, Class<T>, NEnumSet<T>> TYPED_CTR(Class<V> clz) {
-        NAssert.requireNonNull(clz, "enum set class");
+        NAssert.requireNamedNonNull(clz, "enum set class");
         Constructor<V> d;
         try {
             d = clz.getDeclaredConstructor(Set.class, Class.class, NFunction2.class);
