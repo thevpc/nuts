@@ -98,8 +98,8 @@ public class NWorkspaceUtils {
     }
 
     public NId createSdkId(String type, String version) {
-        NAssert.requireNonBlank(type, "sdk type");
-        NAssert.requireNonBlank(version, "version");
+        NAssert.requireNamedNonBlank(type, "sdk type");
+        NAssert.requireNamedNonBlank(version, "version");
         if ("java".equalsIgnoreCase(type)) {
             return NJavaSdkUtils.of(workspace).createJdkId(version);
         } else {
