@@ -375,8 +375,8 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     public NWebResponse run(NWebRequest r) {
-        NAssert.requireNonNull(r, "request");
-        NAssert.requireNonNull(r.getMethod(), "method");
+        NAssert.requireNamedNonNull(r, "request");
+        NAssert.requireNamedNonNull(r.getMethod(), "method");
         NHttpMethod method = r.getMethod();
         String spec = null;
         try {
