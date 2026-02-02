@@ -29,15 +29,13 @@ net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecutorComponent
 net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenRepositoryFactoryComponent
 net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepositoryFactoryComponent
 net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNIndexStoreFactory
-net.thevpc.nuts.runtime.standalone.security.DefaultNAuthenticationAgent
+net.thevpc.nuts.runtime.standalone.security.DefaultNAuthenticationAgentV1
+net.thevpc.nuts.runtime.standalone.security.DefaultNAuthenticationAgentV2
 net.thevpc.nuts.runtime.standalone.log.DefaultNLogs
 net.thevpc.nuts.runtime.standalone.workspace.list.DefaultNWorkspaceList
 net.thevpc.nuts.runtime.standalone.xtra.hashname.DefaultNDigestName
 net.thevpc.nuts.runtime.standalone.repository.DefaultNRepositoryDB
 net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec
-net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNAddUserCmd
-net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNUpdateUserCmd
-net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNRemoveUserCmd
 net.thevpc.nuts.runtime.standalone.workspace.cmd.search.DefaultNSearch
 net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy.DefaultNDeploy
 net.thevpc.nuts.runtime.standalone.workspace.cmd.push.DefaultNPush
@@ -48,7 +46,7 @@ net.thevpc.nuts.runtime.standalone.installer.svc.DefaultInstallSvcCommand
 net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall.DefaultNUninstall
 net.thevpc.nuts.runtime.standalone.workspace.cmd.update.DefaultNUpdate
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.updatestats.DefaultNUpdateStats
-net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityManager
+net.thevpc.nuts.runtime.standalone.security.DefaultNSecurityManager
 net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions
 net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli
 
@@ -122,7 +120,6 @@ net.thevpc.nuts.runtime.standalone.dependency.filter.InternalNDependencyFilters
 net.thevpc.nuts.runtime.standalone.definition.filter.InternalNDefinitionFilters
 net.thevpc.nuts.runtime.standalone.repository.filter.InternalNRepositoryFilters
 net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilters
-net.thevpc.nuts.runtime.standalone.reflect.NReflectMapperImpl
 
 net.thevpc.nuts.runtime.standalone.dependency.solver.DefaultNDependencySolvers
 
