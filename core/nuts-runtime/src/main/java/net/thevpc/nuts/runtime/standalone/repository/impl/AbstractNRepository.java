@@ -41,8 +41,6 @@ import net.thevpc.nuts.spi.NRepositorySPI;
 import java.util.*;
 
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.security.DefaultNRepositorySecurityManager;
-import net.thevpc.nuts.runtime.standalone.security.DefaultNRepositorySecurityModel;
 
 /**
  * Created by vpc on 1/18/17.
@@ -55,7 +53,6 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     protected Map<String, String> extensions = new HashMap<>();
     protected NRepository parentRepository;
     protected NWorkspace workspace;
-    protected DefaultNRepositorySecurityModel securityModel;
     protected NRepositoryConfigModel configModel;
     protected NObservableMap<String, Object> userProperties;
     protected NCachedValue<Boolean> available;
@@ -66,7 +63,6 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     public AbstractNRepository() {
         this.workspace = NWorkspace.of();
         this.userProperties = new NDefaultObservableMap<>();
-        this.securityModel = new DefaultNRepositorySecurityModel(this);
         this.available = NCachedValue.of(() -> isAccessibleImpl());
     }
 
@@ -156,11 +152,6 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     @Override
     public NRepositoryConfigManager config() {
         return new DefaultNRepoConfigManager(configModel);
-    }
-
-    @Override
-    public NRepositorySecurityManager security() {
-        return new DefaultNRepositorySecurityManager(securityModel);
     }
 
     @Override
