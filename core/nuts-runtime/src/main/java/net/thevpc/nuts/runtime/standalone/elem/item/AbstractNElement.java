@@ -236,6 +236,24 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public boolean isAnyNamedListContainer() {
+        switch (type) {
+            case FULL_OBJECT:
+            case NAMED_OBJECT:
+            case FULL_ARRAY:
+            case NAMED_ARRAY:
+            case NAMED_UPLET:
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isAnyNamedListContainer(String name) {
+        return isAnyNamedListContainer() && name.equals(asNamed().get().name().orNull());
+    }
+
+    @Override
     public boolean isAnyNamedObject(String name) {
         return isAnyNamedObject() && isNamed(name);
     }
@@ -942,7 +960,21 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isNamed() {
-        return type().isAnyNamed();
+        switch (type()) {
+            case NAMED_ARRAY:
+            case FULL_ARRAY:
+            case NAMED_OBJECT:
+            case FULL_OBJECT:
+            case NAMED_UPLET:
+            {
+                return true;
+            }
+            case PAIR:{
+                NElement key = asPair().get().key();
+                return key.isAnyString();
+            }
+        }
+        return false;
     }
 
     @Override
