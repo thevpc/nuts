@@ -51,7 +51,7 @@ public class NMsg implements NBlankable {
     private final long durationNano;
 
     public static Placeholder placeholder(String name) {
-        NAssert.requireNonBlank(name, "name");
+        NAssert.requireNamedNonBlank(name, "name");
         return new Placeholder(name.trim());
     }
 
@@ -116,9 +116,9 @@ public class NMsg implements NBlankable {
     }
 
     private NMsg(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, long durationNano, Function<String, ?> placeholderBindings) {
-        NAssert.requireNonNull(message, "message");
-        NAssert.requireNonNull(format, "format");
-        NAssert.requireNonNull(params, "params");
+        NAssert.requireNamedNonNull(message, "message");
+        NAssert.requireNamedNonNull(format, "format");
+        NAssert.requireNamedNonNull(params, "params");
         this.level = level == null ? Level.INFO : level;
         this.format = format;
         this.throwable = throwable;
@@ -133,9 +133,9 @@ public class NMsg implements NBlankable {
             }
         }
         if (format == NTextFormatType.STYLED) {
-            NAssert.requireNonNull(styles, "styles for " + format);
+            NAssert.requireNamedNonNull(styles, "styles for " + format);
         } else {
-            NAssert.requireNull(styles, "styles for " + format + " (not supported)");
+            NAssert.requireNamedNull(styles, "styles for " + format + " (not supported)");
         }
         this.codeLang = NStringUtils.trimToNull(codeLang);
         this.message = message;
@@ -681,8 +681,8 @@ public class NMsg implements NBlankable {
         if (placeholderBindings instanceof MapAsSupplier2) {
             Map<String, Supplier<?>> newMap = new LinkedHashMap<>(((MapAsSupplier2) placeholderBindings).content);
             for (NMsgParam param : params) {
-                NAssert.requireNonNull(param, "param");
-                NAssert.requireNonNull(param.getName(), "param.name");
+                NAssert.requireNamedNonNull(param, "param");
+                NAssert.requireNamedNonNull(param.getName(), "param.name");
                 newMap.put(param.getName(), new ConstSupplier<>(param.getValue()));
             }
             return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier2(newMap));
@@ -693,8 +693,8 @@ public class NMsg implements NBlankable {
                 newMap.put(e.getKey(), e::getValue);
             }
             for (NMsgParam param : params) {
-                NAssert.requireNonNull(param, "param");
-                NAssert.requireNonNull(param.getName(), "param.name");
+                NAssert.requireNamedNonNull(param, "param");
+                NAssert.requireNamedNonNull(param.getName(), "param.name");
                 newMap.put(param.getName(), new ConstSupplier<>(param.getValue()));
             }
             return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier2(newMap));
@@ -726,7 +726,7 @@ public class NMsg implements NBlankable {
         if (placeholderBindings instanceof MapAsSupplier2) {
             Map<String, Supplier<?>> newMap = new LinkedHashMap<>(((MapAsSupplier2) placeholderBindings).content);
             for (Map.Entry<String, ?> e : placeholderMap.entrySet()) {
-                NAssert.requireNonNull(e.getKey(), "param.name");
+                NAssert.requireNamedNonNull(e.getKey(), "param.name");
                 newMap.put(e.getKey(), new ConstSupplier<>(e.getValue()));
             }
             return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier2(newMap));
@@ -1526,9 +1526,9 @@ public class NMsg implements NBlankable {
             this.content = new LinkedHashMap<>();
             if (params != null) {
                 for (NMsgParam param : params) {
-                    NAssert.requireNonNull(param, "param");
+                    NAssert.requireNamedNonNull(param, "param");
                     String e = param.getName();
-                    NAssert.requireNonNull(e, "param.name");
+                    NAssert.requireNamedNonNull(e, "param.name");
                     if (content.containsKey(e)) {
                         throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("duplicate key %s", e));
                     }
