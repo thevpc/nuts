@@ -13,8 +13,9 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.log.NLog;
@@ -45,7 +46,7 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
     public NSearchVersionsRepositoryCmd run() {
         NSession session = getRepo().getWorkspace().currentSession();
         //id = id.builder().setFaceContent().build();
-        getRepo().security().checkAllowed(NConstants.Permissions.FETCH_DESC, "find-versions");
+        NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.FETCH_DESC, "find-versions");
         NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
         CoreNIdUtils.checkShortId(id);
         xrepo.checkAllowedFetch(id);
@@ -65,7 +66,7 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
                         resultList.add(
                                 NIteratorBuilder.of(d).filter(
                                         x -> filter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(x,repo, "DefaultNSearchVersionsRepositoryCmd")),
-                                        () -> NElementDescribables.describeResolveOrToString(filter)
+                                        () -> NDescribables.describeResolveOrToString(filter)
                                 ).safeIgnore().iterator()
                         );
                     }
