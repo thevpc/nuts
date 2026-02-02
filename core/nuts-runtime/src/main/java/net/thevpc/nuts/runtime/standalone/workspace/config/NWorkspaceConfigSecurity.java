@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.core.NConfigItem;
+import net.thevpc.nuts.security.NRepositoryAccessConfig;
 import net.thevpc.nuts.security.NUserConfig;
 
 public class NWorkspaceConfigSecurity extends NConfigItem implements Cloneable {
@@ -9,6 +10,7 @@ public class NWorkspaceConfigSecurity extends NConfigItem implements Cloneable {
     private boolean secure = false;
     private String authenticationAgent;
     private NUserConfig[] users;
+    private NRepositoryAccessConfig[] repositories;
 
     public boolean isSecure() {
         return secure;
@@ -28,6 +30,15 @@ public class NWorkspaceConfigSecurity extends NConfigItem implements Cloneable {
         return this;
     }
 
+    public NRepositoryAccessConfig[] getRepositories() {
+        return repositories;
+    }
+
+    public NWorkspaceConfigSecurity setRepositories(NRepositoryAccessConfig[] repositories) {
+        this.repositories = repositories;
+        return this;
+    }
+
     public NUserConfig[] getUsers() {
         return users;
     }
@@ -44,6 +55,12 @@ public class NWorkspaceConfigSecurity extends NConfigItem implements Cloneable {
                 copy.users = new NUserConfig[copy.users.length];
                 for (int i = 0; i < users.length; i++) {
                     copy.users[i] = users[i].copy();
+                }
+            }
+            if (copy.repositories != null) {
+                copy.repositories = new NRepositoryAccessConfig[copy.repositories.length];
+                for (int i = 0; i < repositories.length; i++) {
+                    copy.repositories[i] = repositories[i].copy();
                 }
             }
             return copy;
