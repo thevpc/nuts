@@ -1,7 +1,5 @@
 package net.thevpc.nuts.internal.optional;
 
-import java.util.Objects;
-
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
@@ -39,7 +37,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public <V> NOptional<V> then(Function<T, V> mapper) {
-        NAssert.requireNonNull(mapper);
+        NAssert.requireNamedNonNull(mapper);
         return (NOptional<V>) this;
     }
 
