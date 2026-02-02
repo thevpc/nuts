@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.repository.config;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -52,8 +51,8 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
                                          NSpeedQualifier speed,
                                          boolean supportedMirroring, String repositoryType) {
         this.workspace = workspace;
-        NAssert.requireNonNull(options, "repository options");
-        NAssert.requireNonNull(options.getConfig(), "repository options config");
+        NAssert.requireNamedNonNull(options, "repository options");
+        NAssert.requireNamedNonNull(options.getConfig(), "repository options config");
         this.repositoryRef = NRepositoryUtils.optionsToRef(options);
         String storeLocation = options.getLocation();
         NRepositoryConfig config = options.getConfig();
@@ -62,10 +61,10 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
 
         speed = speed == null ? NSpeedQualifier.NORMAL : speed;
 
-        NAssert.requireNonBlank(repositoryType, "repository type");
-        NAssert.requireNonBlank(repositoryName, "repository name");
-        NAssert.requireNonBlank(globalName, "repository global name");
-        NAssert.requireNonBlank(storeLocation, "repository store location");
+        NAssert.requireNamedNonBlank(repositoryType, "repository type");
+        NAssert.requireNamedNonBlank(repositoryName, "repository name");
+        NAssert.requireNamedNonBlank(globalName, "repository global name");
+        NAssert.requireNamedNonBlank(storeLocation, "repository store location");
         Path pfolder = Paths.get(storeLocation);
         if ((Files.exists(pfolder) && !Files.isDirectory(pfolder))) {
             throw new NInvalidRepositoryException(storeLocation, NMsg.ofC("unable to resolve root as a valid folder %s", storeLocation));
@@ -263,7 +262,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     }
 
     public void setConfig(NRepositoryConfig newConfig, boolean fireChange) {
-        NAssert.requireNonBlank(newConfig, "repository config");
+        NAssert.requireNamedNonBlank(newConfig, "repository config");
         this.config = newConfig;
         if (this.config.getUuid() == null) {
             fireChange = true;
