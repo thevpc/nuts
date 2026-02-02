@@ -65,7 +65,7 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
         return NElementFactory.of().ofPair(key, value);
     }
 
-    static NOperatorSymbolElement ofOpSymbol(NOperatorSymbol kind) {
+    static NOperatorSymbolElement ofOperatorSymbol(NOperatorSymbol kind) {
         return NElementFactory.of().ofOp(kind);
     }
 
@@ -856,6 +856,10 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
     boolean isAnyNamedObject();
 
     boolean isAnyNamedObject(String name);
+
+    boolean isAnyNamedListContainer();
+
+    boolean isAnyNamedListContainer(String name);
 
     boolean isParamObject();
 
