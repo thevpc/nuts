@@ -11,9 +11,10 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.core.NIndexerNotAccessibleException;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -47,20 +48,20 @@ public class DefaultNSearchRepositoryCmd extends AbstractNSearchRepositoryCmd {
         NSession session = getRepo().getWorkspace().currentSession();
         NRunnable startRunnable = NRunnable.of(
                 () -> {
-                    getRepo().security().checkAllowed(NConstants.Permissions.FETCH_DESC, "search");
+                    NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.FETCH_DESC, "search");
                     NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
                     xrepo.checkAllowedFetch(null);
                     _LOG()
                             .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST))
                                     .withLevel(Level.FINEST).withIntent(NMsgIntent.START));
                 }
-        ).redescribe(NElementDescribables.ofDesc("CheckAuthorizations"));
+        ).withDescription(NDescribables.ofDesc("CheckAuthorizations"));
         NRunnable endRunnable =
                 NRunnable.of(
                         () -> _LOG()
                                 .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST))
                                         .withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS))
-                        ).redescribe(NElementDescribables.ofDesc("Log"));
+                        ).withDescription(NDescribables.ofDesc("Log"));
         try {
             NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
             boolean processIndexFirst =
