@@ -2,18 +2,15 @@ package net.thevpc.nuts.elem;
 
 public interface NExprElementReshaper {
 
-    static NExprElementReshaper ofJavaLike() {
-        return NElements.of().createJavaExprElementReshaper();
+    static NExprElementReshaper ofDefault() {
+        return NElements.of().createExprElementReshaper(NExprElementReshaperType.DEFAULT);
     }
 
-    static NExprElementReshaper ofLogical() {
-        return NElements.of().createLogicalExprElementReshaper();
-    }
-
-    static NExprElementReshaper ofLeftAssociative() {
-        return NElements.of().createLeftAssociativeExprElementReshaper();
+    static NExprElementReshaper of(NExprElementReshaperType type) {
+        return NElements.of().createExprElementReshaper(type);
     }
 
     NElement reshape(NFlatExprElement flat);
+
     NExprElementReshaperBuilder builder();
 }
