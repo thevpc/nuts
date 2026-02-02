@@ -28,9 +28,9 @@ public class NDefinitionDesktopEnvironmentFamilyFilter extends AbstractDefinitio
 
     @Override
     public boolean acceptDefinition(NDefinition def) {
-        List<NDesktopEnvironmentFamily> current = NStream.ofIterable(def.getDescriptor().getCondition().getDesktopEnvironment()).filterNonBlank()
+        List<NDesktopEnvironmentFamily> current = NStream.ofIterable(def.getDescriptor().getCondition().getDesktopEnvironment()).nonBlank()
                 .map(x -> NDesktopEnvironmentFamily.parse(x).orNull())
-                .filterNonBlank()
+                .nonBlank()
                 .toList();
         if (current.isEmpty() || accepted.isEmpty()) {
             return true;
