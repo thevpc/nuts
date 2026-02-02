@@ -516,6 +516,19 @@ public final class CoreStringUtils {
         return values.stream().map(x -> String.valueOf(x)).collect(Collectors.joining(" & "));
     }
 
+    public static List<String> copyNonBlank(List<String> other) {
+        List<String> w=new  ArrayList<>();
+        if(other!=null){
+            for (String s : other) {
+                s=NStringUtils.trimToNull(s);
+                if(s!=null){
+                    w.add(s);
+                }
+            }
+        }
+        return w;
+    }
+
     public static String trueOrNone(List<String> values) {
         if (values.isEmpty()) {
             return "true";
