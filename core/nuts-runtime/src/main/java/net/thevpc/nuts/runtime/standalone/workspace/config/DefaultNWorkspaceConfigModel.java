@@ -69,7 +69,6 @@ import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNTerminalFromSystem
 import net.thevpc.nuts.runtime.standalone.io.terminal.UnmodifiableTerminal;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.NVersionCompat;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
@@ -839,7 +838,7 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public void addNamedCredentials(NNamedCredential credential) {
-        NAssert.requireNonNull(configUsers.get(credential.getUserName()), "user " + credential.getUserName());
+        NAssert.requireNamedNonNull(configUsers.get(credential.getUserName()), "user " + credential.getUserName());
         workspace.getModel().securityModel.requiredAdminOrUser(credential.getUserName());
         for (int i = 0; i < configNamedCredentials.size(); i++) {
             NNamedCredential x = configNamedCredentials.get(i);
@@ -908,9 +907,9 @@ public class DefaultNWorkspaceConfigModel {
 
     public void addRepositoryUser(NRepositoryAccessConfig config) {
         if (config != null) {
-            NAssert.requireNonNull(getUser(config.getUserName()), "user " + config.getUserName());
+            NAssert.requireNamedNonNull(getUser(config.getUserName()), "user " + config.getUserName());
             NRepository repository = workspace.getRepositoryModel().getRepository(config.getRepository());
-            NAssert.requireNonNull(repository, "repo " + config.getUserName());
+            NAssert.requireNamedNonNull(repository, "repo " + config.getUserName());
             NRepositoryAccessConfig cconfig = config.copy();
             cconfig.setRepository(repository.getUuid());
             if (configRepoUsers.stream().anyMatch(
