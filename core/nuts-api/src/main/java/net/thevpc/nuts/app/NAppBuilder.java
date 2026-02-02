@@ -279,7 +279,7 @@ public class NAppBuilder {
                     }
                 }
             }
-            NAssert.requireNonNull(applicationInstanceObj, "applicationInstance");
+            NAssert.requireNamedNonNull(applicationInstanceObj, "applicationInstance");
 
             NApplication applicationInstance = (applicationInstanceObj instanceof NApplication) ? (NApplication) applicationInstanceObj : NApplications.createApplicationInstanceFromAnnotatedInstance(applicationInstanceObj);
             Class appClass =
