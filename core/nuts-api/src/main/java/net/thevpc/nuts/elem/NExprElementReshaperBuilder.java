@@ -1,8 +1,8 @@
 package net.thevpc.nuts.elem;
 
 public interface NExprElementReshaperBuilder {
-    static NExprElementReshaperBuilder ofDefaultBuilder() {
-        return NElements.of().createDefaultExprElementReshaperBuilder();
+    static NExprElementReshaperBuilder of() {
+        return NElements.of().createExprElementReshaperBuilder(NExprElementReshaperType.EMPTY);
     }
 
     NExprElementReshaperBuilder addUnaryOperator(NOperatorSymbol op);
