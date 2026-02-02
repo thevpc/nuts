@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.core.NConfirmationMode;
-import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLog;
@@ -25,42 +24,42 @@ public class DefaultWriteTypeProcessor {
     }
 
     public DefaultWriteTypeProcessor ask(NMsg m) {
-        NAssert.requireNonNull(m, "message");
+        NAssert.requireNamedNonNull(m, "message");
         this.askMessage = m;
         return this;
     }
 
     public DefaultWriteTypeProcessor withLog(NLog log, NMsg m) {
-        NAssert.requireNonNull(log, "log");
-        NAssert.requireNonNull(m, "message");
+        NAssert.requireNamedNonNull(log, "log");
+        NAssert.requireNamedNonNull(m, "message");
         this.log = log;
         this.logMessage = m;
         return this;
     }
 
     public DefaultWriteTypeProcessor onError(Supplier<RuntimeException> error) {
-        NAssert.requireNonNull(error, "error handler");
+        NAssert.requireNamedNonNull(error, "error handler");
         this.error = error;
         return this;
     }
 
     private NMsg getValidAskMessage() {
-        NAssert.requireNonNull(askMessage, "message");
+        NAssert.requireNamedNonNull(askMessage, "message");
         return askMessage;
     }
 
     private NMsg getValidLogMessage() {
-        NAssert.requireNonNull(logMessage, "log message");
+        NAssert.requireNamedNonNull(logMessage, "log message");
         return logMessage;
     }
 
     private Supplier<RuntimeException> getValidError() {
-        NAssert.requireNonNull(error, "error handler");
+        NAssert.requireNamedNonNull(error, "error handler");
         return error;
     }
 
     private NLog getValidLog() {
-        NAssert.requireNonNull(log, "log");
+        NAssert.requireNamedNonNull(log, "log");
         return log;
     }
 
