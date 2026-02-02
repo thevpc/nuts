@@ -4,6 +4,7 @@ import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.security.NUserConfig;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NPositionType;
@@ -36,7 +37,6 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     private final NSpeedQualifier speed;
     private final NPath storeLocation;
     private NRepositoryConfig config;
-    private final Map<String, NUserConfig> configUsers = new LinkedHashMap<>();
     private boolean configurationChanged = false;
     private int deployWeight;
     private boolean temporary;
@@ -292,12 +292,6 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         }
 
         this.globalName = newConfig.getName();
-        this.configUsers.clear();
-        if (config.getUsers() != null) {
-            for (NUserConfig user : config.getUsers()) {
-                configUsers.put(user.getUser(), user);
-            }
-        }
         removeAllMirrors();
         if (config.getMirrors() != null) {
             for (NRepositoryRef ref : config.getMirrors()) {
@@ -339,42 +333,6 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     }
 
 
-    @Override
-    public void setUser(NUserConfig user) {
-//        options = CoreNutsUtils.validate(options, repository.getWorkspace());
-        configUsers.put(user.getUser(), user);
-        fireConfigurationChanged("user");
-//        return this;
-    }
-
-    @Override
-    public void removeUser(String userId) {
-        if (configUsers.containsKey(userId)) {
-//            session = CoreNutsUtils.validate(session, repository.getWorkspace());
-            configUsers.remove(userId);
-            fireConfigurationChanged("user");
-        }
-//        return this;
-    }
-
-    @Override
-    public NOptional<NUserConfig> findUser(String userId) {
-        NUserConfig u = configUsers.get(userId);
-        if (u == null) {
-            if (NConstants.Users.ADMIN.equals(userId) || NConstants.Users.ANONYMOUS.equals(userId)) {
-                u = new NUserConfig(userId, null, null, null);
-                configUsers.put(userId, u);
-                fireConfigurationChanged("user");
-            }
-        }
-        return NOptional.ofNamed(u, "user " + userId);
-    }
-
-    @Override
-    public NUserConfig[] findUsers() {
-        return configUsers.values().toArray(new NUserConfig[0]);
-    }
-
     public void setMirrorEnabled(String repoName, boolean enabled) {
         NRepositoryRef e = repositoryRegistryHelper.findRepositoryRef(repoName);
         if (e != null && e.isEnabled() != enabled) {
@@ -393,7 +351,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         boolean ok = false;
         if (force || (!NWorkspace.of().isReadOnly() && isConfigurationChanged())) {
             NWorkspaceUtils.of().checkReadOnly();
-            repository.security().checkAllowed(NConstants.Permissions.SAVE, "save");
+            NSecurityManager.of().checkRepositoryAllowed(repository.getUuid(), NConstants.Permissions.SAVE, "save");
 
             config.setConfigVersion(DefaultNWorkspace.VERSION_REPOSITORY_CONFIG);
             if (config.getEnv() != null && config.getEnv().isEmpty()) {
@@ -401,10 +359,6 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
             }
             config.setTags(tags.toArray(new String[0]));
             config.setMirrors(Arrays.asList(repositoryRegistryHelper.getRepositoryRefs()));
-            config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
-//            if (NutsBlankable.isBlank(config.getConfigVersion())) {
-//                config.setConfigVersion(repository.getWorkspace().getApiVersion());
-//            }
             boolean created=((NWorkspaceExt)workspace).store().saveRepoConfig(repository,config);
 
             configurationChanged = false;
@@ -527,7 +481,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         }
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         NSession session = repository.getWorkspace().currentSession();
-        repository.security().checkAllowed(NConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
+        NSecurityManager.of().checkRepositoryAllowed(repository.getUuid(), NConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
         final NRepository r = repositoryRegistryHelper.removeRepository(repositoryId);
         if (r != null) {
             NRepositoryHelper.of(repository).events().fireOnRemoveRepository(new DefaultNRepositoryEvent(session, repository, r, "mirror", r, null));
