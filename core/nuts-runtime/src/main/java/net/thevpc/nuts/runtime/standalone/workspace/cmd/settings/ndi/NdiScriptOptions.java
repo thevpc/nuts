@@ -245,7 +245,7 @@ public class NdiScriptOptions implements Cloneable {
                 } catch (IOException e) {
                     throw new NIOException(e);
                 }
-                NAssert.requireNonBlank(_latestVersion, "missing nuts-api version to link to");
+                NAssert.requireNamedNonBlank(_latestVersion, "missing nuts-api version to link to");
                 nutsApiId = workspace.getApiId().builder().setVersion(_latestVersion).build();
             }
         }
