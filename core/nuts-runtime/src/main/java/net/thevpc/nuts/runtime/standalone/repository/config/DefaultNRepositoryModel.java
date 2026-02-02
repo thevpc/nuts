@@ -7,7 +7,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NSimpleRepositoryWrapper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -135,7 +135,7 @@ public class DefaultNRepositoryModel {
 
     public void removeRepository(String repositoryId) {
         NSession session = workspace.currentSession();
-        NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
+        NSecurityManager.of().checkAllowed(NConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
         final NRepository repository = repositoryRegistryHelper.removeRepository(repositoryId);
         if (repository != null) {
             NWorkspace.of().saveConfig();
