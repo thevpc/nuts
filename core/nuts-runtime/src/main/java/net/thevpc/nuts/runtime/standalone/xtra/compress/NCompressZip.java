@@ -27,9 +27,9 @@ public class NCompressZip implements NCompressPackaging {
 
     public void compressPackage(NCompress compress) {
         List<NInputSource> sources = compress.getSources();
-        NAssert.requireNonBlank(sources, "source");
+        NAssert.requireNamedNonBlank(sources, "source");
         NOutputTarget target = compress.getTarget();
-        NAssert.requireNonBlank(target, "target");
+        NAssert.requireNamedNonBlank(target, "target");
         NChronometer chronometer = NChronometer.startNow();
         _LOG().log(NMsg.ofC("compress %s to %s", sources, target).asFinest().withIntent(NMsgIntent.START).withLevel(Level.FINEST).withIntent(NMsgIntent.START));
         try {
