@@ -421,7 +421,7 @@ public class DefaultNExprsCommonOps {
     }
 
     public NOptional<NFunction2<?, ?, ?>> findFunction2(NExprCommonOp op, NExprOpType type, NPlatformArgsSignature sig) {
-        NAssert.requireTrue(sig.size() == 2, "sig size");
+        NAssert.requireNamedTrue(sig.size() == 2, "sig size");
         if (sig.getType(0) == null || sig.getType(1) == null) {
             List<Object> acceptable = commonOps.entrySet().stream().filter(x -> x.getKey().getType() == type && x.getKey().getOp() == op)
                     .flatMap(x -> x.getValue().toMap().entrySet().stream().filter(y -> y.getKey().matches(sig)))
@@ -446,7 +446,7 @@ public class DefaultNExprsCommonOps {
     }
 
     public NOptional<NFunction<?, ?>> findFunction1(NExprCommonOp op, NExprOpType type, NPlatformArgsSignature sig) {
-        NAssert.requireTrue(sig.size() == 1, "sig size");
+        NAssert.requireNamedTrue(sig.size() == 1, "sig size");
         Type t = sig.getType(0);
         if (t == null) {
             List<Object> acceptable = commonOps.entrySet().stream().filter(x -> x.getKey().getType() == type && x.getKey().getOp() == op)
