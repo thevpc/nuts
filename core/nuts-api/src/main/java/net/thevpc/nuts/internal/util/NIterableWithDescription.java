@@ -17,7 +17,7 @@ public class NIterableWithDescription<T> implements NIterable<T> {
 
     @Override
     public NIterator<T> iterator() {
-        return base.iterator().redescribe(nfo);
+        return base.iterator().withDescription(nfo);
     }
 
     @Override
@@ -27,7 +27,7 @@ public class NIterableWithDescription<T> implements NIterable<T> {
 
     @Override
     public NElement describe() {
-        NObjectElement b = NElementDescribables.describeResolveOr(base, () -> NElement.ofObjectBuilder().build())
+        NObjectElement b = NDescribables.describeResolveOr(base, () -> NElement.ofObjectBuilder().build())
                 .asObject().get();
         NElement a = nfo.get();
         if (b.isEmpty()) {
