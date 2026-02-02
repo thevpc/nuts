@@ -97,8 +97,8 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequestImpl setUrl(String url, Object... vars) {
-        NAssert.requireNonNull(url, "url");
-        NAssert.requireNonNull(vars, "vars");
+        NAssert.requireNamedNonNull(url, "url");
+        NAssert.requireNamedNonNull(vars, "vars");
         NStringBuilder sb = new NStringBuilder();
         char[] charArray = url.toCharArray();
         char last = '\0';
