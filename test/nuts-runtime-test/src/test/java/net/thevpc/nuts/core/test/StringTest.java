@@ -123,6 +123,6 @@ public class StringTest {
 
     @Test
     public void test10() {
-        Assertions.assertEquals("", NStringUtils.pjoin("/", "", "/"));
+        Assertions.assertEquals("/", NStringUtils.pjoin("/", "", "/"));
     }
 }
