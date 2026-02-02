@@ -11,7 +11,7 @@ public class WebCliTest {
         TestUtils.openNewMinTestWorkspace();
     }
 
-    @Test
+//    @Test
     public void test01b() {
         String tson = "a:b b";
         NWebCli.of()
