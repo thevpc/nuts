@@ -1,7 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.elem.NDescribable;
 
 /**
  * Immutable snapshot of runtime metrics for a bulkhead.
@@ -16,7 +16,7 @@ import net.thevpc.nuts.elem.NElementDescribable;
  * @since 0.8.8
  */
 
-public class NBulkheadMetrics implements NElementDescribable {
+public class NBulkheadMetrics implements NDescribable {
     private final String bulkheadId;
     private final int maxConcurrent;
     private final int activeCalls;
