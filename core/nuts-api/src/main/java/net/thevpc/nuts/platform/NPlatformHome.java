@@ -53,7 +53,7 @@ public class NPlatformHome {
     }
 
     public static NPlatformHome ofPortable(NOsFamily platformOsFamily, boolean system, String userName) {
-        NAssert.requireNonBlank(userName, "userName");
+        NAssert.requireNamedNonBlank(userName, "userName");
         return new NPlatformHome(platformOsFamily, system, p -> null, p -> portableProp(p, platformOsFamily, null, x -> {
             switch (x) {
                 case "user.name":
@@ -72,7 +72,7 @@ public class NPlatformHome {
         NOsFamily osFamily = platformOsFamily == null ? NOsFamily.UNIX : platformOsFamily;
         switch (p) {
             case "user.name": {
-                String userName = NAssert.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
+                String userName = NAssert.requireNamedNonBlank(props == null ? null : props.apply("user.name"), "user.name");
                 return userName;
             }
             case "user.home": {
@@ -82,11 +82,11 @@ public class NPlatformHome {
                 }
                 switch (osFamily) {
                     case WINDOWS: {
-                        String userName = NAssert.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
+                        String userName = NAssert.requireNamedNonBlank(props == null ? null : props.apply("user.name"), "user.name");
                         return "C:\\Users\\" + userName;
                     }
                     default: {
-                        String userName = NAssert.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
+                        String userName = NAssert.requireNamedNonBlank(props == null ? null : props.apply("user.name"), "user.name");
                         switch (userName) {
                             case "root":
                                 return "/root";
@@ -104,7 +104,7 @@ public class NPlatformHome {
                 }
                 switch (osFamily) {
                     case WINDOWS: {
-                        String userName = NAssert.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
+                        String userName = NAssert.requireNamedNonBlank(props == null ? null : props.apply("user.name"), "user.name");
                         return "C:\\Users\\" + userName + "\\AppData\\Local\\Temp";
                     }
                     default: {
