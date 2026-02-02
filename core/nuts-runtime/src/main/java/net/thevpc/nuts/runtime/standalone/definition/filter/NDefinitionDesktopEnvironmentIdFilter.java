@@ -32,7 +32,7 @@ public class NDefinitionDesktopEnvironmentIdFilter extends AbstractDefinitionFil
 
     @Override
     public boolean acceptDefinition(NDefinition def) {
-        List<String> current = NStream.ofIterable(def.getDescriptor().getCondition().getDesktopEnvironment()).filterNonBlank().toList();
+        List<String> current = NStream.ofIterable(def.getDescriptor().getCondition().getDesktopEnvironment()).nonBlank().toList();
         if(current.isEmpty() || accepted.isEmpty()){
             return true;
         }
