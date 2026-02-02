@@ -65,7 +65,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                 cmdLine.skipAll();
             }
         }
-        NAssert.requireNonBlank(commands, "commands");
+        NAssert.requireNamedNonBlank(commands, "commands");
         NTexts factory = NTexts.of();
         for (String arg : commands) {
             NPrintStream out = session.out();
