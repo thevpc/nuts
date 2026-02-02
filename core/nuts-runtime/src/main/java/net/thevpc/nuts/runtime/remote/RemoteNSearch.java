@@ -4,7 +4,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElementBuilder;
@@ -59,7 +59,7 @@ public class RemoteNSearch extends AbstractNSearch {
                         ),
                         List.class
                 ).iterator()
-        ).redescribe(NElementDescribables.ofDesc("searchRemoteIds"));
+        ).withDescription(NDescribables.ofDesc("searchRemoteIds"));
     }
 
 
