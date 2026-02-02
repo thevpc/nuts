@@ -20,7 +20,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder implements NPrimitiveElementBuilder {
@@ -228,7 +227,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
             }
             stringLayout = newType;
         }
-        NAssert.requireTrue(stringLayout.isAnyString(), "string : " + stringLayout.id());
+        NAssert.requireNamedTrue(stringLayout.isAnyString(), "string : " + stringLayout.id());
         if (value == null) {
             setNull();
         } else {
