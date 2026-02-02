@@ -36,6 +36,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.spi.NFetchContentRepositoryCmd;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.log.NLog;
@@ -69,7 +70,7 @@ public class DefaultNFetchContentRepositoryCmd extends AbstractNFetchContentRepo
                     .getResult();
         }
         id = id.builder().setFaceContent().build();
-        repo.security().checkAllowed(NConstants.Permissions.FETCH_CONTENT, "fetch-content");
+        NSecurityManager.of().checkRepositoryAllowed(repo.getUuid(), NConstants.Permissions.FETCH_CONTENT, "fetch-content");
         NRepositoryExt xrepo = NRepositoryExt.of(repo);
         xrepo.checkAllowedFetch(id);
         long startTime = System.currentTimeMillis();
