@@ -294,7 +294,7 @@ public interface NBootOptions {
      *
      * @return credential needed to log into workspace.
      */
-    NOptional<char[]> getCredentials();
+    NOptional<char[]> getCredential();
 
     /**
      * repository store location strategy to consider when creating new repositories
