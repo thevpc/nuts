@@ -26,7 +26,7 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
         super(type, value, affixes,diagnostics);
         this.rawValue = rawValue;
         if (type == NElementType.NAME) {
-            NAssert.requireTrue(NElementUtils.isValidElementName((String) value), "valid name : " + value);
+            NAssert.requireNamedTrue(NElementUtils.isValidElementName((String) value), "valid name : " + value);
         }
     }
 
