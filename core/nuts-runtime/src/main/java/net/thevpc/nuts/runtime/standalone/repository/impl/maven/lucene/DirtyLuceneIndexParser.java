@@ -41,7 +41,7 @@ public class DirtyLuceneIndexParser extends NIteratorBase<String> implements Clo
     }
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNextImpl() {
         last = preload();
         return last != null;
     }
