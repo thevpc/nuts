@@ -20,13 +20,13 @@ public class NSupplierIterator<T> extends NIteratorBase<T> {
         return NElement.ofObjectBuilder()
                 .name("Supplier")
                 .set("template",
-                        NElementDescribables.describeResolveOr(from, ()-> NElement.ofObjectBuilder().name("Compiled").addAll(name).build())
+                        NDescribables.describeResolveOr(from, ()-> NElement.ofObjectBuilder().name("Compiled").addAll(name).build())
                 )
                 .build();
     }
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNextImpl() {
         if (iterator == null) {
             iterator = from.get();
             if (iterator == null) {
