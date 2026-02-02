@@ -35,7 +35,7 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     public NFlatExprElementBuilder set(int index, NOperatorSymbol op) {
         if (op != null) {
             if (index >= 0 && index < values.size()) {
-                values.set(index, NElement.ofOpSymbol(op));
+                values.set(index, NElement.ofOperatorSymbol(op));
             }
         }
         return this;
@@ -54,7 +54,7 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     @Override
     public NFlatExprElementBuilder add(NOperatorSymbol op) {
         if (op != null) {
-            add(NElement.ofOpSymbol(op));
+            add(NElement.ofOperatorSymbol(op));
         }
         return this;
     }
@@ -81,7 +81,7 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     @Override
     public NFlatExprElementBuilder setAt(int index, NOperatorSymbol element) {
         if (element != null) {
-            setAt(index, NElement.ofOpSymbol(element));
+            setAt(index, NElement.ofOperatorSymbol(element));
         }
         return this;
     }
