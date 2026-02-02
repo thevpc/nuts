@@ -84,7 +84,7 @@ public class ArchetypeCatalogParser {
 
 
         @Override
-        public boolean hasNext() {
+        public boolean hasNextImpl() {
             if (eventReader == null || stream2 == null) {
                 autoCloseStream();
                 return false;
