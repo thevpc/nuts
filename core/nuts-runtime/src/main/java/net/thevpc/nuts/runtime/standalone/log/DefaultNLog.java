@@ -87,7 +87,7 @@ public class DefaultNLog implements NLog {
 
     @Override
     public void log(Level level, Supplier<NMsg> msgSupplier) {
-        NAssert.requireNonNull(level, "level");
+        NAssert.requireNamedNonNull(level, "level");
         DefaultNLogModel logModel = NWorkspaceExt.of().getModel().logModel;
         boolean term = logModel.getTermHandler().isLoggable(level);
         boolean file = logModel.getFileHandler() != null && logModel.getFileHandler().isLoggable(level);
