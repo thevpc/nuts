@@ -143,7 +143,7 @@ public interface NBootOptionsBuilder extends NComponent {
     NBootOptionsBuilder setOutputFormatOptions(List<String> options);
 
 
-    NBootOptionsBuilder setCredentials(char[] credentials);
+    NBootOptionsBuilder setCredential(char[] credentials);
 
 
     NBootOptionsBuilder setRepositoryStoreStrategy(NStoreStrategy repositoryStoreStrategy);
@@ -633,7 +633,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return credential needed to log into workspace.
      */
-    NOptional<char[]> getCredentials();
+    NOptional<char[]> getCredential();
 
     /**
      * repository store location strategy to consider when creating new repositories
