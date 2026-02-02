@@ -57,7 +57,7 @@ public interface NLog {
      * @return new instance of {@link NLog}
      */
     static NLog of(Class<?> clazz) {
-        return of(NAssert.requireNonBlank(clazz, "class").getName());
+        return of(NAssert.requireNamedNonBlank(clazz, "class").getName());
     }
 
     static NLog ofNull() {
@@ -65,7 +65,7 @@ public interface NLog {
     }
 
     static NLog ofScoped(Class<?> clazz) {
-        return ofScoped(NAssert.requireNonBlank(clazz, "class").getName());
+        return ofScoped(NAssert.requireNamedNonBlank(clazz, "class").getName());
     }
 
     /**
