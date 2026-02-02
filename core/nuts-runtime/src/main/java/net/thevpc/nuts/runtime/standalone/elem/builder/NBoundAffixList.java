@@ -199,7 +199,7 @@ public class NBoundAffixList {
     }
 
     public NBoundAffixList addAffixNewLine(int index, NNewLineMode newLineMode, NAffixAnchor anchor) {
-        NAssert.requireNonNull(anchor, "anchor");
+        NAssert.requireNamedNonNull(anchor, "anchor");
         if (newLineMode != null) {
             addAffix(index, NBoundAffix.of(DefaultNElementNewLine.of(newLineMode), anchor));
         }
@@ -290,7 +290,7 @@ public class NBoundAffixList {
     }
 
     public NBoundAffixList addAffixSpace(String space, NAffixAnchor anchor) {
-        NAssert.requireNonNull(anchor, "anchor");
+        NAssert.requireNamedNonNull(anchor, "anchor");
         if (!NStringUtils.isEmpty(space)) {
             addAffix(NBoundAffix.of(DefaultNElementSpace.of(space), anchor));
         }
@@ -298,7 +298,7 @@ public class NBoundAffixList {
     }
 
     public NBoundAffixList addAffixNewLine(NNewLineMode newLineMode, NAffixAnchor anchor) {
-        NAssert.requireNonNull(anchor, "anchor");
+        NAssert.requireNamedNonNull(anchor, "anchor");
         if (newLineMode != null) {
             addAffix(NBoundAffix.of(DefaultNElementNewLine.of(newLineMode), anchor));
         }
@@ -306,7 +306,7 @@ public class NBoundAffixList {
     }
 
     public NBoundAffixList addAffixSeparator(String separator, NAffixAnchor anchor) {
-        NAssert.requireNonNull(anchor, "anchor");
+        NAssert.requireNamedNonNull(anchor, "anchor");
         if (!NStringUtils.isEmpty(separator)) {
             addAffix(NBoundAffix.of(DefaultNElementSeparator.of(separator), anchor));
         }
@@ -314,7 +314,7 @@ public class NBoundAffixList {
     }
 
     public NBoundAffixList addAffixSpace(int index, String space, NAffixAnchor anchor) {
-        NAssert.requireNonNull(anchor, "anchor");
+        NAssert.requireNamedNonNull(anchor, "anchor");
         if (!NStringUtils.isEmpty(space)) {
             addAffix(index, NBoundAffix.of(DefaultNElementSpace.of(space), anchor));
         }
@@ -322,7 +322,7 @@ public class NBoundAffixList {
     }
 
     public NBoundAffixList addAffixSeparator(int index, String separator, NAffixAnchor anchor) {
-        NAssert.requireNonNull(anchor, "anchor");
+        NAssert.requireNamedNonNull(anchor, "anchor");
         if (!NStringUtils.isEmpty(separator)) {
             addAffix(index, NBoundAffix.of(DefaultNElementSeparator.of(separator), anchor));
         }
@@ -350,7 +350,7 @@ public class NBoundAffixList {
     }
 
     public void removeAffixIf(Predicate<NBoundAffix> predicate) {
-        NAssert.requireNonNull(predicate, "predicate");
+        NAssert.requireNamedNonNull(predicate, "predicate");
         affixes.removeIf(predicate);
     }
 }
