@@ -47,7 +47,7 @@ public class NCoalesceIterator<T> extends NIteratorBase<T> {
     }
 
     public void add(NIterator<? extends T> child) {
-        NAssert.requireNonNull(child, "child");
+        NAssert.requireNamedNonNull(child, "child");
         if (child instanceof NCoalesceIterator) {
             children.addAll(((NCoalesceIterator<? extends T>) child).children);
         } else {
