@@ -28,8 +28,8 @@ import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.security.NUser;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,18 +47,10 @@ public class UserNonOption extends DefaultNonOption {
     public List<NArgCandidate> getCandidates(NCmdLineAutoComplete context) {
         List<NArgCandidate> all = new ArrayList<>();
         NRepository repository = context.get(NRepository.class);
-        if (repository != null) {
-            for (NUser nutsSecurityEntityConfig : repository.security()
-                    .findUsers()) {
-                all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUser()));
-            }
-        } else {
-            for (NUser nutsSecurityEntityConfig : NWorkspaceSecurityManager.of()
-                    .findUsers()) {
-                all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUser()));
-            }
+        for (NUser nutsSecurityEntityConfig : NSecurityManager.of()
+                .findUsers()) {
+            all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUsername()));
         }
-
         return all;
     }
 }
