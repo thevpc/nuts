@@ -178,7 +178,7 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public byte[] computeBytes() {
-        NAssert.requireTrue(!(sources == null || sources.isEmpty()), "source");
+        NAssert.requireNamedTrue(!(sources == null || sources.isEmpty()), "source");
         String algo = getValidAlgo();
         MessageDigest md;
         try {
