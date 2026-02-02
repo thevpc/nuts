@@ -13,7 +13,7 @@ public class WorkBalancerStrategyContextImpl implements NWorkBalancerStrategyCon
     private final NWorkBalancerImpl<?> workBalancer;
 
     public WorkBalancerStrategyContextImpl(NWorkBalancerModel model, NWorkBalancerImpl<?> workBalancer) {
-        this.model = NAssert.requireNonNull(model);
+        this.model = NAssert.requireNamedNonNull(model);
         this.workBalancer = workBalancer;
     }
 
