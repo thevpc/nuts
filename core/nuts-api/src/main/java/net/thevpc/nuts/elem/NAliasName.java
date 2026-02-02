@@ -8,7 +8,7 @@ public class NAliasName implements Comparable<NAliasName> {
     private String name;
 
     public NAliasName(String name) {
-        this.name = NAssert.requireNonBlank(name, "name");
+        this.name = NAssert.requireNamedNonBlank(name, "name");
     }
 
     @Override
