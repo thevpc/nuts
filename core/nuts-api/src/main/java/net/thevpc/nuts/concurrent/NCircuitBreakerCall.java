@@ -1,6 +1,6 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.time.NDuration;
 
 import java.util.function.IntFunction;
@@ -18,7 +18,7 @@ import java.util.function.IntFunction;
  * This interface combines three concerns:
  * <ul>
  *     <li>Callable execution semantics via {@link NCallable}</li>
- *     <li>Structured metadata and self-description via {@link NElementDescribable}</li>
+ *     <li>Structured metadata and self-description via {@link NDescribable}</li>
  *     <li>Resilience control via the circuit breaker pattern</li>
  * </ul>
  * </p>
@@ -49,11 +49,11 @@ import java.util.function.IntFunction;
  *
  * @param <T> the type of result produced by the callable
  * @see NCallable
- * @see NElementDescribable
+ * @see NDescribable
  * @see NConcurrent#circuitBreakerCall(NCallable)
  * @since 0.8.7
  */
-public interface NCircuitBreakerCall<T> extends NCallable<T>, NElementDescribable {
+public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable {
 
     /**
      * The current state of the circuit breaker.
