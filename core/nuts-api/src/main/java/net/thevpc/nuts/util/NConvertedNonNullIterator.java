@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.Iterator;
@@ -58,7 +58,7 @@ public class NConvertedNonNullIterator<F, T> extends NIteratorBase<T> {
         return NElement.ofObjectBuilder()
                 .name("Map")
                 .set("accept", "isNotNull")
-                .set("mapper", NElementDescribables.describeResolveOrDestructAsObject(converter)
+                .set("mapper", NDescribables.describeResolveOrDestructAsObject(converter)
                         .builder()
                         .set("name", convertName)
                         .build()
@@ -67,7 +67,7 @@ public class NConvertedNonNullIterator<F, T> extends NIteratorBase<T> {
     }
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNextImpl() {
         while (base.hasNext()) {
             F i = base.next();
             if (i != null) {
