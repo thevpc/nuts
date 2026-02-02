@@ -45,7 +45,7 @@ public class DefaultNUninstall extends AbstractNUninstall {
         NSecurityManager.of().checkAllowed(NConstants.Permissions.UNINSTALL, "uninstall");
         InstallIdList list = new InstallIdList();
         List<NId> nutsIds = this.getIds();
-        NAssert.requireNonBlank(nutsIds, "packages to uninstall");
+        NAssert.requireNamedNonBlank(nutsIds, "packages to uninstall");
         List<NId> installed = new ArrayList<>();
         List<InstallIdInfo> infos = new ArrayList<>();
         InstallHelper h = new InstallHelper((DefaultNWorkspace) NWorkspaceExt.of(), list, false, args, conditionalArguments);
