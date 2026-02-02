@@ -53,4 +53,12 @@ public interface NFlatExprElement extends NElement, Iterable<NElement> {
     default NElement reshape(NExprElementReshaper reshaper) {
         return reshaper == null ? this : reshaper.reshape(this);
     }
+
+    default NElement reshape() {
+        return reshape(NExprElementReshaperType.DEFAULT);
+    }
+
+    default NElement reshape(NExprElementReshaperType reshaper) {
+        return reshaper == null ? this : NExprElementReshaper.of(reshaper).reshape(this);
+    }
 }
