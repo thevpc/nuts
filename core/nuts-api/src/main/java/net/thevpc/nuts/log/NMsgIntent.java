@@ -95,7 +95,7 @@ public final class NMsgIntent {
     private final String name;
 
     public NMsgIntent(String name) {
-        NAssert.requireNonBlank(name, "log verb");
+        NAssert.requireNamedNonBlank(name, "log verb");
         this.name = name;
     }
 
