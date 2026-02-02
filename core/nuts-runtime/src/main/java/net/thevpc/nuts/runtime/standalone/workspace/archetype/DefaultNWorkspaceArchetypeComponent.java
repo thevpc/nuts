@@ -71,7 +71,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         } else if (!NBlankable.isBlank(d.getName())) {
             return NPath.of(d.getName()).toAbsolute(repositoriesRoot).toString();
         } else if (d.getRepositoryModel() != null) {
-            String n = NAssert.requireNonBlank(
+            String n = NAssert.requireNamedNonBlank(
                     NStringUtils.firstNonBlank(d.getRepositoryModel().getName(), d.getRepositoryModel().getUuid()),
                     "RepositoryModel name"
             );
@@ -93,7 +93,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
                 if (d.getConfig() != null && !NBlankable.isBlank(d.getConfig().getName())) {
                     name = d.getConfig().getName();
                 } else if (d.getRepositoryModel() != null) {
-                    name = NAssert.requireNonBlank(
+                    name = NAssert.requireNamedNonBlank(
                             NStringUtils.firstNonBlank(d.getRepositoryModel().getName(), d.getRepositoryModel().getUuid()),
                             "RepositoryModel name"
                     );
