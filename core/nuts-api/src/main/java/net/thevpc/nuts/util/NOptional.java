@@ -1,7 +1,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.concurrent.NCallable;
-import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.internal.optional.NReservedOptionalEmpty;
 import net.thevpc.nuts.internal.optional.NReservedOptionalError;
 import net.thevpc.nuts.internal.optional.NReservedOptionalValidCallable;
@@ -15,7 +15,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public interface NOptional<T> extends NBlankable, NElementDescribable {
+public interface NOptional<T> extends NBlankable, NDescribable {
 
     /**
      * return the default ExceptionFactory used for generating exceptions thrown
@@ -49,16 +49,16 @@ public interface NOptional<T> extends NBlankable, NElementDescribable {
         return ofEmpty(() -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankTrimmed(name, "value")));
     }
 
-    static <T> NOptional<T> ofNamedEmpty(NMsg message) {
-        return ofEmpty(NMsg.ofC("missing %s", message == null ? "value" : message));
+    static <T> NOptional<T> ofNamedEmpty(NMsg name) {
+        return ofEmpty(NMsg.ofC("missing %s", name == null ? "value" : name));
     }
 
-    static <T> NOptional<T> ofNamedError(NMsg message) {
-        return ofError(message == null ? () -> NMsg.ofC("error evaluating %s", "value") : () -> message);
+    static <T> NOptional<T> ofNamedError(NMsg name) {
+        return ofError(name == null ? () -> NMsg.ofC("error evaluating %s", "value") : () -> name);
     }
 
-    static <T> NOptional<T> ofNamedError(NMsg message, Throwable throwable) {
-        return ofError(message == null ? () -> NMsg.ofC("error evaluating %s", "value") : () -> message, throwable);
+    static <T> NOptional<T> ofNamedError(NMsg name, Throwable throwable) {
+        return ofError(name == null ? () -> NMsg.ofC("error evaluating %s", "value") : () -> name, throwable);
     }
 
     static <T> NOptional<T> ofNamedError(String name) {
