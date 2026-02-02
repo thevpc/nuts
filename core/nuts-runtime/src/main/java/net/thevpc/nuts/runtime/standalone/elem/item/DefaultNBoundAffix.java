@@ -10,8 +10,8 @@ public class DefaultNBoundAffix implements NBoundAffix {
     private NAffixAnchor position;
 
     public static DefaultNBoundAffix of(NAffix affix, NAffixAnchor position) {
-        NAssert.requireNonNull(affix, "affix");
-        NAssert.requireNonNull(position, "position");
+        NAssert.requireNamedNonNull(affix, "affix");
+        NAssert.requireNamedNonNull(position, "position");
         return new DefaultNBoundAffix(affix, position);
     }
 
