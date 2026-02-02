@@ -1,6 +1,6 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NOptional;
 
@@ -43,7 +43,7 @@ import net.thevpc.nuts.util.NOptional;
  * @see NCircuitBreakerCall
  * @since 0.8.8
  */
-public interface NBulkheadCall<T>  extends NCallable<T>, NElementDescribable {
+public interface NBulkheadCall<T>  extends NCallable<T>, NDescribable {
     /**
      * Creates a new concurrency limiter wrapping the given callable.
      *
