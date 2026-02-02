@@ -28,7 +28,7 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
                         : NElementType.FULL_OBJECT,
                 affixes,diagnostics);
         if (name != null) {
-            NAssert.requireTrue(NElementUtils.isValidElementName(name), "valid name : " + name);
+            NAssert.requireNamedTrue(NElementUtils.isValidElementName(name), "valid name : " + name);
         }
         this.name = name;
         this.params = CoreNUtils.copyAndUnmodifiableNullableList(params);
