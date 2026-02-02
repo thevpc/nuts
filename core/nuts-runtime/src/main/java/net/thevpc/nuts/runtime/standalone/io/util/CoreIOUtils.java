@@ -617,8 +617,8 @@ public class CoreIOUtils {
     }
 
     public static PathInfo.Status tryWrite(byte[] content, NPath out, /*boolean doNotWrite*/ DoWhenExist doWhenExist, DoWhenNotExists doWhenNotExist, String rememberMeKey) {
-        NAssert.requireNonNull(doWhenExist, "doWhenExist");
-        NAssert.requireNonNull(doWhenNotExist, "doWhenNotExist");
+        NAssert.requireNamedNonNull(doWhenExist, "doWhenExist");
+        NAssert.requireNamedNonNull(doWhenNotExist, "doWhenNotExist");
         out = out.toAbsolute().normalize();
         byte[] old = null;
         if (out.isRegularFile()) {
@@ -827,7 +827,7 @@ public class CoreIOUtils {
     }
 
     public static DefaultNContentMetadata defaultNutsInputSourceMetadata(InputStream is) {
-        NAssert.requireNonNull(is);
+        NAssert.requireNamedNonNull(is);
         if (is instanceof NInputSource) {
             return new DefaultNContentMetadata(((NInputSource) is).getMetaData());
         }
