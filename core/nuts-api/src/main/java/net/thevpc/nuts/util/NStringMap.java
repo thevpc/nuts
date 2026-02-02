@@ -33,7 +33,7 @@ public class NStringMap<V> {
     private char separator;
 
     public NStringMap(Map<String, V> map, char separator) {
-        NAssert.requireNonNull(map, "map");
+        NAssert.requireNamedNonNull(map, "map");
         this.map = map;
         this.separator = separator;
     }
@@ -52,7 +52,7 @@ public class NStringMap<V> {
     }
 
     public Map<String, V> toMap(String prefix) {
-        NAssert.requireNonNull(prefix, "prefix");
+        NAssert.requireNamedNonNull(prefix, "prefix");
         if (prefix.isEmpty()) {
             return new LinkedHashMap<>(map);
         }
@@ -78,7 +78,7 @@ public class NStringMap<V> {
     }
 
     public NStringMap<V> removeAll(String prefix) {
-        NAssert.requireNonNull(prefix, "prefix");
+        NAssert.requireNamedNonNull(prefix, "prefix");
         if (prefix.isEmpty()) {
             return this;
         }
@@ -99,13 +99,13 @@ public class NStringMap<V> {
     }
 
     public NStringMap<V> putAll(Map<String, V> values) {
-        NAssert.requireNonNull(values, "values");
+        NAssert.requireNamedNonNull(values, "values");
         map.putAll(values);
         return this;
     }
 
     public V put(String prefix, String key, V value) {
-        NAssert.requireNonNull(prefix, "prefix");
+        NAssert.requireNamedNonNull(prefix, "prefix");
         return map.put(keyOf(prefix, key), value);
     }
 
@@ -133,7 +133,7 @@ public class NStringMap<V> {
     }
 
     public V set(String prefix, String key, V value) {
-        NAssert.requireNonNull(prefix, "prefix");
+        NAssert.requireNamedNonNull(prefix, "prefix");
         if (value == null) {
             return map.remove(keyOf(prefix, key));
         } else {
@@ -150,13 +150,13 @@ public class NStringMap<V> {
     }
 
     public V remove(String prefix, String key) {
-        NAssert.requireNonNull(prefix, "prefix");
+        NAssert.requireNamedNonNull(prefix, "prefix");
         return map.remove(keyOf(prefix, key));
     }
 
     public Set<String> nextKeys(String prefix) {
         Set<String> keys = new LinkedHashSet<>();
-        NAssert.requireNonNull(prefix, "prefix");
+        NAssert.requireNamedNonNull(prefix, "prefix");
         for (Iterator<Map.Entry<String, V>> iterator = map.entrySet().iterator(); iterator.hasNext(); ) {
             Map.Entry<String, V> e = iterator.next();
             String k = e.getKey();
@@ -180,8 +180,8 @@ public class NStringMap<V> {
     }
 
     public NStringMap<V> putAll(String prefix, Map<String, V> values) {
-        NAssert.requireNonNull(prefix, "prefix");
-        NAssert.requireNonNull(values, "values");
+        NAssert.requireNamedNonNull(prefix, "prefix");
+        NAssert.requireNamedNonNull(values, "values");
         for (Map.Entry<String, V> e : values.entrySet()) {
             String k = e.getKey();
             map.put(keyOf(prefix, k), e.getValue());
