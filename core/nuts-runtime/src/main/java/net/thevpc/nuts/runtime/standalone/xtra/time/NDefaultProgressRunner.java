@@ -68,7 +68,7 @@ public class NDefaultProgressRunner implements NProgressRunner {
         }
 
         public <T> NOptional<T> get(String name, Class<T> expectedType) {
-            NAssert.requireNonNull(name, "name");
+            NAssert.requireNamedNonNull(name, "name");
             Object o = context.get(name);
             if (o == null) {
                 if (context.containsKey(name)) {
