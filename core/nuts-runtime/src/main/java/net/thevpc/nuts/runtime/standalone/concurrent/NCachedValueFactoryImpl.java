@@ -3,10 +3,7 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.util.*;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class NCachedValueFactoryImpl implements NCachedValueFactory {
@@ -25,7 +22,7 @@ public class NCachedValueFactoryImpl implements NCachedValueFactory {
     @Override
     public <T> NCachedValue<T> of(String id, Supplier<T> supplier) {
         String nid = NBlankable.isBlank(id) ? UUID.randomUUID().toString() : id;
-        return new NCachedValueImpl<>(nid, NAssert.requireNonNull(supplier, "supplier"), this);
+        return new NCachedValueImpl<>(nid, NAssert.requireNamedNonNull(supplier, "supplier"), this);
     }
 
     public NCachedValueModel load(String id) {
