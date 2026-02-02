@@ -1,6 +1,6 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.time.NDuration;
 
 import java.util.concurrent.Future;
@@ -16,7 +16,7 @@ import java.util.function.IntFunction;
  * @param <T> the type of the result returned by this retry call
  * @since 0.8.7
  */
-public interface NRetryCall<T> extends NCallable<T>, NElementDescribable {
+public interface NRetryCall<T> extends NCallable<T>, NDescribable {
 
     /**
      * Status of the retry call during its lifecycle.
