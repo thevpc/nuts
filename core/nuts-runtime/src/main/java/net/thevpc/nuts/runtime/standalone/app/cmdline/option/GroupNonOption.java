@@ -32,7 +32,7 @@ import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.security.NUser;
 import net.thevpc.nuts.security.NUserConfig;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.security.NSecurityManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,15 +72,10 @@ public class GroupNonOption extends DefaultNonOption {
             for (String n : securityEntityConfig.getGroups()) {
                 all.add(new DefaultNArgCandidate(n));
             }
-        } else if (repository != null) {
-            for (NUser nutsSecurityEntityConfig : repository.security()
-                    .findUsers()) {
-                all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUser()));
-            }
         } else {
-            for (NUser nutsSecurityEntityConfig : NWorkspaceSecurityManager.of()
+            for (NUser nutsSecurityEntityConfig : NSecurityManager.of()
                     .findUsers()) {
-                all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUser()));
+                all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUsername()));
             }
         }
         return all;
