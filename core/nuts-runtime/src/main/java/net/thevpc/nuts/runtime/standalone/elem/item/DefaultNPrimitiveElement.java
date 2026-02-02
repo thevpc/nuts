@@ -51,7 +51,7 @@ public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimi
     public DefaultNPrimitiveElement(NElementType type, Object value, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
         super(type, affixes, diagnostics);
         if (type == NElementType.NAME) {
-            NAssert.requireTrue(NElementUtils.isValidElementName((String) value), "valid name : " + (String) value);
+            NAssert.requireNamedTrue(NElementUtils.isValidElementName((String) value), "valid name : " + (String) value);
         }
         this.value = value;
     }
