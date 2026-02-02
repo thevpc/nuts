@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.core.NIndexerNotAccessibleException;
@@ -34,14 +34,14 @@ public class NIndexFirstIterator<T> extends NIteratorBase<T> {
         return NElement
                 .ofObjectBuilder()
                 .name("IndexFirst")
-                .set("index", NElementDescribables.describeResolveOrDestruct(index))
-                .set("nonIndex", NElementDescribables.describeResolveOrDestruct(other))
+                .set("index", NDescribables.describeResolveOrDestruct(index))
+                .set("nonIndex", NDescribables.describeResolveOrDestruct(other))
                 .build()
                 ;
     }
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNextImpl() {
         if (index != null) {
             if (readFromIndex == 0) {
                 try {
