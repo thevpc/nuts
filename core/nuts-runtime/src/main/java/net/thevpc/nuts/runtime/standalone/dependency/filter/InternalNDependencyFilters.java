@@ -75,7 +75,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
             return null;
         }
         NDependencyFilter t = as(a);
-        NAssert.requireNonNull(t, "InstallDependencyFilter");
+        NAssert.requireNamedNonNull(t, "InstallDependencyFilter");
         return t;
     }
 
