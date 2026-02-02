@@ -233,7 +233,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     private void initWorkspace(NBootOptions initialBootOptions0) {
-        NAssert.requireNonNull(initialBootOptions0, "boot options");
+        NAssert.requireNamedNonNull(initialBootOptions0, "boot options");
         InitWorkspaceData data = new InitWorkspaceData();
         data.initialBootOptions = initialBootOptions0.readOnly();
         try {
