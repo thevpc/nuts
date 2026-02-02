@@ -18,7 +18,7 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
 
     public NReservedOptionalValidCallable(NCallable<NOptional<T>> value, Supplier<NMsg> msg) {
         super(msg);
-        NAssert.requireNonNull(value, "callable");
+        NAssert.requireNamedNonNull(value, "callable");
         this.value = value;
     }
 
@@ -59,7 +59,7 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
 
     @Override
     public <V> NOptional<V> then(Function<T, V> mapper) {
-        NAssert.requireNonNull(mapper);
+        NAssert.requireNamedNonNull(mapper);
         if (evaluated) {
             if (result != null) {
                 if (result.isPresent()) {
