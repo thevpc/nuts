@@ -51,9 +51,9 @@ public enum NElementTokenType implements NEnum {
     RBRACK,
 
     COLON,
-    BACKSLASH,
-    BACKSLASH2,
-    BACKSLASH3,
+//    BACKSLASH,
+//    BACKSLASH2,
+//    BACKSLASH3,
 
     OP,
 
