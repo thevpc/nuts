@@ -73,6 +73,7 @@ public class CoreNUtils {
         return Boolean.getBoolean("nuts.dev.verbose");
     }
 
+
     public static Comparator<NId> NUTS_ID_COMPARATOR = new Comparator<NId>() {
         @Override
         public int compare(NId o1, NId o2) {
@@ -120,6 +121,15 @@ public class CoreNUtils {
         return (other == null || other.isEmpty()) ? Collections.emptyList() : Collections.unmodifiableList(
                 other.stream().filter(x -> filter == null || filter.test(x)).collect(Collectors.toList())
         );
+    }
+
+    public static <T> List<T> copyNonNullList(List<T> other) {
+        return copyAndFilterList(other, Objects::nonNull);
+    }
+
+    public static <T> List<T> copyAndFilterList(List<T> other, Predicate<T> filter) {
+        return (other == null || other.isEmpty()) ? new ArrayList<>() :
+                other.stream().filter(x -> filter == null || filter.test(x)).collect(Collectors.toList());
     }
 
     public static <T> List<T> copyAndUnmodifiableList(List<T> other) {
