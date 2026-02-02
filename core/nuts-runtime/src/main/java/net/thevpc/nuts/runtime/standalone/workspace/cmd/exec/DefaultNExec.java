@@ -150,7 +150,7 @@ public class DefaultNExec extends AbstractNExec {
         }
         switch (executionType) {
             case OPEN: {
-                NAssert.requireNonBlank(command, "command");
+                NAssert.requireNamedNonBlank(command, "command");
                 NConnectionString connectionString = getConnectionString();
                 if (!NBlankable.isBlank(connectionString)) {
                     throw new NIllegalArgumentException(NMsg.ofC("cannot run %s command remotely", executionType));
@@ -164,7 +164,7 @@ public class DefaultNExec extends AbstractNExec {
                 if (remoteInfo0 != null) {
                     NExecutionType finalExecutionType = executionType;
                     NAssert.requireNull(getCommandDefinition(), () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType));
-                    NAssert.requireNonBlank(command, "command");
+                    NAssert.requireNamedNonBlank(command, "command");
                     String[] ts = command.toArray(new String[0]);
                     return new DefaultNSystemExecutableRemote(
                             remoteInfo0.commExec, ts,
@@ -177,7 +177,7 @@ public class DefaultNExec extends AbstractNExec {
                 } else {
                     NExecutionType finalExecutionType = executionType;
                     NAssert.requireNull(getCommandDefinition(), () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType));
-                    NAssert.requireNonBlank(command, "command");
+                    NAssert.requireNamedNonBlank(command, "command");
                     String[] ts = command.toArray(new String[0]);
                     List<String> tsl = new ArrayList<>(Arrays.asList(ts));
                     if (NStringUtils.firstIndexOf(ts[0], new char[]{'/', '\\'}) < 0) {
@@ -210,7 +210,7 @@ public class DefaultNExec extends AbstractNExec {
                                 executionType, runAs);
                     }
                 } else {
-                    NAssert.requireNonBlank(command, "command");
+                    NAssert.requireNamedNonBlank(command, "command");
                     String[] ts = command.toArray(new String[0]);
                     exec = execEmbeddedOrExternal(ts, getExecutorOptions(), getWorkspaceOptions(), session);
                 }
@@ -328,7 +328,7 @@ public class DefaultNExec extends AbstractNExec {
 
     private NExecutableInformationExt execEmbeddedOrExternal(String[] cmd, List<String> executorOptions, List<String> workspaceOptions, NSession prepareSession) {
         NSession session = NSession.of();
-        NAssert.requireNonBlank(cmd, "command");
+        NAssert.requireNamedNonBlank(cmd, "command");
         String[] args = new String[cmd.length - 1];
         System.arraycopy(cmd, 1, args, 0, args.length);
         String cmdName = cmd[0];
@@ -382,7 +382,7 @@ public class DefaultNExec extends AbstractNExec {
             case PATH: {
                 RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                 if (remoteInfo0 != null) {
-                    NAssert.requireNonBlank(command, "command");
+                    NAssert.requireNamedNonBlank(command, "command");
                     List<String> ts = new ArrayList<>(command);
 //                    NDefinition def2 = NSearchCmd.of()
 //                            .addId(session.getWorkspace().getApiId())
@@ -478,7 +478,7 @@ public class DefaultNExec extends AbstractNExec {
                 NId idToExec = (isp!=null && isp.id!=null)?isp.id:null;
                 RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                 if (remoteInfo0 != null) {
-                    NAssert.requireNonBlank(command, "command");
+                    NAssert.requireNamedNonBlank(command, "command");
                     List<String> ts = new ArrayList<>(command);
                     if (ts.isEmpty()) {
                         throw new NUnsupportedArgumentException(NMsg.ofPlain("missing command"));
@@ -660,7 +660,7 @@ public class DefaultNExec extends AbstractNExec {
                 if (remoteInfo0 != null) {
                     NExecutionType finalExecutionType = executionType;
                     NAssert.requireNull(getCommandDefinition(), () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType));
-                    NAssert.requireNonBlank(command, "command");
+                    NAssert.requireNamedNonBlank(command, "command");
                     String[] ts = command.toArray(new String[0]);
                     return new DefaultNSystemExecutableRemote(
                             remoteInfo0.commExec, ts,
