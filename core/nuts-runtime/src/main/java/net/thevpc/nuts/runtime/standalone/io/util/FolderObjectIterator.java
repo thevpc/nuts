@@ -26,8 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NTerminal;
@@ -76,9 +75,9 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
         return NElement.ofObjectBuilder()
                 .name("ScanPath")
                 .addParam(NElement.ofString(name))
-                .set("path", NElementDescribables.describeResolveOrDestruct(folder))
+                .set("path", NDescribables.describeResolveOrDestruct(folder))
                 .set("maxDepth", maxDepth)
-                .set("filter", NElementDescribables.describeResolveOrDestruct(filter))
+                .set("filter", NDescribables.describeResolveOrDestruct(filter))
                 .build();
     }
 
@@ -87,7 +86,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
     }
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNextImpl() {
         last = null;
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
@@ -107,7 +106,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
                                                 return false;
                                             }
                                         }
-                                ).redescribe(NElementDescribables.ofDesc("isDirectory || isObjectFile"))
+                                ).withDescription(NDescribables.ofDesc("isDirectory || isObjectFile"))
                                 .forEach(item -> {
                                     if (item.isDirectory()) {
                                         if (maxDepth < 0 || file.depth < maxDepth) {
