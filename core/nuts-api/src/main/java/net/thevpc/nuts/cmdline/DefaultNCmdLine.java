@@ -326,7 +326,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public NCmdLine pushBack(NArg arg) {
-        NAssert.requireNonNull(arg, "argument");
+        NAssert.requireNamedNonNull(arg, "argument");
         lookahead.add(0, arg);
         return this;
     }
