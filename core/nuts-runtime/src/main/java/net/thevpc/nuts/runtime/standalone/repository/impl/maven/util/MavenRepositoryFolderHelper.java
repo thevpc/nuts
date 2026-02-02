@@ -42,7 +42,7 @@ import java.util.TreeSet;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 
 
 import net.thevpc.nuts.io.NIOException;
@@ -149,7 +149,7 @@ public class MavenRepositoryFolderHelper {
         NId bestId = null;
         NPath file = getLocalGroupAndArtifactFile(id);
         if (file.exists()) {
-            NPath[] versionFolders = file.stream().filter(NPath::isDirectory).redescribe(NElementDescribables.ofDesc("isDirectory"))
+            NPath[] versionFolders = file.stream().filter(NPath::isDirectory).withDescription(NDescribables.ofDesc("isDirectory"))
                     .toArray(NPath[]::new);
             for (NPath versionFolder : versionFolders) {
                 NId id2 = id.builder().setVersion(versionFolder.getName()).build();
