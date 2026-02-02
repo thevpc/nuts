@@ -33,7 +33,7 @@ import net.thevpc.nuts.command.NCommandFactoryConfig;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.command.NInstallStatus;
 import net.thevpc.nuts.concurrent.NScoredCallable;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
@@ -44,8 +44,7 @@ import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.extension.NExtensionUtils;
 import net.thevpc.nuts.runtime.standalone.util.*;
-import net.thevpc.nuts.security.NUserConfig;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.security.*;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
@@ -74,7 +73,6 @@ import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.NVersionCompat;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
 
@@ -103,6 +101,8 @@ public class DefaultNWorkspaceConfigModel {
     private static Pattern PRELOAD_EXTENSION_PATH_PATTERN = Pattern.compile("^(?<protocol>[a-z][a-z0-9_-]*):.*");
 
     private final DefaultNWorkspace workspace;
+    private final List<NRepositoryAccessConfig> configRepoUsers = new ArrayList<>();
+    private final List<NNamedCredential> configNamedCredentials = new ArrayList<>();
     private final Map<String, NUserConfig> configUsers = new LinkedHashMap<>();
     private final NWorkspaceStoredConfig storedConfig = new NWorkspaceStoredConfigImpl();
     private final ClassLoader bootClassLoader;
@@ -197,7 +197,7 @@ public class DefaultNWorkspaceConfigModel {
         }
         NWorkspaceUtils.of().checkReadOnly();
         boolean ok = false;
-        NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.SAVE, "save");
+        NSecurityManager.of().checkAllowed(NConstants.Permissions.SAVE, "save");
         if (force || storeModelBootChanged) {
 
             storeModelBoot.setConfigVersion(DefaultNWorkspace.VERSION_WS_CONFIG_BOOT);
@@ -214,6 +214,7 @@ public class DefaultNWorkspaceConfigModel {
 
         if (force || storeModelSecurityChanged) {
             storeModelSecurity.setUsers(configUsers.isEmpty() ? null : configUsers.values().toArray(new NUserConfig[0]));
+            storeModelSecurity.setRepositories(configRepoUsers.isEmpty() ? null : configRepoUsers.toArray(new NRepositoryAccessConfig[0]));
 
             storeModelSecurity.setConfigVersion(current().getApiVersion());
             if (storeModelSecurity.getUsers() != null) {
@@ -637,11 +638,11 @@ public class DefaultNWorkspaceConfigModel {
         NPath path = NPath.ofIdStore(apiId, NStoreType.CONF)
                 .getParent();
         List<NId> olderIds = path.stream().filter(NPath::isDirectory)
-                .redescribe(NElementDescribables.ofDesc("isDirectory"))
+                .withDescription(NDescribables.ofDesc("isDirectory"))
                 .map(x -> NVersion.get(x.getName()).get())
-                .redescribe(NElementDescribables.ofDesc("toVersion"))
+                .withDescription(NDescribables.ofDesc("toVersion"))
                 .filter(x -> x.compareTo(apiId.getVersion()) < 0)
-                .redescribe(NElementDescribables.ofDesc("older"))
+                .withDescription(NDescribables.ofDesc("older"))
                 .sorted(new NComparator<NVersion>() {
                     @Override
                     public int compare(NVersion o1, NVersion o2) {
@@ -653,7 +654,7 @@ public class DefaultNWorkspaceConfigModel {
                         return NElement.ofString("reverseOrder");
                     }
                 }).map(x -> apiId.builder().setVersion(x).build())
-                .redescribe(NElementDescribables.ofDesc("toId"))
+                .withDescription(NDescribables.ofDesc("toId"))
                 .toList();
         return olderIds;
     }
@@ -792,12 +793,12 @@ public class DefaultNWorkspaceConfigModel {
 
     public NUserConfig getUser(String userId) {
         NUserConfig _config = getSecurity(userId);
-        if (_config == null) {
-            if (NConstants.Users.ADMIN.equals(userId) || NConstants.Users.ANONYMOUS.equals(userId)) {
-                _config = new NUserConfig(userId, null, null, null);
-                setUser(_config);
-            }
-        }
+//        if (_config == null) {
+//            if (NConstants.Users.ADMIN.equals(userId) || NConstants.Users.ANONYMOUS.equals(userId)) {
+//                _config = new NUserConfig(userId, null, null, null);
+//                addOrUpdateUser(_config);
+//            }
+//        }
         return _config;
     }
 
@@ -806,9 +807,127 @@ public class DefaultNWorkspaceConfigModel {
         return configUsers.values().toArray(new NUserConfig[0]);
     }
 
-    public void setUser(NUserConfig config) {
+    public NRepositoryAccessConfig[] getRepositoryUsers() {
+//        session = NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
+        return configRepoUsers.toArray(new NRepositoryAccessConfig[0]);
+    }
+
+    public NOptional<NRepositoryAccessConfig> getRepositoryUser(String repository, String user) {
+        NRepository crepository = workspace.getRepositoryModel().getRepository(repository);
+        if (crepository == null) {
+            return NOptional.ofNamedEmpty(String.valueOf(repository) + "/" + user);
+        }
+        Optional<NRepositoryAccessConfig> o = configRepoUsers.stream().filter(
+                x ->
+                        Objects.equals(x.getUserName(), user)
+                                && Objects.equals(x.getRepository(), crepository.getUuid())
+        ).findFirst().map(NRepositoryAccessConfig::copy);
+        return NOptional.ofNamedOptional(o, String.valueOf(repository) + "/" + user);
+    }
+
+    public boolean removeRepositoryUser(String repository, String user) {
+        NRepository crepository = workspace.getRepositoryModel().getRepository(repository);
+        if (crepository == null) {
+            return false;
+        }
+        if (configRepoUsers.removeIf(x -> Objects.equals(x.getUserName(), user)
+                && Objects.equals(x.getRepository(), crepository.getUuid()))) {
+            fireConfigurationChanged("repository-user", ConfigEventType.SECURITY);
+            return true;
+        }
+        return false;
+    }
+
+    public void addNamedCredentials(NNamedCredential credential) {
+        NAssert.requireNonNull(configUsers.get(credential.getUserName()), "user " + credential.getUserName());
+        workspace.getModel().securityModel.requiredAdminOrUser(credential.getUserName());
+        for (int i = 0; i < configNamedCredentials.size(); i++) {
+            NNamedCredential x = configNamedCredentials.get(i);
+            if (Objects.equals(x.getName(), credential.getName())
+                    && Objects.equals(x.getUserName(), credential.getUserName())) {
+                if (!credential.equals(x)) {
+                    configNamedCredentials.set(i, credential);
+                    fireConfigurationChanged("named-credential", ConfigEventType.SECURITY);
+                }
+                return;
+            }
+        }
+        configNamedCredentials.add(credential);
+        fireConfigurationChanged("named-credential", ConfigEventType.SECURITY);
+    }
+
+    public NOptional<NUserConfig> resolveAsValidUserConfig(String user) {
+        if (NBlankable.isBlank(user)) {
+            user = workspace.getModel().securityModel.getCurrentUsername();
+        }
+        return NOptional.ofNamed(configUsers.get(user), "user " + user);
+    }
+
+    public void removeNamedCredentials(String name, String user) {
+        String finalUser = resolveAsValidUserConfig(user).get().getUserName();
+        workspace.getModel().securityModel.requiredAdminOrUser(finalUser);
+        if (configNamedCredentials.removeIf(x -> Objects.equals(x.getName(), name)
+                && Objects.equals(x.getUserName(), finalUser))) {
+            fireConfigurationChanged("named-credential", ConfigEventType.SECURITY);
+        }
+    }
+
+    public List<NNamedCredential> findAllNamedCredentials() {
+        if (workspace.getModel().securityModel.isAdmin()) {
+            return new ArrayList<>(configNamedCredentials);
+        }
+        return findNamedCredentials();
+    }
+
+    public NOptional<NNamedCredential> findNamedCredential(String name, String user) {
+        if (user == null) {
+            user = workspace.getModel().securityModel.getCurrentUsername();
+        }
+        workspace.getModel().securityModel.requiredAdminOrUser(user);
+        String finalUser = user;
+        return NOptional.ofNamedOptional(configNamedCredentials.stream().filter(x ->
+                Objects.equals(x.getUserName(), finalUser)
+                        && Objects.equals(x.getName(), name)
+        ).findFirst(), "named credential " + user + "/" + name);
+
+    }
+
+    public List<NNamedCredential> findNamedCredentials(String user) {
+        if (user == null) {
+            user = workspace.getModel().securityModel.getCurrentUsername();
+        }
+        workspace.getModel().securityModel.requiredAdminOrUser(user);
+        String finalUser = user;
+        return configNamedCredentials.stream().filter(x -> Objects.equals(x.getUserName(), finalUser)).collect(Collectors.toList());
+    }
+
+    public List<NNamedCredential> findNamedCredentials() {
+        String u = workspace.getModel().securityModel.getCurrentUsername();
+        return configNamedCredentials.stream().filter(x -> Objects.equals(x.getUserName(), u)).collect(Collectors.toList());
+    }
+
+    public void addRepositoryUser(NRepositoryAccessConfig config) {
         if (config != null) {
-            configUsers.put(config.getUser(), config);
+            NAssert.requireNonNull(getUser(config.getUserName()), "user " + config.getUserName());
+            NRepository repository = workspace.getRepositoryModel().getRepository(config.getRepository());
+            NAssert.requireNonNull(repository, "repo " + config.getUserName());
+            NRepositoryAccessConfig cconfig = config.copy();
+            cconfig.setRepository(repository.getUuid());
+            if (configRepoUsers.stream().anyMatch(
+                    x ->
+                            x.getUserName().equals(cconfig.getUserName())
+                                    && x.getRepository().equals(cconfig.getRepository())
+            )) {
+                return;
+            }
+            configRepoUsers.add(cconfig);
+            fireConfigurationChanged("repository-user", ConfigEventType.SECURITY);
+        }
+    }
+
+    public void addOrUpdateUser(NUserConfig config) {
+        if (config != null) {
+            configUsers.put(config.getUserName(), config);
             fireConfigurationChanged("user", ConfigEventType.SECURITY);
         }
     }
@@ -939,7 +1058,6 @@ public class DefaultNWorkspaceConfigModel {
     public NAuthenticationAgent createAuthenticationAgent(String authenticationAgent) {
         authenticationAgent = NStringUtils.trim(authenticationAgent);
         NAuthenticationAgent supported = null;
-        NSession session = getWorkspace().currentSession();
         if (authenticationAgent.isEmpty()) {
             supported = NExtensions.of().createSupported(NAuthenticationAgent.class, "").get();
         } else {
@@ -953,20 +1071,15 @@ public class DefaultNWorkspaceConfigModel {
         if (supported == null) {
             return NOptional.<NAuthenticationAgent>ofNamedEmpty(NMsg.ofC("extensions component %s with agent=%s", NAuthenticationAgent.class, authenticationAgent)).get();
         }
-        NSessionUtils.setSession(supported, session);
         return supported;
     }
 
-    //
-//    public void setExcludedRepositories(String[] excludedRepositories, NutsUpdateOptions options) {
-//        excludedRepositoriesSet = excludedRepositories == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(excludedRepositories), " ,;"));
-//    }
     public void setUsers(NUserConfig[] users) {
         for (NUserConfig u : getUsers()) {
-            removeUser(u.getUser());
+            removeUser(u.getUserName());
         }
         for (NUserConfig conf : users) {
-            setUser(conf);
+            addOrUpdateUser(conf);
         }
     }
 
@@ -1008,7 +1121,7 @@ public class DefaultNWorkspaceConfigModel {
         configUsers.clear();
         if (this.storeModelSecurity.getUsers() != null) {
             for (NUserConfig s : this.storeModelSecurity.getUsers()) {
-                configUsers.put(s.getUser(), s);
+                configUsers.put(s.getUserName(), s);
             }
         }
         storeModelSecurityChanged = true;
