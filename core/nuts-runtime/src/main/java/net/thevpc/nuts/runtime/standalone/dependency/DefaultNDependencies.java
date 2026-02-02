@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency;
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.util.NStream;
@@ -48,7 +48,7 @@ public class DefaultNDependencies implements NDependencies {
     @Override
     public NStream<NId> sourceIds() {
         return NStream.ofIterator(
-                NIterator.of(Arrays.asList(sourceIds).iterator()).redescribe(description)
+                NIterator.of(Arrays.asList(sourceIds).iterator()).withDescription(description)
         );
     }
 
@@ -60,35 +60,35 @@ public class DefaultNDependencies implements NDependencies {
     @Override
     public NStream<NDependency> immediate() {
         return NStream.ofIterator(
-                NIterator.of(Arrays.asList(immediateDependencies).iterator()).redescribe(description)
+                NIterator.of(Arrays.asList(immediateDependencies).iterator()).withDescription(description)
         );
     }
 
     @Override
     public NStream<NDependency> transitive() {
         return NStream.ofIterator(
-                NIterator.of(Arrays.asList(nonMergedDependencies).iterator()).redescribe(description)
+                NIterator.of(Arrays.asList(nonMergedDependencies).iterator()).withDescription(description)
         );
     }
 
     @Override
     public NStream<NDependencyTreeNode> transitiveNodes() {
         return NStream.ofIterator(
-                NIterator.of(Arrays.asList(nonMergedNodes).iterator()).redescribe(description)
+                NIterator.of(Arrays.asList(nonMergedNodes).iterator()).withDescription(description)
         );
     }
 
     @Override
     public NStream<NDependency> transitiveWithSource() {
         return NStream.ofIterator(
-                NIterator.of(Arrays.asList(mergedDependencies).iterator()).redescribe(description)
+                NIterator.of(Arrays.asList(mergedDependencies).iterator()).withDescription(description)
         );
     }
 
     @Override
     public NStream<NDependencyTreeNode> sourceNodes() {
         return NStream.ofIterator(
-                NIterator.of(Arrays.asList(mergedNodes).iterator()).redescribe(description)
+                NIterator.of(Arrays.asList(mergedNodes).iterator()).withDescription(description)
         );
     }
 
@@ -104,11 +104,11 @@ public class DefaultNDependencies implements NDependencies {
 
     @Override
     public NElement describe() {
-        return NElementDescribables.safeDescribe(description);
+        return NDescribables.safeDescribe(description);
     }
 
     @Override
-    public NDependencies redescribe(Supplier<NElement> description) {
+    public NDependencies withDescription(Supplier<NElement> description) {
         this.description=description;
         return this;
     }
