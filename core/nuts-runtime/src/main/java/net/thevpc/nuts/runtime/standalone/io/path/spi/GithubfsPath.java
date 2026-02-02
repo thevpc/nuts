@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NScoredCallable;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElements;
@@ -69,7 +69,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
                             (Info x) -> NPath.of(new GithubfsPath(
                                     PREFIX + ref.resolve(x.name).toString(),
                                     x))
-                            ).redescribe(NElementDescribables.ofDesc("GithubfsPath::of"))
+                            ).withDescription(NDescribables.ofDesc("GithubfsPath::of"))
                     );
         }
         return NStream.ofEmpty();
