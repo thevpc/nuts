@@ -4,11 +4,11 @@ import net.thevpc.nuts.elem.*;
 
 import java.util.function.Supplier;
 
-public interface NDoubleFunction3 extends NElementRedescribable<NDoubleFunction3> {
+public interface NDoubleFunction3 extends NRedescribable<NDoubleFunction3> {
     double apply(double x, double y, double z);
 
     @Override
-    default NDoubleFunction3 redescribe(Supplier<NElement> description){
+    default NDoubleFunction3 withDescription(Supplier<NElement> description){
         if(description==null){
             return this;
         }
