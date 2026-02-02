@@ -30,9 +30,8 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
-import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.security.NUser;
-import net.thevpc.nuts.security.NWorkspaceSecurityManager;
+import net.thevpc.nuts.security.NSecurityManager;
 
 import java.util.*;
 
@@ -61,10 +60,7 @@ public class PermissionNonOption extends DefaultNonOption {
             all.add(new DefaultNArgCandidate(r));
         }
         Iterator<NArgCandidate> i = all.iterator();
-        NRepository repository=context.get(NRepository.class);
-        NUser info = repository != null ? repository.security()
-                .getEffectiveUser(user) :
-                NWorkspaceSecurityManager.of().findUser(user);
+        NUser info = NSecurityManager.of().findUser(user).orNull();
         Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : (info.getPermissions()));
         while (i.hasNext()) {
             NArgCandidate right = i.next();
