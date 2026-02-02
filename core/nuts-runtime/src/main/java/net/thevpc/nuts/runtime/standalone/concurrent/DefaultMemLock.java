@@ -139,7 +139,7 @@ public class DefaultMemLock extends AbstractNLock {
 
     @Override
     public synchronized boolean tryLock(long time, TimeUnit unit) {
-        NAssert.requireNonNull(unit, "unit");
+        NAssert.requireNamedNonNull(unit, "unit");
         try {
             lock.tryLock(time, unit);
             return true;
@@ -149,7 +149,7 @@ public class DefaultMemLock extends AbstractNLock {
     }
 
     public synchronized boolean tryLockInterruptibly(long time, TimeUnit unit) throws InterruptedException {
-        NAssert.requireNonNull(unit, "unit");
+        NAssert.requireNamedNonNull(unit, "unit");
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);
         do {
