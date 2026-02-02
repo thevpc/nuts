@@ -13,8 +13,8 @@ public class WriterOutputStream extends OutputStream {
 
     // Constructor accepting a Writer
     public WriterOutputStream(Writer writer, Charset charset) {
-        NAssert.requireNonNull(writer, "writer");
-        NAssert.requireNonNull(charset, "charset");
+        NAssert.requireNamedNonNull(writer, "writer");
+        NAssert.requireNamedNonNull(charset, "charset");
         this.writer = writer;
         this.charset = charset;
     }
