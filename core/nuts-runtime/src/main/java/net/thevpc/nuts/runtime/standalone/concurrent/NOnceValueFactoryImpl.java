@@ -35,7 +35,7 @@ public class NOnceValueFactoryImpl implements NOnceValueFactory {
     @Override
     public <T> NOnceValue<T> of(String id, Supplier<T> supplier) {
         String nid = NBlankable.isBlank(id) ? UUID.randomUUID().toString() : id;
-        return new NOnceValueImpl<>(nid, NAssert.requireNonNull(supplier, "supplier"), store);
+        return new NOnceValueImpl<>(nid, NAssert.requireNamedNonNull(supplier, "supplier"), store);
     }
 
     public NOnceValueModel load(String id) {
