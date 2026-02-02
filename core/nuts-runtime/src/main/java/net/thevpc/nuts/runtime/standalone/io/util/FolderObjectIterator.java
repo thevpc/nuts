@@ -65,7 +65,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
         this.model = model;
         this.name = name;
         this.maxDepth = maxDepth;
-        NAssert.requireNonNull(folder, "folder");
+        NAssert.requireNamedNonNull(folder, "folder");
         this.folder = folder;
         stack.push(new PathAndDepth(folder, 0));
     }
