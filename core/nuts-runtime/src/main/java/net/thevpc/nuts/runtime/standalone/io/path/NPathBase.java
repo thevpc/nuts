@@ -196,7 +196,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public void copyFrom(NPath other, NPathOption... options) {
-        NAssert.requireNonNull(other, "other");
+        NAssert.requireNamedNonNull(other, "other");
         other.copyTo(this, options);
     }
 
