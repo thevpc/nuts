@@ -106,7 +106,7 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
 
     @Override
     public InputStream create() {
-        NAssert.requireNonNull(source, "source");
+        NAssert.requireNamedNonNull(source, "source");
         NMsg sourceName = this.sourceName;
         if (sourceName == null && source != null) {
             sourceName = NMsg.ofNtf(NText.of(source));
