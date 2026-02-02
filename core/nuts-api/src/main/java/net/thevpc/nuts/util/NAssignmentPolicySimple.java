@@ -34,8 +34,8 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
     }
 
     public NAssignmentPolicySimple(NMapSideStrategy source, NMapSideStrategy target) {
-        NAssert.requireNonNull(source, "source");
-        NAssert.requireNonNull(target, "target");
+        NAssert.requireNamedNonNull(source, "source");
+        NAssert.requireNamedNonNull(target, "target");
         this.source = source;
         this.target = target;
     }
