@@ -924,4 +924,17 @@ public class NStringBuilder implements CharSequence, NBlankable {
         append(value);
         return this;
     }
+
+    public NStringBuilder clearSecurely() {
+        int c = data.capacity();
+        for (int i = 0; i < c; i++) {
+            if (i < data.length()) {
+                data.setCharAt(i, '\0');
+            } else {
+                data.append('\0');
+            }
+        }
+        data.delete(0, data.length());
+        return this;
+    }
 }
