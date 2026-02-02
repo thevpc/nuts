@@ -3,7 +3,6 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class NIteratorEmpty<E> extends NIteratorBase<E> {
@@ -25,7 +24,7 @@ public class NIteratorEmpty<E> extends NIteratorBase<E> {
 
     @Override
     public void forEachRemaining(Consumer<? super E> action) {
-        NAssert.requireNonNull(action);
+        NAssert.requireNamedNonNull(action);
     }
 
     @Override
