@@ -22,8 +22,8 @@ public abstract class DependencyFilterDelegate extends AbstractDependencyFilter{
     }
 
     @Override
-    public NFilter redescribe(Supplier<NElement> description) {
-        return dependencyFilter().redescribe(description);
+    public NFilter withDescription(Supplier<NElement> description) {
+        return dependencyFilter().withDescription(description);
     }
 
     @Override
