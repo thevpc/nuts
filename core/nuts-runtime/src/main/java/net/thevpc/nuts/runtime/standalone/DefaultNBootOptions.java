@@ -730,7 +730,7 @@ public class DefaultNBootOptions implements NBootOptions {
     }
 
     @Override
-    public NOptional<char[]> getCredentials() {
+    public NOptional<char[]> getCredential() {
         return NOptional.ofNamed(credentials == null ? null : Arrays.copyOf(credentials, credentials.length), "credentials");
     }
 
@@ -1063,7 +1063,7 @@ public class DefaultNBootOptions implements NBootOptions {
         r.setSystem(this.getSystem().orNull());
         r.setGui(this.getGui().orNull());
         r.setUserName(this.getUserName().orNull());
-        r.setCredentials(this.getCredentials().orNull());
+        r.setCredential(this.getCredential().orNull());
         r.setTerminalMode(this.getTerminalMode().map(NTerminalMode::id).orNull());
         r.setReadOnly(this.getReadOnly().orNull());
         r.setTrace(this.getTrace().orNull());
@@ -1214,7 +1214,7 @@ public class DefaultNBootOptions implements NBootOptions {
         b.setSystem(this.getSystem().orNull());
         b.setGui(this.getGui().orNull());
         b.setUserName(this.getUserName().orNull());
-        b.setCredentials(this.getCredentials().orNull());
+        b.setCredential(this.getCredential().orNull());
         b.setTerminalMode(this.getTerminalMode().orNull());
         b.setReadOnly(this.getReadOnly().orNull());
         b.setTrace(this.getTrace().orNull());
