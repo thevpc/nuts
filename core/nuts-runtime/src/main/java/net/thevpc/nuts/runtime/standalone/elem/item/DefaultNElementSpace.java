@@ -21,7 +21,7 @@ public class DefaultNElementSpace implements NElementSpace {
     private String str;
 
     public static DefaultNElementSpace of(String spacesToken) {
-        NAssert.requireNonNull(spacesToken, "spacesToken");
+        NAssert.requireNamedNonNull(spacesToken, "spacesToken");
         char[] c = spacesToken.toCharArray();
         NAssert.requireTrue(c.length > 0, () -> NMsg.ofC("empty space"));
         boolean repeatable = true;
