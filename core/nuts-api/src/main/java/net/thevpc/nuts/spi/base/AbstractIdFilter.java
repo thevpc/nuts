@@ -59,7 +59,7 @@ public abstract class AbstractIdFilter extends AbstractNFilter implements NIdFil
     }
 
     @Override
-    public NFilter redescribe(Supplier<NElement> description) {
+    public NFilter withDescription(Supplier<NElement> description) {
         if (description == null) {
             return this;
         }
