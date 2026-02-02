@@ -1,7 +1,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.concurrent.NRunnable;
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.Iterator;
@@ -19,20 +19,24 @@ class NOnStartIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NElementDescribables.describeResolveOrDestructAsObject(base)
+        return NDescribables.describeResolveOrDestructAsObject(base)
                 .builder()
-                .set("onStart", NElementDescribables.describeResolveOrToString(r))
+                .set("onStart", NDescribables.describeResolveOrToString(r))
                 .build()
                 ;
     }
 
     @Override
-    public boolean hasNext() {
+    public boolean hasNextImpl() {
         if(!started){
             r.run();
             started=true;
         }
-        return base.hasNext();
+        boolean b = base.hasNext();
+        if(!b){
+            close();
+        }
+        return b;
     }
 
     @Override
