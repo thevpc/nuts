@@ -30,7 +30,7 @@ public class NBulkheadCallImpl<T> implements NBulkheadCall<T> {
 
             NBulkheadCallModel m = store.load(oldId);
             if (m == null) {
-                NAssert.requireNonNull(oldCaller, "caller");
+                NAssert.requireNamedNonNull(oldCaller, "caller");
                 m = new NBulkheadCallModel(oldId);
                 m.setMaxConcurrent(1);
                 m.setCaller(oldCaller);
