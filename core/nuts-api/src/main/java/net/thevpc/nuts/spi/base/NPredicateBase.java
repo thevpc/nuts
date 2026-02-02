@@ -1,14 +1,16 @@
 package net.thevpc.nuts.spi.base;
 
-import net.thevpc.nuts.elem.NElementDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import java.util.function.Predicate;
 
 public class NPredicateBase<T> extends AbstractNPredicate<T> {
     private final Predicate<T> base;
-    public NPredicateBase(Predicate<T> base) {
+    private final NElement description;
+    public NPredicateBase(Predicate<T> base,NElement description) {
         this.base = base;
+        this.description = description;
     }
 
     @Override
@@ -23,7 +25,7 @@ public class NPredicateBase<T> extends AbstractNPredicate<T> {
 
     @Override
     public NElement describe() {
-        return NElementDescribables.describeResolveOr(base, () -> NElement.ofObjectBuilder().build())
-                .asObject().get();
+        return description==null? NDescribables.describeResolveOr(base, () -> NElement.ofObjectBuilder().build())
+                .asObject().get():description;
     }
 }
