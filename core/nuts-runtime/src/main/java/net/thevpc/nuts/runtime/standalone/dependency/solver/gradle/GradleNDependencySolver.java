@@ -170,7 +170,7 @@ public class GradleNDependencySolver implements NDependencySolver {
             if (def != null) {
                 dependency = def.getId().toDependency();
             } else {
-                NAssert.requireNonNull(dependency, "dependency");
+                NAssert.requireNamedNonNull(dependency, "dependency");
             }
         }
         GradleDependencyTreeNodeBuild info = new GradleDependencyTreeNodeBuild(this, null, dependency, def, 0);
