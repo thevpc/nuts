@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.NAffixType;
 import net.thevpc.nuts.elem.NElementSeparator;
-import net.thevpc.nuts.elem.NElementSpace;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIllegalArgumentException;
@@ -16,7 +15,7 @@ public class DefaultNElementSeparator implements NElementSeparator {
     private String str;
 
     public static DefaultNElementSeparator of(String separator) {
-        NAssert.requireNonNull(separator, "separator");
+        NAssert.requireNamedNonNull(separator, "separator");
         switch (separator) {
             case ",":
                 return COMMA;
