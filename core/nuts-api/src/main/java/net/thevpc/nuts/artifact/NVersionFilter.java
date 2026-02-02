@@ -87,5 +87,5 @@ public interface NVersionFilter extends NFilter {
         return NFilter.super.describe();
     }
 
-    NFilter redescribe(Supplier<NElement> description);
+    NFilter withDescription(Supplier<NElement> description);
 }
