@@ -1,7 +1,5 @@
 package net.thevpc.nuts.util;
 
-import java.util.Objects;
-
 /**
  * Represents an operation that accepts a single {@code char}-valued argument and
  * returns no result. This is the primitive type specialization of {@link java.util.function.Consumer}
@@ -31,7 +29,7 @@ public interface CharConsumer {
      * @throws NullPointerException if {@code after} is null
      */
     default CharConsumer andThen(CharConsumer after) {
-        NAssert.requireNonNull(after);
+        NAssert.requireNamedNonNull(after);
         return (char t) -> {
             accept(t);
             after.accept(t);
