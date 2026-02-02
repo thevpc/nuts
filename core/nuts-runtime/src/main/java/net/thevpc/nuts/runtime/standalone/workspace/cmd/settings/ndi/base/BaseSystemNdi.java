@@ -814,7 +814,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public PathInfo[] createShortcut(NDesktopIntegrationItem nDesktopIntegrationItem, NdiScriptOptions options) {
         String apiVersion = options.getNutsApiVersion().toString();
-        NAssert.requireNonBlank(apiVersion, "nuts-api version to link to");
+        NAssert.requireNamedNonBlank(apiVersion, "nuts-api version to link to");
         NId apiId = NWorkspace.of().getApiId().builder().setVersion(apiVersion).build();
         NDefinition apiDefinition = NSearch.of().addId(apiId).failFast().latest()
                 .distinct()
