@@ -182,7 +182,7 @@ public class NPredicates {
         private final Predicate<T> base;
 
         public Not(Predicate<T> base) {
-            NAssert.requireNonNull(base, "base");
+            NAssert.requireNamedNonNull(base, "base");
             this.base = base;
         }
 
@@ -215,8 +215,8 @@ public class NPredicates {
         private final Predicate<? super T> right;
 
         public Or(Predicate<T> left, Predicate<? super T> right) {
-            NAssert.requireNonNull(left, "left");
-            NAssert.requireNonNull(right, "right");
+            NAssert.requireNamedNonNull(left, "left");
+            NAssert.requireNamedNonNull(right, "right");
             this.left = left;
             this.right = right;
         }
@@ -253,8 +253,8 @@ public class NPredicates {
         private final Predicate<? super T> right;
 
         public And(Predicate<T> left, Predicate<? super T> right) {
-            NAssert.requireNonNull(left, "left");
-            NAssert.requireNonNull(right, "right");
+            NAssert.requireNamedNonNull(left, "left");
+            NAssert.requireNamedNonNull(right, "right");
             this.left = left;
             this.right = right;
         }
