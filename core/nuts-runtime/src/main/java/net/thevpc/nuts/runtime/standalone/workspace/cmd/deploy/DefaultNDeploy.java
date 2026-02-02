@@ -130,7 +130,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                 }
             }
         }
-        NAssert.requireNonBlank(result, "package to deploy");
+        NAssert.requireNamedNonBlank(result, "package to deploy");
         if (session.isTrace()) {
             switch (session.getOutputFormat().orDefault()) {
                 case PLAIN: {
@@ -170,7 +170,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
         try {
             if (descriptor == null) {
                 characterizedFile = characterizeForDeploy(contentSource, getParseOptions());
-                NAssert.requireNonBlank(characterizedFile.getDescriptor(), "descriptor");
+                NAssert.requireNamedNonBlank(characterizedFile.getDescriptor(), "descriptor");
                 descriptor = characterizedFile.getDescriptor();
             }
             String name = NWorkspace.of().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
