@@ -52,7 +52,7 @@ public class ExecTest {
         List<NId> nutsIds = q
                 .getResultIds()
                 .toList();
-        NAssert.requireNonEmpty(nutsIds, "not found hadra-build-tool");
+        NAssert.requireNamedNonEmpty(nutsIds, "not found hadra-build-tool");
         TestUtils.println(nutsIds);
         List<NDependencies> allDeps = NSearch.of().addId("net.thevpc.hl:hl#0.1.0")
 //                .setDependencies(true)
