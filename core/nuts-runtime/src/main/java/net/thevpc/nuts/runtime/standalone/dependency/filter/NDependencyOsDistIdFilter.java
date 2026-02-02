@@ -35,7 +35,7 @@ public class NDependencyOsDistIdFilter extends AbstractDependencyFilter  {
 
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
-        List<String> current = NStream.ofIterable(dependency.getCondition().getOsDist()).filterNonBlank().toList();
+        List<String> current = NStream.ofIterable(dependency.getCondition().getOsDist()).nonBlank().toList();
         if(current.size()==0 || accepted.isEmpty()){
             return true;
         }
