@@ -7,10 +7,12 @@ import java.util.function.Supplier;
 public class NIteratorWithDescription<T> extends NIteratorDelegate<T> {
     private final NIterator<T> base;
     private final Supplier<NElement> description;
+    private final Runnable onClose;
 
-    public NIteratorWithDescription(NIterator<T> base, Supplier<NElement> description) {
+    public NIteratorWithDescription(NIterator<T> base, Supplier<NElement> description, Runnable onClose) {
         this.base = base;
         this.description = description;
+        this.onClose = onClose;
     }
 
     public NIterator<T> getBase() {
@@ -22,8 +24,16 @@ public class NIteratorWithDescription<T> extends NIteratorDelegate<T> {
         return base;
     }
 
-    public NIterator<T> redescribe(Supplier<NElement> description) {
-        return new NIteratorWithDescription<T>(base, description);
+    public NIterator<T> withDescription(Supplier<NElement> description) {
+        return new NIteratorWithDescription<T>(base, description, onClose);
+    }
+
+    @Override
+    public void close() {
+        base.close();
+        if (onClose != null) {
+            onClose.run();
+        }
     }
 
     @Override
