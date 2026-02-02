@@ -148,7 +148,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     // @Override
     public List<NExtensionInformation> findExtensions(NId id, String extensionType) {
-        NAssert.requireNonBlank(id.getVersion(), "version");
+        NAssert.requireNamedNonBlank(id.getVersion(), "version");
         List<NExtensionInformation> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(id)) {
@@ -528,7 +528,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     public NWorkspaceExtension wireExtension(NId id, NFetch options) {
         NSession session=workspace.currentSession();
-        NAssert.requireNonNull(id, "extension id");
+        NAssert.requireNamedNonNull(id, "extension id");
         NId wired = CoreNUtils.findNutsIdBySimpleName(id, extensions.keySet());
         if (wired != null) {
             throw new NExtensionAlreadyRegisteredException(id, wired.toString());
