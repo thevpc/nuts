@@ -67,7 +67,7 @@ public abstract class AbstractVersionFilter extends AbstractNFilter implements N
         return NOptional.of(Collections.emptyList());
     }
     @Override
-    public NFilter redescribe(Supplier<NElement> description) {
+    public NFilter withDescription(Supplier<NElement> description) {
         if(description==null){
             return this;
         }
