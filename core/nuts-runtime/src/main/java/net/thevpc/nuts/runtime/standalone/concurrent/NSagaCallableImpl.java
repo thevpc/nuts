@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.util.*;
@@ -140,7 +139,7 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
         if (m == null) {
             return null;
         }
-        NAssert.requireNonNull(m.getType(), "type");
+        NAssert.requireNamedNonNull(m.getType(), "type");
         if (NBlankable.isBlank(m.getId())) {
             m.setId(UUID.randomUUID().toString());
         }
@@ -153,7 +152,7 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
         }
         switch (m.getType()) {
             case STEP: {
-                NAssert.requireNonNull(m.getStepCall(), "call");
+                NAssert.requireNamedNonNull(m.getStepCall(), "call");
                 m.setChildren(null);
                 m.setStepCondition(null);
                 m.setElseIfBranches(null);
