@@ -831,15 +831,17 @@ The root of a TSON document is a sequence of elements.
 
 ```antlr
 Document    -> Element*
-Element     -> Annotation* (ListContainer | Entry)
-Entry       -> Expr (Separator Expr)* Separator   -> ':' | '=' | ' '
+Element     -> (Expr | Pair)
+Pair       -> Expr ':' Expr
+Expr       -> Simple | Operator
+Simple    -> Annotation* (Container|List|Literal)
 ```
 
 2. Lists (Hierarchical)
 This section now correctly uses the Unicode markers from your NOperatorSymbol logic.
 
 ```antlr
-ListContainer -> (UnorderedMarker | OrderedMarker) Element
+ListContainer -> (UnorderedMarker | OrderedMarker) Element ListContainer?
 UnorderedMarker -> '•'+ | '●'+ | '[.' '.'* ']'
 OrderedMarker   -> '▪'+ | '■'+ | '[#' '#'* ']'
 ```
