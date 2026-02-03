@@ -111,6 +111,9 @@ More details at [https://thevpc.github.io/nuts/doc-nuts.html](https://thevpc.git
 | nuts io.github.jiashunx:masker-flappybird                                                  | install & run game flappybird                                                 |
 | nuts com.github.anuken:mindustry-desktop                                                   | install & run game mindustry                                                  |
 | nuts com.github.anuken:mindustry-server                                                    | install & run game mindustry server                                           |
+| nuts add org.apache.netbeans:netbeans                                                      | install & run netbeans ide (latest version)                                   |
+| nuts add org.apache.catalina:apache-tomcat                                                 | install & run tomcat web server (latest version)                              |
+| nuts add org.postgresql:pgsql                                                              | install portable postgresql database server                                   |
 | nuts org.jmeld:jmeld                                                                       | install & run a folder diff tool                                              |
 | nuts com.jgoodies:jdiskreport                                                              | install & run JDiskReport a tool to analyze disk space usage                  |
 | nuts org.jd:jd-gui                                                                         | install & run a java decompiler tool                                          |
