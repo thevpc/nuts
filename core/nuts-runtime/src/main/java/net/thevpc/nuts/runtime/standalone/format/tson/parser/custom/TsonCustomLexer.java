@@ -117,10 +117,14 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     return asOperator123(c, NOperatorSymbol.HASH, NOperatorSymbol.HASH2, NOperatorSymbol.HASH3);
                 case '.':
                     return asOperator123(c, NOperatorSymbol.DOT, NOperatorSymbol.DOT2, NOperatorSymbol.DOT3);
-                case '●': {
+                case '●':
+                case '•':
+                {
                     return continueReadBullet(NElementTokenType.UNORDERED_LIST, line, column, pos);
                 }
-                case '■': {
+                case '■':
+                case '▪':
+                {
                     return continueReadBullet(NElementTokenType.ORDERED_LIST, line, column, pos);
                 }
                 case '¶': {
@@ -2140,11 +2144,14 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         NElementTokenType type;
         switch (c1) {
             case '●':
-            case '.': {
+            case '•':
+            case '.':
+            {
                 type = NElementTokenType.UNORDERED_LIST;
                 break;
             }
             case '■':
+            case '▪':
             case '#': {
                 type = NElementTokenType.ORDERED_LIST;
                 break;
