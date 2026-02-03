@@ -1,6 +1,11 @@
 # 📄 TSON Specification (v2.0)
 
 **TSON** (Type Safe Object Notation) is a human-readable, whitespace-aware configuration and DSL format that combines the simplicity of outlines with the expressiveness of structured data. Its primary rationale is to provide a **type-safe** alternative to JSON/YAML, ensuring that data structures are strictly typed and easily validated. It supports **primitives**, **strings**, **structured literals**, **streams**, **annotations**, and **lists** — all while preserving every token for round-tripping, tooling, and diagnostics.
+TSON is a Strongly Typed configuration format. Unlike "Stringly-Typed" formats (like JSON or YAML) that require the application to guess or cast data types, TSON guarantees Type Fidelity at the parser level.
+- Literal Intelligence: A value like 2025-12-01 isn't a string; it is natively resolved as a LocalDate. A value like 12sN is natively resolved as a BigDecimal.
+- Intent Preservation: Suffixes allow the configuration author to communicate hardware or domain-specific intent (e.g., u16, ms, %) directly to the application.
+- Note on Type Safety & Schemas: While TSON is currently schema-agnostic (allowing for maximum flexibility and "semantically neutral" data structures), the internal engine is designed for Type Safety. Future versions will introduce optional Schema validation to enforce structural constraints, building upon TSON's existing strong-typing foundation.
+
 
 > [!TIP]
 > **Key Principles**
@@ -9,15 +14,76 @@
 > - **Depth-driven hierarchy**: Structure comes from `.` / `#` depth, not indentation.
 > - **Interchangeable whitespace**: Spaces and newlines are equivalent (except in literals).
 
+Designed as a frictionless superset of JSON, TSON offers a trivial learning curve for existing developers while providing the rigorous type safety and metadata support required for modern, large-scale systems.
+
+##  Syntactic Philosophy
+
+TSON provides a broad syntactic surface area designed for Human-Centric Data Modeling. Rather than forcing all data into a single quote or list style, TSON offers specialized markers for different data densities:
+- Paragraphs (¶): Optimized for human-readable notes and documentation.
+- Multi-mode Quotes: Allows embedding of code, SQL, or JSON without the 'escaping hell' of standard formats.
+- Depth-based Nesting: Reduces visual noise in deeply hierarchical configurations.
+
+### Contextual Ergonomics
+TSON is designed with the principle of Contextual Ergonomics. Rather than forcing all data into a single, restrictive syntax (the 'one-size-fits-all' approach of JSON), TSON provides a rich vocabulary of markers tailored to specific data densities.
+- Orthogonal Design: While the syntax is broad, it is non-overlapping. Each marker (e.g., ¶ for comments vs. """ for blocks) occupies a distinct lexical space, ensuring the parser remains deterministic and high-performance.
+- Human-Centric Modeling: We provide multiple quote types and paragraph markers so that the data looks like what it represents. Configuration should be as readable to a human as it is to a machine.
+- Intent over Escaping: By offering various delimiters (like ^id{...^id}), we eliminate 'escaping hell,' allowing complex data to be embedded in its raw, natural state."
+
+
+| Lane            | Syntax           | Examples Purpose                                     |            
+|:----------------|:-----------------|:-----------------------------------------------------|
+| **Pithy**       | '...', [...], 12 | High-density data key-value pairs.                   |   
+| **Documentary** | ¶, ¶¶, """       | Human-readable notes and text blocks                 |
+| **System**      | 0x, 0b, u16, sN  | Low-level hardware and units and financial precision |
+| **Raw/Opaque**  | ^id{...^id}      | Large-scale binary or code embedding |
+
+TSON's operator system is Exhaustive, not Arbitrary. We provide a formal catalog of over 500 symbols encompassing nearly all mathematical, logical, and relational Unicode characters. This ensures that even complex scientific or financial expressions remain deterministic and portable across all TSON-compliant parsers.
+
+
+### The "Literal-First" Principle (The Death of the Backslash)
+Most data formats treat the backslash (\) as a "magic" character that triggers escape sequences (like \n for a newline). This often results in "escaping hell," especially when dealing with Windows paths or Regular Expressions.
+TSON takes a different approach:
+- Absolute Fidelity: All characters between delimiters are treated as literal text.
+- No Magic: The sequence \n in TSON is always two characters: a backslash and an 'n'.
+- WYSIWYG: To include a newline, simply insert a literal newline. To include a backslash, simply type a backslash.
+
+This ensures that what you see in your editor is exactly what the application receives, making the format "copy-paste safe" for system paths and shell commands.
+
+
+Because TSON prioritizes explicit intent over implicit guessing, it solves several long-standing pain points found in traditional formats. The following section illustrates how TSON’s rich syntax provides a safer, more expressive alternative for users coming from JSON or YAML.
+
 ---
 
+## TSON for JSON/YAML Users
+If you know JSON, you already know 90% of TSON. TSON is a strict superset of JSON, meaning any valid JSON file is also a valid TSON file.
+
+
+| Feature                       | JSON                 | TSON                                | Why it matters                         |
+|:------------------------------|:---------------------|:------------------------------------|:---------------------------------------|
+| **Syntax**                    | Strict `{}` and `[]` | ✅ Identical                         | Zero learning curve for basics.        |
+| **Quotes**                    | Double ("") only     | ✅ Double, Single, Backtick, or None | No more ""quote-escaped"" nightmares.  |
+| **Comments**                  | ❌ None               | ✅ Inline, Block, and Doc-blocks     | Configuration needs documentation.     |
+| **Trailing Commas**           | ❌ Forbidden          | ✅ Allowed & Optional                | Faster editing; cleaner git diffs.     |
+| **Types**                     | ❌ Forbidden          | ✅ Strict bit-width (u32, f64)       | Catch data-type errors at the source.  |
+
+### Handling System Paths
+
+One of the most common sources of bugs in JSON is the requirement to double-escape backslashes.
+
+
+| Feature                       | JSON                 | TSON                                |
+|:------------------------------|:---------------------|:------------------------------------|
+| **Windows Path**              | "C:\\Users\\Config"  | "C:\Users\Config"                   |
+| **RegEx**                     | "\\d+\\s+"           | "\d+\s+"                            |
+| **Visual Clarity**            | Cluttered by \\      | Clean and Literal                   |
+
 ## TSON Data Model
-A TSON document is represented as a tree of TsonElement nodes. Every element is one of the following:
+A TSON document is represented as a tree of NElement nodes. Every element is one of the following:
 
     TsonPrimitive: A literal value (String, Number, Boolean, Null) optionally tagged with a Unit Suffix (e.g., 5%P) for numbers.
     TsonName: A "naked" identifier that carries semantic meaning without a value (e.g., bold).
-    TsonPair: A Key-Value association where the key is a String and the value is any TsonElement.
-    TsonContainer: An ordered collection of TsonElement nodes. Containers can be:
+    TsonPair: A Key-Value Pair association where the key is a String and the value is any NElement.
+    TsonContainer: An ordered collection of NElement nodes. Containers can be:
         Braced {}: Typically used for object-like mapping.
         Bracketed []: Typically used for list-like sequences.
         Parenthesized (): Typically used for tuples or function-like arguments.
@@ -83,12 +149,46 @@ TSON supports special constants for minimum, maximum, infinity, and NaN values o
 ```
 
 #### Complex Numbers
+TSON treats complex numbers as Composite Literals. They are not handled by the lexer as a single string, but are resolved by the parser as an expression of real and imaginary components.
+
 The imaginary unit is `i` or `î` (lowercase). It must appear after the imaginary part.
 ```tson
 3+4i     // Real + Imaginary
 -1.5i    // Pure imaginary
 -6-1.2î  // Negative real and imaginary
 ```
+
+##### Lexing the Components
+- Real Part: A standard `NUMBER` (e.g., 3).
+- Operator: A standard `OPERATOR_SYMBOL` (e.g., +).
+- Imaginary Part: A `NUMBER` with the `i` suffix (e.g., `4i`). This is a Typed Literal.
+
+##### Lexical Bonding (The Whitespace Rule)
+
+To resolve the "Complex Number" ambiguity, TSON implements a Lexical Bonding rule. This rule determines whether a sequence of characters is treated as a single literal value or a mathematical expression.
+
+**The Bonding Principle**
+
+  - Bonded (No Spaces): If a real number, an operator (+ or -), and an imaginary number are written without intervening whitespace (e.g., 3+4i), the lexer consumes them as a single complex literal.
+  - Floating (With Spaces): If whitespace is present (e.g., 3 + 4i), the lexer produces three distinct tokens. The parser then treats this as a FlatExpression.
+
+Formal Rule: Literal Bonding:
+"TSON distinguishes between Data (Literals) and Logic (Expressions) via whitespace proximity.
+- Complex Literals must be contiguous. The presence of any whitespace (including newlines) within the real-operator-imaginary sequence breaks the bond, downgrading the sequence to a FlatExpression.
+- This ensures that a configuration value like frequency: 3+4i is stored as a constant numeric type, while frequency: 3 + 4i is stored as a calculation to be evaluated.
+- Validation: A bonded literal like 4i3 is lexically invalid because the i suffix acts as a terminal for the complex-literal state."
+
+**Implementation Logic**
+This is handled at the Lexer level using a "Lookahead" or "No-Space" constraint:
+    Complex Token: `(DIGITS)? ('+'|'-') + DIGITS + 'i'` (with no whitespace allowed between components).
+
+
+| Input       | Token Type                | Resulting Element                 |
+|:------------|:--------------------------|:----------------------------------|
+| **3+4i_sN** | COMPLEX_LITERAL           | BIG_COMPLEX (Value: 3 + 4i)       |
+| **3 + 4i**  | INT, OP, COMPLEX_LITERAL  | FLAT_EXPR (A math operation)      |
+| **-1.5i**   | COMPLEX_LITERAL           | DOUBLE_COMPLEX (Value: 0 - 1.5i)  |
+
 
 #### Type Suffixes
 Numbers can be explicitly typed or include custom suffixes (which can represent units). TSON uses `s` (signed) or `u` (unsigned) followed by bit width for types. The underscore `_` before the type or suffix is **optional**.
@@ -102,10 +202,11 @@ Numbers can be explicitly typed or include custom suffixes (which can represent 
 12_u64    // Unsigned 64-bit integer
 12u64     // Same as above
 12_sN     // BigInteger (Arbitrary precision)
-1.2_s64   // 64-bit float (double)
-12.0u64   // 64-bit float (double) using 'u' suffix
+12.0_sN   // BigDecimal (Arbitrary precision)
+1.2_f64_GHz  // 64-bit float (double) with suffix
 100ms     // With suffix (interpreted as unit)
-50%       // With suffix
+100Ω      // With unicode suffix (interpreted as unit)
+50%       // With percent suffix
 1.2i_s32% // Complex with type and suffix
 ```
 
@@ -127,7 +228,7 @@ Syntax Rules
 
 name
 user-id
-api.endpoint
+apiEndpoint
 Ω
 π
 $var
@@ -139,7 +240,34 @@ café.menu
 
 TSON provides multiple ways to represent text, from simple quoted strings to multi-line blocks.
 
-### 3.1 Quoted Strings
+**Guideline**: Use the simplest form that doesn't require escaping.
+
+| Syntax      | Best For                                        | Escaping                                            |
+|:------------|:------------------------------------------------|:----------------------------------------------------|
+| "..."       | Standard strings and JSON-like properties       | double Terminal quote only "", can include newlines |
+| '...'       | Short identifiers or strings containing "       | Terminal quote only '', can include newlines        |
+| `...`       | Command-line snippets or Shell scripts          | Terminal quote only ``, can include newlines        |
+| """..."""   | SQL queries or formatted text blocks            | Terminal quote only """""", can include newlines    |
+| '''...'''   | Multi-line regex or nested single-quote strings | Terminal quote only '''''', can include newlines    |
+| ```...```   | Embedded Markdown or code blocks                | Terminal quote only `````` , can include newlines   |
+| ¶ text      | Inline annotations and quick metadata           | None (ends at newline)                              |
+| ¶¶ text     | Header-level documentation or changelogs        | None (consecutive lines)                            |
+| ^id{...^id} | Serialized data (XML/JSON) or complex macros    | None (custom delimiter)                             |
+
+### 3.1 Quoted Strings & The "Literal-First" Rule
+All quoted strings are multi-line by design and follow the Literal-First principle.
+- No Magic Backslashes: The backslash \ is treated as a literal character. Standard sequences like \n, \t, or \r are not converted into control characters by the parser.
+- Escaping: Only the terminal quote can be escaped (e.g., \" inside a "" string).
+- Result: What you see is exactly what the application receives.
+
+````tson
+path: "C:\new\temp"      // Result: C:\new\temp (No newline/tab injection)
+regex: "\d+\s+"          // Result: \d+\s+ (No double-backslash required)
+multiline: "Line 1
+Line 2"                  // Result: Actual newline preserved
+````
+
+### 3.2 Quoted Strings
 - **Quoted Strings**: Support single (`'`), double (`"`), and backtick (`` ` ``) quotes. All quoted strings are **multi-line by design**.
 - **Triple Quotes**: Support `'''`, `"""`, and ` ``` `.
 - **Escaping**: Quoted strings only support escaping the **terminal quote** character with a backslash (e.g., `\"` in a double-quoted string, `\'''` in a triple-single-quoted string).
@@ -166,34 +294,87 @@ triple double quotes
 """
 ````
 
-### 3.2 Single-line Strings (`¶`)
+### 3.3 Single-line Strings (`¶`)
 A single `¶` starts a string that continues until the end of the line. **No escaping sequences** are supported.
 ```tson
 ¶ This is a single-line string.
 ```
+A single ¶ starts a string that continues until the end of the line.
+- Behavior: Everything after the ¶ (including leading spaces) is part of the string.
+- Escaping: No escaping sequences are supported.
 
-### 3.3 Multi-line Strings (`¶¶`)
-Use `¶¶` for multi-line text. The string continues as long as subsequent lines also start with `¶¶`. **No escaping sequences** are supported.
 
-Multiline strings are defined by a repeating prefix at the start of each line.
-- Aggregation: Consecutive lines starting with ¶¶ are aggregated into a single TsonString element.
-- Newline Preservation: The newline character between lines is preserved in the resulting string.
-- Termination: The element terminates at the first line that does not start with the ¶¶ prefix.
-- Strip Rule: The leading ¶¶ prefix is stripped from each line before being added to the value.
-
+### 3.4 Multi-line Strings (`¶¶`)
+Multi-line strings use the `¶¶` prefix for consecutive lines. Each element
+stores **two representations**:
+1. **Raw Value**: The literal text as written (preserves all whitespace)
+2. **Clean Value**: With maximum common indentation stripped
 
 ```tson
 ¶¶ Line 1 of a long text.
 ¶¶ Line 2 of the same text.
+
+   ¶¶ This is line 1.
+       ¶¶ This is line 2.
+// ^ Indentation here is ignored; result starts at "This is..."
 ```
 
-Rule: Does the ¶¶ have to be the very first character on the line, or can it be preceded by indentation?
+#### Parsing Rules
+1. **Line Detection**: A line is part of a multi-line string if `¶¶` is the
+   first non-whitespace sequence on that line.
+2. **Prefix Stripping**: The `¶¶` marker and any whitespace **before** it
+   are stripped from each line.
+3. **Raw Storage**: The remaining text (after ¶¶) from all lines is joined
+   with newlines and stored as the **raw value**.
+4. **Common Indent Detection**: Find the maximum amount of leading whitespace
+   that is **common to all non-empty lines**.
+5. **Clean Storage**: Strip the common indent from each line to produce the
+   **clean value**.
+6. **Termination**: The string terminates at the first line that does not
+   start with `¶¶` (after stripping leading whitespace).
+
+
+Rule: the ¶¶ can start at amy level of a line, and consumes till the line ends and there is no more ¶¶
 
 ---
+
+## 4. Temporal Literals
+TSON provides native support for date and time types. To prevent ambiguity with mathematical expressions (like 2025-01-01 being parsed as 2025 minus 1 minus 1), TSON employs the Temporal Bonding Rule.
+
+### 4.1 Temporal Types
+TSON categorizes temporal data into four distinct NElementType groups:
+
+### 4.2 The Bonding Rule (Resolution of - Ambiguity)
+
+A sequence of digits separated by hyphens (-) or colons (:) is bonded into a Temporal Literal only if:
+- No Internal Whitespace: There are no spaces between the digits and separators (e.g., 2025-01-01 is a Date; 2025 - 01 - 01 is a Math Expression).
+- Valid Pattern Match: The sequence matches a valid date or time structure.
+
+### 4.3 Handling Edge Cases
+Following the "Fail-Never" philosophy, TSON handles invalid dates gracefully:
+- Invalid Calendar Dates: 2025-02-30 (February 30th) will be lexically captured as a LocalDate. However, isErrorTree() will return true, and the diagnostics() will report an "Invalid Calendar Date."
+- Mixed Precision: TSON supports optional milliseconds or nanoseconds (e.g., 12:30:00.500).
+- Timezone Suffixes: Instants support Z (UTC) or offset notation +HH:mm.
+
 
 ## 4. Expressions
 
 TSON is expression-oriented. Almost everything is an expression, and expressions can be combined using arbitrary operators.
+
+TSON preserves expressions as **ordered token sequences**:
+```tson
+result: 1 + 2 * 3
+```
+
+**Parsed as**: `[result, :, 1, +, 2, *, 3]`
+
+**Applications choose interpretation**:
+- Math context: `7` (multiplication first)
+- Left-to-right: `9`
+- Custom DSL: Application-defined
+
+**TSON never evaluates** these expressions. Use the Nuts API's
+`NFlatExpression::reshape(...)` to construct ASTs with your precedence rules or use default implementations (including java's precedence table)
 
 ### 4.1 Operators
 TSON supports a wide range of predefined **symbolic** operators (prefix, suffix, and infix).
@@ -209,9 +390,19 @@ a && b || c         // Symbolic infix operators
 // Exotic Operators
 x +++ y             // Triple plus
 a ==> b             // Double arrow
+a.b(3)              // dot is an operator actually
+a ⇒ b               // unicode operator
+assemtion : ∀ x ∈ 𝒩 // complex unicode operators
 value ??? default   // Triple interrogation
 @deprecated !!! x   // Exclamation with annotation
 ```
+
+#### 4.1.1 Rationale for Deferred Precedence
+Unlike a programming language (like C or Java) which has a fixed execution model, TSON is a semantic transport format. It is designed to allow domain-specific tools to define their own mathematical or logical rules.
+- Domain Sovereignty: In a standard math context, 1 + 2 * 3 is 7. However, in a CSS-like layout engine using TSON, or a custom Logic DSL, operators might have entirely different priorities (e.g., a "pipe" operator or a "unit conversion" operator).
+- The "Structural-Only" Guarantee: The TSON parser's only job is to guarantee the order of tokens. By delivering a flat, ordered sequence of [1, +, 2, *, 3], TSON ensures that the raw intent of the author is preserved without the parser "hallucinating" a structure that the target domain might not support.
+- Security & Consistency: To prevent inconsistent interpretation, consuming applications are encouraged to use a Standard Evaluation Library (like the NFlatExpression evaluator in Nuts) which provides multiple default, industry-standard precedence tables (for Java, logical, left associative) and provides means to build one's own.
+[!TIP] Best Practice for Ambiguity For mission-critical configurations where cross-tool consistency is paramount, TSON recommends the use of explicit parentheses: result: 1 + (2 * 3) This ensures that even the most basic consumer interprets the hierarchy correctly.
 
 ---
 
@@ -220,7 +411,7 @@ value ??? default   // Triple interrogation
 Structured literals in TSON include pairs, objects, arrays, and tuples. **Keys, values, and elements** in these structures can be complex expressions (including other objects, arrays, or functions).
 
 ### 5.1 Pairs
-Pairs represent key-value associations using a colon `:` as a separator.
+Pairs represent key-value Pair associations using a colon `:` as a separator.
 
 ```tson
 key: value
@@ -244,12 +435,12 @@ In structured literals (objects, arrays, tuples) and lists, elements are separat
 ### 5.3 Objects (`{}`)
 Objects contain **pairs** or standalone elements. They can have an optional **header** (name) and **parameters**.
 
-| Type | Syntax | Description |
-| :--- | :--- | :--- |
-| **Object** | `{}` | Simple anonymous object. |
-| **Named Object** | `name{}` | Object with a name/tag. |
-| **Param Object** | `(args){}` | Object with parameters. |
-| **Full Object** | `name(args){}` | Object with both name and parameters. |
+| Type             | Syntax         | Description                           |
+|:-----------------|:---------------|:--------------------------------------|
+| **Object**       | `{}`           | Simple anonymous object.              |
+| **Named Object** | `name{}`       | Object with a name/tag.               |
+| **Param Object** | `(args){}`     | Object with parameters.               |
+| **Full Object**  | `name(args){}` | Object with both name and parameters. |
 
 **Examples:**
 ```tson
@@ -265,12 +456,12 @@ rgba(255, 0, 0, 0.5){ label: "red" } // Full Object
 ### 5.4 Arrays (`[]`)
 Arrays are ordered collections. Like objects, they support names and parameters. **Elements** within an array can be any valid expression.
 
-| Type | Syntax | Description |
-| :--- | :--- | :--- |
-| **Array** | `[]` | Simple anonymous array. |
-| **Named Array** | `name[]` | Array with a name/tag. |
-| **Param Array** | `(args)[]` | Array with parameters. |
-| **Full Array** | `name(args)[]` | Array with both name and parameters. |
+| Type            | Syntax         | Description                          |
+|:----------------|:---------------|:-------------------------------------|
+| **Array**       | `[]`           | Simple anonymous array.              |
+| **Named Array** | `name[]`       | Array with a name/tag.               |
+| **Param Array** | `(args)[]`     | Array with parameters.               |
+| **Full Array**  | `name(args)[]` | Array with both name and parameters. |
 
 **Examples:**
 ```tson
@@ -283,9 +474,9 @@ matrix(rows: 2, cols: 2)[ 1, 0, 0, 1 ] // Full Array
 ### 5.5 Tuples (`()`)
 Tuples (or uplets) are fixed-size ordered collections. Like objects and arrays, they can be anonymous or named. **Elements** within a tuple can be any valid expression.
 
-| Type | Syntax | Description |
-| :--- | :--- | :--- |
-| **Tuple** | `()` | Simple anonymous tuple. |
+| Type            | Syntax   | Description                                     |
+|:----------------|:---------|:------------------------------------------------|
+| **Tuple**       | `()`     | Simple anonymous tuple.                         |
 | **Named Tuple** | `name()` | Tuple with a name (similar to a function call). |
 
 **Examples:**
@@ -312,6 +503,8 @@ Binary data is enclosed in `^[]`. An optional **encoding** can be specified befo
 ^hex[68656c6c6f]         // Hexadecimal encoding
 ^b85[He7W%DIdAh]         // Base85 encoding
 ```
+
+TSON separates Lexical Capture from Content Validation. The parser will extract invalid!! as the payload of a Base64 stream. However, because ! is not a valid Base64 character, the NElement.isErrorTree() check will return true, and the diagnostics() list will contain an 'Invalid Base64 Encoding' warning. This allows the application to decide whether to crash, ignore the field, or attempt to log the raw corrupted data for debugging.
 
 ### 6.2 Character Streams
 Character streams use a custom delimiter `^id{...^id}`.
@@ -340,19 +533,47 @@ username: "admin"
 
 Lists are a core feature of TSON, using depth instead of indentation for hierarchy.
 TSON supports two types of implicit hierarchical lists:
-- Unordered Lists (.): Represent a collection of elements where the order may be secondary to the identity (Cardinality).
-- Ordered Lists (#): Represent a sequence where the position is semantically significant (Ordinality).
+- Unordered Lists (● and •): Represent a collection of elements where the order may be secondary to the identity (Cardinality).
+- Ordered Lists (■ and ▪): Represent a sequence where the position is semantically significant (Ordinality).
 Nesting Rules: Hierarchies are created by repeating the prefix. However, TSON allows Cross-Prefix Nesting. An ordered item (#) can contain unordered sub-items (..), and vice-versa.
 The depth of a node is determined by the total count of the prefix characters (. or #). A node at Level 3 (... or ###) is always a child of the most recent node at Level 2, regardless of whether the Level 2 node was ordered or unordered.
 
-### 8.1 Unordered Lists (`.`)
-Each item in a dotted list is a full TsonElement. This allows list items to be primitives, complex objects, or even nested containers
+### 8.1 Whitespace and Compactness
+In TSON, spaces and newlines are semantically equivalent separators. The structural hierarchy is defined exclusively by the Marker Count, not by physical indentation or line breaks. This allows TSON to be "Indentation-Agnostic" while maintaining strict hierarchy.
+- Horizontal Compactness: You can represent a full hierarchy on a single line. The parser treats a space exactly like a newline—as a separator between elements.
+- Vertical Readability: You can use newlines and indentation for visual clarity without affecting the data structure. The parser ignores the "column" position and only counts the marker characters.
+
+Example of Equivalency: Both of these parse to the exact same tree structure:
+
+```tson
+
+// Compact Style
+• Fruit •• Apple •• Banana • Vegetable
+
+// Vertical Style
+• Fruit
+  •• Apple
+  •• Banana
+• Vegetable
+```
+
+### 8.2 Unordered Lists (`●`)
+Each item in a dotted list is a full NElement. This allows list items to be primitives, complex objects, or even nested containers
 TSON supports a shorthand notation for hierarchical lists, primarily used for readability in documentation or simple configurations.
 Syntax: A line starting with one or more dots followed by a space.
 Nesting: The number of dots represents the nesting level.
 Mapping: A dotted list is parsed into a standard TsonContainer.
 
 The number of dots determines the depth.
+```tson
+• Fruit
+•• Apple
+•• Banana
+• Vegetable
+•• Carrot
+```
+you can use the full ASCII symbols like this :
+
 ```tson
 [.] Fruit
 [..] Apple
@@ -361,59 +582,130 @@ The number of dots determines the depth.
 [..] Carrot
 ```
 
-### 8.2 Ordered Lists (`#`)
+The Whitespace Rule: A marker must be followed by at least one whitespace character (space, tab, or newline) to separate the marker from its value.
+- `Apple` → Valid: List item "Apple" at depth 1.
+- Apple → Invalid/Identifier: Parsed as a single atom starting with •.
+
+### 8.3 Ordered Lists (`#`)
+```tson
+▪ Step 1
+▪▪ Substep A
+▪▪ Substep B
+▪ Step 2
+```
+
 ```tson
 [#] Step 1
 [##] Substep A
 [##] Substep B
-[#} Step 2
+[#] Step 2
 ```
 
-### Cross-Prefix Nesting
+### 8.4 The "Marker-First" Principle
+
+
+TSON markers are lexically distinct. Symbols like •, ●, ■, and ▪ are reserved exclusively for structural hierarchy and cannot be part of an identifier name.
+
+- No Separator Required: Because markers and identifiers belong to different character classes, whitespace between a marker and its value is optional.
+- Equivalency: `•Fruit` and `• Fruit` are parsed identically.
+- Whitespace Neutrality: Since spaces and newlines are interchangeable, a list can be compressed into a single line or expanded vertically without changing the structure.
+
+The "Compactness" Example: `•Apple••Banana••Cherry•Date` Result: A list with "Apple" and "Date" at Depth 1, with "Banana" and "Cherry" nested under Apple.
+
+TSON's whitespace is purely aesthetic. Unlike YAML, where a newline resets the indentation context, a TSON parser treats a newline exactly like a space. The hierarchy is 'baked into' the markers themselves. Whether you write your list horizontally to save space or vertically to improve readability, the resulting Abstract Syntax Tree (AST) is identical.
+
+
+### 8.5 Cross-Prefix Nesting
 Nesting Rules: Hierarchies are created by repeating the prefix. However, TSON allows Cross-Prefix Nesting. An ordered item (#) can contain unordered sub-items (..), and vice-versa.
 
 ```tson
-[#] Step One
-[..] Sub-task A
-[..] Sub-task B
-[#] Step Two
+▪ Step One
+•• Sub-task A
+•• Sub-task B
+▪ Step Two
 ```
 
-### 8.4 Sparse Depth Jumps
+### 8.6 Sparse Depth Jumps
 Depth can jump arbitrarily. TSON attaches to the most recent shallower item.
 ```tson
-[.] Top
-[.....] Deep Child       // depth 5 → child of "Top"
-[..] Sibling             // depth 2 → also child of "Top"
+• Top
+••••• Deep Child       // depth 5 → child of "Top"
+•• Sibling             // depth 2 → also child of "Top"
 ```
 
 
-8.5 Variants and Array Disambiguation
+### 8.7 Variants and Array Disambiguation
 
 TSON supports two visual variants for list markers: ASCII and Unicode.
-- Unordered lists: [.] (ASCII) or [●] / ● (Unicode)
-- Ordered lists: [#] (ASCII) or [■] / ■ (Unicode)
+- Unordered lists: [.] (ASCII) or [●] / ● / • (Unicode)
+- Ordered lists: [#] (ASCII) or [■] / ■ / ▪ (Unicode)
 
-Repetition of the marker character indicates depth: e.g., [..] or ●● represents a child of the previous [.] or ●. 
+Repetition of the marker character indicates depth: e.g., [..] or •• represents a child of the previous [.] or •. 
 Both bracketed and plain repeated forms are equivalent and can be used interchangeably.
-Distinguishing from arrays: TSON treats a marker as a list prefix only when it matches the canonical marker patterns above. For example:
+
+To maintain a deterministic parse despite syntactic richness, TSON employs Strict Lexical Prioritization. For example, the sequence [.] is reserved as a specific structural marker (List-Item), whereas [ . ] uses whitespace as a separator, identifying . as a distinct atom. TSON's grammar is designed to be LL(k), ensuring that any ambiguity is resolved within a fixed number of lookahead characters.
 
 - [.] → unordered list item
 - [ . ] → an array containing a single element .
 
 This allows TSON to safely parse lists while still permitting any valid TSON expression to be a node, including arrays or operators that resemble list markers. 
+
 Parser logic relies on marker shape and repetition to determine list type and depth, ensuring that lists and arrays are unambiguously differentiated.
+
+TSON employs Strict Lexical Prioritization to differentiate between list markers and standard arrays.
+
+
+| Sequence       | Parsed As           | Reason                                                           |
+|:---------------|:--------------------|:-----------------------------------------------------------------|
+| `[.]`          | Unordered List Item | Reserved structural token (ASCII variant)                        |
+| `[ . ]`        | Array               | Spaces break the token; parses as array with identifier `.`      |
+| `•Apple`       | List Item           | `•` is a non-identifier symbol; triggers list mode immediately.  |
+| `( . )`        | Parenthetical Uplet | Standard grouping (Uplet), not a list marker                     |
 
 ---
 
 ## 9. Comments and Whitespace
+TSON supports both line-oriented and block-oriented comments. While whitespace is generally ignored as a separator, comments serve to document logic without affecting the evaluation of the expression.
 
 ### 9.1 Comments
+Comments in TSON are categorized into three formats based on their delimiter and intended use:
+
+Comments are non-structural and are attached to AST nodes based on proximity:
+- Leading Decoration: By default, a comment is attached to the next subsequent non-whitespace node.
+- Trailing Decoration: If no subsequent node exists within the current scope (e.g., at the end of a file or a block), the comment is attached to the previous node as a trailing comment.
+
+#### 9.1.1 Single-Line Comments
+
+Single-line comments begin with the sequence //. Unlike standard implementations, TSON treats consecutive single-line comments as a single atomic token.
+- Aggregation Rule: The lexer captures all text following // up to the Line Terminator. If the following line (ignoring horizontal whitespace) also begins with //, the lexer continues the capture into the same token.
+- Preservation: The internal Line Terminators between contiguous comment lines are preserved within the token value to maintain the user's formatting.
+- Termination: The comment block is terminated by the first line that does not begin with the // sequence.
+
+Example of a single atomic token:
+
+
 ```tson
-// Inline comment
-/* Block 
-   comment */
+// This entire block is processed
+// as a single NElementTokenType.COMMENT
+// despite spanning three lines.
 ```
+#### 9.1.2 Block Comments
+Block comments are enclosed between /* and */.
+- Universal Handling: No distinction is made between /* and /**. Both are processed as a single block.
+- Content Trimming: If the block comment follows the "Doc-style" convention—where every line starts with a consistent number of spaces followed by one or more asterisks (*)—the lexer trims these decorative characters from the internal string.
+- Original Preservation: Despite the trimming logic, the original raw content (including the asterisks) is preserved in a separate "raw" field of the token for round-trip fidelity.
+
+Example of Block Trimming:
+
+```tson
+/*
+ * This is a comment
+ * with decorative stars
+ */   
+```
+
+- Raw Value: "\n * This is a comment\n * with decorative stars\n"
+- Trimmed Value: "\n This is a comment\n with decorative stars\n"
 
 ### 9.2 Whitespace
 Spaces and newlines are interchangeable outside literals.
@@ -423,40 +715,173 @@ Spaces and newlines are interchangeable outside literals.
 
 ---
 
-## 10. Error Recovery (Fail-Never)
+### 10. Lexical Specification: The Tokenization Engine
+To ensure absolute consistency across implementations, TSON uses a Predefined Lexical Catalog for operators, rather than allowing truly "arbitrary" character sequences.
 
-TSON never fails to parse. Malformed constructs are preserved as "error elements".
+#### 10.1 The Operator Catalog
+TSON supports over 500+ specialized operators, covering standard arithmetic, set theory, calculus (integrals), and logic (arrows/quantifiers).
+- Lexeme-Based Tokenization: The lexer uses a Greedy Multi-Character Match (Maximum Munch). It compares the character stream against the `NOperatorSymbol` catalog.
+- Aliases and Unicode Normalization: Many operators support Unicode aliases (e.g., `*` and `∗` are lexically identical). The parser treats these as the same internal `OPERATOR_SYMBOL`.
+- Token Boundaries: Because the operator catalog is predefined, the lexer can unambiguously split `x+y` into `[ID:x], [OP:+], and [ID:y]` without whitespace, because `+` is a known terminal symbol in the catalog.
+
+##### 10.2 Tokenization Priority (The "Longest Match" Rule)
+When the lexer encounters sequences of operator-class characters, it always prioritizes the longest string present in the NOperatorSymbol table.
+
+
+
+| Input    | Tokenization Result | Reasoning                                       |
+|:---------|:--------------------|:------------------------------------------------|
+| `+++`    | PLUS3               | Found exact match for `+++`                     |
+| `+ + +`  | PLUS, PLUS, PLUS    | Separated by whitespace,treated as three tokens |
+| `+==` | PLUS_EQ2           | Found exact match for `+==`                     |
+
+
+#### 10.3 Identifier vs. Operator Interaction
+The `NAME` (Identifier) and `OPERATOR` groups are disjoint. An identifier terminates the moment a character from the NOperatorSymbol catalog or a structural delimiter (like :) is encountered.
+
+Example: `key:value`
+- `key` matches `NAME`.
+- `:` is a structural separator.
+- `value` matches `NAME`.
+
+Example: `price<=100usd`
+- `price` matches `NAME`.
+- `<=` matches `OPERATOR_SYMBOL` (LTE).
+- `100usd` matches `NUMBER` (with suffix).
+
+#### 10.4 Implementation: The Temporal Lexer
+
+To satisfy the requirement for a strict Lexer Specification, the parser identifies Temporal Literals using the following priority:
+- Greedy Temporal Match: The lexer looks ahead for the pattern \d{4}-\d{2}-\d{2}.
+- Separator Check: If a T or whitespace follows the date, it continues to look for the time component.
+- Fallback: If the pattern is broken by an illegal character or unexpected whitespace, the lexer reverts to parsing individual INT and OPERATOR tokens.
+Example of Tokenization Priority: 
+
+| Raw Input      | Tokenized As          | Logic                               | 
+|:---------------|:----------------------|:------------------------------------| 
+| 2026-02-03     | LOCAL_DATE            | Bonded sequence; no spaces.         | 
+| 2026 - 02 - 03 | INT, OP, INT, OP, INT | Spaces break the temporal bond.     | 
+| 03:15:00Z      | INSTANT               | Recognized as Time with UTC marker. |
+
+---
+
+## 11. Character Encoding & Byte Streams
+To ensure universal compatibility across systems, TSON defines strict rules for text encoding and binary data integrity.
+### 11.1 The UTF-8 Standard
+- Primary Encoding: TSON is strictly a UTF-8 format. All parsers must support the full Unicode range.
+- BOM (Byte Order Mark): TSON parsers should detect and ignore the `UTF-8` `BOM` (`EF BB BF`). If present, it is treated as leading whitespace and discarded.
+- Invalid Sequences: If a file contains invalid `UTF-8` byte sequences, the parser must treat that segment as an Error Node. The `isErrorTree()` method will return true, and the diagnostic will report "Encoding Violation."
+
+### 11.2 Stream and Binary Validation
+
+TSON supports embedded binary data via suffixes (e.g., ^b64).
+- Validation Policy: The TSON parser is a Structural Parser, not a Data Validator.
+  - It will identify the content of `^b64[...]` as a `BINARY_STREAM` element.
+  - Lazy Decoding: To maximize performance, the parser may defer the actual Base64 decoding until the application explicitly accesses the value.
+- Invalid Encoding Handling:
+  - If `^b64[invalid!!]` is encountered, the Lexer will successfully capture the string.
+  - The Decoder (upon access) will flag the error.
+  - If `isErrorTree()` is called, it will trigger a validation check on encoded streams and return `true` if the content is not a valid Base64/Hex string.
+
+
+
+## 12. Fault Tolerance & Security (Fail-Never)
+
+TSON is designed with a Resilient Grammar. This means the parser will always attempt to construct a valid Abstract Syntax Tree (AST), even when the input is syntactically malformed.
+
+
 ```tson
 . { unclosed object
 .. valid child
 ```
 The parser attaches a diagnostic to the unclosed object and continues parsing.
+Ambiguous expressions are not errors; they are simply structural sequences.
+
+
+### 12.1 The "Best-Effort" AST Principle
+
+When TSON encounters a structural error (like a missing comma or a mismatched bracket), it does not halt. Instead, it uses Contextual Repair to close the current container and continue.
+Example: The "Admin" Risk Input: admin_users `[ "alice", "bob" { "charlie" ]`
+In this case, the TSON parser detects a conflict (a `{` inside an array without a separator).
+- The parser treats `{ "charlie" ]` as a malformed fragment.
+- To preserve the structure, it may resolve "charlie" as a string but wrap it in an `EMPTY` or `ERROR` node type, or simply terminate the array.
+- The Result: The AST will exist, but it will contain an anomaly.
+
+### 12.2 Security Best Practices: "Strict Mode" vs. "Resilient Mode"
+TSON guarantees a Tree, not a Truth." Just because TSON successfully parsed a file doesn't mean the file is valid for your application. TSON moves the "Failure Point" from the Lexer to the Validator
+Because TSON is "Fail-Never," developers must use a Validator (or a future TSON Schema) to check the health of the resulting AST.
+- Check for Error Nodes: TSON parsers flag malformed segments as NElementType.EMPTY or NElementType.CUSTOM with error metadata.
+- Schema Enforcement: Applications should verify that admin_users is a clean ARRAY containing only STRING types. If the parser had to "guess" due to a typo, the validator should reject the config before it reaches the logic layer.
+- every NElement has a `isErrorTree()` method that recursively checks for the validity of the tree and List<NElementDiagnostic> diagnostics() that collect all errors within the tree
+
+
+In the case of `admin_users [ "alice", "bob" { "charlie" ]`, the TSON parser ensures the application doesn't crash. 
+However, the resulting `OBJECT` for `admin_users` will contain a structural anomaly. 
+A security-conscious implementation should check if the admin_users element is a 'valid' array. 
+If it contains unexpected objects or error-fragments, the application should log a Critical Configuration Error and refuse to start.
+
+
 
 ---
 
 ## Appendix: Grammar Sketch
 
+1. Structural Rules
+The root of a TSON document is a sequence of elements.
+
 ```antlr
-Document       -> Element*
-Element        -> Annotation* (List | Expr)
-List           -> (ListItem | OrderItem) (Value? (SubList?)?)
-ListItem       -> '.'+
-OrderItem      -> '#'+
-Expr           -> Term (Op Term)*
-Term           -> Value | Pair
-Op             -> Operator
-Value          -> Primitive | String | Object | Array | Tuple | Stream
-Pair           -> Expr (':' | ' ') Expr
-Object         -> Header? Body
-Header         -> Name? Params | Name
-Params         -> '(' (Element (','? Element)*)? ')'
-Body           -> '{' (Element (','? Element)*)? '}'
-Array          -> Header? ArrayBody
-ArrayBody      -> '[' (Element (','? Element)*)? ']'
-Tuple          -> Header? TupleBody
-TupleBody      -> '(' (Element (','? Element)*)? ')'
-Stream         -> '^' Name? '{' Content '^' Name? '}' | '^' Name? '[' Content ']'
+Document    -> Element*
+Element     -> Annotation* (ListContainer | Entry)
+Entry       -> Expr (Separator Expr)* Separator   -> ':' | '=' | ' '
 ```
+
+2. Lists (Hierarchical)
+This section now correctly uses the Unicode markers from your NOperatorSymbol logic.
+
+```antlr
+ListContainer -> (UnorderedMarker | OrderedMarker) Element
+UnorderedMarker -> '•'+ | '●'+ | '[.' '.'* ']'
+OrderedMarker   -> '▪'+ | '■'+ | '[#' '#'* ']'
+```
+
+3. Expressions & Operators
+This is where we address the "Bonding" and "Predefined Operator" critiques.
+
+```antlr
+Expr        -> Term (Operator Term)*
+Term        -> Literal | Identifier | Container | FlatExpr
+
+// Bonding Rule: A Complex Literal is a Lexer-level Terminal 
+// that looks like a math expression but has no whitespace.
+Literal     -> Number | ComplexLiteral | String | Boolean | Temporal | Null
+ComplexLiteral -> Number ('+'|'-') Number ('i'|'j'|'k') // No whitespace allowed
+
+// Operator comes from the NOperatorSymbol catalog (500+ symbols)
+Operator    -> [See NOperatorSymbol Catalog]
+```
+
+4. Containers
+TSON uses a consistent Header + Body pattern for Objects, Arrays, and Tuples.
+
+```antlr
+Container   -> Header? (Body | ArrayBody | TupleBody)
+Header      -> Identifier Params?
+Params      -> '(' (Element (',' Element)*)? ')'
+
+Body        -> '{' (Element (','? Element)*)? '}'
+ArrayBody   -> '[' (Element (','? Element)*)? ']'
+TupleBody   -> '(' (Element (','? Element)*)? ')'
+```
+
+5. Streams (Binary/Encoded)
+Revised to include the unique ID matching requirement.
+
+```antlr
+Stream      -> '^' Suffix? '[' Content ']'
+| '^' Suffix '{' Content '^' Suffix '}'
+Suffix      -> Identifier
+```
+
 
 ## 🧩 TSON Common Patterns / Examples
 
@@ -558,7 +983,7 @@ query: ^sql{
 .. { unclosed_brace   // ← malformed, but preserved!
 .. ssl: true
 . cache
-.. ttl: 300_s32
+.. ttl: 300ms
 ```
 
 > ✅ Sparse depth + malformed object.
@@ -604,22 +1029,22 @@ ssl: true
 
 ```tson
 
-. Introduction
-. API Reference
-.. GET /users
-... Returns list of users
-... @response(200): [User]
-.. POST /users
-... Creates a new user
-. Examples
-.. Basic Auth
-.. OAuth2 Flow
+• Introduction
+• API Reference
+•• GET /users
+••• Returns list of users
+••• @response(200): [User]
+•• POST /users
+••• Creates a new user
+• Examples
+•• Basic Auth
+•• OAuth2 Flow
 ```
 
-> ✅ Depth-driven hierarchy mirrors NTF section structure.
-> 📚 Can be rendered as collapsible TOC in terminal (via NTF).
+> Depth-driven hierarchy mirrors NTF section structure.
+> Can be rendered as collapsible TOC in terminal (via NTF).
 
-### 11. REST API Contract
+### 13. REST API Contract
 
 ```tson
 @title("User Management API")
@@ -780,6 +1205,6 @@ To support refactoring tools and authoring environments, parsers should ideally 
 2. Error Recovery & Synchronization
 
 Parsers must not fail-fast on syntax errors. They should implement a "Synchronization Strategy":
-- Invalid Tokens: If a sequence cannot be parsed, it should be captured as a TsonErrorNode and the parser should resume at the next separator (,, ;) or closing brace (}, ], )).
+- Invalid Tokens: If a sequence cannot be parsed, it should be captured as a NElementDiagnostic and the parser should resume at the next separator (,, ;) or closing brace (}, ], )).
 - Partial AST: The resulting tree should contain as much valid data as possible, with error nodes marking the gaps.
-- 
+
