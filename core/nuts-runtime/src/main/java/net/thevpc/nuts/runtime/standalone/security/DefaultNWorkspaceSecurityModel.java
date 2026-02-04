@@ -187,16 +187,22 @@ public class DefaultNWorkspaceSecurityModel {
             Stack<String> visited = new Stack<>();
             visited.push(username);
             Stack<String> curr = new Stack<>();
-            curr.addAll(security.getGroups());
+            if(security.getGroups()!=null) {
+                curr.addAll(security.getGroups());
+            }
             while (!curr.empty()) {
                 String s = curr.pop();
                 visited.add(s);
                 NUserConfig ss = NWorkspaceExt.of(workspace).getConfigModel().getUser(s);
                 if (ss != null) {
-                    inherited.addAll(ss.getPermissions());
-                    for (String group : ss.getGroups()) {
-                        if (!visited.contains(group)) {
-                            curr.push(group);
+                    if(ss.getPermissions()!=null) {
+                        inherited.addAll(ss.getPermissions());
+                    }
+                    if(ss.getGroups()!=null) {
+                        for (String group : ss.getGroups()) {
+                            if (!visited.contains(group)) {
+                                curr.push(group);
+                            }
                         }
                     }
                 }
