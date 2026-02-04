@@ -234,16 +234,20 @@ public abstract class NEnvBase implements NEnv {
     }
 
 
+    public abstract String getMachineName0();
+
+    public abstract String getHostName0();
+
     public final String getMachineName() {
         if (machineName == null) {
-            machineName = NEnvUtils.getMachineName(this);
+            machineName = getMachineName0();
         }
         return machineName;
     }
 
     public final String getHostName() {
         if (hostName == null) {
-            hostName = NEnvUtils.getHostName(this);
+            hostName = getHostName0();
         }
         return hostName;
     }
