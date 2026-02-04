@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.platform.rnsh;
 
-import net.thevpc.nuts.net.DefaultNConnectionStringBuilder;
+import net.thevpc.nuts.runtime.standalone.net.DefaultNConnectionStringBuilder;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.spi.NExecTargetCommandContext;
