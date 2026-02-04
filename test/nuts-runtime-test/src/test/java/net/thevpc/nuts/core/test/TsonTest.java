@@ -25,6 +25,25 @@ public class TsonTest {
         TestUtils.openNewMinTestWorkspace();
     }
 
+        @Test
+    public void test01_00() {
+        String tson = "if(MACHINE==\"i9\"){\n" +
+                "        JAVA8_HOME  : \"/home/vpc/.jdks/corretto-1.8.0_442\"\n" +
+                "        JAVA17_HOME : \"/home/groups/ctsgroup/programs/dev/jdk/jdk-17.0.17+10/\"\n" +
+                "        IDEA_HOME   : \"/home/groups/ctsgroup/programs/dev/idea\"\n" +
+                "        NUTS_GRAALVM_DIR: \"/home/groups/ctsgroup/programs/dev/graalvm/graalvm-jdk-22+36.1/\"\n" +
+                "        INSTALLER_JRE8_LINUX64: \"/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-linux-x64.tar.gz\"\n" +
+                "        INSTALLER_JRE8_LINUX32: \"/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-linux-x32.tar.gz\"\n" +
+                "        INSTALLER_JRE8_WINDOWS64: \"/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-windows-x64.zip\"\n" +
+                "        INSTALLER_JRE8_WINDOWS32: \"/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-windows-x32.zip\"\n" +
+                "        INSTALLER_JRE8_MAC64: \"/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-mac-x64.zip\"\n" +
+                "}";
+        NElement parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(parsed.toString());
+        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+    }
+
+    
     @Test
     public void test01b() {
         String tson = "a:b b";
