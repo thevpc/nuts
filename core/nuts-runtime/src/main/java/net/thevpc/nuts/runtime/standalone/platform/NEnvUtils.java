@@ -5,6 +5,7 @@ import net.thevpc.nuts.artifact.NIdBuilder;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.platform.NDesktopIntegrationItem;
 import net.thevpc.nuts.platform.NEnv;
@@ -22,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -267,7 +269,7 @@ public class NEnvUtils {
         }
     }
 
-    public static String getHostName(NEnv env) {
+    public static String getHostName(NEnv env, Function<String[],String> cmdRunner, NConnectionString connectionString) {
         // Primary: Java's network-aware lookup (returns DNS-resolved hostname)
         try {
             java.net.InetAddress localHost = java.net.InetAddress.getLocalHost();
@@ -289,12 +291,9 @@ public class NEnvUtils {
             case WINDOWS: {
                 // Windows: Query network hostname from registry (not COMPUTERNAME!)
                 try {
-                    String regQuery = NExec.of()
-                            .addCommand("reg", "query",
-                                    "HKLM\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters",
-                                    "/v", "Hostname")
-                            .failFast()
-                            .getGrabbedOutOnlyString();
+                    String regQuery = cmdRunner.apply(new String[]{"reg", "query",
+                            "HKLM\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters",
+                            "/v", "Hostname"});
                     // Parse: "    Hostname    REG_SZ    MYPC"
                     java.util.regex.Matcher m = java.util.regex.Pattern
                             .compile("Hostname\\s+REG_SZ\\s+(\\S+)")
@@ -308,7 +307,7 @@ public class NEnvUtils {
 
                 try {
                     return NStringUtils.trim(
-                            NExec.of().addCommand("hostname").failFast().getGrabbedOutOnlyString()
+                            cmdRunner.apply(new String[]{"hostname"})
                     );
                 } catch (Exception ignored) {
                     return "";
@@ -320,16 +319,14 @@ public class NEnvUtils {
             default: {
                 String h = null;
                 try {
-                    h = NStringUtils.trim(NPath.of("/etc/hostname")
+                    h = NStringUtils.trim(
+                            (connectionString==null? NPath.of("/etc/hostname"):NPath.of(connectionString.builder().setPath("/etc/hostname").build()))
                             .readString());
                 } catch (Exception e) {
                     //ignore
                 }
                 if (NBlankable.isBlank(h)) {
-                    h = NExec.of()
-                            .system()
-                            .addCommand("/bin/hostname")
-                            .getGrabbedOutOnlyString();
+                    h = cmdRunner.apply(new String[]{"/bin/hostname"});
                 }
                 hostName = NStringUtils.trim(h);
                 break;
@@ -338,7 +335,7 @@ public class NEnvUtils {
         return hostName;
     }
 
-    public static String getMachineName(NEnv env) {
+    public static String getMachineName(NEnv env, Function<String[],String> cmdRunner) {
         switch (env.getOsFamily()) {
             case WINDOWS: {
                 // Windows "Computer name" from System Properties
@@ -348,10 +345,7 @@ public class NEnvUtils {
             case MACOS: {
                 // macOS "Computer Name" (friendly name shown in System Settings)
                 try {
-                    String name = NExec.of()
-                            .addCommand("/usr/sbin/scutil", "--get", "ComputerName")
-                            .failFast()
-                            .getGrabbedOutOnlyString();
+                    String name = cmdRunner.apply(new String[]{"/usr/sbin/scutil", "--get", "ComputerName"});
                     String trimmed = NStringUtils.trim(name);
                     if (!NBlankable.isBlank(trimmed)) {
                         return trimmed;
@@ -366,10 +360,7 @@ public class NEnvUtils {
             case LINUX: {
                 // systemd "Pretty Hostname" if available
                 try {
-                    String pretty = NExec.of()
-                            .addCommand("hostnamectl", "--pretty")
-                            .failFast()
-                            .getGrabbedOutOnlyString();
+                    String pretty = cmdRunner.apply(new String[]{"hostnamectl", "--pretty"});
                     String trimmed = NStringUtils.trim(pretty);
                     if (!NBlankable.isBlank(trimmed) && !"n/a".equalsIgnoreCase(trimmed)) {
                         return trimmed;
