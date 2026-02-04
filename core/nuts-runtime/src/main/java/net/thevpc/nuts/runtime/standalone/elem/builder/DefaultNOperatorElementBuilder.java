@@ -19,14 +19,13 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
     private List<NElement> childrenOperands = new ArrayList<>();
     private List<NOperatorSymbolElement> childrenSymbols = new ArrayList<>();
 
-
     @Override
     public NOperatorElementBuilder operators(NOperatorSymbol... operators) {
-        this.childrenOperands.clear();
+        this.childrenSymbols.clear();
         if (operators != null) {
             for (NOperatorSymbol operator : operators) {
                 if (operator != null) {
-                    this.childrenOperands.add(DefaultNOperatorSymbolElement.of(operator));
+                    this.childrenSymbols.add((NOperatorSymbolElement) DefaultNOperatorSymbolElement.of(operator));
                 }
             }
         }
@@ -89,7 +88,6 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
         }
         return this;
     }
-
 
     public NOperatorElementBuilder add(NElement operandOrOperator, Boolean expectedSymbol) {
         if (operandOrOperator != null) {
@@ -203,8 +201,8 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
         }
 
         // Resolve position heuristic
-        NOperatorPosition pos = (this.position != null) ? this.position :
-                (symbolCount > 0 && operandsCount <= 1 ? NOperatorPosition.PREFIX : NOperatorPosition.INFIX);
+        NOperatorPosition pos = (this.position != null) ? this.position
+                : (symbolCount > 0 && operandsCount <= 1 ? NOperatorPosition.PREFIX : NOperatorPosition.INFIX);
 
         List<NElement> flatList = new ArrayList<>();
 
@@ -287,7 +285,9 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DefaultNOperatorElementBuilder that = (DefaultNOperatorElementBuilder) o;
         return position == that.position && Objects.equals(childrenOperands, that.childrenOperands) && Objects.equals(childrenSymbols, that.childrenSymbols);
     }
@@ -310,40 +310,38 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
                     NAssert.requireTrue(false, () -> NMsg.ofC("too many symbols %s", symbols));
                 }
                 return new DefaultNOperatorElementUnary(symbols.get(0),
-                        position == null ? NOperatorPosition.PREFIX : position
-                        , operands.get(0), affixes(), diagnostics());
+                        position == null ? NOperatorPosition.PREFIX : position,
+                         operands.get(0), affixes(), diagnostics());
             }
             case 2: {
                 if (symbols.size() != 1) {
                     NAssert.requireTrue(false, () -> NMsg.ofC("too many symbols %s", symbols));
                 }
                 return new DefaultNOperatorElementBinary(symbols.get(0),
-                        position == null ? NOperatorPosition.INFIX : position
-                        , operands.get(0)
-                        , operands.get(1)
-                        , affixes(), diagnostics());
+                        position == null ? NOperatorPosition.INFIX : position,
+                         operands.get(0),
+                         operands.get(1),
+                         affixes(), diagnostics());
             }
             case 3: {
-                if (
-                        symbols.size() != 2
-                ) {
+                if (symbols.size() != 2) {
                     NAssert.requireTrue(false, () -> NMsg.ofC("invalid symbols %s", symbols));
                 }
                 return new DefaultNOperatorElementTernary(
-                        operands.get(0)
-                        , operands.get(1)
-                        , operands.get(2)
-                        , symbols
-                        , position == null ? NOperatorPosition.INFIX : position
-                        , affixes(), diagnostics());
+                        operands.get(0),
+                         operands.get(1),
+                         operands.get(2),
+                         symbols,
+                         position == null ? NOperatorPosition.INFIX : position,
+                         affixes(), diagnostics());
             }
         }
         return new DefaultNOperatorElementNary(
                 operands,
                 symbols,
-                position == null ? NOperatorPosition.INFIX : position
-                , affixes()
-                , diagnostics()
+                position == null ? NOperatorPosition.INFIX : position,
+                 affixes(),
+                 diagnostics()
         );
     }
 
@@ -355,7 +353,6 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
     }
 
     // ------------------------------------------
-
     @Override
     public NOperatorElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
         super.copyFrom(other, assignmentPolicy);
@@ -383,7 +380,6 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
     // ------------------------------------------
     // RETURN SIG
     // ------------------------------------------
-
     @Override
     public NOperatorElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
         super.addAnnotations(annotations);
@@ -436,7 +432,6 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
         super.addAffix(affix);
         return this;
     }
-
 
     @Override
     public NOperatorElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
