@@ -6,7 +6,6 @@ import net.thevpc.nuts.ext.ssh.SshConnection;
 import net.thevpc.nuts.ext.ssh.SshConnectionBase;
 import net.thevpc.nuts.ext.ssh.SshListener;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.net.DefaultNConnectionStringBuilder;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.text.NMsg;
@@ -59,7 +58,7 @@ public class BinSshConnection extends SshConnectionBase {
         sshCommandPrefix.add(user + "@" + host);
         if (false) {
             throw new UncheckedIOException(new IOException("unable to run ssh command (" +
-                    new DefaultNConnectionStringBuilder().setUserName(user).setHost(host).setPort(String.valueOf(port)).setPassword(keyPassword).setQueryString(
+                    NConnectionStringBuilder.of().setUserName(user).setHost(host).setPort(String.valueOf(port)).setPassword(keyPassword).setQueryString(
                             keyFilePath == null ? null : NStringMapFormat.URL_FORMAT
                                     .format(
                                             NMaps.of(SshConnection.IDENTITY_FILE, keyFilePath)
