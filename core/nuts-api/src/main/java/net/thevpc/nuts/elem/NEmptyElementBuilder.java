@@ -35,6 +35,8 @@ public interface NEmptyElementBuilder extends NElementBuilder {
 
     NEmptyElementBuilder clearAnnotations();
 
+    NEmptyElementBuilder clearAffixes();
+
     NEmptyElementBuilder addLeadingComment(NElementComment comment);
 
     NEmptyElementBuilder addLeadingComments(NElementComment... comments);
