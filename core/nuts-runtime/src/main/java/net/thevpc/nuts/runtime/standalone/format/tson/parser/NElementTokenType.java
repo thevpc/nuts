@@ -11,7 +11,7 @@ public enum NElementTokenType implements NEnum {
     DATE,
     TIME,
 
-    REGEX,
+//    REGEX,
 
     LBRACE,
 
