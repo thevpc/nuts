@@ -575,6 +575,12 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
+    public NArrayElementBuilder clearAffixes() {
+        super.clearAffixes();
+        return this;
+    }
+
+    @Override
     public NArrayElementBuilder clearComments() {
         super.clearComments();
         return this;
