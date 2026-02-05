@@ -153,6 +153,20 @@ public class TsonCustomParser {
                 nextToken(); // consume it
                 break;
             }
+            boolean doBreak = false;
+            switch (t.token.type()) {
+                case RBRACE:
+                case RPAREN:
+                case RBRACK:
+                case COMMA:
+                case SEMICOLON: {
+                    doBreak = true;
+                    break;
+                }
+            }
+            if (doBreak) {
+                break;
+            }
             if (all.isEmpty()) {
                 if (isOp(t)) {
                     nextToken();
@@ -209,7 +223,7 @@ public class TsonCustomParser {
     private NElement primitiveElement() {
         List<NAffix> affixes = new ArrayList<>();
         List<NElementDiagnostic> diagnostics = new ArrayList<>();
-        NElementTokenInfo t=null;
+        NElementTokenInfo t = null;
         while (true) {
             t = peekToken();
             if (t == null) {
@@ -218,22 +232,22 @@ public class TsonCustomParser {
                 if (t.token == null) {
                     nextToken();
                     affixes.addAll(tokensToAffixes(t.prefixes));
-                    return new NDefaultEmptyElement(bindAffixes(affixes,NAffixAnchor.START), null);
+                    return new NDefaultEmptyElement(bindAffixes(affixes, NAffixAnchor.START), null);
                 } else if (t.token.type() == NElementTokenType.AT) {
                     affixes.addAll(tokensToAffixes(t.prefixes));
                     affixes.add(annotation(diagnostics));
+                    diagnostics.clear();
                 } else {
                     break;
                 }
             }
         }
         if (t == null) {
-            return new NDefaultEmptyElement(bindAffixes(affixes,NAffixAnchor.START), null);
+            return new NDefaultEmptyElement(bindAffixes(affixes, NAffixAnchor.START), null);
         }
         if (t.token == null) {
             return new NDefaultEmptyElement(bindAffixes(affixes, NAffixAnchor.START), null);
         }
-
         NElement base = null;
         while (true) {
             base = null;
@@ -277,18 +291,17 @@ public class TsonCustomParser {
                     break;
                 }
                 case LBRACE: {
-                    base = object(null, null, Collections.emptyList(), Collections.emptyList(), new ArrayList<>(affixes), new ArrayList<>());
+                    base = object(null, null, new ArrayList<>(affixes), new ArrayList<>(), Collections.emptyList(), new ArrayList<>());
                     affixes.clear();
                     break;
                 }
                 case LBRACK: {
-                    base = array(null, null, Collections.emptyList(), Collections.emptyList(), new ArrayList<>(affixes), new ArrayList<>());
+                    base = array(null, null, new ArrayList<>(affixes), new ArrayList<>(), Collections.emptyList(), new ArrayList<>());
                     affixes.clear();
                     break;
                 }
                 case NAME: {
-                    affixes.addAll(tokensToAffixes(t.prefixes));
-                    base = named(new ArrayList<>(), new ArrayList<>());
+                    base = named(new ArrayList<>(affixes), new ArrayList<>());
                     affixes.clear();
                     break;
                 }
@@ -332,7 +345,7 @@ public class TsonCustomParser {
                             || !affixes.isEmpty()
             ) {
                 return new NDefaultEmptyElement(
-                        bindAffixes(affixes,NAffixAnchor.START),
+                        bindAffixes(affixes, NAffixAnchor.START),
                         diagnostics
                 );
             }
@@ -343,32 +356,42 @@ public class TsonCustomParser {
     }
 
     private List<NBoundAffix> readPostComments() {
-        int x = 0;
-        List<NElementTokenImpl> accepted = new ArrayList<>();
-        while (true) {
-            NElementTokenImpl e = lexer.peekAt(x);
-            if (e == null) {
-                break;
+        NElementTokenInfo e = peekToken();
+        if (e == null) {
+            return new ArrayList<>();
+        } else if (e.token == null) {
+            if (e.prefixes.size() > 0) {
+                List<NBoundAffix> r = tokensToBoundAffixes(e.prefixes, NAffixAnchor.END);
+                nextToken();
+                return r;
             }
-            if (e.type() == NElementTokenType.SPACE || e.type() == NElementTokenType.BLOCK_COMMENT) {
-                accepted.add(e);
-                x++;
-            } else if (e.type() == NElementTokenType.LINE_COMMENT) {
-                accepted.add(e);
-                break;
-            } else if (e.type() == NElementTokenType.NEWLINE) {
-                accepted.add(e);
-                x++;
-                break;
-            } else {
-                accepted.clear();
-                break;
+            nextToken();
+            return new ArrayList<>();
+        } else {
+            List<NElementTokenImpl> accepted = new ArrayList<>();
+            List<NElementTokenImpl> prefixes = e.prefixes;
+            for (int i = 0; i < prefixes.size(); i++) {
+                NElementTokenImpl nt = prefixes.get(i);
+                if (nt.type() == NElementTokenType.SPACE || nt.type() == NElementTokenType.BLOCK_COMMENT) {
+                    accepted.add(nt);
+                } else if (nt.type() == NElementTokenType.LINE_COMMENT) {
+                    accepted.add(nt);
+                    break;
+                } else if (nt.type() == NElementTokenType.NEWLINE) {
+                    accepted.add(nt);
+                    break;
+                } else {
+                    accepted.clear();
+                    break;
+                }
             }
+            if (accepted.size() > 0) {
+                for (int i = 0; i < accepted.size(); i++) {
+                    e.prefixes.remove(0);
+                }
+            }
+            return tokensToBoundAffixes(accepted, NAffixAnchor.END);
         }
-        for (NElementTokenImpl e : accepted) {
-            lexer.next();
-        }
-        return tokensToBoundAffixes(accepted, NAffixAnchor.END);
     }
 
     private NElementAnnotation annotation(List<NElementDiagnostic> diagnostics) {
@@ -378,7 +401,7 @@ public class TsonCustomParser {
         List<NElement> params = null;
         if (isToken(NElementTokenType.NAME)) {
             NElementTokenInfo nameToken = nextToken();
-            name=nameToken.token.image();
+            name = nameToken.token.image();
         }
         List<NAffix> beforeLpar = new ArrayList<>();
         List<NAffix> beforeRpar = new ArrayList<>();
@@ -386,8 +409,8 @@ public class TsonCustomParser {
             params = new ArrayList<>();
             readEnclosedAndSeparatedElements(NElementTokenType.RPAREN, params, beforeLpar, beforeRpar, diagnostics);
         }
-        boundAffixes.addAll(bindAffixes(beforeLpar,NAffixAnchor.PRE_1));
-        boundAffixes.addAll(bindAffixes(beforeRpar,NAffixAnchor.PRE_2));
+        boundAffixes.addAll(bindAffixes(beforeLpar, NAffixAnchor.PRE_1));
+        boundAffixes.addAll(bindAffixes(beforeRpar, NAffixAnchor.PRE_2));
         return new NElementAnnotationImpl(name, params, boundAffixes);
     }
 
@@ -397,14 +420,13 @@ public class TsonCustomParser {
 
     private NElement object(String name,
                             List<NElement> params,
-                            List<NAffix> beforeLparAffixes,
+                            List<NAffix> pendingAffixTokens, List<NAffix> beforeLparAffixes,
                             List<NAffix> beforeRparAffixes,
-                            List<NAffix> pendingAffixTokens,
                             List<NElementDiagnostic> diagnostics) {
 
-        beforeLparAffixes=new ArrayList<>(beforeLparAffixes);// make a copy because it will be updated
-        beforeRparAffixes=new ArrayList<>(beforeRparAffixes);// make a copy because it will be updated
-        List<NAffix> startAffixes=new ArrayList<>(pendingAffixTokens);// make a copy because it will be updated
+        beforeLparAffixes = new ArrayList<>(beforeLparAffixes);// make a copy because it will be updated
+        beforeRparAffixes = new ArrayList<>(beforeRparAffixes);// make a copy because it will be updated
+        List<NAffix> startAffixes = new ArrayList<>(pendingAffixTokens);// make a copy because it will be updated
         List<NElement> oelements = new ArrayList<>();
         List<NAffix> beforeLbraceAffixes = new ArrayList<>();
         List<NAffix> beforeRbraceAffixes = new ArrayList<>();
@@ -424,23 +446,23 @@ public class TsonCustomParser {
         }
 
         boundAffixes.addAll(bindAffixes(startAffixes, NAffixAnchor.START));
-        boundAffixes.addAll(bindAffixes(beforeLparAffixes, NAffixAnchor.PRE_1));
-        boundAffixes.addAll(bindAffixes(beforeRparAffixes, NAffixAnchor.POST_1));
-        boundAffixes.addAll(bindAffixes(beforeLbraceAffixes, NAffixAnchor.PRE_2));
-        boundAffixes.addAll(bindAffixes(beforeRbraceAffixes, NAffixAnchor.POST_2));
+        boundAffixes.addAll(bindAffixes(beforeLparAffixes, NAffixAnchor.PRE_2));
+        boundAffixes.addAll(bindAffixes(beforeRparAffixes, NAffixAnchor.PRE_3));
+        boundAffixes.addAll(bindAffixes(beforeLbraceAffixes, NAffixAnchor.PRE_4));
+        boundAffixes.addAll(bindAffixes(beforeRbraceAffixes, NAffixAnchor.PRE_5));
         boundAffixes.addAll(readPostComments());
         return new DefaultNObjectElement(
                 name, params, oelements, boundAffixes, diagnostics
         );
     }
 
-    private NElement array(String name, List<NElement> params, List<NAffix> beforeLparAffixes,
-                           List<NAffix> beforeRparAffixes, List<NAffix> pendingAffixTokens,
+    private NElement array(String name, List<NElement> params, List<NAffix> pendingAffixTokens, List<NAffix> beforeLparAffixes,
+                           List<NAffix> beforeRparAffixes,
                            List<NElementDiagnostic> diagnostics) {
 
-        beforeLparAffixes=new ArrayList<>(beforeLparAffixes);// make a copy because it will be updated
-        beforeRparAffixes=new ArrayList<>(beforeRparAffixes);// make a copy because it will be updated
-        List<NAffix> startAffixes=new ArrayList<>(pendingAffixTokens);// make a copy because it will be updated
+        beforeLparAffixes = new ArrayList<>(beforeLparAffixes);// make a copy because it will be updated
+        beforeRparAffixes = new ArrayList<>(beforeRparAffixes);// make a copy because it will be updated
+        List<NAffix> startAffixes = new ArrayList<>(pendingAffixTokens);// make a copy because it will be updated
         List<NElement> oelements = new ArrayList<>();
         List<NAffix> beforeLbracketAffixes = new ArrayList<>();
         List<NAffix> beforeRbracketAffixes = new ArrayList<>();
@@ -460,10 +482,10 @@ public class TsonCustomParser {
         }
 
         boundAffixes.addAll(bindAffixes(startAffixes, NAffixAnchor.START));
-        boundAffixes.addAll(bindAffixes(beforeLparAffixes, NAffixAnchor.PRE_1));
-        boundAffixes.addAll(bindAffixes(beforeRparAffixes, NAffixAnchor.POST_1));
-        boundAffixes.addAll(bindAffixes(beforeLbracketAffixes, NAffixAnchor.PRE_2));
-        boundAffixes.addAll(bindAffixes(beforeRbracketAffixes, NAffixAnchor.POST_2));
+        boundAffixes.addAll(bindAffixes(beforeLparAffixes, NAffixAnchor.PRE_2));
+        boundAffixes.addAll(bindAffixes(beforeRparAffixes, NAffixAnchor.PRE_3));
+        boundAffixes.addAll(bindAffixes(beforeLbracketAffixes, NAffixAnchor.PRE_4));
+        boundAffixes.addAll(bindAffixes(beforeRbracketAffixes, NAffixAnchor.PRE_5));
         boundAffixes.addAll(readPostComments());
         return new DefaultNArrayElement(
                 name, params, oelements, boundAffixes, diagnostics
@@ -568,7 +590,7 @@ public class TsonCustomParser {
             }
         }
         DefaultNListElementBuilder b = new DefaultNListElementBuilder(t.token.type() == NElementTokenType.ORDERED_LIST ? NElementType.ORDERED_LIST : NElementType.UNORDERED_LIST, minDepth);
-        b.addAffixes(bindAffixes(pendingAffixTokens,NAffixAnchor.START));
+        b.addAffixes(bindAffixes(pendingAffixTokens, NAffixAnchor.START));
         for (NListItemElement e : sub) {
             b.addItem(e);
         }
@@ -584,23 +606,31 @@ public class TsonCustomParser {
         NElementTokenInfo t = peekToken();
         if (t != null && t.token != null) {
             if (t.token.type() == NElementTokenType.LBRACE) {
-                List<NAffix> c = new ArrayList<>();
-                c.addAll(pendingAffixTokens);
-                c.addAll(beforeLparAffixes);
-                return object(seenName, elements, c, beforeRparAffixes, Collections.emptyList(), diagnostics);
+                if(seenName==null) {
+                    List<NAffix> c = new ArrayList<>();
+                    c.addAll(pendingAffixTokens);
+                    c.addAll(beforeLparAffixes);
+                    return object(seenName, elements, Collections.emptyList(), c, beforeRparAffixes, diagnostics);
+                }else{
+                    return object(seenName, elements, pendingAffixTokens, beforeLparAffixes, beforeRparAffixes, diagnostics);
+                }
             }
             if (t.token.type() == NElementTokenType.LBRACK) {
-                List<NAffix> c = new ArrayList<>();
-                c.addAll(pendingAffixTokens);
-                c.addAll(beforeLparAffixes);
-                return array(seenName, elements, c, beforeRparAffixes, Collections.emptyList(), diagnostics);
+                if(seenName==null) {
+                    List<NAffix> c = new ArrayList<>();
+                    c.addAll(pendingAffixTokens);
+                    c.addAll(beforeLparAffixes);
+                    return array(seenName, elements, Collections.emptyList(), c, beforeRparAffixes, diagnostics);
+                }else{
+                    return array(seenName, elements, pendingAffixTokens, beforeLparAffixes, beforeRparAffixes, diagnostics);
+                }
             }
         }
 
         List<NBoundAffix> boundAffixes = new ArrayList<>();
         boundAffixes.addAll(pendingAffixTokens.stream().map(x -> DefaultNBoundAffix.of(x, NAffixAnchor.START)).collect(Collectors.toList()));
         boundAffixes.addAll(beforeLparAffixes.stream().map(x -> DefaultNBoundAffix.of(x, NAffixAnchor.START)).collect(Collectors.toList()));
-        boundAffixes.addAll(beforeRparAffixes.stream().map(x -> DefaultNBoundAffix.of(x, NAffixAnchor.POST_2)).collect(Collectors.toList()));
+        boundAffixes.addAll(beforeRparAffixes.stream().map(x -> DefaultNBoundAffix.of(x, NAffixAnchor.PRE_3)).collect(Collectors.toList()));
         boundAffixes.addAll(readPostComments());
         return new DefaultNUpletElement(
                 seenName, elements,
@@ -641,10 +671,10 @@ public class TsonCustomParser {
                 return unnamed(name, pendingAffixTokens, diagnostics);
             }
             case LBRACE: {
-                return object(name, null, new ArrayList<>(), new ArrayList<>(), pendingAffixTokens, diagnostics);
+                return object(name, null, pendingAffixTokens, new ArrayList<>(), new ArrayList<>(), diagnostics);
             }
             case LBRACK: {
-                return array(name, null, new ArrayList<>(), new ArrayList<>(), pendingAffixTokens, diagnostics);
+                return array(name, null, pendingAffixTokens, new ArrayList<>(), new ArrayList<>(), diagnostics);
             }
         }
 
