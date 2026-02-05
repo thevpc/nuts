@@ -124,6 +124,12 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
     }
 
     @Override
+    public NCharStreamElementBuilder clearAffixes() {
+        super.clearAffixes();
+        return this;
+    }
+
+    @Override
     public NCharStreamElementBuilder clearComments() {
         super.clearComments();
         return this;
