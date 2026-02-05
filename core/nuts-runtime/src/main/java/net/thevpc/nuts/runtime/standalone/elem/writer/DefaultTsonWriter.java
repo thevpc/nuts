@@ -410,12 +410,8 @@ public class DefaultTsonWriter {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
         writeBoundedString("¶", 1, a.affixes());
         List<NBoundAffix> leadingSpaces = NBoundAffixList.filter(a.affixes(), NAffixAnchor.PRE_2, NAffixType.SPACE);
-        if (leadingSpaces.isEmpty()) {
-            write(" ");
-        } else {
-            for (NBoundAffix leadingSpace : leadingSpaces) {
-                write(((NElementSpace) leadingSpace.affix()).value());
-            }
+        for (NBoundAffix leadingSpace : leadingSpaces) {
+            write(((NElementSpace) leadingSpace.affix()).value());
         }
         write(a.stringValue());
 
