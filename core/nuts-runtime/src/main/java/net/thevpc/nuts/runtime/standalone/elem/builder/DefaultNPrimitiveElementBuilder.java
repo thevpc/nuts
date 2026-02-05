@@ -602,6 +602,12 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
+    public NPrimitiveElementBuilder clearAffixes() {
+        super.clearAffixes();
+        return this;
+    }
+
+    @Override
     public NPrimitiveElementBuilder clearComments() {
         super.clearComments();
         return this;
