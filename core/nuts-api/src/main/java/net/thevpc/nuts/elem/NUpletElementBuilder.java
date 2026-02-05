@@ -332,6 +332,8 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     NUpletElementBuilder clearAnnotations();
 
+    NUpletElementBuilder clearAffixes();
+
     NUpletElementBuilder addLeadingComment(NElementComment comment);
 
     NUpletElementBuilder addLeadingComments(NElementComment... comments);
