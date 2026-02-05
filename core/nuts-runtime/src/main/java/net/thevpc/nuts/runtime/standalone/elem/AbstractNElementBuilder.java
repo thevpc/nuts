@@ -130,6 +130,12 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
     }
 
     @Override
+    public NElementBuilder clearAffixes() {
+        affixes.clearAffixes();
+        return this;
+    }
+
+    @Override
     public List<NElementAnnotation> annotations() {
         return affixes.annotations();
     }
