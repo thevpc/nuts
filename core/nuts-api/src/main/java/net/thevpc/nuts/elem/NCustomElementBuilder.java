@@ -66,6 +66,8 @@ public interface NCustomElementBuilder extends NElementBuilder {
 
     NCustomElementBuilder clearAnnotations();
 
+    NCustomElementBuilder clearAffixes();
+
     NCustomElementBuilder addLeadingComment(NElementComment comment);
 
     NCustomElementBuilder addLeadingComments(NElementComment... comments);
