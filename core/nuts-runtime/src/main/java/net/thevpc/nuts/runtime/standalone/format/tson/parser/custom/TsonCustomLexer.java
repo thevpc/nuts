@@ -49,21 +49,10 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         return ret;
     }
 
-    public NElementTokenImpl continueReadBullet(NElementTokenType type, int line, int column, long pos) {
-        int c0 = reader.peek();
-
-        int c1 = reader.peekAt(1);
-        if (c1 != -1) {
-            if (Character.isDigit(c1)) {
-                return continueReadNumber();
-            }
-            if (c1 != '¶' && Character.isAlphabetic(c1)) {
-                return continueReadIdentifier();
-            }
-        }
+    public NElementTokenImpl continueReadBullet(NElementTokenType type, String chars,int line, int column, long pos) {
         StringBuilder image = new StringBuilder();
         int count = 0;
-        while (reader.peek() == c0) {
+        while (chars.indexOf(reader.peek())>=0) {
             image.append((char) reader.read());
             count++;
             if (count >= 10) break; // safety
@@ -120,15 +109,15 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 case '●':
                 case '•':
                 {
-                    return continueReadBullet(NElementTokenType.UNORDERED_LIST, line, column, pos);
+                    return continueReadBullet(NElementTokenType.UNORDERED_LIST,"●•", line, column, pos);
                 }
                 case '■':
                 case '▪':
                 {
-                    return continueReadBullet(NElementTokenType.ORDERED_LIST, line, column, pos);
+                    return continueReadBullet(NElementTokenType.ORDERED_LIST, "■▪",line, column, pos);
                 }
                 case '¶': {
-                    int c2 = reader.peek();
+                    int c2 = reader.peekAt(1);
                     if (c2 == '¶') {
                         return continueReadUserMultiLine();
                     }
