@@ -1183,6 +1183,9 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
 
     NOptional<NUnaryOperatorElement> asUnaryOperator();
 
+    boolean isOperatorSymbol();
+    boolean isOperatorSymbol(NOperatorSymbol symbol);
+
     boolean isBinaryOperator();
 
     boolean isBinaryOperator(NOperatorSymbol type);
