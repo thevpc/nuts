@@ -153,6 +153,13 @@ public class DefaultNListElementBuilder extends AbstractNElementBuilder implemen
     }
 
     @Override
+    public NListElementBuilder clearAffixes() {
+        super.clearAffixes();
+        return this;
+    }
+
+
+    @Override
     public NListElementBuilder clearComments() {
         super.clearComments();
         return this;
