@@ -535,6 +535,13 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
+    public NUpletElementBuilder clearAffixes() {
+        super.clearAffixes();
+        return this;
+    }
+
+
+    @Override
     public NUpletElementBuilder clearComments() {
         super.clearComments();
         return this;
