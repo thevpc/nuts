@@ -92,6 +92,12 @@ public class DefaultNEmptyElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
+    public NEmptyElementBuilder clearAffixes() {
+        super.clearAffixes();
+        return this;
+    }
+
+    @Override
     public NEmptyElementBuilder clearComments() {
         super.clearComments();
         return this;
