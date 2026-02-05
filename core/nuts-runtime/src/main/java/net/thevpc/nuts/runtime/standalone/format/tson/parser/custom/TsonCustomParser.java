@@ -657,6 +657,7 @@ public class TsonCustomParser {
             boundAffixes.addAll(bindAffixes(pendingAffixTokens, NAffixAnchor.START));
 
             boundAffixes.addAll(tokensToBoundAffixes(t.prefixes, NAffixAnchor.END));
+            nextToken();
             return new DefaultNStringElement(
                     NElementType.NAME,
                     name,
