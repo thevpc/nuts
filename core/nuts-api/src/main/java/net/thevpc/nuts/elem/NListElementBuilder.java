@@ -48,6 +48,8 @@ public interface NListElementBuilder extends NElementBuilder {
 
     NListElementBuilder clearAnnotations();
 
+    NListElementBuilder clearAffixes();
+
     NListElementBuilder addLeadingComment(NElementComment comment);
 
     NListElementBuilder addLeadingComments(NElementComment... comments);
