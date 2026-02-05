@@ -29,6 +29,27 @@ public class NElementAnnotationBuilderImpl implements NElementAnnotationBuilder 
     }
 
     @Override
+    public NElementAnnotationBuilder add(NElement element) {
+        if (element != null) {
+            if (params == null) {
+                params = new ArrayList<>();
+            }
+            params.add(element);
+        }
+        return this;
+    }
+
+    @Override
+    public NElementAnnotationBuilder addAll(List<NElement> all) {
+        if (all != null) {
+            for (NElement a : all) {
+                add(a);
+            }
+        }
+        return this;
+    }
+
+    @Override
     public NElementAnnotationBuilder removeAt(int index) {
         if (params == null) {
             return this;
@@ -40,8 +61,23 @@ public class NElementAnnotationBuilderImpl implements NElementAnnotationBuilder 
     }
 
     @Override
-    public NElementAnnotationBuilder setUnparameterized() {
-        params = null;
+    public NElementAnnotationBuilder clear() {
+        if (params == null) {
+            return this;
+        }
+        params.clear();
+        return this;
+    }
+
+    @Override
+    public NElementAnnotationBuilder setParameterized(boolean p) {
+        if (p) {
+            if (params == null) {
+                params = new ArrayList<>();
+            }
+        } else {
+            params = null;
+        }
         return this;
     }
 
