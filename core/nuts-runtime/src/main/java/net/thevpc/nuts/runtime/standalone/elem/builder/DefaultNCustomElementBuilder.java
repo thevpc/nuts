@@ -112,6 +112,12 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
+    public NCustomElementBuilder clearAffixes() {
+        super.clearAffixes();
+        return this;
+    }
+
+    @Override
     public NCustomElementBuilder clearComments() {
         super.clearComments();
         return this;
