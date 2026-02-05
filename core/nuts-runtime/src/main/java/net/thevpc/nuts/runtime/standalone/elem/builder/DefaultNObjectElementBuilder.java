@@ -698,6 +698,13 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
+    public NObjectElementBuilder clearAffixes() {
+        super.clearAffixes();
+        return this;
+    }
+
+
+    @Override
     public NObjectElementBuilder clearComments() {
         super.clearComments();
         return this;
