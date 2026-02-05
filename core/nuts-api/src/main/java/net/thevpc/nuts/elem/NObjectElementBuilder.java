@@ -286,6 +286,8 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder clearAnnotations();
 
+    NObjectElementBuilder clearAffixes();
+
     NObjectElementBuilder addLeadingComment(NElementComment comment);
 
     NObjectElementBuilder addLeadingComments(NElementComment... comments);
