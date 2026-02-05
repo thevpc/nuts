@@ -126,6 +126,12 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
     }
 
     @Override
+    public NBinaryStreamElementBuilder clearAffixes() {
+        super.clearAffixes();
+        return this;
+    }
+
+    @Override
     public NBinaryStreamElementBuilder clearComments() {
         super.clearComments();
         return this;
