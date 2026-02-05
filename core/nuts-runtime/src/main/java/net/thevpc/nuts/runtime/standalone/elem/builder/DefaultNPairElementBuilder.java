@@ -210,6 +210,12 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
     }
 
     @Override
+    public NPairElementBuilder clearAffixes() {
+        super.clearAffixes();
+        return this;
+    }
+
+    @Override
     public NPairElementBuilder clearComments() {
         super.clearComments();
         return this;
