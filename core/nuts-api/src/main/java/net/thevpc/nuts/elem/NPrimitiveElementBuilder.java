@@ -158,6 +158,8 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
 
     NPrimitiveElementBuilder clearAnnotations();
 
+    NPrimitiveElementBuilder clearAffixes();
+
     NPrimitiveElementBuilder addLeadingComment(NElementComment comment);
 
     NPrimitiveElementBuilder addLeadingComments(NElementComment... comments);
