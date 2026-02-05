@@ -174,6 +174,12 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
+    public NFlatExprElementBuilder clearAffixes() {
+        super.clearAffixes();
+        return this;
+    }
+
+    @Override
     public NFlatExprElementBuilder clearComments() {
         super.clearComments();
         return this;
