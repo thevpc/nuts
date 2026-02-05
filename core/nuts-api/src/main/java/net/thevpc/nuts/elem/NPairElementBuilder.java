@@ -48,6 +48,8 @@ public interface NPairElementBuilder extends NElementBuilder {
 
     NPairElementBuilder clearAnnotations();
 
+    NPairElementBuilder clearAffixes();
+
     NPairElementBuilder addLeadingComment(NElementComment comment);
 
     NPairElementBuilder addLeadingComments(NElementComment... comments);
