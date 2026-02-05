@@ -112,6 +112,8 @@ public interface NOperatorElementBuilder extends NElementBuilder {
 
     NOperatorElementBuilder clearAnnotations();
 
+    NOperatorElementBuilder clearAffixes();
+
     NOperatorElementBuilder addLeadingComment(NElementComment comment);
 
     NOperatorElementBuilder addLeadingComments(NElementComment... comments);
