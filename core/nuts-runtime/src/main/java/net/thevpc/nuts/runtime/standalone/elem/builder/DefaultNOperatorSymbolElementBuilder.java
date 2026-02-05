@@ -98,6 +98,12 @@ public class DefaultNOperatorSymbolElementBuilder extends AbstractNElementBuilde
     }
 
     @Override
+    public DefaultNOperatorSymbolElementBuilder clearAffixes() {
+        super.clearAffixes();
+        return this;
+    }
+
+    @Override
     public DefaultNOperatorSymbolElementBuilder clearComments() {
         super.clearComments();
         return this;
