@@ -417,6 +417,12 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
+    public NOperatorElementBuilder clearAffixes() {
+        super.clearAffixes();
+        return this;
+    }
+
+    @Override
     public NOperatorElementBuilder clearComments() {
         super.clearComments();
         return this;
