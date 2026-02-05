@@ -18,7 +18,7 @@ public class NElementAnnotationImpl implements NElementAnnotation {
 
     public NElementAnnotationImpl(String name, List<NElement> params, List<NBoundAffix> affixes) {
         this.name = name;
-        this.params = CoreNUtils.copyNonNullUnmodifiableList(params);
+        this.params = params==null?null:CoreNUtils.copyNonNullUnmodifiableList(params);
         this.affixes = CoreNUtils.copyAndFilterUnmodifiableList(affixes, x -> {
             if (x == null) {
                 return false;
