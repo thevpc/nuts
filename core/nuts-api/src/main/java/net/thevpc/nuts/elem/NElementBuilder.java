@@ -78,6 +78,8 @@ public interface NElementBuilder {
 
     NElementBuilder clearAnnotations();
 
+    NElementBuilder clearAffixes();
+
     NElementBuilder addLeadingComment(NElementComment comment);
 
     NElementBuilder addLeadingComments(NElementComment... comments);
