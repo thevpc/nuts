@@ -25,7 +25,7 @@ public class TsonTest {
         TestUtils.openNewMinTestWorkspace();
     }
 
-        @Test
+    @Test
     public void test01_00() {
         String tson = "if(MACHINE==\"i9\"){\n" +
                 "        JAVA8_HOME  : \"/home/vpc/.jdks/corretto-1.8.0_442\"\n" +
@@ -43,7 +43,7 @@ public class TsonTest {
         TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
     }
 
-    
+
     @Test
     public void test01b() {
         String tson = "a:b b";
@@ -594,6 +594,176 @@ public class TsonTest {
         checkConstant("0maxs8", (byte) 127);
         checkConstant("0max", Integer.MAX_VALUE);
         checkConstant("0pinf_f32", Float.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testSpecial0() {
+        NElement e = NElementReader.ofTson().read("(*)");
+        TestUtils.println(e);
+        NUpletElement u = e.asUplet().get();
+        Assertions.assertEquals(1, u.size());
+        u.get(0).get().asOperatorSymbol(NOperatorSymbol.MUL).get();
+    }
+    @Test
+    public void testSpecial1() {
+        String expected = "styles{\n" +
+                "    (*){\n" +
+                "        a,b,c,\n" +
+                "    }}";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected,s2);
+    }
+    @Test
+    public void testSpecial2() {
+        String expected = "{" +
+                "a,b\n" +
+                "}";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected,s2);
+    }
+    @Test
+    public void testSpecial3() {
+        String expected = "{include(\n" +
+                "    eitherPath(\n" +
+                "        \"$HOME/xprojects/nuts-world/nuts-productivity/ntexup/ntexup-templates/${themeName}/v1.0/theme\"\n" +
+                "        \"github://thevpc/ntexup-templates/${themeName}/v1.0/theme\"\n" +
+                "    )\n" +
+                ")\n" +
+                "\n" +
+                "@define miniPage{\n" +
+                "    group(background:white,draw-contour){\n" +
+                "        componentBody\n" +
+                "    }\n" +
+                "}\n" +
+                "\n" +
+                "@define miniCode{\n" +
+                "    group(background:Gray89,draw-contour,margin:5){\n" +
+                "        componentBody\n" +
+                "    }\n" +
+                "}\n" +
+                "\n" +
+                "@define miniCodeNTexup(code){\n" +
+                "    group(background:Gray89,draw-contour,margin:5){\n" +
+                "        source(ntexup, code)\n" +
+                "    }\n" +
+                "}\n}";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected,s2);
+    }
+
+    @Test
+    public void testSpecial11() {
+        String expected =
+                "@define mini(code){\n" +
+                "}";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected,s2);
+    }
+
+    @Test
+    public void testSpecial4() {
+        String expected =
+                "@define miniPage{\n" +
+                "}";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected,s2);
+    }
+
+    @Test
+    public void testSpecial5() {
+        String expected =
+                "@define() miniPage[\n" +
+                "]";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected,s2);
+    }
+
+    @Test
+    public void testSpecial6() {
+        String expected =
+                "@define() [\n" +
+                "]";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected,s2);
+    }
+
+    @Test
+    public void testSpecial8() {
+        String expected =
+                "@define() {\n" +
+                "}";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected,s2);
+    }
+
+    @Test
+    public void testSpecial9() {
+        String expected =
+                "@define() (){\n" +
+                "}";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected,s2);
+    }
+
+    @Test
+    public void testSpecial10() {
+        String expected =
+                "@define() a";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected,s2);
+    }
+
+    @Test
+    public void testSpecial7() {
+        String expected =
+                "@define 13";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected,s2);
+    }
+
+    @Test
+    public void testSpecial12() {
+        String expected = "    eitherPath(\n" +
+                "        \"$HOME/xprojects/nuts-world/nuts-productivity/ntexup/ntexup-templates/${themeName}/v1.0/theme\"\n" +
+                "        \"github://thevpc/ntexup-templates/${themeName}/v1.0/theme\"\n" +
+                "    )\n"
+                ;
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected,s2);
+    }
+    @Test
+    public void testSpecial() {
+        NElement e = NElementReader.ofTson().read("styles{\n" +
+                "    (*){\n" +
+                "        font-size : 5%P\n" +
+                "        debug-color: red,\n" +
+                "        font-family : \"Serif\",\n" +
+                "    }}");
+        TestUtils.println(e);
     }
 
     @Test
