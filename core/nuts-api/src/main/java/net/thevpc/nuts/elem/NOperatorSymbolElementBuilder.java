@@ -37,6 +37,8 @@ public interface NOperatorSymbolElementBuilder extends NElementBuilder {
 
     NOperatorSymbolElementBuilder clearAnnotations();
 
+    NOperatorSymbolElementBuilder clearAffixes();
+
     NOperatorSymbolElementBuilder addLeadingComment(NElementComment comment);
 
     NOperatorSymbolElementBuilder addLeadingComments(NElementComment... comments);
