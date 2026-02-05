@@ -853,6 +853,16 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public boolean isOperatorSymbol() {
+        return type() == NElementType.OPERATOR_SYMBOL;
+    }
+
+    @Override
+    public boolean isOperatorSymbol(NOperatorSymbol symbol) {
+        return isOperatorSymbol() && asOperatorSymbol().get().symbol() == symbol;
+    }
+
+    @Override
     public boolean isBinaryOperator(NOperatorSymbol type) {
         NAssert.requireNonNull(type, () -> NMsg.ofC("required operator type, got %s", type));
         NOptional<NBinaryOperatorElement> o = asBinaryOperator();
@@ -965,11 +975,10 @@ public abstract class AbstractNElement implements NElement {
             case FULL_ARRAY:
             case NAMED_OBJECT:
             case FULL_OBJECT:
-            case NAMED_UPLET:
-            {
+            case NAMED_UPLET: {
                 return true;
             }
-            case PAIR:{
+            case PAIR: {
                 NElement key = asPair().get().key();
                 return key.isAnyString();
             }
