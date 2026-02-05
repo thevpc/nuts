@@ -72,6 +72,8 @@ public interface NCharStreamElementBuilder extends NElementBuilder {
 
     NCharStreamElementBuilder clearAnnotations();
 
+    NCharStreamElementBuilder clearAffixes();
+
     NCharStreamElementBuilder addLeadingComment(NElementComment comment);
 
     NCharStreamElementBuilder addLeadingComments(NElementComment... comments);
