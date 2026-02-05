@@ -604,6 +604,7 @@ public class TsonTest {
         Assertions.assertEquals(1, u.size());
         u.get(0).get().asOperatorSymbol(NOperatorSymbol.MUL).get();
     }
+
     @Test
     public void testSpecial1() {
         String expected = "styles{\n" +
@@ -613,8 +614,9 @@ public class TsonTest {
         NElement e = NElementReader.ofTson().read(expected);
         String s2 = e.toString();
         TestUtils.println(s2);
-        Assertions.assertEquals(expected,s2);
+        Assertions.assertEquals(expected, s2);
     }
+
     @Test
     public void testSpecial2() {
         String expected = "{" +
@@ -623,8 +625,9 @@ public class TsonTest {
         NElement e = NElementReader.ofTson().read(expected);
         String s2 = e.toString();
         TestUtils.println(s2);
-        Assertions.assertEquals(expected,s2);
+        Assertions.assertEquals(expected, s2);
     }
+
     @Test
     public void testSpecial3() {
         String expected = "{include(\n" +
@@ -654,73 +657,73 @@ public class TsonTest {
         NElement e = NElementReader.ofTson().read(expected);
         String s2 = e.toString();
         TestUtils.println(s2);
-        Assertions.assertEquals(expected,s2);
+        Assertions.assertEquals(expected, s2);
     }
 
     @Test
     public void testSpecial11() {
         String expected =
                 "@define mini(code){\n" +
-                "}";
+                        "}";
         NElement e = NElementReader.ofTson().read(expected);
         String s2 = e.toString();
         TestUtils.println(s2);
-        Assertions.assertEquals(expected,s2);
+        Assertions.assertEquals(expected, s2);
     }
 
     @Test
     public void testSpecial4() {
         String expected =
                 "@define miniPage{\n" +
-                "}";
+                        "}";
         NElement e = NElementReader.ofTson().read(expected);
         String s2 = e.toString();
         TestUtils.println(s2);
-        Assertions.assertEquals(expected,s2);
+        Assertions.assertEquals(expected, s2);
     }
 
     @Test
     public void testSpecial5() {
         String expected =
                 "@define() miniPage[\n" +
-                "]";
+                        "]";
         NElement e = NElementReader.ofTson().read(expected);
         String s2 = e.toString();
         TestUtils.println(s2);
-        Assertions.assertEquals(expected,s2);
+        Assertions.assertEquals(expected, s2);
     }
 
     @Test
     public void testSpecial6() {
         String expected =
                 "@define() [\n" +
-                "]";
+                        "]";
         NElement e = NElementReader.ofTson().read(expected);
         String s2 = e.toString();
         TestUtils.println(s2);
-        Assertions.assertEquals(expected,s2);
+        Assertions.assertEquals(expected, s2);
     }
 
     @Test
     public void testSpecial8() {
         String expected =
                 "@define() {\n" +
-                "}";
+                        "}";
         NElement e = NElementReader.ofTson().read(expected);
         String s2 = e.toString();
         TestUtils.println(s2);
-        Assertions.assertEquals(expected,s2);
+        Assertions.assertEquals(expected, s2);
     }
 
     @Test
     public void testSpecial9() {
         String expected =
                 "@define() (){\n" +
-                "}";
+                        "}";
         NElement e = NElementReader.ofTson().read(expected);
         String s2 = e.toString();
         TestUtils.println(s2);
-        Assertions.assertEquals(expected,s2);
+        Assertions.assertEquals(expected, s2);
     }
 
     @Test
@@ -730,7 +733,7 @@ public class TsonTest {
         NElement e = NElementReader.ofTson().read(expected);
         String s2 = e.toString();
         TestUtils.println(s2);
-        Assertions.assertEquals(expected,s2);
+        Assertions.assertEquals(expected, s2);
     }
 
     @Test
@@ -740,7 +743,7 @@ public class TsonTest {
         NElement e = NElementReader.ofTson().read(expected);
         String s2 = e.toString();
         TestUtils.println(s2);
-        Assertions.assertEquals(expected,s2);
+        Assertions.assertEquals(expected, s2);
     }
 
     @Test
@@ -748,13 +751,100 @@ public class TsonTest {
         String expected = "    eitherPath(\n" +
                 "        \"$HOME/xprojects/nuts-world/nuts-productivity/ntexup/ntexup-templates/${themeName}/v1.0/theme\"\n" +
                 "        \"github://thevpc/ntexup-templates/${themeName}/v1.0/theme\"\n" +
-                "    )\n"
+                "    )\n";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial13() {
+        String expected = "agenda-slide(title:\"Rationale\"){\n" +
+                "    body{\n" +
+                "        a: b\n" +
+                "        a: •¶ Text-based, declarative, and intuitive syntax\n" +
+                "           •• {a:b}\n" +
+                "           •• {a:b}\n" +
+                "           • \"test\"\n" +
+                "\n" +
+                "        •¶ Text-based, declarative, and intuitive syntax\n" +
+                "        •¶ Readable by humans, writable with ease\n" +
+                "        •¶ Designed for long-lived documents with effortless maintenance\n" +
+                "        •¶ Unmatched control over rendering\n" +
+                "        •¶ Seamless multi-file support\n" +
+                "        •¶ Version-control friendly (Git & more)\n" +
+                "        •¶ Integrates with LaTeX, UML, and beyond\n" +
+                "    }\n" +
+                "}\n";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial14() {
+        String expected =
+                "        •¶ Text-based, declarative, and intuitive syntax\n" +
+                        "        •¶ Readable by humans, writable with ease\n" +
+                        "        •¶ Designed for long-lived documents with effortless maintenance\n" +
+                        "        •¶ Unmatched control over rendering\n" +
+                        "        •¶ Seamless multi-file support\n" +
+                        "        •¶ Version-control friendly (Git & more)\n" +
+                        "        •¶ Integrates with LaTeX, UML, and beyond\n";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial15() {
+        String expected =
+                          "• a+b\n"
+                        + "• b\n"
                 ;
         NElement e = NElementReader.ofTson().read(expected);
         String s2 = e.toString();
         TestUtils.println(s2);
-        Assertions.assertEquals(expected,s2);
+        Assertions.assertEquals(expected, s2);
     }
+
+    @Test
+    public void testSpecial16() {
+        String expected =
+                          "•¶ a\n"
+                        + "•¶ b\n"
+                ;
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial17() {
+        String expected =
+                          "• ¶ a\n"
+                        + "• ¶ b\n";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial18() {
+        String expected =
+                          "• ¶ a\n"
+                        ;
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
     @Test
     public void testSpecial() {
         NElement e = NElementReader.ofTson().read("styles{\n" +
