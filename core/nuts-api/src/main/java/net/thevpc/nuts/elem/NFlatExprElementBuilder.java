@@ -86,6 +86,8 @@ public interface NFlatExprElementBuilder extends NElementBuilder {
 
     NFlatExprElementBuilder clearAnnotations();
 
+    NFlatExprElementBuilder clearAffixes();
+
     NFlatExprElementBuilder addLeadingComment(NElementComment comment);
 
     NFlatExprElementBuilder addLeadingComments(NElementComment... comments);
