@@ -1184,6 +1184,7 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
     NOptional<NUnaryOperatorElement> asUnaryOperator();
 
     boolean isOperatorSymbol();
+
     boolean isOperatorSymbol(NOperatorSymbol symbol);
 
     boolean isBinaryOperator();
@@ -1264,4 +1265,8 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
     List<NElement> filter(NElementSelector selector);
 
     List<NElement> filter(String selector);
+
+    String toPrettyString();
+
+    String toCompactString();
 }
