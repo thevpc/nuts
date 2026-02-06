@@ -354,7 +354,7 @@ public abstract class AbstractNElement implements NElement {
         if (size <= 0) {
             size = 100;
         }
-        String s = toString();
+        String s = toCompactString();
         int u = s.indexOf("\n");
         boolean truncated = false;
         if (u >= 0) {
@@ -374,6 +374,16 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public String toString() {
         return DefaultTsonWriter.formatTson(this.format(NContentType.TSON, NElementFormatter.ofSafe()));
+    }
+
+    @Override
+    public String toCompactString() {
+        return DefaultTsonWriter.formatTson(this.format(NContentType.TSON, NElementFormatter.ofCompact()));
+    }
+
+    @Override
+    public String toPrettyString() {
+        return DefaultTsonWriter.formatTson(this.format(NContentType.TSON, NElementFormatter.ofPretty()));
     }
 
     @Override
