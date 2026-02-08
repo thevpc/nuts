@@ -708,18 +708,20 @@ public class CoreIOUtils {
         Set<CopyOption> joptions = new HashSet<>();
 
         for (NPathOption option : noptions) {
-            switch (option) {
-                case REPLACE_EXISTING: {
-                    joptions.add(StandardCopyOption.REPLACE_EXISTING);
-                    break;
-                }
-                case ATOMIC: {
-                    joptions.add(StandardCopyOption.ATOMIC_MOVE);
-                    break;
-                }
-                case COPY_ATTRIBUTES: {
-                    joptions.add(StandardCopyOption.COPY_ATTRIBUTES);
-                    break;
+            if(option instanceof NPathStandardOption) {
+                switch ((NPathStandardOption)option) {
+                    case REPLACE_EXISTING: {
+                        joptions.add(StandardCopyOption.REPLACE_EXISTING);
+                        break;
+                    }
+                    case ATOMIC: {
+                        joptions.add(StandardCopyOption.ATOMIC_MOVE);
+                        break;
+                    }
+                    case COPY_ATTRIBUTES: {
+                        joptions.add(StandardCopyOption.COPY_ATTRIBUTES);
+                        break;
+                    }
                 }
             }
         }
