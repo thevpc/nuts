@@ -1,5 +1,9 @@
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.util.NOptional;
+
+import java.util.List;
+
 public interface NElementPath {
     static NElementPath ofRoot() {
         return NElements.of().createRootPath();
@@ -7,23 +11,17 @@ public interface NElementPath {
 
     int size();
 
-    NElementPath param(String name);
+    /**
+     * @return The specific step taken from the parent to arrive here.
+     * Returns null if called on the Root.
+     */
+    NElementStep step();
 
-    NElementPath ann(String name);
-
-    NElementPath group(String group, int index);
-
-    NElementPath group(String group, String name);
-
-    NElementPath parent();
+    NOptional<NElementPath> parent();
 
     boolean isRoot();
 
-    NElementPath child(String name);
+    NElementPath resolve(NElementStep step);
 
-    NElementPath child(int i);
-
-    NElementPath param(int i);
-
-    NElementPath ann(int i);
+    List<NElementStep> steps();
 }
