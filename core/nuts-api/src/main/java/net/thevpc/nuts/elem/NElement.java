@@ -1234,6 +1234,7 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
      */
     NElement format(NContentType contentType, NElementFormatter formatter);
 
+    NElementMetadata metadata();
     String snippet();
 
     String snippet(int size);
