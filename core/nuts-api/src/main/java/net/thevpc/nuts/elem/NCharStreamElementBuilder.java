@@ -97,4 +97,6 @@ public interface NCharStreamElementBuilder extends NElementBuilder {
     NCharStreamElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NCharStreamElementBuilder addAffixes(List<NBoundAffix> affixes);
+
+    NCharStreamElementBuilder metadata(NElementMetadata metadata);
 }
