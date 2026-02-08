@@ -39,11 +39,11 @@ public class DefaultNCustomElement extends AbstractNElement implements NCustomEl
     private final Object value;
 
     public DefaultNCustomElement(Object value) {
-        this(value, null, null);
+        this(value, null, null,null);
     }
 
-    public DefaultNCustomElement(Object value, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
-        super(NElementType.CUSTOM, affixes, diagnostics);
+    public DefaultNCustomElement(Object value, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
+        super(NElementType.CUSTOM, affixes, diagnostics,metadata);
         this.value = value;
     }
 
