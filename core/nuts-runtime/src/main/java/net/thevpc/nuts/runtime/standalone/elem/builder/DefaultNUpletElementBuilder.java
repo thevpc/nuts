@@ -327,7 +327,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     @Override
     public NUpletElement build() {
         return new DefaultNUpletElement(name, params,
-                affixes(), diagnostics());
+                affixes(), diagnostics(),metadata());
     }
 
     private NElement denull(NElement e) {
@@ -648,4 +648,9 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
+    @Override
+    public NUpletElementBuilder metadata(NElementMetadata metadata) {
+        super.metadata(metadata);
+        return this;
+    }
 }
