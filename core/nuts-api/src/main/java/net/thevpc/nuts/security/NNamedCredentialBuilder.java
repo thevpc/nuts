@@ -17,7 +17,7 @@ public interface NNamedCredentialBuilder {
      */
     String getUserName();
 
-    NCredentialId getCredentialId();
+    NSecureToken getCredentialId();
 
     /**
      * Optional URL pattern for auto-resolution (e.g., "https://github.com/*").
@@ -27,7 +27,7 @@ public interface NNamedCredentialBuilder {
 
     NNamedCredentialBuilder setResource(String resource);
 
-    NNamedCredentialBuilder setCredentialId(NCredentialId credentialId);
+    NNamedCredentialBuilder setCredentialId(NSecureToken credentialId);
 
     NNamedCredentialBuilder setUserName(String user);
 
