@@ -55,7 +55,7 @@ public interface NRepositoryAccess {
 
     String getRemoteUserName();
 
-    NCredentialId getRemoteCredential();
+    NSecureToken getRemoteCredential();
 
     String getRemoteAuthType();
 
