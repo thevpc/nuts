@@ -5,15 +5,12 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtilsV1;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNAuthenticationAgentV1;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNAuthenticationAgentV2;
 import net.thevpc.nuts.runtime.standalone.security.PlainNAuthenticationAgent;
-import net.thevpc.nuts.security.NAuthenticationAgent;
-import net.thevpc.nuts.security.NCredentialId;
-import net.thevpc.nuts.security.NSecretCaller;
-import net.thevpc.nuts.security.NSecretRunner;
+import net.thevpc.nuts.security.*;
+import net.thevpc.nuts.util.NIllegalStateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.Objects;
 import java.util.function.Function;
 
 public class SecurityTest {
@@ -30,52 +27,77 @@ public class SecurityTest {
         TestUtils.println(new String(i));
     }
 
+    private void testDestroy(NAuthenticationAgent a) {
+        String mySecret = "my-secret";
+        NSecureString mySecretS;
+        Function<String, String> envProvider = s -> null;
+        try (NSecureString s = NSecureString.ofSecure(mySecret.toCharArray())) {
+            mySecretS = s;
+            a.addSecret(mySecretS, envProvider);
+        }
+// Outside the block, the secret should be unusable
+        Assertions.assertTrue(mySecretS.isDestroyed());
+        Assertions.assertThrows(NIllegalStateException.class, () -> {
+            mySecretS.callWithContent(c -> c.length);
+        });
+    }
+
     private void testHelperRetrievable(NAuthenticationAgent a) {
         String mySecret = "my-secret";
         Function<String, String> envProvider = s -> null;
-        NCredentialId withAllowRetreiveId = a.addSecret(mySecret.toCharArray(), envProvider);
-        TestUtils.println(withAllowRetreiveId);
-        Assertions.assertTrue(a.verify(withAllowRetreiveId, "my-secret".toCharArray(), envProvider));
-        Assertions.assertFalse(a.verify(withAllowRetreiveId, "my-bad-secret".toCharArray(), envProvider));
-        NCredentialId withoutAllowRetreiveId = a.addOneWayCredential(mySecret.toCharArray(), envProvider);
-        TestUtils.println(withoutAllowRetreiveId);
+        try (NSecureString mySecretS = NSecureString.ofSecure(mySecret.toCharArray())) {
+            NSecureToken withAllowRetreiveId = a.addSecret(mySecretS, envProvider);
+            TestUtils.println(withAllowRetreiveId);
+            try (NSecureString b = NSecureString.ofSecure("my-secret".toCharArray())) {
+                Assertions.assertTrue(a.verify(withAllowRetreiveId, b, envProvider));
+            }
+            try (NSecureString b = NSecureString.ofSecure("my-bad-secret".toCharArray())) {
+                Assertions.assertFalse(a.verify(withAllowRetreiveId, b, envProvider));
+            }
+            NSecureToken withoutAllowRetreiveId = a.addOneWayCredential(mySecretS, envProvider);
+            TestUtils.println(withoutAllowRetreiveId);
+        }
     }
 
     private void testHelperHashed(NAuthenticationAgent a, boolean alwaysRetrievable) {
-        String mySecret = "my-secret";
         Function<String, String> envProvider = s -> null;
-        NCredentialId withoutAllowRetreiveId = a.addOneWayCredential(mySecret.toCharArray(), envProvider);
-        TestUtils.println(withoutAllowRetreiveId);
-        Assertions.assertTrue(a.verify(withoutAllowRetreiveId, "my-secret".toCharArray(), envProvider));
-        Assertions.assertFalse(a.verify(withoutAllowRetreiveId, "my-bad-secret".toCharArray(), envProvider));
-        if (alwaysRetrievable) {
-            try {
-                a.withSecret(withoutAllowRetreiveId, new NSecretCaller<Object>() {
-                    @Override
-                    public Object call(NCredentialId id, char[] secretm, Function<String, String> env) {
-                        return null;
-                    }
-                }, envProvider);
-                Assertions.assertTrue(true);
-            } catch (SecurityException ex) {
-                Assertions.assertTrue(false);
+        try (NSecureString mySecret = NSecureString.ofSecure("my-secret".toCharArray())) {
+            NSecureToken withoutAllowRetrieveId = a.addOneWayCredential(mySecret, envProvider);
+            TestUtils.println(withoutAllowRetrieveId);
+            try (NSecureString ss = NSecureString.ofSecure("my-secret".toCharArray())) {
+                Assertions.assertTrue(a.verify(withoutAllowRetrieveId, ss, envProvider));
             }
-
-        } else {
-            try {
-                a.withSecret(withoutAllowRetreiveId, new NSecretCaller<Object>() {
-                    @Override
-                    public Object call(NCredentialId id, char[] secretm, Function<String, String> env) {
-                        return null;
-                    }
-                }, envProvider);
-                Assertions.assertTrue(false);
-            } catch (SecurityException ex) {
-                Assertions.assertTrue(true);
+            try (NSecureString ss = NSecureString.ofSecure("my-bad-secret".toCharArray())) {
+                Assertions.assertFalse(a.verify(withoutAllowRetrieveId, ss, envProvider));
             }
+            if (alwaysRetrievable) {
+                try {
+                    a.withSecret(withoutAllowRetrieveId, new NSecretCaller<Object>() {
+                        @Override
+                        public Object call(NSecureToken id, NSecureString secretm, Function<String, String> env) {
+                            return null;
+                        }
+                    }, envProvider);
+                    Assertions.assertTrue(true);
+                } catch (SecurityException ex) {
+                    Assertions.assertTrue(false);
+                }
 
+            } else {
+                try {
+                    a.withSecret(withoutAllowRetrieveId, new NSecretCaller<Object>() {
+                        @Override
+                        public Object call(NSecureToken id, NSecureString secretm, Function<String, String> env) {
+                            return null;
+                        }
+                    }, envProvider);
+                    Assertions.assertTrue(false);
+                } catch (SecurityException ex) {
+                    Assertions.assertTrue(true);
+                }
+
+            }
         }
-
     }
 
     @Test
