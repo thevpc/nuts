@@ -46,11 +46,15 @@ public interface NUserSpec {
      *
      * @return return user name
      */
-    String getUsername();
+    String getUserName();
 
-    NCredentialId getCredential();
+    NSecureString getCredential();
 
-    NUserSpec setCredential(NCredentialId value);
+    NSecureString getOldCredential();
+
+    NUserSpec setCredential(NSecureString value);
+
+    NUserSpec setOldCredential(NSecureString value);
 
     NUserSpec addPermissions(String... value);
 
