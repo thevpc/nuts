@@ -39,6 +39,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.security.NUserSpec;
 import net.thevpc.nuts.spi.*;
@@ -150,22 +151,22 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //        );
 
         //has read rights
-        NSecurityManager.of().addUser(
-                NUserSpec.of("user")
-                        .setCredential(
-                                NSecurityManager.of().addOneWayCredential("user".toCharArray())
-                        )
-                        .setPermissions(
-                                Arrays.asList(
-                                        NConstants.Permissions.FETCH_DESC,
-                                        NConstants.Permissions.FETCH_CONTENT,
-                                        NConstants.Permissions.DEPLOY,
-                                        NConstants.Permissions.UNDEPLOY,
-                                        NConstants.Permissions.PUSH,
-                                        NConstants.Permissions.SAVE
-                                )
-                        )
-        );
+        try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
+            NSecurityManager.of().addUser(
+                    NUserSpec.of("user")
+                            .setCredential(ss)
+                            .setPermissions(
+                                    Arrays.asList(
+                                            NConstants.Permissions.FETCH_DESC,
+                                            NConstants.Permissions.FETCH_CONTENT,
+                                            NConstants.Permissions.DEPLOY,
+                                            NConstants.Permissions.UNDEPLOY,
+                                            NConstants.Permissions.PUSH,
+                                            NConstants.Permissions.SAVE
+                                    )
+                            )
+            );
+        }
 //        NWorkspaceSecurityManager.of().setRepositoryRemoteUserName()
 //        .setRemoteIdentity("contributor")
 //                .run();
