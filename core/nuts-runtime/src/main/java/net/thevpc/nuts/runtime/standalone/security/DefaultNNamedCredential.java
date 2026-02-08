@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
-import net.thevpc.nuts.security.NCredentialId;
+import net.thevpc.nuts.security.NSecureToken;
 import net.thevpc.nuts.security.NNamedCredential;
 import net.thevpc.nuts.security.NNamedCredentialBuilder;
 
@@ -8,10 +8,10 @@ public class DefaultNNamedCredential implements NNamedCredential {
     private final String name;
     private final String userName;
     private final String authType;
-    private final NCredentialId credentialId;
+    private final NSecureToken credentialId;
     private final String resource;
 
-    public DefaultNNamedCredential(String name, String userName, NCredentialId credentialId, String authType,String resource) {
+    public DefaultNNamedCredential(String name, String userName, NSecureToken credentialId, String authType, String resource) {
         this.name = name;
         this.userName = userName;
         this.credentialId = credentialId;
@@ -35,7 +35,7 @@ public class DefaultNNamedCredential implements NNamedCredential {
     }
 
     @Override
-    public NCredentialId getCredential() {
+    public NSecureToken getCredential() {
         return credentialId;
     }
 
