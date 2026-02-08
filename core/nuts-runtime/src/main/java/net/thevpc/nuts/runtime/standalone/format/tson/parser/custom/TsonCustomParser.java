@@ -147,7 +147,7 @@ public class TsonCustomParser {
                         );
                         all.set(all.size() - 1, b.build());
                     } else {
-                        all.add(new NDefaultEmptyElement(tokensToBoundAffixes(t.prefixes, NAffixAnchor.START), null));
+                        all.add(new NDefaultEmptyElement(tokensToBoundAffixes(t.prefixes, NAffixAnchor.START), null, null));
                     }
                 }
                 nextToken(); // consume it
@@ -171,7 +171,7 @@ public class TsonCustomParser {
                 if (isOp(t)) {
                     nextToken();
                     NElement e = new DefaultNOperatorSymbolElement(NOperatorSymbol.parse(t.token.image()).get(),
-                            tokensToBoundAffixes(t.prefixes, NAffixAnchor.START), null
+                            tokensToBoundAffixes(t.prefixes, NAffixAnchor.START), null, null
                     );
                     all.add(e);
                     wasOp = true;
@@ -188,7 +188,7 @@ public class TsonCustomParser {
                 if (isOp(t)) {
                     nextToken();
                     NElement e = new DefaultNOperatorSymbolElement(NOperatorSymbol.parse(t.token.image()).get(),
-                            tokensToBoundAffixes(t.prefixes, NAffixAnchor.START), null
+                            tokensToBoundAffixes(t.prefixes, NAffixAnchor.START), null, null
                     );
                     all.add(e);
                     wasOp = true;
@@ -232,7 +232,7 @@ public class TsonCustomParser {
                 if (t.token == null) {
                     nextToken();
                     affixes.addAll(tokensToAffixes(t.prefixes));
-                    return new NDefaultEmptyElement(bindAffixes(affixes, NAffixAnchor.START), null);
+                    return new NDefaultEmptyElement(bindAffixes(affixes, NAffixAnchor.START), null, null);
                 } else if (t.token.type() == NElementTokenType.AT) {
                     affixes.addAll(tokensToAffixes(t.prefixes));
                     affixes.add(annotation(diagnostics));
@@ -243,10 +243,10 @@ public class TsonCustomParser {
             }
         }
         if (t == null) {
-            return new NDefaultEmptyElement(bindAffixes(affixes, NAffixAnchor.START), null);
+            return new NDefaultEmptyElement(bindAffixes(affixes, NAffixAnchor.START), null, null);
         }
         if (t.token == null) {
-            return new NDefaultEmptyElement(bindAffixes(affixes, NAffixAnchor.START), null);
+            return new NDefaultEmptyElement(bindAffixes(affixes, NAffixAnchor.START), null, null);
         }
         NElement base = null;
         while (true) {
@@ -346,7 +346,7 @@ public class TsonCustomParser {
             ) {
                 return new NDefaultEmptyElement(
                         bindAffixes(affixes, NAffixAnchor.START),
-                        diagnostics
+                        diagnostics,null
                 );
             }
             return null;
@@ -452,7 +452,7 @@ public class TsonCustomParser {
         boundAffixes.addAll(bindAffixes(beforeRbraceAffixes, NAffixAnchor.PRE_5));
         boundAffixes.addAll(readPostComments());
         return new DefaultNObjectElement(
-                name, params, oelements, boundAffixes, diagnostics
+                name, params, oelements, boundAffixes, diagnostics,null
         );
     }
 
@@ -488,7 +488,7 @@ public class TsonCustomParser {
         boundAffixes.addAll(bindAffixes(beforeRbracketAffixes, NAffixAnchor.PRE_5));
         boundAffixes.addAll(readPostComments());
         return new DefaultNArrayElement(
-                name, params, oelements, boundAffixes, diagnostics
+                name, params, oelements, boundAffixes, diagnostics,null
         );
     }
 
@@ -634,7 +634,7 @@ public class TsonCustomParser {
         boundAffixes.addAll(readPostComments());
         return new DefaultNUpletElement(
                 seenName, elements,
-                boundAffixes, diagnostics
+                boundAffixes, diagnostics,null
         );
     }
 
@@ -649,7 +649,7 @@ public class TsonCustomParser {
                     name,
                     name,
                     bindAffixes(pendingAffixTokens, NAffixAnchor.START),
-                    diagnostics
+                    diagnostics,null
             );
         }
         if (t.token == null) {
@@ -663,7 +663,7 @@ public class TsonCustomParser {
                     name,
                     name,
                     boundAffixes,
-                    diagnostics
+                    diagnostics,null
             );
         }
 
@@ -686,7 +686,7 @@ public class TsonCustomParser {
                 name,
                 name,
                 boundAffixes,
-                diagnostics
+                diagnostics,null
         );
     }
 
