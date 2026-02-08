@@ -21,7 +21,7 @@ public class DefaultNEmptyElementBuilder extends AbstractNElementBuilder impleme
     public NEmptyElement build() {
         return new NDefaultEmptyElement(
                 affixes()
-                , diagnostics()
+                , diagnostics(),metadata()
         );
     }
 
@@ -202,6 +202,12 @@ public class DefaultNEmptyElementBuilder extends AbstractNElementBuilder impleme
     @Override
     public NEmptyElementBuilder copyFrom(NElement other) {
         super.copyFrom(other);
+        return this;
+    }
+
+    @Override
+    public NEmptyElementBuilder metadata(NElementMetadata metadata) {
+        super.metadata(metadata);
         return this;
     }
 }
