@@ -12,11 +12,12 @@ public class DefaultNListElement extends AbstractNElement implements NListElemen
     private List<NListItemElement> children;
 
     public DefaultNListElement(NElementType type, int depth, List<NListItemElement> children) {
-        this(type, depth, children, null, null);
+        this(type, depth, children, null, null,null);
     }
 
-    public DefaultNListElement(NElementType type, int depth, List<NListItemElement> children, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
-        super(type, affixes, diagnostics);
+    public DefaultNListElement(NElementType type, int depth, List<NListItemElement> children,
+                               List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
+        super(type, affixes, diagnostics,metadata);
         this.depth = depth;
         this.children = CoreNUtils.copyAndUnmodifiableList(children);
     }
