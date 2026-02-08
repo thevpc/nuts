@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import java.lang.reflect.Type;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import net.thevpc.nuts.core.NWorkspace;
@@ -304,4 +305,19 @@ public class DefaultNElements implements NElements {
         return DefaultNElementFormatter.PRETTY;
     }
 
+
+    @Override
+    public NElementMetadata createElementMetadata() {
+        return DefaultNElementMetadata.EMPTY;
+    }
+
+    @Override
+    public NElementMetadata createElementMetadata(Object key, Object value) {
+        return NElementMetadata.of(key, value);
+    }
+
+    @Override
+    public NElementMetadata createElementMetadata(Map<Object, Object> any) {
+        return NElementMetadata.of(any);
+    }
 }
