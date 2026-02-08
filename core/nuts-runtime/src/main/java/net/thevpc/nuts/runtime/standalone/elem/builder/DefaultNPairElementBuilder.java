@@ -59,7 +59,7 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
 
     @Override
     public NPairElement build() {
-        return new DefaultNPairElement(key, value, affixes(), diagnostics());
+        return new DefaultNPairElement(key, value, affixes(), diagnostics(),metadata());
     }
 
     @Override
@@ -323,4 +323,9 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
         return this;
     }
 
+    @Override
+    public NPairElementBuilder metadata(NElementMetadata metadata) {
+        super.metadata(metadata);
+        return this;
+    }
 }
