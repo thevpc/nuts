@@ -50,7 +50,7 @@ public class DefaultNListElementBuilder extends AbstractNElementBuilder implemen
                 type == null ? NElementType.UNORDERED_LIST : type,
                 depth <= 0 ? 1 : depth, items,
                 affixes(),
-                diagnostics()
+                diagnostics(),metadata()
         );
     }
 
@@ -264,6 +264,12 @@ public class DefaultNListElementBuilder extends AbstractNElementBuilder implemen
     @Override
     public NListElementBuilder copyFrom(NElement other) {
         super.copyFrom(other);
+        return this;
+    }
+
+    @Override
+    public NListElementBuilder metadata(NElementMetadata metadata) {
+        super.metadata(metadata);
         return this;
     }
 }
