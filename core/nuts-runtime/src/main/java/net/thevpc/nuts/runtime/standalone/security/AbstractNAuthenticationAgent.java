@@ -28,14 +28,14 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
     }
 
     @Override
-    public boolean removeCredentials(NCredentialId credentialsId, Function<String, String> envProvider) {
+    public boolean removeCredentials(NSecureToken credentialsId, Function<String, String> envProvider) {
         checkValidCredentialId(credentialsId);
         //not really stored elsewhere so just return true....
         return true;
     }
 
     @Override
-    public <T> T withSecret(NCredentialId id, NSecretCaller<T> consumer, Function<String, String> env) {
+    public <T> T withSecret(NSecureToken id, NSecretCaller<T> consumer, Function<String, String> env) {
         //credentials are already encrypted with default passphrase!
         checkValidCredentialId(id);
         String p = id.getPayload();
@@ -43,13 +43,14 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
         if (p != null && !p.isEmpty()) {
             if (p.charAt(0) == 'B') {
                 char[] buffer = new char[p.length() - 1];
-                char[] chars = new char[p.length() - 1];
                 try {
                     p.getChars(1, p.length(), buffer, 0);
-                    chars = decryptChars(buffer, env);
-                    result = consumer.call(id, chars, env);
+                    try(NSecureString secureBuffer = NSecureString.ofSecure(buffer)) {
+                        try(NSecureString chars = decryptChars(secureBuffer, env)){
+                            result = consumer.call(id, chars, env);
+                        }
+                    }
                 } finally {
-                    Arrays.fill(chars, '\0');
                     Arrays.fill(buffer, '\0');
                 }
                 return result;
@@ -58,58 +59,47 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
         throw new NSecurityException(NMsg.ofC("invalid secret %s", id));
     }
 
-    protected boolean verifyOneWayImpl(char[] candidate, char[] storedHash, Function<String, String> env) {
-        try {
-            char[] rehashed = oneWayChars(candidate, env);
+    protected boolean verifyOneWayImpl(NSecureString candidate, NSecureString storedHash, Function<String, String> env) {
+        try (NSecureString rehashed= oneWayChars(candidate, env)){
             if (constantTimeEquals(storedHash, rehashed)) {
                 return true;
             }
-        } finally {
-            Arrays.fill(storedHash, '\0');
         }
         return false;
     }
 
     @Override
-    public boolean verify(NCredentialId id, char[] candidate, Function<String, String> env) {
+    public boolean verify(NSecureToken id, NSecureString candidate, Function<String, String> env) {
         if (candidate == null) {
-            candidate = new char[0];
+            candidate = NSecureString.ofEmpty();
         }
-        try {
-            //credentials are already encrypted with default passphrase!
-            checkValidCredentialId(id);
-            String p = id.getPayload();
-            if (p != null && !p.isEmpty()) {
-                if (p.charAt(0) == 'H') {
-                    char[] storeHashed = new char[p.length() - 1];
-                    try {
-                        p.getChars(1, p.length(), storeHashed, 0);
-                        return verifyOneWayImpl(candidate, storeHashed, env);
-                    } finally {
-                        Arrays.fill(storeHashed, '\0');
-                    }
-                } else if (p.charAt(0) == 'B') {
-                    char[] storedSecret = new char[p.length() - 1];
-                    char[] decryptedChars=null;
-                    try {
-                        p.getChars(1, p.length(), storedSecret, 0);
-                        decryptedChars = decryptChars(storedSecret, env);
-                        if (constantTimeEquals(candidate, decryptedChars)) {
-                            return true;
-                        }
-                    } finally {
-                        Arrays.fill(storedSecret, '\0');
-                        if(decryptedChars!=null){
-                            Arrays.fill(decryptedChars, '\0');
+        //credentials are already encrypted with default passphrase!
+        checkValidCredentialId(id);
+        String p = id.getPayload();
+        if (p != null && !p.isEmpty()) {
+            if (p.charAt(0) == 'H') {
+                char[] storeHashed = new char[p.length() - 1];
+                p.getChars(1, p.length(), storeHashed, 0);
+                return verifyOneWayImpl(candidate, NSecureString.ofSecure(storeHashed), env);
+            } else if (p.charAt(0) == 'B') {
+                char[] storedSecret = new char[p.length() - 1];
+//                    char[] decryptedChars = null;
+                try {
+                    p.getChars(1, p.length(), storedSecret, 0);
+                    try(NSecureString secureBuffer = NSecureString.ofSecure(storedSecret)) {
+                        try(NSecureString decryptedChars = decryptChars(secureBuffer, env)) {
+                            if (constantTimeEquals(candidate, decryptedChars)) {
+                                return true;
+                            }
                         }
                     }
-                    return false;
+                } finally {
+                    Arrays.fill(storedSecret, '\0');
                 }
+                return false;
             }
-            throw new NSecurityException(NMsg.ofC("invalid credential %s", id));
-        } finally {
-            Arrays.fill(candidate, '\0');
         }
+        throw new NSecurityException(NMsg.ofC("invalid credential %s", id));
     }
 
     protected boolean isSupportedVersion(NVersion version) {
@@ -123,7 +113,7 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
         return true;
     }
 
-    private void checkValidCredentialId(NCredentialId id) {
+    private void checkValidCredentialId(NSecureToken id) {
         NAssert.requireNamedNonBlank(id, "id");
         String a = id.getAgentId();
         if (a != null && !a.isEmpty()) {
@@ -147,63 +137,60 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
     }
 
     @Override
-    public NCredentialId addSecret(char[] credentials, Function<String, String> env) {
+    public NSecureToken addSecret(NSecureString credentials, Function<String, String> env) {
         if (credentials == null) {
-            credentials = new char[0];
+            credentials = NSecureString.ofEmpty();
         }
-        char[] val = null;
-        char[] result = null;
-        NCredentialId r;
-        try {
-            val = encryptChars(credentials, env);
-            result = new char[val.length + 1];
-            result[0] = 'B';
-            System.arraycopy(val, 0, result, 1, val.length);
-            r = new NCredentialId(getId(), new String(result));
-        } finally {
-            if (val != null) {
-                Arrays.fill(val, '\0');
-            }
-            if (result != null) {
-                Arrays.fill(result, '\0');
-            }
+        try (NSecureString val = oneWayChars(credentials, env)){
+            return val.callWithContent(valChars -> {
+                char[] result = null;
+                try {
+                    result = new char[valChars.length + 1];
+                    result[0] = 'B';
+                    System.arraycopy(valChars, 0, result, 1, valChars.length);
+                    return new NSecureToken(getId(), new String(result));
+                } finally {
+                    if (result != null) {
+                        Arrays.fill(result, '\0');
+                    }
+                }
+            });
         }
-        return r;
     }
 
     @Override
-    public NCredentialId updateSecret(NCredentialId old, char[] credentials, Function<String, String> envProvider) {
+    public NSecureToken updateSecret(NSecureToken old, NSecureString credentials, Function<String, String> envProvider) {
         removeCredentials(old, envProvider);
         return addSecret(credentials, envProvider);
     }
 
     @Override
-    public NCredentialId addOneWayCredential(char[] credentials, Function<String, String> env) {
+    public NSecureToken addOneWayCredential(NSecureString credentials, Function<String, String> env) {
         if (credentials == null) {
-            credentials = new char[0];
+            credentials = NSecureString.ofEmpty();
         }
-        char[] val = null;
-        char[] result = null;
-        NCredentialId r;
-        try {
-            val = oneWayChars(credentials, env);
-            result = new char[val.length + 1];
-            result[0] = 'H';
-            System.arraycopy(val, 0, result, 1, val.length);
-            r = new NCredentialId(getId(), new String(result));
-        } finally {
-            if (val != null) {
-                Arrays.fill(val, '\0');
-            }
-            if (result != null) {
-                Arrays.fill(result, '\0');
-            }
+        NSecureToken r;
+        try (NSecureString val = oneWayChars(credentials, env)){
+            String sresult = val.callWithContent(valChars -> {
+                char[] result = null;
+                try {
+                    result = new char[valChars.length + 1];
+                    result[0] = 'H';
+                    System.arraycopy(valChars, 0, result, 1, valChars.length);
+                    return new String(result);
+                } finally {
+                    if (result != null) {
+                        Arrays.fill(result, '\0');
+                    }
+                }
+            });
+            r = new NSecureToken(getId(), sresult);
         }
         return r;
     }
 
     @Override
-    public NCredentialId updateOneWay(NCredentialId old, char[] credentials, Function<String, String> envProvider) {
+    public NSecureToken updateOneWay(NSecureToken old, NSecureString credentials, Function<String, String> envProvider) {
         removeCredentials(old, envProvider);
         return addOneWayCredential(credentials, envProvider);
     }
@@ -223,21 +210,20 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
         return defVal;
     }
 
-    private static boolean constantTimeEquals(char[] a, char[] b) {
+    private static boolean constantTimeEquals(NSecureString a, NSecureString b) {
         if (a == null || b == null) {
+            if (a == null && b == null) {
+                return true;
+            }
             return false;
         }
-        int diff = a.length ^ b.length;
-        for (int i = 0; i < a.length && i < b.length; i++) {
-            diff |= a[i] ^ b[i];
-        }
-        return diff == 0;
+        return a.constantTimeEquals(b);
     }
 
-    protected abstract char[] decryptChars(char[] data, Function<String, String> env);
+    protected abstract NSecureString decryptChars(NSecureString data, Function<String, String> env);
 
-    protected abstract char[] encryptChars(char[] data, Function<String, String> env);
+    protected abstract NSecureString encryptChars(NSecureString data, Function<String, String> env);
 
-    protected abstract char[] oneWayChars(char[] data, Function<String, String> env);
+    protected abstract NSecureString oneWayChars(NSecureString data, Function<String, String> env);
 
 }
