@@ -356,7 +356,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     @Override
     public NArrayElement build() {
         return new DefaultNArrayElement(name, params, values,
-                affixes(), diagnostics());
+                affixes(), diagnostics(),metadata());
     }
 
     private NElement denull(NElement e) {
@@ -681,4 +681,9 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
+    @Override
+    public NArrayElementBuilder metadata(NElementMetadata metadata) {
+        super.metadata(metadata);
+        return this;
+    }
 }
