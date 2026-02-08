@@ -66,13 +66,13 @@ public class DefaultNWorkspaceSecurityModel {
         return NLog.of(DefaultNWorkspaceSecurityModel.class);
     }
 
-    public void login(final String username, final char[] password) {
+    public void login(final String username, final NSecureString password) {
         NUserConfig registeredUser = NWorkspaceExt.of()
                 .getConfigModel()
                 .getUser(username);
         if (registeredUser != null) {
             try {
-                NCredentialId chars = NCredentialId.parse(registeredUser.getCredential());
+                NSecureToken chars = NSecureToken.parse(registeredUser.getCredential());
                 if (agentMapper.verify(chars, password)) {
                     Stack<DefaultNLoginContext> r = loginContextStack.get();
                     if (r == null) {
@@ -89,7 +89,7 @@ public class DefaultNWorkspaceSecurityModel {
     }
 
 
-    public boolean setSecureMode(boolean secure, char[] adminPassword) {
+    public boolean setSecureMode(boolean secure, NSecureString adminPassword) {
         if (secure) {
             return switchSecureMode(adminPassword);
         } else {
@@ -97,9 +97,9 @@ public class DefaultNWorkspaceSecurityModel {
         }
     }
 
-    public boolean switchUnsecureMode(char[] adminPassword) {
+    public boolean switchUnsecureMode(NSecureString adminPassword) {
         if (adminPassword == null) {
-            adminPassword = new char[0];
+            adminPassword = NSecureString.ofEmpty();
         }
         NUser adminSecurity = findUser(NConstants.Users.ADMIN).orNull();
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
@@ -108,41 +108,47 @@ public class DefaultNWorkspaceSecurityModel {
                         .log(NMsg.ofC("%s user has no credentials. reset to default", NConstants.Users.ADMIN).asConfig().withIntent(NMsgIntent.ALERT));
             }
             NUserConfig u = NWorkspaceExt.of(workspace).getConfigModel().getUser(NConstants.Users.ADMIN);
-            u.setCredential(agentMapper().storeOneWay("admin".toCharArray(), null).toString());
+            try (NSecureString s = NSecureString.ofSecure("admin".toCharArray())) {
+                u.setCredential(agentMapper().storeOneWay(s, null).toString());
+            }
             NWorkspaceExt.of(workspace).getConfigModel().addOrUpdateUser(u);
         }
 
-        char[] credentials = NDigestUtils.evalSHA1(adminPassword);
-        if (Arrays.equals(credentials, adminPassword)) {
+        return adminPassword.callWithContent(cc -> {
+            char[] credentials = NDigestUtils.evalSHA1(cc);
+            if (Arrays.equals(credentials, cc)) {
+                Arrays.fill(credentials, '\0');
+                throw new NSecurityException(NMsg.ofPlain("invalid credentials"));
+            }
             Arrays.fill(credentials, '\0');
-            throw new NSecurityException(NMsg.ofPlain("invalid credentials"));
-        }
-        Arrays.fill(credentials, '\0');
-        boolean activated = false;
-        if (isSecure()) {
-            NWorkspaceExt.of(workspace).getConfigModel().setSecure(false);
-            activated = true;
-        }
-        return activated;
+            boolean activated = false;
+            if (isSecure()) {
+                NWorkspaceExt.of(workspace).getConfigModel().setSecure(false);
+                activated = true;
+            }
+            return activated;
+        });
     }
 
-    public boolean switchSecureMode(char[] adminPassword) {
+    public boolean switchSecureMode(NSecureString adminPassword) {
         if (adminPassword == null) {
-            adminPassword = new char[0];
+            adminPassword = NSecureString.ofEmpty();
         }
-        boolean deactivated = false;
-        char[] credentials = NDigestUtils.evalSHA1(adminPassword);
-        boolean passwordAccepted = Arrays.equals(credentials, adminPassword);
-        Arrays.fill(credentials, '\0');
-        if (!passwordAccepted) {
-            throw new NSecurityException(NMsg.ofPlain("invalid credentials"));
-        }
-        DefaultNWorkspaceConfigModel configModel = NWorkspaceExt.of(workspace).getConfigModel();
-        if (!configModel.isSecure()) {
-            configModel.setSecure(true);
-            deactivated = true;
-        }
-        return deactivated;
+        return adminPassword.callWithContent(cc -> {
+            boolean deactivated = false;
+            char[] credentials = NDigestUtils.evalSHA1(cc);
+            boolean passwordAccepted = Arrays.equals(credentials, cc);
+            Arrays.fill(credentials, '\0');
+            if (!passwordAccepted) {
+                throw new NSecurityException(NMsg.ofPlain("invalid credentials"));
+            }
+            DefaultNWorkspaceConfigModel configModel = NWorkspaceExt.of(workspace).getConfigModel();
+            if (!configModel.isSecure()) {
+                configModel.setSecure(true);
+                deactivated = true;
+            }
+            return deactivated;
+        });
     }
 
 
@@ -187,7 +193,7 @@ public class DefaultNWorkspaceSecurityModel {
             Stack<String> visited = new Stack<>();
             visited.push(username);
             Stack<String> curr = new Stack<>();
-            if(security.getGroups()!=null) {
+            if (security.getGroups() != null) {
                 curr.addAll(security.getGroups());
             }
             while (!curr.empty()) {
@@ -195,10 +201,10 @@ public class DefaultNWorkspaceSecurityModel {
                 visited.add(s);
                 NUserConfig ss = NWorkspaceExt.of(workspace).getConfigModel().getUser(s);
                 if (ss != null) {
-                    if(ss.getPermissions()!=null) {
+                    if (ss.getPermissions() != null) {
                         inherited.addAll(ss.getPermissions());
                     }
-                    if(ss.getGroups()!=null) {
+                    if (ss.getGroups() != null) {
                         for (String group : ss.getGroups()) {
                             if (!visited.contains(group)) {
                                 curr.push(group);
