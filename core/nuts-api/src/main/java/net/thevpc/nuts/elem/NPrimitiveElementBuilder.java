@@ -183,4 +183,6 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
     NPrimitiveElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NPrimitiveElementBuilder addAffixes(List<NBoundAffix> affixes);
+
+    NPrimitiveElementBuilder metadata(NElementMetadata metadata);
 }
