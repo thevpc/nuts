@@ -526,7 +526,7 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     public NObjectElement build() {
         return new DefaultNObjectElement(name, params, values
                 , affixes()
-                , diagnostics()
+                , diagnostics(),metadata()
         );
     }
 
@@ -812,4 +812,9 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
         return this;
     }
 
+    @Override
+    public NObjectElementBuilder metadata(NElementMetadata metadata) {
+        super.metadata(metadata);
+        return this;
+    }
 }
