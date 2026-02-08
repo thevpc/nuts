@@ -69,6 +69,27 @@ public class NElementAnnotationImpl implements NElementAnnotation {
     }
 
     @Override
+    public NOptional<NElement> param(String name) {
+        if(params!=null) {
+            for (NElement x : params) {
+                if (x instanceof NPairElement) {
+                    NPairElement e = (NPairElement) x;
+                    if (name == null) {
+                        if (e.key().isNull()) {
+                            return NOptional.of(e.value());
+                        }
+                    } else if (e.key().isAnyString()) {
+                        if (Objects.equals(e.key().asStringValue().get(), name)) {
+                            return NOptional.of(e.value());
+                        }
+                    }
+                }
+            }
+        }
+        return NOptional.ofNamedEmpty("property " + name);
+    }
+
+    @Override
     public NOptional<List<NElement>> params() {
         return NOptional.ofNamed(params, "param");
     }
