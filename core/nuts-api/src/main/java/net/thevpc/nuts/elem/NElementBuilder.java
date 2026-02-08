@@ -91,6 +91,7 @@ public interface NElementBuilder {
     NElementBuilder clearComments();
 
     NElementBuilder addAffixes(List<NBoundAffix> affixes);
+    NElementMetadata metadata();
 
     /// /////////////
 
@@ -119,5 +120,5 @@ public interface NElementBuilder {
     NElementBuilder addDiagnostic(NElementDiagnostic error);
 
     NElementBuilder removeDiagnostic(NElementDiagnostic error);
-
+    NElementBuilder metadata(NElementMetadata metadata);
 }
