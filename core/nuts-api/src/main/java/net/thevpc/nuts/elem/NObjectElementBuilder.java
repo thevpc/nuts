@@ -312,4 +312,5 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder addAffixes(List<NBoundAffix> affixes);
 
+    NObjectElementBuilder metadata(NElementMetadata metadata);
 }
