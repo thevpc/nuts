@@ -45,11 +45,11 @@ public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimi
     private final Object value;
 
     public DefaultNPrimitiveElement(NElementType type, Object value) {
-        this(type,value,null,null);
+        this(type,value,null,null,null);
     }
 
-    public DefaultNPrimitiveElement(NElementType type, Object value, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
-        super(type, affixes, diagnostics);
+    public DefaultNPrimitiveElement(NElementType type, Object value, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
+        super(type, affixes, diagnostics,metadata);
         if (type == NElementType.NAME) {
             NAssert.requireNamedTrue(NElementUtils.isValidElementName((String) value), "valid name : " + (String) value);
         }
