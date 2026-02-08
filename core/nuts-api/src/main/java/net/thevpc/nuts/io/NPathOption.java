@@ -25,10 +25,7 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.util.NEnum;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NEnumUtils;
-import net.thevpc.nuts.util.NNameFormat;
+import net.thevpc.nuts.util.*;
 
 import java.nio.file.LinkOption;
 
@@ -156,4 +153,15 @@ public interface NPathOption {
     NPathOption NOSHARE_WRITE = NPathStandardOption.NOSHARE_WRITE;
     NPathOption NOSHARE_DELETE = NPathStandardOption.NOSHARE_DELETE;
 
+    static NPathCredentialsOption ofCredentials(String userName, String secret) {
+        return NPathCredentialsOption.of(userName, secret);
+    }
+
+    static NPathCredentialsOption ofHttpBasicCredentials(String userName, String secret) {
+        return NPathCredentialsOption.ofHttpBasic(userName, secret);
+    }
+
+    static NPathCredentialsOption ofHttpBearerCredentials(String secret) {
+        return NPathCredentialsOption.ofHttpBearer(secret);
+    }
 }
