@@ -96,4 +96,6 @@ public interface NBinaryStreamElementBuilder extends NElementBuilder {
     NBinaryStreamElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NBinaryStreamElementBuilder addAffixes(List<NBoundAffix> affixes);
+
+    NBinaryStreamElementBuilder metadata(NElementMetadata metadata);
 }
