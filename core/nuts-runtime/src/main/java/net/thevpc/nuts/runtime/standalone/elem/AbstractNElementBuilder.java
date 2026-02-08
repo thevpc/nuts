@@ -19,7 +19,17 @@ import java.util.function.Predicate;
 public abstract class AbstractNElementBuilder implements NElementBuilder {
     private final NBoundAffixList affixes = new NBoundAffixList();
     private final List<NElementDiagnostic> diagnostics = new ArrayList<>();
+    private NElementMetadata metadata = DefaultNElementMetadata.EMPTY;
 
+
+    public NElementMetadata metadata() {
+        return metadata;
+    }
+
+    public NElementBuilder metadata(NElementMetadata metadata) {
+        this.metadata = metadata == null ? DefaultNElementMetadata.EMPTY : metadata;
+        return this;
+    }
 
     @Override
     public List<NBoundAffix> affixes() {
@@ -159,6 +169,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
         }
         this.diagnostics.addAll(other.diagnostics());
         this.affixes.addAffixes(other.affixes());
+        this.metadata = other.metadata();
         return this;
     }
 
@@ -169,6 +180,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
         }
         this.diagnostics.addAll(other.diagnostics());
         this.affixes.addAffixes(other.affixes());
+        this.metadata = other.metadata();
         return this;
     }
 
