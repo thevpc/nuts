@@ -112,4 +112,5 @@ public interface NFlatExprElementBuilder extends NElementBuilder {
 
     NFlatExprElementBuilder addAffixes(List<NBoundAffix> affixes);
 
+    NFlatExprElementBuilder metadata(NElementMetadata metadata);
 }
