@@ -92,4 +92,5 @@ public interface NCustomElementBuilder extends NElementBuilder {
 
     NCustomElementBuilder addAffixes(List<NBoundAffix> affixes);
 
+    NCustomElementBuilder metadata(NElementMetadata metadata);
 }
