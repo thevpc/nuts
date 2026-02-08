@@ -425,8 +425,8 @@ class SshNPath implements NPathSPI {
 
     @Override
     public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
-        EnumSet<NPathOption> optionsSet = EnumSet.noneOf(NPathOption.class);
-        optionsSet.addAll(Arrays.asList(options));
+//        Set<NPathOption> optionsSet = new HashSet<>();
+//        optionsSet.addAll(Arrays.asList(options));
         try (SshConnection c = prepareSshConnection()) {
             List<String> ss = c.walk(path.getPath(), true, maxDepth);
             return NStream.ofIterable(ss).map(
