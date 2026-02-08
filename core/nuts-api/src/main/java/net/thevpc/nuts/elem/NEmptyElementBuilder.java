@@ -21,6 +21,7 @@ public interface NEmptyElementBuilder extends NElementBuilder {
     NEmptyElementBuilder addAffix(int index, NBoundAffix affix);
 
     NEmptyElementBuilder setAffix(int index, NBoundAffix affix);
+
     NEmptyElementBuilder addAffix(NBoundAffix affix);
 
     NEmptyElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
@@ -60,4 +61,6 @@ public interface NEmptyElementBuilder extends NElementBuilder {
     NEmptyElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NEmptyElementBuilder addAffixes(List<NBoundAffix> affixes);
+
+    NEmptyElementBuilder metadata(NElementMetadata metadata);
 }
