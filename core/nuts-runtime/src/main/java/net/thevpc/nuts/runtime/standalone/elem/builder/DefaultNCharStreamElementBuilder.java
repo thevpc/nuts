@@ -37,7 +37,7 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
 
     @Override
     public NCharStreamElement build() {
-        return new DefaultNCharStreamElement(blocIdentifier, value, affixes(), diagnostics());
+        return new DefaultNCharStreamElement(blocIdentifier, value, affixes(), diagnostics(),metadata());
     }
 
     public String blocIdentifier() {
@@ -227,6 +227,12 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
     @Override
     public NCharStreamElementBuilder copyFrom(NElement other) {
         super.copyFrom(other);
+        return this;
+    }
+
+    @Override
+    public NCharStreamElementBuilder metadata(NElementMetadata metadata) {
+        super.metadata(metadata);
         return this;
     }
 }
