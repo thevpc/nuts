@@ -89,7 +89,7 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     @Override
     public NFlatExprElement build() {
         return new DefaultNFlatExprElement(values,
-                affixes(), diagnostics()
+                affixes(), diagnostics(),metadata()
         );
     }
 
@@ -285,4 +285,9 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
         return this;
     }
 
+    @Override
+    public NFlatExprElementBuilder metadata(NElementMetadata metadata) {
+        super.metadata(metadata);
+        return this;
+    }
 }
