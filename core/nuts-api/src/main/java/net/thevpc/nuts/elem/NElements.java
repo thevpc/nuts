@@ -128,4 +128,20 @@ public interface NElements extends NComponent {
     NElementMetadata createElementMetadata(Object key, Object value);
 
     NElementMetadata createElementMetadata(Map<Object, Object> any);
+
+    NElementStep createStepChild(String name);
+
+    NElementStep createStepChild(int index);
+
+    NElementStep createStepParam(String name);
+
+    NElementStep createStepParam(int index);
+
+    NElementStep createStepAnnotationParam(int paramIndex,String name);
+
+    NElementStep createStepAnnotationParam(int paramIndex,int index);
+
+    NElementStep createStepSubList(int index);
+
+    NElementNavigator createRootNavigator(NElement element);
 }
