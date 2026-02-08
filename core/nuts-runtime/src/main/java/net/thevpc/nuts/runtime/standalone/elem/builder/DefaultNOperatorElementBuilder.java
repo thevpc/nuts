@@ -311,7 +311,7 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
                 }
                 return new DefaultNOperatorElementUnary(symbols.get(0),
                         position == null ? NOperatorPosition.PREFIX : position,
-                         operands.get(0), affixes(), diagnostics());
+                         operands.get(0), affixes(), diagnostics(),metadata());
             }
             case 2: {
                 if (symbols.size() != 1) {
@@ -321,7 +321,7 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
                         position == null ? NOperatorPosition.INFIX : position,
                          operands.get(0),
                          operands.get(1),
-                         affixes(), diagnostics());
+                         affixes(), diagnostics(),metadata());
             }
             case 3: {
                 if (symbols.size() != 2) {
@@ -333,7 +333,7 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
                          operands.get(2),
                          symbols,
                          position == null ? NOperatorPosition.INFIX : position,
-                         affixes(), diagnostics());
+                         affixes(), diagnostics(),metadata());
             }
         }
         return new DefaultNOperatorElementNary(
@@ -341,7 +341,7 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
                 symbols,
                 position == null ? NOperatorPosition.INFIX : position,
                  affixes(),
-                 diagnostics()
+                 diagnostics(),metadata()
         );
     }
 
@@ -528,4 +528,9 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
         return this;
     }
 
+    @Override
+    public NOperatorElementBuilder metadata(NElementMetadata metadata) {
+        super.metadata(metadata);
+        return this;
+    }
 }
