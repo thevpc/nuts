@@ -358,4 +358,5 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     NUpletElementBuilder addAffixes(List<NBoundAffix> affixes);
 
+    NUpletElementBuilder metadata(NElementMetadata metadata);
 }
