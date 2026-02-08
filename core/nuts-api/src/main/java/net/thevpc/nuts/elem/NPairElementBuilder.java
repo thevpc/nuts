@@ -73,4 +73,6 @@ public interface NPairElementBuilder extends NElementBuilder {
     NPairElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NPairElementBuilder addAffixes(List<NBoundAffix> affixes);
+
+    NPairElementBuilder metadata(NElementMetadata metadata);
 }
