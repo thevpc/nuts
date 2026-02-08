@@ -3,7 +3,9 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNListElementBuilder;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
 
@@ -12,12 +14,12 @@ public class DefaultNListElement extends AbstractNElement implements NListElemen
     private List<NListItemElement> children;
 
     public DefaultNListElement(NElementType type, int depth, List<NListItemElement> children) {
-        this(type, depth, children, null, null,null);
+        this(type, depth, children, null, null, null);
     }
 
     public DefaultNListElement(NElementType type, int depth, List<NListItemElement> children,
-                               List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
-        super(type, affixes, diagnostics,metadata);
+                               List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
+        super(type, affixes, diagnostics, metadata);
         this.depth = depth;
         this.children = CoreNUtils.copyAndUnmodifiableList(children);
     }
@@ -53,6 +55,14 @@ public class DefaultNListElement extends AbstractNElement implements NListElemen
     @Override
     public List<NListItemElement> items() {
         return children;
+    }
+
+    @Override
+    public NOptional<NListItemElement> get(int index) {
+        if (index < 0 || index >= children.size()) {
+            return NOptional.ofNamedEmpty(NMsg.ofC("list item at %s", index));
+        }
+        return NOptional.of(children.get(index));
     }
 
     @Override
