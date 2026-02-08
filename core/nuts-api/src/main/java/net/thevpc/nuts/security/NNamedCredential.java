@@ -29,7 +29,7 @@ public interface NNamedCredential {
      *
      * @return opaque credential identifier (agent#version:payload)
      */
-    NCredentialId getCredential();
+    NSecureToken getCredential();
 
     /**
      * Optional URL pattern for auto-resolution (e.g., "https://github.com/*").
