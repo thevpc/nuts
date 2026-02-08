@@ -494,12 +494,12 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     @Override
     public NPrimitiveElement build() {
         if (type().isAnyNumber()) {
-            return new DefaultNNumberElement(type, (Number) value, numberLayout(), numberSuffix(), image, affixes(), diagnostics());
+            return new DefaultNNumberElement(type, (Number) value, numberLayout(), numberSuffix(), image, affixes(), diagnostics(),metadata());
         }
         if (type().isAnyStringOrName()) {
-            return new DefaultNStringElement(type, (String) value, image, affixes(), diagnostics());
+            return new DefaultNStringElement(type, (String) value, image, affixes(), diagnostics(),metadata());
         }
-        return new DefaultNPrimitiveElement(type, value, affixes(), diagnostics());
+        return new DefaultNPrimitiveElement(type, value, affixes(), diagnostics(),metadata());
     }
 
     @Override
@@ -714,4 +714,9 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         return this;
     }
 
+    @Override
+    public NPrimitiveElementBuilder metadata(NElementMetadata metadata) {
+        super.metadata(metadata);
+        return this;
+    }
 }
