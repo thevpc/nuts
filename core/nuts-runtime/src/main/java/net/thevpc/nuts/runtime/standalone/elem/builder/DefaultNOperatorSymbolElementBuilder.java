@@ -24,7 +24,7 @@ public class DefaultNOperatorSymbolElementBuilder extends AbstractNElementBuilde
 
     @Override
     public NOperatorSymbolElement build() {
-        return new DefaultNOperatorSymbolElement(symbol,affixes(), diagnostics());
+        return new DefaultNOperatorSymbolElement(symbol,affixes(), diagnostics(),metadata());
     }
 
     @Override
@@ -206,6 +206,12 @@ public class DefaultNOperatorSymbolElementBuilder extends AbstractNElementBuilde
     @Override
     public DefaultNOperatorSymbolElementBuilder copyFrom(NElement other) {
         super.copyFrom(other);
+        return this;
+    }
+
+    @Override
+    public DefaultNOperatorSymbolElementBuilder metadata(NElementMetadata metadata) {
+        super.metadata(metadata);
         return this;
     }
 }
