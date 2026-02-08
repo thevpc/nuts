@@ -378,4 +378,5 @@ public interface NArrayElementBuilder extends NElementBuilder {
 
     NArrayElementBuilder addAffixes(List<NBoundAffix> affixes);
 
+    NArrayElementBuilder metadata(NElementMetadata metadata);
 }
