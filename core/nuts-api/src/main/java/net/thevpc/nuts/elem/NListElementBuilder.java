@@ -73,4 +73,6 @@ public interface NListElementBuilder extends NElementBuilder {
     NListElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NListElementBuilder addAffixes(List<NBoundAffix> affixes);
+
+    NListElementBuilder metadata(NElementMetadata metadata);
 }
