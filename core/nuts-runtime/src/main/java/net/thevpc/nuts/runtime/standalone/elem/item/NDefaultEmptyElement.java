@@ -6,8 +6,8 @@ import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNEmptyElementBuild
 import java.util.List;
 
 public class NDefaultEmptyElement extends AbstractNElement implements NEmptyElement {
-    public NDefaultEmptyElement(List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
-        super(NElementType.EMPTY, affixes, diagnostics);
+    public NDefaultEmptyElement(List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
+        super(NElementType.EMPTY, affixes, diagnostics,metadata);
     }
 
     @Override
