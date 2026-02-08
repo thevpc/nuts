@@ -6,8 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.security.NCredentialId;
-import net.thevpc.nuts.security.NRepositoryAccessSpec;
+import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NUserSpec;
 import net.thevpc.nuts.util.NBlankable;
 
@@ -20,24 +19,40 @@ import java.util.List;
  */
 public class DefaultNUserSpec implements NUserSpec {
 
-    private String username;
-    private NCredentialId credential;
+    private String userName;
+    private NSecureString credential;
+    private NSecureString oldCredential;
     private List<String> permissions;
     private List<String> groups;
 
-    public DefaultNUserSpec(String username, NCredentialId credential, List<String> permissions, List<String> groups) {
-        this.username = username;
+    public DefaultNUserSpec(String username) {
+        this.userName = username;
+    }
+    public DefaultNUserSpec(String username, NSecureString credential, NSecureString oldCredential,List<String> permissions, List<String> groups) {
+        this.userName = username;
         this.credential = credential;
+        this.oldCredential = oldCredential;
         this.permissions = CoreNUtils.copyNonNullList(permissions);
         this.groups = CoreNUtils.copyNonNullList(groups);
     }
 
-    public NCredentialId getCredential() {
+    public NSecureString getCredential() {
         return credential;
     }
 
-    public DefaultNUserSpec setCredential(NCredentialId credential) {
+    public DefaultNUserSpec setCredential(NSecureString credential) {
         this.credential = credential;
+        return this;
+    }
+
+    @Override
+    public NSecureString getOldCredential() {
+        return oldCredential;
+    }
+
+    @Override
+    public NUserSpec setOldCredential(NSecureString oldCredential) {
+        this.oldCredential = oldCredential;
         return this;
     }
 
@@ -54,8 +69,8 @@ public class DefaultNUserSpec implements NUserSpec {
     }
 
     @Override
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
 
     @Override
