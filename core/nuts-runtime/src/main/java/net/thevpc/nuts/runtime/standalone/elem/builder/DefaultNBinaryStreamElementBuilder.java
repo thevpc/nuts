@@ -47,7 +47,7 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
 
     @Override
     public NBinaryStreamElement build() {
-        return new DefaultNBinaryStreamElement(value, blocIdentifier, affixes(), diagnostics());
+        return new DefaultNBinaryStreamElement(value, blocIdentifier, affixes(), diagnostics(),metadata());
     }
 
     @Override
@@ -232,4 +232,9 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
         return this;
     }
 
+    @Override
+    public NBinaryStreamElementBuilder metadata(NElementMetadata metadata) {
+        super.metadata(metadata);
+        return this;
+    }
 }
