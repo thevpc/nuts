@@ -31,6 +31,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
+import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.security.NUserSpec;
 import net.thevpc.nuts.text.NI18n;
@@ -125,6 +126,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public static final String RUNTIME_VERSION = "0.8.9.0";
     public static final String RUNTIME_VERSION_STRING = NConstants.Ids.NUTS_RUNTIME + "#" + RUNTIME_VERSION;
     public static final NId RUNTIME_ID = NId.get(RUNTIME_VERSION_STRING).get();
+    public static final String WEAK_ADMIN_PASSWORD = "admin";
     //    public NLog LOG;
     private NWorkspaceModel wsModel;
     protected NBootOptionsInfo callerBootOptionsInfo;
@@ -398,10 +400,24 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
         if (data.effectiveBootOptions.getUserName().orElse("").trim().length() > 0) {
             char[] password = data.effectiveBootOptions.getCredential().orNull();
-            if (password == null || NBlankable.isBlank(new String(password))) {
-                password = data.terminals.getDefaultTerminal().readPassword(NMsg.ofPlain("Password : "));
+            try {
+                if (password == null) {
+                    password = new char[0];
+                } else {
+                    //make a copy because we are not the owner of boot credentials
+                    password = Arrays.copyOf(password, password.length);
+                }
+                if (NBlankable.isBlank(new String(password))) {
+                    password = data.terminals.getDefaultTerminal().readPassword(NMsg.ofPlain("Password : "));
+                }
+                try (NSecureString s = NSecureString.ofSecure(password)) {
+                    NSecurityManager.of().login(data.effectiveBootOptions.getUserName().get(), s);
+                }
+            } finally {
+                if (password != null) {
+                    Arrays.fill(password, '\0');
+                }
             }
-            NSecurityManager.of().login(data.effectiveBootOptions.getUserName().get(), password);
         }
         wsModel.configModel.setEndCreateTime(Instant.now());
         wsModel.LOG
@@ -1047,10 +1063,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         //has all rights (by default)
         //no right nor group is needed for admin user
         if (!NSecurityManager.of().findUser(NConstants.Users.ADMIN).isEmpty()) {
-            NSecurityManager.of().addUser(
-                    NUserSpec.of(NConstants.Users.ADMIN)
-                            .setCredential(NSecurityManager.of().addOneWayCredential("admin".toCharArray()))
-            );
+            try (NSecureString s = NSecureString.ofSecure("admin".toCharArray())) {
+                NSecurityManager.of().addUser(
+                        NUserSpec.of(NConstants.Users.ADMIN)
+                                .setCredential(s)
+                );
+            }
         }
 
         archetypeInstance.initializeWorkspace();
@@ -1138,7 +1156,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
                 adminSecurity = new NUserConfig();
                 adminSecurity.setUserName(NConstants.Users.ADMIN);
-                adminSecurity.setCredential(NSecurityManager.of().addOneWayCredential("admin".toCharArray()).toString());
+                try (NSecureString s = NSecureString.ofSecure("admin".toCharArray())) {
+                    adminSecurity.setCredential(NSecurityManager.of().addOneWayCredential(s).toString());
+                }
                 getConfigModel().addOrUpdateUser(adminSecurity);
             } else if (NBlankable.isBlank(adminSecurity.getCredential())) {
                 if (wsModel.LOG.isLoggable(Level.CONFIG)) {
@@ -1148,7 +1168,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             );
                 }
                 adminSecurity = adminSecurity.copy();
-                adminSecurity.setCredential(NSecurityManager.of().addOneWayCredential("admin".toCharArray()).toString());
+                try (NSecureString s = NSecureString.ofSecure(WEAK_ADMIN_PASSWORD.toCharArray())) {
+                    adminSecurity.setCredential(NSecurityManager.of().addOneWayCredential(s).toString());
+                }
                 getConfigModel().addOrUpdateUser(adminSecurity);
             }
             for (NCommandFactoryConfig commandFactory : this.getCommandFactories()) {
