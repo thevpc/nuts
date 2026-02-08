@@ -62,4 +62,6 @@ public interface NOperatorSymbolElementBuilder extends NElementBuilder {
     NOperatorSymbolElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NOperatorSymbolElementBuilder addAffixes(List<NBoundAffix> affixes);
+
+    NOperatorSymbolElementBuilder metadata(NElementMetadata metadata);
 }
