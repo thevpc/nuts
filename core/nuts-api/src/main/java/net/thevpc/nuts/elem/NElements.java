@@ -29,6 +29,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.spi.NComponent;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -121,4 +122,10 @@ public interface NElements extends NComponent {
     NElementFormatter createElementFormatter(NElementFormatterStyle style);
 
     NElementPath createRootPath();
+
+    NElementMetadata createElementMetadata();
+
+    NElementMetadata createElementMetadata(Object key, Object value);
+
+    NElementMetadata createElementMetadata(Map<Object, Object> any);
 }
