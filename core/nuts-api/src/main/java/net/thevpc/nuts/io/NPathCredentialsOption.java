@@ -25,7 +25,7 @@ public class NPathCredentialsOption implements NPathOption {
     }
 
     public NPathCredentialsOption(String scheme, Map<String, String> attributes) {
-        this.scheme = scheme==null?null:NStringUtils.trimToNull(scheme.toUpperCase());
+        this.scheme = scheme==null?"":NStringUtils.trim(scheme.toUpperCase());
         LinkedHashMap<String, String> c = new LinkedHashMap<>();
         if (attributes != null) {
             for (Map.Entry<String, String> e : attributes.entrySet()) {
