@@ -28,6 +28,7 @@ import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementMetadata;
 import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NContentType;
@@ -54,11 +55,18 @@ public abstract class AbstractNElement implements NElement {
     private NElementType type;
     private List<NBoundAffix> affixes;
     private List<NElementDiagnostic> diagnostics;
+    private NElementMetadata metadata;
 
-    public AbstractNElement(NElementType type, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+    public AbstractNElement(NElementType type, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
         this.type = type;
         this.affixes = CoreNUtils.copyAndUnmodifiableList(affixes);
         this.diagnostics = CoreNUtils.copyAndUnmodifiableList(diagnostics);
+        this.metadata = metadata == null ? DefaultNElementMetadata.EMPTY : metadata;
+    }
+
+    @Override
+    public NElementMetadata metadata() {
+        return metadata;
     }
 
     @Override
