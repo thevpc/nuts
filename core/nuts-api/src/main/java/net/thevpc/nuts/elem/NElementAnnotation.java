@@ -50,6 +50,8 @@ public interface NElementAnnotation extends NAffix {
 
     NOptional<NElement> param(int index);
 
+    NOptional<NElement> param(String name);
+
     NOptional<List<NElement>> params();
 
     boolean isParametrized();
