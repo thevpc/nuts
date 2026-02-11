@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.builder;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
+import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.*;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NAssignmentPolicy;
@@ -41,20 +42,25 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
 
     @Override
     public NOperatorElementBuilder addOperands(NElement... operands) {
-        add(operands, false);
+        addAll(operands, false);
         return this;
     }
 
     @Override
-    public NOperatorElementBuilder setAll(NElement... operandOrOperators) {
+    public NOperatorElementBuilder setChildren(NElement... operandOrOperators) {
         childrenSymbols.clear();
         childrenOperands.clear();
-        return add(operandOrOperators, null);
+        return addAll(operandOrOperators, null);
+    }
+
+    @Override
+    public NOperatorElementBuilder setChildren(List<NElement> operandOrOperators) {
+        return setChildren(operandOrOperators == null ? null : operandOrOperators.toArray(new NElement[0]));
     }
 
     @Override
     public NOperatorElementBuilder addAll(NElement... operandOrOperators) {
-        return add(operandOrOperators, null);
+        return addAll(operandOrOperators, null);
     }
 
     @Override
@@ -80,7 +86,7 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
         return this;
     }
 
-    public NOperatorElementBuilder add(NElement[] operands, Boolean expectedSymbol) {
+    public NOperatorElementBuilder addAll(NElement[] operands, Boolean expectedSymbol) {
         if (operands != null) {
             for (NElement e : operands) {
                 add(e, expectedSymbol);
@@ -90,26 +96,26 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
     }
 
     public NOperatorElementBuilder add(NElement operandOrOperator, Boolean expectedSymbol) {
-        if (operandOrOperator != null) {
+        for (NElement item : CoreNElementUtils.denullList(operandOrOperator)) {
             if (expectedSymbol != null) {
                 if (expectedSymbol) {
-                    if (operandOrOperator.type() == NElementType.OPERATOR_SYMBOL) {
-                        this.childrenSymbols.add((NOperatorSymbolElement) operandOrOperator);
+                    if (item.type() == NElementType.OPERATOR_SYMBOL) {
+                        this.childrenSymbols.add((NOperatorSymbolElement) item);
                     } else {
-                        throw new NIllegalArgumentException(NMsg.ofC("expected operator symbol but got %s", operandOrOperator));
+                        throw new NIllegalArgumentException(NMsg.ofC("expected operator symbol but got %s", item));
                     }
                 } else {
-                    if (operandOrOperator.type() == NElementType.OPERATOR_SYMBOL) {
-                        throw new NIllegalArgumentException(NMsg.ofC("expected operand symbol but got %s", operandOrOperator));
+                    if (item.type() == NElementType.OPERATOR_SYMBOL) {
+                        throw new NIllegalArgumentException(NMsg.ofC("expected operand symbol but got %s", item));
                     } else {
-                        this.childrenOperands.add(operandOrOperator);
+                        this.childrenOperands.add(item);
                     }
                 }
             } else {
-                if (operandOrOperator.type() == NElementType.OPERATOR_SYMBOL) {
-                    this.childrenSymbols.add((NOperatorSymbolElement) operandOrOperator);
+                if (item.type() == NElementType.OPERATOR_SYMBOL) {
+                    this.childrenSymbols.add((NOperatorSymbolElement) item);
                 } else {
-                    this.childrenOperands.add(operandOrOperator);
+                    this.childrenOperands.add(item);
                 }
             }
         }
@@ -153,10 +159,7 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
                 return this;
             }
         }
-        while (this.childrenOperands.size() < index + 1) {
-            this.childrenOperands.add(NElement.ofNull());
-        }
-        this.childrenOperands.set(index, operand == null ? NElement.ofNull() : operand);
+        CoreNElementUtils.setAt(index, operand, this.childrenOperands);
         return this;
     }
 
@@ -311,7 +314,7 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
                 }
                 return new DefaultNOperatorElementUnary(symbols.get(0),
                         position == null ? NOperatorPosition.PREFIX : position,
-                         operands.get(0), affixes(), diagnostics(),metadata());
+                        operands.get(0), affixes(), diagnostics(), metadata());
             }
             case 2: {
                 if (symbols.size() != 1) {
@@ -319,9 +322,9 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
                 }
                 return new DefaultNOperatorElementBinary(symbols.get(0),
                         position == null ? NOperatorPosition.INFIX : position,
-                         operands.get(0),
-                         operands.get(1),
-                         affixes(), diagnostics(),metadata());
+                        operands.get(0),
+                        operands.get(1),
+                        affixes(), diagnostics(), metadata());
             }
             case 3: {
                 if (symbols.size() != 2) {
@@ -329,19 +332,19 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
                 }
                 return new DefaultNOperatorElementTernary(
                         operands.get(0),
-                         operands.get(1),
-                         operands.get(2),
-                         symbols,
-                         position == null ? NOperatorPosition.INFIX : position,
-                         affixes(), diagnostics(),metadata());
+                        operands.get(1),
+                        operands.get(2),
+                        symbols,
+                        position == null ? NOperatorPosition.INFIX : position,
+                        affixes(), diagnostics(), metadata());
             }
         }
         return new DefaultNOperatorElementNary(
                 operands,
                 symbols,
                 position == null ? NOperatorPosition.INFIX : position,
-                 affixes(),
-                 diagnostics(),metadata()
+                affixes(),
+                diagnostics(), metadata()
         );
     }
 
