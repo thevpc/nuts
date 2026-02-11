@@ -26,14 +26,13 @@ package net.thevpc.nuts.runtime.standalone.elem.builder;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
+import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNObjectElement;
-import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPairElement;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -75,41 +74,19 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder addParams(List<NElement> params) {
-        if (params != null) {
-            if (this.params == null) {
-                this.params = new ArrayList<>();
-            }
-            for (NElement a : params) {
-                if (a != null) {
-                    this.params.add(a);
-                }
-            }
-        }
+        this.params = CoreNElementUtils.addAll(params, this.params);
         return this;
     }
 
     @Override
     public NObjectElementBuilder addParam(NElement param) {
-        if (param != null) {
-            if (this.params == null) {
-                this.params = new ArrayList<>();
-            }
-            this.params.add(param);
-        }
+        this.params = CoreNElementUtils.add(param, this.params);
         return this;
     }
 
     @Override
     public NObjectElementBuilder setParamAt(int index, NElement param) {
-        if (param != null) {
-            if (this.params == null) {
-                this.params = new ArrayList<>();
-            }
-            while (this.params.size() < index + 1) {
-                this.params.add(NElement.ofNull());
-            }
-            this.params.set(index, param);
-        }
+        this.params = CoreNElementUtils.setAt(index, param, this.params);
         return this;
     }
 
@@ -135,39 +112,26 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder setParams(List<NElement> params) {
-        if (params == null) {
-            this.params = null;
-        } else {
-            this.params = params.stream().filter(x -> x != null).collect(Collectors.toList());
-        }
+        this.params = CoreNElementUtils.setAll(params, this.params);
         return this;
     }
 
     @Override
-    public NObjectElementBuilder setChildren(List<NElement> params) {
+    public NObjectElementBuilder setChildren(List<NElement> values) {
         this.values.clear();
-        if (params != null) {
-            this.values.addAll(params.stream().filter(x -> x != null).collect(Collectors.toList()));
-        }
+        CoreNElementUtils.setAll(values, this.values);
         return this;
     }
 
     @Override
     public NObjectElementBuilder addParamAt(int index, NElement param) {
-        if (param != null) {
-            if (this.params == null) {
-                this.params = new ArrayList<>();
-            }
-            params.add(index, param);
-        }
+        this.params=CoreNElementUtils.addAt(index, param, this.params);
         return this;
     }
 
     @Override
     public NObjectElementBuilder removeParamAt(int index) {
-        if (params != null) {
-            params.remove(index);
-        }
+        CoreNElementUtils.removeAt(index, this.params);
         return this;
     }
 
@@ -232,178 +196,111 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder add(String name, NElement value) {
-        return add(NElement.ofString(name), denull(value));
+        return add(NElement.ofString(name), CoreNElementUtils.denullOne(value));
     }
 
     @Override
     public NObjectElementBuilder add(NElement name, NElement value) {
-        add(pair(denull(name), denull(value)));
+        add(CoreNElementUtils.pair(name, value));
         return this;
     }
 
     @Override
     public NObjectElementBuilder set(NElement name, NElement value) {
-        name = denull(name);
-        value = denull(value);
-        for (int i = 0; i < values.size(); i++) {
-            NElement nElement = values.get(i);
-            if (nElement instanceof NPairElement) {
-                NElement k = ((NPairElement) nElement).key();
-                if (Objects.equals(k, name)) {
-                    values.set(i, pair(name, value));
-                    return this;
-                }
-            } else if (Objects.equals(nElement, name)) {
-                values.set(i, pair(name, value));
-                return this;
-            }
-        }
-        add(pair(name, value));
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name, value), values);
         return this;
-    }
-
-    private NPairElement pair(NElement k, NElement v) {
-        return new DefaultNPairElement(k, v);
     }
 
     @Override
     public NObjectElementBuilder setAt(int i, NElement element) {
-        values.set(i, denull(element));
+        CoreNElementUtils.setAt(i, element, values);
         return this;
     }
 
     @Override
     public NObjectElementBuilder set(String name, NElement value) {
-        return set(NElement.ofNameOrString(name), denull(value));
+        return set(CoreNElementUtils.pair(name, value));
     }
 
     @Override
     public NObjectElementBuilder set(String name, boolean value) {
-        return set(NElement.ofNameOrString(name), NElement.ofBoolean(value));
+        return set(CoreNElementUtils.pair(name, value));
     }
 
     @Override
     public NObjectElementBuilder set(String name, int value) {
-        return set(NElement.ofNameOrString(name), NElement.ofInt(value));
+        return set(CoreNElementUtils.pair(name, value));
     }
 
     @Override
     public NObjectElementBuilder set(String name, double value) {
-        return set(NElement.ofNameOrString(name), NElement.ofDouble(value));
+        return set(CoreNElementUtils.pair(name, value));
     }
 
     @Override
     public NObjectElementBuilder set(String name, String value) {
-        return set(NElement.ofNameOrString(name), NElement.ofString(value));
+        return set(CoreNElementUtils.pair(name, value));
     }
 
     @Override
     public NObjectElementBuilder removeAt(int index) {
-        values.remove(index);
+        CoreNElementUtils.removeAt(index,values);
         return this;
     }
 
     @Override
     public NObjectElementBuilder remove(NElement child) {
-        child = denull(child);
-        for (int i = 0; i < values.size(); i++) {
-            NElement nElement = values.get(i);
-            if (Objects.equals(nElement, child)) {
-                values.remove(i);
-                return this;
-            }
-        }
+        CoreNElementUtils.remove(child,values);
         return this;
     }
 
     @Override
-    public NObjectElementBuilder removeEntry(NElement entryKey) {
-        entryKey = denull(entryKey);
-        for (int i = 0; i < values.size(); i++) {
-            NElement nElement = values.get(i);
-            if (nElement instanceof NPairElement) {
-                NElement k = ((NPairElement) nElement).key();
-                if (Objects.equals(k, entryKey)) {
-                    values.remove(i);
-                    return this;
-                }
-            } else if (Objects.equals(nElement, entryKey)) {
-                values.remove(i);
-                return this;
-            }
-        }
+    public NObjectElementBuilder removePair(NElement entryKey) {
+        CoreNElementUtils.removePair(entryKey,values);
         return this;
     }
 
     @Override
     public NObjectElementBuilder removeAll(NElement child) {
-        child = denull(child);
-        for (int i = values.size() - 1; i >= 0; i--) {
-            NElement nElement = values.get(i);
-            if (Objects.equals(nElement, child)) {
-                values.remove(i);
-            }
-        }
+        CoreNElementUtils.removeAll(child,values);
         return this;
     }
 
     @Override
-    public NObjectElementBuilder removeEntries(NElement name) {
-        name = denull(name);
-        for (int i = values.size() - 1; i >= 0; i--) {
-            NElement nElement = values.get(i);
-            if (nElement instanceof NPairElement) {
-                NElement k = ((NPairElement) nElement).key();
-                if (Objects.equals(k, name)) {
-                    values.remove(i);
-                }
-            } else if (Objects.equals(nElement, name)) {
-                values.remove(i);
-            }
-        }
+    public NObjectElementBuilder removeAllPairs(NElement name) {
+        CoreNElementUtils.removeAllPairs(name,values);
         return this;
     }
 
     @Override
-    public NObjectElementBuilder removeEntry(String name) {
-        return removeEntry(NElement.ofString(name));
+    public NObjectElementBuilder removePair(String name) {
+        CoreNElementUtils.removePair(name,values);
+        return this;
     }
 
     @Override
-    public NObjectElementBuilder removeEntries(String name) {
-        return removeAll(NElement.ofString(name));
+    public NObjectElementBuilder removeAllPairs(String name) {
+        CoreNElementUtils.removeAllPairs(name,values);
+        return this;
     }
 
 
     @Override
     public NObjectElementBuilder addAll(Map<NElement, NElement> other) {
-        if (other != null) {
-            for (Map.Entry<NElement, NElement> e : other.entrySet()) {
-                add(e.getKey(), e.getValue());
-            }
-        }
+        CoreNElementUtils.addMap(other,values);
         return this;
     }
 
     @Override
     public NObjectElementBuilder addAll(List<NElement> other) {
-        if (other != null) {
-            for (NElement e : other) {
-                if (e != null) {
-                    add(e);
-                }
-            }
-        }
+        CoreNElementUtils.addAll(other,values);
         return this;
     }
 
     @Override
     public NObjectElementBuilder setAll(Map<NElement, NElement> other) {
-        if (other != null) {
-            for (Map.Entry<NElement, NElement> e : other.entrySet()) {
-                set(e.getKey(), e.getValue());
-            }
-        }
+        values.clear();
+        CoreNElementUtils.addMap(other,values);
         return this;
     }
 
@@ -441,46 +338,25 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NObjectElementBuilder add(NElement entry) {
-        if (entry != null) {
-            values.add(entry);
-        }
+        CoreNElementUtils.add(entry, this.values);
         return this;
     }
 
     @Override
     public NObjectElementBuilder addAt(int index, NElement item) {
-        if (item != null) {
-            if (index >= 0 && index < values.size()) {
-                values.add(index, item);
-            } else if (index >= values.size()) {
-                values.add(item);
-            } else if (index < 0) {
-                int i2 = values.size() - index;
-                if (i2 >= 0 && i2 < values.size()) {
-                    values.add(i2, item);
-                } else if (i2 < 0) {
-                    values.add(0, item);
-                }
-            }
-        }
+        CoreNElementUtils.addAt(index, item, this.values);
         return this;
     }
 
     @Override
     public NObjectElementBuilder set(NPairElement entry) {
-        if (entry != null) {
-            set(entry.key(), entry.value());
-        }
+        CoreNElementUtils.setPair(entry, values);
         return this;
     }
 
     @Override
     public NObjectElementBuilder addAll(NElement... entries) {
-        if (entries != null) {
-            for (NElement entry : entries) {
-                add(entry);
-            }
-        }
+        CoreNElementUtils.addAll(entries, values);
         return this;
     }
 
@@ -512,31 +388,15 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
         return this;
     }
 
-    @Override
-    public NObjectElementBuilder addAll(NObjectElementBuilder other) {
-        if (other != null) {
-            for (NElement entry : other.build()) {
-                add(entry);
-            }
-        }
-        return this;
-    }
 
     @Override
     public NObjectElement build() {
         return new DefaultNObjectElement(name, params, values
                 , affixes()
-                , diagnostics(),metadata()
+                , diagnostics(), metadata()
         );
     }
 
-
-    private NElement denull(NElement e) {
-        if (e == null) {
-            return NElement.ofNull();
-        }
-        return e;
-    }
 
     @Override
     public NElementType type() {
@@ -645,12 +505,15 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
             NListContainerElement from = (NListContainerElement) other;
             addAll(from.children());
         }
-        if(other instanceof NNamedElement){
+        if (other instanceof NNamedElement) {
             NNamedElement nfrom = (NNamedElement) other;
             name(nfrom.name().orNull());
         }
         if (other instanceof NParametrizedContainerElement) {
             NParametrizedContainerElement from = (NParametrizedContainerElement) other;
+            if(from.isParametrized()){
+                setParametrized(true);
+            }
             addParams(from.params().orNull());
             return this;
         }
