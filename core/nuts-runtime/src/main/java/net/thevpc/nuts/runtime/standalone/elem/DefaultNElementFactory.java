@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -121,13 +122,11 @@ public class DefaultNElementFactory implements NElementFactory {
 
 
     @Override
-    public NOperatorElement ofOp(NOperatorSymbol op, NOperatorPosition type, NElement first, NElement second) {
-        return ofOpBuilder().operator(op).position(type).first(first).second(second).build();
-    }
-
-    @Override
-    public NOperatorElement ofOp(NOperatorSymbol op, NElement first, NElement second) {
-        return ofOp(op, null, first, second);
+    public NOperatorElement ofBinaryInfixOperator(NOperatorSymbol op, NElement first, NElement second) {
+        NAssert.requireNamedNonNull(op, "operator");
+        NAssert.requireNamedNonNull(first, "first operand");
+        NAssert.requireNamedNonNull(second, "second operand");
+        return ofOpBuilder().operator(op).position(NOperatorPosition.INFIX).first(first).second(second).build();
     }
 
     @Override
@@ -173,8 +172,10 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
-    public NOperatorElement ofOp(NOperatorSymbol op, NElement operand) {
-        return ofOp(op, null, operand, null);
+    public NOperatorElement ofUnaryPrefixOperator(NOperatorSymbol op, NElement operand) {
+        NAssert.requireNamedNonNull(op, "operator");
+        NAssert.requireNamedNonNull(operand, "operand");
+        return ofOpBuilder().operator(op).position(NOperatorPosition.PREFIX).first(operand).build();
     }
 
     @Override
@@ -981,4 +982,13 @@ public class DefaultNElementFactory implements NElementFactory {
         return new DefaultNFlatExprElementBuilder();
     }
 
+    @Override
+    public NFragmentElementBuilder ofFragmentBuilder() {
+        return new DefaultNFragmentElementBuilder();
+    }
+
+    @Override
+    public NFragmentElement ofFragment(NElement... elements) {
+        return ofFragmentBuilder().addAll(elements).build();
+    }
 }
