@@ -240,37 +240,37 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
     }
 
     @Override
-    public NElementBuilder addAffixSpace(String space, NAffixAnchor anchor) {
+    public NElementBuilder addSpaceAffix(String space, NAffixAnchor anchor) {
         this.affixes.addAffixSpace(space, anchor);
         return this;
     }
 
     @Override
-    public NElementBuilder addAffixNewLine(NNewLineMode newLineMode, NAffixAnchor anchor) {
+    public NElementBuilder addNewLineAffix(NNewLineMode newLineMode, NAffixAnchor anchor) {
         this.affixes.addAffixNewLine(newLineMode, anchor);
         return this;
     }
 
     @Override
-    public NElementBuilder addAffixSeparator(String separator, NAffixAnchor anchor) {
+    public NElementBuilder addSeparatorAffix(String separator, NAffixAnchor anchor) {
         this.affixes.addAffixSeparator(separator, anchor);
         return this;
     }
 
     @Override
-    public NElementBuilder addAffixSpace(int index, String space, NAffixAnchor anchor) {
+    public NElementBuilder addSpaceAffix(int index, String space, NAffixAnchor anchor) {
         this.affixes.addAffixSpace(index, space, anchor);
         return this;
     }
 
     @Override
-    public NElementBuilder addAffixSeparator(int index, String separator, NAffixAnchor anchor) {
+    public NElementBuilder addSeparatorAffix(int index, String separator, NAffixAnchor anchor) {
         this.affixes.addAffixSeparator(index, separator, anchor);
         return this;
     }
 
     @Override
-    public NElementBuilder addAffixNewLine(int index, NNewLineMode newLineMode, NAffixAnchor anchor) {
+    public NElementBuilder addNewLineAffix(int index, NNewLineMode newLineMode, NAffixAnchor anchor) {
         affixes.addAffixNewLine(index, newLineMode, anchor);
         return this;
     }
