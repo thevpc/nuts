@@ -46,16 +46,16 @@ public class SecurityTest {
         String mySecret = "my-secret";
         Function<String, String> envProvider = s -> null;
         try (NSecureString mySecretS = NSecureString.ofSecure(mySecret.toCharArray())) {
-            NSecureToken withAllowRetreiveId = a.addSecret(mySecretS, envProvider);
-            TestUtils.println(withAllowRetreiveId);
+            NSecureToken withAllowRetrieveId = a.addSecret(mySecretS, envProvider);
+            TestUtils.println(withAllowRetrieveId);
             try (NSecureString b = NSecureString.ofSecure("my-secret".toCharArray())) {
-                Assertions.assertTrue(a.verify(withAllowRetreiveId, b, envProvider));
+                Assertions.assertTrue(a.verify(withAllowRetrieveId, b, envProvider));
             }
             try (NSecureString b = NSecureString.ofSecure("my-bad-secret".toCharArray())) {
-                Assertions.assertFalse(a.verify(withAllowRetreiveId, b, envProvider));
+                Assertions.assertFalse(a.verify(withAllowRetrieveId, b, envProvider));
             }
-            NSecureToken withoutAllowRetreiveId = a.addOneWayCredential(mySecretS, envProvider);
-            TestUtils.println(withoutAllowRetreiveId);
+            NSecureToken withoutAllowRetrieveId = a.addOneWayCredential(mySecretS, envProvider);
+            TestUtils.println(withoutAllowRetrieveId);
         }
     }
 
