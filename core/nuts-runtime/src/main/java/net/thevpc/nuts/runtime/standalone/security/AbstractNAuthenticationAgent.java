@@ -141,7 +141,7 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
         if (credentials == null) {
             credentials = NSecureString.ofEmpty();
         }
-        try (NSecureString val = oneWayChars(credentials, env)){
+        try (NSecureString val = encryptChars(credentials, env)){
             return val.callWithContent(valChars -> {
                 char[] result = null;
                 try {
