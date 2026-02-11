@@ -134,16 +134,12 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
         return NElementFactory.of().ofOpBuilder().operator(op);
     }
 
-    static NOperatorElement ofOp(NOperatorSymbol op, NOperatorPosition operatorType, NElement first, NElement second) {
-        return NElementFactory.of().ofOp(op, operatorType, first, second);
+    static NOperatorElement ofBinaryInfixOperator(NOperatorSymbol op, NElement first, NElement second) {
+        return NElementFactory.of().ofBinaryInfixOperator(op, first, second);
     }
 
-    static NOperatorElement ofOp(NOperatorSymbol op, NElement first, NElement second) {
-        return NElementFactory.of().ofOp(op, first, second);
-    }
-
-    static NOperatorElement ofOp(NOperatorSymbol op, NElement first) {
-        return NElementFactory.of().ofOp(op, first);
+    static NOperatorElement ofUnaryPrefixOperator(NOperatorSymbol op, NElement first) {
+        return NElementFactory.of().ofUnaryPrefixOperator(op, first);
     }
 
     static NOperatorElementBuilder ofExprBuilder(NOperatorSymbol op, NOperatorPosition operatorType, NElement first, NElement second) {
@@ -181,12 +177,20 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
         return NElementFactory.of().ofArrayBuilder();
     }
 
+    static NFragmentElementBuilder ofFragmentBuilder() {
+        return NElementFactory.of().ofFragmentBuilder();
+    }
+
     static NArrayElementBuilder ofArrayBuilder(String name) {
         return NElementFactory.of().ofArrayBuilder(name);
     }
 
     static NArrayElement ofArray() {
         return NElementFactory.of().ofArray();
+    }
+
+    static NFragmentElement ofFragment() {
+        return NElementFactory.of().ofFragment();
     }
 
     static NObjectElement ofObject() {
@@ -752,6 +756,10 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
         return NElementFactory.of().ofBoundAffix(affix, anchor);
     }
 
+    static NElement ofFragment(NElement... elements) {
+        return NElementFactory.of().ofFragment(elements);
+    }
+
     boolean anyMatches(Predicate<NElement> predicate);
 
     List<NElementDiagnostic> diagnostics();
@@ -993,6 +1001,8 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
 
     boolean isAnyString();
 
+    boolean isAnyStringOrName();
+
 
     /**
      * return true if this element can be cast to {@link NObjectElement} and is a simple object
@@ -1007,6 +1017,8 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
      * @return true if this element can be cast to {@link NArrayElement}
      */
     boolean isArray();
+
+    boolean isFragment();
 
 
     /**
@@ -1248,6 +1260,8 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
     boolean isList();
 
     NOptional<NListElement> asList();
+
+    NOptional<NFragmentElement> asFragment();
 
     boolean isOrderedList();
 
