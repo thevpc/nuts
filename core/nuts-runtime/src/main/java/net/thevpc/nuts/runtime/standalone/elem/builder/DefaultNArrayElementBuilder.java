@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.elem.builder;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
+import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNArrayElement;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
@@ -84,60 +85,31 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NArrayElementBuilder addParams(List<NElement> params) {
-        if (params != null) {
-            for (NElement a : params) {
-                if (a != null) {
-                    if (this.params == null) {
-                        this.params = new ArrayList<>();
-                    }
-                    this.params.add(a);
-                }
-            }
-        }
+        this.params=CoreNElementUtils.addAll(params, this.params);
         return this;
     }
 
     @Override
     public NArrayElementBuilder addParam(NElement param) {
-        if (param != null) {
-            if (this.params == null) {
-                this.params = new ArrayList<>();
-            }
-            this.params.add(param);
-        }
+        this.params=CoreNElementUtils.add(param, this.params);
         return this;
     }
 
     @Override
     public NArrayElementBuilder setParamAt(int index, NElement param) {
-        if (param != null) {
-            if (this.params == null) {
-                this.params = new ArrayList<>();
-            }
-            while (this.params.size() < index + 1) {
-                this.params.add(NElement.ofNull());
-            }
-            this.params.set(index,param);
-        }
+        this.params=CoreNElementUtils.setAt(index,param, this.params);
         return this;
     }
 
     @Override
     public NArrayElementBuilder addParamAt(int index, NElement param) {
-        if (param != null) {
-            if (this.params == null) {
-                this.params = new ArrayList<>();
-            }
-            params.add(index, param);
-        }
+        this.params=CoreNElementUtils.addAt(index,param, this.params);
         return this;
     }
 
     @Override
     public NArrayElementBuilder removeParamAt(int index) {
-        if (this.params != null) {
-            params.remove(index);
-        }
+        CoreNElementUtils.removeAt(index, this.params);
         return this;
     }
 
@@ -216,19 +188,19 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NArrayElementBuilder add(NElement e) {
-        values.add(denull(e));
+        CoreNElementUtils.add(e, this.values);
         return this;
     }
 
     @Override
     public NArrayElementBuilder insert(int index, NElement e) {
-        values.add(index, denull(e));
+        CoreNElementUtils.addAt(index,e, this.values);
         return this;
     }
 
     @Override
     public NArrayElementBuilder setAt(int index, NElement e) {
-        values.set(index, denull(e));
+        CoreNElementUtils.addAt(index,e, this.values);
         return this;
     }
 
@@ -240,7 +212,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NArrayElementBuilder remove(int index) {
-        values.remove(index);
+        CoreNElementUtils.removeAt(index, this.values);
         return this;
     }
 
@@ -359,12 +331,6 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
                 affixes(), diagnostics(),metadata());
     }
 
-    private NElement denull(NElement e) {
-        if (e == null) {
-            return NElement.ofNull();
-        }
-        return e;
-    }
 
     @Override
     public NElementType type() {
@@ -413,20 +379,14 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NArrayElementBuilder setParams(List<NElement> params) {
-        if (params == null) {
-            this.params = null;
-        } else {
-            this.params = params.stream().filter(x -> x != null).collect(Collectors.toList());
-        }
+        this.params=CoreNElementUtils.setAll(params, this.values);
         return this;
     }
 
     @Override
-    public NArrayElementBuilder setChildren(List<NElement> params) {
+    public NArrayElementBuilder setChildren(List<NElement> values) {
         this.values.clear();
-        if (params != null) {
-            this.values.addAll(params.stream().filter(x -> x != null).collect(Collectors.toList()));
-        }
+        CoreNElementUtils.setAll(values, this.values);
         return this;
     }
 
@@ -462,6 +422,9 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
                 add(from.getAt(i).get());
             }
             List<NElement> p = from.params().orNull();
+            if(from.isParametrized()){
+                setParametrized(true);
+            }
             if (p != null) {
                 this.addParams(p);
             }
@@ -472,6 +435,9 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
             NArrayElementBuilder from = (NArrayElementBuilder) other;
             for (int i = 0; i < from.size(); i++) {
                 add(from.get(i).get());
+            }
+            if(from.isParametrized()){
+                setParametrized(true);
             }
             List<NElement> p = from.params().orNull();
             if (p != null) {
