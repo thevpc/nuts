@@ -51,6 +51,12 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
                 applyObjectOrArray(builder, score, context);
                 return;
             }
+            case NAMED_UPLET:
+            case UPLET:
+            {
+                applyUplet(builder, score, context);
+                return;
+            }
             case PAIR: {
                 applyPair((NPairElementBuilder) builder, score, context);
                 return;
@@ -75,8 +81,8 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
 
     private void applyPair(NPairElementBuilder builder, Stats score, NElementFormatContext context) {
         NElementFormatOptions options = context.options();
-        builder.addAffixSpace(" ", NAffixAnchor.PRE_1);
-        builder.addAffixSpace(" ", NAffixAnchor.POST_1);
+        builder.addSpaceAffix(" ", NAffixAnchor.PRE_1);
+        builder.addSpaceAffix(" ", NAffixAnchor.POST_1);
         String indent = context.indent();
 //        if (score.isComplex(options)) {
 //            builder.addAffixNewLine(options.getNewLineMode(), NAffixAnchor.POST_1);
@@ -90,71 +96,61 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
         String indent = context.indent();
         NElementFormatOptions options = context.options();
         String unit = getIndentUnit();
-//        if (score.isComplex(options)) {
-////            builder.addAffixSeparator(" , ", NAffixAnchor.SEP_1);
-//            builder.addAffixSpace(" ", NAffixAnchor.SEP_1);
-//            builder.addAffixSeparator(",", NAffixAnchor.SEP_1);
-//            builder.addAffixSpace(" ", NAffixAnchor.SEP_1);
-//
-//            // after )
-//            builder.addAffixNewLine(options.getNewLineMode(), NAffixAnchor.POST_3);
-//            builder.addAffixSpace(indent, NAffixAnchor.POST_3);
-//
-//            // after { or [
-//            builder.addAffixNewLine(options.getNewLineMode(), NAffixAnchor.POST_4);
-//            builder.addAffixSpace(indent + unit, NAffixAnchor.POST_4);
-//
-//
-//            // between {} or [] items
-//            builder.addAffixSpace(" ", NAffixAnchor.SEP_2);
-//            builder.addAffixSeparator(",", NAffixAnchor.SEP_2);
-//            builder.addAffixSpace(" ", NAffixAnchor.SEP_2);
-//
-//            builder.addAffixNewLine(options.getNewLineMode(), NAffixAnchor.SEP_2);
-//            builder.addAffixSpace(indent + unit, NAffixAnchor.SEP_2);
-//
-//            // before } or ]
-//            builder.addAffixNewLine(options.getNewLineMode(), NAffixAnchor.PRE_5);
-//            builder.addAffixSpace(indent, NAffixAnchor.PRE_5);
-//        } else {
-////            builder.addAffixSpace(indent, NAffixAnchor.START);
-//            builder.addAffixNewLine(options.getNewLineMode(), NAffixAnchor.POST_4);
-//            builder.addAffixSpace(indent + unit, NAffixAnchor.POST_4);
-//            builder.addAffixNewLine(options.getNewLineMode(), NAffixAnchor.PRE_5);
-//            builder.addAffixSpace(indent, NAffixAnchor.PRE_5);
-//            applyDefault(builder, score, context);
-//        }
-
         if (score.isComplex(options)) {
             // Clear old affixes if necessary, or just set them cleanly:
 
             // 1. After { or [
-            builder.addAffixNewLine(options.getNewLineMode(), NAffixAnchor.POST_4);
-            builder.addAffixSpace(indent + unit, NAffixAnchor.POST_4);
+            builder.addNewLineAffix(options.getNewLineMode(), NAffixAnchor.POST_4);
+            builder.addSpaceAffix(indent + unit, NAffixAnchor.POST_4);
 
             // 2. Separators: The comma goes in SEP_1, the NewLine in SEP_2
-            builder.addAffixSeparator(",", NAffixAnchor.SEP_1);
-            builder.addAffixSpace(" ", NAffixAnchor.SEP_1); // Optional trailing space after comma
+            builder.addSeparatorAffix(",", NAffixAnchor.SEP_1);
+            builder.addSpaceAffix(" ", NAffixAnchor.SEP_1); // Optional trailing space after comma
 
-            builder.addAffixSpace(" ", NAffixAnchor.SEP_2);
-            builder.addAffixSeparator(",", NAffixAnchor.SEP_2);
-            builder.addAffixNewLine(options.getNewLineMode(), NAffixAnchor.SEP_2);
-            builder.addAffixSpace(indent + unit, NAffixAnchor.SEP_2);
+            builder.addSpaceAffix(" ", NAffixAnchor.SEP_2);
+            builder.addSeparatorAffix(",", NAffixAnchor.SEP_2);
+            builder.addNewLineAffix(options.getNewLineMode(), NAffixAnchor.SEP_2);
+            builder.addSpaceAffix(indent + unit, NAffixAnchor.SEP_2);
 
             // 3. Before } or ]
-            builder.addAffixNewLine(options.getNewLineMode(), NAffixAnchor.PRE_5);
-            builder.addAffixSpace(indent, NAffixAnchor.PRE_5);
+            builder.addNewLineAffix(options.getNewLineMode(), NAffixAnchor.PRE_5);
+            builder.addSpaceAffix(indent, NAffixAnchor.PRE_5);
         } else {
             // Simple mode: One-liner with single spaces
 //            builder.addAffixSpace(" ", NAffixAnchor.POST_4);
 
-            builder.addAffixSeparator(",", NAffixAnchor.SEP_1);
-            builder.addAffixSpace(" ", NAffixAnchor.SEP_1);
+            builder.addSeparatorAffix(",", NAffixAnchor.SEP_1);
+            builder.addSpaceAffix(" ", NAffixAnchor.SEP_1);
 
-            builder.addAffixSeparator(",", NAffixAnchor.SEP_2);
-            builder.addAffixSpace(" ", NAffixAnchor.SEP_2);
+            builder.addSeparatorAffix(",", NAffixAnchor.SEP_2);
+            builder.addSpaceAffix(" ", NAffixAnchor.SEP_2);
 
 //            builder.addAffixSpace(" ", NAffixAnchor.PRE_5);
+        }
+    }
+
+    private void applyUplet(NElementBuilder builder, Stats score, NElementFormatContext context) {
+        String indent = context.indent();
+        NElementFormatOptions options = context.options();
+        String unit = getIndentUnit();
+        if (score.isComplex(options)) {
+            // Clear old affixes if necessary, or just set them cleanly:
+
+            // 1. After { or [
+            builder.addNewLineAffix(options.getNewLineMode(), NAffixAnchor.POST_2);
+            builder.addSpaceAffix(indent + unit, NAffixAnchor.POST_2);
+
+            // 2. Separators: The comma goes in SEP_1, the NewLine in SEP_2
+            builder.addSeparatorAffix(",", NAffixAnchor.SEP_1);
+            builder.addSpaceAffix(" ", NAffixAnchor.SEP_1); // Optional trailing space after comma
+
+            // 3. Before } or ]
+            builder.addNewLineAffix(options.getNewLineMode(), NAffixAnchor.PRE_3);
+            builder.addSpaceAffix(indent, NAffixAnchor.PRE_3);
+        } else {
+            // Simple mode: One-liner with single spaces
+            builder.addSeparatorAffix(",", NAffixAnchor.SEP_1);
+            builder.addSpaceAffix(" ", NAffixAnchor.SEP_1);
         }
     }
 
