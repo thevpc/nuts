@@ -642,6 +642,11 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public boolean isAnyStringOrName() {
+        return type().isAnyStringOrName();
+    }
+
+    @Override
     public boolean isStream() {
         return type().isAnyStream();
     }
@@ -1038,6 +1043,12 @@ public abstract class AbstractNElement implements NElement {
     public boolean isArray() {
         NElementType t = type();
         return t == NElementType.ARRAY;
+    }
+
+    @Override
+    public boolean isFragment() {
+        NElementType t = type();
+        return t == NElementType.FRAGMENT;
     }
 
     @Override
@@ -1579,6 +1590,14 @@ public abstract class AbstractNElement implements NElement {
             return NOptional.of((NListElement) this);
         }
         return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to list: %s", type().id(), this));
+    }
+
+    @Override
+    public NOptional<NFragmentElement> asFragment() {
+        if (this instanceof NFragmentElement) {
+            return NOptional.of((NFragmentElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to fragment: %s", type().id(), this));
     }
 
     @Override
