@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.elem.builder;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
+import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPairElement;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNUpletElement;
 import net.thevpc.nuts.util.NAssignmentPolicy;
@@ -48,21 +49,6 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public boolean isCustomTree() {
-        if (super.isCustomTree()) {
-            return true;
-        }
-        if (params != null) {
-            for (NElement value : params) {
-                if (value.isCustomTree()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
     public NUpletElementBuilder doWith(Consumer<NUpletElementBuilder> con) {
         if (con != null) {
             con.accept(this);
@@ -79,37 +65,15 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
-    public boolean isParametrized() {
-        return params != null;
-    }
-
-    public NUpletElementBuilder setParametrized(boolean hasArgs) {
-        if (hasArgs) {
-            if (params == null) {
-                params = new ArrayList<>();
-            }
-        } else {
-            params = null;
-        }
-        return this;
-    }
-
 
     public NUpletElementBuilder addAt(int index, NElement arg) {
-        if (arg != null) {
-            if (this.params == null) {
-                this.params = new ArrayList<>();
-            }
-            params.add(index, arg);
-        }
+        CoreNElementUtils.addAt(index, arg,params);
         return this;
     }
 
     @Override
     public NUpletElementBuilder removeAt(int index) {
-        if (this.params != null) {
-            params.remove(index);
-        }
+        CoreNElementUtils.removeAt(index,params);
         return this;
     }
 
@@ -122,9 +86,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     @Override
     public NUpletElementBuilder setParams(List<NElement> params) {
         this.params.clear();
-        if (params != null) {
-            this.params.addAll(params.stream().filter(x -> x != null).collect(Collectors.toList()));
-        }
+        CoreNElementUtils.setAll(params,this.params);
         return this;
     }
 
@@ -158,40 +120,25 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NUpletElementBuilder addAll(NElement[] value) {
-        if (value != null) {
-            for (NElement e : value) {
-                add(e);
-            }
-        }
+        CoreNElementUtils.addAll(value,this.params);
         return this;
     }
 
     @Override
     public NUpletElementBuilder addAll(Collection<NElement> value) {
-        if (value != null) {
-            for (NElement e : value) {
-                add(e);
-            }
-        }
+        CoreNElementUtils.addAll(value,this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder add(NElement e) {
-        if (e != null) {
-            params.add(e);
-        }
+    public NUpletElementBuilder add(NElement value) {
+        CoreNElementUtils.add(value,this.params);
         return this;
     }
 
     @Override
     public NUpletElementBuilder setAt(int index, NElement element) {
-        if (element != null) {
-            while (this.params.size() < index + 1) {
-                this.params.add(NElement.ofNull());
-            }
-            params.set(index, element);
-        }
+        CoreNElementUtils.setAt(index,element,this.params);
         return this;
     }
 
@@ -210,6 +157,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NUpletElementBuilder remove(int index) {
+        CoreNElementUtils.removeAt(index,this.params);
         params.remove(index);
         return this;
     }
@@ -330,13 +278,6 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
                 affixes(), diagnostics(),metadata());
     }
 
-    private NElement denull(NElement e) {
-        if (e == null) {
-            return NElement.ofNull();
-        }
-        return e;
-    }
-
     @Override
     public NElementType type() {
         return name == null ? NElementType.UPLET
@@ -345,73 +286,62 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NUpletElementBuilder add(String name, NElement value) {
-        return add(NElement.ofString(name), denull(value));
+        CoreNElementUtils.add(CoreNElementUtils.pair(name,value),this.params);
+        return this;
     }
 
     @Override
     public NUpletElementBuilder add(NElement name, NElement value) {
-        add(pair(denull(name), denull(value)));
+        CoreNElementUtils.add(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
     public NUpletElementBuilder set(NElement name, NElement value) {
-        name = denull(name);
-        value = denull(value);
-        for (int i = 0; i < params.size(); i++) {
-            NElement nElement = params.get(i);
-            if (nElement instanceof NPairElement) {
-                NElement k = ((NPairElement) nElement).key();
-                if (Objects.equals(k, name)) {
-                    params.set(i, pair(name, value));
-                    return this;
-                }
-            } else if (Objects.equals(nElement, name)) {
-                params.set(i, pair(name, value));
-                return this;
-            }
-        }
-        add(pair(name, value));
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
-    }
-
-    private NPairElement pair(NElement k, NElement v) {
-        return new DefaultNPairElement(k, v);
     }
 
     @Override
     public NUpletElementBuilder set(String name, NElement value) {
-        return set(NElement.ofNameOrString(name), denull(value));
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
     }
 
     @Override
     public NUpletElementBuilder set(String name, boolean value) {
-        return set(NElement.ofNameOrString(name), NElement.ofBoolean(value));
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
     }
 
     @Override
     public NUpletElementBuilder set(String name, int value) {
-        return set(NElement.ofNameOrString(name), NElement.ofInt(value));
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
     }
 
     @Override
     public NUpletElementBuilder set(String name, double value) {
-        return set(NElement.ofNameOrString(name), NElement.ofDouble(value));
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
     }
 
     @Override
     public NUpletElementBuilder set(String name, String value) {
-        return set(NElement.ofNameOrString(name), NElement.ofString(value));
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
     }
 
     @Override
     public NUpletElementBuilder set(NElement name, boolean value) {
-        return set(name, NElement.ofBoolean(value));
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
     }
 
     @Override
     public NUpletElementBuilder set(NElement name, int value) {
-        return set(name, NElement.ofInt(value));
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
     }
 
     @Override
