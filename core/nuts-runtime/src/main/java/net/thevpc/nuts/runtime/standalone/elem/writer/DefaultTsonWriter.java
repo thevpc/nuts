@@ -177,6 +177,10 @@ public class DefaultTsonWriter {
                 writeUplet((NUpletElement) element);
                 break;
             }
+            case FRAGMENT: {
+                writeFragment((NFragmentElement) element);
+                break;
+            }
             case OBJECT:
             case NAMED_OBJECT:
             case PARAM_OBJECT:
@@ -210,10 +214,28 @@ public class DefaultTsonWriter {
             writeBoundedString(name, 1, a.affixes());
         }
         writeBoundedString("(", 2, a.affixes());
-        for (NElement e : a.params()) {
+        List<NElement> params = a.params();
+        for (int i = 0; i < params.size(); i++) {
+            NElement e = params.get(i);
+            if (i > 0) {
+                write(a.affixes(), NAffixAnchor.SEP_1, acceptableWrapSep);
+            }
             write(e);
         }
         writeBoundedString(")", 3, a.affixes());
+        write(a.affixes(), NAffixAnchor.END, acceptablePost);
+    }
+
+    private void writeFragment(NFragmentElement a) {
+        write(a.affixes(), NAffixAnchor.START, acceptablePre);
+        List<NElement> params = a.children();
+        for (int i = 0; i < params.size(); i++) {
+            NElement e = params.get(i);
+            if (i > 0) {
+                write(a.affixes(), NAffixAnchor.SEP_1, acceptableWrapSep);
+            }
+            write(e);
+        }
         write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
