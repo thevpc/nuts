@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.builder;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
+import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNFlatExprElement;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NAssignmentPolicy;
@@ -22,6 +23,11 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
         return new ArrayList<>(values);
     }
 
+    @Override
+    public NFlatExprElementBuilder clear() {
+        values.clear();
+        return this;
+    }
 
     @Override
     public NOptional<NElement> get(int index) {
@@ -29,26 +35,6 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
             return NOptional.of(values.get(index));
         }
         return NOptional.ofNamedEmpty(NMsg.ofC("index %s", index));
-    }
-
-    @Override
-    public NFlatExprElementBuilder set(int index, NOperatorSymbol op) {
-        if (op != null) {
-            if (index >= 0 && index < values.size()) {
-                values.set(index, NElement.ofOperatorSymbol(op));
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public NFlatExprElementBuilder set(int index, NElement element) {
-        if (element != null) {
-            if (index >= 0 && index < values.size()) {
-                values.set(index, element);
-            }
-        }
-        return this;
     }
 
     @Override
@@ -61,35 +47,62 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
 
     @Override
     public NFlatExprElementBuilder add(NElement element) {
-        if (element != null) {
-            values.add(element);
-        }
+        CoreNElementUtils.add(element, values);
+        return this;
+    }
+
+    @Override
+    public NFlatExprElementBuilder setChildren(List<NElement> elements) {
+        CoreNElementUtils.setAll(elements, values);
         return this;
     }
 
     @Override
     public NFlatExprElementBuilder setAt(int index, NElement element) {
-        if (element != null) {
-            while (this.values.size() < index + 1) {
-                this.values.add(NElement.ofNull());
-            }
-            values.set(index, element);
-        }
+        CoreNElementUtils.setAt(index, element, values);
         return this;
     }
 
     @Override
     public NFlatExprElementBuilder setAt(int index, NOperatorSymbol element) {
-        if (element != null) {
-            setAt(index, NElement.ofOperatorSymbol(element));
-        }
+        CoreNElementUtils.setAt(index, element == null ? null : NElement.ofOperatorSymbol(element), values);
         return this;
     }
 
     @Override
     public NFlatExprElement build() {
-        return new DefaultNFlatExprElement(values,
-                affixes(), diagnostics(),metadata()
+        List<Object> ok = new ArrayList<>();
+        for (NElement nElement : children()) {
+            if (ok.isEmpty()) {
+                ok.add(nElement);
+            } else if (nElement.isOperatorSymbol()) {
+                ok.add(nElement);
+            } else {
+                int mi = ok.size() - 1;
+                Object last = ok.get(mi);
+                if (last instanceof NOperatorSymbolElement) {
+                    ok.add(nElement);
+                } else if (last instanceof List) {
+                    ((List) last).add(nElement);
+                } else {
+                    ArrayList<Object> a = new ArrayList<>();
+                    a.add(ok.remove(mi));
+                    a.add(nElement);
+                    ok.add(a);
+                }
+            }
+        }
+        List<NElement> elems = new ArrayList<>();
+        for (Object o : ok) {
+            if (o instanceof NElement) {
+                elems.add((NElement) o);
+            } else {
+                List<NElement> li = (List) o;
+                elems.add(NElement.ofUplet(li.toArray(new NElement[0])));
+            }
+        }
+        return new DefaultNFlatExprElement(elems,
+                affixes(), diagnostics(), metadata()
         );
     }
 
@@ -101,6 +114,12 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     @Override
     public int size() {
         return values.size();
+    }
+
+    @Override
+    public NFlatExprElementBuilder clearChildren() {
+        values.clear();
+        return this;
     }
 
     @Override
