@@ -40,6 +40,7 @@ public class PerfTest {
      * ROGUEi7 - 2021-11-24 ) avg: 3035ms 3681ms 3733ms 3790ms 4061ms
      * OMENi9  - 2021-04-26 ) avg: 2471ms
      * OMENi9  - 2021-05-02 ) avg: 2581ms
+     * vpci9  - 2026-02-11 ) avg: 1596ms
      */
     @Test
     public void testPerf() {
@@ -57,6 +58,7 @@ public class PerfTest {
     /**
      * ROGUEi7-2021-11-24 ) avg: 2301ms
      * ROGUEi7-2021-12-11 ) avg: 3201ms
+     * vpci9-2026-02-11 ) avg: 1647ms
      */
     @Test
     public void testPerfLocal() {
@@ -72,6 +74,7 @@ public class PerfTest {
 
     /**
      * ROGUEi7-2021-11-24 ) avg: 2205ms 2456ms
+     * vpci9-2026-02-11 ) avg: 1493ms
      */
     @Test
     public void testPerfLocalNoSystem() {
