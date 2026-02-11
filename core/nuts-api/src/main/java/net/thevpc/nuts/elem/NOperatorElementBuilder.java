@@ -65,7 +65,9 @@ public interface NOperatorElementBuilder extends NElementBuilder {
 
     NOperatorElementBuilder addAll(NElement... operandOrOperators);
 
-    NOperatorElementBuilder setAll(NElement... operandOrOperators);
+    NOperatorElementBuilder setChildren(NElement... operandOrOperators);
+
+    NOperatorElementBuilder setChildren(List<NElement> operandOrOperators);
 
     NOperatorElementBuilder addOperand(NElement operand);
 
