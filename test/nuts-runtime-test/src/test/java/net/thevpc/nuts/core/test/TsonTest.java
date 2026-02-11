@@ -160,7 +160,7 @@ public class TsonTest {
 //        String tson = "github(\"thevpc/nsh\" , \"/xprojects/nuts-world/nuts-companions\"   , tag:[\"nuts-world\",\"nuts\"] , mvnDeploy:\"thevpc\" )";
         String tson = "[1,2] b:3";
         NElement parsed = NElementReader.ofTson().read(tson);
-        NObjectElement o = parsed.asObject().get();
+        NFragmentElement o = parsed.asFragment().get();
         Assertions.assertEquals(2, o.size());
         NArrayElement a = o.get(0).get().asArray().get();
         NPairElement b = o.get(1).get().asPair().get();
@@ -597,6 +597,16 @@ public class TsonTest {
     }
 
     @Test
+    public void testSpecial() {
+        NElement e = NElementReader.ofTson().read("styles{\n" +
+                "    (*){\n" +
+                "        font-size : 5%P\n" +
+                "        debug-color: red,\n" +
+                "        font-family : \"Serif\",\n" +
+                "    }}");
+        TestUtils.println(e);
+    }
+    @Test
     public void testSpecial0() {
         NElement e = NElementReader.ofTson().read("(*)");
         TestUtils.println(e);
@@ -845,16 +855,38 @@ public class TsonTest {
         Assertions.assertEquals(expected, s2);
     }
 
+
+
+
     @Test
-    public void testSpecial() {
-        NElement e = NElementReader.ofTson().read("styles{\n" +
-                "    (*){\n" +
-                "        font-size : 5%P\n" +
-                "        debug-color: red,\n" +
-                "        font-family : \"Serif\",\n" +
-                "    }}");
-        TestUtils.println(e);
+    public void testSpecial19() {
+        NElement e = NElementReader.ofTson().read("@()text()");
+        TestUtils.println(e.toPrettyString());
     }
+
+    @Test
+    public void testSpecial20() {
+        NElement e = NElementReader.ofTson().read("a\"b\"");
+        TestUtils.println(e.toPrettyString());
+    }
+
+    @Test
+    public void testSpecial21() {
+        NElement e = NElementReader.ofTson().read("  @(\"version\") text(\"value\" : either(\"${documentVersion}\" \"\")) ");
+        TestUtils.println(e.toPrettyString());
+    }
+
+    @Test
+    public void testSpecial22() {
+        String expected =
+                "port : a b"
+                ;
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
 
     @Test
     public void testEdges() {
