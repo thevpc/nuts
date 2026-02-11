@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.NBoundAffix;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementAnnotation;
 import net.thevpc.nuts.elem.NElementAnnotationBuilder;
+import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.NElementAnnotationImpl;
 import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.util.NBlankable;
@@ -30,33 +31,19 @@ public class NElementAnnotationBuilderImpl implements NElementAnnotationBuilder 
 
     @Override
     public NElementAnnotationBuilder add(NElement element) {
-        if (element != null) {
-            if (params == null) {
-                params = new ArrayList<>();
-            }
-            params.add(element);
-        }
+        params=CoreNElementUtils.add(element,this.params);
         return this;
     }
 
     @Override
     public NElementAnnotationBuilder addAll(List<NElement> all) {
-        if (all != null) {
-            for (NElement a : all) {
-                add(a);
-            }
-        }
+        params=CoreNElementUtils.addAll(all,this.params);
         return this;
     }
 
     @Override
     public NElementAnnotationBuilder removeAt(int index) {
-        if (params == null) {
-            return this;
-        }
-        if (index >= 0 && index < params.size()) {
-            params.remove(index);
-        }
+        CoreNElementUtils.removeAt(index,this.params);
         return this;
     }
 
