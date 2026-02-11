@@ -112,19 +112,34 @@ public class NElementTransformHelper {
                 NOperatorElement o = item.asOperator().get();
                 NOperatorElementBuilder builder = o.builder();
                 List<NElement> operands = builder.operands();
+                builder.clearOperands();
                 for (int i = 0; i < operands.size(); i++) {
                     NElement w = builder.operand(i).get();
-                    builder.setOperand(i, compressElement(transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w), transform)));
+                    builder.addOperand(compressElement(transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w), transform)));
                 }
-                o = (NOperatorElement) builder.build();
+                o = builder.build();
                 return transform.postTransform(context.withPath(path).withElement(o));
             }
             case FLAT_EXPR: {
                 NFlatExprElement o = item.asFlatExpression().get();
                 NFlatExprElementBuilder builder = o.builder();
-                for (int i = 0; i < builder.size(); i++) {
-                    NElement w = builder.get(i).get();
-                    builder.set(i, compressElement(transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w), transform)));
+                List<NElement> old = builder.children();
+                builder.clearChildren();
+                for (int i = 0; i < old.size(); i++) {
+                    NElement w = old.get(i);
+                    builder.add(compressElement(transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w), transform)));
+                }
+                o = builder.build();
+                return transform.postTransform(context.withPath(path).withElement(o));
+            }
+            case FRAGMENT: {
+                NFragmentElement o = item.asFragment().get();
+                NFragmentElementBuilder builder = o.builder();
+                List<NElement> old = builder.children();
+                builder.clearChildren();
+                for (int i = 0; i < old.size(); i++) {
+                    NElement w = old.get(i);
+                    builder.add(compressElement(transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w), transform)));
                 }
                 o = builder.build();
                 return transform.postTransform(context.withPath(path).withElement(o));
