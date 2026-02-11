@@ -95,17 +95,17 @@ public interface NElementBuilder {
 
     /// /////////////
 
-    NElementBuilder addAffixSpace(String space, NAffixAnchor anchor);
+    NElementBuilder addSpaceAffix(String space, NAffixAnchor anchor);
 
-    NElementBuilder addAffixNewLine(NNewLineMode newLineMode, NAffixAnchor anchor);
+    NElementBuilder addNewLineAffix(NNewLineMode newLineMode, NAffixAnchor anchor);
 
-    NElementBuilder addAffixSeparator(String separator, NAffixAnchor anchor);
+    NElementBuilder addSeparatorAffix(String separator, NAffixAnchor anchor);
 
-    NElementBuilder addAffixSpace(int index, String space, NAffixAnchor anchor);
+    NElementBuilder addSpaceAffix(int index, String space, NAffixAnchor anchor);
 
-    NElementBuilder addAffixNewLine(int index, NNewLineMode newLineMode, NAffixAnchor anchor);
+    NElementBuilder addNewLineAffix(int index, NNewLineMode newLineMode, NAffixAnchor anchor);
 
-    NElementBuilder addAffixSeparator(int index, String separator, NAffixAnchor anchor);
+    NElementBuilder addSeparatorAffix(int index, String separator, NAffixAnchor anchor);
 
     NElementBuilder removeAffixIf(Predicate<NBoundAffix> affixPredicate);
 
