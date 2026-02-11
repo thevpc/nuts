@@ -58,7 +58,7 @@ public class TsonCustomParser {
         if (elements.size() == 1) {
             return elements.get(0);
         }
-        return NElement.ofObject(elements.toArray(new NElement[0]));
+        return NElement.ofFragment(elements.toArray(new NElement[0]));
     }
 
     public NElement parseElement() {
@@ -85,12 +85,12 @@ public class TsonCustomParser {
         return first;
     }
 
-    private NElement withComments(NElement e, List<NElementComment> comments) {
-        if (comments == null || comments.isEmpty()) {
-            return e;
-        }
-        return e.builder().addLeadingComments(comments.toArray(new NElementComment[0])).build();
-    }
+//    private NElement withComments(NElement e, List<NElementComment> comments) {
+//        if (comments == null || comments.isEmpty()) {
+//            return e;
+//        }
+//        return e.builder().addLeadingComments(comments.toArray(new NElementComment[0])).build();
+//    }
 
     private NBoundAffix tokenToBoundAffix(NElementTokenImpl x, NAffixAnchor anchor) {
         return DefaultNBoundAffix.of(tokenToAffix(x), anchor);
@@ -751,7 +751,7 @@ public class TsonCustomParser {
         return false;
     }
 
-    private class NElementTokenInfo {
+    private static class NElementTokenInfo {
         NElementTokenImpl token;
         List<NElementTokenImpl> prefixes = new ArrayList<>();
 //        List<NElementComment> comments = new ArrayList<>();
