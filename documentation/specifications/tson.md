@@ -606,15 +606,15 @@ Only the marker shape determines the list type. Only the marker count determines
 ### 9.1 Marker Characters (Normative)
 The following Unicode characters are reserved exclusively for list structure and **cannot appear inside identifiers**.
 
-Unordered markers:
-* `•` — U+2022 BULLET
-* `●` — U+25CF BLACK CIRCLE
+Unordered marker characters:
+- `•` — U+2022 BULLET
+- `●` — U+25CF BLACK CIRCLE
 
-Ordered markers:
+Ordered marker characters:
 - `▪` — U+25AA BLACK SMALL SQUARE
 - `■` — U+25A0 BLACK SQUARE
 
-ASCII fallbacks:
+ASCII Token fallbacks:
 - `[.]` — unordered
 - `[#]` — ordered
 
