@@ -111,9 +111,9 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @param name property name
      * @return this {@code this} instance
      */
-    NObjectElementBuilder removeEntry(String name);
+    NObjectElementBuilder removePair(String name);
 
-    NObjectElementBuilder removeEntries(String name);
+    NObjectElementBuilder removeAllPairs(String name);
 
     /**
      * return value for name or null.
@@ -170,7 +170,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @return this builder
      * @since 0.8.9
      */
-    NObjectElementBuilder removeEntry(NElement name);
+    NObjectElementBuilder removePair(NElement name);
 
     /**
      * @param index index to add to, may be negative
@@ -180,7 +180,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      */
     NObjectElementBuilder addAt(int index, NElement item);
 
-    NObjectElementBuilder removeEntries(NElement name);
+    NObjectElementBuilder removeAllPairs(NElement name);
 
     NObjectElementBuilder remove(NElement child);
 
@@ -206,14 +206,6 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @return this {@code this} instance
      */
     NObjectElementBuilder addAll(NElement... entries);
-
-    /**
-     * add all  key value entries binding
-     *
-     * @param other other entry
-     * @return this {@code this} instance
-     */
-    NObjectElementBuilder addAll(NObjectElementBuilder other);
 
     NObjectElementBuilder addParams(List<NElement> params);
 
