@@ -3,18 +3,23 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NStringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TsonFormatSanitizerAction implements NElementFormatterAction {
-    @Override
-    public void apply(NElementFormatContext context) {
-        apply(context, true);
+    private boolean strict;
+
+    public TsonFormatSanitizerAction(boolean strict) {
+        this.strict = strict;
     }
 
-    public void apply(NElementFormatContext context, boolean strict) {
+    @Override
+    public void apply(NElementFormatContext context) {
         NElementBuilder b = context.builder();
+        String startAffixes = lastStringOfBoundAffixes(b.affixes(), NAffixAnchor.START);
         switch (b.type()) {
             case OBJECT:
             case NAMED_OBJECT:
@@ -24,15 +29,15 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                 List<NElement> nElements = eb.params().orNull();
                 if (nElements != null) {
                     for (int i = 1; i < nElements.size(); i++) {
-                        if (isCollision(nElements.get(i - 1), nElements.get(i), strict)) {
-                            eb.setParamAt(i - 1, nElements.get(i - 1).builder().addAffixSpace(" ", NAffixAnchor.END).build());
+                        if (isCollision(nElements.get(i - 1), nElements.get(i))) {
+                            eb.setParamAt(i - 1, nElements.get(i - 1).builder().addSpaceAffix(" ", NAffixAnchor.END).build());
                         }
                     }
                 }
                 nElements = eb.children();
                 for (int i = 1; i < nElements.size(); i++) {
-                    if (isCollision(nElements.get(i - 1), nElements.get(i), strict)) {
-                        eb.setAt(i - 1, nElements.get(i - 1).builder().addAffixSpace(" ", NAffixAnchor.END).build());
+                    if (isCollision(nElements.get(i - 1), nElements.get(i))) {
+                        eb.setAt(i - 1, nElements.get(i - 1).builder().addSpaceAffix(" ", NAffixAnchor.END).build());
                     }
                 }
                 break;
@@ -44,17 +49,19 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                 NArrayElementBuilder eb = (NArrayElementBuilder) b;
                 List<NElement> nElements = eb.params().orNull();
                 if (nElements != null) {
-                    for (int i = 1; i < nElements.size(); i++) {
-                        if (isCollision(nElements.get(i - 1), nElements.get(i), strict)) {
-                            eb.setParamAt(i - 1, nElements.get(i - 1).builder().addAffixSpace(" ", NAffixAnchor.END).build());
-                        }
-                    }
+                    eb.setParams(addSpaces(nElements));
                 }
-                nElements = eb.children();
-                for (int i = 1; i < nElements.size(); i++) {
-                    if (isCollision(nElements.get(i - 1), nElements.get(i), strict)) {
-                        eb.setAt(i - 1, nElements.get(i - 1).builder().addAffixSpace(" ", NAffixAnchor.END).build());
-                    }
+                eb.setChildren(addSpaces(eb.children()));
+                break;
+            }
+            case NAMED_UPLET: {
+                NUpletElementBuilder eb = (NUpletElementBuilder) b;
+                if (isCollision(startAffixes, eb.name().orNull())) {
+                    eb.addSpaceAffix(" ", NAffixAnchor.START);
+                }
+                List<NElement> nElements = eb.params();
+                if (nElements != null) {
+                    eb.setParams(addSpaces(nElements));
                 }
                 break;
             }
@@ -62,22 +69,13 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                 NUpletElementBuilder eb = (NUpletElementBuilder) b;
                 List<NElement> nElements = eb.params();
                 if (nElements != null) {
-                    for (int i = 1; i < nElements.size(); i++) {
-                        if (isCollision(nElements.get(i - 1), nElements.get(i), strict)) {
-                            eb.setAt(i - 1, nElements.get(i - 1).builder().addAffixSpace(" ", NAffixAnchor.END).build());
-                        }
-                    }
+                    eb.setParams(addSpaces(nElements));
                 }
                 break;
             }
             case FLAT_EXPR: {
                 NFlatExprElementBuilder eb = (NFlatExprElementBuilder) b;
-                List<NElement> nElements = eb.children();
-                for (int i = 1; i < nElements.size(); i++) {
-                    if (isCollision(nElements.get(i - 1), nElements.get(i), strict)) {
-                        eb.setAt(i - 1, nElements.get(i - 1).builder().addAffixSpace(" ", NAffixAnchor.END).build());
-                    }
-                }
+                eb.setChildren(addSpaces(eb.children()));
                 break;
             }
             case UNARY_OPERATOR:
@@ -85,20 +83,13 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
             case TERNARY_OPERATOR:
             case NARY_OPERATOR: {
                 NOperatorElementBuilder eb = (NOperatorElementBuilder) b;
-                List<NElement> nElements = eb.children();
-                for (int i = 1; i < nElements.size(); i++) {
-                    if (isCollision(nElements.get(i - 1), nElements.get(i), strict)) {
-                        nElements.set(i - 1, nElements.get(i - 1).builder().addAffixSpace(" ", NAffixAnchor.END).build());
-                    }
-                }
-                eb.setAll(nElements.toArray(new NElement[0]));
+                eb.setChildren(addSpaces(eb.children()));
                 break;
             }
             case ORDERED_LIST:
             case UNORDERED_LIST: {
                 NListElementBuilder eb = (NListElementBuilder) b;
                 List<NListItemElement> items = eb.items();
-
                 for (int i = 0; i < items.size(); i++) {
                     NListItemElement currentItem = items.get(i);
 
@@ -109,7 +100,7 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                                 ? currentItem.value().get()
                                 : currentItem.subList().orNull();
 
-                        if (content != null && isCollision(currentItem.marker(), content, strict)) {
+                        if (content != null && isCollision(currentItem.marker(), content)) {
                             // Add space to POST_1 (The anchor for the list symbol/marker)
                             eb.setItemAt(i, currentItem.builder()
                                     .addAffixSpace(" ", NAffixAnchor.POST_1)
@@ -122,7 +113,7 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                     // Relevant for inline lists where items touch each other
                     if (i > 0) {
                         NListItemElement prevItem = items.get(i - 1);
-                        if (isCollision(lastStringOfElement(prevItem), firstStringOfElement(currentItem), strict)) {
+                        if (isCollision(lastStringOfElement(prevItem), firstStringOfElement(currentItem))) {
                             // Add space to the end of the previous item (POST_2 or END)
                             eb.setItemAt(i - 1, prevItem.builder()
                                     .addAffixSpace(" ", NAffixAnchor.END)
@@ -137,6 +128,23 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                 return;
             }
         }
+    }
+    private List<NElement> addSpaces(List<NElement> oldList){
+        List<NElement> newList=new ArrayList<>();
+        for (int i = 0; i < oldList.size(); i++) {
+            if(!newList.isEmpty()){
+                NElement last = newList.get(newList.size() - 1);
+                if (isCollision(last, oldList.get(i))) {
+                    newList.set(newList.size() - 1, last.builder().addSpaceAffix(" ", NAffixAnchor.END).build());
+                }
+            }
+            newList.add(oldList.get(i));
+        }
+        return newList;
+    }
+
+    public static boolean isNameOrDigit(char c) {
+        return isName(c) || isDigit(c);
     }
 
     public static boolean isName(char c) {
@@ -166,6 +174,26 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
         return Character.isDigit(c);
     }
 
+    public static boolean isCloseSep(char c) {
+        switch (c) {
+            case ')':
+            case ']':
+            case '}':
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean isOpenSep(char c) {
+        switch (c) {
+            case '(':
+            case '[':
+            case '{':
+                return true;
+        }
+        return false;
+    }
+
     public static boolean isOp(char c) {
         switch (c) {
             case '+':
@@ -189,15 +217,19 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
         return false;
     }
 
-    private static boolean isQuote(char c) {
+    private static boolean isQuoteOrLineStr(char c) {
         return c == '\'' || c == '"' || c == '`' || c == '¶';
     }
 
-    public static boolean isCollision(NElement first, NElement second, boolean strict) {
-        return collisionTypeToBoolean(resolveCollision(first, second), strict);
+    private static boolean isQuote(char c) {
+        return c == '\'' || c == '"' || c == '`';
     }
 
-    public static CollisionType resolveCollision(NElement first, NElement second) {
+    public boolean isCollision(NElement first, NElement second) {
+        return collisionTypeToBoolean(resolveCollision(first, second));
+    }
+
+    public CollisionType resolveCollision(NElement first, NElement second) {
         if (first == null || second == null) {
             return CollisionType.NO_COLLISION;
         }
@@ -206,8 +238,8 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
         return resolveCollision(before, after);
     }
 
-    public static boolean isCollision(String first, NElement second, boolean strict) {
-        return collisionTypeToBoolean(resolveCollision(first, second), strict);
+    public boolean isCollision(String first, NElement second) {
+        return collisionTypeToBoolean(resolveCollision(first, second));
     }
 
     public static CollisionType resolveCollision(String first, NElement second) {
@@ -225,83 +257,55 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
         NO_COLLISION
     }
 
-    private static boolean collisionTypeToBoolean(CollisionType c, boolean strict) {
-        boolean b=strict?(c == CollisionType.FATAL):(c != CollisionType.NO_COLLISION);
+    private boolean collisionTypeToBoolean(CollisionType c) {
+        boolean b = strict ? (c == CollisionType.FATAL) : (c != CollisionType.NO_COLLISION);
         if (b) {
             return true;
         }
         return false;
     }
 
-    public static boolean isCollision(String before, String after, boolean strict) {
-        return collisionTypeToBoolean(resolveCollision(before, after), strict);
+    public boolean isCollision(String before, String after) {
+        return collisionTypeToBoolean(resolveCollision(before, after));
     }
 
     public static CollisionType resolveCollision(String before, String after) {
-        if (before.isEmpty() || after.isEmpty()) {
+        if (NStringUtils.isEmpty(before) || NStringUtils.isEmpty(after)) {
             return CollisionType.NO_COLLISION;
         }
         char bc = before.charAt(before.length() - 1);
         char ac = after.charAt(0);
+        if (Character.isWhitespace(bc) || Character.isWhitespace(ac)) {
+            return CollisionType.NO_COLLISION;
+        }
         // If either is a separator (space, comma, brace), no collision possible
+        if (isCloseSep(bc) && (isQuote(ac) || isNameOrDigit(ac))) {
+            return CollisionType.UNPRETTY;
+        }
         if (isFirstOrderSep(ac) || isFirstOrderSep(bc)) return CollisionType.NO_COLLISION;
 
         // Logic: If both are Alphanumeric or both are Operators, they will glue.
-        if (isName(bc) || isDigit(bc)) {
-            boolean b = isName(ac) || isDigit(ac);
-            return b ? CollisionType.FATAL : CollisionType.NO_COLLISION;
+        if (isNameOrDigit(bc) && isNameOrDigit(ac)) {
+            return CollisionType.FATAL;
+        }
+        if (isQuote(bc) && isNameOrDigit(ac)) {
+            return CollisionType.UNPRETTY;
+        }
+        if (isCloseSep(bc) && isNameOrDigit(ac)) {
+            return CollisionType.UNPRETTY;
         }
         if (ac == bc) {
             return CollisionType.FATAL;
         }
-        if (isOp(ac)) {
-            return isOp(bc) ? CollisionType.FATAL : CollisionType.NO_COLLISION;
+        if (isOp(bc) && isOp(ac)) {
+            return  CollisionType.FATAL;
         }
-        // String Glue: 'a''b' can be valid but often needs space for clarity/safety
-//        if ((ac == '\'' || ac == '"' || ac == '`' || bc == '\'' || bc == '"' || bc == '`')) return CollisionType.FATAL;
-
         if (isQuote(ac) || isQuote(bc)) {
             return CollisionType.UNPRETTY;
         }
         return CollisionType.NO_COLLISION;
     }
 
-    private static String lastStringOfAffixes(List<NBoundAffix> list) {
-        if (!list.isEmpty()) {
-            NBoundAffix a = list.get(list.size() - 1);
-            switch (a.affix().type()) {
-                case SPACE: {
-                    return ((NElementSpace) a.affix()).value();
-                }
-                case NEWLINE: {
-                    return ((NElementNewLine) a.affix()).value().value();
-                }
-                case LINE_COMMENT: {
-                    //even though is something else doesn't matter
-                    return "\n";
-                }
-                case BLOC_COMMENT: {
-                    return "*/";
-                }
-                case SEPARATOR: {
-                    return ((NElementSeparator) a.affix()).value();
-                }
-                case ANNOTATION: {
-                    NElementAnnotation ann = (NElementAnnotation) a.affix();
-                    List<NElement> p = ann.params().orNull();
-                    if (p != null) {
-                        return ")";
-                    }
-                    String n = ann.name();
-                    if (n != null && !n.isEmpty()) {
-                        return n;
-                    }
-                    return "@";
-                }
-            }
-        }
-        return null;
-    }
 
     private static String firstStringOfAffixes(List<NBoundAffix> list) {
         if (!list.isEmpty()) {
@@ -500,7 +504,9 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
             case UINT:
             case BIG_DECIMAL:
             case CUSTOM:
-            case NAME: {
+            case NAME:
+            case FRAGMENT:
+            {
                 return DefaultTsonWriter.formatTson(e);
             }
         }
@@ -519,18 +525,63 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
             return lastStringOfElement(i.value().get());
         }
         //after list item symbol
-        List<NBoundAffix> list2 = i.affixes().stream().filter(x -> x.anchor() == NAffixAnchor.POST_1).collect(Collectors.toList());
-        String s = lastStringOfAffixes(list2);
-        if (s != null) {
+        String s = lastStringOfBoundAffixes(i.affixes(), NAffixAnchor.POST_1);
+        if (!NStringUtils.isEmpty(s)) {
             return s;
         }
         return i.marker();
     }
 
+    public static String lastStringOfBoundAffixes(List<NBoundAffix> affixes, NAffixAnchor anchor) {
+        for (int i = affixes.size() - 1; i >= 0; i--) {
+            NBoundAffix a = affixes.get(i);
+            if (anchor == null || a.anchor() == anchor) {
+                String u = lastStringOfAffix(a.affix());
+                if (!NStringUtils.isEmpty(u)) {
+                    return u;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    public static String lastStringOfAffix(NAffix e) {
+        switch (e.type()) {
+            case SPACE:
+                return ((NElementSpace) e).value();
+            case NEWLINE:
+                return ((NElementNewLine) e).value().value();
+            case SEPARATOR:
+                return ((NElementSeparator) e).value();
+            case LINE_COMMENT:
+                return "\n";
+            case BLOC_COMMENT:
+                return "*/";
+            case ANNOTATION: {
+                NElementAnnotation ea = (NElementAnnotation) e;
+                if (ea.affixes() != null) {
+                    String s = lastStringOfBoundAffixes(ea.affixes(), NAffixAnchor.END);
+                    if (!NStringUtils.isEmpty(s)) {
+                        return s;
+                    }
+                }
+                List<NElement> p = ea.params().orNull();
+                if (p != null) {
+                    return ")";
+                }
+                if (!ea.name().isEmpty()) {
+                    return ea.name().substring(ea.name().length() - 2, ea.name().length() - 1);
+                }
+                return "@";
+            }
+        }
+        return null;
+    }
+
     public static String lastStringOfElement(NElement e) {
-        List<NBoundAffix> list = e.affixes().stream().filter(x -> x.anchor() == NAffixAnchor.END).collect(Collectors.toList());
-        String ss = lastStringOfAffixes(list);
-        if (ss != null) {
+        String ss = lastStringOfBoundAffixes(e.affixes(), NAffixAnchor.END);
+        if (!NStringUtils.isEmpty(ss)) {
             return ss;
         }
         // there is no affixes
@@ -668,9 +719,8 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                     return lastStringOfElement(i.value().get());
                 }
                 //after list item symbol
-                List<NBoundAffix> list2 = i.affixes().stream().filter(x -> x.anchor() == NAffixAnchor.POST_1).collect(Collectors.toList());
-                String s = lastStringOfAffixes(list2);
-                if (s != null) {
+                String s = lastStringOfBoundAffixes(i.affixes(), NAffixAnchor.POST_1);
+                if (!NStringUtils.isEmpty(s)) {
                     return s;
                 }
                 return i.marker();
@@ -698,7 +748,9 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
             case UINT:
             case BIG_DECIMAL:
             case CUSTOM:
-            case NAME: {
+            case NAME:
+            case FRAGMENT:
+            {
                 return DefaultTsonWriter.formatTson(e);
             }
         }
