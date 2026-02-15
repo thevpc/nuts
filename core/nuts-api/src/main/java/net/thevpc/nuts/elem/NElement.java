@@ -1247,6 +1247,7 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
     NElement format(NContentType contentType, NElementFormatter formatter);
 
     NElementMetadata metadata();
+
     String snippet();
 
     String snippet(int size);
@@ -1284,4 +1285,12 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
     String toPrettyString();
 
     String toCompactString();
+
+    NOptional<NBinaryStreamElement> asBinaryStream();
+
+    boolean isBinaryStream();
+
+    NOptional<NCharStreamElement> asCharStream();
+
+    boolean isCharStream();
 }
