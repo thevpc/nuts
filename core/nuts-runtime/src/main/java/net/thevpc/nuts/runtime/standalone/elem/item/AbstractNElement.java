@@ -1644,4 +1644,29 @@ public abstract class AbstractNElement implements NElement {
         return filter(NElementSelector.of(selector));
     }
 
+    @Override
+    public NOptional<NBinaryStreamElement> asBinaryStream() {
+        if(this instanceof NBinaryStreamElement){
+            return NOptional.of((NBinaryStreamElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to binary stream: %s", type().id(), this));
+    }
+
+    @Override
+    public boolean isBinaryStream() {
+        return type()==NElementType.BINARY_STREAM;
+    }
+
+    @Override
+    public NOptional<NCharStreamElement> asCharStream() {
+        if(this instanceof NCharStreamElement){
+            return NOptional.of((NCharStreamElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to char stream: %s", type().id(), this));
+    }
+
+    @Override
+    public boolean isCharStream() {
+        return type()==NElementType.CHAR_STREAM;
+    }
 }
