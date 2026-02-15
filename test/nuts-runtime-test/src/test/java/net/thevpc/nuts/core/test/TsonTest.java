@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.io.NIOUtils;
+import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.NAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -649,13 +651,13 @@ public class TsonTest {
                 "\n" +
                 "@define miniPage{\n" +
                 "    group(background:white,draw-contour){\n" +
-                "        componentBody\n" +
+                "        body\n" +
                 "    }\n" +
                 "}\n" +
                 "\n" +
                 "@define miniCode{\n" +
                 "    group(background:Gray89,draw-contour,margin:5){\n" +
-                "        componentBody\n" +
+                "        body\n" +
                 "    }\n" +
                 "}\n" +
                 "\n" +
@@ -885,6 +887,36 @@ public class TsonTest {
         String s2 = e.toString();
         TestUtils.println(s2);
         Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial23() {
+        NChronometer c = NChronometer.startNow();
+        String expected = NIOUtils.readString(
+                TsonTest.class.getResourceAsStream("bigtson.tson")
+        );
+        c.stop();
+        TestUtils.println("load in "+c);
+
+        c = NChronometer.startNow();
+        NElement e = NElementReader.ofTson().read(expected);
+        c.stop();
+        TestUtils.println("read in "+c);
+
+        c = NChronometer.startNow();
+        String s2 = e.toString();
+        c.stop();
+        TestUtils.println("toString in "+c);
+
+        c = NChronometer.startNow();
+        s2 = e.toPrettyString();
+        c.stop();
+        TestUtils.println("toPrettyString in "+c);
+
+        c = NChronometer.startNow();
+        s2 = e.toCompactString();
+        c.stop();
+        TestUtils.println("toCompactString in "+c);
     }
 
 
