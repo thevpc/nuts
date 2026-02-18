@@ -19,7 +19,17 @@ import java.util.function.Predicate;
 public abstract class AbstractNElementBuilder implements NElementBuilder {
     private final NBoundAffixList affixes = new NBoundAffixList();
     private final List<NElementDiagnostic> diagnostics = new ArrayList<>();
+    private NElementMetadata metadata = DefaultNElementMetadata.EMPTY;
 
+
+    public NElementMetadata metadata() {
+        return metadata;
+    }
+
+    public NElementBuilder metadata(NElementMetadata metadata) {
+        this.metadata = metadata == null ? DefaultNElementMetadata.EMPTY : metadata;
+        return this;
+    }
 
     @Override
     public List<NBoundAffix> affixes() {
@@ -130,6 +140,12 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
     }
 
     @Override
+    public NElementBuilder clearAffixes() {
+        affixes.clearAffixes();
+        return this;
+    }
+
+    @Override
     public List<NElementAnnotation> annotations() {
         return affixes.annotations();
     }
@@ -153,6 +169,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
         }
         this.diagnostics.addAll(other.diagnostics());
         this.affixes.addAffixes(other.affixes());
+        this.metadata = other.metadata();
         return this;
     }
 
@@ -163,6 +180,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
         }
         this.diagnostics.addAll(other.diagnostics());
         this.affixes.addAffixes(other.affixes());
+        this.metadata = other.metadata();
         return this;
     }
 
@@ -222,37 +240,37 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
     }
 
     @Override
-    public NElementBuilder addAffixSpace(String space, NAffixAnchor anchor) {
+    public NElementBuilder addSpaceAffix(String space, NAffixAnchor anchor) {
         this.affixes.addAffixSpace(space, anchor);
         return this;
     }
 
     @Override
-    public NElementBuilder addAffixNewLine(NNewLineMode newLineMode, NAffixAnchor anchor) {
+    public NElementBuilder addNewLineAffix(NNewLineMode newLineMode, NAffixAnchor anchor) {
         this.affixes.addAffixNewLine(newLineMode, anchor);
         return this;
     }
 
     @Override
-    public NElementBuilder addAffixSeparator(String separator, NAffixAnchor anchor) {
+    public NElementBuilder addSeparatorAffix(String separator, NAffixAnchor anchor) {
         this.affixes.addAffixSeparator(separator, anchor);
         return this;
     }
 
     @Override
-    public NElementBuilder addAffixSpace(int index, String space, NAffixAnchor anchor) {
+    public NElementBuilder addSpaceAffix(int index, String space, NAffixAnchor anchor) {
         this.affixes.addAffixSpace(index, space, anchor);
         return this;
     }
 
     @Override
-    public NElementBuilder addAffixSeparator(int index, String separator, NAffixAnchor anchor) {
+    public NElementBuilder addSeparatorAffix(int index, String separator, NAffixAnchor anchor) {
         this.affixes.addAffixSeparator(index, separator, anchor);
         return this;
     }
 
     @Override
-    public NElementBuilder addAffixNewLine(int index, NNewLineMode newLineMode, NAffixAnchor anchor) {
+    public NElementBuilder addNewLineAffix(int index, NNewLineMode newLineMode, NAffixAnchor anchor) {
         affixes.addAffixNewLine(index, newLineMode, anchor);
         return this;
     }

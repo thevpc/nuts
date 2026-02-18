@@ -4,7 +4,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NCachedValue;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.net.DefaultNConnectionStringBuilder;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.spi.NPathSPIAware;
 import net.thevpc.nuts.net.NConnectionStringBuilder;
@@ -426,8 +425,8 @@ class SshNPath implements NPathSPI {
 
     @Override
     public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
-        EnumSet<NPathOption> optionsSet = EnumSet.noneOf(NPathOption.class);
-        optionsSet.addAll(Arrays.asList(options));
+//        Set<NPathOption> optionsSet = new HashSet<>();
+//        optionsSet.addAll(Arrays.asList(options));
         try (SshConnection c = prepareSshConnection()) {
             List<String> ss = c.walk(path.getPath(), true, maxDepth);
             return NStream.ofIterable(ss).map(
@@ -457,7 +456,7 @@ class SshNPath implements NPathSPI {
     @Override
     public boolean moveTo(NPath basePath, NPath other, NPathOption... options) {
         if (other.toString().startsWith("ssh:")) {
-            NConnectionStringBuilder sp = DefaultNConnectionStringBuilder.of(other.toString()).get();
+            NConnectionStringBuilder sp = NConnectionStringBuilder.of(other.toString());
             if (
                     Objects.equals(sp.getHost(), path.getHost())
                             && Objects.equals(sp.getUserName(), path.getUserName())

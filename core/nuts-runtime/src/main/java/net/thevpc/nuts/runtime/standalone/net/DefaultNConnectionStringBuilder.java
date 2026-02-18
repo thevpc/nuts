@@ -1,5 +1,7 @@
-package net.thevpc.nuts.net;
+package net.thevpc.nuts.runtime.standalone.net;
 
+import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 

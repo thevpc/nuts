@@ -13,7 +13,8 @@ public abstract class AbstractNOperatorElement extends AbstractNElement implemen
     private List<NOperatorSymbol> symbols;
     private List<NElement> operands;
 
-    public AbstractNOperatorElement(List<NOperatorSymbol> symbols, NOperatorPosition position, List<NElement> operands, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+    public AbstractNOperatorElement(List<NOperatorSymbol> symbols, NOperatorPosition position, List<NElement> operands,
+                                    List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
         super(operands.size() == 1 ?
                         NElementType.UNARY_OPERATOR
                         : operands.size() == 2 ?
@@ -21,7 +22,7 @@ public abstract class AbstractNOperatorElement extends AbstractNElement implemen
                         : operands.size() == 3 ?
                         NElementType.TERNARY_OPERATOR
                         : NElementType.NARY_OPERATOR
-                , affixes,diagnostics);
+                , affixes,diagnostics,metadata);
         this.position = position;
         this.symbols = CoreNUtils.copyAndUnmodifiableNullableList(symbols);
         this.operands = CoreNUtils.copyAndUnmodifiableList(operands);

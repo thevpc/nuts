@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.platform;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NIdBuilder;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -9,13 +11,14 @@ import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
+import java.util.function.Function;
 
 @NComponentScope(NScopeType.PROTOTYPE)
 public class NEnvAsCmd extends NEnvBase {
 
     private NEnvCmdSPI envCmdSPI;
     private boolean valid;
-    private Map<String,String> envSnapshot;
+    private Map<String, String> envSnapshot;
 
     public NEnvAsCmd(NScorableContext context) {
         Object criteria = context.getCriteria();
@@ -308,6 +311,7 @@ public class NEnvAsCmd extends NEnvBase {
             return false;
         }
     }
+
     private boolean isSsh() {
         try {
             String r = runOnceSystemGrab("echo $SSH_CONNECTION$SSH_CLIENT");
@@ -325,6 +329,7 @@ public class NEnvAsCmd extends NEnvBase {
             return false;
         }
     }
+
     private static Map<String, String> parseKeyValue(String s) {
         Map<String, String> m = new HashMap<>();
         for (String line : s.split("\\R")) {
@@ -377,12 +382,12 @@ public class NEnvAsCmd extends NEnvBase {
 
     @Override
     public NOptional<String> getEnv(String name) {
-        return NOptional.ofNamed(getEnv().get(name),name);
+        return NOptional.ofNamed(getEnv().get(name), name);
     }
 
     @Override
     public Map<String, String> getEnv() {
-        if(envSnapshot==null){
+        if (envSnapshot == null) {
             synchronized (this) {
                 if (envSnapshot == null) {
                     Map<String, String> m = new LinkedHashMap<>();
@@ -437,5 +442,15 @@ public class NEnvAsCmd extends NEnvBase {
         } catch (Exception ignored) {
         }
         return false;
+    }
+
+    @Override
+    public String getMachineName0() {
+        return NEnvUtils.getMachineName(this, strings -> envCmdSPI.exec(NCmdLine.of(strings).toString()));
+    }
+
+    @Override
+    public String getHostName0() {
+        return NEnvUtils.getHostName(this, strings -> envCmdSPI.exec(NCmdLine.of(strings).toString()), getConnectionString());
     }
 }

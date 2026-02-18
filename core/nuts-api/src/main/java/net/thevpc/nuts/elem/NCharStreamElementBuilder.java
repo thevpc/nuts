@@ -72,6 +72,8 @@ public interface NCharStreamElementBuilder extends NElementBuilder {
 
     NCharStreamElementBuilder clearAnnotations();
 
+    NCharStreamElementBuilder clearAffixes();
+
     NCharStreamElementBuilder addLeadingComment(NElementComment comment);
 
     NCharStreamElementBuilder addLeadingComments(NElementComment... comments);
@@ -95,4 +97,6 @@ public interface NCharStreamElementBuilder extends NElementBuilder {
     NCharStreamElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NCharStreamElementBuilder addAffixes(List<NBoundAffix> affixes);
+
+    NCharStreamElementBuilder metadata(NElementMetadata metadata);
 }

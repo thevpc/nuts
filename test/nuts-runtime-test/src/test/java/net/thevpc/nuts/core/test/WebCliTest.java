@@ -16,6 +16,7 @@ public class WebCliTest {
         String tson = "a:b b";
         NWebCli.of()
                 .GET("http://localhost:8080/p/image.png")
+                .setAuthorizationBasic("taha","taha")
                 .run().failFast();
     }
 

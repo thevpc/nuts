@@ -83,11 +83,9 @@ public interface NElementFactory extends NComponent {
 
     NOperatorElementBuilder ofOpBuilder();
 
-    NOperatorElement ofOp(NOperatorSymbol op, NOperatorPosition position, NElement first, NElement second);
+    NOperatorElement ofBinaryInfixOperator(NOperatorSymbol op, NElement first, NElement second);
 
-    NOperatorElement ofOp(NOperatorSymbol op, NElement first, NElement second);
-
-    NOperatorElement ofOp(NOperatorSymbol op, NElement first);
+    NOperatorElement ofUnaryPrefixOperator(NOperatorSymbol op, NElement first);
 
     NOperatorSymbolElement ofOp(NOperatorSymbol op);
 
@@ -108,6 +106,8 @@ public interface NElementFactory extends NComponent {
      * @return array element
      */
     NArrayElementBuilder ofArrayBuilder();
+
+    NFragmentElementBuilder ofFragmentBuilder();
 
     NArrayElementBuilder ofArrayBuilder(String name);
 
@@ -388,4 +388,6 @@ public interface NElementFactory extends NComponent {
     NElementNewLine ofNewline(String value);
 
     NBoundAffix ofBoundAffix(NAffix affix, NAffixAnchor anchor);
+
+    NFragmentElement ofFragment(NElement...elements);
 }

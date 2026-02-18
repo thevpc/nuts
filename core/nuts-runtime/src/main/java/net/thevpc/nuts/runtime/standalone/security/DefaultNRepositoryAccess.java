@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.security.NCredentialId;
+import net.thevpc.nuts.security.NSecureToken;
 import net.thevpc.nuts.security.NRepositoryAccess;
 import net.thevpc.nuts.security.NRepositoryAccessSpec;
 
@@ -13,11 +13,11 @@ public class DefaultNRepositoryAccess implements NRepositoryAccess {
     private String repositoryUuid;
     private String repositoryName;
     private String remoteUserName;
-    private NCredentialId remoteCredential;
+    private NSecureToken remoteCredential;
     private String remoteAuthType;
     private List<String> permissions;
 
-    public DefaultNRepositoryAccess(String userName, String repositoryUuid, String repositoryName, String remoteUserName, NCredentialId remoteCredential, String remoteAuthType, List<String> permissions) {
+    public DefaultNRepositoryAccess(String userName, String repositoryUuid, String repositoryName, String remoteUserName, NSecureToken remoteCredential, String remoteAuthType, List<String> permissions) {
         this.userName = userName;
         this.repositoryUuid = repositoryUuid;
         this.repositoryName = repositoryName;
@@ -48,7 +48,7 @@ public class DefaultNRepositoryAccess implements NRepositoryAccess {
     }
 
     @Override
-    public NCredentialId getRemoteCredential() {
+    public NSecureToken getRemoteCredential() {
         return remoteCredential;
     }
 
@@ -89,6 +89,6 @@ public class DefaultNRepositoryAccess implements NRepositoryAccess {
 
     @Override
     public NRepositoryAccessSpec toSpec() {
-        return new DefaultNRepositoryAccessSpec(userName, repositoryUuid, remoteUserName, remoteCredential, remoteAuthType, permissions);
+        return new DefaultNRepositoryAccessSpec(userName, repositoryUuid, remoteUserName, null, remoteAuthType, permissions);
     }
 }

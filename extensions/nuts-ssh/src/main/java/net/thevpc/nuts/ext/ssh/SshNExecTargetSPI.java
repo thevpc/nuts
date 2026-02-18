@@ -8,7 +8,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.net.DefaultNConnectionStringBuilder;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.spi.NExecTargetCommandContext;
@@ -212,7 +211,7 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
     public static int getScore(NScorableContext context) {
         Object c = context.getCriteria();
         if (c instanceof String) {
-            NConnectionStringBuilder z = DefaultNConnectionStringBuilder.of((String) c).orNull();
+            NConnectionStringBuilder z = NConnectionStringBuilder.get((String) c).orNull();
             if (z != null && isSupportedProtocol(z.getProtocol())) {
                 return NScorable.DEFAULT_SCORE;
             }

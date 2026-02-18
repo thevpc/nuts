@@ -8,9 +8,12 @@ public interface NElementAnnotationBuilder extends NBlankable {
     String name();
 
     boolean isParametrized();
-    NElementAnnotationBuilder setUnparameterized();
+
+    NElementAnnotationBuilder setParameterized(boolean p);
 
     NElement param(int index);
+
+    NElementAnnotationBuilder clear();
 
     NElementAnnotationBuilder setName(String name);
 
@@ -18,7 +21,11 @@ public interface NElementAnnotationBuilder extends NBlankable {
 
     List<NElement> params();
 
+    NElementAnnotationBuilder add(NElement element);
+
     NElementAnnotationBuilder removeAt(int index);
 
     int size();
+
+    NElementAnnotationBuilder addAll(List<NElement> all);
 }

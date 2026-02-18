@@ -65,7 +65,9 @@ public interface NOperatorElementBuilder extends NElementBuilder {
 
     NOperatorElementBuilder addAll(NElement... operandOrOperators);
 
-    NOperatorElementBuilder setAll(NElement... operandOrOperators);
+    NOperatorElementBuilder setChildren(NElement... operandOrOperators);
+
+    NOperatorElementBuilder setChildren(List<NElement> operandOrOperators);
 
     NOperatorElementBuilder addOperand(NElement operand);
 
@@ -112,6 +114,8 @@ public interface NOperatorElementBuilder extends NElementBuilder {
 
     NOperatorElementBuilder clearAnnotations();
 
+    NOperatorElementBuilder clearAffixes();
+
     NOperatorElementBuilder addLeadingComment(NElementComment comment);
 
     NOperatorElementBuilder addLeadingComments(NElementComment... comments);
@@ -135,4 +139,6 @@ public interface NOperatorElementBuilder extends NElementBuilder {
     NOperatorElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NOperatorElementBuilder addAffixes(List<NBoundAffix> affixes);
+
+    NOperatorElementBuilder metadata(NElementMetadata metadata);
 }

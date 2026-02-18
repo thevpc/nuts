@@ -352,6 +352,8 @@ public interface NArrayElementBuilder extends NElementBuilder {
 
     NArrayElementBuilder clearAnnotations();
 
+    NArrayElementBuilder clearAffixes();
+
     NArrayElementBuilder addLeadingComment(NElementComment comment);
 
     NArrayElementBuilder addLeadingComments(NElementComment... comments);
@@ -376,4 +378,5 @@ public interface NArrayElementBuilder extends NElementBuilder {
 
     NArrayElementBuilder addAffixes(List<NBoundAffix> affixes);
 
+    NArrayElementBuilder metadata(NElementMetadata metadata);
 }

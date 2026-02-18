@@ -44,11 +44,11 @@ public class DefaultNBinaryStreamElement extends AbstractNElement implements NBi
     private final String blocIdentifier;
 
     public DefaultNBinaryStreamElement(NInputStreamProvider value, String blocIdentifier) {
-        this(value, blocIdentifier, null, null);
+        this(value, blocIdentifier, null, null,null);
     }
 
-    public DefaultNBinaryStreamElement(NInputStreamProvider value, String blocIdentifier, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
-        super(NElementType.BINARY_STREAM, affixes, diagnostics);
+    public DefaultNBinaryStreamElement(NInputStreamProvider value, String blocIdentifier, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
+        super(NElementType.BINARY_STREAM, affixes, diagnostics,metadata);
         this.value = value;
         this.blocIdentifier = NStringUtils.trim(blocIdentifier);
     }

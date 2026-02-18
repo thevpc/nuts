@@ -48,6 +48,8 @@ public interface NListElementBuilder extends NElementBuilder {
 
     NListElementBuilder clearAnnotations();
 
+    NListElementBuilder clearAffixes();
+
     NListElementBuilder addLeadingComment(NElementComment comment);
 
     NListElementBuilder addLeadingComments(NElementComment... comments);
@@ -71,4 +73,6 @@ public interface NListElementBuilder extends NElementBuilder {
     NListElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NListElementBuilder addAffixes(List<NBoundAffix> affixes);
+
+    NListElementBuilder metadata(NElementMetadata metadata);
 }

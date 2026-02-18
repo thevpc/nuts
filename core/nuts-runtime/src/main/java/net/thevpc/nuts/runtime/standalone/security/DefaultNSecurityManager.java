@@ -56,21 +56,21 @@ public class DefaultNSecurityManager implements NSecurityManager {
     }
 
     @Override
-    public NSecurityManager login(final String username, final char[] password) {
+    public NSecurityManager login(final String username, final NSecureString password) {
         model.login(username, password);
         return this;
     }
 
     @Override
-    public boolean setSecureMode(boolean secure, char[] adminPassword) {
+    public boolean setSecureMode(boolean secure, NSecureString adminPassword) {
         return model.setSecureMode(secure, adminPassword);
     }
 
-    public boolean switchUnsecureMode(char[] adminPassword) {
+    public boolean switchUnsecureMode(NSecureString adminPassword) {
         return model.switchUnsecureMode(adminPassword);
     }
 
-    public boolean switchSecureMode(char[] adminPassword) {
+    public boolean switchSecureMode(NSecureString adminPassword) {
         return model.switchSecureMode(adminPassword);
     }
 
@@ -151,51 +151,51 @@ public class DefaultNSecurityManager implements NSecurityManager {
     /// //////////
 
     @Override
-    public void runWithSecret(NCredentialId id, NSecretRunner runner) {
+    public void runWithSecret(NSecureToken id, NSecretRunner runner) {
         model.agentMapper().runWithSecret(id, runner);
     }
 
     @Override
-    public <T> T callWithSecret(NCredentialId id, NSecretCaller<T> caller) {
+    public <T> T callWithSecret(NSecureToken id, NSecretCaller<T> caller) {
         return model.agentMapper().callWithSecret(id, caller);
     }
 
     @Override
-    public boolean verify(NCredentialId credentialsId, char[] candidate) {
+    public boolean verify(NSecureToken credentialsId, NSecureString candidate) {
         return model.agentMapper().verify(credentialsId, candidate);
     }
 
-    public boolean removeCredentials(NCredentialId credentialsId) {
+    public boolean removeCredentials(NSecureToken credentialsId) {
         return model.agentMapper().removeCredentials(credentialsId);
     }
 
     @Override
-    public NCredentialId addSecret(char[] credentials) {
+    public NSecureToken addSecret(NSecureString credentials) {
         return addSecret(credentials, null);
     }
 
     @Override
-    public NCredentialId addSecret(char[] credentials, String agent) {
+    public NSecureToken addSecret(NSecureString credentials, String agent) {
         return model.agentMapper().storeSecret(credentials, agent);
     }
 
     @Override
-    public NCredentialId updateSecret(NCredentialId old, char[] credentials, String agent) {
+    public NSecureToken updateSecret(NSecureToken old, NSecureString credentials, String agent) {
         return model.agentMapper().updateSecret(old, credentials, agent);
     }
 
     @Override
-    public NCredentialId addOneWayCredential(char[] password) {
+    public NSecureToken addOneWayCredential(NSecureString password) {
         return addOneWayCredential(password, null);
     }
 
     @Override
-    public NCredentialId addOneWayCredential(char[] password, String agent) {
+    public NSecureToken addOneWayCredential(NSecureString password, String agent) {
         return model.agentMapper().storeOneWay(password, agent);
     }
 
     @Override
-    public NCredentialId updateOneWay(NCredentialId old, char[] credentials, String agent) {
+    public NSecureToken updateOneWayCredential(NSecureToken old, NSecureString credentials, String agent) {
         return model.agentMapper().updateOneWay(old, credentials, agent);
     }
 
@@ -359,7 +359,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
                             repository1.get().getUuid(),
                             repository1.get().getName(),
                             r.getRemoteUserName(),
-                            NBlankable.isBlank(r.getRemoteCredential()) ? null : NCredentialId.parse(r.getRemoteCredential()),
+                            NBlankable.isBlank(r.getRemoteCredential()) ? null : NSecureToken.parse(r.getRemoteCredential()),
                             r.getRemoteAuthType(),
                             r.getPermissions()
                     ));
@@ -396,18 +396,21 @@ public class DefaultNSecurityManager implements NSecurityManager {
     @Override
     public NSecurityManager addUser(NUserSpec query) {
         NAssert.requireNamedNonNull(query, "add user query");
-        NAssert.requireNamedNonNull(query.getUsername(), "add user query");
-        if (!query.getUsername().matches("[a-zA-Z]+[a-zA-Z0-9_-]*")) {
-            throw new NIllegalArgumentException(NMsg.ofC("invalid username %s", query.getUsername()));
+        NAssert.requireNamedNonNull(query.getUserName(), "add user query");
+        if (!query.getUserName().matches("[a-zA-Z]+[a-zA-Z0-9_-]*")) {
+            throw new NIllegalArgumentException(NMsg.ofC("invalid username %s", query.getUserName()));
         }
         DefaultNWorkspaceConfigModel c = NWorkspaceExt.of(workspace).getConfigModel();
-        NUserConfig u = c.getUser(query.getUsername());
+        NUserConfig u = c.getUser(query.getUserName());
         if (u != null) {
-            throw new NSecurityException(NMsg.ofC("user already exists : %s", query.getUsername()));
+            throw new NSecurityException(NMsg.ofC("user already exists : %s", query.getUserName()));
         }
-        NCredentialId credential = query.getCredential();
-        String scredential = credential == null ? null : credential.toString();
-        NUserConfig uc = new NUserConfig(query.getUsername(), scredential, query.getGroups(), query.getPermissions());
+        NSecureString credential = query.getCredential();
+        NSecureToken owCredential = null;
+        if (credential != null) {
+            owCredential = addOneWayCredential(credential);
+        }
+        NUserConfig uc = new NUserConfig(query.getUserName(), owCredential == null ? null : owCredential.toString(), query.getGroups(), query.getPermissions());
         c.addOrUpdateUser(uc);
         return this;
     }
@@ -415,20 +418,27 @@ public class DefaultNSecurityManager implements NSecurityManager {
     @Override
     public NSecurityManager updateUser(NUserSpec query) {
         NAssert.requireNamedNonNull(query, "query user query");
-        NAssert.requireNamedNonNull(query.getUsername(), "add user query");
-        if (!query.getUsername().matches("[a-zA-Z]+[a-zA-Z0-9_-]*")) {
-            throw new NIllegalArgumentException(NMsg.ofC("invalid username %s", query.getUsername()));
+        NAssert.requireNamedNonNull(query.getUserName(), "add user query");
+        if (!query.getUserName().matches("[a-zA-Z]+[a-zA-Z0-9_-]*")) {
+            throw new NIllegalArgumentException(NMsg.ofC("invalid username %s", query.getUserName()));
         }
         DefaultNWorkspaceConfigModel c = NWorkspaceExt.of(workspace).getConfigModel();
-        NUserConfig u = c.getUser(query.getUsername());
+        NUserConfig u = c.getUser(query.getUserName());
         if (u == null) {
-            throw new NSecurityException(NMsg.ofC("user not found : %s", query.getUsername()));
+            throw new NSecurityException(NMsg.ofC("user not found : %s", query.getUserName()));
         }
         u = u.copy();
-        NCredentialId credential = query.getCredential();
+        NSecureString credential = query.getCredential();
         if (credential != null) {
-            String scredential = credential.toString();
-            u.setCredential(scredential);
+            String oldOwString = u.getCredential();
+            NSecureToken oldOw=NBlankable.isBlank(oldOwString)?null:NSecureToken.parse(oldOwString);
+            NSecureToken owCredential;
+            if(oldOw!=null) {
+                owCredential = updateOneWayCredential(oldOw,credential,null);
+            }else{
+                owCredential = addOneWayCredential(credential);
+            }
+            u.setCredential(owCredential.toString());
         }
         if (query.getGroups() != null) {
             u.setGroups(query.getGroups());
@@ -442,11 +452,32 @@ public class DefaultNSecurityManager implements NSecurityManager {
 
     @Override
     public NUserSpec createUserUpdateQuery(String username) {
-        return new DefaultNUserSpec(username, null, null, null);
+        return new DefaultNUserSpec(username);
     }
 
     @Override
     public NRepositoryAccessSpec createRepositoryAccessSpec(String userName, String repository) {
         return new DefaultNRepositoryAccessSpec(userName, repository);
+    }
+
+    @Override
+    public NSecureString createEmptySecureString() {
+        return NUndestroyableString.EMPTY;
+    }
+
+    @Override
+    public NSecureString createSecureString(char[] value) {
+        NAssert.requireNamedNonNull(value, "value");
+        try {
+            return new NDestroyableString(Arrays.copyOf(value, value.length));
+        } finally {
+            Arrays.fill(value, '\0');
+        }
+    }
+
+    @Override
+    public NSecureString createUnsecureString(String value) {
+        NAssert.requireNamedNonNull(value, "value");
+        return new NUndestroyableString(value.toCharArray());
     }
 }

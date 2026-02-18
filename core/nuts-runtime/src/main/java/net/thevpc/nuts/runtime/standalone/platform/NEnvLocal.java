@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.platform;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
@@ -12,6 +13,7 @@ import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 
 import java.util.Map;
+import java.util.function.Function;
 
 @NComponentScope(NScopeType.WORKSPACE)
 public class NEnvLocal extends NEnvBase {
@@ -36,15 +38,15 @@ public class NEnvLocal extends NEnvBase {
             this.arch = NId.get(System.getProperty("os.arch")).get();
             this.archFamily = NArchFamily.getCurrent();
             this.initialized = true;
-            userHome=System.getProperty("user.home");
-            userName=System.getProperty("user.name");
+            userHome = System.getProperty("user.home");
+            userName = System.getProperty("user.name");
             switch (getOsFamily()) {
-                case WINDOWS:{
-                    rootUserName=resolveWindowAdminName(userName,rootUserName);
+                case WINDOWS: {
+                    rootUserName = resolveWindowAdminName(userName, rootUserName);
                     break;
                 }
                 default: {
-                    rootUserName="root";
+                    rootUserName = "root";
                 }
             }
         }
@@ -136,5 +138,29 @@ public class NEnvLocal extends NEnvBase {
             return NScorable.DEFAULT_SCORE;
         }
         return NScorable.UNSUPPORTED_SCORE;
+    }
+
+    @Override
+    public String getMachineName0() {
+        return NEnvUtils.getMachineName(this, new Function<String[], String>() {
+            @Override
+            public String apply(String[] cmd) {
+                return NExec.ofSystem(cmd)
+                        .failFast()
+                        .getGrabbedOutOnlyString();
+            }
+        });
+    }
+
+    @Override
+    public String getHostName0() {
+        return NEnvUtils.getHostName(this, new Function<String[], String>() {
+            @Override
+            public String apply(String[] strings) {
+                return NExec.ofSystem(strings)
+                        .failFast()
+                        .getGrabbedOutOnlyString();
+            }
+        },null);
     }
 }

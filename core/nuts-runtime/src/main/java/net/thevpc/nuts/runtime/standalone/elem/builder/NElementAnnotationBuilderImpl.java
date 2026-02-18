@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.NBoundAffix;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementAnnotation;
 import net.thevpc.nuts.elem.NElementAnnotationBuilder;
+import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.NElementAnnotationImpl;
 import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.util.NBlankable;
@@ -29,19 +30,41 @@ public class NElementAnnotationBuilderImpl implements NElementAnnotationBuilder 
     }
 
     @Override
-    public NElementAnnotationBuilder removeAt(int index) {
-        if (params == null) {
-            return this;
-        }
-        if (index >= 0 && index < params.size()) {
-            params.remove(index);
-        }
+    public NElementAnnotationBuilder add(NElement element) {
+        params=CoreNElementUtils.add(element,this.params);
         return this;
     }
 
     @Override
-    public NElementAnnotationBuilder setUnparameterized() {
-        params = null;
+    public NElementAnnotationBuilder addAll(List<NElement> all) {
+        params=CoreNElementUtils.addAll(all,this.params);
+        return this;
+    }
+
+    @Override
+    public NElementAnnotationBuilder removeAt(int index) {
+        CoreNElementUtils.removeAt(index,this.params);
+        return this;
+    }
+
+    @Override
+    public NElementAnnotationBuilder clear() {
+        if (params == null) {
+            return this;
+        }
+        params.clear();
+        return this;
+    }
+
+    @Override
+    public NElementAnnotationBuilder setParameterized(boolean p) {
+        if (p) {
+            if (params == null) {
+                params = new ArrayList<>();
+            }
+        } else {
+            params = null;
+        }
         return this;
     }
 

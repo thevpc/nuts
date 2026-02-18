@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.platform.rnsh;
 
 import net.thevpc.nuts.elem.NElementReader;
+import net.thevpc.nuts.runtime.standalone.net.DefaultNConnectionString;
+import net.thevpc.nuts.runtime.standalone.net.DefaultNConnectionStringBuilder;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.net.*;
 import net.thevpc.nuts.text.NMsg;

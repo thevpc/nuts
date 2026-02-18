@@ -1,8 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
-import net.thevpc.nuts.util.NUnsupportedOperationException;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.text.NMsg;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,25 +32,38 @@ public class NElementTransformHelper {
 
     private static List<NElement> transformAfter(NElementTransformContext context, NElementTransform transform) {
         NElement item = context.element();
-        List<NElementAnnotation> annotations = item.annotations();
-        List<NElementAnnotation> annotations2 = new ArrayList<>();
+        List<NBoundAffix> affixes = item.affixes();
         NElementPath path = context.path();
-        for (int i = 0; i < annotations.size(); i++) {
-            NElementAnnotation a = annotations.get(i);
-            NElementPath apath = path.ann(i);
-            List<NElement> u = a.params().orNull();
-            if (u == null) {
-                annotations2.add(NElement.ofAnnotation(a.name()));
-            } else {
-                List<NElement> u2 = new ArrayList<>(u.size());
-                for (int j = 0; j < u.size(); j++) {
-                    NElement nElement = u.get(j);
-                    u2.addAll(nElement.transform(transform.prepareChildContext(item, context.withPath(apath.child(j))), transform));
+        int annotationIndex = 0;
+        List<NBoundAffix> newAffixes = new ArrayList<>();
+        for (NBoundAffix affix : affixes) {
+            switch (affix.affix().type()) {
+                case ANNOTATION: {
+                    NElementAnnotation a = (NElementAnnotation) affix.affix();
+                    List<NElement> u = a.params().orNull();
+                    if (u == null || u.isEmpty()) {
+                        newAffixes.add(affix);
+                    } else {
+                        NElementAnnotationBuilder ab = a.builder();
+                        ab.clear();
+                        ab.setParameterized(true);
+                        for (int j = 0; j < u.size(); j++) {
+                            ab.addAll(transform(transform.prepareChildContext(item, context.withPath(
+                                    path.resolve(NElementStep.ofAnnParam(annotationIndex, j))
+                            )).withElement(u.get(j)), transform));
+                        }
+                        newAffixes.add(NBoundAffix.of(ab.build(), affix.anchor()));
+                    }
+                    annotationIndex++;
+                    break;
                 }
-                annotations2.add(NElement.ofAnnotation(a.name(), u2.toArray(new NElement[0])));
+                default: {
+                    newAffixes.add(affix);
+                }
             }
         }
-        item = item.builder().clearAnnotations().addAnnotations(annotations2).build();
+
+        item = item.builder().clearAffixes().addAffixes(newAffixes).build();
 
         switch (item.type()) {
             case OBJECT:
@@ -80,8 +91,8 @@ public class NElementTransformHelper {
             }
             case BINARY_OPERATOR: {
                 NBinaryOperatorElement o = item.asBinaryOperator().get();
-                List<NElement> k = o.firstOperand().transform(transform.prepareChildContext(item, context.withPath(path.child(0))), transform);
-                List<NElement> v = o.secondOperand().transform(transform.prepareChildContext(item, context.withPath(path.child(1))), transform);
+                List<NElement> k = transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(0)))).withElement(o.firstOperand()), transform);
+                List<NElement> v = transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(1)))).withElement(o.secondOperand()), transform);
                 NOperatorElementBuilder b = o.builder();
                 b.first(compressElement(k));
                 b.second(compressElement(v));
@@ -90,7 +101,7 @@ public class NElementTransformHelper {
             }
             case UNARY_OPERATOR: {
                 NUnaryOperatorElement o = item.asUnaryOperator().get();
-                List<NElement> k = o.operand().transform(transform.prepareChildContext(item, context.withPath(path.child(0))), transform);
+                List<NElement> k = transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(0)))).withElement(o.operand()), transform);
                 NOperatorElementBuilder b = o.builder();
                 b.first(compressElement(k));
                 o = (NUnaryOperatorElement) b.build();
@@ -101,19 +112,34 @@ public class NElementTransformHelper {
                 NOperatorElement o = item.asOperator().get();
                 NOperatorElementBuilder builder = o.builder();
                 List<NElement> operands = builder.operands();
+                builder.clearOperands();
                 for (int i = 0; i < operands.size(); i++) {
                     NElement w = builder.operand(i).get();
-                    builder.setOperand(i, compressElement(w.transform(transform.prepareChildContext(item, context.withPath(path.child(i))), transform)));
+                    builder.addOperand(compressElement(transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w), transform)));
                 }
-                o = (NOperatorElement) builder.build();
+                o = builder.build();
                 return transform.postTransform(context.withPath(path).withElement(o));
             }
             case FLAT_EXPR: {
                 NFlatExprElement o = item.asFlatExpression().get();
                 NFlatExprElementBuilder builder = o.builder();
-                for (int i = 0; i < builder.size(); i++) {
-                    NElement w = builder.get(i).get();
-                    builder.set(i, compressElement(w.transform(transform.prepareChildContext(item, context.withPath(path.child(i))), transform)));
+                List<NElement> old = builder.children();
+                builder.clearChildren();
+                for (int i = 0; i < old.size(); i++) {
+                    NElement w = old.get(i);
+                    builder.add(compressElement(transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w), transform)));
+                }
+                o = builder.build();
+                return transform.postTransform(context.withPath(path).withElement(o));
+            }
+            case FRAGMENT: {
+                NFragmentElement o = item.asFragment().get();
+                NFragmentElementBuilder builder = o.builder();
+                List<NElement> old = builder.children();
+                builder.clearChildren();
+                for (int i = 0; i < old.size(); i++) {
+                    NElement w = old.get(i);
+                    builder.add(compressElement(transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w), transform)));
                 }
                 o = builder.build();
                 return transform.postTransform(context.withPath(path).withElement(o));
@@ -123,15 +149,16 @@ public class NElementTransformHelper {
                 NListElement o = item.asList().get();
                 NListElementBuilder builder = o.builder();
                 for (int i = 0; i < builder.size(); i++) {
-                    NElementPath childPath = path.child(i);
                     NListItemElement w = builder.get(i);
                     NElement value = w.value().orNull();
                     if (value != null) {
-                        value = compressElement(value.transform(transform.prepareChildContext(item, context.withPath(childPath.child(0))), transform));
+                        value = compressElement(transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(value), transform));
                     }
                     NListElement subList = w.subList().orNull();
                     if (subList != null) {
-                        subList = (NListElement) compressElement(subList.transform(transform.prepareChildContext(item, context.withPath(childPath.child(1))), transform));
+                        subList = (NListElement) compressElement(transform(transform.prepareChildContext(item, context.withPath(
+                                path.resolve(NElementStep.ofSubList(i))
+                        )).withElement(subList), transform));
                     }
                     w = w.builder().value(value).subList(subList).build();
                     builder.setItemAt(i, w);
@@ -186,8 +213,8 @@ public class NElementTransformHelper {
 
     private static List<NElement> transformAfterPair(NPairElement o, NElementTransformContext context, NElementTransform transform) {
         NElementPath path = context.path();
-        List<NElement> k = o.key().transform(transform.prepareChildContext(o, context.withPath(path.child(0))), transform);
-        List<NElement> v = o.value().transform(transform.prepareChildContext(o, context.withPath(path.child(1))), transform);
+        List<NElement> k = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(0)))).withElement(o.key()), transform);
+        List<NElement> v = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(1)))).withElement(o.value()), transform);
         NPairElementBuilder b = o.builder();
         b.key(compressElement(k));
         b.value(compressElement(v));
@@ -206,7 +233,7 @@ public class NElementTransformHelper {
             List<NElement> params = o.params();
             for (int i = 0; i < params.size(); i++) {
                 NElement e = params.get(i);
-                List<NElement> u = e.transform(transform.prepareChildContext(o, context.withPath(path.child(i))), transform);
+                List<NElement> u = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(e), transform);
                 if (u != null) {
                     b.addAll(u);
                 }
@@ -239,8 +266,8 @@ public class NElementTransformHelper {
             List<NElement> get = o.params().get();
             for (int i = 0; i < get.size(); i++) {
                 NElement e = get.get(i);
-                List<NElement> u = e.transform(
-                        transform.prepareChildContext(o, context.withPath(path.param(i))), transform);
+                List<NElement> u = transform(
+                        transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofParam(i)))).withElement(e), transform);
                 if (u != null) {
                     b.addParams(u);
                 }
@@ -254,7 +281,7 @@ public class NElementTransformHelper {
             List<NElement> children = o.children();
             for (int i = 0; i < children.size(); i++) {
                 NElement e = children.get(i);
-                List<NElement> u = e.transform(transform.prepareChildContext(o, context.withPath(path.child(i))), transform);
+                List<NElement> u = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(e), transform);
                 if (u != null) {
                     b.addAll(u);
                 }
@@ -277,7 +304,7 @@ public class NElementTransformHelper {
             List<NElement> get = o.params().get();
             for (int i = 0; i < get.size(); i++) {
                 NElement e = get.get(i);
-                List<NElement> u = e.transform(transform.prepareChildContext(o, context.withPath(path.param(i))), transform);
+                List<NElement> u = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofParam(i)))).withElement(e), transform);
                 if (u != null) {
                     b.addParams(u);
                 }
@@ -291,7 +318,7 @@ public class NElementTransformHelper {
             List<NElement> children = o.children();
             for (int i = 0; i < children.size(); i++) {
                 NElement e = children.get(i);
-                List<NElement> u = e.transform(transform.prepareChildContext(o, context.withPath(path.child(i))), transform);
+                List<NElement> u = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(e), transform);
                 if (u != null) {
                     b.addAll(u);
                 }

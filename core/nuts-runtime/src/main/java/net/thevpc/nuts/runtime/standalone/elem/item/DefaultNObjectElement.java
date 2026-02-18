@@ -17,16 +17,16 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
     private List<NElement> params;
 
     public DefaultNObjectElement(String name, List<NElement> params, List<NElement> values) {
-        this(name,params,values,null,null);
+        this(name,params,values,null,null,null);
     }
 
-    public DefaultNObjectElement(String name, List<NElement> params, List<NElement> values, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+    public DefaultNObjectElement(String name, List<NElement> params, List<NElement> values, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
         super(
                 name == null && params == null ? NElementType.OBJECT
                         : name == null && params != null ? NElementType.PARAM_OBJECT
                         : name != null && params == null ? NElementType.NAMED_OBJECT
                         : NElementType.FULL_OBJECT,
-                affixes,diagnostics);
+                affixes,diagnostics,metadata);
         if (name != null) {
             NAssert.requireNamedTrue(NElementUtils.isValidElementName(name), "valid name : " + name);
         }

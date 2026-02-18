@@ -9,11 +9,11 @@ public class DefaultNOperatorSymbolElement extends AbstractNElement implements N
     private NOperatorSymbol symbol;
 
     public DefaultNOperatorSymbolElement(NOperatorSymbol op) {
-        this(op,null,null);
+        this(op,null,null,null);
     }
 
-    public DefaultNOperatorSymbolElement(NOperatorSymbol op, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
-        super(NElementType.OPERATOR_SYMBOL, affixes, diagnostics);
+    public DefaultNOperatorSymbolElement(NOperatorSymbol op, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
+        super(NElementType.OPERATOR_SYMBOL, affixes, diagnostics,metadata);
         this.symbol = op;
     }
 

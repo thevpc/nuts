@@ -8,10 +8,7 @@ import java.util.function.Supplier;
 
 
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.security.NAuthenticationAgent;
-import net.thevpc.nuts.security.NCredentialId;
-import net.thevpc.nuts.security.NSecretCaller;
-import net.thevpc.nuts.security.NSecretRunner;
+import net.thevpc.nuts.security.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -28,7 +25,7 @@ public class WrapperNAuthenticationAgent {
         this.ws = ws;
     }
 
-    public NAuthenticationAgent getCachedAuthenticationAgent(NCredentialId name) {
+    public NAuthenticationAgent getCachedAuthenticationAgent(NSecureToken name) {
         if (name == null) {
             return getCachedAuthenticationAgent("");
         }
@@ -48,33 +45,33 @@ public class WrapperNAuthenticationAgent {
         return a;
     }
 
-    public void runWithSecret(NCredentialId id, NSecretRunner consumer) {
+    public void runWithSecret(NSecureToken id, NSecretRunner consumer) {
         getCachedAuthenticationAgent(id).withSecret(id, new NSecretCaller<Object>() {
             @Override
-            public Object call(NCredentialId id, char[] secretm, Function<String, String> env) {
+            public Object call(NSecureToken id, NSecureString secretm, Function<String, String> env) {
                 consumer.run(id, secretm, env);
                 return null;
             }
         }, envProvider.get());
     }
 
-    public <T> T callWithSecret(NCredentialId id, NSecretCaller<T> consumer) {
+    public <T> T callWithSecret(NSecureToken id, NSecretCaller<T> consumer) {
         return getCachedAuthenticationAgent(id).withSecret(id, consumer, envProvider.get());
     }
 
-    public boolean verify(NCredentialId credentialsId, char[] candidate) {
+    public boolean verify(NSecureToken credentialsId, NSecureString candidate) {
         return getCachedAuthenticationAgent(credentialsId).verify(credentialsId, candidate, envProvider.get());
     }
 
-    public boolean removeCredentials(NCredentialId credentialsId) {
+    public boolean removeCredentials(NSecureToken credentialsId) {
         return getCachedAuthenticationAgent(credentialsId).removeCredentials(credentialsId, envProvider.get());
     }
 
-    public NCredentialId storeSecret(char[] credentials, String agent) {
+    public NSecureToken storeSecret(NSecureString credentials, String agent) {
         return getCachedAuthenticationAgent(agent).addSecret(credentials, envProvider.get());
     }
 
-    public NCredentialId updateSecret(NCredentialId old, char[] credentials, String agent) {
+    public NSecureToken updateSecret(NSecureToken old, NSecureString credentials, String agent) {
         if (NBlankable.isBlank(agent) || Objects.equals(old.getAgentId(), agent)) {
             return getCachedAuthenticationAgent(old).updateSecret(old, credentials, envProvider.get());
         } else {
@@ -84,11 +81,11 @@ public class WrapperNAuthenticationAgent {
         }
     }
 
-    public NCredentialId storeOneWay(char[] password, String agent) {
+    public NSecureToken storeOneWay(NSecureString password, String agent) {
         return getCachedAuthenticationAgent(agent).addOneWayCredential(password, envProvider.get());
     }
 
-    public NCredentialId updateOneWay(NCredentialId old, char[] credentials, String agent) {
+    public NSecureToken updateOneWay(NSecureToken old, NSecureString credentials, String agent) {
         if (NBlankable.isBlank(agent) || Objects.equals(old.getAgentId(), agent)) {
             return getCachedAuthenticationAgent(old).updateOneWay(old, credentials, envProvider.get());
         } else {

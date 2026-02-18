@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
-import net.thevpc.nuts.security.NCredentialId;
+import net.thevpc.nuts.security.NSecureToken;
 import net.thevpc.nuts.security.NNamedCredential;
 import net.thevpc.nuts.security.NNamedCredentialBuilder;
 
@@ -9,15 +9,15 @@ import java.util.function.Supplier;
 public class DefaultNNamedCredentialBuilder implements NNamedCredentialBuilder {
     private String name;
     private String userName;
-    private NCredentialId credentialId;
+    private NSecureToken credentialId;
     private String authType;
     private String resource;
-    private Supplier<NCredentialId> credentialIdSupplier;
+    private Supplier<NSecureToken> credentialIdSupplier;
 
     public DefaultNNamedCredentialBuilder() {
     }
 
-    public DefaultNNamedCredentialBuilder(String name, String userName, NCredentialId credentialId, String authType, String resource) {
+    public DefaultNNamedCredentialBuilder(String name, String userName, NSecureToken credentialId, String authType, String resource) {
         this.name = name;
         this.userName = userName;
         this.authType = authType;
@@ -57,7 +57,7 @@ public class DefaultNNamedCredentialBuilder implements NNamedCredentialBuilder {
     }
 
     @Override
-    public NCredentialId getCredentialId() {
+    public NSecureToken getCredentialId() {
         return credentialId;
     }
 
@@ -73,7 +73,7 @@ public class DefaultNNamedCredentialBuilder implements NNamedCredentialBuilder {
     }
 
     @Override
-    public NNamedCredentialBuilder setCredentialId(NCredentialId credentialId) {
+    public NNamedCredentialBuilder setCredentialId(NSecureToken credentialId) {
         this.credentialId = credentialId;
         credentialIdSupplier = () -> credentialId;
         return this;

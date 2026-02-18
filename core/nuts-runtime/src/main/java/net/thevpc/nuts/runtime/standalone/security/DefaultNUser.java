@@ -69,6 +69,6 @@ public class DefaultNUser implements NUser {
 
     @Override
     public NUserSpec toSpec() {
-        return new DefaultNUserSpec(username, null, new ArrayList<>(permissions), new ArrayList<>(groups));
+        return new DefaultNUserSpec(username, null, null, new ArrayList<>(permissions), new ArrayList<>(groups));
     }
 }

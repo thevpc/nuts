@@ -40,7 +40,7 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
 
     @Override
     public NCustomElement build() {
-        return new DefaultNCustomElement(value, affixes(), diagnostics());
+        return new DefaultNCustomElement(value, affixes(), diagnostics(),metadata());
     }
 
     @Override
@@ -108,6 +108,12 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
     @Override
     public NCustomElementBuilder clearAnnotations() {
         super.clearAnnotations();
+        return this;
+    }
+
+    @Override
+    public NCustomElementBuilder clearAffixes() {
+        super.clearAffixes();
         return this;
     }
 
@@ -217,4 +223,9 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
         return this;
     }
 
+    @Override
+    public NCustomElementBuilder metadata(NElementMetadata metadata) {
+        super.metadata(metadata);
+        return this;
+    }
 }

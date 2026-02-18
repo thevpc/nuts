@@ -142,6 +142,7 @@ public enum NElementType implements NEnum {
     /**
      * custom object that is not destructed. Cannot be null or primitive
      */
+    FRAGMENT(NElementTypeGroup.CUSTOM),
     CUSTOM(NElementTypeGroup.CUSTOM),
     EMPTY(NElementTypeGroup.OTHER),
     ;

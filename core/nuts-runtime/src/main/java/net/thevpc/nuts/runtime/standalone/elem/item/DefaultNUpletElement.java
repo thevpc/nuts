@@ -43,10 +43,11 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
     private final List<NElement> params;
     private String name;
 
-    public DefaultNUpletElement(String name, List<NElement> params, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+    public DefaultNUpletElement(String name, List<NElement> params, List<NBoundAffix> affixes,
+                                List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
         super(name == null ? NElementType.UPLET
                         : NElementType.NAMED_UPLET,
-                affixes, diagnostics);
+                affixes, diagnostics,metadata);
         if(name!=null){
             NAssert.requireNamedTrue(NElementUtils.isValidElementName(name), "valid name : " + name);
         }

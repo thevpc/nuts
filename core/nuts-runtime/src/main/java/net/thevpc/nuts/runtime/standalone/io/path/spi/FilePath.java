@@ -50,7 +50,7 @@ public class FilePath implements NPathSPI {
                 try (Stream<Path> files = Files.list(value)) {
                     //ensure closed!!
                     return NStream.ofIterable(files.collect(Collectors.toList())).map(
-                            NFunction.of(x -> fastPath(x),NElement.ofName("fastPath"))
+                            NFunction.of(x -> fastPath(x), NElement.ofName("fastPath"))
                     );
                 }
             } catch (IOException e) {
@@ -206,62 +206,64 @@ public class FilePath implements NPathSPI {
         if (options != null) {
             for (NPathOption o : options) {
                 if (o != null) {
-                    switch (o) {
-                        case NOFOLLOW_LINKS: {
-                            oo.add(LinkOption.NOFOLLOW_LINKS);
-                            break;
-                        }
-                        case READ: {
-                            oo.add(StandardOpenOption.READ);
-                            break;
-                        }
-                        case WRITE: {
-                            oo.add(StandardOpenOption.WRITE);
-                            break;
-                        }
-                        case APPEND: {
-                            oo.add(StandardOpenOption.APPEND);
-                            break;
-                        }
-                        case TRUNCATE_EXISTING: {
-                            oo.add(StandardOpenOption.TRUNCATE_EXISTING);
-                            break;
-                        }
-                        case CREATE: {
-                            oo.add(StandardOpenOption.CREATE);
-                            break;
-                        }
-                        case CREATE_NEW: {
-                            oo.add(StandardOpenOption.CREATE_NEW);
-                            break;
-                        }
-                        case DELETE_ON_CLOSE: {
-                            oo.add(StandardOpenOption.DELETE_ON_CLOSE);
-                            break;
-                        }
-                        case SPARSE: {
-                            oo.add(StandardOpenOption.SPARSE);
-                            break;
-                        }
-                        case SYNC: {
-                            oo.add(StandardOpenOption.SYNC);
-                            break;
-                        }
-                        case DSYNC: {
-                            oo.add(StandardOpenOption.DSYNC);
-                            break;
-                        }
-                        case NOSHARE_READ: {
-                            //oo.add(ExtendedOpenOption.NOSHARE_READ);
-                            break;
-                        }
-                        case NOSHARE_DELETE: {
-                            //oo.add(ExtendedOpenOption.NOSHARE_DELETE);
-                            break;
-                        }
-                        case NOSHARE_WRITE: {
-                            //oo.add(ExtendedOpenOption.NOSHARE_WRITE);
-                            break;
+                    if (o instanceof NPathStandardOption) {
+                        switch ((NPathStandardOption) o) {
+                            case NOFOLLOW_LINKS: {
+                                oo.add(LinkOption.NOFOLLOW_LINKS);
+                                break;
+                            }
+                            case READ: {
+                                oo.add(StandardOpenOption.READ);
+                                break;
+                            }
+                            case WRITE: {
+                                oo.add(StandardOpenOption.WRITE);
+                                break;
+                            }
+                            case APPEND: {
+                                oo.add(StandardOpenOption.APPEND);
+                                break;
+                            }
+                            case TRUNCATE_EXISTING: {
+                                oo.add(StandardOpenOption.TRUNCATE_EXISTING);
+                                break;
+                            }
+                            case CREATE: {
+                                oo.add(StandardOpenOption.CREATE);
+                                break;
+                            }
+                            case CREATE_NEW: {
+                                oo.add(StandardOpenOption.CREATE_NEW);
+                                break;
+                            }
+                            case DELETE_ON_CLOSE: {
+                                oo.add(StandardOpenOption.DELETE_ON_CLOSE);
+                                break;
+                            }
+                            case SPARSE: {
+                                oo.add(StandardOpenOption.SPARSE);
+                                break;
+                            }
+                            case SYNC: {
+                                oo.add(StandardOpenOption.SYNC);
+                                break;
+                            }
+                            case DSYNC: {
+                                oo.add(StandardOpenOption.DSYNC);
+                                break;
+                            }
+                            case NOSHARE_READ: {
+                                //oo.add(ExtendedOpenOption.NOSHARE_READ);
+                                break;
+                            }
+                            case NOSHARE_DELETE: {
+                                //oo.add(ExtendedOpenOption.NOSHARE_DELETE);
+                                break;
+                            }
+                            case NOSHARE_WRITE: {
+                                //oo.add(ExtendedOpenOption.NOSHARE_WRITE);
+                                break;
+                            }
                         }
                     }
                 }
@@ -524,9 +526,11 @@ public class FilePath implements NPathSPI {
                     if (x == null) {
                         return null;
                     }
-                    switch (x) {
-                        case FOLLOW_LINKS:
-                            return FileVisitOption.FOLLOW_LINKS;
+                    if (x instanceof NPathStandardOption) {
+                        switch ((NPathStandardOption) x) {
+                            case FOLLOW_LINKS:
+                                return FileVisitOption.FOLLOW_LINKS;
+                        }
                     }
                     return null;
                 }).filter(Objects::nonNull).toArray(FileVisitOption[]::new);
@@ -593,10 +597,10 @@ public class FilePath implements NPathSPI {
 
             Path fileName = path.getFileName();
             return new DefaultNPathInfo(
-                    fileName==null?"":fileName.toString(),
-                    path.toString(),type,targetType,targetPath,attrs.size(),isSymlink,lastModified,lastAccess,creationTime,perms,owner,
+                    fileName == null ? "" : fileName.toString(),
+                    path.toString(), type, targetType, targetPath, attrs.size(), isSymlink, lastModified, lastAccess, creationTime, perms, owner,
                     group
-            ) ;
+            );
         } catch (IOException e) {
             return DefaultNPathInfo.ofNotFound(path.toString());
         }
@@ -650,10 +654,12 @@ public class FilePath implements NPathSPI {
     public boolean walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
         Set<FileVisitOption> foptions = new HashSet<>();
         for (NPathOption option : options) {
-            switch (option) {
-                case FOLLOW_LINKS: {
-                    foptions.add(FileVisitOption.FOLLOW_LINKS);
-                    break;
+            if (option instanceof NPathStandardOption) {
+                switch ((NPathStandardOption) option) {
+                    case FOLLOW_LINKS: {
+                        foptions.add(FileVisitOption.FOLLOW_LINKS);
+                        break;
+                    }
                 }
             }
         }
@@ -916,7 +922,7 @@ public class FilePath implements NPathSPI {
         @NScore
         public static int getScore(NScorableContext context) {
             Object cri = context.getCriteria();
-            if(!(cri instanceof String)) {
+            if (!(cri instanceof String)) {
                 return NScorable.DEFAULT_SCORE;
             }
             String path = (String) cri;

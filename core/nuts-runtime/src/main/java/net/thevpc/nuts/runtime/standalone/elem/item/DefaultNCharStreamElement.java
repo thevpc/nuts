@@ -49,11 +49,11 @@ public class DefaultNCharStreamElement extends AbstractNElement implements NChar
     private final String blockIdentifier;
 
     public DefaultNCharStreamElement(String blockIdentifier, NReaderProvider value) {
-        this(blockIdentifier, value, null, null);
+        this(blockIdentifier, value, null, null,null);
     }
 
-    public DefaultNCharStreamElement(String blockIdentifier, NReaderProvider value, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
-        super(NElementType.CHAR_STREAM, affixes, diagnostics);
+    public DefaultNCharStreamElement(String blockIdentifier, NReaderProvider value, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
+        super(NElementType.CHAR_STREAM, affixes, diagnostics,metadata);
         this.value = value;
         this.blockIdentifier = NStringUtils.trim(blockIdentifier);
     }

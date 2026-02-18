@@ -10,6 +10,7 @@ public class DefaultNElementFormatter implements NElementFormatter {
     private boolean removeWhiteSpaces;
     private boolean removeSeparators;
     private boolean sanitize;
+    private boolean strict;
     private DefaultNElementFormatOptions options;
     public static final RemovedAffixesElementFormatterAction REMOVED_WHITESPACES_ELEMENT_FORMATTER_ACTION = new RemovedAffixesElementFormatterAction(null,
             a -> {
@@ -28,14 +29,16 @@ public class DefaultNElementFormatter implements NElementFormatter {
                 }
                 return false;
             });
-    public static final TsonFormatSanitizerAction TSON_FORMAT_SANITIZER_ACTION = new TsonFormatSanitizerAction();
+    public static final TsonFormatSanitizerAction TSON_FORMAT_SANITIZER_ACTION_COMPACT = new TsonFormatSanitizerAction(true);
+    public static final TsonFormatSanitizerAction TSON_FORMAT_SANITIZER_ACTION_SAFE = new TsonFormatSanitizerAction(false);
 
     public static final NElementFormatter COMPACT = new DefaultNElementFormatter(
             Collections.emptyList(),
             NMaps.of(
                     "removeWhiteSpaces", true,
                     "removeSeparators", true,
-                    "sanitize", true
+                    "sanitize", true,
+                    "strict", true
             )
 
     );
@@ -45,6 +48,7 @@ public class DefaultNElementFormatter implements NElementFormatter {
                     "removeWhiteSpaces", (Object)true,
                     "removeSeparators", true,
                     "sanitize", true,
+                    "strict", false,
                     "columns", 80,
                     "complexity", 30
             )
@@ -55,7 +59,8 @@ public class DefaultNElementFormatter implements NElementFormatter {
             NMaps.of(
                     "removeWhiteSpaces", false,
                     "removeSeparators", false,
-                    "sanitize", true
+                    "sanitize", true,
+                    "strict", false
             )
     );
     public static final NElementFormatter VERBATIM = new DefaultNElementFormatter(
@@ -75,6 +80,7 @@ public class DefaultNElementFormatter implements NElementFormatter {
         this.removeWhiteSpaces = this.options.getBoolean("removeWhiteSpaces", () -> false);
         this.removeSeparators = this.options.getBoolean("removeSeparators", () -> false);
         this.sanitize = this.options.getBoolean("sanitize", () -> false);
+        this.strict = this.options.getBoolean("strict", () -> false);
     }
 
     @Override
@@ -112,7 +118,11 @@ public class DefaultNElementFormatter implements NElementFormatter {
             action.apply(fc.withBuilder(builder));
         }
         if (sanitize) {
-            TSON_FORMAT_SANITIZER_ACTION.apply(fc);
+            if(strict) {
+                TSON_FORMAT_SANITIZER_ACTION_COMPACT.apply(fc);
+            }else{
+                TSON_FORMAT_SANITIZER_ACTION_SAFE.apply(fc);
+            }
         }
         return Collections.singletonList(builder.build());
     }
@@ -121,6 +131,7 @@ public class DefaultNElementFormatter implements NElementFormatter {
     public NElementFormatterBuilder builder() {
         Map<String, Object> m = options.toMap();
         m.put("sanitize", sanitize);
+        m.put("strict", strict);
         m.put("removeWhiteSpaces", removeWhiteSpaces);
         m.put("removeSeparators", removeSeparators);
         return new DefaultNElementFormatterBuilder(actions, m);

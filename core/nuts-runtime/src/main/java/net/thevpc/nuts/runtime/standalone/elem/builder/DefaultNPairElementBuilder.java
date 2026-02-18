@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.builder;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
+import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPairElement;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
@@ -59,7 +60,7 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
 
     @Override
     public NPairElement build() {
-        return new DefaultNPairElement(key, value, affixes(), diagnostics());
+        return new DefaultNPairElement(CoreNElementUtils.defragment(key), CoreNElementUtils.defragment(value), affixes(), diagnostics(),metadata());
     }
 
     @Override
@@ -210,6 +211,12 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
     }
 
     @Override
+    public NPairElementBuilder clearAffixes() {
+        super.clearAffixes();
+        return this;
+    }
+
+    @Override
     public NPairElementBuilder clearComments() {
         super.clearComments();
         return this;
@@ -317,4 +324,9 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
         return this;
     }
 
+    @Override
+    public NPairElementBuilder metadata(NElementMetadata metadata) {
+        super.metadata(metadata);
+        return this;
+    }
 }

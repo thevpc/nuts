@@ -49,21 +49,10 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         return ret;
     }
 
-    public NElementTokenImpl continueReadBullet(NElementTokenType type, int line, int column, long pos) {
-        int c0 = reader.peek();
-
-        int c1 = reader.peekAt(1);
-        if (c1 != -1) {
-            if (Character.isDigit(c1)) {
-                return continueReadNumber();
-            }
-            if (c1 != '¶' && Character.isAlphabetic(c1)) {
-                return continueReadIdentifier();
-            }
-        }
+    public NElementTokenImpl continueReadBullet(NElementTokenType type, String chars,int line, int column, long pos) {
         StringBuilder image = new StringBuilder();
         int count = 0;
-        while (reader.peek() == c0) {
+        while (chars.indexOf(reader.peek())>=0) {
             image.append((char) reader.read());
             count++;
             if (count >= 10) break; // safety
@@ -120,15 +109,15 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 case '●':
                 case '•':
                 {
-                    return continueReadBullet(NElementTokenType.UNORDERED_LIST, line, column, pos);
+                    return continueReadBullet(NElementTokenType.UNORDERED_LIST,"●•", line, column, pos);
                 }
                 case '■':
                 case '▪':
                 {
-                    return continueReadBullet(NElementTokenType.ORDERED_LIST, line, column, pos);
+                    return continueReadBullet(NElementTokenType.ORDERED_LIST, "■▪",line, column, pos);
                 }
                 case '¶': {
-                    int c2 = reader.peek();
+                    int c2 = reader.peekAt(1);
                     if (c2 == '¶') {
                         return continueReadUserMultiLine();
                     }
@@ -1299,25 +1288,25 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     case 8:
                         return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
-                                new DefaultNNumberElement(NElementType.UBYTE, (short) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                new DefaultNNumberElement(NElementType.UBYTE, (short) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
                     case 16:
                         return new NElementTokenImpl(image.toString(),
                                 NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
-                                new DefaultNNumberElement(NElementType.USHORT, 0, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                new DefaultNNumberElement(NElementType.USHORT, 0, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
                     case 32:
                         return new NElementTokenImpl(image.toString(),
                                 NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
-                                new DefaultNNumberElement(NElementType.UINT, 0L, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                new DefaultNNumberElement(NElementType.UINT, 0L, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
                     case 64:
                         return new NElementTokenImpl(image.toString(),
                                 NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
-                                new DefaultNNumberElement(NElementType.ULONG, BigInteger.ZERO, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                new DefaultNNumberElement(NElementType.ULONG, BigInteger.ZERO, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
                 }
             } else {
@@ -1325,27 +1314,27 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     case 8:
                         return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
-                                new DefaultNNumberElement(NElementType.BYTE, (byte) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                new DefaultNNumberElement(NElementType.BYTE, (byte) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
                     case 16:
                         return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
-                                new DefaultNNumberElement(NElementType.SHORT, (short) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                new DefaultNNumberElement(NElementType.SHORT, (short) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
                     case 32:
                         return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
-                                new DefaultNNumberElement(NElementType.INT, (int) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                new DefaultNNumberElement(NElementType.INT, (int) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
                     case 64:
                         return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
-                                new DefaultNNumberElement(NElementType.LONG, 0L, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                new DefaultNNumberElement(NElementType.LONG, 0L, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
                     case -1:
                         return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
-                                new DefaultNNumberElement(NElementType.BIG_INT, BigInteger.ZERO, NNumberLayout.DECIMAL, "", image.toString(), null, null)
+                                new DefaultNNumberElement(NElementType.BIG_INT, BigInteger.ZERO, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
                 }
             }
@@ -1364,7 +1353,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Float.MAX_VALUE,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     case "min":
                         return new DefaultNNumberElement(
@@ -1372,7 +1361,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Float.MIN_VALUE,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     case "pinf":
                         return new DefaultNNumberElement(
@@ -1380,7 +1369,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Float.POSITIVE_INFINITY,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     case "ninf":
                         return new DefaultNNumberElement(
@@ -1388,7 +1377,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Float.NEGATIVE_INFINITY,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     case "nan":
                         return new DefaultNNumberElement(
@@ -1396,7 +1385,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Float.NaN,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                 }
             } else {
@@ -1407,7 +1396,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Double.MAX_VALUE,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     case "min":
                         return new DefaultNNumberElement(
@@ -1415,7 +1404,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Double.MIN_VALUE,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     case "pinf":
                         return new DefaultNNumberElement(
@@ -1423,7 +1412,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Double.POSITIVE_INFINITY,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     case "ninf":
                         return new DefaultNNumberElement(
@@ -1431,7 +1420,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Double.NEGATIVE_INFINITY,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     case "nan":
                         return new DefaultNNumberElement(
@@ -1439,7 +1428,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Double.NaN,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                 }
             }
@@ -1454,7 +1443,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 (short) 255,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     } else if ("min".equals(name) || "ninf".equals(name)) {
                         return new DefaultNNumberElement(
@@ -1462,7 +1451,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 (short) 0,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     }
                     break;
@@ -1474,7 +1463,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 (int) 65535,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     } else if ("min".equals(name) || "ninf".equals(name)) {
                         return new DefaultNNumberElement(
@@ -1482,7 +1471,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 (int) 0,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     }
                     break;
@@ -1494,7 +1483,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 4294967295L,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     } else if ("min".equals(name) || "ninf".equals(name)) {
                         return new DefaultNNumberElement(
@@ -1502,7 +1491,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 0L,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     }
                     break;
@@ -1513,7 +1502,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 new BigInteger("18446744073709551615"),
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     } else if ("min".equals(name) || "ninf".equals(name)) {
                         return new DefaultNNumberElement(
@@ -1521,7 +1510,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 BigInteger.ZERO,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     }
                     break;
@@ -1538,7 +1527,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                     Integer.MAX_VALUE,
                                     info.numberLayout,
                                     info.suffix,
-                                    image.toString(), null, null
+                                    image.toString(), null, null, null
                             );
                         }
                         case "min": {
@@ -1547,7 +1536,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                     Integer.MIN_VALUE,
                                     info.numberLayout,
                                     info.suffix,
-                                    image.toString(), null, null
+                                    image.toString(), null, null, null
                             );
                         }
                         case "nan": {
@@ -1556,7 +1545,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                     Double.NaN,
                                     info.numberLayout,
                                     info.suffix,
-                                    image.toString(), null, null
+                                    image.toString(), null, null, null
                             );
                         }
                         case "pinf": {
@@ -1565,7 +1554,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                     Double.POSITIVE_INFINITY,
                                     info.numberLayout,
                                     info.suffix,
-                                    image.toString(), null, null
+                                    image.toString(), null, null, null
                             );
                         }
                         case "ninf": {
@@ -1574,7 +1563,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                     Double.NEGATIVE_INFINITY,
                                     info.numberLayout,
                                     info.suffix,
-                                    image.toString(), null, null
+                                    image.toString(), null, null, null
                             );
                         }
                     }
@@ -1587,7 +1576,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Byte.MAX_VALUE,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     } else if ("min".equals(name) || "ninf".equals(name)) {
                         return new DefaultNNumberElement(
@@ -1595,7 +1584,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Byte.MIN_VALUE,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     }
                     break;
@@ -1607,7 +1596,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Short.MAX_VALUE,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     } else if ("min".equals(name) || "ninf".equals(name)) {
                         return new DefaultNNumberElement(
@@ -1615,7 +1604,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Short.MIN_VALUE,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     }
                     break;
@@ -1626,7 +1615,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Integer.MAX_VALUE,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     } else if ("min".equals(name) || "ninf".equals(name)) {
                         return new DefaultNNumberElement(
@@ -1634,7 +1623,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Integer.MIN_VALUE,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     }
                     break;
@@ -1645,7 +1634,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Long.MAX_VALUE,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     } else if ("min".equals(name) || "ninf".equals(name)) {
                         return new DefaultNNumberElement(
@@ -1653,7 +1642,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 Long.MIN_VALUE,
                                 info.numberLayout,
                                 info.suffix,
-                                image.toString(), null, null
+                                image.toString(), null, null, null
                         );
                     }
                     break;
@@ -1939,7 +1928,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 new DefaultNNumberElement(
                         numberElementType, numberValue, layout, info.suffix,
                         image.toString(),
-                        null, null
+                        null, null, null
                 )
                 , errorMessage
         );

@@ -33,6 +33,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.security.NUserSpec;
 import net.thevpc.nuts.spi.*;
@@ -69,26 +70,29 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
         }
         NSecurityManager sec = NSecurityManager.of();
 
-        NSecurityManager.of().addUser(
-                NUserSpec.of("guest")
-                        .setCredential(NSecurityManager.of().addOneWayCredential("user".toCharArray()))
-                        .addPermissions(
-                                NConstants.Permissions.FETCH_DESC,
-                                NConstants.Permissions.FETCH_CONTENT,
-                                NConstants.Permissions.DEPLOY
-                        )
-        );
-
-        NSecurityManager.of().addUser(
-                NUserSpec.of("contributor")
-                        .setCredential(NSecurityManager.of().addOneWayCredential("user".toCharArray()))
-                        .addPermissions(
-                                NConstants.Permissions.FETCH_DESC,
-                                NConstants.Permissions.FETCH_CONTENT,
-                                NConstants.Permissions.DEPLOY,
-                                NConstants.Permissions.UNDEPLOY
-                        )
-        );
+        try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
+            NSecurityManager.of().addUser(
+                    NUserSpec.of("guest")
+                            .setCredential(ss)
+                            .addPermissions(
+                                    NConstants.Permissions.FETCH_DESC,
+                                    NConstants.Permissions.FETCH_CONTENT,
+                                    NConstants.Permissions.DEPLOY
+                            )
+            );
+        }
+        try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
+            NSecurityManager.of().addUser(
+                    NUserSpec.of("contributor")
+                            .setCredential(ss)
+                            .addPermissions(
+                                    NConstants.Permissions.FETCH_DESC,
+                                    NConstants.Permissions.FETCH_CONTENT,
+                                    NConstants.Permissions.DEPLOY,
+                                    NConstants.Permissions.UNDEPLOY
+                            )
+            );
+        }
     }
 
     @Override

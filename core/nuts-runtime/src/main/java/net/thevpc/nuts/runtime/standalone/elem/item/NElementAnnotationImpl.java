@@ -18,7 +18,7 @@ public class NElementAnnotationImpl implements NElementAnnotation {
 
     public NElementAnnotationImpl(String name, List<NElement> params, List<NBoundAffix> affixes) {
         this.name = name;
-        this.params = CoreNUtils.copyNonNullUnmodifiableList(params);
+        this.params = params==null?null:CoreNUtils.copyNonNullUnmodifiableList(params);
         this.affixes = CoreNUtils.copyAndFilterUnmodifiableList(affixes, x -> {
             if (x == null) {
                 return false;
@@ -66,6 +66,27 @@ public class NElementAnnotationImpl implements NElementAnnotation {
             return NOptional.ofNamedEmpty(NMsg.ofC("param %s", index));
         }
         return NOptional.of(params.get(index));
+    }
+
+    @Override
+    public NOptional<NElement> param(String name) {
+        if(params!=null) {
+            for (NElement x : params) {
+                if (x instanceof NPairElement) {
+                    NPairElement e = (NPairElement) x;
+                    if (name == null) {
+                        if (e.key().isNull()) {
+                            return NOptional.of(e.value());
+                        }
+                    } else if (e.key().isAnyString()) {
+                        if (Objects.equals(e.key().asStringValue().get(), name)) {
+                            return NOptional.of(e.value());
+                        }
+                    }
+                }
+            }
+        }
+        return NOptional.ofNamedEmpty("property " + name);
     }
 
     @Override

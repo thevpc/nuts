@@ -71,6 +71,8 @@ public interface NBinaryStreamElementBuilder extends NElementBuilder {
 
     NBinaryStreamElementBuilder clearAnnotations();
 
+    NBinaryStreamElementBuilder clearAffixes();
+
     NBinaryStreamElementBuilder addLeadingComment(NElementComment comment);
 
     NBinaryStreamElementBuilder addLeadingComments(NElementComment... comments);
@@ -94,4 +96,6 @@ public interface NBinaryStreamElementBuilder extends NElementBuilder {
     NBinaryStreamElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NBinaryStreamElementBuilder addAffixes(List<NBoundAffix> affixes);
+
+    NBinaryStreamElementBuilder metadata(NElementMetadata metadata);
 }

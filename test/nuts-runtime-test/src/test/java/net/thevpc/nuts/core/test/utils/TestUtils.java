@@ -38,13 +38,6 @@ public class TestUtils {
 
     public static FileSystemStash STASH = new FileSystemStash();
 
-    public static void main(String[] args) {
-        if (System.console() != null && System.getenv().get("TERM") != null) {
-            TestUtils.println("\u001B[36m"+"Coloured Menu option"+"\u001B[0m");
-        } else {
-            TestUtils.println("Menu option");
-        }
-    }
     public static Set<String> createNamesSet(String... names) {
         return new HashSet<String>(Arrays.asList(names));
     }

@@ -1,10 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import java.lang.reflect.Type;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.steps.NElementStepAnnotationParam;
+import net.thevpc.nuts.runtime.standalone.elem.steps.NElementStepChild;
+import net.thevpc.nuts.runtime.standalone.elem.steps.NElementStepParam;
+import net.thevpc.nuts.runtime.standalone.elem.steps.NElementStepSubList;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.UserElementMapperStore;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementSelectorFilters;
@@ -304,4 +309,61 @@ public class DefaultNElements implements NElements {
         return DefaultNElementFormatter.PRETTY;
     }
 
+
+    @Override
+    public NElementMetadata createElementMetadata() {
+        return DefaultNElementMetadata.EMPTY;
+    }
+
+    @Override
+    public NElementMetadata createElementMetadata(Object key, Object value) {
+        return NElementMetadata.of(key, value);
+    }
+
+    @Override
+    public NElementMetadata createElementMetadata(Map<Object, Object> any) {
+        return NElementMetadata.of(any);
+    }
+
+    @Override
+    public NElementStep createStepChild(String name) {
+        return new NElementStepChild(name);
+    }
+
+    @Override
+    public NElementStep createStepChild(int index) {
+        return new NElementStepChild(index);
+    }
+
+    @Override
+    public NElementStep createStepParam(String name) {
+        return new NElementStepParam(name);
+    }
+
+    @Override
+    public NElementStep createStepParam(int index) {
+        return new NElementStepParam(index);
+    }
+
+    @Override
+    public NElementStep createStepAnnotationParam(int paramIndex, String name) {
+        return new NElementStepAnnotationParam(paramIndex, name);
+    }
+
+    @Override
+    public NElementStep createStepAnnotationParam(int paramIndex, int index) {
+        return new NElementStepAnnotationParam(paramIndex, index);
+    }
+
+    @Override
+    public NElementStep createStepSubList(int index) {
+        return new NElementStepSubList(index);
+    }
+
+    @Override
+    public NElementNavigator createRootNavigator(NElement element) {
+        return new DefaultNElementNavigator(
+                null, element, NElementPath.ofRoot()
+        );
+    }
 }

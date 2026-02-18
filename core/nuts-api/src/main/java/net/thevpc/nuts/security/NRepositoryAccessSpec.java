@@ -47,7 +47,7 @@ public interface NRepositoryAccessSpec {
 
     String getRemoteUserName();
 
-    NCredentialId getRemoteCredential();
+    NSecureString getRemoteCredential();
 
     String getRemoteAuthType();
 
@@ -55,7 +55,7 @@ public interface NRepositoryAccessSpec {
 
     NRepositoryAccessSpec setRemoteUserName(String remoteUserName);
 
-    NRepositoryAccessSpec setRemoteCredential(NCredentialId remoteCredential);
+    NRepositoryAccessSpec setRemoteCredential(NSecureString remoteCredential);
 
     NRepositoryAccessSpec setRemoteAuthType(String remoteAuthType);
 

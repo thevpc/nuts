@@ -39,25 +39,25 @@ public interface NFlatExprElementBuilder extends NElementBuilder {
         return NElement.ofFlatExprBuilder();
     }
 
+    NFlatExprElementBuilder clear();
     NOptional<NElement> get(int index);
-
-    NFlatExprElementBuilder set(int index, NOperatorSymbol op);
-
-    NFlatExprElementBuilder set(int index, NElement element);
-
-    NFlatExprElementBuilder add(NOperatorSymbol op);
-
-    NFlatExprElementBuilder add(NElement element);
 
     NFlatExprElementBuilder setAt(int index, NElement element);
 
     NFlatExprElementBuilder setAt(int index, NOperatorSymbol element);
+
+    NFlatExprElementBuilder add(NOperatorSymbol op);
+
+    NFlatExprElementBuilder add(NElement element);
+    NFlatExprElementBuilder setChildren(List<NElement> elements);
+
 
     List<NElement> children();
 
     NFlatExprElementBuilder doWith(Consumer<NFlatExprElementBuilder> con);
 
     int size();
+    NFlatExprElementBuilder clearChildren();
 
     NFlatExprElement build();
 
@@ -86,6 +86,8 @@ public interface NFlatExprElementBuilder extends NElementBuilder {
 
     NFlatExprElementBuilder clearAnnotations();
 
+    NFlatExprElementBuilder clearAffixes();
+
     NFlatExprElementBuilder addLeadingComment(NElementComment comment);
 
     NFlatExprElementBuilder addLeadingComments(NElementComment... comments);
@@ -109,5 +111,7 @@ public interface NFlatExprElementBuilder extends NElementBuilder {
     NFlatExprElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NFlatExprElementBuilder addAffixes(List<NBoundAffix> affixes);
+
+    NFlatExprElementBuilder metadata(NElementMetadata metadata);
 
 }

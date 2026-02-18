@@ -25,10 +25,7 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.util.NEnum;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NEnumUtils;
-import net.thevpc.nuts.util.NNameFormat;
+import net.thevpc.nuts.util.*;
 
 import java.nio.file.LinkOption;
 
@@ -39,52 +36,38 @@ import java.nio.file.LinkOption;
  * @app.category Base
  * @since 0.8.3
  */
-public enum NPathOption implements NEnum {
+public interface NPathOption {
     /**
      * follow links
      */
-    FOLLOW_LINKS,
-    NOFOLLOW_LINKS,
-
-    /**
-     * replace existing file
-     */
-    REPLACE_EXISTING,
-
+    NPathOption FOLLOW_LINKS = NPathStandardOption.FOLLOW_LINKS;
+    NPathOption NOFOLLOW_LINKS = NPathStandardOption.NOFOLLOW_LINKS;
+    NPathOption REPLACE_EXISTING = NPathStandardOption.REPLACE_EXISTING;
     /**
      * copy attributes to the new file.
      */
-    COPY_ATTRIBUTES,
-
-    /**
-     * move the file as an atomic file system operation.
-     */
-    ATOMIC,
-
-    /**
-     * operations involving the path should be interruptible.
-     */
-    INTERRUPTIBLE,
-
+    NPathOption COPY_ATTRIBUTES = NPathStandardOption.COPY_ATTRIBUTES;
+    NPathOption ATOMIC = NPathStandardOption.ATOMIC;
+    NPathOption INTERRUPTIBLE = NPathStandardOption.INTERRUPTIBLE;
     /**
      * operations are implemented in two passes. copy/move will use a temporary file
      */
-    SAFE,
+    NPathOption SAFE = NPathStandardOption.SAFE;
 
     /**
      * log the copy/move progress
      */
-    LOG,
+    NPathOption LOG = NPathStandardOption.LOG;
     /**
      * log the copy/move progress
      */
-    TRACE,
-    READ,
+    NPathOption TRACE = NPathStandardOption.TRACE;
+    NPathOption READ = NPathStandardOption.READ;
 
     /**
      * Open for write access.
      */
-    WRITE,
+    NPathOption WRITE = NPathStandardOption.WRITE;
 
     /**
      * If the file is opened for {@link #WRITE} access then bytes will be written
@@ -93,14 +76,14 @@ public enum NPathOption implements NEnum {
      * <p> If the file is opened for write access by other programs, then it
      * is file system specific if writing to the end of the file is atomic.
      */
-    APPEND,
+    NPathOption APPEND = NPathStandardOption.APPEND;
 
     /**
      * If the file already exists and It's opened for {@link #WRITE}
      * access, then its length is truncated to 0. This option is ignored
      * if the file is opened only for {@link #READ} access.
      */
-    TRUNCATE_EXISTING,
+    NPathOption TRUNCATE_EXISTING = NPathStandardOption.TRUNCATE_EXISTING;
 
     /**
      * Create a new file if it does not exist.
@@ -109,7 +92,7 @@ public enum NPathOption implements NEnum {
      * if it does not exist is atomic with respect to other file system
      * operations.
      */
-    CREATE,
+    NPathOption CREATE = NPathStandardOption.CREATE;
 
     /**
      * Create a new file, failing if the file already exists.
@@ -117,7 +100,7 @@ public enum NPathOption implements NEnum {
      * if it does not exist is atomic with respect to other file system
      * operations.
      */
-    CREATE_NEW,
+    NPathOption CREATE_NEW = NPathStandardOption.CREATE_NEW;
 
     /**
      * Delete on close. When this option is present then the implementation
@@ -141,7 +124,7 @@ public enum NPathOption implements NEnum {
      * when opening an existing file that is a symbolic link then it may fail
      * (by throwing {@link java.io.IOException}).
      */
-    DELETE_ON_CLOSE,
+    NPathOption DELETE_ON_CLOSE = NPathStandardOption.DELETE_ON_CLOSE;
 
     /**
      * Sparse file. When used with the {@link #CREATE_NEW} option then this
@@ -149,7 +132,7 @@ public enum NPathOption implements NEnum {
      * option is ignored when the file system does not support the creation of
      * sparse files.
      */
-    SPARSE,
+    NPathOption SPARSE = NPathStandardOption.SPARSE;
 
     /**
      * Requires that every update to the file's content or metadata be written
@@ -157,7 +140,7 @@ public enum NPathOption implements NEnum {
      *
      * @see <a href="package-summary.html#integrity">Synchronized I/O file integrity</a>
      */
-    SYNC,
+    NPathOption SYNC = NPathStandardOption.SYNC;
 
     /**
      * Requires that every update to the file's content be written
@@ -165,32 +148,20 @@ public enum NPathOption implements NEnum {
      *
      * @see <a href="package-summary.html#integrity">Synchronized I/O file integrity</a>
      */
-    DSYNC,
-    NOSHARE_READ,
-    NOSHARE_WRITE,
-    NOSHARE_DELETE,
-    ;
+    NPathOption DSYNC = NPathStandardOption.DSYNC;
+    NPathOption NOSHARE_READ = NPathStandardOption.NOSHARE_READ;
+    NPathOption NOSHARE_WRITE = NPathStandardOption.NOSHARE_WRITE;
+    NPathOption NOSHARE_DELETE = NPathStandardOption.NOSHARE_DELETE;
 
-    /**
-     * lower-cased identifier for the enum entry
-     */
-    private final String id;
-
-    NPathOption() {
-        this.id = NNameFormat.ID_NAME.format(name());
+    static NPathCredentialsOption ofCredentials(String userName, String secret) {
+        return NPathCredentialsOption.of(userName, secret);
     }
 
-    public static NOptional<NPathOption> parse(String value) {
-        return NEnumUtils.parseEnum(value, NPathOption.class);
+    static NPathCredentialsOption ofHttpBasicCredentials(String userName, String secret) {
+        return NPathCredentialsOption.ofHttpBasic(userName, secret);
     }
 
-
-    /**
-     * lower cased identifier.
-     *
-     * @return lower cased identifier
-     */
-    public String id() {
-        return id;
+    static NPathCredentialsOption ofHttpBearerCredentials(String secret) {
+        return NPathCredentialsOption.ofHttpBearer(secret);
     }
 }

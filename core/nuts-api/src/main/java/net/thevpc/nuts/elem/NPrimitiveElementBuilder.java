@@ -158,6 +158,8 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
 
     NPrimitiveElementBuilder clearAnnotations();
 
+    NPrimitiveElementBuilder clearAffixes();
+
     NPrimitiveElementBuilder addLeadingComment(NElementComment comment);
 
     NPrimitiveElementBuilder addLeadingComments(NElementComment... comments);
@@ -181,4 +183,6 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
     NPrimitiveElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NPrimitiveElementBuilder addAffixes(List<NBoundAffix> affixes);
+
+    NPrimitiveElementBuilder metadata(NElementMetadata metadata);
 }

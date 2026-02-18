@@ -17,19 +17,19 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
     private String raw;
 
     public DefaultNNumberElement(NElementType type, Number value) {
-        this(type, value, null, null, null,null,null);
+        this(type, value, null, null, null,null,null,null);
     }
 
     public DefaultNNumberElement(NElementType type, Number value, NNumberLayout layout, String suffix) {
-        this(type, value, layout, suffix, null,null,null);
+        this(type, value, layout, suffix, null,null,null,null);
     }
 
     public DefaultNNumberElement(NElementType type, Number value,
                                  NNumberLayout layout,
                                  String suffix,
                                  String raw,
-                                 List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
-        super(type, value, affixes,diagnostics);
+                                 List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
+        super(type, value, affixes,diagnostics,metadata);
         this.layout = layout == null ? NNumberLayout.DECIMAL : layout;
         this.suffix = NStringUtils.trimToNull(suffix);
         this.raw = NStringUtils.trimToNull(raw);
@@ -146,7 +146,7 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
                 layout,
                 suffix,
                 null,
-                affixes(), diagnostics())
+                affixes(), diagnostics(),metadata())
         );
     }
 

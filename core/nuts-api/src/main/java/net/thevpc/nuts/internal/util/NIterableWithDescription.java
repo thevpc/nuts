@@ -35,7 +35,7 @@ public class NIterableWithDescription<T> implements NIterable<T> {
         }
         if (a.isObject()) {
             return b.builder()
-                    .addAll(a.asObject().get())
+                    .copyFrom(a.asObject().get())
                     .build()
                     ;
         } else {

@@ -66,7 +66,7 @@ public interface NSecurityManager extends NComponent {
      * @param password user password
      * @return {@code this} instance
      */
-    NSecurityManager login(String username, char[] password);
+    NSecurityManager login(String username, NSecureString password);
 
     /**
      * log out from last logged in user (if any) and pop out from user name stack.
@@ -135,7 +135,7 @@ public interface NSecurityManager extends NComponent {
      * @return true if mode was switched correctly
      * @since 0.5.7
      */
-    boolean setSecureMode(boolean secure, char[] adminPassword);
+    boolean setSecureMode(boolean secure, NSecureString adminPassword);
 
     /**
      * return true if current user has admin privileges
@@ -170,11 +170,11 @@ public interface NSecurityManager extends NComponent {
      */
     boolean isSecureMode();
 
-    <T> T callWithSecret(NCredentialId id, NSecretCaller<T> caller);
+    <T> T callWithSecret(NSecureToken id, NSecretCaller<T> caller);
 
-    void runWithSecret(NCredentialId id, NSecretRunner runner);
+    void runWithSecret(NSecureToken id, NSecretRunner runner);
 
-    boolean verify(NCredentialId credentialsId, char[] candidate);
+    boolean verify(NSecureToken credentialsId, NSecureString candidate);
 
     /**
      * remove existing credentials with the given id The {@code credentialsId}
@@ -184,19 +184,19 @@ public interface NSecurityManager extends NComponent {
      * @param credentialsId credentials-id
      * @return credentials
      */
-    boolean removeCredentials(NCredentialId credentialsId);
+    boolean removeCredentials(NSecureToken credentialsId);
 
-    NCredentialId addSecret(char[] credentials);
+    NSecureToken addSecret(NSecureString credentials);
 
-    NCredentialId addSecret(char[] credentials, String agent);
+    NSecureToken addSecret(NSecureString credentials, String agent);
 
-    NCredentialId updateSecret(NCredentialId old, char[] credentials, String agent);
+    NSecureToken updateSecret(NSecureToken old, NSecureString credentials, String agent);
 
-    NCredentialId addOneWayCredential(char[] password);
+    NSecureToken addOneWayCredential(NSecureString password);
 
-    NCredentialId addOneWayCredential(char[] password, String agent);
+    NSecureToken addOneWayCredential(NSecureString password, String agent);
 
-    NCredentialId updateOneWay(NCredentialId old, char[] credentials, String agent);
+    NSecureToken updateOneWayCredential(NSecureToken old, NSecureString credentials, String agent);
 
     NSecurityManager addNamedCredential(NNamedCredential credential);
 
@@ -221,4 +221,10 @@ public interface NSecurityManager extends NComponent {
     NUserSpec createUserUpdateQuery(String username);
 
     NRepositoryAccessSpec createRepositoryAccessSpec(String userName, String repository);
+
+    NSecureString createEmptySecureString();
+
+    NSecureString createSecureString(char[] content);
+
+    NSecureString createUnsecureString(String string);
 }

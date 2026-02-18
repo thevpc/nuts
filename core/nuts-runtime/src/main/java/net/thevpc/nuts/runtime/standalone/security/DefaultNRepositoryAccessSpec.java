@@ -1,10 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
-import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.security.NCredentialId;
-import net.thevpc.nuts.security.NRepositoryAccess;
+import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NRepositoryAccessSpec;
 import net.thevpc.nuts.util.NBlankable;
 
@@ -16,7 +13,7 @@ public class DefaultNRepositoryAccessSpec implements NRepositoryAccessSpec {
     private String userName;
     private String repository;
     private String remoteUserName;
-    private NCredentialId remoteCredential;
+    private NSecureString remoteCredential;
     private String remoteAuthType;
     private List<String> permissions;
 
@@ -25,7 +22,7 @@ public class DefaultNRepositoryAccessSpec implements NRepositoryAccessSpec {
         this.repository = repository;
     }
 
-    public DefaultNRepositoryAccessSpec(String userName, String repository, String remoteUserName, NCredentialId remoteCredential, String remoteAuthType, List<String> permissions) {
+    public DefaultNRepositoryAccessSpec(String userName, String repository, String remoteUserName, NSecureString remoteCredential, String remoteAuthType, List<String> permissions) {
         this.userName = userName;
         this.repository = repository;
         this.remoteUserName = remoteUserName;
@@ -41,7 +38,7 @@ public class DefaultNRepositoryAccessSpec implements NRepositoryAccessSpec {
     }
 
     @Override
-    public DefaultNRepositoryAccessSpec setRemoteCredential(NCredentialId remoteCredential) {
+    public DefaultNRepositoryAccessSpec setRemoteCredential(NSecureString remoteCredential) {
         this.remoteCredential = remoteCredential;
         return this;
     }
@@ -103,7 +100,7 @@ public class DefaultNRepositoryAccessSpec implements NRepositoryAccessSpec {
     }
 
     @Override
-    public NCredentialId getRemoteCredential() {
+    public NSecureString getRemoteCredential() {
         return remoteCredential;
     }
 

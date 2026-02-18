@@ -19,7 +19,7 @@ documentVersion="1.0"
 documentColorAccent=3
 //---------------------------------------------
 
-include("/home/vpc/xprojects/nuts-world/nuts-productivity/ntexup-templates/classic/v1.0/theme")
+include("/home/vpc/xprojects/nuts-world/nuts-productivity/ntexup/ntexup-templates/classic/v1.0/theme")
 cover-slide(){
 }
 include("pages")

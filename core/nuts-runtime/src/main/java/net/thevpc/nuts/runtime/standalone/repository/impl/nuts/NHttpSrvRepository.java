@@ -212,10 +212,11 @@ public class NHttpSrvRepository extends NCachedRepository {
         }
         NSecurityManager.of().runWithSecret(c.password, new NSecretRunner() {
             @Override
-            public void run(NCredentialId id, char[] secretm, Function<String, String> env) {
-                r.addPart("ul", c.login)
-                        .addPart("up", new String(secretm));
-
+            public void run(NSecureToken id, NSecureString secretm, Function<String, String> env) {
+                secretm.doWithContent(cc->{
+                    r.addPart("ul", c.login)
+                            .addPart("up", new String(cc));
+                });
             }
         });
         return r;
@@ -264,9 +265,9 @@ public class NHttpSrvRepository extends NCachedRepository {
 
     private static class Creds {
         String login;
-        NCredentialId password;
+        NSecureToken password;
 
-        public Creds(String login, NCredentialId password) {
+        public Creds(String login, NSecureToken password) {
             this.login = login;
             this.password = password;
         }
@@ -276,7 +277,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         String login = NSecurityManager.of().getCurrentUsername();
         NRepositoryAccess security = NSecurityManager.of().findRepositoryAccess(getUuid(), login).get();
         String newLogin = "";
-        NCredentialId credentials = null;
+        NSecureToken credentials = null;
         if (security == null) {
             newLogin = "anonymous";
         } else {
@@ -300,8 +301,10 @@ public class NHttpSrvRepository extends NCachedRepository {
         }
         NSecurityManager.of().runWithSecret(auth.password, new NSecretRunner() {
             @Override
-            public void run(NCredentialId id, char[] secretm, Function<String, String> env) {
-                s.set("ul=" + CoreIOUtils.urlEncodeString(auth.login) + "&up=" + CoreIOUtils.urlEncodeString(new String(secretm)));
+            public void run(NSecureToken id, NSecureString secretm, Function<String, String> env) {
+                secretm.doWithContent(cc->{
+                    s.set("ul=" + CoreIOUtils.urlEncodeString(auth.login) + "&up=" + CoreIOUtils.urlEncodeString(new String(cc)));
+                });
             }
         });
         return s.get();

@@ -6,7 +6,6 @@ import net.thevpc.nuts.ext.ssh.util.SshUtils;
 import net.thevpc.nuts.io.NonClosableInputStream;
 import net.thevpc.nuts.io.NonClosableOutputStream;
 import net.thevpc.nuts.io.NullOutputStream;
-import net.thevpc.nuts.net.DefaultNConnectionStringBuilder;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.text.NMsg;
@@ -79,7 +78,7 @@ public class JCshConnection extends SshConnectionBase {
         } catch (JSchException e) {
             //
             throw new UncheckedIOException(new IOException(e.getMessage() + " (" +
-                    new DefaultNConnectionStringBuilder().setUserName(user).setHost(host).setPort(String.valueOf(port)).setPassword(keyPassword).setQueryString(
+                    NConnectionStringBuilder.of().setUserName(user).setHost(host).setPort(String.valueOf(port)).setPassword(keyPassword).setQueryString(
                             keyFilePath == null ? null : NStringMapFormat.URL_FORMAT
                                     .format(
                                             NMaps.of(SshConnection.IDENTITY_FILE, keyFilePath)

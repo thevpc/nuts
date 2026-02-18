@@ -119,7 +119,7 @@ public class NBoundAffixList {
                 }
             }
         }
-        if (!someAdded) {
+        if (someAdded) {
             _reorderAffixes();
         }
         return this;
@@ -227,6 +227,11 @@ public class NBoundAffixList {
 
     public NBoundAffixList clearAnnotations() {
         affixes.removeIf(x -> x.affix().type() == NAffixType.ANNOTATION);
+        return this;
+    }
+
+    public NBoundAffixList clearAffixes() {
+        affixes.clear();
         return this;
     }
 

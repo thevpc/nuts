@@ -28,6 +28,7 @@ import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementMetadata;
 import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NContentType;
@@ -54,11 +55,18 @@ public abstract class AbstractNElement implements NElement {
     private NElementType type;
     private List<NBoundAffix> affixes;
     private List<NElementDiagnostic> diagnostics;
+    private NElementMetadata metadata;
 
-    public AbstractNElement(NElementType type, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics) {
+    public AbstractNElement(NElementType type, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
         this.type = type;
         this.affixes = CoreNUtils.copyAndUnmodifiableList(affixes);
         this.diagnostics = CoreNUtils.copyAndUnmodifiableList(diagnostics);
+        this.metadata = metadata == null ? DefaultNElementMetadata.EMPTY : metadata;
+    }
+
+    @Override
+    public NElementMetadata metadata() {
+        return metadata;
     }
 
     @Override
@@ -354,7 +362,7 @@ public abstract class AbstractNElement implements NElement {
         if (size <= 0) {
             size = 100;
         }
-        String s = toString();
+        String s = toCompactString();
         int u = s.indexOf("\n");
         boolean truncated = false;
         if (u >= 0) {
@@ -374,6 +382,16 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public String toString() {
         return DefaultTsonWriter.formatTson(this.format(NContentType.TSON, NElementFormatter.ofSafe()));
+    }
+
+    @Override
+    public String toCompactString() {
+        return DefaultTsonWriter.formatTson(this.format(NContentType.TSON, NElementFormatter.ofCompact()));
+    }
+
+    @Override
+    public String toPrettyString() {
+        return DefaultTsonWriter.formatTson(this.format(NContentType.TSON, NElementFormatter.ofPretty()));
     }
 
     @Override
@@ -624,6 +642,11 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public boolean isAnyStringOrName() {
+        return type().isAnyStringOrName();
+    }
+
+    @Override
     public boolean isStream() {
         return type().isAnyStream();
     }
@@ -853,6 +876,16 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public boolean isOperatorSymbol() {
+        return type() == NElementType.OPERATOR_SYMBOL;
+    }
+
+    @Override
+    public boolean isOperatorSymbol(NOperatorSymbol symbol) {
+        return isOperatorSymbol() && asOperatorSymbol().get().symbol() == symbol;
+    }
+
+    @Override
     public boolean isBinaryOperator(NOperatorSymbol type) {
         NAssert.requireNonNull(type, () -> NMsg.ofC("required operator type, got %s", type));
         NOptional<NBinaryOperatorElement> o = asBinaryOperator();
@@ -965,11 +998,10 @@ public abstract class AbstractNElement implements NElement {
             case FULL_ARRAY:
             case NAMED_OBJECT:
             case FULL_OBJECT:
-            case NAMED_UPLET:
-            {
+            case NAMED_UPLET: {
                 return true;
             }
-            case PAIR:{
+            case PAIR: {
                 NElement key = asPair().get().key();
                 return key.isAnyString();
             }
@@ -1011,6 +1043,12 @@ public abstract class AbstractNElement implements NElement {
     public boolean isArray() {
         NElementType t = type();
         return t == NElementType.ARRAY;
+    }
+
+    @Override
+    public boolean isFragment() {
+        NElementType t = type();
+        return t == NElementType.FRAGMENT;
     }
 
     @Override
@@ -1555,6 +1593,14 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<NFragmentElement> asFragment() {
+        if (this instanceof NFragmentElement) {
+            return NOptional.of((NFragmentElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to fragment: %s", type().id(), this));
+    }
+
+    @Override
     public NOptional<NListElement> asOrderedList() {
         if (type() == NElementType.ORDERED_LIST) {
             return NOptional.of((NListElement) this);
@@ -1598,4 +1644,29 @@ public abstract class AbstractNElement implements NElement {
         return filter(NElementSelector.of(selector));
     }
 
+    @Override
+    public NOptional<NBinaryStreamElement> asBinaryStream() {
+        if(this instanceof NBinaryStreamElement){
+            return NOptional.of((NBinaryStreamElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to binary stream: %s", type().id(), this));
+    }
+
+    @Override
+    public boolean isBinaryStream() {
+        return type()==NElementType.BINARY_STREAM;
+    }
+
+    @Override
+    public NOptional<NCharStreamElement> asCharStream() {
+        if(this instanceof NCharStreamElement){
+            return NOptional.of((NCharStreamElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to char stream: %s", type().id(), this));
+    }
+
+    @Override
+    public boolean isCharStream() {
+        return type()==NElementType.CHAR_STREAM;
+    }
 }

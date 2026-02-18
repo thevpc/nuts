@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.io.NIOUtils;
+import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.NAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,6 +26,25 @@ public class TsonTest {
     static void init() {
         TestUtils.openNewMinTestWorkspace();
     }
+
+    @Test
+    public void test01_00() {
+        String tson = "if(MACHINE==\"i9\"){\n" +
+                "        JAVA8_HOME  : \"/home/vpc/.jdks/corretto-1.8.0_442\"\n" +
+                "        JAVA17_HOME : \"/home/groups/ctsgroup/programs/dev/jdk/jdk-17.0.17+10/\"\n" +
+                "        IDEA_HOME   : \"/home/groups/ctsgroup/programs/dev/idea\"\n" +
+                "        NUTS_GRAALVM_DIR: \"/home/groups/ctsgroup/programs/dev/graalvm/graalvm-jdk-22+36.1/\"\n" +
+                "        INSTALLER_JRE8_LINUX64: \"/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-linux-x64.tar.gz\"\n" +
+                "        INSTALLER_JRE8_LINUX32: \"/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-linux-x32.tar.gz\"\n" +
+                "        INSTALLER_JRE8_WINDOWS64: \"/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-windows-x64.zip\"\n" +
+                "        INSTALLER_JRE8_WINDOWS32: \"/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-windows-x32.zip\"\n" +
+                "        INSTALLER_JRE8_MAC64: \"/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-mac-x64.zip\"\n" +
+                "}";
+        NElement parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(parsed.toString());
+        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+    }
+
 
     @Test
     public void test01b() {
@@ -141,7 +162,7 @@ public class TsonTest {
 //        String tson = "github(\"thevpc/nsh\" , \"/xprojects/nuts-world/nuts-companions\"   , tag:[\"nuts-world\",\"nuts\"] , mvnDeploy:\"thevpc\" )";
         String tson = "[1,2] b:3";
         NElement parsed = NElementReader.ofTson().read(tson);
-        NObjectElement o = parsed.asObject().get();
+        NFragmentElement o = parsed.asFragment().get();
         Assertions.assertEquals(2, o.size());
         NArrayElement a = o.get(0).get().asArray().get();
         NPairElement b = o.get(1).get().asPair().get();
@@ -576,6 +597,328 @@ public class TsonTest {
         checkConstant("0max", Integer.MAX_VALUE);
         checkConstant("0pinf_f32", Float.POSITIVE_INFINITY);
     }
+
+    @Test
+    public void testSpecial() {
+        NElement e = NElementReader.ofTson().read("styles{\n" +
+                "    (*){\n" +
+                "        font-size : 5%P\n" +
+                "        debug-color: red,\n" +
+                "        font-family : \"Serif\",\n" +
+                "    }}");
+        TestUtils.println(e);
+    }
+    @Test
+    public void testSpecial0() {
+        NElement e = NElementReader.ofTson().read("(*)");
+        TestUtils.println(e);
+        NUpletElement u = e.asUplet().get();
+        Assertions.assertEquals(1, u.size());
+        u.get(0).get().asOperatorSymbol(NOperatorSymbol.MUL).get();
+    }
+
+    @Test
+    public void testSpecial1() {
+        String expected = "styles{\n" +
+                "    (*){\n" +
+                "        a,b,c,\n" +
+                "    }}";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial2() {
+        String expected = "{" +
+                "a,b\n" +
+                "}";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial3() {
+        String expected = "{include(\n" +
+                "    eitherPath(\n" +
+                "        \"$HOME/xprojects/nuts-world/nuts-productivity/ntexup/ntexup-templates/${themeName}/v1.0/theme\"\n" +
+                "        \"github://thevpc/ntexup-templates/${themeName}/v1.0/theme\"\n" +
+                "    )\n" +
+                ")\n" +
+                "\n" +
+                "@define miniPage{\n" +
+                "    group(background:white,draw-contour){\n" +
+                "        body\n" +
+                "    }\n" +
+                "}\n" +
+                "\n" +
+                "@define miniCode{\n" +
+                "    group(background:Gray89,draw-contour,margin:5){\n" +
+                "        body\n" +
+                "    }\n" +
+                "}\n" +
+                "\n" +
+                "@define miniCodeNTexup(code){\n" +
+                "    group(background:Gray89,draw-contour,margin:5){\n" +
+                "        source(ntexup, code)\n" +
+                "    }\n" +
+                "}\n}";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial11() {
+        String expected =
+                "@define mini(code){\n" +
+                        "}";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial4() {
+        String expected =
+                "@define miniPage{\n" +
+                        "}";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial5() {
+        String expected =
+                "@define() miniPage[\n" +
+                        "]";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial6() {
+        String expected =
+                "@define() [\n" +
+                        "]";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial8() {
+        String expected =
+                "@define() {\n" +
+                        "}";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial9() {
+        String expected =
+                "@define() (){\n" +
+                        "}";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial10() {
+        String expected =
+                "@define() a";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial7() {
+        String expected =
+                "@define 13";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial12() {
+        String expected = "    eitherPath(\n" +
+                "        \"$HOME/xprojects/nuts-world/nuts-productivity/ntexup/ntexup-templates/${themeName}/v1.0/theme\"\n" +
+                "        \"github://thevpc/ntexup-templates/${themeName}/v1.0/theme\"\n" +
+                "    )\n";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial13() {
+        String expected = "agenda-slide(title:\"Rationale\"){\n" +
+                "    body{\n" +
+                "        a: b\n" +
+                "        a: •¶ Text-based, declarative, and intuitive syntax\n" +
+                "           •• {a:b}\n" +
+                "           •• {a:b}\n" +
+                "           • \"test\"\n" +
+                "\n" +
+                "        •¶ Text-based, declarative, and intuitive syntax\n" +
+                "        •¶ Readable by humans, writable with ease\n" +
+                "        •¶ Designed for long-lived documents with effortless maintenance\n" +
+                "        •¶ Unmatched control over rendering\n" +
+                "        •¶ Seamless multi-file support\n" +
+                "        •¶ Version-control friendly (Git & more)\n" +
+                "        •¶ Integrates with LaTeX, UML, and beyond\n" +
+                "    }\n" +
+                "}\n";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial14() {
+        String expected =
+                "        •¶ Text-based, declarative, and intuitive syntax\n" +
+                        "        •¶ Readable by humans, writable with ease\n" +
+                        "        •¶ Designed for long-lived documents with effortless maintenance\n" +
+                        "        •¶ Unmatched control over rendering\n" +
+                        "        •¶ Seamless multi-file support\n" +
+                        "        •¶ Version-control friendly (Git & more)\n" +
+                        "        •¶ Integrates with LaTeX, UML, and beyond\n";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial15() {
+        String expected =
+                          "• a+b\n"
+                        + "• b\n"
+                ;
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial16() {
+        String expected =
+                          "•¶ a\n"
+                        + "•¶ b\n"
+                ;
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial17() {
+        String expected =
+                          "• ¶ a\n"
+                        + "• ¶ b\n";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial18() {
+        String expected =
+                          "• ¶ a\n"
+                        ;
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+
+
+
+    @Test
+    public void testSpecial19() {
+        NElement e = NElementReader.ofTson().read("@()text()");
+        TestUtils.println(e.toPrettyString());
+    }
+
+    @Test
+    public void testSpecial20() {
+        NElement e = NElementReader.ofTson().read("a\"b\"");
+        TestUtils.println(e.toPrettyString());
+    }
+
+    @Test
+    public void testSpecial21() {
+        NElement e = NElementReader.ofTson().read("  @(\"version\") text(\"value\" : either(\"${documentVersion}\" \"\")) ");
+        TestUtils.println(e.toPrettyString());
+    }
+
+    @Test
+    public void testSpecial22() {
+        String expected =
+                "port : a b"
+                ;
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+    }
+
+    @Test
+    public void testSpecial23() {
+        NChronometer c = NChronometer.startNow();
+        String expected = NIOUtils.readString(
+                TsonTest.class.getResourceAsStream("bigtson.tson")
+        );
+        c.stop();
+        TestUtils.println("load in "+c);
+
+        c = NChronometer.startNow();
+        NElement e = NElementReader.ofTson().read(expected);
+        c.stop();
+        TestUtils.println("read in "+c);
+
+        c = NChronometer.startNow();
+        String s2 = e.toString();
+        c.stop();
+        TestUtils.println("toString in "+c);
+
+        c = NChronometer.startNow();
+        s2 = e.toPrettyString();
+        c.stop();
+        TestUtils.println("toPrettyString in "+c);
+
+        c = NChronometer.startNow();
+        s2 = e.toCompactString();
+        c.stop();
+        TestUtils.println("toCompactString in "+c);
+    }
+
 
     @Test
     public void testEdges() {

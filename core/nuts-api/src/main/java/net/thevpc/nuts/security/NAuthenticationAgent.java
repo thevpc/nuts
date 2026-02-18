@@ -51,9 +51,9 @@ public interface NAuthenticationAgent extends NComponent/* as authentication age
     String getId();
 
 
-    <T> T withSecret(NCredentialId id, NSecretCaller<T> consumer, Function<String, String> env);
+    <T> T withSecret(NSecureToken id, NSecretCaller<T> consumer, Function<String, String> env);
 
-    boolean verify(NCredentialId id, char[] candidate, Function<String, String> env);
+    boolean verify(NSecureToken id, NSecureString candidate, Function<String, String> env);
 
     /**
      * remove existing credentials with the given id The {@code credentialsId}
@@ -64,24 +64,24 @@ public interface NAuthenticationAgent extends NComponent/* as authentication age
      * @param envProvider   environment provider, nullable
      * @return credentials
      */
-    boolean removeCredentials(NCredentialId credentialsId, Function<String, String> envProvider);
+    boolean removeCredentials(NSecureToken credentialsId, Function<String, String> envProvider);
 
-    NCredentialId addSecret(char[] credentials, Function<String, String> envProvider);
-
-    /**
-     * Update credential. MAY return a new NCredentialId (immutable storage)
-     * or the same instance (mutable storage). Callers MUST rebind named
-     * credentials to the returned ID to ensure correctness.
-     */
-    NCredentialId updateSecret(NCredentialId od, char[] credentials, Function<String, String> envProvider);
-
-    NCredentialId addOneWayCredential(char[] password, Function<String, String> envProvider);
+    NSecureToken addSecret(NSecureString credentials, Function<String, String> envProvider);
 
     /**
      * Update credential. MAY return a new NCredentialId (immutable storage)
      * or the same instance (mutable storage). Callers MUST rebind named
      * credentials to the returned ID to ensure correctness.
      */
-    NCredentialId updateOneWay(NCredentialId old, char[] credentials, Function<String, String> envProvider);
+    NSecureToken updateSecret(NSecureToken od, NSecureString credentials, Function<String, String> envProvider);
+
+    NSecureToken addOneWayCredential(NSecureString password, Function<String, String> envProvider);
+
+    /**
+     * Update credential. MAY return a new NCredentialId (immutable storage)
+     * or the same instance (mutable storage). Callers MUST rebind named
+     * credentials to the returned ID to ensure correctness.
+     */
+    NSecureToken updateOneWay(NSecureToken old, NSecureString credentials, Function<String, String> envProvider);
 
 }
