@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
+import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -19,7 +20,43 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
     @Override
     public void apply(NElementFormatContext context) {
         NElementBuilder b = context.builder();
-        String startAffixes = lastStringOfBoundAffixes(b.affixes(), NAffixAnchor.START);
+        List<NBoundAffix> oldAffixes = new ArrayList<>(b.affixes());
+        boolean requireEndNewAsFirstEnd=(b.type()==NElementType.LINE_STRING ||b.type()==NElementType.BLOCK_STRING)
+                && b.build().asString().get().newLineSuffix()==null
+                && (!context.isTail());
+        int visitedEnd=-1;
+        int foundNewline=-1;
+        for (int i = 0; i < oldAffixes.size(); i++) {
+            NBoundAffix a1 = oldAffixes.get(i);
+            if(a1.anchor()==NAffixAnchor.END){
+                if(visitedEnd<0) {
+                    visitedEnd=i;
+                    if (a1.affix().type() == NAffixType.NEWLINE) {
+                        foundNewline=i;
+                    }
+                }
+            }
+            if (a1.affix().type() == NAffixType.LINE_COMMENT) {
+                NElementComment e = (NElementComment) a1.affix();
+                if (e.newlineSuffix() == null) {
+                    if(a1.anchor()==NAffixAnchor.END  && i==oldAffixes.size()-1) {
+                        if(context.isTail()) {
+                            b.setAffix(i, e.withNewlineSuffix(NNewLineMode.LF), a1.anchor());
+                        }
+                    }else {
+                        b.setAffix(i, e.withNewlineSuffix(NNewLineMode.LF), a1.anchor());
+                    }
+                }
+            }
+        }
+        if(requireEndNewAsFirstEnd && foundNewline<0){
+            if(visitedEnd<0){
+                b.addAffix(NBoundAffix.of(NAffix.ofNewline(), NAffixAnchor.END));
+            }else {
+                b.addAffix(visitedEnd, NBoundAffix.of(NAffix.ofNewline(), NAffixAnchor.END));
+            }
+        }
+        String startAffixes = lastStringOfBoundAffixes(oldAffixes, NAffixAnchor.START);
         switch (b.type()) {
             case OBJECT:
             case NAMED_OBJECT:
@@ -129,10 +166,11 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
             }
         }
     }
-    private List<NElement> addSpaces(List<NElement> oldList){
-        List<NElement> newList=new ArrayList<>();
+
+    private List<NElement> addSpaces(List<NElement> oldList) {
+        List<NElement> newList = new ArrayList<>();
         for (int i = 0; i < oldList.size(); i++) {
-            if(!newList.isEmpty()){
+            if (!newList.isEmpty()) {
                 NElement last = newList.get(newList.size() - 1);
                 if (isCollision(last, oldList.get(i))) {
                     newList.set(newList.size() - 1, last.builder().addSpaceAffix(" ", NAffixAnchor.END).build());
@@ -298,7 +336,7 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
             return CollisionType.FATAL;
         }
         if (isOp(bc) && isOp(ac)) {
-            return  CollisionType.FATAL;
+            return CollisionType.FATAL;
         }
         if (isQuote(ac) || isQuote(bc)) {
             return CollisionType.UNPRETTY;
@@ -505,8 +543,7 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
             case BIG_DECIMAL:
             case CUSTOM:
             case NAME:
-            case FRAGMENT:
-            {
+            case FRAGMENT: {
                 return DefaultTsonWriter.formatTson(e);
             }
         }
@@ -749,8 +786,7 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
             case BIG_DECIMAL:
             case CUSTOM:
             case NAME:
-            case FRAGMENT:
-            {
+            case FRAGMENT: {
                 return DefaultTsonWriter.formatTson(e);
             }
         }
