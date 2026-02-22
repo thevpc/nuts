@@ -150,6 +150,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
+            case BLOCK_STRING:
             {
                 Element e = doc.createElement(TAG_STRING);
                 final String s = elem.asStringValue().get();
@@ -268,6 +269,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                                 case TRIPLE_SINGLE_QUOTED_STRING:
                                 case TRIPLE_BACKTICK_STRING:
                                 case LINE_STRING:
+                                case BLOCK_STRING:
                                 {
                                     entryElem.setAttribute(ATTRIBUTE_VALUE, ne.value().asStringValue().get());
                                     obj.appendChild(entryElem);
