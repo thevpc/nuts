@@ -21,7 +21,8 @@ public class NElementTransformHelper {
         }
         List<NElement> allThis = transform.preTransform(context);
         List<NElement> result = new ArrayList<>();
-        for (NElement a : allThis) {
+        for (int i = 0; i < allThis.size(); i++) {
+            NElement a = allThis.get(i);
             List<NElement> u = transformAfter(context.withElement(a), transform);
             if (u != null) {
                 result.addAll(u);
@@ -49,8 +50,10 @@ public class NElementTransformHelper {
                         ab.setParameterized(true);
                         for (int j = 0; j < u.size(); j++) {
                             ab.addAll(transform(transform.prepareChildContext(item, context.withPath(
-                                    path.resolve(NElementStep.ofAnnParam(annotationIndex, j))
-                            )).withElement(u.get(j)), transform));
+                                                    path.resolve(NElementStep.ofAnnParam(annotationIndex, j))
+                                            )).withElement(u.get(j))
+                                            .withTail(j == u.size() - 1)
+                                    , transform));
                         }
                         newAffixes.add(NBoundAffix.of(ab.build(), affix.anchor()));
                     }
@@ -91,80 +94,29 @@ public class NElementTransformHelper {
             }
             case BINARY_OPERATOR: {
                 NBinaryOperatorElement o = item.asBinaryOperator().get();
-                List<NElement> k = transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(0)))).withElement(o.firstOperand()), transform);
-                List<NElement> v = transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(1)))).withElement(o.secondOperand()), transform);
-                NOperatorElementBuilder b = o.builder();
-                b.first(compressElement(k));
-                b.second(compressElement(v));
-                o = (NBinaryOperatorElement) b.build();
-                return transform.postTransform(context.withPath(path).withElement(o));
+                return transformAfterBinaryOperator(o, context, transform);
             }
             case UNARY_OPERATOR: {
                 NUnaryOperatorElement o = item.asUnaryOperator().get();
-                List<NElement> k = transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(0)))).withElement(o.operand()), transform);
-                NOperatorElementBuilder b = o.builder();
-                b.first(compressElement(k));
-                o = (NUnaryOperatorElement) b.build();
-                return transform.postTransform(context.withPath(path).withElement(o));
+                return transformAfterUnaryOperator(o, context, transform);
             }
             case TERNARY_OPERATOR:
             case NARY_OPERATOR: {
                 NOperatorElement o = item.asOperator().get();
-                NOperatorElementBuilder builder = o.builder();
-                List<NElement> operands = builder.operands();
-                builder.clearOperands();
-                for (int i = 0; i < operands.size(); i++) {
-                    NElement w = builder.operand(i).get();
-                    builder.addOperand(compressElement(transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w), transform)));
-                }
-                o = builder.build();
-                return transform.postTransform(context.withPath(path).withElement(o));
+                return transformAfterNAryOperator(o, context, transform);
             }
             case FLAT_EXPR: {
                 NFlatExprElement o = item.asFlatExpression().get();
-                NFlatExprElementBuilder builder = o.builder();
-                List<NElement> old = builder.children();
-                builder.clearChildren();
-                for (int i = 0; i < old.size(); i++) {
-                    NElement w = old.get(i);
-                    builder.add(compressElement(transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w), transform)));
-                }
-                o = builder.build();
-                return transform.postTransform(context.withPath(path).withElement(o));
+                return transformAfterFlatExpr(o, context, transform);
             }
             case FRAGMENT: {
                 NFragmentElement o = item.asFragment().get();
-                NFragmentElementBuilder builder = o.builder();
-                List<NElement> old = builder.children();
-                builder.clearChildren();
-                for (int i = 0; i < old.size(); i++) {
-                    NElement w = old.get(i);
-                    builder.add(compressElement(transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w), transform)));
-                }
-                o = builder.build();
-                return transform.postTransform(context.withPath(path).withElement(o));
+                return transformAfterFragment(o, context, transform);
             }
             case ORDERED_LIST:
             case UNORDERED_LIST: {
                 NListElement o = item.asList().get();
-                NListElementBuilder builder = o.builder();
-                for (int i = 0; i < builder.size(); i++) {
-                    NListItemElement w = builder.get(i);
-                    NElement value = w.value().orNull();
-                    if (value != null) {
-                        value = compressElement(transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(value), transform));
-                    }
-                    NListElement subList = w.subList().orNull();
-                    if (subList != null) {
-                        subList = (NListElement) compressElement(transform(transform.prepareChildContext(item, context.withPath(
-                                path.resolve(NElementStep.ofSubList(i))
-                        )).withElement(subList), transform));
-                    }
-                    w = w.builder().value(value).subList(subList).build();
-                    builder.setItemAt(i, w);
-                }
-                o = builder.build();
-                return transform.postTransform(context.withPath(path).withElement(o));
+                return transformAfterList(o, context, transform);
             }
             case BOOLEAN:
             case NULL:
@@ -211,10 +163,106 @@ public class NElementTransformHelper {
         //throw new NUnsupportedOperationException(NMsg.ofC("container %s not yet fully supported", item.type()));
     }
 
+    private static List<NElement> transformAfterFragment(NFragmentElement o, NElementTransformContext context, NElementTransform transform) {
+        NElementPath path = context.path();
+        NFragmentElementBuilder builder = o.builder();
+        List<NElement> old = builder.children();
+        builder.clearChildren();
+        for (int i = 0; i < old.size(); i++) {
+            NElement w = old.get(i);
+            builder.add(compressElement(transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w)
+                            .withTail(context.isTail() && i == old.size() - 1)
+                    , transform)));
+        }
+        o = builder.build();
+        return transform.postTransform(context.withPath(path).withElement(o));
+    }
+
+    private static List<NElement> transformAfterFlatExpr(NFlatExprElement o, NElementTransformContext context, NElementTransform transform) {
+        NElementPath path = context.path();
+        NFlatExprElementBuilder builder = o.builder();
+        List<NElement> old = builder.children();
+        builder.clearChildren();
+        for (int i = 0; i < old.size(); i++) {
+            NElement w = old.get(i);
+            builder.add(compressElement(transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w)
+                            .withTail(context.isTail() && i == old.size() - 1)
+                    , transform)));
+        }
+        o = builder.build();
+        return transform.postTransform(context.withPath(path).withElement(o));
+    }
+
+    private static List<NElement> transformAfterNAryOperator(NOperatorElement o, NElementTransformContext context, NElementTransform transform) {
+        NElementPath path = context.path();
+        NOperatorElementBuilder builder = o.builder();
+        List<NElement> operands = builder.operands();
+        builder.clearOperands();
+        for (int i = 0; i < operands.size(); i++) {
+            NElement w = builder.operand(i).get();
+            builder.addOperand(compressElement(transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w)
+                            .withTail(context.isTail() && o.position() != NOperatorPosition.POSTFIX && i == operands.size() - 1)
+                    , transform)));
+        }
+        o = builder.build();
+        return transform.postTransform(context.withPath(path).withElement(o));
+    }
+
+    private static List<NElement> transformAfterUnaryOperator(NUnaryOperatorElement o, NElementTransformContext context, NElementTransform transform) {
+        NElementPath path = context.path();
+        List<NElement> k = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(0)))).withElement(o.operand())
+                        .withTail(context.isTail() && o.position() != NOperatorPosition.POSTFIX)
+                , transform);
+        NOperatorElementBuilder b = o.builder();
+        b.first(compressElement(k));
+        o = (NUnaryOperatorElement) b.build();
+        return transform.postTransform(context.withPath(path).withElement(o));
+    }
+
+    private static List<NElement> transformAfterList(NListElement item, NElementTransformContext context, NElementTransform transform) {
+        NElementPath path = context.path();
+        NListElementBuilder builder = item.builder();
+        for (int i = 0; i < builder.size(); i++) {
+            NListItemElement w = builder.get(i);
+            NElement value = w.value().orNull();
+            NListElement subList = w.subList().orNull();
+            if (value != null) {
+                value = compressElement(transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(value)
+                                .withTail(context.isTail() && subList == null)
+                        , transform));
+            }
+            if (subList != null) {
+                subList = (NListElement) compressElement(transform(transform.prepareChildContext(item, context.withPath(
+                                        path.resolve(NElementStep.ofSubList(i))
+                                )).withElement(subList)
+                                .withTail(context.isTail() && i == builder.size() - 1)
+                        , transform));
+            }
+            w = w.builder().value(value).subList(subList).build();
+            builder.setItemAt(i, w);
+        }
+        item = builder.build();
+        return transform.postTransform(context.withPath(path).withElement(item));
+    }
+
+    private static List<NElement> transformAfterBinaryOperator(NBinaryOperatorElement item, NElementTransformContext context, NElementTransform transform) {
+        NElementPath path = context.path();
+        NOperatorElementBuilder b = item.builder();
+        List<NElement> k = transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(0)))).withElement(item.firstOperand()).withTail(false), transform);
+        List<NElement> v = transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(1)))).withElement(item.secondOperand())
+                        .withTail(context.isTail() && item.position() != NOperatorPosition.POSTFIX)
+                , transform);
+        b.first(compressElement(k));
+        b.second(compressElement(v));
+        item = (NBinaryOperatorElement) b.build();
+        return transform.postTransform(context.withPath(path).withElement(item));
+    }
+
     private static List<NElement> transformAfterPair(NPairElement o, NElementTransformContext context, NElementTransform transform) {
         NElementPath path = context.path();
-        List<NElement> k = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(0)))).withElement(o.key()), transform);
-        List<NElement> v = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(1)))).withElement(o.value()), transform);
+        boolean wasLast = context.isTail();
+        List<NElement> k = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(0))).withTail(false)).withElement(o.key()), transform);
+        List<NElement> v = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(1))).withTail(wasLast)).withElement(o.value()), transform);
         NPairElementBuilder b = o.builder();
         b.key(compressElement(k));
         b.value(compressElement(v));
@@ -223,6 +271,8 @@ public class NElementTransformHelper {
     }
 
     private static List<NElement> transformAfterUplet(NUpletElement o, NElementTransformContext context, NElementTransform transform) {
+        //none of the children could be the very last element (because ends with ')')
+        context = context.withTail(false);
         NElementPath path = context.path();
         NUpletElementBuilder b = null;
         if (!o.params().isEmpty()) {
@@ -256,6 +306,8 @@ public class NElementTransformHelper {
     }
 
     private static List<NElement> transformAfterObject(NObjectElement o, NElementTransformContext context, NElementTransform transform) {
+        //none of the children could be the very last element (because ends with '}')
+        context = context.withTail(false);
         NElementPath path = context.path();
         NObjectElementBuilder b = null;
         if (o.params().isPresent()) {
@@ -294,8 +346,11 @@ public class NElementTransformHelper {
     }
 
     private static List<NElement> transformAfterArray(NArrayElement o, NElementTransformContext context, NElementTransform transform) {
+        //none of the children could be the very last element (because ends with ']')
+        context = context.withTail(false);
         NElementPath path = context.path();
         NArrayElementBuilder b = null;
+        boolean hasChildren = !o.children().isEmpty();
         if (o.params().isPresent()) {
             if (b == null) {
                 b = o.builder();
@@ -310,7 +365,7 @@ public class NElementTransformHelper {
                 }
             }
         }
-        if (!o.children().isEmpty()) {
+        if (hasChildren) {
             if (b == null) {
                 b = o.builder();
             }
