@@ -9,7 +9,11 @@ public interface NElementTransformContext {
 
     NElement element();
 
+    boolean isTail();
+
     Map<String, Object> properties();
+
+    NElementTransformContext withTail(boolean tail);
 
     NElementTransformContext withPath(NElementPath path);
 
