@@ -8,7 +8,6 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -147,12 +146,9 @@ public class DefaultTsonWriter {
                 writeQuotedString("`", (NStringElement) element);
                 break;
             }
-            case LINE_STRING: {
-                writeLineString((NStringElement) element);
-                break;
-            }
+            case LINE_STRING:
             case BLOCK_STRING: {
-                writeBlocString((NStringElement) element);
+                writeLineOrBlockString((NStringElement) element);
                 break;
             }
             case UNARY_OPERATOR:
@@ -428,58 +424,18 @@ public class DefaultTsonWriter {
         write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 
-    private void writeLineString(NStringElement a) {
+    private void writeLineOrBlockString(NStringElement a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
-        writeBoundedString("¶", 1, a.affixes());
-        List<NBoundAffix> leadingSpaces = NBoundAffixList.filter(a.affixes(), NAffixAnchor.PRE_2, NAffixType.SPACE);
-        for (NBoundAffix leadingSpace : leadingSpaces) {
-            write(((NElementSpace) leadingSpace.affix()).value());
-        }
-        write(a.stringValue());
-
-        List<NBoundAffix> trailingSpaces = NBoundAffixList.filter(a.affixes(), NAffixAnchor.POST_2, NAffixType.SPACE, NAffixType.NEWLINE);
-        for (NBoundAffix s : trailingSpaces) {
-            write(((NElementSpace) s.affix()).value());
-        }
-        if (trailingSpaces.isEmpty() || trailingSpaces.get(trailingSpaces.size() - 1).affix().type() != NAffixType.NEWLINE) {
-            write("\n");
-        }
-        write(a.affixes(), NAffixAnchor.END, acceptablePost);
-    }
-
-    private void writeBlocString(NStringElement a) {
-        write(a.affixes(), NAffixAnchor.START, acceptablePre);
-        List<String> strValues = NStringUtils.split(a.stringValue(), "\n", false, false);
-        List<String> leadingSpaces = new ArrayList<>();
-        for (NBoundAffix p : NBoundAffixList.filter(a.affixes(), NAffixAnchor.PRE_2, NAffixType.SPACE)) {
-            List<String> y = NStringUtils.split(((NElementSpace) p.affix()).value(), "\n", false, false);
-            leadingSpaces.addAll(y);
-        }
-        List<String> trailingSpaces = new ArrayList<>();
-        for (NBoundAffix p : NBoundAffixList.filter(a.affixes(), NAffixAnchor.POST_2, NAffixType.SPACE)) {
-            List<String> y = NStringUtils.split(((NElementSpace) p.affix()).value(), "\n", false, false);
-            trailingSpaces.addAll(y);
-        }
-        if (strValues.isEmpty()) {
-            strValues.add("");
-        }
-        for (int i = 0; i < strValues.size(); i++) {
-            writeBoundedString("¶¶", i, a.affixes());
-            if (i > 0) {
-                write(a.affixes(), NAffixAnchor.SEP_1, acceptableWrapSep);
+        List<NElementLine> lines = a.lines();
+        for (int i = 0; i < lines.size(); i++) {
+            NElementLine line = lines.get(i);
+            write(line.prefix());
+            writeBoundedString(line.startMarker(), 1, a.affixes());
+            write(line.startPadding());
+            write(line.content());
+            if (line.newline() != null) {
+                write(line.newline().value());
             }
-            if (i < leadingSpaces.size()) {
-                write(leadingSpaces.get(i));
-            } else if (!leadingSpaces.isEmpty()) {
-                write(leadingSpaces.get(leadingSpaces.size() - 1));
-            } else {
-                write(" ");
-            }
-            write(strValues.get(i));
-            if (i < trailingSpaces.size()) {
-                write(trailingSpaces.get(i));
-            }
-            write("\n");
         }
         write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
