@@ -178,7 +178,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 List<NElement> oldParams = e.params().orNull();
                 List<NElement> sub = oldParams == null ? new ArrayList<>() : convertList_objectToElement(oldParams, src, typeOfSrc, context, someChange0);
                 if (someChange0.get()) {
-                    newList.add(NElement.ofAnnotation(e.name(), sub.toArray(new NElement[0])));
+                    newList.add(NElementAnnotation.of(e.name(), sub.toArray(new NElement[0])));
                     someChange.set(true);
                     anyChange00 = true;
                 } else {
