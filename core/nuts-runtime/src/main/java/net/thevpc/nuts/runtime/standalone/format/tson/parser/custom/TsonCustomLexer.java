@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
@@ -21,9 +22,11 @@ import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.runtime.standalone.elem.item.*;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementLineImpl;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenImpl;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenType;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.*;
 
 public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
@@ -49,10 +52,10 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         return ret;
     }
 
-    public NElementTokenImpl continueReadBullet(NElementTokenType type, String chars,int line, int column, long pos) {
+    public NElementTokenImpl continueReadBullet(NElementTokenType type, String chars, int line, int column, long pos) {
         StringBuilder image = new StringBuilder();
         int count = 0;
-        while (chars.indexOf(reader.peek())>=0) {
+        while (chars.indexOf(reader.peek()) >= 0) {
             image.append((char) reader.read());
             count++;
             if (count >= 10) break; // safety
@@ -107,21 +110,19 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 case '.':
                     return asOperator123(c, NOperatorSymbol.DOT, NOperatorSymbol.DOT2, NOperatorSymbol.DOT3);
                 case '●':
-                case '•':
-                {
-                    return continueReadBullet(NElementTokenType.UNORDERED_LIST,"●•", line, column, pos);
+                case '•': {
+                    return continueReadBullet(NElementTokenType.UNORDERED_LIST, "●•", line, column, pos);
                 }
                 case '■':
-                case '▪':
-                {
-                    return continueReadBullet(NElementTokenType.ORDERED_LIST, "■▪",line, column, pos);
+                case '▪': {
+                    return continueReadBullet(NElementTokenType.ORDERED_LIST, "■▪", line, column, pos);
                 }
                 case '¶': {
                     int c2 = reader.peekAt(1);
                     if (c2 == '¶') {
-                        return continueReadUserMultiLine();
+                        return readBlockString();
                     }
-                    return continueReadUserSingleLine();
+                    return readLineString();
                 }
                 case ';': {
                     int c2 = reader.peek();
@@ -138,16 +139,16 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     switch (n) {
                         case ':': {
                             reader.read(2);
-                            return new NElementTokenImpl("::", NElementTokenType.OP, "::", 0, line, column, pos, NOperatorSymbol.COLON2, null);
+                            return new NElementTokenImpl("::", NElementTokenType.OPERATOR_SYMBOL, "::", 0, line, column, pos, NOperatorSymbol.COLON2, null);
                         }
                         case '=': {
                             n = reader.peekAt(2);
                             if (n == '=') {
                                 reader.read(3);
-                                return new NElementTokenImpl(":==", NElementTokenType.OP, ":==", 0, line, column, pos, NOperatorSymbol.COLON_EQ2, null);
+                                return new NElementTokenImpl(":==", NElementTokenType.OPERATOR_SYMBOL, ":==", 0, line, column, pos, NOperatorSymbol.COLON_EQ2, null);
                             }
                             reader.read(2);
-                            return new NElementTokenImpl(":=", NElementTokenType.OP, ":=", 0, line, column, pos, NOperatorSymbol.COLON_EQ, null);
+                            return new NElementTokenImpl(":=", NElementTokenType.OPERATOR_SYMBOL, ":=", 0, line, column, pos, NOperatorSymbol.COLON_EQ, null);
                         }
                         default: {
                             return asChar(c, NElementTokenType.COLON);
@@ -158,10 +159,10 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     int n = reader.peekAt(1);
                     switch (n) {
                         case '/': {
-                            return continueReadLineComments();
+                            return readLineComments();
                         }
                         case '*': {
-                            return continueReadBlockComments();
+                            return readBlockComments();
                         }
                         default: {
                             return asChar(c, NOperatorSymbol.DIV);
@@ -194,11 +195,11 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                         if (n2 == c) {
                             reader.read(3);
                             String i = new String(new char[]{cc, cc, cc});
-                            return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, NOperatorSymbol.AT3, null);
+                            return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, NOperatorSymbol.AT3, null);
                         } else {
                             reader.read(2);
                             String i = new String(new char[]{cc, cc});
-                            return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, NOperatorSymbol.AT2, null);
+                            return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, NOperatorSymbol.AT2, null);
                         }
                     }
                     return asChar(c, NElementTokenType.AT);
@@ -208,43 +209,43 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     if (c1 == '<') {
                         if (reader.peekAt(2) == '<') {
                             reader.read(3);
-                            return new NElementTokenImpl("<<<", NElementTokenType.OP, "<<<", 0, line, column, pos, NOperatorSymbol.LT3, null);
+                            return new NElementTokenImpl("<<<", NElementTokenType.OPERATOR_SYMBOL, "<<<", 0, line, column, pos, NOperatorSymbol.LT3, null);
                         }
                         reader.read(2);
-                        return new NElementTokenImpl("<<", NElementTokenType.OP, "<<", 0, line, column, pos, NOperatorSymbol.LT2, null);
+                        return new NElementTokenImpl("<<", NElementTokenType.OPERATOR_SYMBOL, "<<", 0, line, column, pos, NOperatorSymbol.LT2, null);
                     } else if (c1 == '>') {
                         reader.read(2);
-                        return new NElementTokenImpl("<>", NElementTokenType.OP, "<>", 0, line, column, pos, NOperatorSymbol.LT_GT, null);
+                        return new NElementTokenImpl("<>", NElementTokenType.OPERATOR_SYMBOL, "<>", 0, line, column, pos, NOperatorSymbol.LT_GT, null);
                     } else if (c1 == '=') {
                         int c2 = reader.peekAt(2);
                         if (c2 == '=') {
                             reader.read(3);
-                            return new NElementTokenImpl("<==", NElementTokenType.OP, "<<<", 0, line, column, pos, NOperatorSymbol.LT_EQ2, null);
+                            return new NElementTokenImpl("<==", NElementTokenType.OPERATOR_SYMBOL, "<<<", 0, line, column, pos, NOperatorSymbol.LT_EQ2, null);
                         }
                         reader.read(2);
-                        return new NElementTokenImpl("<=", NElementTokenType.OP, "<<", 0, line, column, pos, NOperatorSymbol.LTE, null);
+                        return new NElementTokenImpl("<=", NElementTokenType.OPERATOR_SYMBOL, "<<", 0, line, column, pos, NOperatorSymbol.LTE, null);
                     } else if (c1 == '-') {
                         int c2 = reader.peekAt(2);
                         if (c2 == '-') {
                             reader.read(3); // <--x
-                            return new NElementTokenImpl("<--", NElementTokenType.OP, "<<<", 0, line, column, pos, NOperatorSymbol.LT_MINUS2, null);
+                            return new NElementTokenImpl("<--", NElementTokenType.OPERATOR_SYMBOL, "<<<", 0, line, column, pos, NOperatorSymbol.LT_MINUS2, null);
                         } else if (Character.isDigit(c2)) {
                             //<-3
                             reader.read(); // <--x
-                            return new NElementTokenImpl("<", NElementTokenType.OP, "<", 0, line, column, pos, NOperatorSymbol.LT, null);
+                            return new NElementTokenImpl("<", NElementTokenType.OPERATOR_SYMBOL, "<", 0, line, column, pos, NOperatorSymbol.LT, null);
                         }
                         reader.read(2);
-                        return new NElementTokenImpl("<=", NElementTokenType.OP, "<<", 0, line, column, pos, NOperatorSymbol.LT2, null);
+                        return new NElementTokenImpl("<=", NElementTokenType.OPERATOR_SYMBOL, "<<", 0, line, column, pos, NOperatorSymbol.LT2, null);
                     }
                     reader.read();
-                    return new NElementTokenImpl("<", NElementTokenType.OP, "&", 0, line, column, pos, NOperatorSymbol.LT, null);
+                    return new NElementTokenImpl("<", NElementTokenType.OPERATOR_SYMBOL, "&", 0, line, column, pos, NOperatorSymbol.LT, null);
                 }
 
                 case '-': {
                     int c1 = reader.peekAt(1);
-                    if (c1==':') {
+                    if (c1 == ':') {
                         String s = reader.read(2);
-                        return new NElementTokenImpl(s, NElementTokenType.OP,s, 0, line, column, pos, NOperatorSymbol.MINUS_COLON, null);
+                        return new NElementTokenImpl(s, NElementTokenType.OPERATOR_SYMBOL, s, 0, line, column, pos, NOperatorSymbol.MINUS_COLON, null);
                     }
                     if (Character.isDigit(c1)) {
                         return continueReadNumber();
@@ -269,65 +270,53 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                         int c2 = reader.peekAt(2);
                         if (c2 == '=') {
                             reader.read(3);
-                            return new NElementTokenImpl("===", NElementTokenType.OP, "===", 0, line, column, pos, NOperatorSymbol.EQ3, null);
+                            return new NElementTokenImpl("===", NElementTokenType.OPERATOR_SYMBOL, "===", 0, line, column, pos, NOperatorSymbol.EQ3, null);
                         } else if (c2 == '>') {
                             reader.read(3);
-                            return new NElementTokenImpl("==>", NElementTokenType.OP, "==>", 0, line, column, pos, NOperatorSymbol.EQ2_GT, null);
+                            return new NElementTokenImpl("==>", NElementTokenType.OPERATOR_SYMBOL, "==>", 0, line, column, pos, NOperatorSymbol.EQ2_GT, null);
                         }
                         reader.read(2);
-                        return new NElementTokenImpl("==", NElementTokenType.OP, "==", 0, line, column, pos, NOperatorSymbol.EQ2, null);
+                        return new NElementTokenImpl("==", NElementTokenType.OPERATOR_SYMBOL, "==", 0, line, column, pos, NOperatorSymbol.EQ2, null);
                     } else if (c1 == '>') {
                         reader.read(2);
-                        return new NElementTokenImpl("=>", NElementTokenType.OP, "=>", 0, line, column, pos, NOperatorSymbol.EQ_GT, null);
+                        return new NElementTokenImpl("=>", NElementTokenType.OPERATOR_SYMBOL, "=>", 0, line, column, pos, NOperatorSymbol.EQ_GT, null);
                     }
                     reader.read();
-                    return new NElementTokenImpl("=", NElementTokenType.OP, "=", 0, line, column, pos, NOperatorSymbol.EQ, null);
+                    return new NElementTokenImpl("=", NElementTokenType.OPERATOR_SYMBOL, "=", 0, line, column, pos, NOperatorSymbol.EQ, null);
                 }
                 case '>': {
                     int c1 = reader.peekAt(1);
                     if (c1 == '>') {
                         if (reader.peekAt(2) == '>') {
                             reader.read(3);
-                            return new NElementTokenImpl(">>>", NElementTokenType.OP, ">>>", 0, line, column, pos, NOperatorSymbol.GT3, null);
+                            return new NElementTokenImpl(">>>", NElementTokenType.OPERATOR_SYMBOL, ">>>", 0, line, column, pos, NOperatorSymbol.GT3, null);
                         }
                         reader.read(2);
-                        return new NElementTokenImpl(">>", NElementTokenType.OP, ">>", 0, line, column, pos, NOperatorSymbol.GT2, null);
+                        return new NElementTokenImpl(">>", NElementTokenType.OPERATOR_SYMBOL, ">>", 0, line, column, pos, NOperatorSymbol.GT2, null);
                     } else if (c1 == '=') {
                         reader.read(2);
-                        return new NElementTokenImpl(">=", NElementTokenType.OP, ">=", 0, line, column, pos, NOperatorSymbol.GTE, null);
+                        return new NElementTokenImpl(">=", NElementTokenType.OPERATOR_SYMBOL, ">=", 0, line, column, pos, NOperatorSymbol.GTE, null);
                     }
                     reader.read();
-                    return new NElementTokenImpl(">", NElementTokenType.OP, ">", 0, line, column, pos, NOperatorSymbol.GT, null);
+                    return new NElementTokenImpl(">", NElementTokenType.OPERATOR_SYMBOL, ">", 0, line, column, pos, NOperatorSymbol.GT, null);
                 }
                 case '"': {
                     if (reader.canRead(2) && reader.peekAt(1) == c && reader.peekAt(2) == c) {
-                        reader.read(); // consume first "
-                        reader.read(); // second
-                        reader.read(); // third
-                        return continueReadQ3('"', NElementTokenType.TRIPLE_DOUBLE_QUOTED_STRING, NElementType.TRIPLE_DOUBLE_QUOTED_STRING);
+                        return readTripleQuoted('"', NElementTokenType.TRIPLE_DOUBLE_QUOTED_STRING, NElementType.TRIPLE_DOUBLE_QUOTED_STRING);
                     }
-                    reader.read(); // third
-                    return continueReadQ1('\"', NElementTokenType.DOUBLE_QUOTED_STRING, NElementType.DOUBLE_QUOTED_STRING);
+                    return readQuoted('\"', NElementTokenType.DOUBLE_QUOTED_STRING, NElementType.DOUBLE_QUOTED_STRING);
                 }
                 case '\'': {
                     if (reader.canRead(2) && reader.peekAt(1) == c && reader.peekAt(2) == c) {
-                        reader.read(); // consume first "
-                        reader.read(); // second
-                        reader.read(); // third
-                        return continueReadQ3('\'', NElementTokenType.TRIPLE_SINGLE_QUOTED_STRING, NElementType.TRIPLE_SINGLE_QUOTED_STRING);
+                        return readTripleQuoted('\'', NElementTokenType.TRIPLE_SINGLE_QUOTED_STRING, NElementType.TRIPLE_SINGLE_QUOTED_STRING);
                     }
-                    reader.read(); // third
-                    return continueReadQ1('\'', NElementTokenType.SINGLE_QUOTED_STRING, NElementType.SINGLE_QUOTED_STRING);
+                    return readQuoted('\'', NElementTokenType.SINGLE_QUOTED_STRING, NElementType.SINGLE_QUOTED_STRING);
                 }
                 case '`': {
                     if (reader.canRead(2) && reader.peekAt(1) == c && reader.peekAt(2) == c) {
-                        reader.read(); // consume first "
-                        reader.read(); // second
-                        reader.read(); // third
-                        return continueReadQ3('`', NElementTokenType.TRIPLE_BACKTICK_STRING, NElementType.TRIPLE_BACKTICK_STRING);
+                        return readTripleQuoted('`', NElementTokenType.TRIPLE_BACKTICK_STRING, NElementType.TRIPLE_BACKTICK_STRING);
                     }
-                    reader.read(); // third
-                    return continueReadQ1('`', NElementTokenType.BACKTICK_STR, NElementType.BACKTICK_STRING);
+                    return readQuoted('`', NElementTokenType.BACKTICK_STRING, NElementType.BACKTICK_STRING);
                 }
                 case ' ': {
                     StringBuilder sb = new StringBuilder();
@@ -405,7 +394,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
 
                     NOptional<NOperatorSymbol> cc = NOperatorSymbol.parse(symbolStr);
                     if (cc.isPresent()) {
-                        return new NElementTokenImpl(String.valueOf(c), NElementTokenType.OP, String.valueOf(c), 0, line, column, pos,
+                        return new NElementTokenImpl(String.valueOf(c), NElementTokenType.OPERATOR_SYMBOL, String.valueOf(c), 0, line, column, pos,
                                 cc.get(), null
                         );
                     }
@@ -413,11 +402,11 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                         break;
                     }
                     int type = Character.getType(c);
-                    if (type == Character.MATH_SYMBOL||
+                    if (type == Character.MATH_SYMBOL ||
                             type == Character.OTHER_SYMBOL ||
                             type == Character.DASH_PUNCTUATION ||
                             type == Character.MODIFIER_SYMBOL) {
-                        return new NElementTokenImpl(String.valueOf(c), NElementTokenType.OP, String.valueOf(c), 0, line, column, pos,
+                        return new NElementTokenImpl(String.valueOf(c), NElementTokenType.OPERATOR_SYMBOL, String.valueOf(c), 0, line, column, pos,
                                 NOperatorSymbol.UNKNOWN, null
                         );
                     }
@@ -535,106 +524,123 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
             int p2 = reader.peekAt(2);
             if (p2 == '^') {
                 String op = reader.read(3);
-                return new NElementTokenImpl(op, NElementTokenType.OP, op, 0, line, column, pos, NOperatorSymbol.HAT3, null);
+                return new NElementTokenImpl(op, NElementTokenType.OPERATOR_SYMBOL, op, 0, line, column, pos, NOperatorSymbol.HAT3, null);
             }
             String op = reader.read(2);
-            return new NElementTokenImpl(op, NElementTokenType.OP, op, 0, line, column, pos, NOperatorSymbol.HAT2, null);
+            return new NElementTokenImpl(op, NElementTokenType.OPERATOR_SYMBOL, op, 0, line, column, pos, NOperatorSymbol.HAT2, null);
         } else if (p1 == '=') {
             int p2 = reader.peekAt(2);
             if (p2 == '=') {
                 String op = reader.read(3);
-                return new NElementTokenImpl(op, NElementTokenType.OP, op, 0, line, column, pos, NOperatorSymbol.HAT_EQ2, null);
+                return new NElementTokenImpl(op, NElementTokenType.OPERATOR_SYMBOL, op, 0, line, column, pos, NOperatorSymbol.HAT_EQ2, null);
             }
             String op = reader.read(2);
-            return new NElementTokenImpl(op, NElementTokenType.OP, op, 0, line, column, pos, NOperatorSymbol.HAT_EQ, null);
+            return new NElementTokenImpl(op, NElementTokenType.OPERATOR_SYMBOL, op, 0, line, column, pos, NOperatorSymbol.HAT_EQ, null);
         }
         String op = reader.read(1);
-        return new NElementTokenImpl(op, NElementTokenType.OP, op, 0, line, column, pos, NOperatorSymbol.HAT, null);
+        return new NElementTokenImpl(op, NElementTokenType.OPERATOR_SYMBOL, op, 0, line, column, pos, NOperatorSymbol.HAT, null);
     }
 
-    private boolean readLineCommentStart(StringBuilder sb) {
-        while (true) {
-            int c = reader.peek();
-            if (c == -1) {
-                break;
-            } else if (c == '\n') {
-                char cc = (char) reader.read();
-                sb.append(cc);
-                readLineCommentSuite(sb);
-                return true;
-            } else if (c == '\r') {
-                sb.append((char) reader.read());
-                c = reader.peek();
-                if (c == '\n') {
-                    sb.append((char) reader.read());
-                }
-                readLineCommentSuite(sb);
-                return true;
-            }
-            char cc = (char) reader.read();
-            sb.append(cc);
-        }
-        return true;
+    private NElementTokenImpl readLineComments() {
+        return readMultiLineString("//", NElementTokenType.LINE_COMMENT);
     }
 
-    private boolean readLineCommentSuite(StringBuilder sb) {
-        int i = 0;
-        while (true) {
-            int c = reader.peekAt(i);
-            if (c == '\n') {
-                return false;
-            } else if (Character.isWhitespace(c)) {
-                i++;
-            } else if (c == '/') {
-                c = reader.peekAt(i + 1);
-                if (c == '/') {
-                    sb.append(reader.read(i + 1));
-                    return readLineCommentStart(sb);
-                }
-                return false;
-            }else{
-                return false;
-            }
-        }
-    }
+    private NElementTokenImpl readBlockComments() {
+        int line0 = reader.line();
+        int column0 = reader.column();
+        long pos0 = reader.pos();
 
-
-    private NElementTokenImpl continueReadLineComments() {
-        int line = reader.line();
-        int column = reader.column();
-        long pos = reader.pos();
-        StringBuilder raw = new StringBuilder("//");
-        reader.read(2); // consume //
-
-        readLineCommentStart(raw);
-        return new NElementTokenImpl(raw.toString(), NElementTokenType.LINE_COMMENT, "//", 0, line, column, pos,
-                raw.toString(), null);
-    }
-
-    private NElementTokenImpl continueReadBlockComments() {
-        int line = reader.line();
-        int column = reader.column();
-        long pos = reader.pos();
         StringBuilder image = new StringBuilder("/*");
+        List<NElementLine> lines = new ArrayList<>();
+
         reader.read(2); // consume /*
+
+        boolean firstLine = true;
         NMsg error = null;
+
         while (true) {
-            int c = reader.peek();
-            if (c == -1) {
-                error = NMsg.ofC("unclosed bloc comment. missing '*/'");
+            // 1. Identify leading whitespace (Potential Prefix)
+            String currentPrefix = readSpaces();
+
+            // 2. Identify a potential Marker (like '*' in Javadoc)
+            String currentMarker = "";
+            String currentPadding = "";
+
+            if (reader.peek() == '*' && reader.peekAt(1) != '/') {
+                currentMarker = String.valueOf((char)reader.read()); // consume '*'
+                currentPadding = readSpaces(); // consume spaces after '*'
+            }
+
+            // 3. Read the actual content until EOL or */
+            StringBuilder contentBuf = new StringBuilder();
+            while (true) {
+                int c = reader.peek();
+                if (c == -1 || (c == '*' && reader.peekAt(1) == '/')) break;
+
+                NNewLineMode nl = reader.readNewLine();
+                if (nl != null) {
+                    // End of this line
+                    lines.add(new NElementLineImpl(
+                            currentPrefix, currentMarker, currentPadding, contentBuf.toString(), "", "", nl
+                    ));
+                    // Update image (reconstructing the source exactly)
+                    image.append(currentPrefix).append(currentMarker).append(currentPadding)
+                            .append(contentBuf).append(nl.value());
+                    break;
+                }
+                contentBuf.append((char)reader.read());
+            }
+
+            // Check if we exited because of the closing tag */
+            if (reader.peek() == '*' && reader.peekAt(1) == '/') {
+                lines.add(new NElementLineImpl(
+                        currentPrefix, currentMarker,  currentPadding, contentBuf.toString(), "", "", null
+                ));
+                image.append(currentPrefix).append(currentMarker).append(currentPadding)
+                        .append(contentBuf).append("*/");
+                reader.read(2); // consume */
                 break;
             }
-            if (c == '*' && reader.peekAt(1) == '/') {
-                image.append("*/");
-                reader.read(2);
+
+            if (reader.peek() == -1) {
+                error = NMsg.ofC("Unclosed block comment");
                 break;
             }
-            c = (char) reader.read();
-            image.append((char) c);
         }
-        return new NElementTokenImpl(image.toString(), NElementTokenType.BLOCK_COMMENT, "/*", 0, line, column, pos,
-                image.toString()
-                , error);
+
+        return new NElementTokenImpl(
+                image.toString(), NElementTokenType.BLOCK_COMMENT, "/*", 0,
+                line0, column0, pos0,
+                new LinesAndContent(lines, extractPureContent(lines)),
+                error
+        );
+    }
+
+    private String extractPureContent(List<NElementLine> lines) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < lines.size(); i++) {
+            NElementLine line = lines.get(i);
+            sb.append(line.content());
+            if (line.newline() != null) {
+                sb.append(line.newline().value());
+            }
+        }
+        return sb.toString();
+    }
+    private String readSpaces(){
+        StringBuilder sb=new StringBuilder();
+        while (true){
+            int c = reader.peek();
+            if(c<0){
+                break;
+            }
+            if(c==' ' || c=='\t'){
+                sb.append(reader.readChar());
+            }else{
+                break;
+            }
+        }
+        return sb.toString();
     }
 
     private NElementTokenImpl asOperator123Eq(int c, NOperatorSymbol t1, NOperatorSymbol t2, NOperatorSymbol t3, NOperatorSymbol eq1, NOperatorSymbol eq2) {
@@ -648,11 +654,11 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
             if (n2 == c) {
                 reader.read(3);
                 String i = new String(new char[]{cc, cc, cc});
-                return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, t3, null);
+                return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, t3, null);
             } else {
                 reader.read(2);
                 String i = new String(new char[]{cc, cc});
-                return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, t2, null);
+                return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, t2, null);
             }
         } else if (n == '=') {
             int n2 = reader.peekAt(2);
@@ -660,11 +666,11 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
             if (n2 == '=') {
                 reader.read(3);
                 String i = new String(new char[]{cc, cc, cc});
-                return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, eq2, null);
+                return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, eq2, null);
             } else {
                 reader.read(2);
                 String i = new String(new char[]{cc, cc});
-                return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, eq1, null);
+                return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, eq1, null);
             }
         } else {
             return asChar(c, t1);
@@ -682,17 +688,22 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
             if (n2 == c) {
                 reader.read(3);
                 String i = new String(new char[]{cc, cc, cc});
-                return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, t3, null);
+                return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, t3, null);
             } else {
                 reader.read(2);
                 String i = new String(new char[]{cc, cc});
-                return new NElementTokenImpl(i, NElementTokenType.OP, i, 0, line, column, pos, t2, null);
+                return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, t2, null);
             }
         }
         return asChar(c, t1);
     }
 
-    private NElementTokenImpl continueReadQ1(char c0, NElementTokenType elementTokenType, NElementType elementType) {
+    public NElementTokenImpl readQuoted(char c0, NElementTokenType elementTokenType, NElementType elementType) {
+        int a = reader.read(); // third
+        if (a != c0) {
+            throw new NUnexpectedException(NMsg.ofC("expected %s", c0, c0, c0));
+        }
+
         StringBuilder image = new StringBuilder().append(c0);
         StringBuilder value = new StringBuilder();
         NMsg error = null;
@@ -726,18 +737,20 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 reader.line(),
                 reader.column(),
                 reader.pos(),
-                new DefaultNStringElement(
-                        elementType,
-                        value.toString(),
-                        image.toString()
-                ), error
+                value.toString(),
+                error
         );
     }
 
-    private NElementTokenImpl continueReadQ3(char c0, NElementTokenType tokenType, NElementType elementType) {
+    public NElementTokenImpl readTripleQuoted(char c0, NElementTokenType tokenType, NElementType elementType) {
         StringBuilder image = new StringBuilder().append(c0).append(c0).append(c0);
         StringBuilder value = new StringBuilder();
-
+        int a1 = reader.read(); // consume first "
+        int a2 = reader.read(); // second
+        int a3 = reader.read(); // third
+        if (a1 != a2 || a2 != a3 || a3 != c0) {
+            throw new NUnexpectedException(NMsg.ofC("expected %s%s%s", c0, c0, c0));
+        }
         while (true) {
             // End delimiter """
             if (reader.canRead(3)
@@ -787,49 +800,27 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 reader.line(),
                 reader.column(),
                 reader.pos(),
-                new DefaultNStringElement(
-                        elementType,
-                        value.toString(),
-                        image.toString()
-                ),
+                value.toString(),
                 null
         );
     }
 
-    private NElementTokenImpl continueReadUserSingleLine() {
+    public NElementTokenImpl readLineString() {
         StringBuilder image = new StringBuilder();
         StringBuilder content = new StringBuilder();
 
         // Consume the initial '¶'
         image.append('¶');
-        reader.read(); // consume '¶'
+        int c = reader.read();// consume '¶'
+        NAssert.requireNamedEquals('¶',(char)c,"paragraph start");
+        String line = reader.readLine();
+        image.append(line);
+        content.append(line);
 
-        // Read rest of line (up to but not including newline)
-        while (true) {
-            int c = reader.peek();
-            if (c == -1 || c == '\n' || c == '\r') {
-                break;
-            }
-            char ch = (char) reader.read();
-            image.append(ch);
-            content.append(ch);
+        NNewLineMode newLine = reader.readNewLine();
+        if (newLine != null) {
+            image.append(newLine.value());
         }
-
-        // Consume and append newline to image (but not to content)
-        int c = reader.peek();
-        if (c == '\r') {
-            image.append('\r');
-            reader.read();
-            if (reader.peek() == '\n') {
-                image.append('\n');
-                reader.read();
-            }
-        } else if (c == '\n') {
-            image.append('\n');
-            reader.read();
-        }
-        // If EOF, no newline to consume
-
         return new NElementTokenImpl(
                 image.toString(),           // e.g., "¶ hello\n"
                 NElementTokenType.LINE_STRING,
@@ -838,102 +829,151 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 reader.line(),
                 reader.column(),
                 reader.pos(),
-                new DefaultNStringElement(
-                        NElementType.LINE_STRING,
-                        content.toString(),
-                        image.toString()
+                new LinesAndContent(
+                        Arrays.asList(new NElementLineImpl(
+                                "",
+                                "¶",
+                                "",
+                                content.toString(),
+                                "",
+                                "",
+                                newLine
+                        )),
+                        content.toString()
                 )
-
                 , null
         );
     }
 
-    private NElementTokenImpl continueReadUserMultiLine() {
-        StringBuilder image = new StringBuilder();
-        StringBuilder content = new StringBuilder();
+    private static class NewLineThenSpaces {
+        NNewLineMode newLine;
+        String spaces;
+        String suffix;
 
-        // Read first "¶¶"
-        image.append("¶¶");
-        reader.read(); // ¶
-        reader.read(); // ¶
+        public NewLineThenSpaces(NNewLineMode newLine, String spaces, String suffix) {
+            this.newLine = newLine;
+            this.spaces = spaces;
+            this.suffix = suffix;
+        }
+    }
 
-        boolean firstLine = true;
-
-        while (true) {
-            // Read rest of current line
-            StringBuilder lineContent = new StringBuilder();
-            while (true) {
-                int c = reader.peek();
-                if (c == -1 || c == '\n' || c == '\r') {
-                    break;
-                }
-                char ch = (char) reader.read();
-                image.append(ch);
-                lineContent.append(ch);
-            }
-
-            // Append to content
-            if (!firstLine) {
-                content.append('\n');
-            }
-            content.append(lineContent.toString());
-            firstLine = false;
-
-            // Consume newline and add to image
-            int c = reader.peek();
-            if (c == '\r') {
-                image.append('\r');
-                reader.read();
-                if (reader.peek() == '\n') {
-                    image.append('\n');
-                    reader.read();
-                }
-            } else if (c == '\n') {
-                image.append('\n');
-                reader.read();
+    private NewLineThenSpaces newLineThenSpaceThen(String a) {
+        int i = 0;
+        NNewLineMode newLine;
+        char[] cc = a.toCharArray();
+        if (reader.peekAt(i) == '\r') {
+            if (reader.peekAt(i + 1) == '\n') {
+                i += 2;
+                newLine = NNewLineMode.CRLF;
             } else {
-                // EOF
-                break;
+                i++;
+                newLine = NNewLineMode.CR;
             }
-
-            // Check for next ¶¶ line
-            if (!reader.canRead(2)) {
-                break;
+        } else if (reader.peekAt(i) == '\n') {
+            newLine = NNewLineMode.LF;
+            i++;
+        } else {
+            return null;
+        }
+        while (true) {
+            int c = reader.peekAt(i);
+            if (c == -1 || c == '\n' || c == '\r') {
+                return null;
             }
-            if (reader.peekAt(0) != '¶' || reader.peekAt(1) != '¶') {
-                break;
-            }
-
-            // Consume next ¶¶
-            image.append("¶¶");
-            reader.read(); // ¶
-            reader.read(); // ¶
-
-            // Optional: consume space after ¶¶
-            if (reader.peek() == ' ') {
-                image.append(' ');
-                reader.read();
+            if (c == ' ' || c == '\t') {
+                i++;
+            } else {
+                if (reader.canRead(cc.length)) {
+                    for (int j = 0; j < cc.length; j++) {
+                        if (cc[j] != reader.peekAt(i)) {
+                            return null;
+                        }
+                        i++;
+                    }
+                    //skip newline
+                    int nll = newLine.value().length();
+                    reader.read(nll);
+                    int remaining = i - nll - cc.length;
+                    String spaces = "";
+                    if (remaining > 0) {
+                        spaces = reader.read(remaining);
+                    }
+                    String suffix = reader.read(cc.length);
+                    return new NewLineThenSpaces(newLine, spaces, suffix);
+                } else {
+                    return null;
+                }
             }
         }
+    }
 
+
+    public NElementTokenImpl readBlockString() {
+        return readMultiLineString("¶¶", NElementTokenType.BLOCK_STRING);
+    }
+
+    public NElementTokenImpl readMultiLineString(String marker,NElementTokenType tokenType) {
+        int line0 = reader.line();
+        int column0 = reader.column();
+        long pos0 = reader.pos();
+        StringBuilder image = new StringBuilder();
+        StringBuilder content = new StringBuilder();
+        image.append(marker);
+        String s = reader.read(2);// consume /*
+        NAssert.requireNamedEquals(s, marker, "prefix");
+        List<NElementLine> elems = new ArrayList<>();
+        String nextPrefix = null;
+        String nextMarker = marker;
+        while (true) {
+            // Read rest of current line
+            String line = reader.readLine();
+            image.append(line);
+            content.append(line);
+            NewLineThenSpaces cont = newLineThenSpaceThen(marker);
+            if (cont != null) {
+                content.append(cont.newLine.value());
+                image.append(cont.newLine.value());
+                image.append(cont.spaces);
+                image.append(cont.suffix);
+                elems.add(new NElementLineImpl(
+                        nextPrefix, nextMarker, "", line, "", "", cont.newLine
+                ));
+                nextMarker = marker;
+                nextPrefix = cont.spaces;
+            } else {
+                NNewLineMode nl = reader.readNewLine();
+                elems.add(new NElementLineImpl(
+                        nextPrefix, nextMarker, "", line, "", "", nl
+                ));
+                if (nl != null) {
+                    image.append(nl.value());
+                }
+                break;
+            }
+        }
         return new NElementTokenImpl(
                 image.toString(),           // ← exact source
-                NElementTokenType.BLOCK_STRING,
-                "¶¶",
+                tokenType,
+                marker,
                 0,
-                reader.line(),
-                reader.column(),
-                reader.pos(),
-                new DefaultNStringElement(
-                        NElementType.BLOCK_STRING,
-                        content.toString(),
-                        image.toString()
-                )
+                line0,
+                column0,
+                pos0,
+                new LinesAndContent(elems, content.toString())
                 // ← clean value
                 , null
         );
     }
 
+    public static class LinesAndContent {
+        public List<NElementLine> lines;
+        public String content;
+
+        public LinesAndContent(List<NElementLine> lines, String content) {
+            this.lines = lines;
+            this.content = content;
+        }
+    }
 
     private NElementTokenImpl continueReadIdentifier() {
         int line = reader.line();
@@ -2064,14 +2104,14 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     }
                     String str = reader.read(h);
                     LocalDateTime i = LocalDateTime.parse(str);
-                    return new NElementTokenImpl(str, NElementTokenType.DATETIME, "", 0, line, column, pos,
+                    return new NElementTokenImpl(str, NElementTokenType.LOCAL_DATETIME, "", 0, line, column, pos,
                             //should include raw image as well
                             new DefaultNPrimitiveElement(NElementType.LOCAL_DATETIME, i)
                             , null);
                 } else {
                     String str = reader.read(16);
                     LocalDateTime i = LocalDateTime.parse(str);
-                    return new NElementTokenImpl(str, NElementTokenType.DATETIME, "", 0, line, column, pos,
+                    return new NElementTokenImpl(str, NElementTokenType.LOCAL_DATETIME, "", 0, line, column, pos,
                             new DefaultNPrimitiveElement(NElementType.LOCAL_DATETIME, i)
 
                             , null);
@@ -2079,7 +2119,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
             } else {
                 String str = reader.read(10);
                 LocalDate i = LocalDate.parse(str);
-                return new NElementTokenImpl(str, NElementTokenType.DATE, "", 0, line, column, pos,
+                return new NElementTokenImpl(str, NElementTokenType.LOCAL_DATE, "", 0, line, column, pos,
                         new DefaultNPrimitiveElement(NElementType.LOCAL_DATE, i)
 
                         , null);
@@ -2103,7 +2143,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
             }
             String str = reader.read(h);
             LocalTime i = LocalTime.parse(str);
-            return new NElementTokenImpl(str, NElementTokenType.TIME, "", 0, line, column, pos,
+            return new NElementTokenImpl(str, NElementTokenType.LOCAL_TIME, "", 0, line, column, pos,
                     new DefaultNPrimitiveElement(NElementType.LOCAL_TIME, i)
                     , null);
         }
@@ -2134,8 +2174,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         switch (c1) {
             case '●':
             case '•':
-            case '.':
-            {
+            case '.': {
                 type = NElementTokenType.UNORDERED_LIST;
                 break;
             }
@@ -2180,6 +2219,6 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
     private NElementTokenImpl asChar(int c, NOperatorSymbol tt) {
         String image = String.valueOf((char) c);
         reader.read();
-        return new NElementTokenImpl(image, NElementTokenType.OP, image, 0, reader.line(), reader.column(), reader.pos(), tt, null);
+        return new NElementTokenImpl(image, NElementTokenType.OPERATOR_SYMBOL, image, 0, reader.line(), reader.column(), reader.pos(), tt, null);
     }
 }
