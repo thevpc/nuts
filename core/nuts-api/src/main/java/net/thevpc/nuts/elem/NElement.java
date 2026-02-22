@@ -31,6 +31,7 @@ import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.*;
 
@@ -663,11 +664,19 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
         return NElementFactory.of().ofParamObject(name, params);
     }
 
-    static NElementComment ofBlocComment(String... comments) {
+    static NElementComment ofBlocComment(String comments) {
         return NElementFactory.of().ofBlocComment(comments);
     }
 
-    static NElementComment ofLineComment(String... lines) {
+    static NElementComment ofLineComment(String lines) {
+        return NElementFactory.of().ofLineComment(lines);
+    }
+
+    static NElementComment ofBlocComment(NElementLine... comments) {
+        return NElementFactory.of().ofBlocComment(comments);
+    }
+
+    static NElementComment ofLineComment(NElementLine... lines) {
         return NElementFactory.of().ofLineComment(lines);
     }
 
@@ -695,47 +704,6 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
         return NElementFactory.of().ofCharStreamBuilder();
     }
 
-    static NElementAnnotation ofAnnotation(String name, NElement... values) {
-        return NElementFactory.of().ofAnnotation(name, values);
-    }
-
-    static NElementNewLine ofNewline() {
-        return NElementFactory.of().ofNewline("\n");
-    }
-
-    static NElementNewLine ofNewline(String value) {
-        return NElementFactory.of().ofNewline(value);
-    }
-
-    static NElementSpace ofSpace() {
-        return NElementFactory.of().ofSpace(" ");
-    }
-
-    static NElementSpace ofSpace(int count) {
-        NAssert.requireTrue(count > 0, () -> NMsg.ofC("spaces count should be positive"));
-        return NElementFactory.of().ofSpace(NStringUtils.repeat(' ', count));
-    }
-
-    static NElementSpace ofSpace(String value) {
-        return NElementFactory.of().ofSpace(value);
-    }
-
-    static NElementSeparator ofSeparator(String value) {
-        return NElementFactory.of().ofSeparator(value);
-    }
-
-    static NElementSeparator ofSeparator() {
-        return NElementFactory.of().ofSeparator(',');
-    }
-
-    static NElementSeparator ofSeparator(char value) {
-        return NElementFactory.of().ofSeparator(value);
-    }
-
-    static NElementAnnotation ofAnnotation(String name) {
-        return NElementFactory.of().ofAnnotation(name);
-    }
-
     static NPrimitiveElementBuilder ofPrimitiveBuilder() {
         return NElementFactory.of().ofPrimitiveBuilder();
     }
@@ -750,10 +718,6 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
 
     static NElementDiagnosticBuilder ofDiagnosticBuilder() {
         return NElementFactory.of().ofDiagnosticBuilder();
-    }
-
-    static NBoundAffix ofBoundAffix(NAffix affix, NAffixAnchor anchor) {
-        return NElementFactory.of().ofBoundAffix(affix, anchor);
     }
 
     static NElement ofFragment(NElement... elements) {
