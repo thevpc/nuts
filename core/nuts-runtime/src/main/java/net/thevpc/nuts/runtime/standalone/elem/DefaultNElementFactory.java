@@ -8,11 +8,13 @@ import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.runtime.standalone.elem.builder.*;
 import net.thevpc.nuts.runtime.standalone.elem.item.*;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementLineImpl;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenImpl;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCustomLexer;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.*;
 
 import java.math.BigDecimal;
@@ -21,7 +23,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -964,11 +965,19 @@ public class DefaultNElementFactory implements NElementFactory {
         return new DefaultNNumberElement(NElementType.FLOAT, value);
     }
 
-    public NElementComment ofBlocComment(String... lines) {
+    public NElementComment ofBlocComment(String lines) {
         return NElementCommentImpl.ofBloc(lines);
     }
 
-    public NElementComment ofLineComment(String... lines) {
+    public NElementComment ofLineComment(String lines) {
+        return NElementCommentImpl.ofLine(lines);
+    }
+
+    public NElementComment ofBlocComment(NElementLine... lines) {
+        return NElementCommentImpl.ofBloc(lines);
+    }
+
+    public NElementComment ofLineComment(NElementLine... lines) {
         return NElementCommentImpl.ofLine(lines);
     }
 
@@ -990,5 +999,10 @@ public class DefaultNElementFactory implements NElementFactory {
     @Override
     public NFragmentElement ofFragment(NElement... elements) {
         return ofFragmentBuilder().addAll(elements).build();
+    }
+
+    @Override
+    public NElementLine ofElementLine(String prefix, String startMarker, String startPadding, String content, String endPadding, String endMarker, NNewLineMode newline) {
+        return new NElementLineImpl(prefix, startMarker, startPadding, content, endPadding, endMarker, newline);
     }
 }
