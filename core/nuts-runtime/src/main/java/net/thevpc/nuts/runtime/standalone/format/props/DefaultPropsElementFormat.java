@@ -89,7 +89,7 @@ public class DefaultPropsElementFormat implements NElementStreamFormat {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
-//            case NUTS_STRING:
+            case BLOCK_STRING:
             {
                 StringBuilder sb = new StringBuilder("\"");
                 final String str = data.asStringValue().orElse("");
