@@ -27,6 +27,7 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
+import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 
 import java.math.BigDecimal;
@@ -51,6 +52,7 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
     NPrimitiveElementBuilder numberLayout(NNumberLayout numberLayout);
 
     String numberSuffix();
+
     String image();
 
     NPrimitiveElementBuilder numberSuffix(String numberSuffix);
@@ -63,6 +65,10 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
     NPrimitiveElementBuilder setValue(Object value);
 
     NPrimitiveElementBuilder value(Object value);
+
+    NPrimitiveElementBuilder setBlockString(NElementLine... value);
+
+    NPrimitiveElementBuilder setLineString(NElementLine value);
 
     NPrimitiveElementBuilder setInstant(Instant value);
 
@@ -93,6 +99,8 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
     NPrimitiveElementBuilder setTripleAntiQuotedString(String value);
 
     NPrimitiveElementBuilder setLineString(String value);
+
+    NPrimitiveElementBuilder setBlockString(String value);
 
     NPrimitiveElementBuilder setInt(Integer value);
 
@@ -144,6 +152,7 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
     NPrimitiveElementBuilder addAffix(int index, NBoundAffix affix);
 
     NPrimitiveElementBuilder setAffix(int index, NBoundAffix affix);
+
     NPrimitiveElementBuilder addAffix(NBoundAffix affix);
 
     NPrimitiveElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
