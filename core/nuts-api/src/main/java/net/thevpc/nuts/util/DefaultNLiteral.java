@@ -809,6 +809,7 @@ public class DefaultNLiteral implements NLiteral {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
+            case BLOCK_STRING:
                 return NStringUtils.formatStringLiteral(asString().get(), type());
             case BOOLEAN:
                 return String.valueOf(asBoolean().get());
@@ -842,7 +843,9 @@ public class DefaultNLiteral implements NLiteral {
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_BACKTICK_STRING:
-            case LINE_STRING: {
+            case LINE_STRING:
+            case BLOCK_STRING:
+            {
                 return toString().isEmpty();
             }
         }
@@ -1035,7 +1038,9 @@ public class DefaultNLiteral implements NLiteral {
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_BACKTICK_STRING:
-            case LINE_STRING: {
+            case LINE_STRING:
+            case BLOCK_STRING:
+            {
                 String s = asString().get();
                 s = s.trim();
                 try {
