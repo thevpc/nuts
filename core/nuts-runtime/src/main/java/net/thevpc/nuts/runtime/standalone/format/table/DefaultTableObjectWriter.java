@@ -160,7 +160,7 @@ public class DefaultTableObjectWriter extends DefaultObjectWriterBase<NTableWrit
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
-//            case NUTS_STRING:
+            case BLOCK_STRING:
             case INT:
             case FLOAT:
             case NULL: {
