@@ -13,13 +13,13 @@ public class DefaultNElementFormatContext extends DefaultNElementTransformContex
     private NElementBuilder builder;
     private NContentType contentType;
 
-    public DefaultNElementFormatContext(NElement element,NContentType contentType) {
+    public DefaultNElementFormatContext(NElement element, NContentType contentType) {
         super(element);
-        this.contentType=contentType;
+        this.contentType = contentType;
     }
 
-    public DefaultNElementFormatContext(NElement element, NElementPath path, Map<String, Object> properties, Map<String, Object> sharedConfig, String indent, NElementFormatOptions options, NElementBuilder builder) {
-        super(element, path, properties, sharedConfig);
+    public DefaultNElementFormatContext(NElement element, NElementPath path, Map<String, Object> properties, Map<String, Object> sharedConfig, boolean lastElement, String indent, NElementFormatOptions options, NElementBuilder builder) {
+        super(element, path, properties, sharedConfig, lastElement);
         this.indent = NStringUtils.firstNonNull(indent, "");
         this.options = options;
         this.builder = builder;
@@ -46,7 +46,7 @@ public class DefaultNElementFormatContext extends DefaultNElementTransformContex
 
     @Override
     public NElementFormatContext withBuilder(NElementBuilder builder) {
-        return newInstance(element(), path(), properties(), sharedConfig(), indent, options, builder);
+        return newInstance(element(), path(), properties(), sharedConfig(), isTail(), indent, options, builder);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class DefaultNElementFormatContext extends DefaultNElementTransformContex
         if (Objects.equals(options, this.options)) {
             return this;
         }
-        return newInstance(element(), path(), properties(), sharedConfig(), indent, options, builder);
+        return newInstance(element(), path(), properties(), sharedConfig(), isTail(), indent, options, builder);
     }
 
     @Override
@@ -69,15 +69,15 @@ public class DefaultNElementFormatContext extends DefaultNElementTransformContex
 
 
     public NElementFormatContext withIndent(String indent) {
-        return newInstance(element(), path(), properties(), sharedConfig(), indent, options, builder);
+        return newInstance(element(), path(), properties(), sharedConfig(), isTail(), indent, options, builder);
     }
 
     @Override
-    protected NElementFormatContext newInstance(NElement element, NElementPath path, Map<String, Object> properties, Map<String, Object> sharedConfig) {
-        return newInstance(element, path, properties, sharedConfig, indent, options, builder);
+    protected NElementFormatContext newInstance(NElement element, NElementPath path, Map<String, Object> properties, Map<String, Object> sharedConfig, boolean lastElement) {
+        return newInstance(element, path, properties, sharedConfig, lastElement, indent, options, builder);
     }
 
-    protected NElementFormatContext newInstance(NElement element, NElementPath path, Map<String, Object> properties, Map<String, Object> sharedConfig, String indent, NElementFormatOptions options, NElementBuilder builder) {
-        return new DefaultNElementFormatContext(element, path, properties, sharedConfig, indent, options, builder);
+    protected NElementFormatContext newInstance(NElement element, NElementPath path, Map<String, Object> properties, Map<String, Object> sharedConfig, boolean lastElement, String indent, NElementFormatOptions options, NElementBuilder builder) {
+        return new DefaultNElementFormatContext(element, path, properties, sharedConfig, lastElement, indent, options, builder);
     }
 }
