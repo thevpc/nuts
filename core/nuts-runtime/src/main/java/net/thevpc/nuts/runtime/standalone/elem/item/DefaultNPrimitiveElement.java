@@ -45,11 +45,11 @@ public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimi
     private final Object value;
 
     public DefaultNPrimitiveElement(NElementType type, Object value) {
-        this(type,value,null,null,null);
+        this(type, value, null, null, null);
     }
 
-    public DefaultNPrimitiveElement(NElementType type, Object value, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
-        super(type, affixes, diagnostics,metadata);
+    public DefaultNPrimitiveElement(NElementType type, Object value, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
+        super(type, affixes, diagnostics, metadata);
         if (type == NElementType.NAME) {
             NAssert.requireNamedTrue(NElementUtils.isValidElementName((String) value), "valid name : " + (String) value);
         }
@@ -67,17 +67,26 @@ public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimi
 
     @Override
     public Object value() {
-        return NLiteral.of(value).asObject().orNull();
+        return value;
     }
 
     @Override
     public boolean isEmpty() {
+        if (value == null) {
+            return true;
+        }
+        if (value instanceof String) {
+            return NStringUtils.isEmpty((String) value);
+        }
+        if (value instanceof CharSequence) {
+            return NStringUtils.isEmpty(((CharSequence) value).toString());
+        }
         return NLiteral.of(value).isEmpty();
     }
 
     @Override
     public boolean isBlank() {
-        return NLiteral.of(value).isBlank();
+        return NBlankable.isBlank(value);
     }
 
     @Override
