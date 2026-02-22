@@ -106,11 +106,11 @@ public class TsonCustomParser {
                 return DefaultNElementSpace.of(x.image());
             case NEWLINE:
                 return DefaultNElementNewLine.of(x.image());
-            case BLOCK_COMMENT: {
-                return new NElementCommentImpl(NAffixType.BLOC_COMMENT, x.image(), x.image());
-            }
-            case LINE_COMMENT: {
-                return new NElementCommentImpl(NAffixType.LINE_COMMENT, x.image(), x.image());
+            case BLOCK_COMMENT:
+            case LINE_COMMENT:
+            {
+                TsonCustomLexer.LinesAndContent value = (TsonCustomLexer.LinesAndContent) x.value();
+                return new NElementCommentImpl(NAffixType.BLOC_COMMENT, x.image(), value.content,value.lines.toArray(new NElementLine[0]));
             }
             case COMMA:
             case SEMICOLON2:
@@ -263,18 +263,11 @@ public class TsonCustomParser {
                 case NULL:
                 case TRUE:
                 case FALSE:
-                case DATE:
+                case LOCAL_DATE:
                 case INSTANT:
-                case DATETIME:
-                case TIME:
+                case LOCAL_DATETIME:
+                case LOCAL_TIME:
                 case NUMBER:
-                case DOUBLE_QUOTED_STRING:
-                case SINGLE_QUOTED_STRING:
-                case LINE_STRING:
-                case BACKTICK_STR:
-                case TRIPLE_DOUBLE_QUOTED_STRING:
-                case TRIPLE_SINGLE_QUOTED_STRING:
-                case TRIPLE_BACKTICK_STRING:
                 case CHAR_STREAM:
                 case BINARY_STREAM: {
                     nextToken();
@@ -288,6 +281,49 @@ public class TsonCustomParser {
                         b.addDiagnostic(diagnostic);
                     }
                     base = b.build();
+                    break;
+                }
+                case DOUBLE_QUOTED_STRING:
+                case SINGLE_QUOTED_STRING:
+                case BACKTICK_STRING:
+                case TRIPLE_DOUBLE_QUOTED_STRING:
+                case TRIPLE_SINGLE_QUOTED_STRING:
+                case TRIPLE_BACKTICK_STRING: {
+                    nextToken();
+                    String lines = (String) t.token.value();
+                    List<NBoundAffix> boundAffixes = new ArrayList<>();
+                    affixes.addAll(tokensToAffixes(t.prefixes));
+                    boundAffixes.addAll(bindAffixes(affixes, NAffixAnchor.START));
+                    boundAffixes.addAll(readPostComments());
+                    base = new DefaultNStringElement(
+                            t.token.type().elementType(),
+                            lines,
+                            t.token.image(),
+                            null,
+                            boundAffixes,
+                            diagnostics,
+                            null
+                    );
+                    break;
+                }
+
+                case LINE_STRING:
+                case BLOCK_STRING: {
+                    nextToken();
+                    TsonCustomLexer.LinesAndContent lines = (TsonCustomLexer.LinesAndContent) t.token.value();
+                    List<NBoundAffix> boundAffixes = new ArrayList<>();
+                    affixes.addAll(tokensToAffixes(t.prefixes));
+                    boundAffixes.addAll(bindAffixes(affixes, NAffixAnchor.START));
+                    boundAffixes.addAll(readPostComments());
+                    base = new DefaultNStringElement(
+                            t.token.type().elementType(),
+                            lines.content,
+                            t.token.image(),
+                            lines.lines,
+                            boundAffixes,
+                            diagnostics,
+                            null
+                    );
                     break;
                 }
                 case LBRACE: {
@@ -346,7 +382,7 @@ public class TsonCustomParser {
             ) {
                 return new NDefaultEmptyElement(
                         bindAffixes(affixes, NAffixAnchor.START),
-                        diagnostics,null
+                        diagnostics, null
                 );
             }
             return null;
@@ -354,6 +390,7 @@ public class TsonCustomParser {
         // now read suffix nelements
         return base;
     }
+
 
     private List<NBoundAffix> readPostComments() {
         NElementTokenInfo e = peekToken();
@@ -452,7 +489,7 @@ public class TsonCustomParser {
         boundAffixes.addAll(bindAffixes(beforeRbraceAffixes, NAffixAnchor.PRE_5));
         boundAffixes.addAll(readPostComments());
         return new DefaultNObjectElement(
-                name, params, oelements, boundAffixes, diagnostics,null
+                name, params, oelements, boundAffixes, diagnostics, null
         );
     }
 
@@ -488,7 +525,7 @@ public class TsonCustomParser {
         boundAffixes.addAll(bindAffixes(beforeRbracketAffixes, NAffixAnchor.PRE_5));
         boundAffixes.addAll(readPostComments());
         return new DefaultNArrayElement(
-                name, params, oelements, boundAffixes, diagnostics,null
+                name, params, oelements, boundAffixes, diagnostics, null
         );
     }
 
@@ -606,22 +643,22 @@ public class TsonCustomParser {
         NElementTokenInfo t = peekToken();
         if (t != null && t.token != null) {
             if (t.token.type() == NElementTokenType.LBRACE) {
-                if(seenName==null) {
+                if (seenName == null) {
                     List<NAffix> c = new ArrayList<>();
                     c.addAll(pendingAffixTokens);
                     c.addAll(beforeLparAffixes);
                     return object(seenName, elements, Collections.emptyList(), c, beforeRparAffixes, diagnostics);
-                }else{
+                } else {
                     return object(seenName, elements, pendingAffixTokens, beforeLparAffixes, beforeRparAffixes, diagnostics);
                 }
             }
             if (t.token.type() == NElementTokenType.LBRACK) {
-                if(seenName==null) {
+                if (seenName == null) {
                     List<NAffix> c = new ArrayList<>();
                     c.addAll(pendingAffixTokens);
                     c.addAll(beforeLparAffixes);
                     return array(seenName, elements, Collections.emptyList(), c, beforeRparAffixes, diagnostics);
-                }else{
+                } else {
                     return array(seenName, elements, pendingAffixTokens, beforeLparAffixes, beforeRparAffixes, diagnostics);
                 }
             }
@@ -634,7 +671,7 @@ public class TsonCustomParser {
         boundAffixes.addAll(readPostComments());
         return new DefaultNUpletElement(
                 seenName, elements,
-                boundAffixes, diagnostics,null
+                boundAffixes, diagnostics, null
         );
     }
 
@@ -647,9 +684,9 @@ public class TsonCustomParser {
             return new DefaultNStringElement(
                     NElementType.NAME,
                     name,
-                    name,
+                    name, null,
                     bindAffixes(pendingAffixTokens, NAffixAnchor.START),
-                    diagnostics,null
+                    diagnostics, null
             );
         }
         if (t.token == null) {
@@ -661,9 +698,9 @@ public class TsonCustomParser {
             return new DefaultNStringElement(
                     NElementType.NAME,
                     name,
-                    name,
+                    name, null,
                     boundAffixes,
-                    diagnostics,null
+                    diagnostics, null
             );
         }
 
@@ -684,9 +721,9 @@ public class TsonCustomParser {
         return new DefaultNStringElement(
                 NElementType.NAME,
                 name,
-                name,
+                name, null,
                 boundAffixes,
-                diagnostics,null
+                diagnostics, null
         );
     }
 
@@ -745,7 +782,7 @@ public class TsonCustomParser {
     private boolean isOp(NElementTokenImpl t) {
         if (t == null) return false;
         switch (t.type()) {
-            case OP:
+            case OPERATOR_SYMBOL:
                 return true;
         }
         return false;
