@@ -63,6 +63,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
+            case BLOCK_STRING:
             {
                 if (c.isAssignableFrom(String.class)) {
                     return o.asStringValue().orNull();
