@@ -90,6 +90,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
+            case BLOCK_STRING:
             case NAME:
 //            case NUTS_STRING:
             {
@@ -318,6 +319,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
+            case BLOCK_STRING:
                 // TODO FIXE ME LATER
             {
                 List<NElementAnnotation> a = e.annotations();
