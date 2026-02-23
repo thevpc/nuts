@@ -15,17 +15,19 @@ public class DefaultNElementTransformContext implements NElementTransformContext
     private NElement element;
     private final Map<String, Object> properties; // Immutable/Scoped
     private final Map<String, Object> sharedConfig; // Mutable/Global
+    private final boolean lastElement; // Mutable/Global
 
     public DefaultNElementTransformContext(NElement element) {
         this.element = element;
         this.path = NElementPath.ofRoot();
         this.properties = Collections.emptyMap();
         this.sharedConfig = new HashMap<>();
+        this.lastElement = true;
     }
 
     public DefaultNElementTransformContext(NElement element, NElementPath path,
                                            Map<String, Object> properties,
-                                           Map<String, Object> sharedConfig) {
+                                           Map<String, Object> sharedConfig, boolean lastElement) {
         this.element = element;
         this.path = path;
         // Ensure properties is unmodifiable to enforce the "withProperty" pattern
@@ -33,6 +35,7 @@ public class DefaultNElementTransformContext implements NElementTransformContext
                 Collections.unmodifiableMap(new HashMap<>(properties));
         // sharedConfig is the SAME instance across the whole tree
         this.sharedConfig = sharedConfig == null ? new HashMap<>() : sharedConfig;
+        this.lastElement = lastElement;
     }
 
     public Map<String, Object> properties() {
@@ -50,17 +53,17 @@ public class DefaultNElementTransformContext implements NElementTransformContext
     }
 
     public NElementTransformContext next(NElementPath path, NElement element) {
-        return newInstance(element, path, properties, sharedConfig);
+        return newInstance(element, path, properties, sharedConfig, lastElement);
     }
 
     @Override
     public NElementTransformContext withPath(NElementPath path) {
-        return newInstance(element, path, properties, sharedConfig);
+        return newInstance(element, path, properties, sharedConfig, lastElement);
     }
 
     @Override
     public NElementTransformContext withElement(NElement element) {
-        return newInstance(element, path, properties, sharedConfig);
+        return newInstance(element, path, properties, sharedConfig, lastElement);
     }
 
     @Override
@@ -71,6 +74,16 @@ public class DefaultNElementTransformContext implements NElementTransformContext
     @Override
     public <T> NOptional<T> getSharedProperty(String key) {
         return NOptional.ofNamed((T) sharedConfig.get(key), key);
+    }
+
+    @Override
+    public boolean isTail() {
+        return lastElement;
+    }
+
+    @Override
+    public NElementTransformContext withTail(boolean tail) {
+        return newInstance(element, path, properties, sharedConfig, tail);
     }
 
     @Override
@@ -87,7 +100,7 @@ public class DefaultNElementTransformContext implements NElementTransformContext
         } else {
             p.put(key, value);
         }
-        return newInstance(element, path, properties, sharedConfig);
+        return newInstance(element, path, properties, sharedConfig, lastElement);
     }
 
     public Map<String, Object> sharedConfig() {
@@ -115,13 +128,14 @@ public class DefaultNElementTransformContext implements NElementTransformContext
         if (!changed) {
             return this;
         }
-        return newInstance(element, path, properties, sharedConfig);
+        return newInstance(element, path, properties, sharedConfig, lastElement);
     }
 
     protected NElementTransformContext newInstance(NElement element, NElementPath path,
-                                           Map<String, Object> properties,
-                                           Map<String, Object> sharedConfig) {
-        return new DefaultNElementTransformContext(element, path, properties, sharedConfig);
+                                                   Map<String, Object> properties,
+                                                   Map<String, Object> sharedConfig,
+                                                   boolean lastElement) {
+        return new DefaultNElementTransformContext(element, path, properties, sharedConfig, lastElement);
     }
 
 }

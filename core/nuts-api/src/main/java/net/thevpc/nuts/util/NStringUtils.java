@@ -259,13 +259,16 @@ public class NStringUtils {
     }
 
     public static int firstIndexOf(String string, char... chars) {
-        if (string != null && chars != null) {
-            char[] value = string.toCharArray();
-            for (int i = 0; i < value.length; i++) {
-                for (int j = 0; j < chars.length; j++) {
-                    if (value[i] == chars[j]) {
-                        return i;
-                    }
+        if (string == null || chars == null || string.isEmpty()) {
+            return -1;
+        }
+        int stringLen = string.length();
+        int charsLen = chars.length;
+        for (int i = 0; i < stringLen; i++) {
+            char c = string.charAt(i);
+            for (int j = 0; j < charsLen; j++) {
+                if (c == chars[j]) {
+                    return i;
                 }
             }
         }
@@ -567,6 +570,21 @@ public class NStringUtils {
                 case LINE_STRING: {
                     sb.insert(0, "¶ ");
                     sb.append("\n");
+                    break;
+                }
+                case BLOCK_STRING:
+                {
+                    String s = sb.toString();
+                    sb.delete(0,sb.length());
+                    List<String> lines = NStringUtils.splitLines(s);
+                    for (String l : lines) {
+                        sb.append("¶¶ ");
+                        sb.append(l);
+                        sb.append("\n");
+                    }
+                    if(lines.isEmpty()){
+                        sb.append("¶¶\n");
+                    }
                     break;
                 }
                 default: {

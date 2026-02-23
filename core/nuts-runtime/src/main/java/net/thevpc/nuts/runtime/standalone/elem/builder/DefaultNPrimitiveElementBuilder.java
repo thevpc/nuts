@@ -3,6 +3,8 @@ package net.thevpc.nuts.runtime.standalone.elem.builder;
 import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementLineImpl;
+import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
@@ -19,7 +21,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder implements NPrimitiveElementBuilder {
@@ -217,6 +221,34 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
+    public NPrimitiveElementBuilder setBlockString(NElementLine... value) {
+        if (value == null) {
+            setNull();
+        } else {
+            this.value = value;
+            this.image = null;
+            this.type = NElementType.BLOCK_STRING;
+            this.numberLayout = null;
+            this.numberSuffix = null;
+        }
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder setLineString(NElementLine value) {
+        if (value == null) {
+            setNull();
+        } else {
+            this.value = value;
+            this.image = null;
+            this.type = NElementType.LINE_STRING;
+            this.numberLayout = null;
+            this.numberSuffix = null;
+        }
+        return this;
+    }
+
+    @Override
     public NPrimitiveElementBuilder setString(String value, NElementType stringLayout) {
         if (stringLayout == null) {
             NElementType newType = this.type;
@@ -297,6 +329,11 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     @Override
     public NPrimitiveElementBuilder setLineString(String value) {
         return setString(value, NElementType.LINE_STRING);
+    }
+
+    @Override
+    public NPrimitiveElementBuilder setBlockString(String value) {
+        return setString(value, NElementType.BLOCK_STRING);
     }
 
     @Override
@@ -494,12 +531,79 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     @Override
     public NPrimitiveElement build() {
         if (type().isAnyNumber()) {
-            return new DefaultNNumberElement(type, (Number) value, numberLayout(), numberSuffix(), image, affixes(), diagnostics(),metadata());
+            return new DefaultNNumberElement(type, (Number) value, numberLayout(), numberSuffix(), image, affixes(), diagnostics(), metadata());
         }
         if (type().isAnyStringOrName()) {
-            return new DefaultNStringElement(type, (String) value, image, affixes(), diagnostics(),metadata());
+            switch (type) {
+                case BLOCK_STRING: {
+                    if (value instanceof NElementLine[]) {
+                        List<NElementLine> lines = new ArrayList<>();
+                        StringBuilder vv = new StringBuilder();
+                        NElementLine[] nElementLines = (NElementLine[]) value;
+                        for (int i = 0; i < nElementLines.length; i++) {
+                            NElementLine e = nElementLines[i];
+                            vv.append(e.startPadding());
+                            vv.append(e.content());
+                            if (e.newline() != null) {
+                                vv.append(e.newline().value());
+                            }
+                            boolean changed = false;
+                            String startMarker = e.startMarker();
+                            if (!startMarker.startsWith("¶¶")) {
+                                if (startMarker.startsWith("¶")) {
+                                    startMarker = "¶" + startMarker;
+                                } else {
+                                    startMarker = "¶¶" + startMarker;
+                                }
+                                changed = true;
+                            }
+                            NNewLineMode newline = e.newline();
+                            if (newline == null && i < nElementLines.length - 1) {
+                                newline = NNewLineMode.LF;
+                                changed = true;
+                            }
+                            if (!changed) {
+                                lines.add(e);
+                            } else {
+                                lines.add(new NElementLineImpl(e.prefix(), startMarker, e.startPadding(), e.content(), e.endPadding(), e.endMarker(), newline));
+                            }
+                        }
+                        return new DefaultNStringElement(type, vv.toString(), image, lines, affixes(), diagnostics(), metadata());
+                    }
+                    break;
+                }
+                case LINE_STRING: {
+                    if (value instanceof NElementLine) {
+                        List<NElementLine> lines = new ArrayList<>();
+                        StringBuilder vv = new StringBuilder();
+                        NElementLine e = (NElementLine) value;
+                        vv.append(e.startPadding());
+                        vv.append(e.content());
+                        if (e.newline() != null) {
+                            vv.append(e.newline().value());
+                        }
+                        boolean changed = false;
+                        String startMarker = e.startMarker();
+                        if (startMarker.startsWith("¶¶")) {
+                            throw new NIllegalArgumentException(NMsg.ofC("line string could not start with ¶"));
+                        }
+                        if (!startMarker.startsWith("¶")) {
+                            startMarker = "¶" + startMarker;
+                            changed = true;
+                        }
+                        if (!changed) {
+                            lines.add(e);
+                        } else {
+                            lines.add(new NElementLineImpl(e.prefix(), startMarker, e.startPadding(), e.content(), e.endPadding(), e.endMarker(), e.newline()));
+                        }
+                        return new DefaultNStringElement(type, vv.toString(), image, lines, affixes(), diagnostics(), metadata());
+                    }
+                    break;
+                }
+            }
+            return new DefaultNStringElement(type, (String) value, image, null, affixes(), diagnostics(), metadata());
         }
-        return new DefaultNPrimitiveElement(type, value, affixes(), diagnostics(),metadata());
+        return new DefaultNPrimitiveElement(type, value, affixes(), diagnostics(), metadata());
     }
 
     @Override
@@ -556,6 +660,22 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
                 this.numberLayout = nfrom.numberLayout();
                 this.numberSuffix = nfrom.numberSuffix();
                 this.image = nfrom.image();
+            }
+            if (other instanceof NStringElement) {
+                NStringElement nfrom = (NStringElement) other;
+                switch (nfrom.type()) {
+                    case BLOCK_STRING: {
+                        value = nfrom.lines().toArray(new NElementLine[0]);
+                        break;
+                    }
+                    case LINE_STRING: {
+                        value = nfrom.lines().toArray(new NElementLine[0])[0];
+                        break;
+                    }
+                    default: {
+                        this.value = nfrom.stringValue();
+                    }
+                }
             }
         }
         return this;
@@ -619,7 +739,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
         return this;
     }
 
-    public NPrimitiveElementBuilder addAffix(NBoundAffix affix){
+    public NPrimitiveElementBuilder addAffix(NBoundAffix affix) {
         super.addAffix(affix);
         return this;
     }

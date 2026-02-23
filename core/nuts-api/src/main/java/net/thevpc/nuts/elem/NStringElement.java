@@ -25,6 +25,10 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.text.NNewLineMode;
+
+import java.util.List;
+
 /**
  * primitive values implementation of Nuts Element type. Nuts Element types are
  * generic JSON like parsable objects.
@@ -35,9 +39,29 @@ package net.thevpc.nuts.elem;
  */
 public interface NStringElement extends NPrimitiveElement {
 
+    /**
+     * unparsed raw value of the string, including separators and boundaries
+     *
+     * @return
+     */
+    String rawValue();
+
+    /**
+     * when block or line string, this is the type of the newline used as suffix (or null if at the end of the file).
+     * this value is null for all other string types
+     *
+     * @return
+     */
+    NNewLineMode newLineSuffix();
+
     String stringValue();
+
+    List<NElementLine> lines();
 
     NPrimitiveElementBuilder builder();
 
     String literalString();
+
+    NNewLineMode newlineSuffix();
+    NStringElement withNewlineSuffix(NNewLineMode nNewLineMode);
 }

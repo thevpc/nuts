@@ -1,5 +1,6 @@
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.NExceptions;
 
 import java.io.*;
@@ -50,6 +51,9 @@ public class NCharReader extends Reader {
     public String read(int count) {
         char[] c = new char[count];
         int v = read(c);
+        if(v<0){
+            return "";
+        }
         return new String(c, 0, v);
     }
 
@@ -117,6 +121,38 @@ public class NCharReader extends Reader {
         fill(offset + count);
         int available = Math.min(count, limit - pos - offset);
         return new String(buffer, pos + offset, available);
+    }
+
+    public String readLine() {
+        StringBuilder sb=new StringBuilder();
+        while (true) {
+            int c = peek();
+            if (c == -1 || c == '\n' || c == '\r') {
+                break;
+            }
+            char ch = (char) read();
+            sb.append(ch);
+        }
+        return sb.toString();
+    }
+
+    public NNewLineMode readNewLine() {
+        int c = this.peek();
+        if (c == '\r') {
+            this.read();
+            if (this.peek() == '\n') {
+                this.read();
+                return NNewLineMode.CRLF;
+            } else {
+                return NNewLineMode.CR;
+            }
+        } else if (c == '\n') {
+            this.read();
+            return NNewLineMode.LF;
+        } else {
+            // EOF
+            return null;
+        }
     }
 
     public int peek() {

@@ -42,6 +42,7 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
+            case BLOCK_STRING:
             case CHAR:
             case NAME:
             {

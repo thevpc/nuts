@@ -30,6 +30,7 @@ import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NNewLineMode;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -351,9 +352,13 @@ public interface NElementFactory extends NComponent {
 
     NObjectElement ofParamObject(String name, NElement... params);
 
-    NElementComment ofBlocComment(String... a);
+    NElementComment ofBlocComment(String text);
 
-    NElementComment ofLineComment(String... lines);
+    NElementComment ofLineComment(String text);
+
+    NElementComment ofBlocComment(NElementLine... text);
+
+    NElementComment ofLineComment(NElementLine... text);
 
     NElement ofBinaryStream(NInputStreamProvider value);
 
@@ -390,4 +395,6 @@ public interface NElementFactory extends NComponent {
     NBoundAffix ofBoundAffix(NAffix affix, NAffixAnchor anchor);
 
     NFragmentElement ofFragment(NElement...elements);
+
+    NElementLine ofElementLine(String prefix, String startMarker, String startPadding, String content, String endPadding, String endMarker, NNewLineMode newline);
 }

@@ -28,6 +28,7 @@ public class YamlFormat {
             case LOCAL_DATETIME:
             case LOCAL_TIME:
             case LINE_STRING:
+            case BLOCK_STRING:
             case BACKTICK_STRING:
             case TRIPLE_BACKTICK_STRING:
             case TRIPLE_DOUBLE_QUOTED_STRING:

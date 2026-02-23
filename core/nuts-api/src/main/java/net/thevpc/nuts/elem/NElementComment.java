@@ -1,6 +1,10 @@
 package net.thevpc.nuts.elem;
 
-public interface NElementComment extends Comparable<NElementComment>, NAffix {
+import net.thevpc.nuts.text.NNewLineMode;
+
+import java.util.List;
+
+public interface NElementComment extends /*Comparable<NElementComment>, */NAffix {
 
     /**
      * create some comments
@@ -10,7 +14,7 @@ public interface NElementComment extends Comparable<NElementComment>, NAffix {
      * @since 0.8.9
      */
     static NElementComment of(String text) {
-        return ofMultiLine(text);
+        return ofBlocComment(text);
     }
 
     /**
@@ -20,7 +24,7 @@ public interface NElementComment extends Comparable<NElementComment>, NAffix {
      * @return NElementComment
      * @since 0.8.9
      */
-    static NElementComment ofMultiLine(String... text) {
+    static NElementComment ofBlocComment(String text) {
         return NElement.ofBlocComment(text);
     }
 
@@ -31,12 +35,26 @@ public interface NElementComment extends Comparable<NElementComment>, NAffix {
      * @return NElementComment
      * @since 0.8.9
      */
-    static NElementComment ofSingleLine(String... text) {
+    static NElementComment ofLineComment(String text) {
         return NElement.ofLineComment(text);
     }
 
+    static NElementComment ofLineComment(NElementLine... text) {
+        return NElement.ofLineComment(text);
+    }
+
+    static NElementComment ofBlocComment(NElementLine... text) {
+        return NElement.ofBlocComment(text);
+    }
+
+
+    NNewLineMode newlineSuffix();
+
+    List<NElementLine> lines();
 
     String text();
 
     String raw();
+
+    NElementComment withNewlineSuffix(NNewLineMode nNewLineMode);
 }
