@@ -160,7 +160,7 @@ public final class NApplications {
                 throw new NBootException(NBootMsg.ofC("method %s has annotation @%s. it should not have parameters", m, annClass.getName()));
             }
             if (!Modifier.isPublic(m.getModifiers())) {
-                throw new NBootException(NBootMsg.ofC("method %s has annotation @%s. it should be public"));
+                throw new NBootException(NBootMsg.ofC("method %s has annotation @%s. it should be public", m, annClass.getName()));
             }
             return true;
         }

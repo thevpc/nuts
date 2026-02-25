@@ -136,7 +136,7 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
             }
         }
         if (exception == null) {
-            if (!NWorkspace.get().isPresent()) {
+            if (NWorkspace.get().isPresent()) {
                 exception = new NEmptyOptionalException(preferredMessage.get());
             } else {
                 exception = new NDetachedEmptyOptionalException(preferredMessage.get());
