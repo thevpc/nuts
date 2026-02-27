@@ -1,9 +1,6 @@
 package net.thevpc.nuts.app;
 
-import net.thevpc.nuts.util.NEnum;
-import net.thevpc.nuts.util.NEnumUtils;
-import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.*;
 
 public enum NApplicationHandleMode implements NEnum {
     HANDLE,
@@ -33,5 +30,44 @@ public enum NApplicationHandleMode implements NEnum {
      */
     public String id() {
         return id;
+    }
+
+
+    public void runHandled(Runnable preparedWorkspace) {
+        try {
+            preparedWorkspace.run();
+            switch (this) {
+                case EXIT: {
+                    System.exit(0);
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            switch (this) {
+                case PROPAGATE: {
+                    NExceptionHandler.of(e).propagate();
+                    break;
+                }
+                case EXIT: {
+                    NExceptionHandler.of(e).handleFatal();
+                    break;
+                }
+                case HANDLE: {
+                    NExceptionHandler.of(e).handle();
+                    break;
+                }
+                default: {
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException) e;
+                    }
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    public static void runHandled(Runnable preparedWorkspace, NApplicationHandleMode handleMode) {
+        NApplicationHandleMode m = NUtils.firstNonNull(handleMode, NApplicationHandleMode.HANDLE);
+        m.runHandled(preparedWorkspace);
     }
 }
