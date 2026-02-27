@@ -29,7 +29,9 @@ import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.boot.NBootLogConfig;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceOptions;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLogConfig;
@@ -52,7 +54,7 @@ import java.util.logging.Logger;
  */
 public class NApiUtilsRPI {
 
-    private static Logger LOG = Logger.getLogger(NApiUtilsRPI.class.getName());
+//    private static Logger LOG = Logger.getLogger(NApiUtilsRPI.class.getName());
 
     private NApiUtilsRPI() {
     }
@@ -198,25 +200,33 @@ public class NApiUtilsRPI {
 
     public static NMsg resolveValidErrorMessage(Supplier<NMsg> supplier) {
         if (supplier == null) {
-            NMsg m = NMsg.ofC("unexpected error : %s", "empty message supplier");
-            LOG.log(Level.SEVERE, new Throwable(m.toString()), m::toString);
+            NMsg m = NMsg.ofC("unexpected error : %s", "empty message supplier").asError();
+            safeLog(m);
             return m;
         }
         NMsg t;
         try {
             t = supplier.get();
         } catch (Exception ex) {
-            NMsg m = NMsg.ofC("unexpected error : %s", "message builder failed with : " + ex);
-            LOG.log(Level.SEVERE, new Throwable(m.toString()), m::toString);
+            NMsg m = NMsg.ofC("unexpected error : %s", "message builder failed with : " + ex).asError();
+            safeLog(m);
             return m;
         }
 
         if (t == null) {
-            NMsg m = NMsg.ofC("unexpected error : %s", "empty error message");
-            LOG.log(Level.SEVERE, new Throwable(m.toString()), m::toString);
+            NMsg m = NMsg.ofC("unexpected error : %s", "empty error message").asError();
+            safeLog(m);
             return m;
         }
         return t;
+    }
+
+    private static void safeLog(NMsg m){
+        if(NWorkspace.get().isPresent()) {
+            NLog.of(NApiUtilsRPI.class.getName()).log(m);
+        }else {
+            Logger.getLogger(NApiUtilsRPI.class.getName()).log(m.getLevel(), new Throwable(m.toString()), m::toString);
+        }
     }
 
     public static String getNativePath(String s) {
