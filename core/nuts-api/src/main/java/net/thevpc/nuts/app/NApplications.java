@@ -251,10 +251,6 @@ public final class NApplications {
         throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("missing application constructor for %s from of : \n\t static createApplicationInstance(NSession,String[])\n\t Constructor(NSession,String[])\n\t Constructor()"), appType.getName()));
     }
 
-    public static NAppBuilder builder() {
-        return new NAppBuilder();
-    }
-
     static class AnnotationClassNApplication implements NApplication {
         private final List<Method> runMethods;
         private final List<Method> installMethods;
