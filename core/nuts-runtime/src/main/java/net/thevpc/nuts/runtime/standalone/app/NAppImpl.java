@@ -15,6 +15,8 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
+import net.thevpc.nuts.reflect.NTypeLoader;
+import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
@@ -29,6 +31,8 @@ import net.thevpc.nuts.util.*;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -42,7 +46,9 @@ import java.util.regex.Pattern;
 @NComponentScope(NScopeType.SHARED_SESSION)
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NAppImpl implements NApp, Cloneable, NCopiable {
-    private Class appClass;
+    private Class sourceType;
+    private NApplication application;
+    private Object source;
     private final NPath[] folders = new NPath[NStoreType.values().length];
     private final NPath[] sharedFolders = new NPath[NStoreType.values().length];
     /**
@@ -55,6 +61,13 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     private List<String> args;
     private NApplicationMode mode = NApplicationMode.RUN;
     private NAppStoreLocationResolver storeLocationResolver;
+    private boolean prepared;
+    private NTypeLoader springBootType = new NTypeLoaderImpl("org.springframework.boot.web.servlet.support.SpringBootServletInitializer");
+    private NTypeLoader quarkusAppType = new NTypeLoaderImpl("io.quarkus.runtime.QuarkusApplication");
+    private NTypeLoader micronautAppType = new NTypeLoaderImpl("io.micronaut.runtime.Micronaut");
+    private NTypeLoader jServletType = new NTypeLoaderImpl("jakarta.servlet.http.HttpServlet");
+    private NTypeLoader xServletType = new NTypeLoaderImpl("javax.servlet.http.HttpServlet");
+    private NTypeLoader osgiType = new NTypeLoaderImpl("org.osgi.framework.BundleActivator");
     /**
      * previous parse for "update" mode
      */
@@ -76,7 +89,9 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
-        cloned.appClass = this.getAppClass();
+        cloned.sourceType = this.getSourceType();
+        cloned.application = this.getApplication();
+        cloned.source = this.getSource();
         NStoreType[] values = NStoreType.values();
         for (int i = 0; i < values.length; i++) {
             NStoreType value = values[i];
@@ -100,7 +115,9 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     public NApp copyFrom(NApp other) {
         //boolean withDefaults = false;
         this.id = other.getId().orNull();
-        this.appClass = other.getAppClass();
+        this.sourceType = other.getSourceType();
+        this.application = other.getApplication();
+        this.source = other.getSource();
         NStoreType[] values = NStoreType.values();
         for (int i = 0; i < values.length; i++) {
             NStoreType value = values[i];
@@ -125,10 +142,68 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         return NOptional.ofNamed(this.id, "app-id");
     }
 
+    public NApplication getApplication() {
+        return application;
+    }
 
     public void prepare(NAppInitInfo appInitInfo) {
+        if (prepared) {
+            throw new NIllegalStateException(NMsg.ofC("application already prepared"));
+        }
+        prepared = true;
         String[] args0 = appInitInfo.getArgs();
-        Class<?> appClass = appInitInfo.getAppClass();
+        Class<?> appClass = appInitInfo.getSourceType();
+        Object source = appInitInfo.getSource();
+        NApplication application = appInitInfo.getApplication();
+        if (appClass == null && source == null) {
+            if (application != null) {
+                source = application;
+                appClass = application.getClass();
+            } else {
+                StackTraceElement[] stackTrace = new Throwable().getStackTrace();
+                for (int i = 0; i < stackTrace.length; i++) {
+                    Class c = resolveClassWithMain(stackTrace[i]);
+                    if (c != null) {
+                        source = createInstance(c);
+                        appClass = c;
+                        break;
+                    }
+                }
+                if (appClass == null) {
+                    throw new NIllegalArgumentException(NMsg.ofC("unable to resolve application class from the current stacktrace"));
+                }
+                NAssert.requireNamedNonNull(appClass, "applicationType");
+                application = NApplications.createApplicationInstanceFromAnnotatedInstance(source);
+            }
+        } else {
+            if (appClass != null) {
+                if (source == null) {
+                    source = createInstance(appClass);
+                } else {
+                    if (!appClass.isInstance(source)) {
+                        throw new NIllegalArgumentException(NMsg.ofC("invalid application instance (%s). Expected %s", source.getClass(), appClass));
+                    }
+                }
+            }
+            if (source != null) {
+                if (appClass == null) {
+                    appClass = JavaClassUtils.unwrapCGLib(source.getClass());
+                } else {
+                    if (!appClass.isInstance(source)) {
+                        throw new NIllegalArgumentException(NMsg.ofC("invalid application instance (%s). Expected %s", source.getClass(), appClass));
+                    }
+                }
+            }
+            if (application == null) {
+                application = NApplications.createApplicationInstanceFromAnnotatedInstance(source);
+            }
+        }
+//        Class appClass =
+//                (applicationInstance instanceof NApplications.AnnotationClassNApplication) ?
+//                        ((NApplications.AnnotationClassNApplication) applicationInstance).getAppInstance().getClass()
+//                        : applicationInstance.getClass();
+
+
         NClock startTime = appInitInfo.getStartTime();
         this.storeLocationResolver = appInitInfo.getStoreLocationSupplier();
         List<String> args = new ArrayList<>();
@@ -194,8 +269,10 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             }
             this.id = _appId;
         }
-        this.args = (args);
-        this.appClass = appClass == null ? null : JavaClassUtils.unwrapCGLib(appClass);
+        this.args = new ArrayList<>(args);
+        this.sourceType = appClass == null ? null : JavaClassUtils.unwrapCGLib(appClass);
+        this.application = application;
+        this.source = source;
         for (NStoreType folder : NStoreType.values()) {
             this.setFolder(folder, NPath.ofIdStore(this.id, folder));
             this.setSharedFolder(folder, NPath.ofIdStore(this.id.builder().setVersion("SHARED").build(), folder));
@@ -211,9 +288,54 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         } else {
             this.autoComplete = null;
         }
-        if(bundleName==null){
-            bundleName = resolveAppNameFromClass(this.appClass, _appId.getArtifactId());
+        if (bundleName == null) {
+            bundleName = resolveAppNameFromClass(this.sourceType, _appId.getArtifactId());
         }
+    }
+
+    private Class<?> resolveClassWithMain(StackTraceElement stackTraceElement) {
+        String m = stackTraceElement.getMethodName();
+        if (m != null && stackTraceElement.getClassName() != null && !stackTraceElement.getClassName().isEmpty()) {
+            NTypeLoader type = NTypeLoader.of(stackTraceElement.getClassName());
+            Class<?> c = type.getType().orNull();
+            if (c != null) {
+                if ("main".equals(m)) {
+                    return type.getDeclaredMethod("main", String[].class).filter(
+                            main->Modifier.isStatic(main.getModifiers()) && Modifier.isPublic(main.getModifiers()))
+                            .isPresent() ?c:null;
+                } else {
+                    if (isAssignableFromAny(c, springBootType, quarkusAppType, micronautAppType, jServletType, xServletType,osgiType)) {
+                        return c;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean isAssignableFromAny(Class<?> c, NTypeLoader... loaders) {
+        for (NTypeLoader loader : loaders) {
+            if (loader.getType().filter(x -> x.isAssignableFrom(c)).isPresent()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * Creates an application instance by calling a no-argument constructor.
+     * Errors are wrapped in RuntimeExceptions for simplicity.
+     */
+    private Object createInstance(Class applicationType) {
+        try {
+            return applicationType == null ? null : applicationType.getConstructor().newInstance();
+        } catch (Exception e) {
+            throw NExceptions.ofUncheckedException(e);
+        }
+    }
+
+    @Override
+    public Object getSource() {
+        return source;
     }
 
     public String getBundleName() {
@@ -307,7 +429,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     public NOptional<NText> getHelpText() {
         NText h = null;
         try {
-            h = NWorkspaceExt.of().resolveDefaultHelp(getAppClass());
+            h = NWorkspaceExt.of().resolveDefaultHelp(getSourceType());
         } catch (Exception ex) {
             //
         }
@@ -328,7 +450,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
 
     @Override
     public void printHelp() {
-        NText h = NWorkspaceExt.of().resolveDefaultHelp(getAppClass());
+        NText h = NWorkspaceExt.of().resolveDefaultHelp(getSourceType());
         h = NTexts.of().transform(h, new NTextTransformConfig()
                 .setProcessTitleNumbers(true)
                 .setNormalize(true)
@@ -344,8 +466,8 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     }
 
     @Override
-    public Class<?> getAppClass() {
-        return this.appClass;
+    public Class<?> getSourceType() {
+        return this.sourceType;
     }
 
     @Override
