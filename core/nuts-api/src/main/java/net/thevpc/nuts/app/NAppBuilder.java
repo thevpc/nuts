@@ -11,8 +11,9 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NExceptionHandler;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,7 +36,7 @@ import java.util.Objects;
  * </ul>
  *
  * <h2>Basic Usage</h2>
- *
+ * <p>
  * A typical JVM application may delegate to Nuts as follows:
  *
  * <pre>{@code
@@ -45,7 +46,7 @@ import java.util.Objects;
  * }</pre>
  *
  * <h2>Advanced Custom Instance Construction</h2>
- *
+ * <p>
  * If you want the builder to instantiate your application class reflectively:
  *
  * <pre>{@code
@@ -56,7 +57,7 @@ import java.util.Objects;
  * }</pre>
  *
  * <h2>Error Handling</h2>
- *
+ * <p>
  * The handling strategy is selected via:
  * <ul>
  *   <li>{@link #handleErrors()}      – default Nuts behavior</li>
@@ -64,110 +65,78 @@ import java.util.Objects;
  *   <li>{@link #fatalErrors()}       – exit the JVM on error</li>
  *   <li>{@link #ignoreErrors()}      – ignore exceptions</li>
  * </ul>
- *
+ * <p>
  * This builder orchestrates argument parsing, instance preparation, execution mode
  * dispatching, and high-level runtime behavior for Nuts applications.
  */
 public class NAppBuilder {
 
-    /** Defines how runtime errors should be handled. */
+    /**
+     * Defines how runtime errors should be handled.
+     */
     private NApplicationHandleMode handleMode = NApplicationHandleMode.HANDLE;
 
-    /** The application instance to run. May be created reflectively. */
+    /**
+     * The application instance to run. May be created reflectively.
+     */
     private Object instance;
 
-    /** Arguments passed to the Nuts workspace / bootstrap. */
+    /**
+     * Arguments passed to the Nuts workspace / bootstrap.
+     */
     private String[] nutsArgs;
 
-    /** Arguments passed to the application itself. */
+    /**
+     * Arguments passed to the application itself.
+     */
     private String[] args;
 
-    /** Creates a new empty builder. */
+    private NWorkspace preparedWorkspace;
+
+    /**
+     * Creates a new empty builder.
+     */
     public static NAppBuilder of() {
         return new NAppBuilder();
     }
 
-    /** Creates a new builder and sets plain arguments. */
+    /**
+     * Creates a new builder and sets plain arguments.
+     */
     public static NAppBuilder of(String[] args) {
         return new NAppBuilder().args(args);
     }
 
-    /** Errors are handled by Nuts (default behavior). */
+    /**
+     * Errors are handled by Nuts (default behavior).
+     */
     public NAppBuilder handleErrors() {
         this.handleMode = NApplicationHandleMode.HANDLE;
         return this;
     }
 
-    /** Errors are propagated to the caller. */
+    /**
+     * Errors are propagated to the caller.
+     */
     public NAppBuilder propagateErrors() {
         this.handleMode = NApplicationHandleMode.PROPAGATE;
         return this;
     }
 
-    /** Errors are considered fatal and cause process exit. */
+    /**
+     * Errors are considered fatal and cause process exit.
+     */
     public NAppBuilder fatalErrors() {
         this.handleMode = NApplicationHandleMode.EXIT;
         return this;
     }
 
-    /** Errors are ignored (no operation). */
+    /**
+     * Errors are ignored (no operation).
+     */
     public NAppBuilder ignoreErrors() {
         this.handleMode = NApplicationHandleMode.NOP;
         return this;
-    }
-
-    /**
-     * Executes the provided NApplication instance based on its execution mode.
-     * Handles RUN, INSTALL, UPDATE, UNINSTALL modes.
-     */
-    private void runInstance(NApplication applicationInstance) {
-        boolean inherited = NWorkspace.of().getBootOptions().getInherited().orElse(false);
-        NApp nApp = NApp.of();
-        // Resolve the application class name (explicit or fallback)
-        String appClassName = nApp.getAppClass() == null ? null : nApp.getAppClass().getName();
-        if (appClassName == null) {
-            appClassName = applicationInstance.getClass().getName();
-        }
-        NId appId = nApp.getId().orNull();
-        NLog.of(NApplications.class)
-                .log(
-                        NMsg.ofC(
-                                NI18n.of("running application %s: %s (%s) %s"),
-                                inherited ? ("(" + NI18n.of("inherited") + ")") : "",
-                                appId == null ? ("<" + NI18n.of("unresolved-id") + ">") : appId,
-                                appClassName,
-                                nApp.getCmdLine()
-                        ).asFine().withIntent(NMsgIntent.START)
-                );
-        try {
-            switch (nApp.getMode()) {
-                //both RUN and AUTO_COMPLETE execute the run branch. Later
-                //session.isExecMode()
-                case RUN:
-                case AUTO_COMPLETE: {
-                    applicationInstance.run();
-                    return;
-                }
-                case INSTALL: {
-                    applicationInstance.onInstallApplication();
-                    return;
-                }
-                case UPDATE: {
-                    applicationInstance.onUpdateApplication();
-                    return;
-                }
-                case UNINSTALL: {
-                    applicationInstance.onUninstallApplication();
-                    return;
-                }
-            }
-        } catch (NExecutionException e) {
-            if (e.getExitCode() == NExecutionException.SUCCESS) {
-                return;
-            }
-            throw e;
-        }
-        throw new NExecutionException(NMsg.ofC(NI18n.of("unsupported execution mode %s"), nApp.getMode()), NExecutionException.ERROR_255);
     }
 
     public NApplicationHandleMode getHandleMode() {
@@ -183,7 +152,9 @@ public class NAppBuilder {
         return instance;
     }
 
-    /** Sets the application instance explicitly. */
+    /**
+     * Sets the application instance explicitly.
+     */
     public NAppBuilder instance(Object applicationInstance) {
         this.instance = applicationInstance;
         return this;
@@ -207,7 +178,9 @@ public class NAppBuilder {
         }
     }
 
-    /** Creates and stores an instance from a class type. */
+    /**
+     * Creates and stores an instance from a class type.
+     */
     public NAppBuilder type(Class applicationType) {
         this.instance = applicationType == null ? null : createInstance(applicationType);
         return this;
@@ -217,13 +190,17 @@ public class NAppBuilder {
         return nutsArgs;
     }
 
-    /** Sets Nuts bootstrap/WS args explicitly. */
+    /**
+     * Sets Nuts bootstrap/WS args explicitly.
+     */
     public NAppBuilder setNutsArgs(String... nutsArgs) {
         this.nutsArgs = nutsArgs;
         return this;
     }
 
-    /** Parses a Nuts argument line into structured args. */
+    /**
+     * Parses a Nuts argument line into structured args.
+     */
     public NAppBuilder setNutsArgsLine(String nutsArgs) {
         this.nutsArgs = NBootCmdLine.parseDefault(nutsArgs);
         return this;
@@ -252,9 +229,31 @@ public class NAppBuilder {
         return args;
     }
 
-    /** Sets plain application arguments. */
+    /**
+     * Sets plain application arguments.
+     */
     public NAppBuilder args(String[] args) {
         this.args = args;
+        return this;
+    }
+
+    public NAppBuilder prepare() {
+        if (this.preparedWorkspace == null) {
+            try {
+                NClock now = NClock.now();
+                NWorkspace ws = NWorkspace.get().orNull();
+                if (ws == null) {
+                    ws = Nuts.openWorkspace(NBootArguments.of(this.getNutsArgs()).setAppArgs(args));
+                }
+                ws.runWith(() -> {
+                    NApp a = NApp.of();
+                    a.prepare(new NAppInitInfo(args, null, null, null, null, now));
+                });
+                this.preparedWorkspace = ws;
+            } catch (Exception e) {
+                throw NExceptions.ofUncheckedException(e);
+            }
+        }
         return this;
     }
 
@@ -263,66 +262,9 @@ public class NAppBuilder {
      * applies error-handling strategy, and executes the application lifecycle.
      */
     public void run() {
-        NApplicationHandleMode m = this.getHandleMode() == null ? NApplicationHandleMode.HANDLE : getHandleMode();
-        try {
-            NClock now = NClock.now();
-            String[] args = this.getArgs() == null ? new String[0] : this.getArgs();
-            Object applicationInstanceObj = this.getInstance();
-            if (applicationInstanceObj == null) {
-                StackTraceElement[] stackTrace = new Throwable().getStackTrace();
-                if (stackTrace.length >= 1 && Objects.equals(stackTrace[1].getMethodName(), "main")) {
-                    Class c = Class.forName(stackTrace[1].getClassName(), true, Thread.currentThread().getContextClassLoader());
-                    Method main = c.getDeclaredMethod("main", String[].class);
-                    if (Modifier.isStatic(main.getModifiers())) {
-                        // i am in good position to say this is the app instance type
-                        applicationInstanceObj = createInstance(c);
-                    }
-                }
-            }
-            NAssert.requireNamedNonNull(applicationInstanceObj, "applicationInstance");
-
-            NApplication applicationInstance = (applicationInstanceObj instanceof NApplication) ? (NApplication) applicationInstanceObj : NApplications.createApplicationInstanceFromAnnotatedInstance(applicationInstanceObj);
-            Class appClass =
-                    (applicationInstance instanceof NApplications.AnnotationClassNApplication) ?
-                            ((NApplications.AnnotationClassNApplication) applicationInstance).getAppInstance().getClass()
-                            : applicationInstance.getClass();
-            NWorkspace ws = NWorkspace.get().orNull();
-            if (ws == null) {
-                ws = Nuts.openWorkspace(NBootArguments.of(this.getNutsArgs()).setAppArgs(args));
-            }
-            ws.runWith(() -> {
-                NApp a = NApp.of();
-                a.setArguments(args);
-                a.prepare(new NAppInitInfo(args, appClass, now));
-                runInstance(applicationInstance);
-            });
-            switch (m) {
-                case EXIT: {
-                    System.exit(0);
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            switch (m) {
-                case PROPAGATE: {
-                    NExceptionHandler.of(e).propagate();
-                    break;
-                }
-                case EXIT: {
-                    NExceptionHandler.of(e).handleFatal();
-                    break;
-                }
-                case HANDLE: {
-                    NExceptionHandler.of(e).handle();
-                    break;
-                }
-                default: {
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException) e;
-                    }
-                    throw new RuntimeException(e);
-                }
-            }
+        NApplicationHandleMode.runHandled(this::prepare, getHandleMode());
+        if(preparedWorkspace!=null) {
+            preparedWorkspace.runApplication(this.getHandleMode());
         }
     }
 
