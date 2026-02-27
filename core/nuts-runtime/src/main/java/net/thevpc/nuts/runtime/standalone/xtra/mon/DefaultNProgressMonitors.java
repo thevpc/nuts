@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.xtra.time.NDefaultProgressRunner;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
@@ -62,11 +63,16 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
 
     @Override
     public NProgressMonitor ofLogger(NMsgTemplate message, long freq) {
-        return ofLogger(message, null).temporize(freq);
+        return ofLogger(message, (NLog)null).temporize(freq);
     }
 
     @Override
     public NProgressMonitor ofLogger(NMsgTemplate message, long freq, Logger out) {
+        return ofLogger(message, out).temporize(freq);
+    }
+    
+    @Override
+    public NProgressMonitor ofLogger(NMsgTemplate message, long freq, NLog out) {
         return ofLogger(message, out).temporize(freq);
     }
 
@@ -114,15 +120,25 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
 
     @Override
     public NProgressMonitor ofLogger(NMsgTemplate messageFormat, Logger printStream) {
-        return new DefaultProgressMonitor(null,
-                new JLogProgressHandler(messageFormat, printStream),
-                null
-        );
+        return ofLogger(messageFormat,printStream==null?null:NLog.of(printStream));
     }
 
     @Override
-    public NProgressMonitor ofLogger(Logger printStream) {
-        return ofLogger(null, printStream);
+    public NProgressMonitor ofLogger(NMsgTemplate messageFormat, NLog log) {
+        return new DefaultProgressMonitor(null,
+                new JLogProgressHandler(messageFormat, log),
+                null
+        );    
+    }
+
+    @Override
+    public NProgressMonitor ofLogger(Logger logger) {
+        return ofLogger(null, logger);
+    }
+
+    @Override
+    public NProgressMonitor ofLogger(NLog logger) {
+        return ofLogger(null, logger);
     }
 
     @Override
@@ -132,7 +148,7 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
 
     @Override
     public NProgressMonitor ofLogger() {
-        return ofLogger(null, null);
+        return ofLogger(null, (NLog) null);
     }
 
     @Override

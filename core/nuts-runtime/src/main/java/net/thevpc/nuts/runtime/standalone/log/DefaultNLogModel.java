@@ -92,12 +92,12 @@ public class DefaultNLogModel {
 
     public void runWithContext(NLogScope context, Runnable runnable) {
         NLogScope c2 = logContext.get().mergedWith(context);
-        logContext.runWith(c2,runnable);
+        logContext.runWith(c2, runnable);
     }
 
     public <T> T callWithContext(NLogScope context, NCallable<T> callable) {
         NLogScope c2 = logContext.get().mergedWith(context);
-        return logContext.callWith(c2,callable);
+        return logContext.callWith(c2, callable);
     }
 
 
@@ -181,13 +181,22 @@ public class DefaultNLogModel {
         return y;
     }
 
+    public NLog getLogger(Logger logger) {
+        Map<String, NLog> loaded = loaded();
+        NLog y = loaded.get(logger.getName());
+        if (y == null) {
+            y = new DefaultNLog(logger.getName(), new NLogSPIJUL(logger), this, false);
+            loaded.put(logger.getName(), y);
+        }
+        return y;
+    }
+
     public NLog createCustomLogger(String name, NLogSPI spi) {
         if (name == null) {
             name = "LOGGER-" + UUID.randomUUID();
         }
         return new DefaultNLog(name, spi, this, true);
     }
-
 
 
     public Level getTermLevel() {
