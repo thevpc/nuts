@@ -3,7 +3,9 @@ package net.thevpc.nuts.runtime.optional.mslink;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.reflect.NTypeLoader;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.util.NBlankable;
 
@@ -16,6 +18,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public class OptionalMsLinkHelper {
+    private static final NTypeLoader mslinksShellLink = new NTypeLoaderImpl("mslinks.ShellLink");
     private final String command;
     private final String wd;
     private final String icon;
@@ -29,9 +32,7 @@ public class OptionalMsLinkHelper {
     }
 
     public static boolean isSupported() {
-        try {
-            Class.forName("mslinks.ShellLink");
-        } catch (Exception e) {
+        if(!mslinksShellLink.getType().isPresent()){
             return false;
         }
         try {
