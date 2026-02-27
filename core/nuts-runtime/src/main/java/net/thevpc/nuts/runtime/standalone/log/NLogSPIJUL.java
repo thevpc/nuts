@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.log.NLogSPI;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NAssert;
 
 import java.time.Instant;
 import java.util.logging.Level;
@@ -15,6 +16,9 @@ public class NLogSPIJUL implements NLogSPI {
     public NLogSPIJUL(String name) {
         this.log = Logger.getLogger(name);
     }
+    public NLogSPIJUL(Logger logger) {
+        this.log = NAssert.requireNamedNonNull(logger,"logger");
+    }
 
     @Override
     public boolean isLoggable(Level level) {
@@ -25,7 +29,7 @@ public class NLogSPIJUL implements NLogSPI {
     public void log(NMsg message) {
         String[] caller = findCaller();
         Instant now = Instant.now();
-        NMsg msg2=NMsg.ofC("%s [%-6s] [%-7s] %s%s", now, message.getLevel(), message.getIntent(), message,
+        NMsg msg2=NMsg.ofC("%s [%-6s] [%-7s] %s%s", now, message.getLevel(), message.getIntent(), message.toString(true),
                 message.getDurationNanos() <= 0 ? ""
                         : NMsg.ofC(" (duration: %s)", NDuration.ofNanos(message.getDurationNanos()))
         );

@@ -31,6 +31,7 @@ import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.concurrent.NCallable;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Nuts Log Manager
@@ -57,6 +58,8 @@ public interface NLogs extends NComponent {
      * @return new instance of {@link NLog}
      */
     NLog getLogger(String name);
+
+    NLog getLogger(Logger logger);
 
     NLog getNullLogger();
 
