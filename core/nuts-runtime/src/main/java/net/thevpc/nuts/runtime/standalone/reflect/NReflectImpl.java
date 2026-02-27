@@ -5,6 +5,7 @@ import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.runtime.standalone.reflect.mapper.NReflectMapperImpl;
 import net.thevpc.nuts.runtime.standalone.reflect.mapper.TypeHelper;
 import net.thevpc.nuts.runtime.standalone.reflect.mapper.TypeMapperRepositoryDef;
+import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NScore;
@@ -92,5 +93,10 @@ public class NReflectImpl implements NReflect {
             return isImmutableType(t);
         }
         return false;
+    }
+
+    @Override
+    public NTypeLoader createTypeLoader(String name) {
+        return new NTypeLoaderImpl(name);
     }
 }
