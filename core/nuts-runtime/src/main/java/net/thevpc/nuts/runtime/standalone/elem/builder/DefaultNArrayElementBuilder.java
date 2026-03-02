@@ -31,13 +31,8 @@ import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNArrayElement;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
 
 /**
  * @author thevpc
@@ -85,25 +80,58 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NArrayElementBuilder addParams(List<NElement> params) {
-        this.params=CoreNElementUtils.addAll(params, this.params);
+        this.params = CoreNElementUtils.addAll(params, this.params);
         return this;
     }
 
     @Override
     public NArrayElementBuilder addParam(NElement param) {
-        this.params=CoreNElementUtils.add(param, this.params);
+        this.params = CoreNElementUtils.add(param, this.params);
         return this;
     }
 
     @Override
     public NArrayElementBuilder setParamAt(int index, NElement param) {
-        this.params=CoreNElementUtils.setAt(index,param, this.params);
+        this.params = CoreNElementUtils.setAt(index, param, this.params);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder setParamAt(int index, boolean value) {
+        return setParamAt(index, NElement.ofBoolean(value));
+    }
+
+    @Override
+    public NArrayElementBuilder setParamAt(int index, int value) {
+        return setParamAt(index, NElement.ofInt(value));
+    }
+
+    @Override
+    public NArrayElementBuilder setParamAt(int index, double value) {
+        return setParamAt(index, NElement.ofDouble(value));
+    }
+
+    @Override
+    public NArrayElementBuilder setParamAt(int index, String value) {
+        return setParamAt(index, NElement.ofString(value));
+    }
+
+    @Override
+    public NArrayElementBuilder setParams(List<NElement> params) {
+        this.params = CoreNElementUtils.setAll(params, this.values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder setChildren(List<NElement> values) {
+        this.values.clear();
+        CoreNElementUtils.setAll(values, this.values);
         return this;
     }
 
     @Override
     public NArrayElementBuilder addParamAt(int index, NElement param) {
-        this.params=CoreNElementUtils.addAt(index,param, this.params);
+        this.params = CoreNElementUtils.addAt(index, param, this.params);
         return this;
     }
 
@@ -115,7 +143,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NArrayElementBuilder clearParams() {
-        if (this.params != null) {
+        if (params != null) {
             params.clear();
         }
         return this;
@@ -131,7 +159,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
 
     @Override
-    public List<NElement> items() {
+    public List<NElement> children() {
         return Collections.unmodifiableList(values);
     }
 
@@ -141,13 +169,22 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NArrayElementBuilder clearChildren() {
-        this.values.clear();
-        return this;
+    public List<NElement> getAll(NElement s) {
+        return CoreNElementUtils.getAll(values, s);
     }
 
     @Override
-    public NOptional<NElement> get(int index) {
+    public NOptional<NElement> get(NElement s) {
+        return NOptional.ofNamedSingleton(getAll(s), "property " + s);
+    }
+
+    @Override
+    public NOptional<NElement> get(String s) {
+        return NOptional.ofNamedSingleton(CoreNElementUtils.getAll(values, s), "property " + s);
+    }
+
+    @Override
+    public NOptional<NElement> getAt(int index) {
         if (index >= 0 && index < values.size()) {
             return NOptional.of(values.get(index));
         }
@@ -155,14 +192,190 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NArrayElementBuilder addAll(NElement[] value) {
-        if (value != null) {
-            for (NElement e : value) {
-                add(e);
-            }
-        }
+    public NArrayElementBuilder add(String name, NElement value) {
+        return add(NElement.ofString(name), CoreNElementUtils.denullOne(value));
+    }
+
+    @Override
+    public NArrayElementBuilder add(NElement name, NElement value) {
+        add(CoreNElementUtils.pair(name, value));
         return this;
     }
+
+    @Override
+    public NArrayElementBuilder set(NElement name, NElement value) {
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name, value), values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder setAt(int index, NElement e) {
+        CoreNElementUtils.setAt(index, e, this.values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder set(String name, NElement value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(String name, boolean value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(String name, int value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(String name, double value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(String name, String value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
+    public NArrayElementBuilder removeAt(int index) {
+        CoreNElementUtils.removeAt(index, values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder remove(NElement child) {
+        CoreNElementUtils.remove(child, values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder removePair(NElement entryKey) {
+        CoreNElementUtils.removePair(entryKey, values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder removeAll(NElement child) {
+        CoreNElementUtils.removeAll(child, values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder removeAllPairs(NElement name) {
+        CoreNElementUtils.removeAllPairs(name, values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder removePair(String name) {
+        CoreNElementUtils.removePair(name, values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder removeAllPairs(String name) {
+        CoreNElementUtils.removeAllPairs(name,values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addAll(Map<NElement, NElement> other) {
+        CoreNElementUtils.addMap(other, values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addAll(List<NElement> other) {
+        CoreNElementUtils.addAll(other, values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder setAll(Map<NElement, NElement> other) {
+        values.clear();
+        CoreNElementUtils.addMap(other, values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder set(NElement name, boolean value) {
+        return set(name, NElement.ofBoolean(value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(NElement name, int value) {
+        return set(name, NElement.ofInt(value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(NElement name, double value) {
+        return set(name, NElement.ofDouble(value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(NElement name, String value) {
+        return set(name, NElement.ofString(value));
+    }
+
+    @Override
+    public NArrayElementBuilder clear() {
+        values.clear();
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder clearChildren() {
+        values.clear();
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder add(NElement e) {
+        CoreNElementUtils.add(e, this.values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addAt(int index, NElement item) {
+        CoreNElementUtils.addAt(index, item, this.values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder set(NPairElement entry) {
+        CoreNElementUtils.setPair(entry, values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder addAll(NElement... values) {
+        CoreNElementUtils.addAll(values, this.values);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder add(String name, boolean value) {
+        return add(NElement.ofNameOrString(name), NElement.ofBoolean(value));
+    }
+
+    @Override
+    public NArrayElementBuilder add(String name, int value) {
+        return add(NElement.ofNameOrString(name), NElement.ofInt(value));
+    }
+
+    @Override
+    public NArrayElementBuilder add(String name, double value) {
+        return add(NElement.ofNameOrString(name), NElement.ofDouble(value));
+    }
+
+    @Override
+    public NArrayElementBuilder add(String name, String value) {
+        return add(NElement.ofNameOrString(name), NElement.ofString(value));
+    }
+
 
     @Override
     public NArrayElementBuilder addAll(Collection<NElement> value) {
@@ -179,42 +392,13 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         if (value == null) {
             add(NElement.ofNull());
         } else {
-            for (NElement child : value.items()) {
+            for (NElement child : value.children()) {
                 add(child);
             }
         }
         return this;
     }
 
-    @Override
-    public NArrayElementBuilder add(NElement e) {
-        CoreNElementUtils.add(e, this.values);
-        return this;
-    }
-
-    @Override
-    public NArrayElementBuilder insert(int index, NElement e) {
-        CoreNElementUtils.addAt(index,e, this.values);
-        return this;
-    }
-
-    @Override
-    public NArrayElementBuilder setAt(int index, NElement e) {
-        CoreNElementUtils.addAt(index,e, this.values);
-        return this;
-    }
-
-    @Override
-    public NArrayElementBuilder clear() {
-        values.clear();
-        return this;
-    }
-
-    @Override
-    public NArrayElementBuilder remove(int index) {
-        CoreNElementUtils.removeAt(index, this.values);
-        return this;
-    }
 
     @Override
     public NArrayElementBuilder addAll(String[] value) {
@@ -328,7 +512,8 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     @Override
     public NArrayElement build() {
         return new DefaultNArrayElement(name, params, values,
-                affixes(), diagnostics(),metadata());
+                affixes(), diagnostics(), metadata()
+        );
     }
 
 
@@ -377,23 +562,6 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         return addParam(NElement.ofPair(name, value));
     }
 
-    @Override
-    public NArrayElementBuilder setParams(List<NElement> params) {
-        this.params=CoreNElementUtils.setAll(params, this.values);
-        return this;
-    }
-
-    @Override
-    public NArrayElementBuilder setChildren(List<NElement> values) {
-        this.values.clear();
-        CoreNElementUtils.setAll(values, this.values);
-        return this;
-    }
-
-    @Override
-    public List<NElement> children() {
-        return new ArrayList<>(this.values);
-    }
 
     // ------------------------------------------
 
@@ -405,8 +573,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         super.copyFrom(other, assignmentPolicy);
         if (other instanceof NPairElementBuilder) {
             NPairElementBuilder from = (NPairElementBuilder) other;
-            add(from.key());
-            add(from.value());
+            add(from.key(), from.value());
             return this;
         }
         if (other instanceof NUpletElementBuilder) {
@@ -422,7 +589,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
                 add(from.getAt(i).get());
             }
             List<NElement> p = from.params().orNull();
-            if(from.isParametrized()){
+            if (from.isParametrized()) {
                 setParametrized(true);
             }
             if (p != null) {
@@ -434,9 +601,9 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         if (other instanceof NArrayElementBuilder) {
             NArrayElementBuilder from = (NArrayElementBuilder) other;
             for (int i = 0; i < from.size(); i++) {
-                add(from.get(i).get());
+                add(from.getAt(i).get());
             }
-            if(from.isParametrized()){
+            if (from.isParametrized()) {
                 setParametrized(true);
             }
             List<NElement> p = from.params().orNull();
@@ -455,41 +622,26 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
             return this;
         }
         super.copyFrom(other, assignmentPolicy);
-        if (other instanceof NPairElementBuilder) {
-            NPairElementBuilder from = (NPairElementBuilder) other;
-            add(from.key());
-            add(from.value());
+        if (other instanceof NPairElement) {
+            NPairElement from = (NPairElement) other;
+            add(from.key(), from.value());
             return this;
         }
         if (other instanceof NUpletElement) {
             NUpletElement from = (NUpletElement) other;
-            for (int i = 0; i < from.size(); i++) {
-                add(from.get(i).get());
-            }
+            addAll(from.children());
             return this;
         }
-        if (other instanceof NObjectElement) {
-            NObjectElement from = (NObjectElement) other;
-            for (int i = 0; i < from.size(); i++) {
-                add(from.getAt(i).get());
-            }
-            List<NElement> p = from.params().orNull();
-            if (p != null) {
-                this.addParams(p);
-            }
-            name(from.name().orNull());
-            return this;
+        if (other instanceof NNamedElement) {
+            NNamedElement nfrom = (NNamedElement) other;
+            name(nfrom.name().orNull());
         }
-        if (other instanceof NArrayElement) {
-            NArrayElement from = (NArrayElement) other;
-            for (int i = 0; i < from.size(); i++) {
-                add(from.get(i).get());
+        if (other instanceof NParametrizedContainerElement) {
+            NParametrizedContainerElement from = (NParametrizedContainerElement) other;
+            if (from.isParametrized()) {
+                setParametrized(true);
             }
-            List<NElement> p = from.params().orNull();
-            if (p != null) {
-                this.addParams(p);
-            }
-            name(from.name().orNull());
+            addParams(from.params().orNull());
             return this;
         }
         return this;
@@ -523,11 +675,6 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
-    public NArrayElementBuilder addAffix(NBoundAffix affix) {
-        super.addAffix(affix);
-        return this;
-    }
-
     @Override
     public NArrayElementBuilder removeAffix(int index) {
         super.removeAffix(index);
@@ -558,6 +705,11 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
+    public NArrayElementBuilder addAffix(NBoundAffix affix) {
+        super.addAffix(affix);
+        return this;
+    }
+
     @Override
     public NArrayElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
         super.addAffix(index, affix, anchor);
@@ -576,6 +728,7 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
+    @Override
     public NArrayElementBuilder addAffixes(List<NBoundAffix> affixes) {
         super.addAffixes(affixes);
         return this;

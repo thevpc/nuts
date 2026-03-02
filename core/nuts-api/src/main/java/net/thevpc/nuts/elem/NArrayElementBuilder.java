@@ -30,6 +30,7 @@ import net.thevpc.nuts.util.NOptional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -50,7 +51,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
      *
      * @return array items
      */
-    List<NElement> items();
+    List<NElement> children();
 
     /**
      * element count
@@ -67,7 +68,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
      * @param index index
      * @return element at index
      */
-    NOptional<NElement> get(int index);
+    NOptional<NElement> getAt(int index);
 
 
     /**
@@ -240,18 +241,6 @@ public interface NArrayElementBuilder extends NElementBuilder {
     NArrayElementBuilder add(NElement element);
 
     /**
-     * insert new element at the given index.
-     *
-     * @param index   index to insert into
-     * @param element element to add, should no be null
-     * @return {@code this} instance
-     * @throws NullPointerException      if {@code element==null}
-     * @throws IndexOutOfBoundsException if the index is out of range
-     *                                   ({@code index < 0 || index > size()})
-     */
-    NArrayElementBuilder insert(int index, NElement element);
-
-    /**
      * update element at the given index.
      *
      * @param index   index to update
@@ -269,16 +258,6 @@ public interface NArrayElementBuilder extends NElementBuilder {
      * @return {@code this} instance
      */
     NArrayElementBuilder clear();
-
-    /**
-     * add new element to the end of the array.
-     *
-     * @param index index to remove
-     * @return {@code this} instance
-     * @throws IndexOutOfBoundsException if the index is out of range
-     *                                   ({@code index < 0 || index > size()})
-     */
-    NArrayElementBuilder remove(int index);
 
     NArrayElementBuilder addParams(List<NElement> params);
 
@@ -318,7 +297,6 @@ public interface NArrayElementBuilder extends NElementBuilder {
 
     NArrayElementBuilder setChildren(List<NElement> params);
 
-    List<NElement> children();
 
     NArrayElementBuilder doWith(Consumer<NArrayElementBuilder> con);
     /**
@@ -379,4 +357,123 @@ public interface NArrayElementBuilder extends NElementBuilder {
     NArrayElementBuilder addAffixes(List<NBoundAffix> affixes);
 
     NArrayElementBuilder metadata(NElementMetadata metadata);
+
+
+    /// ///////
+
+
+
+    /**
+     * set value for property {@code name}
+     *
+     * @param name  property name
+     * @param value property value. should not be null
+     * @return this {@code this} instance
+     */
+    NArrayElementBuilder set(String name, NElement value);
+
+    NArrayElementBuilder set(String name, boolean value);
+
+    NArrayElementBuilder set(String name, int value);
+
+    NArrayElementBuilder set(String name, double value);
+
+    NArrayElementBuilder set(String name, String value);
+
+    NArrayElementBuilder setParamAt(int index, boolean value);
+
+    NArrayElementBuilder setParamAt(int index, int value);
+
+    NArrayElementBuilder setParamAt(int index, double value);
+
+    NArrayElementBuilder setParamAt(int index, String value);
+
+    NArrayElementBuilder add(NElement name, NElement value);
+
+    NArrayElementBuilder add(String name, NElement value);
+
+    NArrayElementBuilder add(String name, boolean value);
+
+    NArrayElementBuilder add(String name, int value);
+
+    NArrayElementBuilder add(String name, double value);
+
+    NArrayElementBuilder add(String name, String value);
+
+    NArrayElementBuilder addAll(Map<NElement, NElement> other);
+
+    NArrayElementBuilder addAll(List<NElement> other);
+
+    NArrayElementBuilder setAll(Map<NElement, NElement> other);
+
+    /**
+     * remove property
+     *
+     * @param name property name
+     * @return this {@code this} instance
+     */
+    NArrayElementBuilder removePair(String name);
+
+    NArrayElementBuilder removeAllPairs(String name);
+
+    /**
+     * return value for name or null.
+     * If multiple values are available return any of them.
+     *
+     * @param name key name
+     * @return value for name or null
+     */
+    NOptional<NElement> get(String name);
+
+    List<NElement> getAll(NElement s);
+
+
+    NArrayElementBuilder set(NPairElement entry);
+
+
+    /**
+     * remove child at index
+     *
+     * @param index element index
+     * @return this builder
+     * @since 0.8.9
+     */
+    NArrayElementBuilder removeAt(int index);
+
+    /**
+     * remove child pair when its key is the given name
+     *
+     * @param name entry key
+     * @return this builder
+     * @since 0.8.9
+     */
+    NArrayElementBuilder removePair(NElement name);
+
+    /**
+     * @param index index to add to, may be negative
+     * @param item  item to add
+     * @return this builder
+     * @since 0.8.9
+     */
+    NArrayElementBuilder addAt(int index, NElement item);
+
+    NArrayElementBuilder removeAllPairs(NElement name);
+
+    NArrayElementBuilder remove(NElement child);
+
+    NArrayElementBuilder removeAll(NElement child);
+
+
+    NArrayElementBuilder set(NElement name, NElement value);
+
+    NArrayElementBuilder set(NElement name, String value);
+
+    NArrayElementBuilder set(NElement name, boolean value);
+
+    NArrayElementBuilder set(NElement name, double value);
+
+    NArrayElementBuilder set(NElement name, int value);
+
+    NOptional<NElement> get(NElement s);
+
 }

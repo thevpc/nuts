@@ -176,7 +176,7 @@ public class NElementSelectorFilters {
         public List<NElement> filter(NElement element) {
             NArrayElementBuilder aa = NElement.ofArrayBuilder();
             aa.add(element);
-            return aa.items();
+            return aa.children();
         }
 
         @Override
@@ -185,7 +185,7 @@ public class NElementSelectorFilters {
             for (NElement element : elements) {
                 aa.add(element);
             }
-            return aa.items();
+            return aa.children();
         }
 
     }

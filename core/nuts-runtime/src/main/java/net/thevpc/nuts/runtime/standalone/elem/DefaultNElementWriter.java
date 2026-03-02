@@ -203,12 +203,20 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
         NElement elem = NElements.of().doWithMapperStore(d -> d.copyFrom(mapperStore())).toElement(aValue);
         if (out.isNtf()) {
             NPrintStream bos = NMemoryPrintStream.of();
-            format.printElement(elem, bos, formatter, createFactoryContext());
+            format.printElement(elem, bos, effectiveFormatter(), createFactoryContext());
             out.print(NText.ofCode(getContentType().id(), bos.toString()));
         } else {
-            format.printElement(elem, out, formatter, createFactoryContext());
+            format.printElement(elem, out, effectiveFormatter(), createFactoryContext());
         }
         out.flush();
+    }
+    private NElementFormatter effectiveFormatter(){
+        if(contentType==NContentType.JSON){
+            if(formatter==null){
+                return NElementFormatter.ofPretty();
+            }
+        }
+        return formatter;
     }
 
     @Override

@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.standalone.elem.builder;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
-import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNArrayElement;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNFragmentElement;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
@@ -37,7 +36,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 
 /**
@@ -297,7 +295,7 @@ public class DefaultNFragmentElementBuilder extends AbstractNElementBuilder impl
         if (other instanceof NArrayElementBuilder) {
             NArrayElementBuilder from = (NArrayElementBuilder) other;
             for (int i = 0; i < from.size(); i++) {
-                add(from.get(i).get());
+                add(from.getAt(i).get());
             }
             return this;
         }
