@@ -6,6 +6,7 @@ import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.extension.CoreServiceUtils;
+import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
 import net.thevpc.nuts.util.NClassClassMap;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NAssert;
@@ -66,12 +67,7 @@ class IdCache {
     ) {
         int count = 0;
         for (Class<?> extensionPoint : extensionPoints) {
-            Class<?> c = null;
-            try {
-                c = Class.forName(className, false, bootClassLoader);
-            } catch (ClassNotFoundException x) {
-                LOG.log(NMsg.ofC("not a valid type %s", c).asFineAlert(x));
-            }
+            Class<?> c = new NTypeLoaderImpl(className).tryLoad(bootClassLoader).getType().orNull();
             if (c != null) {
                 if (!logStart.get()) {
                     Set<String> extensionPointStrings = Arrays.stream(extensionPoints).map(x -> x.getName()).collect(Collectors.toSet());

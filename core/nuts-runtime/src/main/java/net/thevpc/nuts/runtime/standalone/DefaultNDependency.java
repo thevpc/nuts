@@ -28,13 +28,13 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.internal.NReservedUtils;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by vpc on 1/5/17.
@@ -96,25 +96,25 @@ public class DefaultNDependency implements NDependency {
                 switch (k){
                     case NConstants.IdProperties.SCOPE:{
                         if(!Objects.equals(old,scope) && !Objects.equals(old,this.scope)){
-                            Logger.getLogger(DefaultNDependency.class.getName()).log(Level.WARNING, "unexpected dependency key : {0} {1}<>{2},{3}", new Object[]{k,old,scope,this.scope});
+                            NLog.of(DefaultNDependency.class).log(NMsg.ofC("unexpected dependency key : %s %s<>%s,%s", k,old,scope,this.scope).asWarning());
                         }
                         break;
                     }
                     case NConstants.IdProperties.OPTIONAL:{
                         if(!Objects.equals(old,optional) && !Objects.equals(old,this.optional)){
-                            Logger.getLogger(DefaultNDependency.class.getName()).log(Level.WARNING, "unexpected dependency key : {0} {1}<>{2},{3}", new Object[]{k,old,optional,this.optional});
+                            NLog.of(DefaultNDependency.class).log(NMsg.ofC("unexpected dependency key : %s %s<>%s,%s", k,old,optional,this.optional).asWarning());
                         }
                         break;
                     }
                     case NConstants.IdProperties.TYPE:{
                         if(!Objects.equals(old,type) && !Objects.equals(old,this.type)){
-                            Logger.getLogger(DefaultNDependency.class.getName()).log(Level.WARNING, "unexpected dependency key : {0} {1}<>{2},{3}", new Object[]{k,old,type,this.type});
+                            NLog.of(DefaultNDependency.class).log(NMsg.ofC("unexpected dependency key : %s %s<>%s,%s", k,old,type,this.type).asWarning());
                         }
                         break;
                     }
                     case NConstants.IdProperties.REPO:{
                         if(!Objects.equals(old,repository) && !Objects.equals(old,this.repository)){
-                            Logger.getLogger(DefaultNDependency.class.getName()).log(Level.WARNING, "unexpected dependency key : {0} {1}<>{2},{3}", new Object[]{k,old,repository,this.repository});
+                            NLog.of(DefaultNDependency.class).log(NMsg.ofC("unexpected dependency key : %s %s<>%s,%s", k,old,repository,this.repository).asWarning());
                         }
                         break;
                     }

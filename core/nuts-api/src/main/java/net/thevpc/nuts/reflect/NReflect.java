@@ -20,4 +20,6 @@ public interface NReflect extends NComponent {
     boolean isImmutableType(Type type);
 
     boolean isImmutableType(NReflectType type);
+
+    NTypeLoader createTypeLoader(String name);
 }

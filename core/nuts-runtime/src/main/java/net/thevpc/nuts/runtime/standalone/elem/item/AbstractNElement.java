@@ -1319,13 +1319,12 @@ public abstract class AbstractNElement implements NElement {
                 }
                 return NOptional.of(NElement.ofObjectBuilder().add(this).build());
             }
-            case NAMED_UPLET: {
-                NUpletElement u = asUplet().orNull();
-                return NOptional.of(NElement.ofObjectBuilder().addAll(u.children().toArray(new NElement[0])).build());
-            }
+            case NAMED_UPLET:
             case UPLET: {
                 NUpletElement u = asUplet().orNull();
-                return NOptional.of(NElement.ofObjectBuilder().addAll(u.children().toArray(new NElement[0])).build());
+                return NOptional.of(NElement.ofObjectBuilder()
+                        .name(u.name().orNull())
+                        .addAll(u.children().toArray(new NElement[0])).build());
             }
             case OBJECT: {
                 return NOptional.of((NObjectElement) this);
@@ -1347,6 +1346,11 @@ public abstract class AbstractNElement implements NElement {
                         .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
+            case FRAGMENT: {
+                NFragmentElement u = asFragment().orNull();
+                return NOptional.of(NElement.ofObjectBuilder()
+                        .addAll(u.children().toArray(new NElement[0])).build());
+            }
             default: {
                 return NOptional.of(NElement.ofObjectBuilder().add(this).build());
             }
@@ -1364,13 +1368,12 @@ public abstract class AbstractNElement implements NElement {
                 }
                 return NOptional.of(NElement.ofArrayBuilder().add(this).build());
             }
+            case UPLET:
             case NAMED_UPLET: {
                 NUpletElement u = asUplet().orNull();
-                return NOptional.of(NElement.ofArrayBuilder().addAll(u.children().toArray(new NElement[0])).build());
-            }
-            case UPLET: {
-                NUpletElement u = asUplet().orNull();
-                return NOptional.of(NElement.ofArrayBuilder().addAll(u.children().toArray(new NElement[0])).build());
+                return NOptional.of(NElement.ofArrayBuilder()
+                        .name(u.name().orNull())
+                        .addAll(u.children().toArray(new NElement[0])).build());
             }
             case OBJECT:
             case NAMED_OBJECT:
@@ -1378,16 +1381,18 @@ public abstract class AbstractNElement implements NElement {
             case FULL_OBJECT: {
                 NObjectElement u = asObject().orNull();
                 return NOptional.of(NElement.ofArrayBuilder()
+                        .name(u.name().orNull())
                         .addParams(u.params().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
-            case ARRAY: {
-                return NOptional.of((NArrayElement) this);
-            }
+            case ARRAY:
             case NAMED_ARRAY:
             case PARAM_ARRAY:
             case FULL_ARRAY: {
-                NArrayElement u = asArray().orNull();
+                return NOptional.of((NArrayElement) this);
+            }
+            case FRAGMENT: {
+                NFragmentElement u = asFragment().orNull();
                 return NOptional.of(NElement.ofArrayBuilder()
                         .addAll(u.children().toArray(new NElement[0])).build());
             }
@@ -1573,7 +1578,7 @@ public abstract class AbstractNElement implements NElement {
      */
     public NElement format(NContentType contentType, NElementFormatter formatter) {
         return NOptional.ofSingleton(
-                transform(new DefaultNElementFormatContext(this, contentType == null ? NContentType.TSON : contentType), formatter)
+                transform(new DefaultNElementFormatContext(this, contentType == null ? NContentType.TSON : contentType), formatter!=null?formatter : NElementFormatter.ofSafe())
         ).get();
     }
 
@@ -1646,7 +1651,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NOptional<NBinaryStreamElement> asBinaryStream() {
-        if(this instanceof NBinaryStreamElement){
+        if (this instanceof NBinaryStreamElement) {
             return NOptional.of((NBinaryStreamElement) this);
         }
         return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to binary stream: %s", type().id(), this));
@@ -1654,12 +1659,12 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isBinaryStream() {
-        return type()==NElementType.BINARY_STREAM;
+        return type() == NElementType.BINARY_STREAM;
     }
 
     @Override
     public NOptional<NCharStreamElement> asCharStream() {
-        if(this instanceof NCharStreamElement){
+        if (this instanceof NCharStreamElement) {
             return NOptional.of((NCharStreamElement) this);
         }
         return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to char stream: %s", type().id(), this));
@@ -1667,6 +1672,6 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public boolean isCharStream() {
-        return type()==NElementType.CHAR_STREAM;
+        return type() == NElementType.CHAR_STREAM;
     }
 }

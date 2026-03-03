@@ -115,10 +115,10 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
         if (other instanceof NArrayElementBuilder) {
             NArrayElementBuilder from = (NArrayElementBuilder) other;
             if (from.size() > 0) {
-                this.key = from.get(0).get();
+                this.key = from.getAt(0).get();
             }
             if (from.size() > 1) {
-                this.value = from.get(1).get();
+                this.value = from.getAt(1).get();
             }
             return this;
         }

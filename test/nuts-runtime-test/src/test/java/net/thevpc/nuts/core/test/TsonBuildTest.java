@@ -29,41 +29,58 @@ public class TsonBuildTest {
     @Test
     public void test001() {
         NElement elem = NElement.ofInt(12).builder()
-                .addAffix(NElement.ofLineComment("hello"),NAffixAnchor.START)
-                .addAffix(NElement.ofLineComment("world"),NAffixAnchor.START)
-                .build()
-                ;
+                .addAffix(NElement.ofLineComment("hello"), NAffixAnchor.START)
+                .addAffix(NElement.ofLineComment("world"), NAffixAnchor.START)
+                .build();
         TestUtils.println(elem.toString());
         TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(elem));
-        String s=NElementWriter.ofTson().setFormatterCompact().formatPlain(elem);
+        String s = NElementWriter.ofTson().setFormatterCompact().formatPlain(elem);
         NElement e = NElementReader.ofTson().read(s);
-        Assertions.assertEquals(elem,e);
+        Assertions.assertEquals(elem, e);
     }
 
     @Test
     public void test002() {
         NElement elem = NElement.ofFragment(
-                NElement.ofString("hello",NElementType.LINE_STRING)
-                ,NElement.ofString("world",NElementType.LINE_STRING)
-                )
-                ;
+                NElement.ofString("hello", NElementType.LINE_STRING)
+                , NElement.ofString("world", NElementType.LINE_STRING)
+        );
         TestUtils.println(elem.toString());
         TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(elem));
-        String s=NElementWriter.ofTson().setFormatterCompact().formatPlain(elem);
+        String s = NElementWriter.ofTson().setFormatterCompact().formatPlain(elem);
         NElement e = NElementReader.ofTson().read(s);
         TestUtils.println(e.toString());
-        Assertions.assertEquals(elem.toString(),e.toString()); // the latter should have a more newline
-        Assertions.assertNotEquals(elem,e); // the latter should have a more newline
+        Assertions.assertEquals(elem.toString(), e.toString()); // the latter should have a more newline
+        Assertions.assertNotEquals(elem, e); // the latter should have a more newline
     }
 
     @Test
     public void test003() {
-        NElement elem = NElement.ofString("hello",NElementType.LINE_STRING);
+        NElement elem = NElement.ofString("hello", NElementType.LINE_STRING);
         TestUtils.println(elem.toString());
         TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(elem));
-        String s=NElementWriter.ofTson().setFormatterCompact().formatPlain(elem);
+        String s = NElementWriter.ofTson().setFormatterCompact().formatPlain(elem);
         NElement e = NElementReader.ofTson().read(s);
         e.equals(elem);
-        Assertions.assertEquals(elem,e);
+        Assertions.assertEquals(elem, e);
+    }
+
+    @Test
+    public void test004() {
+        NObjectElementBuilder builder = NElement.ofObjectBuilder();
+        builder.addAt(0,
+                NElement.ofPair("REDIRECT_COMMAND", "/here/there")
+                        .builder()
+                        .addLeadingComment(
+                                NElementComment.ofLineComment("load configuration from the following path. will ignore all the remaining")
+                        ).build()
+        );
+        NElement elem = builder.build();
+        TestUtils.println(elem.toString());
+        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(elem));
+        String s = elem.toString();
+        NElement e = NElementReader.ofTson().read(s);
+        e.equals(elem);
+        Assertions.assertEquals(elem, e);
     }
 }

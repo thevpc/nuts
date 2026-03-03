@@ -28,6 +28,7 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -244,6 +245,44 @@ public interface NObjectElementBuilder extends NElementBuilder {
     NObjectElementBuilder setChildren(List<NElement> params);
 
     NObjectElementBuilder doWith(Consumer<NObjectElementBuilder> con);
+
+    NObjectElementBuilder addAll(Collection<NElement> value);
+
+    NObjectElementBuilder addAll(NObjectElementBuilder value);
+
+    NObjectElementBuilder addAll(String[] value);
+
+    NObjectElementBuilder addAll(int[] value);
+
+    NObjectElementBuilder addAll(double[] value);
+
+    NObjectElementBuilder addAll(long[] value);
+
+    NObjectElementBuilder addAll(float[] value);
+
+    NObjectElementBuilder addAll(boolean[] value);
+
+    NObjectElementBuilder addAll(char[] value);
+
+    NObjectElementBuilder addAll(byte[] value);
+
+    NObjectElementBuilder add(int value);
+
+    NObjectElementBuilder add(long value);
+
+    NObjectElementBuilder add(double value);
+
+    NObjectElementBuilder add(float value);
+
+    NObjectElementBuilder add(byte value);
+
+    NObjectElementBuilder add(boolean value);
+
+    NObjectElementBuilder add(char value);
+
+    NObjectElementBuilder add(Number value);
+
+    NObjectElementBuilder add(String value);
 
     /**
      * create a immutable instance of {@link NObjectElement} representing

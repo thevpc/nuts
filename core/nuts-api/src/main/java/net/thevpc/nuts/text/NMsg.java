@@ -395,6 +395,10 @@ public class NMsg implements NBlankable {
 
     @Override
     public String toString() {
+        return toString(false);
+    }
+
+    public String toString(boolean plain) {
         try {
             switch (format) {
                 case CFORMAT: {
@@ -454,7 +458,14 @@ public class NMsg implements NBlankable {
                 case VFORMAT: {
                     return formatAsV();
                 }
-                case NTF:
+                case NTF:{
+                    if(plain){
+                        if(message instanceof NText){
+                            return ((NText)message).filteredText();
+                        }
+                    }
+                    return String.valueOf(message);
+                }
                 case STYLED:
                 case CODE:
                 case PLAIN: {

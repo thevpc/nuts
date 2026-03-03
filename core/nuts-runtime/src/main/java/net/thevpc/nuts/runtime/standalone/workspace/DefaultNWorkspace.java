@@ -26,6 +26,8 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NApplicationHandleMode;
+import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.log.NLog;
@@ -134,7 +136,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     /**
      * using currentApp so that we can change NApp when calling embedded apps
      */
-    public NApp currentApp = new NAppImpl();
+    public NApp currentApp;
 
     public DefaultNWorkspace(NBootOptionsInfo callerBootOptionsInfo, NBootOptions info) {
         this.callerBootOptionsInfo = callerBootOptionsInfo;
@@ -241,6 +243,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         try {
             this.wsModel = new NWorkspaceModel(this, data.initialBootOptions);
             this.runWith(() -> {
+                currentApp = new NAppImpl();
                 this.wsModel.init();
                 _preloadWorkspace(data);
                 if (!loadWorkspace(data.effectiveBootOptions.getExcludedExtensions().orElseGet(Collections::emptyList), null)) {
@@ -2295,6 +2298,62 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     @Override
     public NWorkspaceTerminalOptions getBootTerminal() {
         return getBootModel().getBootTerminal();
+    }
+
+
+    @Override
+    public void runApplication(NApplicationHandleMode handleMode) {
+        NApplicationHandleMode.runHandled(() ->
+                this.runWith(() -> {
+                    boolean inherited = NWorkspace.of().getBootOptions().getInherited().orElse(false);
+                    NApp nApp = NApp.of();
+                    // Resolve the application class name (explicit or fallback)
+                    String appClassName = nApp.getSourceType() == null ? null : nApp.getSourceType().getName();
+                    if (appClassName == null) {
+                        appClassName = nApp.getSource() == null ? null : nApp.getSource().getClass().getName();
+                    }
+                    NId appId = nApp.getId().orNull();
+                    NLog.of(NApplications.class)
+                            .log(
+                                    NMsg.ofC(
+                                            NI18n.of("running application %s: %s (%s) %s"),
+                                            inherited ? ("(" + NI18n.of("inherited") + ")") : "",
+                                            appId == null ? ("<" + NI18n.of("unresolved-id") + ">") : appId,
+                                            appClassName,
+                                            nApp.getCmdLine()
+                                    ).asFine().withIntent(NMsgIntent.START)
+                            );
+                    try {
+                        switch (nApp.getMode()) {
+                            //both RUN and AUTO_COMPLETE execute the run branch. Later
+                            //session.isExecMode()
+                            case RUN:
+                            case AUTO_COMPLETE: {
+                                nApp.getApplication().run();
+                                return;
+                            }
+                            case INSTALL: {
+                                nApp.getApplication().onInstallApplication();
+                                return;
+                            }
+                            case UPDATE: {
+                                nApp.getApplication().onUpdateApplication();
+                                return;
+                            }
+                            case UNINSTALL: {
+                                nApp.getApplication().onUninstallApplication();
+                                return;
+                            }
+                        }
+                    } catch (NExecutionException e) {
+                        if (e.getExitCode() == NExecutionException.SUCCESS) {
+                            return;
+                        }
+                        throw e;
+                    }
+                    throw new NExecutionException(NMsg.ofC(NI18n.of("unsupported execution mode %s"), nApp.getMode()), NExecutionException.ERROR_255);
+                }), handleMode
+        );
     }
 
     @Override

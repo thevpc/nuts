@@ -51,23 +51,23 @@ public class TypeHelper {
             }
         };
     }
-    public static boolean isLoadableClass(String className) {
-        return isLoadableClass(className, null);
-    }
+//    public static boolean isLoadableClass(String className) {
+//        return isLoadableClass(className, null);
+//    }
 
-    public static boolean isLoadableClass(String className, ClassLoader cl) {
-        try {
-            if (cl == null) {
-                Class.forName(className);
-                return true;
-            } else {
-                Class.forName(className, true, cl);
-                return true;
-            }
-        } catch (Throwable ex) {
-            return false;
-        }
-    }
+//    public static boolean isLoadableClass(String className, ClassLoader cl) {
+//        try {
+//            if (cl == null) {
+//                Class.forName(className);
+//                return true;
+//            } else {
+//                Class.forName(className, true, cl);
+//                return true;
+//            }
+//        } catch (Throwable ex) {
+//            return false;
+//        }
+//    }
 
     public static Object getFieldValue(Object obj, String name) {
         Field declaredField = null;

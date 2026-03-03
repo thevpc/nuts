@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.core;
 
+import net.thevpc.nuts.app.NApplicationHandleMode;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.boot.core.NWorkspaceBase;
@@ -601,4 +602,5 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     NWorkspaceTerminalOptions getBootTerminal();
 
+    void runApplication(NApplicationHandleMode handleMode);
 }

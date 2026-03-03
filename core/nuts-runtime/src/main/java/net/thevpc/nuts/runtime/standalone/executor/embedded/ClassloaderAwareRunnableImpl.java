@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.app.NAppInitInfo;
+import net.thevpc.nuts.app.NApplication;
+import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionContext;
@@ -43,7 +45,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
         NWorkspaceExt ows = NWorkspaceExt.of();
         Map<String, String> newEnv = ows.getModel().appendEnv(executionContext.getEnv());
         NAppImpl newApp = new NAppImpl();
-        NWorkspaceExtNewContext wsc= new NWorkspaceExtNewContext(ows,newEnv,newApp);
+        NWorkspaceExtNewContext wsc = new NWorkspaceExtNewContext(ows, newEnv, newApp);
         return wsc.callWith(() -> {
             NClock now = NClock.now();
             if (cls.getName().equals("net.thevpc.nuts.Nuts")) {
@@ -83,13 +85,15 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                 //ignore
             }
             String finalNutsAppVersion = nutsAppVersion;
-            Object finalNutsApp = nutsApp;
+            Object applicationRawInstance = nutsApp;
+            NApplication applicationInstance = NApplications.createApplicationInstanceFromAnnotatedInstance(applicationRawInstance);
+
             return sessionCopy.callWith(() -> {
-                NApp.of().prepare(new NAppInitInfo(joptions.getAppArgs().toArray(new String[0]), cls, now));
+                NApp.of().prepare(new NAppInitInfo(joptions.getAppArgs().toArray(new String[0]), cls, applicationRawInstance, applicationInstance, null, now));
                 try {
-                    if (finalNutsAppVersion != null && finalNutsApp != null) {
+                    if (finalNutsAppVersion != null && applicationRawInstance != null) {
                         //NutsWorkspace
-                        mainMethod[0].invoke(finalNutsApp, sessionCopy, joptions.getAppArgs().toArray(new String[0]));
+                        mainMethod[0].invoke(applicationRawInstance, sessionCopy, joptions.getAppArgs().toArray(new String[0]));
                     } else {
                         //NutsWorkspace
 

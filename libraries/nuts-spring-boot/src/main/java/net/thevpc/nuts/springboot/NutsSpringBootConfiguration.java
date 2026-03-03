@@ -1,9 +1,7 @@
 package net.thevpc.nuts.springboot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.app.NApp;
-import net.thevpc.nuts.app.NApplication;
-import net.thevpc.nuts.app.NApplications;
+import net.thevpc.nuts.app.*;
 import net.thevpc.nuts.artifact.NDefinitionFilters;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NIdFilters;
@@ -23,16 +21,18 @@ import net.thevpc.nuts.reflect.NReflect;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
-import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.time.NProgressMonitors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
 import java.util.*;
@@ -171,7 +171,6 @@ public class NutsSpringBootConfiguration {
 
     @Bean
     public NApplication nutsApplication(@Autowired NWorkspace workspace, @Autowired ApplicationArguments applicationArguments) {
-        NClock now = NClock.now();
         NApplication validApp = null;
         Object validAppBean = resolveValidSpringBootApplication(workspace, applicationArguments);
         if (validAppBean instanceof NApplication) {
@@ -191,19 +190,21 @@ public class NutsSpringBootConfiguration {
 
     @Bean
     public NWorkspace nutsWorkspace(@Autowired ApplicationArguments applicationArguments) {
-        return Nuts.openWorkspace(
+        NWorkspace workspace = Nuts.openWorkspace(
                 NBootArguments.of(resolveNutsArgs())
                         .setAppArgs(applicationArguments.getSourceArgs())
         );
+        // prepare app early
+        NApp.builder(applicationArguments.getSourceArgs())
+                .instance(nutsApplication(workspace, applicationArguments))
+                .setNutsArgs(resolveNutsArgs())
+                .propagateErrors().prepare();
+        return workspace;
     }
 
     @Bean
-    public CommandLineRunner nutsCommandLineRunner(@Autowired NWorkspace workspace, @Autowired ApplicationArguments applicationArguments) {
-        return args -> NApp.builder(applicationArguments.getSourceArgs())
-                .instance(nutsApplication(workspace, applicationArguments))
-                .setNutsArgs(resolveNutsArgs())
-                .propagateErrors()
-                .run();
+    public CommandLineRunner nutsCommandLineRunner(@Autowired NWorkspace workspace) {
+        return args -> workspace.runApplication(NApplicationHandleMode.HANDLE);
     }
 
     private String[] resolveNutsArgs() {

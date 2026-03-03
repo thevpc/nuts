@@ -33,6 +33,7 @@ import net.thevpc.nuts.text.NMsgBuilder;
 
 import java.util.function.Supplier;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Workspace aware Logger
@@ -58,6 +59,10 @@ public interface NLog {
      */
     static NLog of(Class<?> clazz) {
         return of(NAssert.requireNamedNonBlank(clazz, "class").getName());
+    }
+
+    static NLog of(Logger logger) {
+        return NLogs.of().getLogger(logger);
     }
 
     static NLog ofNull() {

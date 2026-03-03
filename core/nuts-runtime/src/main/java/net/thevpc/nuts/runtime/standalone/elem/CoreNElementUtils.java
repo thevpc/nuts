@@ -558,4 +558,35 @@ public class CoreNElementUtils {
         }
         return any;
     }
+
+
+    public static List<NElement> getAll(List<NElement> values, String s) {
+        List<NElement> ret = new ArrayList<>();
+        for (NElement x : values) {
+            if (x instanceof NPairElement) {
+                NPairElement e = (NPairElement) x;
+                NElement k = e.key();
+                if (
+                        (s == null && k.isNull())
+                                || (s != null && k.isAnyStringOrName() && k.asStringValue().orElse("").equals(s))
+                ) {
+                    ret.add(e.value());
+                }
+            }
+        }
+        return ret;
+    }
+
+    public static List<NElement> getAll(List<NElement> values, NElement s) {
+        List<NElement> ret = new ArrayList<>();
+        for (NElement x : values) {
+            if (x instanceof NPairElement) {
+                NPairElement e = (NPairElement) x;
+                if (Objects.equals(e.key(), s)) {
+                    ret.add(e.value());
+                }
+            }
+        }
+        return ret;
+    }
 }

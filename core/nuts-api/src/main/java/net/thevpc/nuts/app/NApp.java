@@ -9,13 +9,11 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * Represents application configuration bound to the current {@code NSession}
@@ -51,6 +49,10 @@ public interface NApp extends NComponent {
      * @param appInitInfo the initialization information required to prepare the application for the current {@code session}
      */
     void prepare(NAppInitInfo appInitInfo);
+
+    NApplication getApplication();
+
+    Object getSource();
 
     /**
      * Creates and returns a copy of this {@code NApp} instance.
@@ -131,7 +133,7 @@ public interface NApp extends NComponent {
      *
      * @return a {@code Class<?>} representing the main application class, or {@code null} if It's not defined.
      */
-    Class<?> getAppClass();
+    Class<?> getSourceType();
 
     /**
      * Retrieves the path to the binary folder associated with this application.

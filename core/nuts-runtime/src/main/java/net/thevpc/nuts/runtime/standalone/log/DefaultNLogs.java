@@ -9,6 +9,7 @@ import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.concurrent.NCallable;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @NComponentScope(NScopeType.WORKSPACE)
 @NScore(fixed = NScorable.DEFAULT_SCORE)
@@ -43,6 +44,11 @@ public class DefaultNLogs implements NLogs {
     @Override
     public NLog getLogger(String name) {
         return model.getLogger(name);
+    }
+
+    @Override
+    public NLog getLogger(Logger logger) {
+        return model.getLogger(logger);
     }
 
     @Override

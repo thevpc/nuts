@@ -1,6 +1,7 @@
 package net.thevpc.nuts.time;
 
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.text.NMsgTemplate;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponent;
@@ -35,7 +36,11 @@ public interface NProgressMonitors extends NComponent {
 
     NProgressMonitor ofLogger(NMsgTemplate messageFormat, Logger printStream);
 
-    NProgressMonitor ofLogger(Logger printStream);
+    NProgressMonitor ofLogger(NMsgTemplate messageFormat, NLog printStream);
+
+    NProgressMonitor ofLogger(Logger logger);
+
+    NProgressMonitor ofLogger(NLog logger);
 
     NProgressMonitor ofLogger(long milliseconds);
 
@@ -58,6 +63,8 @@ public interface NProgressMonitors extends NComponent {
     NProgressMonitor ofLogger(NMsgTemplate message, long freq);
 
     NProgressMonitor ofLogger(NMsgTemplate message, long freq, Logger out);
+
+    NProgressMonitor ofLogger(NMsgTemplate message, long freq, NLog out);
 
     NProgressMonitor ofOut(long freq);
 
