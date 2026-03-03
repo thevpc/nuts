@@ -78,7 +78,7 @@ public class CoreNIdUtils {
 
     public static void checkLongId(NId id) {
         checkShortId(id);
-        NAssert.requireNonBlank(id.getVersion(), () -> NMsg.ofC("missing version for %s", id));
+        NAssert.requireNamedNonBlank(id.getVersion(), () -> NMsg.ofC("version for %s", id));
     }
 
     public static void checkShortId(NId id) {
