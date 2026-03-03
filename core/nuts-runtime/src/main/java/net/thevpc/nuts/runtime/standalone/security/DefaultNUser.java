@@ -37,9 +37,9 @@ public class DefaultNUser implements NUser {
         username = config.getUserName();
         credentials = !NBlankable.isBlank(config.getCredential());
 
-        permissions = new ArrayList<>(config.getPermissions());
-        groups = new ArrayList<>(config.getGroups());
-        this.inheritedPermissions = new ArrayList<>(inheritedPermissions);
+        permissions = config.getPermissions() == null ? new ArrayList<>() : new ArrayList<>(config.getPermissions());
+        groups = config.getGroups() == null ? new ArrayList<>() : new ArrayList<>(config.getGroups());
+        this.inheritedPermissions = inheritedPermissions == null ? new ArrayList<>() : new ArrayList<>(inheritedPermissions);
     }
 
     @Override
