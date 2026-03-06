@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore;
 
+import net.thevpc.nuts.runtime.standalone.util.collections.NClassMapImpl;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.*;
@@ -23,7 +24,7 @@ public class UserElementMapperStore implements NElementMapperStore {
     public static final NElementTypeAndNameNoCaseNElementKeyResolver CASE_INSENSITIVE_NAME_RESOLVER = new NElementTypeAndNameNoCaseNElementKeyResolver();
     public static final NElementTypeAndNameNoFormatNElementKeyResolver FORMAT_INSENSITIVE_NAME_RESOLVER = new NElementTypeAndNameNoFormatNElementKeyResolver();
     private DefaultElementMapperStore defaultElementMapperStore;
-    private final NClassMap<NElementMapper> lvl1_customMappersByType = new NClassMap<>(null, NElementMapper.class);
+    private final NClassMap<NElementMapper> lvl1_customMappersByType = new NClassMapImpl<>(null, NElementMapper.class);
     private final List<NElementKeyResolverEntry> lvl2_customMappersByKey = new ArrayList<>();
     private List<Predicate<Type>> indestructibleTypesFilters = new ArrayList<>();//CoreNElementUtils.DEFAULT_INDESTRUCTIBLE;
     private NReflectRepository reflectRepository;
