@@ -37,6 +37,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
+import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
@@ -59,7 +60,6 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.AbstractNRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt0;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryFolderHelper;
 import net.thevpc.nuts.util.NLRUMap;
-import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -673,7 +673,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 }
                 result = idIter; //deployments.searchImpl(getFilter(), session)
                 if (result == null) {
-                    result = NIteratorBuilder.emptyIterator();
+                    result = NIterator.ofEmpty();
                 }
                 return this;
             }
@@ -687,10 +687,11 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             @Override
             public NSearchVersionsRepositoryCmd run() {
                 final NVersionFilter filter0 = getId().getVersion().filter();
+                SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("<installed>"));
                 result = NStream.ofIterator(_wstore().searchInstalledVersions(getId()))
                         .map(NFunction.of(vv -> {
                             NId newId = getId().builder().setVersion(vv).build();
-                            if (filter0.acceptVersion(vv) && (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(newId, repo, "DefaultNInstalledRepository")))) {
+                            if (filter0.acceptVersion(vv) && (safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(newId, repo, "DefaultNInstalledRepository")))) {
                                 return newId;
                             }
                             return null;
