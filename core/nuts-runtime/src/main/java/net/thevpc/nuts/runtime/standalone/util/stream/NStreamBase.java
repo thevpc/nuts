@@ -31,7 +31,7 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NIteratorBuilder;
-import net.thevpc.nuts.util.NIteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
@@ -45,23 +45,43 @@ import java.util.stream.*;
 public class NStreamBase<T> implements NStream<T> {
 
     public static <X> NStream<X> ofEmpty(String name) {
-        return new NStreamBase<>(name, () -> NIteratorBuilder.emptyIterator(), NElement.ofName("empty"), null);
+        return ofEmpty(name, null);
     }
 
     public static <X> NStream<X> ofJavaStream(String name, Stream<X> o) {
-        return new NStreamBase<>(name, () -> NIterator.of(o.iterator()), NDescribables.describeResolveOr(o, () -> NElement.ofName("fromJavaStream")), null);
+        return ofJavaStream(name, o, null);
     }
 
     public static <X> NStream<X> ofIterable(String name, NIterable<X> o) {
-        return new NStreamBase<>(name, () -> o.iterator(), NDescribables.describeResolveOr(o, () -> NElement.ofName("fromIterable")), null);
+        return ofIterable(name, o, null);
     }
 
     public static <X> NStream<X> ofIterator(String name, NIterator<X> o) {
-        return new NStreamBase<>(name, () -> o, NDescribables.describeResolveOr(o, () -> NElement.ofName("fromIterator")), null);
+        return ofIterator(name, o, null);
     }
 
     public static <X> NStream<X> ofCollection(String name, Collection<X> o) {
-        return new NStreamBase<>(name, () -> NIterator.of(o.iterator()), NDescribables.describeResolveOr(o, () -> NElement.ofName("fromCollection")), null);
+        return ofCollection(name, o, null);
+    }
+
+    public static <X> NStream<X> ofEmpty(String name,Runnable onClose) {
+        return new NStreamBase<>(name, () -> NIterator.ofEmpty(), NElement.ofName("empty"), onClose);
+    }
+
+    public static <X> NStream<X> ofJavaStream(String name, Stream<X> o,Runnable onClose) {
+        return new NStreamBase<>(name, () -> NIterator.of(o.iterator()), NDescribables.describeResolveOr(o, () -> NElement.ofName("fromJavaStream")), onClose);
+    }
+
+    public static <X> NStream<X> ofIterable(String name, NIterable<X> o,Runnable onClose) {
+        return new NStreamBase<>(name, () -> o.iterator(), NDescribables.describeResolveOr(o, () -> NElement.ofName("fromIterable")), onClose);
+    }
+
+    public static <X> NStream<X> ofIterator(String name, NIterator<X> o,Runnable onClose) {
+        return new NStreamBase<>(name, () -> o, NDescribables.describeResolveOr(o, () -> NElement.ofName("fromIterator")), onClose);
+    }
+
+    public static <X> NStream<X> ofCollection(String name, Collection<X> o,Runnable onClose) {
+        return new NStreamBase<>(name, () -> NIterator.of(o.iterator()), NDescribables.describeResolveOr(o, () -> NElement.ofName("fromCollection")), onClose);
     }
 
     interface NStreamBaseTransform<A, B> {
