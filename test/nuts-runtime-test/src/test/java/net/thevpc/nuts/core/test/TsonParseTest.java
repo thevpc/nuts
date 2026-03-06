@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.util.NAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -144,7 +145,11 @@ public class TsonParseTest {
 
     @Test
     public void test015() {
-        NObjectElement b1 = NElement.ofObjectBuilder().name("a").addParam("a", "a").add("b", "b").build();
+        NObjectElement b1 = NElement.ofObjectBuilder().name("a").addParam("b", "b").add("c", "c").build();
+        NObjectElementBuilder b = b1.builder();
+        String str = b1.toString();
+        Assertions.assertEquals("a(b:\"b\"){c:\"c\"}", str);
+        System.out.println(str);
         NObjectElement b2 = b1.builder().build();
         Assertions.assertEquals(b1, b2);
     }
