@@ -27,7 +27,7 @@ package net.thevpc.nuts.util;
 /**
  * @author vpc
  */
-public interface NBPlusTreeStore<K extends Comparable<K>, V> {
+public interface NBPlusTreeStore<K extends Comparable<K>, V> extends AutoCloseable {
 
     int m();
 
@@ -118,5 +118,6 @@ public interface NBPlusTreeStore<K extends Comparable<K>, V> {
 
     int indexOfKey(NBPlusTree.LeafNode<K, V> leafNode, K key);
 
-
+    @Override
+    void close();
 }
