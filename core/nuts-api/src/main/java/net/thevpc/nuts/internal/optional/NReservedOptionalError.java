@@ -128,7 +128,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
             }
         }
         if (exception == null) {
-            if (!NWorkspace.get().isPresent()) {
+            if (NWorkspace.get().isPresent()) {
                 exception = new NErrorOptionalException(preferredMessage.get(), cause);
             } else {
                 exception = new NDetachedErrorOptionalException(preferredMessage.get(), cause);
