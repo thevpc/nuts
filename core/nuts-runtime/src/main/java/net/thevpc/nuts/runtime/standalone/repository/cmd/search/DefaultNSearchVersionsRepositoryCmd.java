@@ -15,6 +15,7 @@ import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NPositionType;
@@ -26,7 +27,7 @@ import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.util.NIteratorBuilder;
-import net.thevpc.nuts.util.NIteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
 import net.thevpc.nuts.spi.NSearchVersionsRepositoryCmd;
 
 /**
@@ -52,6 +53,7 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
         xrepo.checkAllowedFetch(id);
         try {
             List<NIterator<? extends NId>> resultList = new ArrayList<>();
+            SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("DefaultNSearchVersionsRepositoryCmd"));
             if(getFetchMode()== NFetchMode.REMOTE) {
                 if (session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                     NIterator<NId> d = null;
@@ -65,7 +67,7 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
                     if (d != null && filter != null) {
                         resultList.add(
                                 NIteratorBuilder.of(d).filter(
-                                        x -> filter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(x,repo, "DefaultNSearchVersionsRepositoryCmd")),
+                                        x -> safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(x,repo, "DefaultNSearchVersionsRepositoryCmd")),
                                         () -> NDescribables.describeResolveOrToString(filter)
                                 ).safeIgnore().iterator()
                         );
