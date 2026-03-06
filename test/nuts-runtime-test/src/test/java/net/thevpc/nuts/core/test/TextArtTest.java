@@ -88,34 +88,36 @@ public class TextArtTest {
         }
     }
 
-
     @Test
     public void test3() {
         NTextArt art = NTextArt.of();
 
-        class MyNode implements NTreeNode {
-            int value;
-
-            public MyNode(int value) {
-                this.value = value;
-            }
-
-            @Override
-            public NText value() {
-                return art.getTableRenderer().get().render(NTableModel.of().addRow(NText.of(value)));
-            }
-
-            @Override
-            public List<NTreeNode> children() {
-                return (value < 3) ? Arrays.<Integer>asList(value + 1, value + 2).stream().map(MyNode::new).collect(Collectors.toList())
-                        : Collections.emptyList();
-            }
-        }
-        NTreeNode tree = new MyNode(1);
+        NTreeNode tree = new MyNode(1,art);
         NOut.println(art.getTreeRenderer().get().render(tree));
 
     }
 
+    static class MyNode implements NTreeNode {
+
+        int value;
+        NTextArt art;
+
+        public MyNode(int value, NTextArt art) {
+            this.value = value;
+            this.art = art;
+        }
+
+        @Override
+        public NText value() {
+            return art.getTableRenderer().get().render(NTableModel.of().addRow(NText.of(value)));
+        }
+
+        @Override
+        public List<NTreeNode> children() {
+            return (value < 3) ? Arrays.<Integer>asList(value + 1, value + 2).stream().map(w -> new MyNode(w, art)).collect(Collectors.toList())
+                    : Collections.emptyList();
+        }
+    }
 
     @Test
     public void test4() {
@@ -123,7 +125,7 @@ public class TextArtTest {
         NText text = NText.of("hello world");
         NOut.println(art.getTextRenderer("figlet:standard").get().render(text));
         NOut.println(art.getImageRenderer("pixel:standard").get()
-                .setFontSize(20) .setOutputColumns(60) .render(text));
+                .setFontSize(20).setOutputColumns(60).render(text));
 
     }
 
@@ -139,6 +141,7 @@ public class TextArtTest {
 
         NOut.println(art.getTableRenderer("table:spaces").get().render(table));
     }
+
     @Test
     public void test6() {
         NOut.println("TEST 6 ");
@@ -148,30 +151,30 @@ public class TextArtTest {
                 .addRow(NText.of("adam\nwas\nhere"), NText.ofStyled("active", NTextStyle.italic()))
                 .addRow(NText.of("eve"), NText.ofStyled("inactive", NTextStyle.success()));
         for (NTextArtTableRenderer renderer : art.getTableRenderers()) {
-            NOut.println(renderer.getName()+"::");
+            NOut.println(renderer.getName() + "::");
 //            NOut.println(art.getDefaultTextRenderer().get().render(NText.of(renderer.getName())));
             NOut.println(renderer.render(table));
         }
     }
+
     @Test
     public void test7() {
         NOut.println("TEST 7 ");
         NTextArt art = NTextArt.of();
         NMutableTableModel table = NTableModel.of()
-                .addRow(NText.of("adam\nwas\nhere"),NText.of("adam\nwill be\nhere"))
-                .addRow(NText.of("adam\nhere"),NText.of("adam\nis\nhere"))
-                ;
+                .addRow(NText.of("adam\nwas\nhere"), NText.of("adam\nwill be\nhere"))
+                .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"));
         NOut.println(art.getTableRenderer().get().render(table));
     }
+
     @Test
     public void test8() {
         NOut.println("TEST 8 ");
         NTextArt art = NTextArt.of();
         NMutableTableModel table = NTableModel.of()
                 .addRow(NText.of("adam\nwas\nhere"))
-                .addRow(NText.of("adam\nhere"),NText.of("adam\nis\nhere"))
-                .setCellColSpan(0, 0, 2)
-                ;
+                .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"))
+                .setCellColSpan(0, 0, 2);
         NOut.println(art.getTableRenderer().get().render(table));
     }
 
@@ -181,11 +184,11 @@ public class TextArtTest {
         NTextArt art = NTextArt.of();
         NMutableTableModel table = NTableModel.of()
                 .addRow(NText.of("adam\nwas\nhere"))
-                .addRow(NText.of("adam\nhere"),NText.of("adam\nis\nhere"),NText.of(3))
-                .setCellColSpan(0, 0, 3)
-                ;
+                .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"), NText.of(3))
+                .setCellColSpan(0, 0, 3);
         NOut.println(art.getTableRenderer().get().render(table));
     }
+
     @Test
     public void test10() {
         NOut.println("TEST 10 ");
@@ -193,11 +196,10 @@ public class TextArtTest {
         NMutableTableModel table = NTableModel.of()
                 .addRow(NText.of("tall\ncell\nvery\ntall"), NText.of("short"))
                 .addRow(NText.of("another"))
-                .setCellRowSpan(0, 0, 2)  // First cell spans 2 rows
+                .setCellRowSpan(0, 0, 2) // First cell spans 2 rows
                 ;
         NOut.println(art.getTableRenderer().get().render(table));
     }
-
 
     @Test
     public void test11() {
@@ -205,11 +207,12 @@ public class TextArtTest {
         NTextArt art = NTextArt.of();
         NMutableTableModel table = NTableModel.of()
                 .addRow(NText.of("tall\ncell\ncell2\ncell3\ncell4"), NText.of("short\ncell"))
-                .setCellRowSpan(0, 0, 2)  // First cell spans 2 rows
+                .setCellRowSpan(0, 0, 2) // First cell spans 2 rows
                 ;
         NText tableText = art.getTableRenderer().get().render(table);
         NOut.println(tableText);
     }
+
     @Test
     public void test12() {
         NOut.println("TEST 12 ");
@@ -217,7 +220,7 @@ public class TextArtTest {
         NMutableTableModel table = NTableModel.of()
                 .addRow(NText.of("tall\ncell\ncell2\ncell3\ncell4"))
                 .addRow(NText.of("short\ncell"))
-                .setCellColSpan(0, 0, 2)  // First cell spans 2 rows
+                .setCellColSpan(0, 0, 2) // First cell spans 2 rows
                 ;
         NText tableText = art.getTableRenderer().get().render(table);
         NOut.println(tableText);
@@ -245,7 +248,7 @@ public class TextArtTest {
                     .addRow(NText.of("adam\nwas\nhere"), NText.ofStyled("active", NTextStyle.italic()))
                     .addRow(NText.of("eve"), NText.ofStyled("inactive", NTextStyle.success()));
             for (NTextArtTableRenderer renderer : art.getTableRenderers()) {
-                NOut.println(renderer.getName()+"::");
+                NOut.println(renderer.getName() + "::");
 //            NOut.println(art.getDefaultTextRenderer().get().render(NText.of(renderer.getName())));
                 NOut.println(renderer.render(table));
             }
@@ -254,9 +257,8 @@ public class TextArtTest {
             NOut.println("TEST 7 ");
             NTextArt art = NTextArt.of();
             NMutableTableModel table = NTableModel.of()
-                    .addRow(NText.of("adam\nwas\nhere"),NText.of("adam\nwill be\nhere"))
-                    .addRow(NText.of("adam\nhere"),NText.of("adam\nis\nhere"))
-                    ;
+                    .addRow(NText.of("adam\nwas\nhere"), NText.of("adam\nwill be\nhere"))
+                    .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"));
             NOut.println(art.getTableRenderer().get().render(table));
         }
         {
@@ -264,9 +266,8 @@ public class TextArtTest {
             NTextArt art = NTextArt.of();
             NMutableTableModel table = NTableModel.of()
                     .addRow(NText.of("adam\nwas\nhere"))
-                    .addRow(NText.of("adam\nhere"),NText.of("adam\nis\nhere"))
-                    .setCellColSpan(0, 0, 2)
-                    ;
+                    .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"))
+                    .setCellColSpan(0, 0, 2);
             NOut.println(art.getTableRenderer().get().render(table));
         }
 
@@ -275,9 +276,8 @@ public class TextArtTest {
             NTextArt art = NTextArt.of();
             NMutableTableModel table = NTableModel.of()
                     .addRow(NText.of("adam\nwas\nhere"))
-                    .addRow(NText.of("adam\nhere"),NText.of("adam\nis\nhere"),NText.of(3))
-                    .setCellColSpan(0, 0, 3)
-                    ;
+                    .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"), NText.of(3))
+                    .setCellColSpan(0, 0, 3);
             NOut.println(art.getTableRenderer().get().render(table));
         }
         {
@@ -286,18 +286,17 @@ public class TextArtTest {
             NMutableTableModel table = NTableModel.of()
                     .addRow(NText.of("tall\ncell\nvery\ntall"), NText.of("short"))
                     .addRow(NText.of("another"))
-                    .setCellRowSpan(0, 0, 2)  // First cell spans 2 rows
+                    .setCellRowSpan(0, 0, 2) // First cell spans 2 rows
                     ;
             NOut.println(art.getTableRenderer().get().render(table));
         }
-
 
         {
             NOut.println("TEST 11 ");
             NTextArt art = NTextArt.of();
             NMutableTableModel table = NTableModel.of()
                     .addRow(NText.of("tall\ncell\ncell2\ncell3\ncell4"), NText.of("short\ncell"))
-                    .setCellRowSpan(0, 0, 2)  // First cell spans 2 rows
+                    .setCellRowSpan(0, 0, 2) // First cell spans 2 rows
                     ;
             NText tableText = art.getTableRenderer().get().render(table);
             NOut.println(tableText);
@@ -308,7 +307,7 @@ public class TextArtTest {
             NMutableTableModel table = NTableModel.of()
                     .addRow(NText.of("tall\ncell\ncell2\ncell3\ncell4"))
                     .addRow(NText.of("short\ncell"))
-                    .setCellColSpan(0, 0, 2)  // First cell spans 2 rows
+                    .setCellColSpan(0, 0, 2) // First cell spans 2 rows
                     ;
             NText tableText = art.getTableRenderer().get().render(table);
             NOut.println(tableText);
@@ -316,6 +315,5 @@ public class TextArtTest {
         nChronometer.stop();
         NOut.println(nChronometer);
     }
-
 
 }
