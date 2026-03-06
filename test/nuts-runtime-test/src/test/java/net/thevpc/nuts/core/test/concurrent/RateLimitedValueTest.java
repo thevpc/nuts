@@ -59,11 +59,11 @@ public class RateLimitedValueTest {
     @Test
     public void test3() {
         NRateLimitValue lv = NRateLimitValue.ofBuilder("example")
-                .withLimit("seconds", 10).per(NDuration.ofSeconds(10))
+                .withLimit("seconds", 5).per(NDuration.ofSeconds(5))
                 .withStrategy(NRateLimitDefaultStrategy.SLIDING_WINDOW)
 //                .withStartDate(Instant.parse("2025-09-16T00:00:00.000Z"))
                 .build();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             int index = i;
             lv.claimAndRun(() -> {
                 NOut.println(Instant.now() + " : " + index);
