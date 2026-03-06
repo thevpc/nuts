@@ -1653,7 +1653,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public NSession currentSession() {
-        NSession old = wsModel.sessionScopes.get();
+        NSession old = sessionScopes().get();
         if (old == null) {
             return defaultSession();
         }
@@ -2303,90 +2303,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public void runApplication(NApplicationHandleMode handleMode) {
-        NApplicationHandleMode.runHandled(() ->
-                this.runWith(() -> {
-                    boolean inherited = NWorkspace.of().getBootOptions().getInherited().orElse(false);
-                    NApp nApp = NApp.of();
-                    // Resolve the application class name (explicit or fallback)
-                    String appClassName = nApp.getSourceType() == null ? null : nApp.getSourceType().getName();
-                    if (appClassName == null) {
-                        appClassName = nApp.getSource() == null ? null : nApp.getSource().getClass().getName();
-                    }
-                    NId appId = nApp.getId().orNull();
-                    NLog.of(NApplications.class)
-                            .log(
-                                    NMsg.ofC(
-                                            NI18n.of("running application %s: %s (%s) %s"),
-                                            inherited ? ("(" + NI18n.of("inherited") + ")") : "",
-                                            appId == null ? ("<" + NI18n.of("unresolved-id") + ">") : appId,
-                                            appClassName,
-                                            nApp.getCmdLine()
-                                    ).asFine().withIntent(NMsgIntent.START)
-                            );
-                    try {
-                        switch (nApp.getMode()) {
-                            //both RUN and AUTO_COMPLETE execute the run branch. Later
-                            //session.isExecMode()
-                            case RUN:
-                            case AUTO_COMPLETE: {
-                                nApp.getApplication().run();
-                                return;
-                            }
-                            case INSTALL: {
-                                nApp.getApplication().onInstallApplication();
-                                return;
-                            }
-                            case UPDATE: {
-                                nApp.getApplication().onUpdateApplication();
-                                return;
-                            }
-                            case UNINSTALL: {
-                                nApp.getApplication().onUninstallApplication();
-                                return;
-                            }
-                        }
-                    } catch (NExecutionException e) {
-                        if (e.getExitCode() == NExecutionException.SUCCESS) {
-                            return;
-                        }
-                        throw e;
-                    }
-                    throw new NExecutionException(NMsg.ofC(NI18n.of("unsupported execution mode %s"), nApp.getMode()), NExecutionException.ERROR_255);
-                }), handleMode
-        );
+        NWorkspaceHelper.runApplication(this,handleMode);
     }
 
     @Override
     public void runBootCommand() {
-        runWith(() -> {
-            NBootOptions info2 = new DefaultNBootOptionsBuilder(getCallerBootOptionsInfo()).build();
-            NApp.of().setId(getApiId());
-            NLog LOG = NLog.of(NBootWorkspaceImpl.class);
-            LOG.log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2))
-                    .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
-            );
-            NExec execCmd = NExec.of()
-                    .setExecutionType(info2.getExecutionType().orNull())
-                    .setRunAs(info2.getRunAs().orNull())
-                    .failFast();
-            List<String> executorOptions = info2.getExecutorOptions().orNull();
-            if (executorOptions != null) {
-                execCmd.configure(true, executorOptions.toArray(new String[0]));
-            }
-            NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions).setExpandSimpleOptions(false);
-            while (executorOptionsCmdLine.hasNext()) {
-                execCmd.configureLast(executorOptionsCmdLine);
-            }
-            if (info2.getApplicationArguments().get().isEmpty()) {
-                if (info2.getSkipWelcome().orElse(false)) {
-                    return;
-                }
-                execCmd.addCommand("welcome");
-            } else {
-                execCmd.addCommand(info2.getApplicationArguments().get());
-            }
-            execCmd.run();
-        });
+        NWorkspaceHelper.runBootCommand(this);
     }
 
 }
