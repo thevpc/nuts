@@ -8,6 +8,7 @@ import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
+import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.util.SingleBaseIdFilterHelper;
 import net.thevpc.nuts.spi.NDefinitionFactory;
@@ -86,6 +87,8 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
         if (!baseIdFilterHelper.accept(id,basePaths)) {
             return null;
         }
+        SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("repo %s","postgres"));
+
         NIdBuilder idBuilder = NIdBuilder.of("org.postgresql", "pgsql");
         List<String> versions = NPath.of("https://www.postgresql.org/ftp/source")
                 .lines()
@@ -103,7 +106,7 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
         for (String s : versions) {
             NId id0 = idBuilder.setVersion(NVersion.of(s)).build();
             final NDefinition dd = NDefinitionFactory.of().byId(id0,repository);
-            if (filter == null || filter.acceptDefinition(dd)) {
+            if (safeFilter.acceptDefinition(dd)) {
                 ids.add(id0);
             }
         }
@@ -123,7 +126,6 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
                             if (filter == null || filter.acceptDefinition(dd)) {
                                 return NStream.ofSingleton(id2, session);
                             }
-                            System.out.println(version);
                             return NStream.ofEmpty(());
                         }
                         , "flatMap"))
