@@ -33,7 +33,7 @@
 //
 //    @Override
 //    public NIterator<T> iteratorImpl() {
-//        return NIteratorBuilder.emptyIterator();
+//        return NIterator.ofEmpty();
 //    }
 //
 //    @Override
