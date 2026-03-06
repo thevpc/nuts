@@ -71,30 +71,32 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                 return null;
             }
             final Method[] mainMethod = {null};
-            String nutsAppVersion = null;
-            Object nutsApp = null;
-            NSession sessionCopy = getSession().copy();
-            try {
-                nutsAppVersion = CoreNApplications.getNutsAppVersion(cls);
-                if (nutsAppVersion != null) {
-                    mainMethod[0] = cls.getMethod("run", NSession.class, String[].class);
-                    mainMethod[0].setAccessible(true);
-                    nutsApp = CoreNApplications.createApplicationInstance(cls, session, joptions.getAppArgs().toArray(new String[0]));
-                }
-            } catch (Exception rr) {
-                //ignore
-            }
-            String finalNutsAppVersion = nutsAppVersion;
-            Object applicationRawInstance = nutsApp;
-            NApplication applicationInstance = NApplications.createApplicationInstanceFromAnnotatedInstance(applicationRawInstance);
+//            String nutsAppVersion = null;
+//            Object nutsApp = null;
+            NSession sessionCopy = NSession.of().copyFrom(getSession());
+//            try {
+//                nutsAppVersion = CoreNApplications.getNutsAppVersion(cls);
+//                if (nutsAppVersion != null) {
+//                    mainMethod[0] = cls.getMethod("run", NSession.class, String[].class);
+//                    mainMethod[0].setAccessible(true);
+//                    nutsApp = CoreNApplications.createApplicationInstance(cls, session, joptions.getAppArgs().toArray(new String[0]));
+//                }
+//            } catch (Exception rr) {
+//                //ignore
+//            }
+//            String finalNutsAppVersion = nutsAppVersion;
+//            Object applicationRawInstance = nutsApp;
+//            NApplication applicationInstance = NApplications.createApplicationInstanceFromAnnotatedInstance(applicationRawInstance);
 
             return sessionCopy.callWith(() -> {
-                NApp.of().prepare(new NAppInitInfo(joptions.getAppArgs().toArray(new String[0]), cls, applicationRawInstance, applicationInstance, null, now));
+//                NApp.of().prepare(new NAppInitInfo(joptions.getAppArgs().toArray(new String[0]), cls, applicationRawInstance, applicationInstance, null, now));
+                String old_nuts_boot_args=System.getProperty("nuts.boot.args");
+                String old_nuts_args=System.getProperty("nuts.args");
                 try {
-                    if (finalNutsAppVersion != null && applicationRawInstance != null) {
-                        //NutsWorkspace
-                        mainMethod[0].invoke(applicationRawInstance, sessionCopy, joptions.getAppArgs().toArray(new String[0]));
-                    } else {
+//                    if (finalNutsAppVersion != null && applicationRawInstance != null) {
+//                        //NutsWorkspace
+//                        mainMethod[0].invoke(applicationRawInstance, sessionCopy, joptions.getAppArgs().toArray(new String[0]));
+//                    } else {
                         //NutsWorkspace
 
                         NWorkspaceOptionsBuilder bootOptions = JavaExecutorComponent.createChildOptions(executionContext);
@@ -103,11 +105,23 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                                         .toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))
                                         .add(id.getLongName()))
                         );
+                        System.setProperty("nuts.args","");
                         mainMethod[0] = cls.getMethod("main", String[].class);
                         mainMethod[0].invoke(null, new Object[]{joptions.getAppArgs().toArray(new String[0])});
-                    }
+//                    }
                 } catch (Exception e) {
                     throw CoreNUtils.toUncheckedException(e);
+                }finally {
+                    if(old_nuts_boot_args==null){
+                        System.setProperty("nuts.boot.args", "");
+                    }else {
+                        System.setProperty("nuts.boot.args", old_nuts_boot_args);
+                    }
+                    if(old_nuts_args==null) {
+                        System.setProperty("nuts.args", "");
+                    }else{
+                        System.setProperty("nuts.args", old_nuts_args);
+                    }
                 }
                 return null;
             });
