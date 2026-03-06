@@ -19,6 +19,7 @@ import net.thevpc.nuts.elem.NObjectElement;
 
 
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.*;
@@ -257,7 +258,7 @@ public class NRepositoryFolderHelper {
                         if (localFile != null && localFile.isRegularFile()) {
                             return Collections.singletonList(id.builder().setRepository(repo == null ? null : repo.getName()).build()).iterator();
                         }
-                        return NIteratorBuilder.emptyIterator();
+                        return NIterator.ofEmpty();
                     },
                     () -> NElement.ofObjectBuilder()
                             .name("SearchSingleVersion")
@@ -334,6 +335,7 @@ public class NRepositoryFolderHelper {
             return null;
         }
         NId bestId = null;
+        SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("repo %s",repo.getName()));
         NPath file = getLocalGroupAndArtifactFile(id);
         if (file.exists()) {
             NPath[] versionFolders = file.stream().filter(NPath::isDirectory)
@@ -344,7 +346,7 @@ public class NRepositoryFolderHelper {
                     if (pathExists(versionFolder)) {
                         NId id2 = id.builder().setVersion(versionFolder.getName()).build();
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
-                            if (filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id2,repo, "NRepositoryFolderHelper"))) {
+                            if (safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id2,repo, "NRepositoryFolderHelper"))) {
                                 bestId = id2;
                             }
                         }
