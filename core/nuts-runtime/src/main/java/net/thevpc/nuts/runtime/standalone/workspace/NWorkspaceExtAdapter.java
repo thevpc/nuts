@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.app.NApplicationHandleMode;
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.concurrent.NScopedValue;
@@ -12,6 +13,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
+import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
@@ -32,12 +34,23 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspaceExt {
-    private NWorkspaceExt baseExt;
-    private NWorkspace base;
+    private final NWorkspaceExt baseExt;
+    private final NWorkspace base;
+    private final NScopedValue<NSession> sessionScopes = new NScopedValue<>();
+    private NSession bootSession;
 
     public NWorkspaceExtAdapter(NWorkspaceExt baseExt) {
         this.baseExt = baseExt;
         this.base = (NWorkspace) baseExt;
+    }
+
+    @Override
+    public NBootOptionsInfo getCallerBootOptionsInfo() {
+        return baseExt.getCallerBootOptionsInfo();
+    }
+
+    public NScopedValue<NSession> sessionScopes() {
+        return sessionScopes;
     }
 
     @Override
@@ -117,7 +130,11 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
 
     @Override
     public NSession defaultSession() {
-        return baseExt.defaultSession();
+        if (bootSession == null) {
+            this.bootSession = new DefaultNSession(this, null);
+            this.bootSession.copyFrom(baseExt.defaultSession());
+        }
+        return bootSession;
     }
 
     @Override
@@ -133,11 +150,6 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     @Override
     public void setInstallationDigest(String value) {
         baseExt.setInstallationDigest(value);
-    }
-
-    @Override
-    public NScopedValue<NSession> sessionScopes() {
-        return baseExt.sessionScopes();
     }
 
     @Override
@@ -182,7 +194,7 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
 
     @Override
     public void runApplication(NApplicationHandleMode handleMode) {
-        base.runApplication(handleMode);
+        NWorkspaceHelper.runApplication(this, handleMode);
     }
 
     @Override
@@ -243,12 +255,16 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
 
     @Override
     public NSession currentSession() {
-        return null;
+        NSession old = sessionScopes().get();
+        if (old == null) {
+            return defaultSession();
+        }
+        return old;
     }
 
     @Override
     public NExtensions extensions() {
-        return null;
+        return base.extensions();
     }
 
     @Override
@@ -693,6 +709,6 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
 
     @Override
     public void runBootCommand() {
-        base.runBootCommand();
+        NWorkspaceHelper.runBootCommand(this);
     }
 }
