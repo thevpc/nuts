@@ -44,6 +44,9 @@ public class PerfTest {
      */
     @Test
     public void testPerf() {
+        if(!_TestConfig.ENABLE_PERF){
+            return;
+        }
         long start = System.currentTimeMillis();
         int nbr = 10;
         for (int i = 0; i < nbr; i++) {
@@ -62,6 +65,9 @@ public class PerfTest {
      */
     @Test
     public void testPerfLocal() {
+        if(!_TestConfig.ENABLE_PERF){
+            return;
+        }
         long start = System.currentTimeMillis();
         for (int i = 0; i < nbr; i++) {
             TestUtils.openNewTestWorkspace("-Zy","--verbose","-P=%n","-r=-maven-central","version");
@@ -78,6 +84,9 @@ public class PerfTest {
      */
     @Test
     public void testPerfLocalNoSystem() {
+        if(!_TestConfig.ENABLE_PERF){
+            return;
+        }
         long start = System.currentTimeMillis();
         for (int i = 0; i < nbr; i++) {
             TestUtils.openNewTestWorkspace("-Zy","--verbose","-P=%n","-r=-maven-central,-system","version");
