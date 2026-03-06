@@ -641,7 +641,10 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
                 setParametrized(true);
             }
             addParams(from.params().orNull());
-            return this;
+        }
+        if (other instanceof NListContainerElement) {
+            NListContainerElement from = (NListContainerElement) other;
+            addAll(from.children());
         }
         return this;
     }
