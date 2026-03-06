@@ -10,6 +10,7 @@ import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NIdType;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.command.NInstallStatus;
 import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.core.NSession;
@@ -39,6 +40,8 @@ public interface NWorkspaceExt {
     static NWorkspaceExt of(NWorkspace ws) {
         return ((NWorkspaceExt) ws);
     }
+
+    NBootOptionsInfo getCallerBootOptionsInfo();
 
     Map<String, String> getSysEnv();
 
