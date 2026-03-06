@@ -62,12 +62,12 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     private NApplicationMode mode = NApplicationMode.RUN;
     private NAppStoreLocationResolver storeLocationResolver;
     private boolean prepared;
-    private NTypeLoader springBootType = new NTypeLoaderImpl("org.springframework.boot.web.servlet.support.SpringBootServletInitializer");
-    private NTypeLoader quarkusAppType = new NTypeLoaderImpl("io.quarkus.runtime.QuarkusApplication");
-    private NTypeLoader micronautAppType = new NTypeLoaderImpl("io.micronaut.runtime.Micronaut");
-    private NTypeLoader jServletType = new NTypeLoaderImpl("jakarta.servlet.http.HttpServlet");
-    private NTypeLoader xServletType = new NTypeLoaderImpl("javax.servlet.http.HttpServlet");
-    private NTypeLoader osgiType = new NTypeLoaderImpl("org.osgi.framework.BundleActivator");
+    private static NTypeLoader springBootType = new NTypeLoaderImpl("org.springframework.boot.web.servlet.support.SpringBootServletInitializer");
+    private static NTypeLoader quarkusAppType = new NTypeLoaderImpl("io.quarkus.runtime.QuarkusApplication");
+    private static NTypeLoader micronautAppType = new NTypeLoaderImpl("io.micronaut.runtime.Micronaut");
+    private static NTypeLoader jServletType = new NTypeLoaderImpl("jakarta.servlet.http.HttpServlet");
+    private static NTypeLoader xServletType = new NTypeLoaderImpl("javax.servlet.http.HttpServlet");
+    private static NTypeLoader osgiType = new NTypeLoaderImpl("org.osgi.framework.BundleActivator");
     /**
      * previous parse for "update" mode
      */
