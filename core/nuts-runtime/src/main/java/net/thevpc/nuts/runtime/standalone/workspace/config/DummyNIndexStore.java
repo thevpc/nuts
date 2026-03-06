@@ -4,7 +4,6 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NIndexStore;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NIterator;
 
 public class DummyNIndexStore extends AbstractNIndexStore {
@@ -16,12 +15,12 @@ public class DummyNIndexStore extends AbstractNIndexStore {
 
     @Override
     public NIterator<NId> searchVersions(NId id) {
-        return NIteratorBuilder.emptyIterator();
+        return NIterator.ofEmpty();
     }
 
     @Override
     public NIterator<NId> search(NDefinitionFilter filter) {
-        return NIteratorBuilder.emptyIterator();
+        return NIterator.ofEmpty();
     }
 
     @Override
