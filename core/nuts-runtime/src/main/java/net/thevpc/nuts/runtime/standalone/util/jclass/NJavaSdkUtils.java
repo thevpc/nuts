@@ -320,6 +320,7 @@ public class NJavaSdkUtils {
                             ).setDefaultValue(true)
                             .getBooleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
+                        NWorkspace.of().saveConfig();
                         return NOptional.of(selected);
                     }
                 }
@@ -344,6 +345,7 @@ public class NJavaSdkUtils {
                             ).setDefaultValue(true)
                             .getBooleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
+                        NWorkspace.of().saveConfig();
                         return NOptional.of(selected);
                     }
                 }
@@ -366,6 +368,7 @@ public class NJavaSdkUtils {
                             ).setDefaultValue(true)
                             .getBooleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
+                        NWorkspace.of().saveConfig();
                         return NOptional.of(selected);
                     }
                 }
@@ -385,6 +388,7 @@ public class NJavaSdkUtils {
                             ).setDefaultValue(true)
                             .getBooleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
+                        NWorkspace.of().saveConfig();
                         return NOptional.of(selected);
                     }
                 }
@@ -402,10 +406,11 @@ public class NJavaSdkUtils {
                 NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(lowerVersionFirst).toArray(NExecutionEngineLocation[]::new);
                 for (NExecutionEngineLocation selected : sorted) {
                     if (NIn.ask().forBoolean(
-                                    NMsg.ofC("Found this installation : %s (located at %s). Would you like to auto-configure and use it?", javaVersion, selected.getName(), selected.getPath())
+                                    NMsg.ofC("Found this installation : %s (located at %s). Would you like to auto-configure and use it?", selected.getName(), selected.getPath())
                             ).setDefaultValue(true)
                             .getBooleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
+                        NWorkspace.of().saveConfig();
                         return NOptional.of(selected);
                     }
                 }
