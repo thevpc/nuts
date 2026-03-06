@@ -6,11 +6,10 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.concurrent.NRunnable;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -21,209 +20,98 @@ import java.util.function.Supplier;
 /**
  * @author thevpc
  */
-public class NIteratorBuilder<T> {
+public interface NIteratorBuilder<T> {
 
-    public static final NPredicate NON_NULL = NPredicates.isNull().negate();
-    public static final NPredicate NON_BLANK = NPredicates.blank().negate();
-    static final NIteratorEmpty EMPTY_ITERATOR = new NIteratorEmpty<>();
-    private final NIterator<T> it;
-
-    private NIteratorBuilder(NIterator<T> it) {
-        if (it == null) {
-            it = emptyIterator();
-        }
-        this.it = it;
+    static <T> NIteratorBuilder<T> ofCoalesce(List<NIterator<? extends T>> t) {
+        return NCollectionsRPI.of().iteratorBuilderOfCoalesce(t);
     }
 
-    public static <T> NIteratorBuilder<T> ofCoalesce(List<NIterator<? extends T>> t) {
-        return new NIteratorBuilder<>(
-                NIteratorUtils.coalesce(t)
-        );
+    static <T> NIteratorBuilder<T> ofConcat(List<NIterator<? extends T>> t) {
+        return NCollectionsRPI.of().iteratorBuilderOfConcat(t);
     }
 
-    public static <T> NIteratorBuilder<T> ofConcat(List<NIterator<? extends T>> t) {
-        return new NIteratorBuilder<>(
-                NIteratorUtils.concat(t)
-        );
+    static <T> NIteratorBuilder<T> of(Iterator<T> t) {
+        return NCollectionsRPI.of().iteratorBuilder(t);
     }
 
-    public static <T> NIteratorBuilder<T> of(NIterator<T> t) {
-        return new NIteratorBuilder<>(t);
+    static <T> NIteratorBuilder<T> ofRunnable(NRunnable t) {
+        return NCollectionsRPI.of().iteratorBuilderOfRunnable(t);
     }
 
-    public static <T> NIteratorBuilder<T> ofRunnable(NRunnable t) {
-        return (NIteratorBuilder) of(
-                emptyIterator()
-        ).onStart(t);
+    static <T> NIteratorBuilder<T> ofRunnable(Runnable t, String n) {
+        return NCollectionsRPI.of().iteratorBuilderOfRunnable(t, n);
     }
 
-//    public static <T> IteratorBuilder<T> ofRunnable(Runnable t, NElement n) {
-//        return ofRunnable(NRunnable.of(t, n));
-//    }
-
-    public static <T> NIteratorBuilder<T> ofRunnable(Runnable t, String n) {
-        return ofRunnable(NRunnable.of(t).withDescription(NDescribables.ofDesc(n)));
-    }
-//
-//    public static <T> IteratorBuilder<T> ofSupplier(Supplier<NutsIterator<T>> from) {
-//        return of(new SupplierIterator<T>(from, null));
-//    }
-
-    public static <T> NIteratorBuilder<T> ofSupplier(Supplier<Iterator<T>> from, Supplier<NElement> name) {
-        return of(new NSupplierIteratorJ<T>(from,name).withDescription(name));
+    static <T> NIteratorBuilder<T> ofSupplier(Supplier<Iterator<T>> from, Supplier<NElement> name) {
+        return NCollectionsRPI.of().iteratorBuilderOfSupplier(from, name);
     }
 
-    public static <T> NIteratorBuilder<T> ofArrayValues(T[] t, NElement n) {
-        return ofArrayValues(t, () -> n);
+    static <T> NIteratorBuilder<T> ofArrayValues(T[] t, NElement n) {
+        return NCollectionsRPI.of().iteratorBuilderOfArrayValues(t, n);
     }
 
-    public static <T> NIteratorBuilder<T> ofArrayValues(T[] t, String n) {
-        return ofArrayValues(t, () -> NElement.ofString(n));
+    static <T> NIteratorBuilder<T> ofArrayValues(T[] t, String n) {
+        return NCollectionsRPI.of().iteratorBuilderOfArrayValues(t, n);
     }
 
-    public static <T> NIteratorBuilder<T> ofArrayValues(T[] t, Supplier<NElement> n) {
-        return of(t == null ? emptyIterator() :
-                new NIteratorAdapter<T>(
-                        Arrays.asList(t).iterator(), n)
-        );
+    static <T> NIteratorBuilder<T> ofArrayValues(T[] t, Supplier<NElement> n) {
+        return NCollectionsRPI.of().iteratorBuilderOfArrayValues(t, n);
     }
 
-    public static <T> NIterator<T> emptyIterator() {
-        return EMPTY_ITERATOR;
+    static <T> NIteratorBuilder<T> ofEmpty() {
+        return NCollectionsRPI.of().iteratorEmptyBuilder();
     }
 
-    public static <T> NIteratorBuilder<T> emptyBuilder() {
-        return of(EMPTY_ITERATOR);
+    static <T> NIteratorBuilder<T> ofFlatMap(NIterator<? extends Collection<T>> from) {
+        return NCollectionsRPI.of().iteratorBuilderOfFlatMap(from);
     }
 
-    public static <T> NIteratorBuilder<T> ofFlatMap(NIterator<? extends Collection<T>> from) {
-        if (from == null) {
-            return emptyBuilder();
-        }
-        return of(new NFlatMapIterator<>(from, Collection::iterator));
-    }
+    NIteratorBuilder<T> filter(Predicate<? super T> t, Supplier<NElement> e);
 
-    public NIteratorBuilder<T> filter(Predicate<? super T> t, Supplier<NElement> e) {
-        if (t == null) {
-            return this;
-        }
-        return of(new NFilteredIterator<>(it, NPredicate.of(t).withDescription(e)));
-    }
+    NIteratorBuilder<T> filter(NPredicate<? super T> t);
 
-    public NIteratorBuilder<T> filter(NPredicate<? super T> t) {
-        if (t == null) {
-            return this;
-        }
-        return new NIteratorBuilder<>(new NFilteredIterator<>(it, t));
-    }
+    NIteratorBuilder<T> concat(NIteratorBuilder<T> t);
 
-    public NIteratorBuilder<T> concat(NIteratorBuilder<T> t) {
-        return concat(t.it);
-    }
+    NIteratorBuilder<T> concat(NIterator<T> t);
 
-    public NIteratorBuilder<T> concat(NIterator<T> t) {
-        if (t == null) {
-            return this;
-        }
-        return new NIteratorBuilder<>(NIteratorUtils.concat(Arrays.asList(it, t)));
-    }
-
-    public <V> NIteratorBuilder<V> map(NFunction<? super T, ? extends V> t) {
-        return new NIteratorBuilder<>(new NConvertedIterator<>(it, t));
-    }
+    <V> NIteratorBuilder<V> map(NFunction<? super T, ? extends V> t);
 
 
-    public <V> NIteratorBuilder<V> flatMap(Function<? super T, ? extends Iterator<? extends V>> fun) {
-        return of(new NFlatMapIterator<T, V>(it, fun));
-    }
+    <V> NIteratorBuilder<V> flatMap(Function<? super T, ? extends Iterator<? extends V>> fun);
 
-    public <V> NIteratorBuilder<V> mapMulti(NFunction<T, List<V>> mapper) {
-        return new NIteratorBuilder<>(
-                new NFlatMapIterator<>(it, t -> mapper.apply(t).iterator())
-        );
-    }
+    <V> NIteratorBuilder<V> mapMulti(NFunction<T, List<V>> mapper);
 
-    public <V> NIteratorBuilder<T> sort(NComparator<T> t, boolean removeDuplicates) {
-        return new NIteratorBuilder<>(NIteratorUtils.sort(it, t, removeDuplicates));
-    }
+    <V> NIteratorBuilder<T> sort(NComparator<T> t, boolean removeDuplicates);
 
-    public <V> NIteratorBuilder<T> distinct() {
-        return distinct(null);
-    }
+    <V> NIteratorBuilder<T> distinct();
 
-    public <V> NIteratorBuilder<T> distinct(NFunction<T, V> t) {
-        if (t == null) {
-            return new NIteratorBuilder<>(NIteratorUtils.distinct(it));
-        } else {
-            return new NIteratorBuilder<>(NIteratorUtils.distinct(it, t));
-        }
-    }
+    <V> NIteratorBuilder<T> distinct(NFunction<T, V> t);
 
-    public <V> NIteratorBuilder<T> named(NElement n) {
-        if (n != null) {
-            NIteratorAdapter<T> a = new NIteratorAdapter<>(it, () -> n);
-//            a.describe();
-            return new NIteratorBuilder<>(a);
-        }
-        return this;
-    }
+    <V> NIteratorBuilder<T> named(NElement n);
 
-    public <V> NIteratorBuilder<T> named(NObjectElement nfo) {
-        if (nfo != null) {
-            return new NIteratorBuilder<>(new NIteratorAdapter<T>(it, () -> nfo));
-        }
-        return this;
-    }
+    <V> NIteratorBuilder<T> named(NObjectElement nfo);
 
 
-    public NIteratorBuilder<T> safe(NIteratorErrorHandlerType type) {
-        return new NIteratorBuilder<>(new NErrorHandlerIterator(type, it));
-    }
+    NIteratorBuilder<T> safe(NIteratorErrorHandlerType type);
 
-    public NIteratorBuilder<T> safeIgnore() {
-        return safe(NIteratorErrorHandlerType.IGNORE);
-    }
+    NIteratorBuilder<T> safeIgnore();
 
-    public NIteratorBuilder<T> safePostpone() {
-        return safe(NIteratorErrorHandlerType.POSTPONE);
-    }
+    NIteratorBuilder<T> safePostpone();
 
-    public NIteratorBuilder<T> notNull() {
-        return filter(NON_NULL);
-    }
+    NIteratorBuilder<T> notNull();
 
-    public NIteratorBuilder<String> notBlank() {
-        return this.filter(NON_BLANK);
-    }
+    NIteratorBuilder<String> notBlank();
 
-    public NIterator<T> iterator() {
-        return it;
-    }
+    NIterator<T> iterator();
 
-    public List<T> list() {
-        return NCollections.list(it);
-    }
+    List<T> list();
 
-    public NIterator<T> build() {
-        return it;
-    }
+    NIterator<T> build();
 
-    public List<T> toList() {
-        return NIteratorUtils.toList(it);
-    }
+    List<T> toList();
 
-    public NIteratorBuilder<T> onFinish(NRunnable r) {
-        if (r == null) {
-            return this;
-        }
-        return of(new NIteratorOnFinish<>(it, r));
-    }
+    NIteratorBuilder<T> onFinish(NRunnable r);
 
 
-    public NIteratorBuilder<T> onStart(NRunnable r) {
-        if (r == null) {
-            return this;
-        }
-        return of(new NOnStartIterator<>(it, r));
-    }
+    NIteratorBuilder<T> onStart(NRunnable r);
 }
