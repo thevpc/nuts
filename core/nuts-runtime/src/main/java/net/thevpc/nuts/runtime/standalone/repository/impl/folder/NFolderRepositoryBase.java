@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.folder;
 
+import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetchMode;
@@ -11,7 +12,9 @@ import net.thevpc.nuts.core.NSpeedQualifier;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.text.NTreeVisitor;
@@ -200,6 +203,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         String artifactId = id.getArtifactId();
         NPath foldersFileUrl = config().getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/");
 //        NSession session = getWorkspace().currentSession();
+        SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(idFilter, NMsg.ofC("repo %s",getName()));
 
         return NIteratorBuilder.ofSupplier(
                 () -> {
@@ -214,9 +218,9 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                                             NId expectedId = NIdBuilder.of(groupId, artifactId).setVersion(versionName).build();
                                             if (isValidArtifactVersionFolder(expectedId, versionFolder)) {
                                                 final NId nutsId = id.builder().setVersion(versionFolder.getName()).build();
-                                                if (idFilter == null || idFilter.acceptDefinition(NDefinitionHelper.ofIdAndLazyDescriptor(
+                                                if (safeFilter.acceptDefinition(NDefinitionHelper.ofIdAndLazyDescriptor(
                                                         nutsId,
-                                                        () -> fetchDescriptor().setId(nutsId).getResult(),
+                                                        () -> fetchDescriptor().setFetchMode(fetchMode).setId(nutsId).getResult(),
                                                         "NFolderRepositoryBase::findNonSingleVersionImpl"))) {
                                                     return expectedId;
                                                 }
