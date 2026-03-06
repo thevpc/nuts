@@ -165,28 +165,16 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 61 * hash + Objects.hashCode(this.values);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DefaultNObjectElement nElements = (DefaultNObjectElement) o;
+        return Objects.equals(values, nElements.values) && Objects.equals(name, nElements.name) && Objects.equals(params, nElements.params);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DefaultNObjectElement other = (DefaultNObjectElement) obj;
-        if (!Objects.equals(this.values, other.values)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), values, name, params);
     }
 
     @Override
