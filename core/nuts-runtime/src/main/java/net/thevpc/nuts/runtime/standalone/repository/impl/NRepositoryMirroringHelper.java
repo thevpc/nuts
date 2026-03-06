@@ -18,6 +18,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfigManager;
 import net.thevpc.nuts.core.NRepositoryNotFoundException;
+import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
@@ -26,7 +27,7 @@ import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.util.NIteratorBuilder;
-import net.thevpc.nuts.util.NIteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NDeployRepositoryCmd;
@@ -225,6 +226,7 @@ public class NRepositoryMirroringHelper {
     public NId searchLatestVersion(NId bestId, NId id, NDefinitionFilter filter, NFetchMode fetchMode) {
         NRepositoryConfigManager rconfig = repo.config();
         NSession session = repo.getWorkspace().currentSession();
+        SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("repo %s",repo.getName()));
         if (session.isTransitive() && rconfig.isSupportedMirroring()) {
             for (NRepository remote : rconfig.getMirrors()) {
                 NDescriptor nutsDescriptor = null;
@@ -235,7 +237,7 @@ public class NRepositoryMirroringHelper {
                     //ignore
                 }
                 if (nutsDescriptor != null) {
-                    if (filter == null || filter.acceptDefinition(NDefinitionHelper.ofDescriptorOnly(nutsDescriptor))) {
+                    if (safeFilter.acceptDefinition(NDefinitionHelper.ofDescriptorOnly(nutsDescriptor))) {
 //                        NutsId id2 = C                                oreNutsUtils.createComponentFaceId(getWorkspace().resolveEffectiveId(nutsDescriptor,session),nutsDescriptor,null);
                         NWorkspaceExt dws = NWorkspaceExt.of();
                         NId id2 = dws.resolveEffectiveId(nutsDescriptor).builder().setFaceDescriptor().build();
