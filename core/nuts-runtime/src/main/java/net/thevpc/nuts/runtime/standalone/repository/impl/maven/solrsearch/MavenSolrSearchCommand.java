@@ -7,9 +7,11 @@ import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
+import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenFolderRepository;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NIteratorBuilder;
-import net.thevpc.nuts.util.NIteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.util.NLiteral;
 
@@ -99,7 +101,8 @@ public class MavenSolrSearchCommand {
                     index++;
                 }
                 NPath query = NPath.of(q2.toString());
-                NIteratorBuilder<NId> it = NIteratorBuilder.<NId>ofSupplier(new Supplier<Iterator<NId>>() {
+                SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(idFilter, NMsg.ofC("solr repo %s",repo.getName()));
+                NIteratorBuilder<NId> it = NIteratorBuilder.ofSupplier(new Supplier<Iterator<NId>>() {
                     @Override
                     public Iterator<NId> get() {
                         return new Iterator<NId>() {
@@ -140,7 +143,7 @@ public class MavenSolrSearchCommand {
                         };
                     }
                 }, () -> NElement.ofObjectBuilder().set("url", query.toString()).build());
-                return it.filter(y -> idFilter == null || idFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(y, repo, "MavenSolrSearchCommand")),
+                return it.filter(y -> safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(y, repo, "MavenSolrSearchCommand")),
                                 () ->
                                         NElement.ofObjectBuilder().set(
                                                 "filterBy", NElement.ofString(idFilter == null ? "true" : idFilter.toString())
