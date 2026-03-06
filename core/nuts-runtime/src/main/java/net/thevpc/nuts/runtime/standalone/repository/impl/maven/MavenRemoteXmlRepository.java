@@ -35,6 +35,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
+import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenMetadata;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
@@ -61,7 +62,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
     @Override
     public NIterator<NId> findNonSingleVersionImpl(NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
         if (!acceptedFetchNoCache(fetchMode)) {
-            return NIteratorBuilder.emptyIterator();
+            return NIterator.ofEmpty();
         }
         NSession session = getWorkspace().currentSession();
         String groupId = id.getGroupId();
@@ -73,18 +74,19 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                     List<NId> ret = new ArrayList<>();
                     InputStream metadataStream = null;
                     session.getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, NCoreLogUtils.forProgress(metadataURL)));
+                    SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(idFilter, NMsg.ofC("repo %s",getName()));
                     try {
                         try {
                             metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNConstants.QueryFaces.CATALOG).build(), "artifact catalog", NMsg.ofC("retrieve %s",id.getLongId()));
                         } catch (UncheckedIOException | NIOException ex) {
-                            return NIteratorBuilder.emptyIterator();
+                            return NIterator.ofEmpty();
                         }
                         MavenMetadata info = MavenUtils.of().parseMavenMetaData(metadataStream);
                         if (info != null) {
                             for (String version : info.getVersions()) {
                                 final NId nutsId = id.builder().setVersion(version).build();
 
-                                if (idFilter != null && !idFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(nutsId,MavenRemoteXmlRepository.this, "MavenRemoteXmlRepository"))) {
+                                if (!safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(nutsId,MavenRemoteXmlRepository.this, "MavenRemoteXmlRepository"))) {
                                     continue;
                                 }
                                 ret.add(
@@ -94,14 +96,14 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                         }
                     } catch (UncheckedIOException | NIOException ex) {
                         //unable to access
-                        return NIteratorBuilder.emptyIterator();
+                        return NIterator.ofEmpty();
                     } finally {
                         if (metadataStream != null) {
                             try {
                                 metadataStream.close();
                             } catch (IOException e) {
 //                    throw new NutsIOException(getWorkspace(),e);
-                                return NIteratorBuilder.emptyIterator();
+                                return NIterator.ofEmpty();
                             }
                         }
                     }
