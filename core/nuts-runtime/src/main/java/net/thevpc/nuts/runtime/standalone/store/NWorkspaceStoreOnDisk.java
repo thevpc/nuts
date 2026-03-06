@@ -323,7 +323,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                     .notNull().iterator();
         } else {
             //ok.sort((a, b) -> CoreVersionUtils.compareVersions(a, b));
-            return NIteratorBuilder.emptyIterator();
+            return NIterator.ofEmpty();
         }
     }
 
