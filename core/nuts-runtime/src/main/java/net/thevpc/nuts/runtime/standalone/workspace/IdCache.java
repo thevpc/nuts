@@ -7,7 +7,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.extension.CoreServiceUtils;
 import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
-import net.thevpc.nuts.util.NClassClassMap;
+import net.thevpc.nuts.runtime.standalone.util.collections.NClassClassMap;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.text.NMsg;
