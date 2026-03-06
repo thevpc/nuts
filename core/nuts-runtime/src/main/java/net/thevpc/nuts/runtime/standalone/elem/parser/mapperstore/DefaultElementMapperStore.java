@@ -11,6 +11,7 @@ import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.*;
 import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlDocument;
 import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlElement;
+import net.thevpc.nuts.runtime.standalone.util.collections.NClassMapImpl;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NClassMap;
@@ -90,8 +91,8 @@ public class DefaultElementMapperStore {
     public final NElementMapper F_COLLECTION = new NElementMapperCollection();
     public final NElementMapper F_MAP = new NElementMapperMap();
 
-    private final NClassMap<NElementMapper> defaultMappers = new NClassMap<>(null, NElementMapper.class);
-    private final NClassMap<NElementMapper> coreMappers = new NClassMap<>(null, NElementMapper.class);
+    private final NClassMap<NElementMapper> defaultMappers = new NClassMapImpl<>(null, NElementMapper.class);
+    private final NClassMap<NElementMapper> coreMappers = new NClassMapImpl<>(null, NElementMapper.class);
 
     public DefaultElementMapperStore() {
         addDefaultMapper(Boolean.class, F_BOOLEANS);
