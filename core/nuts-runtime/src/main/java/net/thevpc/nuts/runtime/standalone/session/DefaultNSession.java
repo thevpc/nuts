@@ -859,18 +859,21 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
         //boolean withDefaults = false;
         this.terminal = other.getTerminal() == null ? null : NTerminal.of(terminal);
         this.terminal = other.getTerminal();
-        for (String s : ((DefaultNSession) other).properties.keySet()) {
-            NPropertiesHolder.NScopedPropertyValue v = properties.getScopedValue(s);
+        for (Map.Entry<String,NPropertiesHolder.NScopedPropertyValue> ee : ((DefaultNSession) other).properties.entrySet()) {
+            NPropertiesHolder.NScopedPropertyValue v = ee.getValue();
             switch (v.getScope()) {
                 case SHARED_SESSION: {
-                    this.properties.setProperty(s, v.getValue(), NScopeType.SHARED_SESSION);
+                    this.properties.setProperty(ee.getKey(), v.getValue(), NScopeType.SHARED_SESSION);
                     break;
                 }
                 case TRANSITIVE_SESSION: {
-                    this.properties.setProperty(s, CoreNUtils.copyValue(v.getValue()), NScopeType.TRANSITIVE_SESSION);
+                    this.properties.setProperty(ee.getKey(), CoreNUtils.copyValue(v.getValue()), NScopeType.TRANSITIVE_SESSION);
                     break;
                 }
             }
+        }
+        if(this.listeners!=null){
+            this.listeners.clear();
         }
         this.listeners.clear();
         for (NListener listener : other.getListeners()) {
