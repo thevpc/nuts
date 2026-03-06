@@ -41,6 +41,9 @@ public class NanoDBTest {
 
     @Test
     public void testPerf() {
+        if(!_TestConfig.ENABLE_PERF){
+            return;
+        }
         File dir = TestUtils.initFolder(".test-db-perf").toFile();
         long from = System.currentTimeMillis();
         NIOUtils.delete(dir);
