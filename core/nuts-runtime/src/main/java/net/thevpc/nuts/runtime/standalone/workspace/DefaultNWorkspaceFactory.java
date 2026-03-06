@@ -38,7 +38,6 @@ import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NLibPaths;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.net.NConnectionString;
-import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementWriter;
 import net.thevpc.nuts.runtime.standalone.elem.parser.DefaultNElementReader;
@@ -46,6 +45,7 @@ import net.thevpc.nuts.runtime.standalone.extension.*;
 import net.thevpc.nuts.runtime.standalone.platform.NEnvLocal;
 import net.thevpc.nuts.runtime.standalone.util.FixedNScoredValue;
 import net.thevpc.nuts.runtime.standalone.util.NUtilSPIImpl;
+import net.thevpc.nuts.runtime.standalone.util.collections.NClassClassMap;
 import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -62,7 +62,7 @@ import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.DefaultNExprs;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.runtime.standalone.util.stream.DefaultNCollectionsRPI;
+import net.thevpc.nuts.runtime.standalone.util.collections.DefaultNCollectionsRPI;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
@@ -494,8 +494,8 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 err.println("\t" + e.getKey() + " :: " + idCache.url);
                 for (Map.Entry<Class<?>, NClassClassMap> v : idCache.classes.entrySet()) {
                     NClassClassMap vv = v.getValue();
-                    Set<Class> classes = vv.allKeySet();
-                    for (Class k : classes) {
+                    Set<Class<?>> classes = vv.allKeySet();
+                    for (Class<?> k : classes) {
                         if (k.isInterface()) {
                             if (k.getName().equals(tname)) {
                                 if (k.equals(type)) {
