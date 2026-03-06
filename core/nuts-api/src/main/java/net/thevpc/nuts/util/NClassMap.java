@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -33,216 +35,50 @@ import java.util.*;
  *
  * @author thevpc
  */
-public class NClassMap<V> {
-
-    private static final long serialVersionUID = 1L;
-    private static final Comparator<Class> CLASS_HIERARCHY_COMPARATOR = new Comparator<Class>() {
-        @Override
-        public int compare(Class o1, Class o2) {
-            if (o1.isAssignableFrom(o2)) {
-                return 1;
-            } else if (o2.isAssignableFrom(o1)) {
-                return -1;
-            }
-            if (o1.isInterface() && !o2.isInterface()) {
-                return 1;
-            }
-            if (o2.isInterface() && !o1.isInterface()) {
-                return -1;
-            }
-            return 0;
-        }
-    };
-    protected HashMap<Class, V> values;
-    protected HashMap<Class, V[]> cachedValues;
-    private final Class keyType;
-    private final Class<V> valueType;
-    private final HashMap<Class, Class[]> cachedHierarchy;
-
-    public NClassMap(Class<V> valueType) {
-        this(null, valueType);
+public interface NClassMap<V> {
+    static <V> NClassMap<V> of(Class<V> clazz) {
+        return NCollectionsRPI.of().classMap(clazz);
     }
 
-    public NClassMap(Class keyType, Class<V> valueType) {
-        this(keyType, valueType, 0);
+    static <V> NClassMap<V> of(Class keyType, Class<V> valueType) {
+        return NCollectionsRPI.of().classMap(keyType, valueType);
     }
 
-    public NClassMap(Class keyType, Class<V> valueType, int initialCapacity) {
-        this.keyType = keyType;
-        this.valueType = valueType;
-        values = new HashMap<Class, V>(initialCapacity);
-        cachedValues = new HashMap<Class, V[]>(initialCapacity * 2);
-        cachedHierarchy = new HashMap<Class, Class[]>(initialCapacity * 2);
+    static <V> NClassMap<V> of(Class keyType, Class<V> valueType, int initialCapacity) {
+        return NCollectionsRPI.of().classMap(keyType, valueType, initialCapacity);
     }
 
-    public static Class[] findClassHierarchy(Class clazz, Class baseType) {
-        HashSet<Class> seen = new HashSet<Class>();
-        Queue<Class> queue = new LinkedList<Class>();
-        List<Class> result = new LinkedList<Class>();
-        queue.add(clazz);
-        while (!queue.isEmpty()) {
-            Class i = queue.remove();
-            if (baseType == null || baseType.isAssignableFrom(i)) {
-                if (!seen.contains(i)) {
-                    seen.add(i);
-                    result.add(i);
-                    if (i.getSuperclass() != null) {
-                        queue.add(i.getSuperclass());
-                    }
-                    for (Class ii : i.getInterfaces()) {
-                        queue.add(ii);
-                    }
-                }
-            }
-        }
-        Collections.sort(result, CLASS_HIERARCHY_COMPARATOR);
-        return result.toArray(new Class[result.size()]);
+    static NClassMap<Class<?>> ofClass() {
+        return NCollectionsRPI.of().classClassMap();
     }
 
-    public Set<Class<?>> cacheKeySet() {
-        HashSet<Class<?>> r = new HashSet<>();
-        r.addAll((Collection) this.values.keySet());
-        r.addAll((Collection) cachedValues.keySet());
-        return r;
-    }
+    Set<V> allKeySet();
 
-    public Set<V> allKeySet() {
-        Set<Class> ks0 = values.keySet();
-        HashSet u = new HashSet(ks0);
-        for (Class a : ks0) {
-            u.addAll(Arrays.asList(getKeys(a)));
-        }
-        return u;
-    }
+    Set<Class> keySet();
 
-    public Set<Class> keySet() {
-        return new HashSet(values.keySet());
-    }
+    Collection<V> values();
 
-    public Collection<V> values() {
-        return values.values();
-    }
+    V put(Class classKey, V value);
 
-    public V put(Class classKey, V value) {
-        cachedValues.clear();
-        return values.put(classKey, value);
-    }
+    V remove(Class classKey);
 
-    public V remove(Class classKey) {
-        cachedValues.clear();
-        return values.remove(classKey);
-    }
+    Class[] getKeys(Class classKey);
 
-    public Class[] getKeys(Class classKey) {
-        Class[] keis = cachedHierarchy.get(classKey);
-        if (keis == null) {
-            keis = findClassHierarchy(classKey, keyType);
-            cachedHierarchy.put(classKey, keis);
-        }
-        return keis;
-    }
+    V getRequired(Class key);
 
-    public V getRequired(Class key) {
-        V[] found = getAllRequired(key);
-        return found[0];
-    }
+    boolean containsExactKey(Class key);
 
-    public boolean containsExactKey(Class key) {
-        return values.containsKey(key);
-    }
+    V getExact(Class key);
 
-    public V getExact(Class key) {
-        return values.get(key);
-    }
+    V get(Class key);
 
-    public V get(Class key) {
-        V[] found = getAll(key);
-        if (found.length > 0) {
-            return found[0];
-        }
-        return null;
-    }
+    V[] getAllRequired(Class key);
 
-    public V[] getAllRequired(Class key) {
-        V[] found = getAll(key);
-        if (found.length > 0) {
-            return found;
-        }
-        throw new NoSuchElementException(key.getName());
-    }
+    V[] getAll(Class key);
 
-    protected V[] getAllImpl(Class key) {
-        Class[] keis = getKeys(key);
-        List<V> all = new ArrayList<V>(keis.length);
-        for (Class c : keis) {
-            V u = values.get(c);
-            if (u != null) {
-                all.add(u);
-            }
-        }
-        return all.toArray((V[]) Array.newInstance(valueType, 0));
-    }
+    void clear();
 
-    public V[] getAll(Class key) {
-        V[] found = cachedValues.get(key);
-        if (found == null) {
-            found = getAllImpl(key);
-            cachedValues.put(key, found);
-        }
-        return found;
-    }
+    int size();
 
-    @Override
-    public int hashCode() {
-        int result = 0;
-        //transform map hashcode according to names and not class references
-        if (values != null) {
-            int h = 0;
-            Iterator<Map.Entry<Class, V>> i = values.entrySet().iterator();
-            while (i.hasNext()) {
-                Map.Entry<Class, V> next = i.next();
-                h += (next.getKey().getName().hashCode() ^ (next.getValue() == null ? 0 : next.getValue().hashCode()));
-            }
-            result = h;
-        }
-        result = 31 * result + (keyType != null ? keyType.getName().hashCode() : 0);
-        result = 31 * result + (valueType != null ? valueType.getName().hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof NClassMap)) {
-            return false;
-        }
-
-        NClassMap classMap = (NClassMap) o;
-
-        if (keyType != null ? !keyType.equals(classMap.keyType) : classMap.keyType != null) {
-            return false;
-        }
-        if (valueType != null ? !valueType.equals(classMap.valueType) : classMap.valueType != null) {
-            return false;
-        }
-        return values != null ? values.equals(classMap.values) : classMap.values == null;
-    }
-
-    public void clear() {
-        values.clear();
-        cachedValues.clear();
-        cachedHierarchy.clear();
-    }
-
-    public int size() {
-        return values.size();
-    }
-
-    public void expand() {
-        for (Class k : values.keySet()) {
-            getKeys(k);
-        }
-    }
+    void expand();
 }
