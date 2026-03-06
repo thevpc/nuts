@@ -41,7 +41,7 @@ import org.junit.jupiter.api.*;
 public class VersionTest {
     @BeforeAll
     public static void init() {
-//        TestUtils.openNewTestWorkspace();
+        TestUtils.openNewTestWorkspace();
     }
 
     @Test
