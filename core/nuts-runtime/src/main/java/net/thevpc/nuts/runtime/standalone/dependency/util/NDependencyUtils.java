@@ -28,10 +28,7 @@ import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NDependencyScope;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.util.NIteratorBuilder;
-import net.thevpc.nuts.util.NFunction;
-import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.util.Iterator;
 import java.util.TreeSet;
