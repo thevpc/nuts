@@ -10,6 +10,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
+import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 
 import net.thevpc.nuts.text.NMsg;
@@ -22,6 +23,7 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
     public abstract NWorkspace getWorkspace();
 
     public NId validate(NId id, NDescriptor descriptor, NPath pathname, NPath rootPath, NDefinitionFilter filter, NRepository repository) {
+        SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("NIdPathIterator"));
         if (descriptor != null) {
             if (!CoreNUtils.isEffectiveId(descriptor.getId())) {
                 NDescriptor effectiveDescriptor = null;
@@ -39,14 +41,14 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
                     descriptor = effectiveDescriptor;
                 }
             }
-            if ((filter == null || filter.acceptDefinition(NDefinitionHelper.ofDescriptorOnly(descriptor)))) {
+            if ((safeFilter.acceptDefinition(NDefinitionHelper.ofDescriptorOnly(descriptor)))) {
                 NId nutsId = descriptor.getId().builder().setRepository(repository.getName()).build();
 //                        nutsId = nutsId.setAlternative(t.getAlternative());
                 return nutsId;
             }
         }
         if (id != null) {
-            if ((filter == null || filter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id, repository, "NIdPathIteratorBase")))) {
+            if ((safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id, repository, "NIdPathIteratorBase")))) {
                 return id;
             }
         }
