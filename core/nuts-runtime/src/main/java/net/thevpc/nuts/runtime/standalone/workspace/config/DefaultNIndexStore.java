@@ -42,7 +42,6 @@ import net.thevpc.nuts.core.NIndexerNotAccessibleException;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterToNIdPredicate2;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
@@ -65,7 +64,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
         return NIteratorBuilder.ofSupplier(
                 () -> {
                     if (isInaccessible()) {
-                        return NIteratorBuilder.emptyIterator();
+                        return NIterator.ofEmpty();
                     }
                     String uu = getIndexURL().resolve( NConstants.Folders.ID).resolve( "allVersions")
                             + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s"
@@ -84,7 +83,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                                 .collect(Collectors.toList()).iterator();
                     } catch (UncheckedIOException | NIOException e) {
                         setInaccessible();
-                        return NIteratorBuilder.emptyIterator();
+                        return NIterator.ofEmpty();
                     }
                 },
                 ()-> NElement
