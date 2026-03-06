@@ -330,6 +330,10 @@ public class ZipUtils {
             zis = new ZipInputStream(zipFile);
             //get the zipped file list entry
             ZipEntry ze = zis.getNextEntry();
+            if(ze==null){
+                //not a zip file
+                return false;
+            }
             String eFileName = ze.getName();
             final ZipInputStream finalZis = zis;
             InputStream entryInputStream = new InputStream() {
