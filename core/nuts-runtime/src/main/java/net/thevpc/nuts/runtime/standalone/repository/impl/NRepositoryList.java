@@ -10,7 +10,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.util.NIteratorBuilder;
-import net.thevpc.nuts.util.NIteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NIterator;
 
