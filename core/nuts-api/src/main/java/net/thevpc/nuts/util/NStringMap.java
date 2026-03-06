@@ -13,56 +13,62 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+
 import java.util.*;
 
-public interface NStringMap<V> extends NCopiable{
+public interface NStringMap<V> extends NCopiable {
 
-    public NStringMap<V> clear() ;
+    static <V> NStringMap<V> of(Map<String, V> map, char separator) {
+        return NCollectionsRPI.of().stringMap(map, separator);
+    }
 
-    public int size() ;
+    NStringMap<V> clear();
 
-    public char getSeparator() ;
+    int size();
 
-    public Map<String, V> toMap(String prefix) ;
+    char getSeparator();
 
-    public Map<String, V> toMap() ;
+    Map<String, V> toMap(String prefix);
 
-    public NStringMap<V> removeAll(String prefix) ;
+    Map<String, V> toMap();
 
-    public NStringMap<V> putAll(Map<String, V> values) ;
+    NStringMap<V> removeAll(String prefix);
 
-    public V put(String prefix, String key, V value) ;
+    NStringMap<V> putAll(Map<String, V> values);
 
-    public V put(String key, V value) ;
+    V put(String prefix, String key, V value);
 
-    public V get(String key) ;
+    V put(String key, V value);
 
-    public NOptional<V> getOptional(String prefix, String key) ;
+    V get(String key);
 
-    public NOptional<V> getOptional(String key) ;
+    NOptional<V> getOptional(String prefix, String key);
 
-    public V set(String prefix, String key, V value) ;
+    NOptional<V> getOptional(String key);
 
-    public V set(String key, V value) ;
+    V set(String prefix, String key, V value);
 
-    public V remove(String prefix, String key) ;
+    V set(String key, V value);
 
-    public Set<String> nextKeys(String prefix) ;
+    V remove(String prefix, String key);
 
-    public NStringMap<V> putAll(String prefix, Map<String, V> values) ;
+    Set<String> nextKeys(String prefix);
 
-    public NStringMap<V> copy() ;
+    NStringMap<V> putAll(String prefix, Map<String, V> values);
+
+    NStringMap<V> copy();
 }
