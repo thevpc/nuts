@@ -705,7 +705,6 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                 // Check if mode already exists
                 modeExists = runActionInstallJEdit_modeExists(modesElement, info.getLanguageId());
             } else {
-//                System.out.println("Creating new catalog file...");
                 doc = runActionInstallJEdit_createNewCatalog();
                 modesElement = doc.getDocumentElement();
             }
@@ -717,7 +716,6 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                 // Write back to file
                 runActionInstallJEdit_writeCatalog(doc, catalog);
             }
-            //System.out.println("Successfully updated catalog: " + catalogPath);
         } catch (TransformerException e) {
             throw new NIllegalArgumentException(NMsg.ofC("error : ", e), e);
         } catch (ParserConfigurationException e) {
