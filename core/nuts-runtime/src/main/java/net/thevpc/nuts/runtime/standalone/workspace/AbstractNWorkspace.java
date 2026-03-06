@@ -170,13 +170,5 @@ public abstract class AbstractNWorkspace implements NWorkspace {
         return eventsModel().getInstallListeners();
     }
 
-    protected String getRunModeString(NBootOptions options) {
-        if (options.getReset().orElse(false)) {
-            return "reset";
-        } else if (options.getRecover().orElse(false)) {
-            return "recover";
-        } else {
-            return "exec";
-        }
-    }
+
 }
