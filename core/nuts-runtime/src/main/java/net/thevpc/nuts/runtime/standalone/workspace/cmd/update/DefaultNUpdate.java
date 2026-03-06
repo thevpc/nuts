@@ -20,6 +20,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.io.NIn;
+import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.install.*;
 import net.thevpc.nuts.security.NSecurityManager;
