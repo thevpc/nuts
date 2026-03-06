@@ -34,7 +34,7 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
         try {
             loadedType = Class.forName(className, false, loader);
         } catch (Exception e) {
-            NLog.of(NTypeLoaderImpl.class).log(NMsg.ofC("unable to load %s : %s", className, e).asError());
+            NLog.of(NTypeLoaderImpl.class).log(NMsg.ofC("unable to load %s : %s", className, e).asFinestFail());
         } finally {
             checked = true;
         }
@@ -70,7 +70,7 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
             }catch (Exception ex){
                 NLog.of(NTypeLoaderImpl.class).log(NMsg.ofC("unable to find %s.%s(%s) : %s", className, name,
                         Arrays.stream(parameterTypes).map(p->p.getSimpleName()).collect(Collectors.joining(",")),
-                        ex).asError());
+                        ex).asFinestFail());
             }
             return null;
         }).withMessage(()->NMsg.ofC("missing method find %s.%s(%s) : %s", className, name,
@@ -84,7 +84,7 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
                 return c.getDeclaredField(name);
             }catch (Exception ex){
                 NLog.of(NTypeLoaderImpl.class).log(NMsg.ofC("unable to find %s.%s : %s", className, name,
-                        ex).asError(ex));
+                        ex).asFinestFail(ex));
             }
             return null;
         }).withMessage(()->NMsg.ofC("missing method find %s.%s : %s", className, name));
