@@ -53,7 +53,7 @@ public final class NClassLoaderUtils {
     }
 
     public static NClassLoaderNode definitionToClassLoaderNode(NDefinition def, NRepositoryFilter repositoryFilter) {
-        def.getDependencies().get();
+//        def.getDependencies().get();
         def.getContent().get();
         def.getContent().flatMap(NPath::toURL).get();
         return new NDefaultClassLoaderNode(
