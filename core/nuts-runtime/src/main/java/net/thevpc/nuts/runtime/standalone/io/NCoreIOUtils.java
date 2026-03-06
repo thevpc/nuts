@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.InputStreamExt;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.text.NMsg;
@@ -25,6 +26,7 @@ import java.nio.file.attribute.FileTime;
 import java.security.MessageDigest;
 import java.time.Instant;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -42,6 +44,25 @@ public class NCoreIOUtils {
             return child;
         }
         return null;
+    }
+
+    public static void closeObject(Object o) {
+        if(o!=null){
+            if(o instanceof Closeable) {
+                try {
+                    ((Closeable) o).close();
+                } catch (IOException e) {
+                    throw NExceptions.ofUncheckedException(e);
+                }
+            }
+            if(o instanceof AutoCloseable) {
+                try {
+                    ((AutoCloseable) o).close();
+                }catch (Exception e) {
+                    throw NExceptions.ofUncheckedException(e);
+                }
+            }
+        }
     }
 
     public static Long detectLength(InputStream is) {
