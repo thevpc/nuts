@@ -54,7 +54,6 @@ import java.util.Arrays;
 import java.util.function.Function;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.*;
@@ -152,7 +151,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             session.getTerminal().printProgress(NMsg.ofC("search version for %s", id.getLongId()));
             ret = NPath.of(getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).getInputStream();
         } catch (UncheckedIOException | NIOException e) {
-            return NIteratorBuilder.emptyIterator();
+            return NIterator.ofEmpty();
         }
         NIterator<NId> it = new NamedNIdFromStreamIterator(ret);
         NDefinitionFilter filter2 = NDefinitionFilters.of().nonnull(idFilter).and(
