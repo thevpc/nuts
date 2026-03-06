@@ -69,6 +69,10 @@ public class NPropertiesHolder {
         return lhm;
     }
 
+    public Set<Map.Entry<String,NScopedPropertyValue>> entrySet() {
+        return new LinkedHashSet<>(properties.entrySet());
+
+    }
     public Set<String> keySet() {
         return new LinkedHashSet<>(properties.keySet());
     }
