@@ -1,5 +1,6 @@
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.runtime.standalone.util.collections.NStringMapImpl;
 import net.thevpc.nuts.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ public class StringMapMap {
 
     @Test
     public void test1() {
-        NStringMap<String> sm=new NStringMap<>(new HashMap<>(),'.' );
+        NStringMap<String> sm=new NStringMapImpl<>(new HashMap<>(),'.' );
         sm.put("a.b.c","1");
         sm.put("a.b.d","2");
         sm.put("a.c.e","3");
