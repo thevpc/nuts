@@ -20,6 +20,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.NInputStreamSource;
 import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.reflect.NUseDefaultUtils;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.NClassMapImpl;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.time.NChronometer;
@@ -57,8 +58,8 @@ import java.util.logging.Level;
 public class DefaultNTexts implements NTexts {
 
     private final DefaultNTextManagerModel shared;
-    private NClassMap<NTextMapper> textMappers = new NClassMap<>(NTextMapper.class);
-    private NClassMap<NObjectWriterMapper> writerMappers = new NClassMap<>(NObjectWriterMapper.class);
+    private NClassMap<NTextMapper> textMappers = new NClassMapImpl<>(NTextMapper.class);
+    private NClassMap<NObjectWriterMapper> writerMappers = new NClassMapImpl<>(NObjectWriterMapper.class);
 
     public DefaultNTexts() {
         this.shared = NWorkspaceExt.of().getModel().textModel;
