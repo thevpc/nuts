@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NIteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
