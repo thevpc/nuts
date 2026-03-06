@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DefaultNWebHeaders {
-    private Map<String, List<String>> headers = NMaps.ofCaseInsensitiveKeyMap();
+    private Map<String, List<String>> headers = NMaps.ofCaseInsensitiveKey();
 
     public void addHeaders(DefaultNWebHeaders others, Mode mode) {
         if (others != null) {
@@ -158,7 +158,7 @@ public class DefaultNWebHeaders {
     }
 
     public Map<String, List<String>> toMap() {
-        Map<String, List<String>> headers2 = NMaps.ofCaseInsensitiveKeyMap();
+        Map<String, List<String>> headers2 = NMaps.ofCaseInsensitiveKey();
         for (Map.Entry<String, List<String>> e : this.headers.entrySet()) {
             headers2.put(e.getKey(), new ArrayList<>(e.getValue()));
         }
