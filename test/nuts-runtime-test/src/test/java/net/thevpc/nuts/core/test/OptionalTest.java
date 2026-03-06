@@ -6,9 +6,9 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.util.NDetachedEmptyOptionalException;
-import net.thevpc.nuts.util.NDetachedErrorOptionalException;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NEmptyOptionalException;
+import net.thevpc.nuts.util.NErrorOptionalException;
 import net.thevpc.nuts.util.NOptional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -37,7 +37,7 @@ public class OptionalTest {
         }
         {
             NOptional<String> a = NOptional.of(null);
-            Assertions.assertThrows(NDetachedEmptyOptionalException.class, () -> a.get());
+            Assertions.assertThrows(NEmptyOptionalException.class, () -> a.get());
             Assertions.assertEquals(true, a.isEmpty());
             Assertions.assertEquals(false, a.isError());
             Assertions.assertEquals(false, a.isPresent());
@@ -62,7 +62,7 @@ public class OptionalTest {
             Assertions.assertEquals(false, a.isNotPresent());
 
             NOptional<String> b=a.onBlankEmpty();
-            Assertions.assertThrows(NDetachedEmptyOptionalException.class, () -> b.get());
+            Assertions.assertThrows(NEmptyOptionalException.class, () -> b.get());
             Assertions.assertEquals(true, b.isEmpty());
             Assertions.assertEquals(false, b.isError());
             Assertions.assertEquals(false, b.isPresent());
@@ -71,7 +71,7 @@ public class OptionalTest {
 
         {
             NOptional<String> a = NOptional.ofError(NMsg.ofPlain("error"));
-            Assertions.assertThrows(NDetachedErrorOptionalException.class, () -> a.get());
+            Assertions.assertThrows(NErrorOptionalException.class, () -> a.get());
             Assertions.assertEquals(false, a.isEmpty());
             Assertions.assertEquals(true, a.isError());
             Assertions.assertEquals(false, a.isPresent());
