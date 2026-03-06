@@ -60,7 +60,7 @@ net.thevpc.nuts.runtime.standalone.DefaultNWorkspaceOptionsBuilder
 ##################### Utilities
 net.thevpc.nuts.runtime.standalone.app.NAppImpl
 net.thevpc.nuts.runtime.standalone.xtra.expr.DefaultNExprs
-net.thevpc.nuts.runtime.standalone.util.stream.DefaultNCollectionsRPI
+net.thevpc.nuts.runtime.standalone.util.collections.DefaultNCollectionsRPI
 net.thevpc.nuts.runtime.standalone.xtra.glob.DefaultNGlob
 net.thevpc.nuts.runtime.standalone.io.terminal.history.NCmdLineHistoryImpl
 net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLines
