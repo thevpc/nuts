@@ -96,7 +96,7 @@ public class ToolboxRepositoryModel implements NRepositoryModel {
         if (fetchMode != NFetchMode.REMOTE) {
             return NIterator.ofEmpty();
         }
-        NIteratorBuilder<NId> b = NIteratorBuilder.emptyBuilder();
+        NIteratorBuilder<NId> b = NIteratorBuilder.ofEmpty();
         for (ToolboxRepoHelper h : map) {
             b.concat(h.search(null,filter, basePaths, repository));
         }
