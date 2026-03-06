@@ -826,8 +826,8 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 if (options.getStoreLayout() == null) {
                     if (lastWorkspaceOptions != null && !resetFlag && !resetHardFlag) {
                         options.setStoreLayout(NBootUtils.firstNonNull(lastWorkspaceOptions.getStoreLayout(), NBootPlatformHome.currentOsFamily()));
-                    } else {
-                        options.setHomeLocations(Collections.emptyMap());
+//                    } else {
+//                        options.setHomeLocations(Collections.emptyMap());
                     }
                 }
 
