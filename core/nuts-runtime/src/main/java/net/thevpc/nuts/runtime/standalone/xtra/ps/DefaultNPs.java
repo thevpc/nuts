@@ -15,7 +15,6 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.io.NPs;
-import net.thevpc.nuts.util.NIteratorBuilder;
 
 import java.io.File;
 import java.io.StringReader;
@@ -283,7 +282,7 @@ public class DefaultNPs implements NPs {
                 String[] split = out.split("\n");
                 return Arrays.asList(split).iterator();
             }
-            return NIteratorBuilder.emptyIterator();
+            return NIterator.ofEmpty();
         }, () -> NElement.ofString("jps")).map(
                 NFunction.of(
                         (String line) -> {
