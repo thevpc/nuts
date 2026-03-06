@@ -1,5 +1,7 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,8 +146,8 @@ public class NMaps {
         return li;
     }
 
-    public static <A, B> Map<A, B> of(A a1, B b1, A a2, B b2, A a3, B b3, A a4, B b4, A a5, B b5, A a6, B b6, A a7, B b7, A a8, B b8, A a9, B b9, A a10, 
-            B b10, A a11, B b11, A a12, B b12, A a13, B b13) {
+    public static <A, B> Map<A, B> of(A a1, B b1, A a2, B b2, A a3, B b3, A a4, B b4, A a5, B b5, A a6, B b6, A a7, B b7, A a8, B b8, A a9, B b9, A a10,
+                                      B b10, A a11, B b11, A a12, B b12, A a13, B b13) {
         LinkedHashMap<A, B> li = new LinkedHashMap<A, B>();
         li.put(a1, b1);
         li.put(a2, b2);
@@ -163,8 +165,8 @@ public class NMaps {
         return li;
     }
 
-    public static <A, B> Map<A, B> of(A a1, B b1, A a2, B b2, A a3, B b3, A a4, B b4, A a5, B b5, A a6, B b6, A a7, B b7, A a8, B b8, A a9, B b9, A a10, 
-            B b10, A a11, B b11, A a12, B b12, A a13, B b13, A a14, B b14) {
+    public static <A, B> Map<A, B> of(A a1, B b1, A a2, B b2, A a3, B b3, A a4, B b4, A a5, B b5, A a6, B b6, A a7, B b7, A a8, B b8, A a9, B b9, A a10,
+                                      B b10, A a11, B b11, A a12, B b12, A a13, B b13, A a14, B b14) {
         LinkedHashMap<A, B> li = new LinkedHashMap<A, B>();
         li.put(a1, b1);
         li.put(a2, b2);
@@ -183,8 +185,8 @@ public class NMaps {
         return li;
     }
 
-    public static <A, B> Map<A, B> of(A a1, B b1, A a2, B b2, A a3, B b3, A a4, B b4, A a5, B b5, A a6, B b6, A a7, B b7, A a8, B b8, A a9, B b9, A a10, 
-            B b10, A a11, B b11, A a12, B b12, A a13, B b13, A a14, B b14, A a15, B b15) {
+    public static <A, B> Map<A, B> of(A a1, B b1, A a2, B b2, A a3, B b3, A a4, B b4, A a5, B b5, A a6, B b6, A a7, B b7, A a8, B b8, A a9, B b9, A a10,
+                                      B b10, A a11, B b11, A a12, B b12, A a13, B b13, A a14, B b14, A a15, B b15) {
         LinkedHashMap<A, B> li = new LinkedHashMap<A, B>();
         li.put(a1, b1);
         li.put(a2, b2);
@@ -204,8 +206,8 @@ public class NMaps {
         return li;
     }
 
-    public static <A, B> Map<A, B> of(A a1, B b1, A a2, B b2, A a3, B b3, A a4, B b4, A a5, B b5, A a6, B b6, A a7, B b7, A a8, B b8, A a9, B b9, A a10, 
-            B b10, A a11, B b11, A a12, B b12, A a13, B b13, A a14, B b14, A a15, B b15, A a16, B b16) {
+    public static <A, B> Map<A, B> of(A a1, B b1, A a2, B b2, A a3, B b3, A a4, B b4, A a5, B b5, A a6, B b6, A a7, B b7, A a8, B b8, A a9, B b9, A a10,
+                                      B b10, A a11, B b11, A a12, B b12, A a13, B b13, A a14, B b14, A a15, B b15, A a16, B b16) {
         LinkedHashMap<A, B> li = new LinkedHashMap<A, B>();
         li.put(a1, b1);
         li.put(a2, b2);
@@ -319,12 +321,19 @@ public class NMaps {
         return new NListValueMap<>(map);
     }
 
-    public static <T> Map<String, T> ofCaseInsensitiveKeyMap() {
-        return new NCaseInsensitiveStringMap<>();
+    public static <T> Map<String, T> ofCaseInsensitiveKey() {
+        return NCollectionsRPI.of().caseInsensitiveMap();
     }
 
-    public static <T> Map<String, T> ofCaseInsensitiveKeyMap(Map<String, T> other) {
-        return new NCaseInsensitiveStringMap<>(other);
+    public static <T> Map<String, T> ofCaseInsensitiveKey(Map<String, T> other) {
+        return NCollectionsRPI.of().caseInsensitiveMap(other);
     }
 
+    public static <K, V> NMultiKeyMap<K, V> ofMultiKey() {
+        return NCollectionsRPI.of().multiKeyMap();
+    }
+
+    public static <V> NStringMap<V> ofStringMap(Map<String, V> map, char separator) {
+        return NCollectionsRPI.of().stringMap(map, separator);
+    }
 }
