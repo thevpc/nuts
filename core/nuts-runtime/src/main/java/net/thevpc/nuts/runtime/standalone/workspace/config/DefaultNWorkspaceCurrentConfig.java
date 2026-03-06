@@ -119,7 +119,7 @@ public final class DefaultNWorkspaceCurrentConfig {
         }
         Map<NStoreType, String> storeLocations =
         NPlatformHome.of(getStoreLayout(),getSystem()).buildLocations(storeStrategy,
-                getStoreLocations(), homeLocations, workspaceLocation==null?null:workspaceLocation.toString()
+                userStoreLocations, homeLocations, workspaceLocation==null?null:workspaceLocation.toString()
         );
         this.effStoreLocationsMap.clear();
         this.effStoreLocationsMap.putAll(storeLocations);
