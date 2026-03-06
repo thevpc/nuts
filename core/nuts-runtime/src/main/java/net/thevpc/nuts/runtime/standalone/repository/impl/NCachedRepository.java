@@ -46,7 +46,6 @@ import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.runtime.standalone.repository.impl.util.CommonRootsByPathHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.util.CommonRootsByIdHelper;
-import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUpdateRepositoryStatsCmd;
@@ -247,7 +246,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 NFunction.of(NId::getLongName).withDescription(NDescribables.ofDesc("getLongName"))).build();
 
         if (namedNutIdIterator == null) {
-            namedNutIdIterator = NIteratorBuilder.emptyIterator();
+            namedNutIdIterator = NIterator.ofEmpty();
         }
         return NIteratorBuilder.of(
                 mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, fetchMode)
