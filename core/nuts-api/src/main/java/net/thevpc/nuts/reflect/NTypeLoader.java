@@ -23,4 +23,5 @@ public interface NTypeLoader {
 
     String getClassName() ;
 
+    NOptional<Object> newInstance();
 }

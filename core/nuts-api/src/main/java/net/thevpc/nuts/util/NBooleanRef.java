@@ -46,6 +46,18 @@ public class NBooleanRef extends NObjectRef<Boolean> {
         return this;
     }
 
+    public NBooleanRef or(boolean b) {
+        Boolean v = get();
+        set(v == null ? b : v || b);
+        return this;
+    }
+
+    public NBooleanRef and(boolean b) {
+        Boolean v = get();
+        set(v == null ? b : v && b);
+        return this;
+    }
+
     public NBooleanRef setTrue() {
         set(true);
         return this;

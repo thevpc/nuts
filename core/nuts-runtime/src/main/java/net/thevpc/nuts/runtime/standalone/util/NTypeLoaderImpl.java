@@ -1,12 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,8 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
     private void loadUnsafe(ClassLoader loader) {
         try {
             loadedType = Class.forName(className, false, loader);
+        } catch (NoClassDefFoundError e) {
+            NLog.of(NTypeLoaderImpl.class).log(NMsg.ofC("unable to load %s : %s", className, e).asFinestFail());
         } catch (Exception e) {
             NLog.of(NTypeLoaderImpl.class).log(NMsg.ofC("unable to load %s : %s", className, e).asFinestFail());
         } finally {
@@ -92,6 +95,30 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
 
     public String getClassName() {
         return className;
+    }
+
+    @Override
+    public NOptional<Object> newInstance() {
+        return getType().map(x->{
+            Constructor<?> c =null;
+            try {
+                c = x.getDeclaredConstructor();
+            }catch (Exception ex){
+                return NOptional.ofNamedEmpty(NMsg.ofC("constructor() for %s",className));
+            }
+            try {
+                if(!Modifier.isPublic(c.getModifiers())) {
+                    c.setAccessible(true);
+                }
+            }catch (Exception ex){
+                return NOptional.ofNamedEmpty(NMsg.ofC("constructor() is not public and could not set accessible for %s",className));
+            }
+            try {
+                return c.newInstance();
+            }catch (Exception ex){
+                return NOptional.ofNamedError(NMsg.ofC("constructor() failed for %s",className));
+            }
+        });
     }
 
     @Override
