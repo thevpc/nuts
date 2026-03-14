@@ -19,12 +19,15 @@ public class NBigComplex extends Number implements Serializable, Comparable<NBig
     private BigDecimal real;
     private BigDecimal imag;
 
+    public static NBigComplex of(String any) {
+        return parse(any).get();
+    }
     /**
      * @param any string
      * @return optional of complex
      * @since 0.8.6
      */
-    public NOptional<NBigComplex> of(String any) {
+    public static NOptional<NBigComplex> parse(String any) {
         try {
             if (NBlankable.isBlank(any)) {
                 return NOptional.ofNamedEmpty("complex");
@@ -35,6 +38,14 @@ public class NBigComplex extends Number implements Serializable, Comparable<NBig
         } catch (Exception e) {
             return NOptional.ofNamedError("complex : " + any);
         }
+    }
+
+    public static NBigComplex of(BigDecimal x, BigDecimal y) {
+        return new NBigComplex(x, y);
+    }
+
+    public static NBigComplex ofPolar(BigDecimal r, double theta) {
+        return new NBigComplex(r.multiply(new BigDecimal(Math.cos(theta))), r.multiply(new BigDecimal(Math.sin(theta))));
     }
 
     public NBigComplex(BigDecimal real, BigDecimal imag) {
