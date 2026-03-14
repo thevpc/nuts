@@ -11,15 +11,19 @@ public class NFloatComplex extends Number implements Serializable, Comparable<NF
     public static final NFloatComplex ZERO = new NFloatComplex(0, 0);
     public static final NFloatComplex ONE = new NFloatComplex(1, 0);
     public static final NFloatComplex I = new NFloatComplex(0, 1);
-    private float real;
-    private float imag;
+    private final float real;
+    private final float imag;
+
+    public static NFloatComplex of(String any) {
+        return parse(any).get();
+    }
 
     /**
      * @param any string
      * @return optional of complex
      * @since 0.8.6
      */
-    public NOptional<NFloatComplex> of(String any) {
+    public static NOptional<NFloatComplex> parse(String any) {
         try {
             if (NBlankable.isBlank(any)) {
                 return NOptional.ofNamedEmpty("complex");
@@ -30,6 +34,14 @@ public class NFloatComplex extends Number implements Serializable, Comparable<NF
         } catch (Exception e) {
             return NOptional.ofNamedError("complex : " + any);
         }
+    }
+
+    public static NFloatComplex of(float x, float y) {
+        return new NFloatComplex(x, y);
+    }
+
+    public static NFloatComplex ofPolar(float r, float theta) {
+        return new NFloatComplex((float) (r * Math.cos(theta)), (float) (r * Math.sin(theta)));
     }
 
     public NFloatComplex(float real, float imag) {
@@ -158,6 +170,7 @@ public class NFloatComplex extends Number implements Serializable, Comparable<NF
                 (this.imag * c - this.real * d) / denominator
         );
     }
+
     public NFloatComplex inv() {
         float denominator = this.real * this.real + this.imag * this.imag;
         return new NFloatComplex(this.real / denominator, -this.imag / denominator);
