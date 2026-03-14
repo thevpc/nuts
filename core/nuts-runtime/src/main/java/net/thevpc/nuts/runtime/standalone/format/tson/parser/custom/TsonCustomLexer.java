@@ -9,10 +9,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NInputStreamProvider;
@@ -30,7 +27,7 @@ import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.*;
 
 public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
-    private NPositionedCharReader reader;
+    private final NPositionedCharReader reader;
 
     public TsonCustomLexer(String reader) {
         this(new StringReader(reader));
@@ -567,7 +564,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
             String currentPadding = "";
 
             if (reader.peek() == '*' && reader.peekAt(1) != '/') {
-                currentMarker = String.valueOf((char)reader.read()); // consume '*'
+                currentMarker = String.valueOf((char) reader.read()); // consume '*'
                 currentPadding = readSpaces(); // consume spaces after '*'
             }
 
@@ -588,13 +585,13 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                             .append(contentBuf).append(nl.value());
                     break;
                 }
-                contentBuf.append((char)reader.read());
+                contentBuf.append((char) reader.read());
             }
 
             // Check if we exited because of the closing tag */
             if (reader.peek() == '*' && reader.peekAt(1) == '/') {
                 lines.add(new NElementLineImpl(
-                        currentPrefix, currentMarker,  currentPadding, contentBuf.toString(), "", "", null
+                        currentPrefix, currentMarker, currentPadding, contentBuf.toString(), "", "", null
                 ));
                 image.append(currentPrefix).append(currentMarker).append(currentPadding)
                         .append(contentBuf).append("*/");
@@ -627,16 +624,17 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         }
         return sb.toString();
     }
-    private String readSpaces(){
-        StringBuilder sb=new StringBuilder();
-        while (true){
+
+    private String readSpaces() {
+        StringBuilder sb = new StringBuilder();
+        while (true) {
             int c = reader.peek();
-            if(c<0){
+            if (c < 0) {
                 break;
             }
-            if(c==' ' || c=='\t'){
+            if (c == ' ' || c == '\t') {
                 sb.append(reader.readChar());
-            }else{
+            } else {
                 break;
             }
         }
@@ -812,7 +810,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         // Consume the initial '¶'
         image.append('¶');
         int c = reader.read();// consume '¶'
-        NAssert.requireNamedEquals('¶',(char)c,"paragraph start");
+        NAssert.requireNamedEquals('¶', (char) c, "paragraph start");
         String line = reader.readLine();
         image.append(line);
         content.append(line);
@@ -830,7 +828,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 reader.column(),
                 reader.pos(),
                 new LinesAndContent(
-                        Arrays.asList(new NElementLineImpl(
+                        Collections.singletonList(new NElementLineImpl(
                                 "",
                                 "¶",
                                 "",
@@ -912,7 +910,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         return readMultiLineString("¶¶", NElementTokenType.BLOCK_STRING);
     }
 
-    public NElementTokenImpl readMultiLineString(String marker,NElementTokenType tokenType) {
+    public NElementTokenImpl readMultiLineString(String marker, NElementTokenType tokenType) {
         int line0 = reader.line();
         int column0 = reader.column();
         long pos0 = reader.pos();
@@ -1105,11 +1103,11 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
 
     private static class NamedSize {
         String image;
-        int bits;
+        TSONBits bits;
         boolean floatingNumber;
         boolean floating;
 
-        public NamedSize(String image, int bits, boolean floatingNumber, boolean floating) {
+        public NamedSize(String image, TSONBits bits, boolean floatingNumber, boolean floating) {
             this.image = image;
             this.bits = bits;
             this.floatingNumber = floatingNumber;
@@ -1149,7 +1147,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                         sb.append((char) c2);
                         return new NamedSize(
                                 sb.toString(),
-                                -1,
+                                TSONBits.BIG,
                                 c0 == 'u',
                                 c0 == 'f'
                         );
@@ -1160,7 +1158,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     if (c2 < '0' || c2 > '9') {
                         return new NamedSize(
                                 sb.toString(),
-                                8,
+                                TSONBits.S8,
                                 c0 == 'u',
                                 c0 == 'f'
                         );
@@ -1174,7 +1172,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                             sb.append((char) c2);
                             return new NamedSize(
                                     sb.toString(),
-                                    16,
+                                    TSONBits.S16,
                                     c0 == 'u',
                                     c0 == 'f'
                             );
@@ -1189,7 +1187,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                             sb.append((char) c2);
                             return new NamedSize(
                                     sb.toString(),
-                                    32,
+                                    TSONBits.S32,
                                     c0 == 'u',
                                     c0 == 'f'
                             );
@@ -1204,7 +1202,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                             sb.append((char) c2);
                             return new NamedSize(
                                     sb.toString(),
-                                    64,
+                                    TSONBits.S64,
                                     c0 == 'u',
                                     c0 == 'f'
                             );
@@ -1325,24 +1323,24 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
             // We'll treat it as 0
             if (info.unsignedNumber) {
                 switch (info.bits) {
-                    case 8:
+                    case S8:
                         return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
                                 new DefaultNNumberElement(NElementType.UBYTE, (short) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
-                    case 16:
+                    case S16:
                         return new NElementTokenImpl(image.toString(),
                                 NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
                                 new DefaultNNumberElement(NElementType.USHORT, 0, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
-                    case 32:
+                    case S32:
                         return new NElementTokenImpl(image.toString(),
                                 NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
                                 new DefaultNNumberElement(NElementType.UINT, 0L, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
-                    case 64:
+                    case S64:
                         return new NElementTokenImpl(image.toString(),
                                 NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
@@ -1351,27 +1349,27 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 }
             } else {
                 switch (info.bits) {
-                    case 8:
+                    case S8:
                         return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
                                 new DefaultNNumberElement(NElementType.BYTE, (byte) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
-                    case 16:
+                    case S16:
                         return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
                                 new DefaultNNumberElement(NElementType.SHORT, (short) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
-                    case 32:
+                    case S32:
                         return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
-                                new DefaultNNumberElement(NElementType.INT, (int) 0, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
+                                new DefaultNNumberElement(NElementType.INT, 0, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
-                    case 64:
+                    case S64:
                         return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
                                 new DefaultNNumberElement(NElementType.LONG, 0L, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
                                 , null);
-                    case -1:
+                    case BIG:
                         return new NElementTokenImpl(image.toString(), NElementTokenType.NUMBER,
                                 image.toString(), 0, line, col, pos,
                                 new DefaultNNumberElement(NElementType.BIG_INT, BigInteger.ZERO, NNumberLayout.DECIMAL, "", image.toString(), null, null, null)
@@ -1385,7 +1383,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
     private NNumberElement applyConstantValue(TSONNumberInfo info, StringBuilder image) {
         String name = info.baseValue;
         if (info.floatingNumber) {
-            if (info.bits == 32) {
+            if (info.bits == TSONBits.S32) {
                 switch (name) {
                     case "max":
                         return new DefaultNNumberElement(
@@ -1476,7 +1474,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
 
         if (info.unsignedNumber) {
             switch (info.bits) {
-                case 8: {
+                case S8: {
                     if ("max".equals(name) || "pinf".equals(name)) {
                         return new DefaultNNumberElement(
                                 NElementType.UBYTE,
@@ -1496,11 +1494,11 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     }
                     break;
                 }
-                case 16: {
+                case S16: {
                     if ("max".equals(name) || "pinf".equals(name)) {
                         return new DefaultNNumberElement(
                                 NElementType.USHORT,
-                                (int) 65535,
+                                65535,
                                 info.numberLayout,
                                 info.suffix,
                                 image.toString(), null, null, null
@@ -1508,7 +1506,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     } else if ("min".equals(name) || "ninf".equals(name)) {
                         return new DefaultNNumberElement(
                                 NElementType.USHORT,
-                                (int) 0,
+                                0,
                                 info.numberLayout,
                                 info.suffix,
                                 image.toString(), null, null, null
@@ -1516,7 +1514,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     }
                     break;
                 }
-                case 32:
+                case S32:
                     if ("max".equals(name) || "pinf".equals(name)) {
                         return new DefaultNNumberElement(
                                 NElementType.UINT,
@@ -1535,7 +1533,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                         );
                     }
                     break;
-                case 64: {
+                case S64: {
                     if ("max".equals(name) || "pinf".equals(name)) {
                         return new DefaultNNumberElement(
                                 NElementType.ULONG,
@@ -1558,7 +1556,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
             }
         } else {
             switch (info.bits) {
-                case -2: // no type defined
+                case AUTO: // no type defined
                 {
                     switch (name) {
                         case "max": {
@@ -1609,7 +1607,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     }
                     break;
                 }
-                case 8: {
+                case S8: {
                     if ("max".equals(name) || "pinf".equals(name)) {
                         return new DefaultNNumberElement(
                                 NElementType.BYTE,
@@ -1629,7 +1627,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     }
                     break;
                 }
-                case 16:
+                case S16:
                     if ("max".equals(name) || "pinf".equals(name)) {
                         return new DefaultNNumberElement(
                                 NElementType.SHORT,
@@ -1648,7 +1646,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                         );
                     }
                     break;
-                case 32:
+                case S32:
                     if ("max".equals(name) || "pinf".equals(name)) {
                         return new DefaultNNumberElement(
                                 NElementType.INT,
@@ -1667,7 +1665,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                         );
                     }
                     break;
-                case 64:
+                case S64:
                     if ("max".equals(name) || "pinf".equals(name)) {
                         return new DefaultNNumberElement(
                                 NElementType.LONG,
@@ -1686,7 +1684,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                         );
                     }
                     break;
-                case -1:
+                case BIG:
                     // BigInt doesn't have max/min in the same way, but we can support min=0 for unsigned?
                     // For signed BigInt, max/min are infinite.
                     break;
@@ -1695,11 +1693,15 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         return null;
     }
 
+    private enum TSONBits {
+        S8, S16, S32, S64, BIG, AUTO
+    }
+
     private static class TSONNumberInfo {
         public boolean specialConst;      // e.g. "10" or "0x1A"
         public String baseValue;      // e.g. "10" or "0x1A"
         public String imaginaryValue; // e.g. "5" (if complex)
-        public int bits = -2;     // e.g. 32, 64, -1 is big decimal, -2 is unknown yet
+        public TSONBits bits = TSONBits.AUTO;     // e.g. 32, 64, -1 is big decimal, -2 is unknown yet
         public boolean unsignedNumber;    // true if 'u'
         public boolean floatingNumber;    // true if 'u'
         public String suffix;           // e.g. "ohm"
@@ -1716,7 +1718,10 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         NMsg errorMessage = null;
         NElementType numberElementType = NElementType.INT;
         Number numberValue = 0;
-
+        int initialSign = 1;
+        if (image.length() > 0 && image.charAt(image.length() - 1) == '-') {
+            initialSign = -1;
+        }
         // --- 1. BASE DETECTION ---
         boolean isDecimal = true;
         NNumberLayout layout = NNumberLayout.DECIMAL;
@@ -1746,19 +1751,18 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         if (readDigits(image, isDecimal)) {
             info.floatingNumber = true;
         }
-        info.baseValue = image.substring(realStart);
+        info.baseValue = (initialSign < 0 ? "-" : "") + image.substring(realStart);
 
         // --- 3. COMPLEX TRANSITION ---
         int p = reader.peek();
         if (isDecimal && (p == '+' || p == '-') && isImaginaryPartNext()) {
             char sign = (char) reader.read();
             image.append(sign);
-
             int imagStart = image.length();
             if (readDigits(image, true)) {
                 info.floatingNumber = true;
             }
-            info.imaginaryValue = image.substring(imagStart);
+            info.imaginaryValue = (sign == '-' ? "-" : "") + image.substring(imagStart);
 
             if (isImaginaryNumberChar(reader.peek())) {
                 image.append((char) reader.read());
@@ -1792,29 +1796,38 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         info.suffix = consumeSuffix(image);
 
         if (info.imaginaryValue != null) {
-            if (info.bits == -1) {
-                numberElementType = NElementType.BIG_COMPLEX;
-                try {
-                    numberValue = (new NBigComplex(new BigDecimal(info.baseValue), new BigDecimal(info.imaginaryValue)));
-                } catch (Exception ex) {
-                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                    numberValue = (NBigComplex.ZERO);
+            switch (info.bits) {
+                case BIG: {
+                    numberElementType = NElementType.BIG_COMPLEX;
+                    try {
+                        numberValue = (new NBigComplex(new BigDecimal(info.baseValue), new BigDecimal(info.imaginaryValue)));
+                    } catch (Exception ex) {
+                        errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                        numberValue = (NBigComplex.ZERO);
+                    }
+                    break;
                 }
-            } else if (info.bits <= 32) {
-                numberElementType = NElementType.FLOAT_COMPLEX;
-                try {
-                    numberValue = (new NFloatComplex(Float.parseFloat(info.baseValue), Float.parseFloat(info.imaginaryValue)));
-                } catch (Exception ex) {
-                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                    numberValue = (NFloatComplex.ZERO);
+                case S8:
+                case S16:
+                case S32: {
+                    numberElementType = NElementType.FLOAT_COMPLEX;
+                    try {
+                        numberValue = (new NFloatComplex(Float.parseFloat(info.baseValue), Float.parseFloat(info.imaginaryValue)));
+                    } catch (Exception ex) {
+                        errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                        numberValue = (NFloatComplex.ZERO);
+                    }
+                    break;
                 }
-            } else {
-                numberElementType = NElementType.DOUBLE_COMPLEX;
-                try {
-                    numberValue = (new NDoubleComplex(Double.parseDouble(info.baseValue), Double.parseDouble(info.imaginaryValue)));
-                } catch (Exception ex) {
-                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                    numberValue = (NDoubleComplex.ZERO);
+                case AUTO:
+                case S64: {
+                    numberElementType = NElementType.DOUBLE_COMPLEX;
+                    try {
+                        numberValue = (new NDoubleComplex(Double.parseDouble(info.baseValue), Double.parseDouble(info.imaginaryValue)));
+                    } catch (Exception ex) {
+                        errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                        numberValue = (NDoubleComplex.ZERO);
+                    }
                 }
             }
         } else {
@@ -1827,26 +1840,26 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     bi = BigInteger.ZERO;
                 }
                 switch (info.bits) {
-                    case 8:
+                    case S8:
                         numberElementType = NElementType.UBYTE;
                         numberValue = (bi.shortValue());
                         break;
-                    case 16:
+                    case S16:
                         numberElementType = NElementType.USHORT;
                         numberValue = (bi.intValue());
                         break;
-                    case 32:
+                    case S32:
                         numberElementType = NElementType.UINT;
                         numberValue = (bi.longValue());
                         break;
-                    case 64:
+                    case S64:
                     default:
                         numberElementType = NElementType.ULONG;
                         numberValue = (bi);
                         break;
                 }
             } else {
-                if (info.bits == -1) {
+                if (info.bits == TSONBits.BIG) {
                     if (info.baseValue.contains(".") || info.baseValue.contains("e") || info.baseValue.contains("E")) {
                         numberElementType = NElementType.BIG_DECIMAL;
                         try {
@@ -1866,7 +1879,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     }
                 } else {
                     switch (info.bits) {
-                        case 8: {
+                        case S8: {
                             numberElementType = NElementType.BYTE;
                             try {
                                 numberValue = (Byte.parseByte(info.baseValue));
@@ -1876,7 +1889,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                             }
                             break;
                         }
-                        case 16: {
+                        case S16: {
                             numberElementType = NElementType.SHORT;
                             try {
                                 numberValue = (Short.parseShort(info.baseValue));
@@ -1886,7 +1899,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                             }
                             break;
                         }
-                        case 32:
+                        case S32:
                             numberElementType = NElementType.INT;
                             if (info.baseValue.contains(".") || info.baseValue.contains("e") || info.baseValue.contains("E")) {
                                 try {
@@ -1905,7 +1918,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 }
                             }
                             break;
-                        case 64: {
+                        case S64: {
                             numberElementType = NElementType.LONG;
                             if (info.baseValue.contains(".") || info.baseValue.contains("e") || info.baseValue.contains("E")) {
                                 try {
@@ -1924,7 +1937,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                             }
                             break;
                         }
-                        case -2: // auto detect
+                        case AUTO: // auto detect
                         default: {
                             if (info.baseValue.contains(".") || info.baseValue.contains("e") || info.baseValue.contains("E")) {
                                 numberElementType = NElementType.DOUBLE;
