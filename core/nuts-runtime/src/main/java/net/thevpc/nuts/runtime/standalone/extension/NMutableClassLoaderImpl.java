@@ -41,7 +41,9 @@ import net.thevpc.nuts.text.NMsg;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -53,6 +55,7 @@ import java.util.stream.Collectors;
 public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableClassLoader {
 
     private final List<NDefinition> dependencies = new ArrayList<>();
+    private final Map<String, NDefinition> dependenciesByShortId = new HashMap<>();
 
     public NMutableClassLoaderImpl(ClassLoader parent) {
         super(new URL[0], parent);
@@ -72,6 +75,10 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
         for (NDependency dep : allDefinitions) {
             NDependency id = dep;
             if (!NBlankable.isBlank(id.getGroupId())) {
+                if (isLoadedDependency(id.toId())) {
+                    NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("dependency already loaded %s...", id).asFineAlert());
+                    continue;
+                }
                 NChronometer ch = NChronometer.startNow();
                 NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("searching dependency %s...", id).asConfig().withIntent(NMsgIntent.PROGRESS));
                 List<NDefinition> d = NSearch.of(id.toId()).latest()
@@ -110,7 +117,10 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
             NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("loaded dependency %s...", id.getId()).asFineAlert());
             ok.add(id);
         }
-        dependencies.addAll(ok);
+        for (NDefinition d : ok) {
+            dependenciesByShortId.put(d.getId().getShortName(), d);
+            dependencies.add(d);
+        }
         for (URL a : urls) {
             super.addURL(a);
         }
@@ -118,9 +128,12 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
     }
 
     public boolean isLoadedDependency(NId id) {
-        if (dependencies.stream().anyMatch(x -> x.getId().equalsShortId(id))) {
+        if (dependenciesByShortId.containsKey(id.getShortName())) {
             return true;
         }
+//        if (dependencies.stream().anyMatch(x -> x.getId().equalsShortId(id))) {
+//            return true;
+//        }
 
         // try current class loader
         URL s = getResource("META-INF/maven/" + id.getGroupId() + "/" + id.getArtifactId() + "/pom.properties");
@@ -132,10 +145,7 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
             return true;
         }
         s = getResource("META-INF/nuts/" + id.getGroupId() + "/" + id.getArtifactId() + "/nuts.nuts");
-        if (s != null) {
-            return true;
-        }
-        return false;
+        return s != null;
     }
 
 
