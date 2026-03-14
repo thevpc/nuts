@@ -11,15 +11,24 @@ public class NDoubleComplex extends Number implements Serializable, Comparable<N
     public static final NDoubleComplex ZERO = new NDoubleComplex(0, 0);
     public static final NDoubleComplex ONE = new NDoubleComplex(1, 0);
     public static final NDoubleComplex I = new NDoubleComplex(0, 1);
-    private double real;
-    private double imag;
+    private final double real;
+    private final double imag;
 
     /**
      * @param any string
      * @return optional of complex
      * @since 0.8.6
      */
-    public NOptional<NDoubleComplex> of(String any) {
+    public static NDoubleComplex of(String any) {
+        return parse(any).get();
+    }
+
+    /**
+     * @param any string
+     * @return optional of complex
+     * @since 0.8.6
+     */
+    public static NOptional<NDoubleComplex> parse(String any) {
         try {
             if (NBlankable.isBlank(any)) {
                 return NOptional.ofNamedEmpty("complex");
@@ -30,6 +39,14 @@ public class NDoubleComplex extends Number implements Serializable, Comparable<N
         } catch (Exception e) {
             return NOptional.ofNamedError("complex : " + any);
         }
+    }
+
+    public static NDoubleComplex of(double x, double y) {
+        return new NDoubleComplex(x, y);
+    }
+
+    public static NDoubleComplex ofPolar(double r, double theta) {
+        return new NDoubleComplex(r * Math.cos(theta), r * Math.sin(theta));
     }
 
     public NDoubleComplex(double real, double imag) {
