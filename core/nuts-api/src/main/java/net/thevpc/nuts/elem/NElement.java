@@ -474,6 +474,10 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
         return NElementFactory.of().ofNumber(value);
     }
 
+    static NPrimitiveElement ofNumber(Number value, NNumberLayout layout, String suffix) {
+        return NElementFactory.of().ofNumber(value,layout,suffix);
+    }
+
     static NPrimitiveElement ofBigDecimal(BigDecimal value) {
         return NElementFactory.of().ofBigDecimal(value);
     }
