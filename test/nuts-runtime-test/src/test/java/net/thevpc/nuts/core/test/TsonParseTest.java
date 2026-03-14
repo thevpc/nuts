@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOUtils;
+import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.time.NChronometer;
-import net.thevpc.nuts.util.NAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -51,6 +51,15 @@ public class TsonParseTest {
         String tson = "a:b b";
         NElement parsed = NElementReader.ofTson().read(tson);
         TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+    }
+
+    @Test
+    public void test31() {
+//        Assertions.assertEquals(-30, NElementReader.ofTson().read("-30").asNumberValue().get());
+//        Assertions.assertEquals(-30L, NElementReader.ofTson().read("-30s64").asNumberValue().get());
+//        Assertions.assertEquals(30, NElementReader.ofTson().read("+30").asNumberValue().get());
+//        Assertions.assertEquals(30L, NElementReader.ofTson().read("+30s64").asNumberValue().get());
+        Assertions.assertEquals(NDoubleComplex.of(-30,-30), NElementReader.ofTson().read("-30-30i").asNumberValue().get());
     }
 
     @Test
@@ -329,6 +338,7 @@ public class TsonParseTest {
         List<NElementTokenImpl> tokens = lexer.all();
         Assertions.assertEquals("^myid{Hello World^myid}", tokens.get(0).image());
     }
+
 
     @Test
     public void test16_streams4() {
@@ -888,6 +898,7 @@ public class TsonParseTest {
         Assertions.assertEquals(expected, s2);
     }
 
+
     @Test
     public void testSpecial23() {
         NChronometer c = NChronometer.startNow();
@@ -1053,4 +1064,36 @@ public class TsonParseTest {
             Assertions.assertEquals(expected, actual, "Failed for " + tson);
         }
     }
+
+    @Test
+    public void test30() {
+        String tson = "            datasets:[\n" +
+                "                {id:\"factory\",name:\"factory\"}\n" +
+                "            }";
+        NElement e = net.thevpc.nuts.elem.NElementReader.ofTson().read(tson);
+        TestUtils.println(tson);
+    }
+
+    @Test
+    public void testSpecial31() {
+        String expected =
+                "a,-b,c";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+        Assertions.assertEquals(3,e.asFragment().get().size());
+    }
+
+    @Test
+    public void testSpecial32() {
+        String expected =
+                "(a,-b,c)";
+        NElement e = NElementReader.ofTson().read(expected);
+        String s2 = e.toString();
+        TestUtils.println(s2);
+        Assertions.assertEquals(expected, s2);
+        Assertions.assertEquals(3,e.asUplet().get().size());
+    }
+
 }
