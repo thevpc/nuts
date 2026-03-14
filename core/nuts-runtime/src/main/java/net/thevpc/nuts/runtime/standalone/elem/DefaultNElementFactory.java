@@ -931,38 +931,50 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NPrimitiveElement ofNumber(Number value) {
+        return ofNumber(value, null, null);
+    }
+
+    @Override
+    public NPrimitiveElement ofNumber(Number value, NNumberLayout layout, String suffix) {
         if (value == null) {
             return ofNull();
         }
         switch (value.getClass().getName()) {
             case "java.lang.Byte":
-                return new DefaultNNumberElement(NElementType.BYTE, value);
+                return new DefaultNNumberElement(NElementType.BYTE, value, layout, suffix);
             case "java.lang.Short":
-                return new DefaultNNumberElement(NElementType.SHORT, value);
+                return new DefaultNNumberElement(NElementType.SHORT, value, layout, suffix);
             case "java.lang.Integer":
-                return new DefaultNNumberElement(NElementType.INT, value);
+                return new DefaultNNumberElement(NElementType.INT, value, layout, suffix);
             case "java.lang.Long":
-                return new DefaultNNumberElement(NElementType.LONG, value);
+                return new DefaultNNumberElement(NElementType.LONG, value, layout, suffix);
             case "java.math.BigInteger":
-                return new DefaultNNumberElement(NElementType.BIG_INT, value);
+                return new DefaultNNumberElement(NElementType.BIG_INT, value, layout, suffix);
             case "java.lang.float":
-                return new DefaultNNumberElement(NElementType.FLOAT, value);
+                return new DefaultNNumberElement(NElementType.FLOAT, value, layout, suffix);
             case "java.lang.Double":
-                return new DefaultNNumberElement(NElementType.DOUBLE, value);
+                return new DefaultNNumberElement(NElementType.DOUBLE, value, layout, suffix);
             case "java.math.BigDecimal":
-                return new DefaultNNumberElement(NElementType.BIG_DECIMAL, value);
+                return new DefaultNNumberElement(NElementType.BIG_DECIMAL, value, layout, suffix);
+            case "net.thevpc.nuts.math.NDoubleComplex":
+                return new DefaultNNumberElement(NElementType.DOUBLE_COMPLEX, value, layout, suffix);
+            case "net.thevpc.nuts.math.NFloatComplex":
+                return new DefaultNNumberElement(NElementType.FLOAT_COMPLEX, value, layout, suffix);
+            case "net.thevpc.nuts.math.NBigComplex":
+                return new DefaultNNumberElement(NElementType.BIG_COMPLEX, value, layout, suffix);
         }
+        //this is for when someone implements a custom NDoubleComplex, etc
         if (value instanceof NDoubleComplex) {
-            return new DefaultNNumberElement(NElementType.DOUBLE_COMPLEX, value);
+            return new DefaultNNumberElement(NElementType.DOUBLE_COMPLEX, value, layout, suffix);
         }
         if (value instanceof NBigComplex) {
-            return new DefaultNNumberElement(NElementType.BIG_COMPLEX, value);
+            return new DefaultNNumberElement(NElementType.BIG_COMPLEX, value, layout, suffix);
         }
         if (value instanceof NFloatComplex) {
-            return new DefaultNNumberElement(NElementType.FLOAT_COMPLEX, value);
+            return new DefaultNNumberElement(NElementType.FLOAT_COMPLEX, value, layout, suffix);
         }
         // ???
-        return new DefaultNNumberElement(NElementType.FLOAT, value);
+        return new DefaultNNumberElement(NElementType.DOUBLE, value, layout, suffix);
     }
 
     public NElementComment ofBlocComment(String lines) {
