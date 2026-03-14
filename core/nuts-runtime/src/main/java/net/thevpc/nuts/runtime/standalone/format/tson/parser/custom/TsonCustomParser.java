@@ -185,6 +185,9 @@ public class TsonCustomParser {
                     }
                 }
             } else {
+                if(t.prefixes.stream().anyMatch(p->p.type()==NElementTokenType.COMMA || p.type()==NElementTokenType.SEMICOLON)){
+                    break;
+                }
                 if (isOp(t)) {
                     nextToken();
                     NElement e = new DefaultNOperatorSymbolElement(NOperatorSymbol.parse(t.token.image()).get(),
@@ -543,6 +546,7 @@ public class TsonCustomParser {
         NElementTokenInfo lpar = nextToken();
         beforeLparAffixes.addAll(tokensToAffixes(lpar.prefixes));
         List<NAffix> pendingCommaSeparators = new ArrayList<>();
+        NElementTokenInfo rpar = null;
         while (true) {
             NElementTokenInfo p = peekToken();
             if (p == null) {
@@ -555,17 +559,26 @@ public class TsonCustomParser {
                 break;
             }
             if (isToken(stopToken)) {
+                rpar = nextToken();
                 break;
             }
-            elements.add(exprOrPairElement(copyAndClear(pendingCommaSeparators)));
-            if (isToken(NElementTokenType.COMMA) || isToken(NElementTokenType.SEMICOLON)) {
-                NElementTokenInfo t = nextToken();
-                pendingCommaSeparators.addAll(tokenToAffixes(t));
+            NElement e = exprOrPairElement(copyAndClear(pendingCommaSeparators));
+            if(e==null){
+                //found unsupported token, skip it
+                diagnostics.add(new DefaultNElementDiagnostic(p.token, NMsg.ofC("unexpected " + p.token.type().id())));
+                nextToken();
+            }else {
+                elements.add(e);
+                if (isToken(NElementTokenType.COMMA) || isToken(NElementTokenType.SEMICOLON)) {
+                    NElementTokenInfo t = nextToken();
+                    pendingCommaSeparators.addAll(tokenToAffixes(t));
+                }
             }
         }
-        NElementTokenInfo rpar = nextToken();
         beforeRparAffixes.addAll(copyAndClear(pendingCommaSeparators));
-        beforeRparAffixes.addAll(tokenToAffixes(rpar));
+        if(rpar!=null){
+            beforeRparAffixes.addAll(tokenToAffixes(rpar));
+        }
     }
 
     private NListItemElement listItem(boolean ordered, int depth, List<NAffix> pendingAffixTokens, List<NElementDiagnostic> diagnostics) {
