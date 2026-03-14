@@ -12,25 +12,25 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class DefaultNNumberElement extends DefaultNPrimitiveElement implements NNumberElement {
-    private NNumberLayout layout;
-    private String suffix;
-    private String raw;
+    private final NNumberLayout layout;
+    private final String suffix;
+    private final String raw;
 
     public DefaultNNumberElement(NElementType type, Number value) {
-        this(type, value, null, null, null,null,null,null);
+        this(type, value, null, null, null, null, null, null);
     }
 
     public DefaultNNumberElement(NElementType type, Number value, NNumberLayout layout, String suffix) {
-        this(type, value, layout, suffix, null,null,null,null);
+        this(type, value, layout, suffix, null, null, null, null);
     }
 
     public DefaultNNumberElement(NElementType type, Number value,
                                  NNumberLayout layout,
                                  String suffix,
                                  String raw,
-                                 List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
-        super(type, value, affixes,diagnostics,metadata);
-        this.layout = layout == null ? NNumberLayout.DECIMAL : layout;
+                                 List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
+        super(type, value, affixes, diagnostics, metadata);
+        this.layout = (type.isAnyFloatingNumber() || layout == null) ? NNumberLayout.DECIMAL : layout;
         this.suffix = NStringUtils.trimToNull(suffix);
         this.raw = NStringUtils.trimToNull(raw);
     }
@@ -146,7 +146,7 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
                 layout,
                 suffix,
                 null,
-                affixes(), diagnostics(),metadata())
+                affixes(), diagnostics(), metadata())
         );
     }
 
@@ -257,7 +257,7 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
                 break;
             }
         }
-        if(!NBlankable.isBlank(value)) {
+        if (!NBlankable.isBlank(value)) {
             sb.append(suffix);
         }
         return sb.toString();
