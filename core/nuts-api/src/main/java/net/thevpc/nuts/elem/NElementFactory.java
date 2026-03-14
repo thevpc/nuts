@@ -262,6 +262,8 @@ public interface NElementFactory extends NComponent {
 
     NPrimitiveElement ofBigDecimal(BigDecimal value);
 
+    NPrimitiveElement ofNumber(Number value, NNumberLayout layout, String suffix);
+
     NPrimitiveElement ofBigDecimal(BigDecimal value, String suffix);
 
     NPrimitiveElement ofBigInt(BigInteger value);
@@ -394,7 +396,7 @@ public interface NElementFactory extends NComponent {
 
     NBoundAffix ofBoundAffix(NAffix affix, NAffixAnchor anchor);
 
-    NFragmentElement ofFragment(NElement...elements);
+    NFragmentElement ofFragment(NElement... elements);
 
     NElementLine ofElementLine(String prefix, String startMarker, String startPadding, String content, String endPadding, String endMarker, NNewLineMode newline);
 }
