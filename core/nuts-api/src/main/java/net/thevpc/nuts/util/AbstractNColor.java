@@ -85,6 +85,9 @@ abstract class AbstractNColor implements NColor {
         return li.get(a % li.size());
     }
 
+    static NColor _reg(String name, String canonicalName, int rgb) {
+        return _reg2(canonicalName, NColor.of32(rgb, name));
+    }
     static NColor _reg(String name, String canonicalName, int r, int g, int b) {
         return _reg2(canonicalName, NColor.of32(r, g, b, name));
     }
@@ -221,7 +224,7 @@ abstract class AbstractNColor implements NColor {
         if (name == null) {
             return of32(color);
         }
-        return new AbstractNColor.NColor32(color);
+        return new AbstractNColor.NColor32Named(color,name);
     }
 
     public static NColor of64(long color) {
