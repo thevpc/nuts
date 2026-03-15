@@ -657,7 +657,7 @@ public class DefaultNIORPI implements NIORPI {
             return JavaJarUtils.parseJarExecutionEntries(inputStream);
         } else if ("class".equals(type)) {
             NExecutionEntry u = JavaClassUtils.parseClassExecutionEntry(inputStream, sourceName);
-            return u == null ? Collections.emptyList() : Arrays.asList(u);
+            return u == null ? Collections.emptyList() : Collections.singletonList(u);
         }
         return Collections.emptyList();
     }
@@ -743,5 +743,4 @@ public class DefaultNIORPI implements NIORPI {
             return inputStreamProvider.getReader();
         }
     }
-
 }
