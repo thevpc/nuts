@@ -311,6 +311,12 @@ public interface NColor {
     NColor TACHA = AbstractNColor._reg("Tacha", "Tacha", 214, 183, 90);
     NColor SHADOW = AbstractNColor._reg("Shadow", "Shadow", 138, 121, 93);
     NColor MOCASSIN = AbstractNColor._reg("Moccasin", "Moccasin", 255, 228, 181);
+    NColor COPPER = AbstractNColor._reg("Copper", "Copper", 0xb87333);
+    NColor RAW_COPPER = AbstractNColor._reg("RawCopper", "Copper", 0xc46b51);
+    NColor VINTAGE_COPPER = AbstractNColor._reg("VintageCopper", "Copper", 0x9d5f46);
+    NColor BRIGHT_COPPER = AbstractNColor._reg("BrightCopper", "Copper", 0xc7561e);
+    NColor DARK_COPPER = AbstractNColor._reg("DarkCopper", "Copper", 0x77422c);
+    NColor BURNT_COPPER = AbstractNColor._reg("BurntCopper", "Copper", 0x982e01);
 
     NColor GRAY = AbstractNColor._reg("Gray", "Gray", 128, 128, 128);
     NColor GRAY_0 = AbstractNColor._regGray(0);
