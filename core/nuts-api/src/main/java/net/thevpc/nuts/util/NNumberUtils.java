@@ -174,7 +174,7 @@ public class NNumberUtils {
             case BIG_DECIMAL:
                 return andBigDecimals(NLiteral.of(a).asBigDecimal().get(), NLiteral.of(b).asBigDecimal().get());
             case BIG_INT:
-                return NLiteral.of(a).asBigInt().get().or(NLiteral.of(b).asBigInt().get());
+                return NLiteral.of(a).asBigInt().get().and(NLiteral.of(b).asBigInt().get());
             case DOUBLE:
                 return andDoubles(NLiteral.of(a).asDouble().get(), NLiteral.of(b).asDouble().get());
             case FLOAT:
@@ -475,7 +475,7 @@ public class NNumberUtils {
         }
         switch (at) {
             case BIG_COMPLEX: {
-                switch (at) {
+                switch (bt) {
                     case BIG_COMPLEX:
                     case DOUBLE_COMPLEX:
                     case FLOAT_COMPLEX:
@@ -492,7 +492,7 @@ public class NNumberUtils {
                 }
             }
             case DOUBLE_COMPLEX: {
-                switch (at) {
+                switch (bt) {
                     case BIG_COMPLEX:
                         return NElementType.BIG_COMPLEX;
                     case DOUBLE_COMPLEX:
@@ -520,7 +520,7 @@ public class NNumberUtils {
                 }
             }
             case FLOAT_COMPLEX: {
-                switch (at) {
+                switch (bt) {
                     case BIG_COMPLEX:
                         return NElementType.BIG_COMPLEX;
                     case DOUBLE_COMPLEX:
@@ -548,7 +548,7 @@ public class NNumberUtils {
                 }
             }
             case BIG_DECIMAL: {
-                switch (at) {
+                switch (bt) {
                     case BIG_COMPLEX:
                         return NElementType.BIG_COMPLEX;
                     case DOUBLE_COMPLEX:
@@ -576,7 +576,7 @@ public class NNumberUtils {
                 }
             }
             case BIG_INT: {
-                switch (at) {
+                switch (bt) {
                     case BIG_COMPLEX:
                         return NElementType.BIG_COMPLEX;
                     case DOUBLE_COMPLEX:
@@ -604,7 +604,7 @@ public class NNumberUtils {
                 }
             }
             case DOUBLE: {
-                switch (at) {
+                switch (bt) {
                     case BIG_COMPLEX:
                         return NElementType.BIG_COMPLEX;
                     case DOUBLE_COMPLEX:
@@ -632,7 +632,7 @@ public class NNumberUtils {
                 }
             }
             case FLOAT: {
-                switch (at) {
+                switch (bt) {
                     case BIG_COMPLEX:
                         return NElementType.BIG_COMPLEX;
                     case DOUBLE_COMPLEX:
@@ -660,7 +660,7 @@ public class NNumberUtils {
                 }
             }
             case LONG: {
-                switch (at) {
+                switch (bt) {
                     case BIG_COMPLEX:
                         return NElementType.BIG_COMPLEX;
                     case DOUBLE_COMPLEX:
@@ -688,7 +688,7 @@ public class NNumberUtils {
                 }
             }
             case INT: {
-                switch (at) {
+                switch (bt) {
                     case BIG_COMPLEX:
                         return NElementType.BIG_COMPLEX;
                     case DOUBLE_COMPLEX:
@@ -716,7 +716,7 @@ public class NNumberUtils {
                 }
             }
             case SHORT: {
-                switch (at) {
+                switch (bt) {
                     case BIG_COMPLEX:
                         return NElementType.BIG_COMPLEX;
                     case DOUBLE_COMPLEX:
@@ -744,7 +744,7 @@ public class NNumberUtils {
                 }
             }
             case BYTE: {
-                switch (at) {
+                switch (bt) {
                     case BIG_COMPLEX:
                         return NElementType.BIG_COMPLEX;
                     case DOUBLE_COMPLEX:
