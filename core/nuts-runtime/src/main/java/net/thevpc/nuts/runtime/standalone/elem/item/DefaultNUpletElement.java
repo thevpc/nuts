@@ -144,7 +144,7 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
         if (!super.equals(o)) return false;
         DefaultNUpletElement nElements = (DefaultNUpletElement) o;
         return Objects.deepEquals(params, nElements.params)
-                && Objects.equals(name, nElements.name())
+                && Objects.equals(name, nElements.name().orNull())
                 ;
     }
 
