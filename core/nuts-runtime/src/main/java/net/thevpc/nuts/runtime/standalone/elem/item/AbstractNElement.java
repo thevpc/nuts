@@ -52,10 +52,10 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractNElement implements NElement {
 
-    private NElementType type;
-    private List<NBoundAffix> affixes;
-    private List<NElementDiagnostic> diagnostics;
-    private NElementMetadata metadata;
+    private final NElementType type;
+    private final List<NBoundAffix> affixes;
+    private final List<NElementDiagnostic> diagnostics;
+    private final NElementMetadata metadata;
 
     public AbstractNElement(NElementType type, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
         this.type = type;
@@ -1578,7 +1578,7 @@ public abstract class AbstractNElement implements NElement {
      */
     public NElement format(NContentType contentType, NElementFormatter formatter) {
         return NOptional.ofSingleton(
-                transform(new DefaultNElementFormatContext(this, contentType == null ? NContentType.TSON : contentType), formatter!=null?formatter : NElementFormatter.ofSafe())
+                transform(new DefaultNElementFormatContext(this, contentType == null ? NContentType.TSON : contentType), formatter != null ? formatter : NElementFormatter.ofSafe())
         ).get();
     }
 
@@ -1635,6 +1635,19 @@ public abstract class AbstractNElement implements NElement {
     public NOptional<NStringElement> asName() {
         if (type() == NElementType.NAME) {
             return NOptional.of((NStringElement) this);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to name: %s", type().id(), this));
+    }
+
+    @Override
+    public NOptional<NStringElement> toName() {
+        if (type() == NElementType.NAME) {
+            return NOptional.of((NStringElement) this);
+        } else if (isAnyString()) {
+            String s = asStringValue().get();
+            if (NElementUtils.isValidElementName(s)) {
+                return NOptional.of((NStringElement) ((NPrimitiveElementBuilder) builder()).setString(s, NElementType.NAME).build());
+            }
         }
         return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to name: %s", type().id(), this));
     }

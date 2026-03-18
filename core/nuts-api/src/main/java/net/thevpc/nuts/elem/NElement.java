@@ -475,7 +475,7 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
     }
 
     static NPrimitiveElement ofNumber(Number value, NNumberLayout layout, String suffix) {
-        return NElementFactory.of().ofNumber(value,layout,suffix);
+        return NElementFactory.of().ofNumber(value, layout, suffix);
     }
 
     static NPrimitiveElement ofBigDecimal(BigDecimal value) {
@@ -1241,6 +1241,8 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
     NOptional<NListElement> asUnorderedList();
 
     NOptional<NStringElement> asName();
+
+    NOptional<NStringElement> toName();
 
     NOptional<NTernaryOperatorElement> asTernaryOperator();
 
