@@ -1939,13 +1939,14 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                         }
                         case AUTO: // auto detect
                         default: {
-                            if (info.baseValue.contains(".") || info.baseValue.contains("e") || info.baseValue.contains("E")) {
+                            String baseValue = info.baseValue.replace("_", "");
+                            if (baseValue.contains(".") || baseValue.contains("e") || baseValue.contains("E")) {
                                 numberElementType = NElementType.DOUBLE;
                                 try {
-                                    numberValue = (Double.parseDouble(info.baseValue));
+                                    numberValue = (Double.parseDouble(baseValue));
                                 } catch (Exception ex) {
                                     try {
-                                        numberValue = new BigDecimal(info.baseValue);
+                                        numberValue = new BigDecimal(baseValue);
                                         numberElementType = NElementType.BIG_DECIMAL;
                                     } catch (Exception ex2) {
                                         errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
@@ -1955,14 +1956,14 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                             } else {
                                 numberElementType = NElementType.INT;
                                 try {
-                                    numberValue = (Integer.parseInt(info.baseValue));
+                                    numberValue = (Integer.parseInt(baseValue));
                                 } catch (Exception ex) {
                                     try {
-                                        numberValue = (Long.parseLong(info.baseValue));
+                                        numberValue = (Long.parseLong(baseValue));
                                         numberElementType = NElementType.LONG;
                                     } catch (Exception ex2) {
                                         try {
-                                            numberValue = new BigInteger(info.baseValue);
+                                            numberValue = new BigInteger(baseValue);
                                             numberElementType = NElementType.BIG_INT;
                                         } catch (Exception ex3) {
                                             errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));

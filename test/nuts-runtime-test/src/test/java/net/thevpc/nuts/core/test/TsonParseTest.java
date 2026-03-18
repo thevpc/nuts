@@ -232,6 +232,39 @@ public class TsonParseTest {
         String tson = "-1E-5hello";
         NElement parsed = NElementReader.ofTson().read(tson);
         TestUtils.println(parsed.toString());
+        Assertions.assertEquals(-1E-5,parsed.asNumberValue().get());
+
+        tson = "2.1GHz";
+        parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(parsed.toString());
+        Assertions.assertEquals(2.1,parsed.asNumberValue().get());
+
+        tson = "2.3_GHz";
+        parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(parsed.toString());
+        Assertions.assertEquals(2.3,parsed.asNumberValue().get());
+
+        tson = "2_1.3_5_GHz";
+        parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(parsed.toString());
+        Assertions.assertEquals(21.35,parsed.asNumberValue().get());
+
+        tson = "2__1.3__5_GHz";
+        parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(parsed.toString());
+        Assertions.assertEquals(21.35,parsed.asNumberValue().get());
+
+        tson = "2__1_._3__5_GHz";
+        parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(parsed.toString());
+        Assertions.assertEquals(21.35,parsed.asNumberValue().get());
+
+        tson = "2__1_._3__5___GHz";
+        parsed = NElementReader.ofTson().read(tson);
+        TestUtils.println(parsed.toString());
+        Assertions.assertEquals(21.35,parsed.asNumberValue().get());
+
+
     }
 
     @Test
