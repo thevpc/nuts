@@ -11,13 +11,16 @@ import java.io.PrintStream;
  * thanks to
  * https://stackoverflow.com/questions/6913983/jtextpane-removing-first-line
  */
+/**
+ * thanks to
+ * https://stackoverflow.com/questions/6913983/jtextpane-removing-first-line
+ */
 public class AnsiTermPane extends JTextPane {
-    //    public static Color colorForeground = Color.BLACK;//cReset;
-//    public static Color colorBackground = null;//cReset;
 
-    //    public static Color colorCurrent = Color.WHITE;//cReset;
     String remaining = "";
-    PrintStream ps;
+
+    private volatile PrintStream ps;
+
     AnsiColors ansiColors = new AnsiColors();
     TextStyle currentStyle = new TextStyle()
             .setForeColor(Color.BLACK);
@@ -41,8 +44,8 @@ public class AnsiTermPane extends JTextPane {
     }
 
     public void setDarkMode(boolean darkMode) {
-        ansiColors.cResetBackground = getBackground();
         ansiColors.setDarkMode(darkMode);
+        ansiColors.cResetBackground = getBackground();
         applyFont();
         setForeground(ansiColors.cResetForeground);
         setBackground(ansiColors.preferredBackground);
@@ -89,11 +92,9 @@ public class AnsiTermPane extends JTextPane {
             Element first = root.getElement(root.getElementCount() - 1);
             try {
                 int offs = first.getStartOffset();
-                int len = first.getEndOffset()-offs-1;
+                int len = first.getEndOffset() - offs - 1;
                 int length = getDocument().getLength();
-                if (offs < 0 || (offs + len) > length) {
-
-                }else {
+                if (len > 0 && offs >= 0 && (offs + len) <= length) {
                     getDocument().remove(offs, len);
                 }
             } catch (BadLocationException e) {
@@ -108,7 +109,6 @@ public class AnsiTermPane extends JTextPane {
     }
 
     public void append(TextStyle c, String s) {
-//        System.out.println(">>"+colorName(c)+" : "+s);
         StyleContext sc = StyleContext.getDefaultStyleContext();
         AttributeSet aset = SimpleAttributeSet.EMPTY;
         aset = sc.addAttribute(aset, StyleConstants.Foreground, c.foreColor);
@@ -119,56 +119,68 @@ public class AnsiTermPane extends JTextPane {
         aset = sc.addAttribute(aset, StyleConstants.Bold, c.bold);
         aset = sc.addAttribute(aset, StyleConstants.Italic, c.italic);
         aset = sc.addAttribute(aset, StyleConstants.StrikeThrough, c.strikeThrough);
-        int len = getDocument().getLength(); // same value as getText().length();
+        int len = getDocument().getLength();
         boolean editable = isEditable();
         setEditable(true);
-        setCaretPosition(len);  // place caret at the end (with no selection)
+        setCaretPosition(len);
         setCharacterAttributes(aset, false);
         replaceSelection(s);
-        // there is no selection, so inserts at caret
         ensureMaxRows();
         setEditable(editable);
-        applyFont();
     }
 
     private void ensureMaxRows() {
         int currentMaxRows = getMaxRows();
         if (currentMaxRows > 0) {
-            int rowsCount = getText().split("\n").length;
-            while (rowsCount > currentMaxRows) {
-                Element root = this.getDocument().getDefaultRootElement();
+            Element root = this.getDocument().getDefaultRootElement();
+            while (root.getElementCount() > currentMaxRows) {
                 Element first = root.getElement(0);
                 try {
                     this.getDocument().remove(first.getStartOffset(), first.getEndOffset());
                 } catch (BadLocationException e) {
                     break;
                 }
-                rowsCount--;
             }
         }
     }
 
     public PrintStream asPrintStream() {
         if (ps == null) {
-            ps = new PrintStream(
-                    new OutputStream() {
+            synchronized (this) {
+                if (ps == null) {
+                    ps = new TempPrintStream(this);
+                }
+            }
+        }
+        return ps;
+    }
+
+    private static class TempPrintStream extends PrintStream {
+        private AnsiTermPane termPane;
+
+        public TempPrintStream(AnsiTermPane termPane) {
+            super(new OutputStream() {
                 @Override
                 public void write(int b) throws IOException {
                     UIHelper.withinGUI(() -> {
-                        appendANSI(String.valueOf((char) b));
+                        termPane.appendANSI(String.valueOf((char) b));
                     });
                 }
 
                 @Override
                 public void write(byte[] b, int off, int len) throws IOException {
+                    String decoded = new String(b, off, len);
                     UIHelper.withinGUI(() -> {
-                        appendANSI(new String(b, off, len));
+                        termPane.appendANSI(decoded);
                     });
                 }
-            }
-            );
+            });
+            this.termPane = termPane;
         }
-        return ps;
+
+        public AnsiTermPane getTermPane() {
+            return termPane;
+        }
     }
 
     public void printlnAnsi(String s) {
@@ -188,34 +200,32 @@ public class AnsiTermPane extends JTextPane {
         return -1;
     }
 
-    public void appendANSI(String s) { // convert ANSI color codes first
-        int aPos = 0;   // current char position in addString
-        int aIndex = 0; // index of next Escape sequence
-        int mIndex = 0; // index of "m" terminating Escape sequence
+    public void appendANSI(String s) {
+        int aPos = 0;
+        int aIndex = 0;
+        int mIndex = 0;
         String tmpString = "";
-        boolean stillSearching = true; // true until no more Escape sequences
+        boolean stillSearching = true;
         String addString = remaining + s;
         remaining = "";
 
         if (!addString.isEmpty()) {
-            aIndex = addString.indexOf("\u001B"); // find first escape
-            if (aIndex == -1) { // no escape/color change in this string, so just send it with current color
+            aIndex = addString.indexOf("\u001B");
+            if (aIndex == -1) {
                 append(currentStyle, addString);
                 return;
             }
-// otherwise There is an escape character in the string, so we must process it
 
-            if (aIndex > 0) { // Escape is not first char, so send text up to first escape
+            if (aIndex > 0) {
                 tmpString = addString.substring(0, aIndex);
                 append(currentStyle, tmpString);
                 aPos = aIndex;
             }
-// aPos is now at the beginning of the first escape sequence
 
             stillSearching = true;
             while (stillSearching) {
-                mIndex = endOfEscape(addString, aPos); // find the end of the escape sequence
-                if (mIndex < 0) { // the buffer ends halfway through the ansi string!
+                mIndex = endOfEscape(addString, aPos);
+                if (mIndex < 0) {
                     remaining = addString.substring(aPos);
                     stillSearching = false;
                     continue;
@@ -224,30 +234,27 @@ public class AnsiTermPane extends JTextPane {
                     applyANSIColor(tmpString);
                 }
                 aPos = mIndex + 1;
-// now we have the color, send text that is in that color (up to next escape)
 
                 aIndex = addString.indexOf("\u001B", aPos);
 
-                if (aIndex == -1) { // if that was the last sequence of the input, send remaining text
+                if (aIndex == -1) {
                     tmpString = addString.substring(aPos);
                     append(currentStyle, tmpString);
                     stillSearching = false;
-                    continue; // jump out of loop early, as the whole string has been sent now
+                    continue;
                 }
 
-                // there is another escape sequence, so send part of the string and prepare for the next
                 tmpString = addString.substring(aPos, aIndex);
                 aPos = aIndex;
                 append(currentStyle, tmpString);
-
-            } // while there's text in the input buffer
+            }
         }
         applyFont();
     }
 
     public void applyANSIColor(String ANSIColor) {
         switch (ANSIColor) {
-            case "\u001B[2K":{
+            case "\u001B[2K": {
                 clearLastLine();
                 return;
             }
