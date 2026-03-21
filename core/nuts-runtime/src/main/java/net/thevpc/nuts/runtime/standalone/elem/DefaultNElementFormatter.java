@@ -4,10 +4,12 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NMaps;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DefaultNElementFormatter implements NElementFormatter {
     private List<NElementFormatterAction> actions;
     private boolean removeWhiteSpaces;
+    private boolean removeRootSeparators;
     private boolean removeSeparators;
     private boolean sanitize;
     private boolean strict;
@@ -21,6 +23,89 @@ public class DefaultNElementFormatter implements NElementFormatter {
                 }
                 return false;
             });
+    private static class NBoundAffixAndIndex {
+        NBoundAffix value;
+        int index;
+        NBoundAffixAndIndex(NBoundAffix value, int index) {
+            this.value = value;
+            this.index = index;
+        }
+    }
+
+    public static final NElementFormatterAction REMOVED_ROOT_GARBAGE = new NElementFormatterAction() {
+        @Override
+        public void apply(NElementFormatContext context) {
+            NElementBuilder builder = context.builder();
+
+
+            List<NBoundAffixAndIndex> all = new ArrayList<>();
+            List<NBoundAffix> affixes = builder.affixes();
+            for (int i = 0; i < affixes.size(); i++) {
+                all.add(new NBoundAffixAndIndex(affixes.get(i), i));
+            }
+
+            List<NBoundAffixAndIndex> before = all.stream()
+                    .filter(x -> x.value.anchor() == NAffixAnchor.START)
+                    .collect(Collectors.toList());
+            List<NBoundAffixAndIndex> after = all.stream()
+                    .filter(x -> x.value.anchor() == NAffixAnchor.END)
+                    .collect(Collectors.toList());
+
+            Set<Integer> toRemove = new HashSet<>();
+
+            // Helper: is this affix type "cluster-eligible" (space/newline/separator)?
+            // Comments and annotations are boundaries — they break clusters.
+
+            toRemove.addAll(garbageClusters(before));
+            // For END affixes, scan in reverse so clusters are built from the trailing edge inward
+            Collections.reverse(after);
+            toRemove.addAll(garbageClusters(after));
+
+            // Remove in reverse index order to avoid index shifting
+            toRemove.stream()
+                    .sorted(Comparator.reverseOrder())
+                    .forEach(builder::removeAffix);
+        }
+
+        private Set<Integer> garbageClusters(List<NBoundAffixAndIndex> affixes) {
+            Set<Integer> toRemove = new HashSet<>();
+
+            List<List<NBoundAffixAndIndex>> clusters = new ArrayList<>();
+            List<NBoundAffixAndIndex> currentCluster = new ArrayList<>();
+
+            for (NBoundAffixAndIndex item : affixes) {
+                switch (item.value.affix().type()) {
+                    case SPACE:
+                    case NEWLINE:
+                    case SEPARATOR: {
+                        currentCluster.add(item);
+                        break;
+                    }
+                    case LINE_COMMENT:
+                    case BLOC_COMMENT:
+                    case ANNOTATION: {
+                        clusters.add(currentCluster);
+                        currentCluster = new ArrayList<>();
+                        break;
+                    }
+                }
+            }
+            clusters.add(currentCluster);
+
+            for (int i = 0; i < clusters.size(); i++) {
+                List<NBoundAffixAndIndex> cluster = clusters.get(i);
+                boolean isOuterEdge = (i == 0);  // only the outermost edge, not the one adjacent to the value
+                boolean hasSeparator = cluster.stream()
+                        .anyMatch(x -> x.value.affix().type() == NAffixType.SEPARATOR);
+
+                if (hasSeparator || isOuterEdge) {
+                    cluster.forEach(x -> toRemove.add(x.index));
+                }
+            }
+
+            return toRemove;
+        }
+    };
     public static final RemovedAffixesElementFormatterAction REMOVED_SEPARATORS_ELEMENT_FORMATTER_ACTION = new RemovedAffixesElementFormatterAction(null,
             a -> {
                 switch (a.affix().type()) {
@@ -63,6 +148,16 @@ public class DefaultNElementFormatter implements NElementFormatter {
                     "strict", false
             )
     );
+    public static final NElementFormatter TO_STRING = new DefaultNElementFormatter(
+            Collections.emptyList(),
+            NMaps.of(
+                    "removeRootSeparators", true,
+                    "removeWhiteSpaces", false,
+                    "removeSeparators", false,
+                    "sanitize", true,
+                    "strict", false
+            )
+    );
     public static final NElementFormatter VERBATIM = new DefaultNElementFormatter(
             Collections.emptyList(),
             NMaps.of(
@@ -78,6 +173,7 @@ public class DefaultNElementFormatter implements NElementFormatter {
         this.actions = new ArrayList<>(actions);
         this.options = new DefaultNElementFormatOptions(options);
         this.removeWhiteSpaces = this.options.getBoolean("removeWhiteSpaces", () -> false);
+        this.removeRootSeparators = this.options.getBoolean("removeRootSeparators", () -> false);
         this.removeSeparators = this.options.getBoolean("removeSeparators", () -> false);
         this.sanitize = this.options.getBoolean("sanitize", () -> false);
         this.strict = this.options.getBoolean("strict", () -> false);
@@ -106,6 +202,9 @@ public class DefaultNElementFormatter implements NElementFormatter {
         NElementFormatContext fc = ((NElementFormatContext) context).withBuilder(builder).withOptions(options);
         // 1. We create a builder for the current element
 
+        if(removeRootSeparators && context.path().isRoot()){
+            REMOVED_ROOT_GARBAGE.apply(fc);
+        }
         if (removeWhiteSpaces) {
             REMOVED_WHITESPACES_ELEMENT_FORMATTER_ACTION.apply(fc);
         }
