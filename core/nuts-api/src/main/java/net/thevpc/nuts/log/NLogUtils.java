@@ -5,10 +5,12 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class NLogUtils {
     private NLogUtils() {
     }
+
     public static NOptional<Level> parseLogLevel(String value) {
         value = value == null ? "" : value.trim();
         if (value.isEmpty()) {
@@ -76,5 +78,33 @@ public class NLogUtils {
         public CustomLogLevel(String name, int value) {
             super(name, value);
         }
+    }
+
+    public static void safeLog(NMsg msg, Class<?> source) {
+        if (msg == null) {
+            return;
+        }
+        if (source == null) {
+            source = NLogUtils.class;
+        }
+        NLog logger = null;
+        try {
+            logger = NLog.of(source);
+        } catch (Throwable ex) {
+            //
+        }
+        if (logger != null) {
+            try {
+                logger.log(msg);
+                return;
+            } catch (Throwable ex) {
+                //
+            }
+        }
+        Level level = msg.getLevel();
+        if (level == null) {
+            level = Level.INFO;
+        }
+        Logger.getLogger(source.getName()).log(level, msg.toFullString());
     }
 }
