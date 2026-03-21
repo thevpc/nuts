@@ -10,6 +10,7 @@ public enum NElementFormatterStyle implements NEnum {
     SAFE,
     PRETTY,
     VERBATIM,
+    TO_STRING,
     CUSTOM,
     ;
     /**
