@@ -21,5 +21,9 @@ public interface NElementFormatter extends NElementTransform {
         return of(NElementFormatterStyle.SAFE);
     }
 
+    static NElementFormatter ofToString() {
+        return of(NElementFormatterStyle.TO_STRING);
+    }
+
     NElementFormatterBuilder builder();
 }
