@@ -291,6 +291,12 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
+    public NUpletElementBuilder add(String name, Number value) {
+        CoreNElementUtils.add(CoreNElementUtils.pair(name,value),this.params);
+        return this;
+    }
+
+    @Override
     public NUpletElementBuilder add(NElement name, NElement value) {
         CoreNElementUtils.add(CoreNElementUtils.pair(name,value),this.params);
         return this;
