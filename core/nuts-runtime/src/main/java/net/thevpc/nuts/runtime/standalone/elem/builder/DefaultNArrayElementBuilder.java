@@ -193,7 +193,12 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
 
     @Override
     public NArrayElementBuilder add(String name, NElement value) {
-        return add(NElement.ofString(name), CoreNElementUtils.denullOne(value));
+        return add(NElement.ofPair(name,value));
+    }
+
+    @Override
+    public NArrayElementBuilder add(String name, Number value) {
+        return add(NElement.ofPair(name, value));
     }
 
     @Override
