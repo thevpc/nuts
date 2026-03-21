@@ -40,7 +40,7 @@ import java.util.logging.Logger;
  *
  * @app.category Logging
  */
-public interface NLog {
+public interface NLog extends NLogger{
 
     static void runInScope(NLogScope context, Runnable runnable) {
         NLogs.of().runInScope(context, runnable);
