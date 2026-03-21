@@ -33,6 +33,7 @@ import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * @author thevpc
@@ -192,13 +193,34 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
+    public NObjectElementBuilder addIf(String name, NElement value, Predicate<NElement> predicate) {
+        if (predicate == null || predicate.test(value)) {
+            return add(CoreNElementUtils.pair(name, CoreNElementUtils.denullOne(value)));
+        }
+        return this;
+    }
+
+    @Override
     public NObjectElementBuilder add(String name, NElement value) {
-        return add(NElement.ofString(name), CoreNElementUtils.denullOne(value));
+        return add(CoreNElementUtils.pair(name, CoreNElementUtils.denullOne(value)));
+    }
+
+    @Override
+    public NObjectElementBuilder add(String name, Number value) {
+        return add(CoreNElementUtils.pair(name, value));
     }
 
     @Override
     public NObjectElementBuilder add(NElement name, NElement value) {
         add(CoreNElementUtils.pair(name, value));
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder addIf(NElement name, NElement value, Predicate<NElement> predicate) {
+        if (predicate == null || predicate.test(value)) {
+            add(CoreNElementUtils.pair(name, value));
+        }
         return this;
     }
 
@@ -512,7 +534,7 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     @Override
     public NObjectElement build() {
         return new DefaultNObjectElement(name, params, values,
-                affixes() , diagnostics(), metadata()
+                affixes(), diagnostics(), metadata()
         );
     }
 
