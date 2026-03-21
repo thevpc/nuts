@@ -78,6 +78,10 @@ public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
         return NElementFactory.of().ofPair(key, value);
     }
 
+    static NPairElement ofPair(String key, Number value) {
+        return NElementFactory.of().ofPair(key, value);
+    }
+
     static NPairElement ofPair(String key, Byte value) {
         return NElementFactory.of().ofPair(key, value);
     }
