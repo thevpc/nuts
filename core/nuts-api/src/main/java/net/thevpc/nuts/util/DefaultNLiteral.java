@@ -202,7 +202,7 @@ public class DefaultNLiteral implements NLiteral {
                     ((NBigComplex) value).imag().doubleValue()
             ));
         }
-        return asDouble().map(x -> new NDoubleComplex((double) value, 0));
+        return asDouble().map(x -> new NDoubleComplex(x, 0));
     }
 
     @Override
