@@ -392,6 +392,8 @@ public interface NArrayElementBuilder extends NElementBuilder {
 
     NArrayElementBuilder add(String name, NElement value);
 
+    NArrayElementBuilder add(String name, Number value);
+
     NArrayElementBuilder add(String name, boolean value);
 
     NArrayElementBuilder add(String name, int value);
