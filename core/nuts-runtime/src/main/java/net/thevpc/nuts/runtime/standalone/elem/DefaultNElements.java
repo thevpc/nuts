@@ -302,6 +302,9 @@ public class DefaultNElements implements NElements {
             case SAFE: {
                 return DefaultNElementFormatter.SAFE;
             }
+            case TO_STRING: {
+                return DefaultNElementFormatter.TO_STRING;
+            }
             case VERBATIM: {
                 return DefaultNElementFormatter.VERBATIM;
             }
