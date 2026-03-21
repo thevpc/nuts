@@ -1,10 +1,12 @@
 package net.thevpc.nuts.reflect;
 
+import net.thevpc.nuts.log.NLogUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public class NReflectUtils {
     private static final Map<Class<?>, Object> DEFAULTS_CACHE = new ConcurrentHashMap<>();
@@ -149,7 +151,7 @@ public class NReflectUtils {
             case "short":
                 return (short) 0;
             case "int":
-                return (int) 0;
+                return 0;
             case "long":
                 return 0L;
             case "char":
@@ -231,9 +233,7 @@ public class NReflectUtils {
                 if (superClass != null && superClass != Object.class) {
                     nextLevel.add(superClass);
                 }
-                for (Class<?> eachInt : each.getInterfaces()) {
-                    nextLevel.add(eachInt);
-                }
+                Collections.addAll(nextLevel, each.getInterfaces());
             }
         }
         return classes;
@@ -265,6 +265,51 @@ public class NReflectUtils {
             return a;
         }
         return new ArrayList<>(rollingIntersect);
+    }
+
+
+    public static <T> List<T> listServices(Class<T> type,Class<?>...sources) {
+        List<T> instances = new ArrayList<>();
+        loadServices(type, e -> instances.add(e),sources);
+        return instances;
+    }
+
+    public static <T> void loadServices(Class<T> type, Consumer<T> consumer,Class<?>...sources) {
+        NAssert.requireNamedNonNull(type,"serviceType");
+        NAssert.requireNamedNonNull(consumer,"consumer");
+        LinkedHashSet<Class<?>> uniqueClasses = new LinkedHashSet<>();
+        LinkedHashSet<ClassLoader> uniqueClassLoaders = new LinkedHashSet<>();
+        Set<String> implementedClasses = new HashSet<>(); // To prevent duplicates
+        if(sources!=null){
+            for (Class<?> c : sources) {
+                if(c!=null){
+                    if(uniqueClasses.add(c)){
+                        uniqueClassLoaders.add(c.getClassLoader());
+                    }
+                }
+            }
+        }
+
+        if(uniqueClasses.add(type)){
+            uniqueClassLoaders.add(type.getClassLoader());
+        }
+        uniqueClassLoaders.add(Thread.currentThread().getContextClassLoader());
+
+        uniqueClassLoaders.add(NReflectUtils.class.getClassLoader());
+        ClassLoader[] loaders = uniqueClassLoaders.toArray(new ClassLoader[0]);
+        for (ClassLoader loader : loaders) {
+            if (loader == null) continue;
+            try {
+                ServiceLoader<T> sl = ServiceLoader.load(type, loader);
+                for (T lib : sl) {
+                    if(implementedClasses.add(lib.getClass().getName())) {
+                        consumer.accept(lib);
+                    }
+                }
+            } catch (Exception e) {
+                NLogUtils.safeLog(NMsg.ofC("error loading service %s: %S", type, e).asError(e), type);
+            }
+        }
     }
 
 }
