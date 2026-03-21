@@ -381,7 +381,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public String toString() {
-        return DefaultTsonWriter.formatTson(this.format(NContentType.TSON, NElementFormatter.ofSafe()));
+        return DefaultTsonWriter.formatTson(this.format(NContentType.TSON, NElementFormatter.ofToString()));
     }
 
     @Override
