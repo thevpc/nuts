@@ -275,6 +275,8 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     NUpletElementBuilder add(String name, NElement value);
 
+    NUpletElementBuilder add(String name, Number value);
+
     NUpletElementBuilder set(NElement name, boolean value);
 
     NUpletElementBuilder set(NElement name, int value);
