@@ -60,6 +60,8 @@ public interface NElementFactory extends NComponent {
 
     NPairElement ofPair(String key, Boolean value);
 
+    NPairElement ofPair(String key, Number value);
+
     NPairElement ofPair(String key, Byte value);
 
     NPairElement ofPair(String key, Short value);
