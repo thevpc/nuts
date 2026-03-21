@@ -528,6 +528,10 @@ public class CoreNElementUtils {
         return pair(NElement.ofNameOrString(name), NElement.ofString(value));
     }
 
+    public static NPairElement pair(String name, Number value) {
+        return pair(NElement.ofNameOrString(name), NElement.ofNumber(value));
+    }
+
     public static void removeAt(int index, List<NElement> values) {
         values.remove(index);
     }
