@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Builder for manipulating {@link NObjectElement} instances
@@ -81,7 +82,12 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder add(NElement name, NElement value);
 
+    NObjectElementBuilder addIf(String name, NElement value, Predicate<NElement> predicate);
+    NObjectElementBuilder addIf(NElement name, NElement value, Predicate<NElement> predicate);
+
     NObjectElementBuilder add(String name, NElement value);
+
+    NObjectElementBuilder add(String name, Number value);
 
     NObjectElementBuilder add(String name, boolean value);
 
