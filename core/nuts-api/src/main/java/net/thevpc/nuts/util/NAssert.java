@@ -129,7 +129,7 @@ public final class NAssert {
     }
 
     public static boolean requireNamedFalse(boolean value, String name) {
-        return requireTrue(value, () -> NMsg.ofC("should not be %s", createMessage(name)));
+        return requireFalse(value, () -> NMsg.ofC("should not be %s", createMessage(name)));
     }
 
     public static boolean requireNamedFalse(boolean value, NMsg name) {
