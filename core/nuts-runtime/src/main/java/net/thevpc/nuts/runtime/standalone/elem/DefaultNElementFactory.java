@@ -54,6 +54,11 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
+    public NPairElement ofPair(String key, Number value) {
+        return ofPair(ofNameOrString(key), ofNumber(value));
+    }
+
+    @Override
     public NPairElement ofPair(String key, Short value) {
         return ofPair(ofNameOrString(key), ofShort(value));
     }
