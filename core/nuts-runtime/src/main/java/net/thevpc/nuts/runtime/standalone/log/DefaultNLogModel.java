@@ -25,18 +25,17 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.core.NBootOptions;
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.log.*;
-import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.text.NMsg;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,18 +44,18 @@ import java.util.logging.Logger;
  * @author thevpc
  */
 public class DefaultNLogModel {
-    private static Handler[] EMPTY = new Handler[0];
-    private NWorkspace workspace;
+    private static final Handler[] EMPTY = new Handler[0];
+    private final NWorkspace workspace;
     //    private NPrintStream out;
     private NLogConsoleHandler consoleHandler;
     private NLogFileHandler fileHandler;
-    private NLogConfig logConfig = new NLogConfig();
-    private List<Handler> extraHandlers = new ArrayList<>();
+    private final NLogConfig logConfig = new NLogConfig();
+    private final List<Handler> extraHandlers = new ArrayList<>();
     private Path logFolder;
-    private NLogFactorySPI defaultFactorySPI = new NLogFactorySPIJUL();
+    private final NLogFactorySPI defaultFactorySPI = new NLogFactorySPIJUL();
     private NLogFactorySPI factorySPI;
-    private NLog nullLogger;
-    private NScopedValue<NLogScope> logContext = NScopedValue.of(NLogScopeImpl.BLANK);
+    private volatile NLog nullLogger;
+    private final NScopedValue<NLogScope> logContext = NScopedValue.of(NLogScopeImpl.BLANK);
 
     public DefaultNLogModel(NWorkspace ws) {
         this.workspace = ws;
@@ -156,17 +155,21 @@ public class DefaultNLogModel {
     }
 
     private Map<String, NLog> loaded() {
-        return NWorkspace.of().getOrComputeProperty(NLog.class.getName() + "#Map", HashMap::new);
+        return NWorkspace.of().getOrComputeProperty(NLog.class.getName() + "#Map", ConcurrentHashMap::new);
     }
 
     public NLog getNullLogger() {
         if (nullLogger == null) {
-            nullLogger = new DefaultNLog("", new NLogSPI() {
-                @Override
-                public void log(NMsg message) {
+            synchronized (this) {
+                if (nullLogger == null) {
+                    nullLogger = new DefaultNLog("", new NLogSPI() {
+                        @Override
+                        public void log(NMsg message) {
 
+                        }
+                    }, this, false);
                 }
-            }, this, false);
+            }
         }
         return nullLogger;
     }
