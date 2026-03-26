@@ -108,7 +108,7 @@ public interface NOperatorElementBuilder extends NElementBuilder {
 
     NOperatorElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NOperatorElementBuilder removeAffix(int index);
+    NOperatorElementBuilder removeAffix(int affix);
 
     NOperatorElementBuilder removeAnnotation(NElementAnnotation annotation);
 
