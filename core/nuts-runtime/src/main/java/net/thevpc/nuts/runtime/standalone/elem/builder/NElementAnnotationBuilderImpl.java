@@ -1,12 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.elem.builder;
 
-import net.thevpc.nuts.elem.NBoundAffix;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementAnnotation;
-import net.thevpc.nuts.elem.NElementAnnotationBuilder;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.NElementAnnotationImpl;
-import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -44,6 +40,42 @@ public class NElementAnnotationBuilderImpl implements NElementAnnotationBuilder 
     @Override
     public NElementAnnotationBuilder removeAt(int index) {
         CoreNElementUtils.removeAt(index,this.params);
+        return this;
+    }
+
+    @Override
+    public NElementAnnotationBuilder remove(NElement child) {
+        CoreNElementUtils.remove(child, params);
+        return this;
+    }
+
+    @Override
+    public NElementAnnotationBuilder removePair(NElement entryKey) {
+        CoreNElementUtils.removePair(entryKey, params);
+        return this;
+    }
+
+    @Override
+    public NElementAnnotationBuilder removeAll(NElement child) {
+        CoreNElementUtils.removeAll(child, params);
+        return this;
+    }
+
+    @Override
+    public NElementAnnotationBuilder removeAllPairs(NElement name) {
+        CoreNElementUtils.removeAllPairs(name, params);
+        return this;
+    }
+
+    @Override
+    public NElementAnnotationBuilder removePair(String name) {
+        CoreNElementUtils.removePair(name, params);
+        return this;
+    }
+
+    @Override
+    public NElementAnnotationBuilder removeAllPairs(String name) {
+        CoreNElementUtils.removeAllPairs(name, params);
         return this;
     }
 
