@@ -5,8 +5,10 @@ import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NSearch;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NShellFamily;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
@@ -168,25 +170,25 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_WORKSPACE":
                                         return NWorkspace.of().getWorkspaceLocation().toString();
                                     case "NUTS_WORKSPACE_BIN":
-                                        return str(NPath.ofWorkspaceStore(NStoreType.BIN));
+                                        return str(NPath.of(NStoreKey.ofBin()));
                                     case "NUTS_WORKSPACE_CONF":
-                                        return str(NPath.ofWorkspaceStore(NStoreType.CONF));
+                                        return str(NPath.of(NStoreKey.ofConf()));
                                     case "NUTS_WORKSPACE_CACHE":
-                                        return str(NPath.ofWorkspaceStore(NStoreType.CACHE));
+                                        return str(NPath.of(NStoreKey.ofCache()));
                                     case "NUTS_WORKSPACE_LIB":
-                                        return str(NPath.ofWorkspaceStore(NStoreType.LIB));
+                                        return str(NPath.of(NStoreKey.ofLib()));
                                     case "NUTS_WORKSPACE_LOG":
-                                        return str(NPath.ofWorkspaceStore(NStoreType.LOG));
+                                        return str(NPath.of(NStoreKey.ofLog()));
                                     case "NUTS_WORKSPACE_RUN":
-                                        return str(NPath.ofWorkspaceStore(NStoreType.RUN));
+                                        return str(NPath.of(NStoreKey.ofRun()));
                                     case "NUTS_WORKSPACE_TEMP":
-                                        return str(NPath.ofWorkspaceStore(NStoreType.TEMP));
+                                        return str(NPath.of(NStoreKey.ofTemp()));
                                     case "NUTS_WORKSPACE_VAR":
-                                        return str(NPath.ofWorkspaceStore(NStoreType.VAR));
+                                        return str(NPath.of(NStoreKey.ofVar()));
                                     case "NUTS_APP_JAR_EXPR": {
                                         String NUTS_APP_JAR_PATH = options.resolveNutsAppJarPath().toString();
-                                        if (NUTS_APP_JAR_PATH.startsWith(NPath.ofWorkspaceStore(NStoreType.LIB).toString())) {
-                                            String pp = NUTS_APP_JAR_PATH.substring(NPath.ofWorkspaceStore(NStoreType.LIB).toString().length());
+                                        if (NUTS_APP_JAR_PATH.startsWith(NPath.of(NStoreKey.ofLib()).toString())) {
+                                            String pp = NUTS_APP_JAR_PATH.substring(NPath.of(NStoreKey.ofLib()).toString().length());
                                             return NShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_LIB") + pp;
                                         } else {
                                             return NUTS_APP_JAR_PATH;
@@ -195,7 +197,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_WORKSPACE_BINDIR_EXPR": {
                                         //="${NUTS_WORKSPACE_BIN}/id/net/thevpc/nuts/nuts/0.8.2/bin"
                                         return NShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_BIN") + options.resolveBinFolder().toString().substring(
-                                                NPath.ofWorkspaceStore(NStoreType.BIN).toString().length()
+                                                NPath.of(NStoreKey.ofBin()).toString().length()
                                         );
                                     }
                                     default: {
