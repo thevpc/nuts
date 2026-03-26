@@ -317,7 +317,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NObjectElementBuilder removeAffix(int index);
+    NObjectElementBuilder removeAffix(int affix);
 
     NObjectElementBuilder removeAnnotation(NElementAnnotation annotation);
 
