@@ -181,8 +181,8 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
-    public NFlatExprElementBuilder removeAffix(int index) {
-        super.removeAffix(index);
+    public NFlatExprElementBuilder removeAffix(int affix) {
+        super.removeAffix(affix);
         return this;
     }
 
