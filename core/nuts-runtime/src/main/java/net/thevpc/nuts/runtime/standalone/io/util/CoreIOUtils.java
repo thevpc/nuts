@@ -26,7 +26,9 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 
 
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
@@ -345,7 +347,7 @@ public class CoreIOUtils {
 
     public static InputStream getCachedUrlWithSHA1(String path, String sourceTypeName, boolean ignoreSha1NotFound) {
         NWorkspace workspace = NWorkspace.of();
-        final NPath cacheBasePath = NPath.ofIdStore(workspace.getRuntimeId(), NStoreType.CACHE);
+        final NPath cacheBasePath = NPath.of(NStoreKey.ofCache(workspace.getRuntimeId()));
         final NPath urlContent = cacheBasePath.resolve("urls-content");
         String sha1 = null;
         try {
