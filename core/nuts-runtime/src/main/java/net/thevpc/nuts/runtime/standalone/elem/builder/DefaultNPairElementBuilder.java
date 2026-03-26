@@ -199,8 +199,8 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
     }
 
     @Override
-    public NPairElementBuilder removeAffix(int index) {
-        super.removeAffix(index);
+    public NPairElementBuilder removeAffix(int affix) {
+        super.removeAffix(affix);
         return this;
     }
 
