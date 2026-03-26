@@ -1,5 +1,6 @@
 package net.thevpc.nuts.time;
 
+import net.thevpc.nuts.elem.NElementAutoUndestructable;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.elem.NMapBy;
 import net.thevpc.nuts.text.NMsg;
@@ -55,7 +56,7 @@ import java.time.temporal.ChronoUnit;
  * operate with partial durations (e.g., only hours and minutes) or full
  * durations covering all units.
  */
-public class NDuration implements Serializable {
+public class NDuration implements Serializable, NElementAutoUndestructable {
     /**
      * A constant representing a duration of zero.
      */
