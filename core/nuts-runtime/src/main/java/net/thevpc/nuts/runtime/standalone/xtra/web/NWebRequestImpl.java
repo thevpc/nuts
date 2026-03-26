@@ -5,6 +5,7 @@ import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.*;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.util.*;
@@ -20,26 +21,24 @@ import java.util.function.Consumer;
 public class NWebRequestImpl implements NWebRequest {
     private String url;
     private NHttpMethod method;
-    private DefaultNWebHeaders headers = new DefaultNWebHeaders();
+    private final DefaultNWebHeaders headers = new DefaultNWebHeaders();
     private Map<String, List<String>> parameters;
     private NInputSource requestBody;
     private boolean oneWay;
     private Integer readTimeout;
     private Integer connectTimeout;
-    private List<NWebRequestBody> parts = new ArrayList<>();
-    private DefaultNWebCli cli;
+    private final List<NWebRequestBody> parts = new ArrayList<>();
+    private final DefaultNWebCli cli;
     private Map<String, Object> formData;
     private Map<String, String> urlEncoded;
     private Mode mode = Mode.NONE;
 
-    private static enum Mode {
+    private enum Mode {
         NONE,
         BODY,
         FORM_DATA,
         URLENCODED,
     }
-
-    ;
 
     public NWebRequestImpl(DefaultNWebCli cli, NHttpMethod method) {
         this.cli = cli;
@@ -566,7 +565,7 @@ public class NWebRequestImpl implements NWebRequest {
                 //setContentTypeFormUrlEncoded();
                 SimpleWriter sw = new SimpleWriter(NIO.of().ofTempOutputStream());
                 if (formData != null && !formData.isEmpty()) {
-                    String boundary = "-------------------------------" + UUID.randomUUID().toString();
+                    String boundary = "-------------------------------" + UUID.randomUUID();
                     setContentType("multipart/form-data; boundary=" + boundary);
                     try {
                         sw.println(boundary);
@@ -604,7 +603,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     private static class SimpleWriter {
-        private NTempOutputStream tos;
+        private final NTempOutputStream tos;
 
         public SimpleWriter(NTempOutputStream tos) {
             this.tos = tos;
@@ -830,6 +829,12 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
+    public NWebRequest setReadTimeout(NDuration duration) {
+        this.readTimeout = duration == null ? null : (int) duration.toSeconds();
+        return this;
+    }
+
+    @Override
     public Integer getConnectTimeout() {
         return connectTimeout;
     }
@@ -837,6 +842,12 @@ public class NWebRequestImpl implements NWebRequest {
     @Override
     public NWebRequest setConnectTimeout(Integer connectTimeout) {
         this.connectTimeout = connectTimeout;
+        return this;
+    }
+
+    @Override
+    public NWebRequest setConnectTimeout(NDuration duration) {
+        this.connectTimeout = duration == null ? null : (int) duration.toSeconds();
         return this;
     }
 
