@@ -345,16 +345,6 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     NPath getHomeLocation(NStoreType folderType);
 
-    NPath getStoreLocation(NStoreType folderType);
-
-    NPath getStoreLocation(NId id, NStoreType folderType);
-
-    NPath getStoreLocation(NStoreType folderType, String repositoryIdOrName);
-
-    NPath getStoreLocation(NId id, NStoreType folderType, String repositoryIdOrName);
-
-    NPath getStoreLocation(NLocationKey nLocationKey);
-
     NStoreStrategy getStoreStrategy();
 
     NWorkspace setStoreStrategy(NStoreStrategy strategy);
