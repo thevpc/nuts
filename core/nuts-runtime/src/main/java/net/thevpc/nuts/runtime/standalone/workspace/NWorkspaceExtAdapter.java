@@ -363,31 +363,6 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public NPath getStoreLocation(NStoreType folderType) {
-        return base.getStoreLocation(folderType);
-    }
-
-    @Override
-    public NPath getStoreLocation(NId id, NStoreType folderType) {
-        return base.getStoreLocation(id, folderType);
-    }
-
-    @Override
-    public NPath getStoreLocation(NStoreType folderType, String repositoryIdOrName) {
-        return base.getStoreLocation(folderType, repositoryIdOrName);
-    }
-
-    @Override
-    public NPath getStoreLocation(NId id, NStoreType folderType, String repositoryIdOrName) {
-        return base.getStoreLocation(id, folderType, repositoryIdOrName);
-    }
-
-    @Override
-    public NPath getStoreLocation(NLocationKey nLocationKey) {
-        return base.getStoreLocation(nLocationKey);
-    }
-
-    @Override
     public NStoreStrategy getStoreStrategy() {
         return base.getStoreStrategy();
     }
