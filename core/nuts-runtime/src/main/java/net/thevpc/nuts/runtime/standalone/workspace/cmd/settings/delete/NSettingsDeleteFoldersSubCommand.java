@@ -10,9 +10,11 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 
 
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepository;
@@ -20,7 +22,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettin
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NScorable;
@@ -95,13 +96,13 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
         return false;
     }
 
-    private void deleteWorkspaceFolder(NStoreType folder, boolean force) {
-        NPath sstoreLocation = NPath.ofWorkspaceStore(folder);
+    private void deleteWorkspaceFolder(NStoreType storeType, boolean force) {
+        NPath sstoreLocation = NPath.of(NStoreKey.of(storeType));
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of();
             if (sstoreLocation.exists()) {
                 NOut.println(NMsg.ofC("```error deleting``` %s for workspace %s folder %s ...",
-                        factory.ofStyled(folder.id(), NTextStyle.primary1()),
+                        factory.ofStyled(storeType.id(), NTextStyle.primary1()),
                         factory.ofStyled(NWorkspace.of().getName(), NTextStyle.primary1()),
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
@@ -113,17 +114,17 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
             }
         }
         for (NRepository repository : NWorkspace.of().getRepositories()) {
-            deleteRepoFolder(repository, folder, force);
+            deleteRepoFolder(repository, storeType, force);
         }
     }
 
-    private void deleteRepoFolder(NRepository repository, NStoreType folder, boolean force) {
-        NPath sstoreLocation = NPath.ofWorkspaceStore(folder);
+    private void deleteRepoFolder(NRepository repository, NStoreType storeType, boolean force) {
+        NPath sstoreLocation = NPath.of(NStoreKey.of(storeType));
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of();
             if (sstoreLocation.exists()) {
                 NOut.println(NMsg.ofC("```error deleting``` %s for repository %s folder %s ...",
-                        factory.ofStyled(folder.id(), NTextStyle.primary1()),
+                        factory.ofStyled(storeType.id(), NTextStyle.primary1()),
                         factory.ofStyled(repository.getName(), NTextStyle.primary1()),
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
@@ -142,7 +143,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     }
 
     private void deleteCache(boolean force) {
-        NPath sstoreLocation = NPath.ofWorkspaceStore(NStoreType.CACHE);
+        NPath sstoreLocation = NPath.of(NStoreKey.ofCache());
         if (sstoreLocation != null) {
             //            File cache = new File(storeLocation);
             if (sstoreLocation.exists()) {
