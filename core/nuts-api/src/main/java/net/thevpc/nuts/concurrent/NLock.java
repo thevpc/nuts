@@ -27,7 +27,8 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NIsolationLevel;
-import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.core.NStoreKey;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.io.NPath;
@@ -67,19 +68,19 @@ public interface NLock extends Lock, NDescribable {
         if (NWorkspace.of().getBootOptions().getIsolationLevel().orNull() == NIsolationLevel.MEMORY) {
             return of(id.getLongId());
         } else {
-            return ofIdPath(id);
+            return ofIdPath(id, NStoreScope.WORKSPACE);
         }
     }
 
-    static NLock ofIdPath(NId id) {
-        return NLockBuilder.of().setSource(id.getLongId()).setResource(NPath.ofIdStore(id, NStoreType.RUN)
+    static NLock ofIdPath(NId id, NStoreScope storeScope) {
+        return NLockBuilder.of().setSource(id.getLongId()).setResource(NPath.of(NStoreKey.ofRun(id).scope(storeScope))
                 .resolve("nuts-" + NStringUtils.firstNonBlankTrimmed(id.getFace(), "content"))
                 .toPath().get()
         ).build();
     }
 
-    static NLock ofIdPath(NId id,String path) {
-        return NLockBuilder.of().setSource(id.getLongId()).setResource(NPath.ofIdStore(id, NStoreType.RUN)
+    static NLock ofIdPath(NId id, NStoreScope storeScope, String path) {
+        return NLockBuilder.of().setSource(id.getLongId()).setResource(NPath.of(NStoreKey.ofRun(id).scope(storeScope))
                 .resolve(path)
                 .toPath().get()
         ).build();
