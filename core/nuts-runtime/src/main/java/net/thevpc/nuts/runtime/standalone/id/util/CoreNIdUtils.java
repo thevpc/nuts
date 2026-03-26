@@ -9,10 +9,12 @@ import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementReader;
 
 
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;
@@ -143,7 +145,7 @@ public class CoreNIdUtils {
         if (apiVersion.equals(workspace.getApiVersion().toString())) {
             return workspace.getRuntimeId();
         }
-        NPath apiBoot = NPath.ofIdStore(apiId(apiVersion), NStoreType.CONF).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
+        NPath apiBoot = NPath.of(NStoreKey.ofConf(apiId(apiVersion))).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         if (apiBoot.isRegularFile()) {
             NWorkspaceConfigApi c = NElementReader.ofJson().read(apiBoot, NWorkspaceConfigApi.class);
             if (!NBlankable.isBlank(c.getRuntimeId())) {
