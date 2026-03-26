@@ -8,6 +8,7 @@ import net.thevpc.nuts.cmdline.*;
 
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
@@ -31,7 +32,6 @@ import net.thevpc.nuts.util.*;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -274,8 +274,8 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         this.application = application;
         this.source = source;
         for (NStoreType folder : NStoreType.values()) {
-            this.setFolder(folder, NPath.ofIdStore(this.id, folder));
-            this.setSharedFolder(folder, NPath.ofIdStore(this.id.builder().setVersion("SHARED").build(), folder));
+            this.setFolder(folder, NPath.of(NStoreKey.of(this.id).type(folder)));
+            this.setSharedFolder(folder, NPath.of(NStoreKey.ofShared(this.id).type(folder)));
         }
         if (this.mode == NApplicationMode.AUTO_COMPLETE) {
             //TODO fix me
@@ -525,7 +525,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                 return r;
             }
         }
-        return NPath.ofIdStore(newId, storeType);
+        return NPath.of(NStoreKey.of(newId).type(storeType));
     }
 
     @Override
