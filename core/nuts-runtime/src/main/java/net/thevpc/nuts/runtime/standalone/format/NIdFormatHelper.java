@@ -31,16 +31,11 @@ import java.util.stream.Collectors;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.core.NWorkspaceEvent;
-import net.thevpc.nuts.core.NWorkspaceListener;
+import net.thevpc.nuts.core.*;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NRepositoryEvent;
-import net.thevpc.nuts.core.NRepositoryListener;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
@@ -452,43 +447,43 @@ public class NIdFormatHelper {
             }
             case CACHE_FOLDER: {
                 if (def != null) {
-                    return stringValue(NPath.ofIdStore(def.getId(), NStoreType.CACHE));
+                    return stringValue(NPath.of(NStoreKey.ofCache(def.getId())));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case CONF_FOLDER: {
                 if (def != null) {
-                    return stringValue(NPath.ofIdStore(def.getId(), NStoreType.CONF));
+                    return stringValue(NPath.of(NStoreKey.ofConf(def.getId())));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case LIB_FOLDER: {
                 if (def != null) {
-                    return stringValue(NPath.ofIdStore(def.getId(), NStoreType.LIB));
+                    return stringValue(NPath.of(NStoreKey.ofLib(def.getId())));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case LOG_FOLDER: {
                 if (def != null) {
-                    return stringValue(NPath.ofIdStore(def.getId(), NStoreType.LOG));
+                    return stringValue(NPath.of(NStoreKey.ofLog(def.getId())));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case TEMP_FOLDER: {
                 if (def != null) {
-                    return stringValue(NPath.ofIdStore(def.getId(), NStoreType.TEMP));
+                    return stringValue(NPath.of(NStoreKey.ofTemp(def.getId())));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case VAR_LOCATION: {
                 if (def != null) {
-                    return stringValue(NPath.ofIdStore(def.getId(), NStoreType.VAR));
+                    return stringValue(NPath.of(NStoreKey.ofVar(def.getId())));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case BIN_FOLDER: {
                 if (def != null) {
-                    return stringValue(NPath.ofIdStore(def.getId(), NStoreType.BIN));
+                    return stringValue(NPath.of(NStoreKey.ofBin(def.getId())));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
