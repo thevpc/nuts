@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.text;
 
+import net.thevpc.nuts.elem.NElementAutoUndestructable;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
@@ -39,7 +40,7 @@ import java.util.List;
  *
  * @app.category Format
  */
-public interface NText extends NBlankable {
+public interface NText extends NBlankable, NElementAutoUndestructable {
     static NText of(String str) {
         return NTexts.of().of(str);
     }
