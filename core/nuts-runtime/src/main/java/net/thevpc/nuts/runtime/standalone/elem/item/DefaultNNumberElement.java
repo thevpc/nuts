@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.math.NNumber;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.text.NMsg;
@@ -19,9 +20,15 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
     public DefaultNNumberElement(NElementType type, Number value) {
         this(type, value, null, null, null, null, null, null);
     }
+    public DefaultNNumberElement(NElementType type, NNumber value) {
+        this(type, value.numberValue(), null, null, null, null, null, null);
+    }
 
     public DefaultNNumberElement(NElementType type, Number value, NNumberLayout layout, String suffix) {
         this(type, value, layout, suffix, null, null, null, null);
+    }
+    public DefaultNNumberElement(NElementType type, NNumber value, NNumberLayout layout, String suffix) {
+        this(type, value.numberValue(), layout, suffix, null, null, null, null);
     }
 
     public DefaultNNumberElement(NElementType type, Number value,
