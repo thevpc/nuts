@@ -228,6 +228,12 @@ public class DefaultNId implements NId {
     }
 
     @Override
+    public NId getSharedId() {
+        return new DefaultNId(groupId, artifactId, classifier, NVersion.of("SHARED"), "",
+                NEnvCondition.BLANK);
+    }
+
+    @Override
     public NId getLongId() {
         return new DefaultNId(groupId, artifactId, classifier, version, "", NEnvCondition.BLANK);
     }

@@ -275,6 +275,8 @@ public interface NId extends Comparable<NId>, NBlankable {
      */
     NId getShortId();
 
+    NId getSharedId();
+
     /**
      * return a new instance of NutsId defining only group, name, version and classifier if available,
      * ignoring repository, and queryMap values.
