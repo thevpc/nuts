@@ -6,6 +6,7 @@ import net.thevpc.nuts.core.*;
 
 import net.thevpc.nuts.command.NExecutionEntry;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
@@ -36,7 +37,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -523,23 +523,19 @@ public class DefaultNIORPI implements NIORPI {
 
     private NPath resolveRootPath(NRepository repositoryId) {
         if (repositoryId == null) {
-            return NPath.ofWorkspaceStore(NStoreType.TEMP);
+            return NPath.of(NStoreKey.ofTemp());
         } else {
-            return repositoryId.config().getStoreLocation(NStoreType.TEMP);
+            return NPath.of(NStoreKey.ofTemp().repo(repositoryId.getUuid()));
         }
     }
 
     private NPath resolveRootPath(NId nId) {
-        if (nId == null) {
-            return NPath.ofWorkspaceStore(NStoreType.TEMP);
-        } else {
-            return NPath.ofIdStore(nId, NStoreType.TEMP);
-        }
+        return NPath.of(NStoreKey.ofTemp(nId));
     }
 
     public NPath createAnyTempFile(String name, boolean folder, NPath rootFolder) {
         if (rootFolder == null) {
-            rootFolder = NPath.ofWorkspaceStore(NStoreType.TEMP);
+            rootFolder = NPath.of(NStoreKey.ofTemp());
         }
         NId appId = NApp.of().getId().orElseGet(() -> NWorkspace.of().getRuntimeId());
         if (appId != null) {
@@ -650,6 +646,11 @@ public class DefaultNIORPI implements NIORPI {
         return new NPathFromSPI(path);
     }
 
+
+    @Override
+    public NPath getStoreLocation(NStoreKey key) {
+        return NWorkspaceExt.of().getModel().locationsModel.getStoreLocation(key);
+    }
 
     @Override
     public List<NExecutionEntry> parseExecutionEntries(InputStream inputStream, String type, String sourceName) {
