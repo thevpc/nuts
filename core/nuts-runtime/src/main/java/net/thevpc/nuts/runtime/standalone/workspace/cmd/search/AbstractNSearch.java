@@ -26,35 +26,34 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.command.*;
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.io.NErr;
-import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.core.NRepositoryFilters;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
-import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
-import net.thevpc.nuts.runtime.standalone.util.ValueSupplier;
-import net.thevpc.nuts.runtime.standalone.util.stream.NStreamBase;
-import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.command.*;
+import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NStoreKey;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.text.NContentType;
+import net.thevpc.nuts.io.NErr;
+import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNQueryBaseOptions;
+import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.format.NDisplayProperty;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
-import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
-import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
+import net.thevpc.nuts.runtime.standalone.util.ValueSupplier;
+import net.thevpc.nuts.runtime.standalone.util.stream.NStreamBase;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNQueryBaseOptions;
+import net.thevpc.nuts.text.NContentType;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.*;
 
 import java.io.File;
 import java.net.URL;
@@ -499,10 +498,10 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
-    public NStream<NPath> getResultStoreLocations(NStoreType location) {
+    public NStream<NPath> getResultStoreLocations(NStoreType storeType) {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .map(NFunction.of((NDefinition x) -> NPath.ofIdStore(x.getId(), location))
-                        .withDescription(NDescribables.ofDesc("getStoreLocation(" + location.id() + ")"))
+                .map(NFunction.of((NDefinition x) -> NPath.of(NStoreKey.of(x.getId()).type(storeType)))
+                        .withDescription(NDescribables.ofDesc("getStoreLocation(" + storeType.id() + ")"))
                 )
                 .notNull());
     }
