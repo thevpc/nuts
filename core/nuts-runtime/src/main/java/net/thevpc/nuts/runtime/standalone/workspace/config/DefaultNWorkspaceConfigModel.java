@@ -363,7 +363,7 @@ public class DefaultNWorkspaceConfigModel {
         NPath root = this.getRepositoriesRoot();
         return repositoryLocation
                 .toAbsolute(root != null ? root :
-                        NPath.ofWorkspaceStore(NStoreType.CONF)
+                        NPath.of(NStoreKey.ofConf())
                                 .resolve(NConstants.Folders.REPOSITORIES))
                 ;
     }
@@ -634,7 +634,7 @@ public class DefaultNWorkspaceConfigModel {
 
     private List<NId> findOlderNutsApiIds() {
         NId apiId = workspace.getApiId();
-        NPath path = NPath.ofIdStore(apiId, NStoreType.CONF)
+        NPath path = NPath.of(NStoreKey.ofConf(apiId))
                 .getParent();
         List<NId> olderIds = path.stream().filter(NPath::isDirectory)
                 .withDescription(NDescribables.ofDesc("isDirectory"))
@@ -690,7 +690,7 @@ public class DefaultNWorkspaceConfigModel {
                 NWorkspaceExt.of().deployBoot(extensionId, true);
             }
         }
-        NPath runtimeVersionSpecificLocation = NPath.ofWorkspaceStore(NStoreType.CONF)
+        NPath runtimeVersionSpecificLocation = NPath.of(NStoreKey.ofConf())
                 .resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(extensionId));
         NPath afile = runtimeVersionSpecificLocation.resolve(NConstants.Files.EXTENSION_BOOT_CONFIG_FILE_NAME);
         cc.setConfigVersion(current().getApiVersion());
@@ -720,7 +720,7 @@ public class DefaultNWorkspaceConfigModel {
         estoreModelApi.setApiVersion(apiId.getVersion());
         estoreModelApi.setRuntimeId(runtimeId);
         estoreModelApi.setConfigVersion(current().getApiVersion());
-        NPath apiVersionSpecificLocation = NPath.ofIdStore(apiId, NStoreType.CONF);
+        NPath apiVersionSpecificLocation = NPath.of(NStoreKey.ofConf(apiId));
         NPath afile = apiVersionSpecificLocation.resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         NElementWriter.ofJson().write(estoreModelApi, afile);
 
@@ -730,7 +730,7 @@ public class DefaultNWorkspaceConfigModel {
                 newDeps
         );
 
-        NPath runtimeVersionSpecificLocation = NPath.ofWorkspaceStore(NStoreType.CONF)
+        NPath runtimeVersionSpecificLocation = NPath.of(NStoreKey.ofConf())
                 .resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(runtimeId));
         afile = runtimeVersionSpecificLocation.resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
         storeModelRuntime.setConfigVersion(current().getApiVersion());
@@ -1047,11 +1047,11 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public NPath getRepositoriesRoot() {
-        return NPath.ofWorkspaceStore(NStoreType.CONF).resolve(NConstants.Folders.REPOSITORIES);
+        return NPath.of(NStoreKey.ofConf()).resolve(NConstants.Folders.REPOSITORIES);
     }
 
     public NPath getTempRepositoriesRoot() {
-        return NPath.ofWorkspaceStore(NStoreType.TEMP).resolve(NConstants.Folders.REPOSITORIES);
+        return NPath.of(NStoreKey.ofTemp()).resolve(NConstants.Folders.REPOSITORIES);
     }
 
     public NAuthenticationAgent createAuthenticationAgent(String authenticationAgent) {
@@ -1362,7 +1362,7 @@ public class DefaultNWorkspaceConfigModel {
         String fileSuffix = Instant.now().toString();
         fileSuffix = fileSuffix.replace(':', '-');
         String fileName = "nuts-workspace-" + fileSuffix;
-        NPath logError = NPath.ofIdStore(workspace.getApiId(), NStoreType.LOG).resolve("invalid-config");
+        NPath logError = NPath.of(NStoreKey.ofLog(workspace.getApiId())).resolve("invalid-config");
         NPath logFile = logError.resolve(fileName + ".error");
         _LOG()
                 .log(NMsg.ofC("erroneous workspace config file. Unable to load file %s : %s", file, ex)
@@ -1397,7 +1397,7 @@ public class DefaultNWorkspaceConfigModel {
             );
             for (NStoreType storeType : NStoreType.values()) {
                 o.println("location." + storeType.id() + ":");
-                o.println(NPath.ofWorkspaceStore(storeType));
+                o.println(NPath.of(NStoreKey.of(storeType)));
             }
             o.println("java.class.path:");
             o.println(System.getProperty("java.class.path"));
