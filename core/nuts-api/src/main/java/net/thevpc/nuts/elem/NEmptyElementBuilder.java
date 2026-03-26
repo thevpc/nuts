@@ -30,7 +30,7 @@ public interface NEmptyElementBuilder extends NElementBuilder {
 
     NEmptyElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NEmptyElementBuilder removeAffix(int index);
+    NEmptyElementBuilder removeAffix(int affix);
 
     NEmptyElementBuilder removeAnnotation(NElementAnnotation annotation);
 
