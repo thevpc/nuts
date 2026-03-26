@@ -31,6 +31,8 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionContext;
+import net.thevpc.nuts.core.NStoreKey;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
@@ -67,7 +69,7 @@ public class ZipInstallerComponent implements NInstallerComponent {
     @Override
     public void install(NExecutionContext executionContext) {
         NDefinition nutsDefinition = executionContext.getDefinition();
-        NPath installFolder = NPath.ofIdStore(nutsDefinition.getId(), NStoreType.BIN);
+        NPath installFolder = NPath.of(NStoreKey.ofBin(nutsDefinition.getId()));
         NCmdLine cmd = NCmdLine.of(executionContext.getArguments());
         UnzipOptions unzipOptions = new UnzipOptions();
         while (cmd.hasNext()) {
