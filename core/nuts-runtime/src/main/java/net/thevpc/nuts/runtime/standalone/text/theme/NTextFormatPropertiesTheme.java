@@ -2,7 +2,9 @@ package net.thevpc.nuts.runtime.standalone.text.theme;
 
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
@@ -57,10 +59,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                     throw new NIOException(e);
                 }
             } else {
-                NPath themeFile = NPath.ofIdStore(
-                        NId.getRuntime("SHARED").get(),
-                        NStoreType.CONF
-                ).resolve("themes").resolve(name);
+                NPath themeFile = NPath.of(NStoreKey.ofShared(NWorkspace.of().getRuntimeId()).conf()).resolve("themes").resolve(name);
                 if (themeFile.isRegularFile()) {
                     try (InputStream inStream = themeFile.getInputStream()) {
                         props.load(inStream);
