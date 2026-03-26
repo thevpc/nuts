@@ -55,6 +55,8 @@ public interface NElementAnnotation extends NAffix {
 
     int size();
 
+    NOptional<NElement> get(String s);
+
     NOptional<NElement> param(int index);
 
     NOptional<NElement> param(String name);
