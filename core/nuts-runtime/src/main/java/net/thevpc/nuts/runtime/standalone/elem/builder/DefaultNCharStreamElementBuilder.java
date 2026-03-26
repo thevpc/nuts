@@ -112,8 +112,8 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
     }
 
     @Override
-    public NCharStreamElementBuilder removeAffix(int index) {
-        super.removeAffix(index);
+    public NCharStreamElementBuilder removeAffix(int affix) {
+        super.removeAffix(affix);
         return this;
     }
 
