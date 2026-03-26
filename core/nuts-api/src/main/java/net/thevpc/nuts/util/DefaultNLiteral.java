@@ -127,14 +127,17 @@ public class DefaultNLiteral implements NLiteral {
                     return NElementType.LOCAL_TIME;
                 case "java.lang.Boolean":
                     return NElementType.BOOLEAN;
-                case "net.thevpc.nuts.math.NDoubleComplex":
-                    return NElementType.DOUBLE_COMPLEX;
-                case "net.thevpc.nuts.math.NFloatComplex":
-                    return NElementType.FLOAT_COMPLEX;
-                case "net.thevpc.nuts.math.NBigComplex":
-                    return NElementType.BIG_COMPLEX;
                 case "net.thevpc.nuts.elem.NName":
                     return NElementType.NAME;
+            }
+            if (value instanceof NDoubleComplex) {
+                return  NElementType.DOUBLE_COMPLEX;
+            }
+            if (value instanceof NFloatComplex) {
+                return  NElementType.FLOAT_COMPLEX;
+            }
+            if (value instanceof NBigComplex) {
+                return  NElementType.BIG_COMPLEX;
             }
             if (value instanceof Number) {
                 return NElementType.DOUBLE;
@@ -165,7 +168,7 @@ public class DefaultNLiteral implements NLiteral {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty FloatComplex"));
         }
         if (value instanceof NDoubleComplex) {
-            return NOptional.of(new NFloatComplex(
+            return NOptional.of(NFloatComplex.of(
                     (float) ((NDoubleComplex) value).real(),
                     (float) ((NDoubleComplex) value).imag()
             ));
@@ -174,12 +177,12 @@ public class DefaultNLiteral implements NLiteral {
             return NOptional.of((NFloatComplex) value);
         }
         if (value instanceof NBigComplex) {
-            return NOptional.of(new NFloatComplex(
+            return NOptional.of(NFloatComplex.of(
                     ((NBigComplex) value).real().floatValue(),
                     ((NBigComplex) value).imag().floatValue()
             ));
         }
-        return asFloat().map(x -> new NFloatComplex((float) value, 0));
+        return asFloat().map(x -> NFloatComplex.of((float) value, 0));
     }
 
     @Override
@@ -191,18 +194,18 @@ public class DefaultNLiteral implements NLiteral {
             return NOptional.of((NDoubleComplex) value);
         }
         if (value instanceof NFloatComplex) {
-            return NOptional.of(new NDoubleComplex(
+            return NOptional.of(NDoubleComplex.of(
                     ((NFloatComplex) value).real(),
                     ((NFloatComplex) value).imag()
             ));
         }
         if (value instanceof NBigComplex) {
-            return NOptional.of(new NDoubleComplex(
+            return NOptional.of(NDoubleComplex.of(
                     ((NBigComplex) value).real().doubleValue(),
                     ((NBigComplex) value).imag().doubleValue()
             ));
         }
-        return asDouble().map(x -> new NDoubleComplex(x, 0));
+        return asDouble().map(x -> NDoubleComplex.of(x, 0));
     }
 
     @Override
@@ -211,13 +214,13 @@ public class DefaultNLiteral implements NLiteral {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty DoubleComplex"));
         }
         if (value instanceof NDoubleComplex) {
-            return NOptional.of(new NBigComplex(
+            return NOptional.of(NBigComplex.of(
                     BigDecimal.valueOf(((NDoubleComplex) value).real()),
                     BigDecimal.valueOf(((NDoubleComplex) value).real())
             ));
         }
         if (value instanceof NFloatComplex) {
-            return NOptional.of(new NBigComplex(
+            return NOptional.of(NBigComplex.of(
                     BigDecimal.valueOf(((NFloatComplex) value).real()),
                     BigDecimal.valueOf(((NFloatComplex) value).real())
             ));
@@ -225,7 +228,7 @@ public class DefaultNLiteral implements NLiteral {
         if (value instanceof NBigComplex) {
             return NOptional.of(((NBigComplex) value));
         }
-        return asBigDecimal().map(x -> new NBigComplex(
+        return asBigDecimal().map(x -> NBigComplex.of(
                 BigDecimal.valueOf(x.doubleValue()),
                 BigDecimal.ZERO
         ));
