@@ -13,6 +13,7 @@ import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
 
@@ -109,21 +110,30 @@ public class DefaultFileNLock extends AbstractNLock {
 
     @Override
     public synchronized void lock() {
-        long now = System.currentTimeMillis();
-        long maxWaitingTime = 30000;
-        PollTime ptime = preferredPollTime(maxWaitingTime, TimeUnit.MILLISECONDS);
-        long lastLog = System.currentTimeMillis();
-        do {
-            long now2 = System.currentTimeMillis();
-            if (now2 - lastLog > maxWaitingTime) {
-                NLog.of(DefaultFileNLock.class).warn(NMsg.ofC("Lock file duration is excessive. waiting for %s for %s", NDuration.ofMillis(now2 - now), path));
-                lastLog = now2;
+        NLog _log = NLog.of(DefaultFileNLock.class);
+        NChronometer chrono = NChronometer.startNow();
+        try {
+            long now = System.currentTimeMillis();
+            long maxWaitingTime = 30000;
+            PollTime ptime = preferredPollTime(maxWaitingTime, TimeUnit.MILLISECONDS);
+            long lastLog = System.currentTimeMillis();
+            do {
+                long now2 = System.currentTimeMillis();
+                if (now2 - lastLog > maxWaitingTime) {
+                    _log.warn(NMsg.ofC("Lock file duration is excessive. waiting for %s for %s", NDuration.ofMillis(now2 - now), path));
+                    lastLog = now2;
+                }
+                if (tryLockImmediately()) {
+                    return;
+                }
+                NWorkspaceProfilerImpl.sleep(ptime.minTimeToSleep, "DefaultFileNLock::lock");
+            } while (true);
+        }finally {
+            chrono.stop();
+            if(chrono.getDurationMs()>10) {
+                _log.warn(NMsg.ofC("Lock file duration for %s (%s)", chrono.stop(), path));
             }
-            if (tryLockImmediately()) {
-                return;
-            }
-            NWorkspaceProfilerImpl.sleep(ptime.minTimeToSleep, "DefaultFileNLock::lock");
-        } while (true);
+        }
     }
 
     public void checkFree() {
