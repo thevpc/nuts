@@ -26,9 +26,7 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.boot.internal.util.NBootPlatformHome;
-import net.thevpc.nuts.core.NLocationKey;
-import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NStoreType;
@@ -239,6 +237,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
     }
 
     /**
+     * Returns the resolved store path corresponding to the given location key.
      * Resolves a path to a standard store location specific to the given application identifier (GAV)
      * and store type. This method provides a convenient way to access predefined directories
      * for application-related resources such as binaries, configuration, data, logs, temporary
@@ -263,64 +262,14 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * standard, predictable manner based on their GAV.
      * </p>
      *
-     * @param id the application identifier (GAV) to associate with the store
-     * @param storeType the type of store specifying the nature of resources to access
+     * @param locationKey store identification key
      * @return a non-null {@link NPath} pointing to the standard store location for the given GAV and store type
      * @throws NullPointerException if {@code id} or {@code storeType} is null or blank
      * @see NStoreType
      */
-    static NPath ofIdStore(NId id, NStoreType storeType) {
-        NAssert.requireNamedNonBlank(id, "id");
-        NAssert.requireNamedNonBlank(storeType, "storeType");
-        return NWorkspace.of().getStoreLocation(id, storeType);
-    }
-
-    /**
-     * Returns a workspace-level store path for the given store type.
-     *
-     * @param storeType type of store
-     * @return the workspace’s store path
-     */
-    static NPath ofWorkspaceStore(NStoreType storeType) {
-        NAssert.requireNamedNonBlank(storeType, "storeType");
-        return NWorkspace.of().getStoreLocation(storeType);
-    }
-
-    /**
-     * Returns the resolved store path corresponding to the given location key.
-     *
-     * @param locationKey store identification key
-     * @return the resolved store directory
-     */
-    static NPath ofStore(NLocationKey locationKey) {
+    static NPath of(NStoreKey locationKey) {
         NAssert.requireNamedNonBlank(locationKey, "locationKey");
-        return NWorkspace.of().getStoreLocation(locationKey);
-    }
-
-    /**
-     * Returns the user-level Nuts store directory for the given store type.
-     * <p>
-     * This does not depend on the workspace; it uses platform-wide user
-     * configuration (e.g., {@code ~/.config/nuts/...}).
-     * </p>
-     *
-     * @param storeType store type
-     * @return user store path
-     */
-    static NPath ofUserStore(NStoreType storeType) {
-        NAssert.requireNamedNonBlank(storeType, "storeType");
-        return NPath.of(NBootPlatformHome.of(null).getStore(storeType.id()));
-    }
-
-    /**
-     * Returns the system-level Nuts store directory for the given store type.
-     *
-     * @param storeType store type
-     * @return system store path
-     */
-    static NPath ofSystemStore(NStoreType storeType) {
-        NAssert.requireNamedNonBlank(storeType, "storeType");
-        return NPath.of(NBootPlatformHome.ofSystem(null).getStore(storeType.id()));
+        return NIORPI.of().getStoreLocation(locationKey);
     }
 
     /**
