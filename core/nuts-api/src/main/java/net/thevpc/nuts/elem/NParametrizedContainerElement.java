@@ -45,4 +45,6 @@ public interface NParametrizedContainerElement extends NElement, NListOrParametr
 
     NElement param(int index);
 
+    NOptional<NElement> param(String name);
+
 }
