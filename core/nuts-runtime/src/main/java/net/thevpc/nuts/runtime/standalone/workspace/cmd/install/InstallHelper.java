@@ -8,6 +8,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNInstallEvent;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNUpdateEvent;
@@ -59,7 +60,7 @@ public class InstallHelper {
         Map<String, String> m = new HashMap<>();
         m.put("nutsIdContentPath", def.getContent().get().toString());
         for (NStoreType st : NStoreType.values()) {
-            m.put("nutsId" + NNameFormat.TITLE_CASE.format(st.id()) + "Path", NPath.ofIdStore(def.getId(), st).toString());
+            m.put("nutsId" + NNameFormat.TITLE_CASE.format(st.id()) + "Path", NPath.of(NStoreKey.of(def.getId()).type(st)).toString());
         }
         return m;
     }
@@ -815,24 +816,13 @@ public class InstallHelper {
         ws.getInstalledRepository().uninstall(definition);
         NId id = definition.getId();
         if (deleteFiles) {
-            if (ws.getLocationModel().getStoreLocation(id, NStoreType.BIN).exists()) {
-                ws.getLocationModel().getStoreLocation(id, NStoreType.BIN).deleteTree();
-            }
-            if (ws.getLocationModel().getStoreLocation(id, NStoreType.LIB).exists()) {
-                ws.getLocationModel().getStoreLocation(id, NStoreType.LIB).deleteTree();
-            }
-            if (ws.getLocationModel().getStoreLocation(id, NStoreType.LOG).exists()) {
-                ws.getLocationModel().getStoreLocation(id, NStoreType.LOG).deleteTree();
-            }
-            if (ws.getLocationModel().getStoreLocation(id, NStoreType.CACHE).exists()) {
-                ws.getLocationModel().getStoreLocation(id, NStoreType.CACHE).deleteTree();
-            }
-            if (eraseFiles) {
-                if (ws.getLocationModel().getStoreLocation(id, NStoreType.VAR).exists()) {
-                    ws.getLocationModel().getStoreLocation(id, NStoreType.VAR).deleteTree();
-                }
-                if (ws.getLocationModel().getStoreLocation(id, NStoreType.CONF).exists()) {
-                    ws.getLocationModel().getStoreLocation(id, NStoreType.CONF).deleteTree();
+            for (NStoreType type : new NStoreType[]{NStoreType.BIN,NStoreType.LIB,NStoreType.LOG,NStoreType.CACHE,
+                    eraseFiles?NStoreType.VAR:null,eraseFiles?NStoreType.CONF:null}) {
+                if(type != null){
+                    NPath p = NPath.of(NStoreKey.of(id).type(type));
+                    if(p.exists()){
+                        p.deleteTree();
+                    }
                 }
             }
         }
