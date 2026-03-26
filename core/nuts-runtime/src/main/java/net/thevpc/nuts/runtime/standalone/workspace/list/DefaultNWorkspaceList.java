@@ -8,6 +8,7 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 
 
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NScore;
@@ -65,8 +66,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
     }
 
     private NPath getConfigFile() {
-        return NPath.ofIdStore(NId.getForClass(DefaultNWorkspaceList.class).get(),
-                        NStoreType.CONF)
+        return NPath.of(NStoreKey.ofConf(NId.getForClass(DefaultNWorkspaceList.class).get()))
                 .resolve(name + "-nuts-workspace-list.json");
     }
 
