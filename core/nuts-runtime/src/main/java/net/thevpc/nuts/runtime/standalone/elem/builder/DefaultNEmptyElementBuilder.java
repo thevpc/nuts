@@ -80,8 +80,8 @@ public class DefaultNEmptyElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NEmptyElementBuilder removeAffix(int index) {
-        super.removeAffix(index);
+    public NEmptyElementBuilder removeAffix(int affix) {
+        super.removeAffix(affix);
         return this;
     }
 
