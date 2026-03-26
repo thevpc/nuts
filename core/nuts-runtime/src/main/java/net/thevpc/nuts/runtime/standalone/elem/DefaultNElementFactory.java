@@ -189,10 +189,6 @@ public class DefaultNElementFactory implements NElementFactory {
         return new DefaultNPairElementBuilder();
     }
 
-    //    @Override
-//    public NutsPrimitiveElementBuilder forPrimitive() {
-//        return new DefaultNPrimitiveElementBuilder(session);
-//    }
     @Override
     public NObjectElementBuilder ofObjectBuilder() {
         return new DefaultNObjectElementBuilder();
@@ -409,9 +405,6 @@ public class DefaultNElementFactory implements NElementFactory {
         return ofBoolean(o.get());
     }
 
-    //    public NutsPrimitiveElement forNutsString(NutsString str) {
-//        return str == null ? DefaultNPrimitiveElementBuilder.NULL : new DefaultNPrimitiveElement(NutsElementType.NUTS_STRING, str);
-//    }
     @Override
     public NPrimitiveElement ofBoolean(boolean value) {
         //TODO: perhaps we can optimize this
@@ -890,12 +883,12 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NPrimitiveElement ofDoubleComplex(double real, double imag) {
-        return new DefaultNNumberElement(NElementType.DOUBLE_COMPLEX, new NDoubleComplex(real, imag));
+        return new DefaultNNumberElement(NElementType.DOUBLE_COMPLEX, NDoubleComplex.of(real, imag));
     }
 
     @Override
     public NPrimitiveElement ofDoubleComplex(double real, double imag, String suffix) {
-        return new DefaultNNumberElement(NElementType.DOUBLE_COMPLEX, new NDoubleComplex(real, imag), NNumberLayout.DECIMAL, suffix);
+        return new DefaultNNumberElement(NElementType.DOUBLE_COMPLEX, NDoubleComplex.of(real, imag), NNumberLayout.DECIMAL, suffix);
     }
 
     @Override
@@ -905,12 +898,12 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NPrimitiveElement ofFloatComplex(float real, float imag) {
-        return new DefaultNNumberElement(NElementType.FLOAT_COMPLEX, new NFloatComplex(real, imag));
+        return new DefaultNNumberElement(NElementType.FLOAT_COMPLEX, NFloatComplex.of(real, imag));
     }
 
     @Override
     public NPrimitiveElement ofFloatComplex(float real, float imag, String suffix) {
-        return new DefaultNNumberElement(NElementType.FLOAT_COMPLEX, new NFloatComplex(real, imag), NNumberLayout.DECIMAL, suffix);
+        return new DefaultNNumberElement(NElementType.FLOAT_COMPLEX, NFloatComplex.of(real, imag), NNumberLayout.DECIMAL, suffix);
     }
 
     @Override
@@ -923,7 +916,7 @@ public class DefaultNElementFactory implements NElementFactory {
         if (real == null && imag == null) {
             return ofNull();
         }
-        return new DefaultNNumberElement(NElementType.BIG_COMPLEX, new NBigComplex(real, imag));
+        return new DefaultNNumberElement(NElementType.BIG_COMPLEX, NBigComplex.of(real, imag));
     }
 
     @Override
@@ -931,7 +924,7 @@ public class DefaultNElementFactory implements NElementFactory {
         if (real == null && imag == null) {
             return ofNull();
         }
-        return new DefaultNNumberElement(NElementType.BIG_COMPLEX, new NBigComplex(real, imag), NNumberLayout.DECIMAL, suffix);
+        return new DefaultNNumberElement(NElementType.BIG_COMPLEX, NBigComplex.of(real, imag), NNumberLayout.DECIMAL, suffix);
     }
 
     @Override
