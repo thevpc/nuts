@@ -386,8 +386,8 @@ public class DefaultNFragmentElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
-    public NFragmentElementBuilder removeAffix(int index) {
-        super.removeAffix(index);
+    public NFragmentElementBuilder removeAffix(int affix) {
+        super.removeAffix(affix);
         return this;
     }
 
