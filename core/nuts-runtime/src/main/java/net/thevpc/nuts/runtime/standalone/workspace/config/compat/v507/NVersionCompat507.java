@@ -3,10 +3,12 @@ package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v507;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementReader;
 
 
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
@@ -58,7 +60,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigApi parseApiConfig(NId nutsApiId) {
-        NPath path = NPath.ofIdStore(nutsApiId, NStoreType.CONF)
+        NPath path = NPath.of(NStoreKey.ofConf(nutsApiId))
                 .resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NWorkspaceConfigApi c = bytes==null?null: NElementReader.ofJson().read(bytes, NWorkspaceConfigApi.class);
@@ -72,7 +74,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigRuntime parseRuntimeConfig() {
-        NPath path = NPath.ofIdStore(NWorkspace.of().getRuntimeId(), NStoreType.CONF)
+        NPath path = NPath.of(NStoreKey.ofConf(NWorkspace.of().getRuntimeId()))
                 .resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NWorkspaceConfigRuntime c = bytes==null?null: NElementReader.ofJson().read(bytes, NWorkspaceConfigRuntime.class);
@@ -81,8 +83,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigSecurity parseSecurityConfig(NId nutsApiId) {
-        NPath path = NPath.ofIdStore(nutsApiId
-                , NStoreType.CONF)
+        NPath path = NPath.of(NStoreKey.ofConf(nutsApiId))
                 .resolve(CoreNConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NWorkspaceConfigSecurity c = bytes==null?null: NElementReader.ofJson().read(bytes, NWorkspaceConfigSecurity.class);
@@ -91,8 +92,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigMain parseMainConfig(NId nutsApiId) {
-        NPath path = NPath.ofIdStore(
-                        nutsApiId, NStoreType.CONF)
+        NPath path = NPath.of(NStoreKey.ofConf(nutsApiId))
                 .resolve(CoreNConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NWorkspaceConfigMain507 c = bytes==null?null: NElementReader.ofJson().read(bytes, NWorkspaceConfigMain507.class);
