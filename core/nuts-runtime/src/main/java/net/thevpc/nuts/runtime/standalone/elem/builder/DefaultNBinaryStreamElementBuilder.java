@@ -114,8 +114,8 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
     }
 
     @Override
-    public NBinaryStreamElementBuilder removeAffix(int index) {
-        super.removeAffix(index);
+    public NBinaryStreamElementBuilder removeAffix(int affix) {
+        super.removeAffix(affix);
         return this;
     }
 
