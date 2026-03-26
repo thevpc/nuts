@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.builder.NElementAnnotationBuilderImpl;
 import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
@@ -66,6 +67,11 @@ public class NElementAnnotationImpl implements NElementAnnotation {
             return NOptional.ofNamedEmpty(NMsg.ofC("param %s", index));
         }
         return NOptional.of(params.get(index));
+    }
+
+    @Override
+    public NOptional<NElement> get(String s) {
+        return CoreNElementUtils.getByName(params,s);
     }
 
     @Override
