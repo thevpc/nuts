@@ -377,9 +377,8 @@ public final class DefaultNWorkspaceCurrentConfig {
     }
 
     public NPath getHomeLocation(NStoreType storeType) {
-        return NPath.of(Paths.get(NPlatformHome.of(getStoreLayout(), isSystem()).getWorkspaceLocation(
-                storeType, getHomeLocations(),
-                getName()
+        return NPath.of(Paths.get(NPlatformHome.of(getStoreLayout(), isSystem()).getBaseLocation(
+                storeType, getHomeLocations()
         )));
     }
 
