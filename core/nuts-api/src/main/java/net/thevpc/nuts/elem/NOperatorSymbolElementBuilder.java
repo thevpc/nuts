@@ -31,7 +31,7 @@ public interface NOperatorSymbolElementBuilder extends NElementBuilder {
 
     NOperatorSymbolElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NOperatorSymbolElementBuilder removeAffix(int index);
+    NOperatorSymbolElementBuilder removeAffix(int affix);
 
     NOperatorSymbolElementBuilder removeAnnotation(NElementAnnotation annotation);
 
