@@ -574,7 +574,7 @@ public class DefaultNFetch extends AbstractNFetch {
         private Set<NDescriptorFlag> loadCache() {
             Map<String, String> map = null;
             try {
-                map = (Map<String, String>) ((NWorkspaceExt) NWorkspace.of()).store().loadLocationKey(NLocationKey.ofCacheFaced(id, null, "info.cache"), Map.class);
+                map = (Map<String, String>) ((NWorkspaceExt) NWorkspace.of()).store().loadLocationKey(NStoreKey.ofCacheFaced(id, null, "info.cache"), Map.class);
             } catch (Exception ex) {
                 //
             }
@@ -602,7 +602,7 @@ public class DefaultNFetch extends AbstractNFetch {
                 for (NDescriptorFlag n : nb) {
                     map.put(NNameFormat.VAR_NAME.format(n.name()), "true");
                 }
-                ((NWorkspaceExt) NWorkspace.of()).store().saveLocationKey(NLocationKey.ofCacheFaced(id, null, "info.cache"), map);
+                ((NWorkspaceExt) NWorkspace.of()).store().saveLocationKey(NStoreKey.ofCacheFaced(id, null, "info.cache"), map);
             } catch (Exception ex) {
                 //
             }
