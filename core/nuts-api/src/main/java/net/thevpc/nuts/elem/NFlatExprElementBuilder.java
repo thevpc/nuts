@@ -80,7 +80,7 @@ public interface NFlatExprElementBuilder extends NElementBuilder {
 
     NFlatExprElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NFlatExprElementBuilder removeAffix(int index);
+    NFlatExprElementBuilder removeAffix(int affix);
 
     NFlatExprElementBuilder removeAnnotation(NElementAnnotation annotation);
 
