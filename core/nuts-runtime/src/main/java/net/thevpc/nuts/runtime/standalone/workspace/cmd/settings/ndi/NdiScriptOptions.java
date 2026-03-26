@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NConstants;
 
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceBootConfig;
 import net.thevpc.nuts.platform.NLauncherOptions;
@@ -11,6 +12,7 @@ import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
@@ -178,7 +180,7 @@ public class NdiScriptOptions implements Cloneable {
                     bootConfig.getStoreLocation(apiId, NStoreType.BIN)
             );
         } else {
-            return NPath.ofIdStore(apiId, NStoreType.BIN);
+            return NPath.of(NStoreKey.ofBin(apiId));
         }
     }
 
@@ -193,7 +195,7 @@ public class NdiScriptOptions implements Cloneable {
             bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
             return NPath.of(bootConfig.getStoreLocation(apiId, NStoreType.BIN));
         } else {
-            return NPath.ofIdStore(apiId, NStoreType.BIN);
+            return NPath.of(NStoreKey.ofBin(apiId));
         }
     }
 
