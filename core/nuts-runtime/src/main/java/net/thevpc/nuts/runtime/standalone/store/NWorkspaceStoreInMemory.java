@@ -4,7 +4,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.core.NLocationKey;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfig;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.InstallInfoConfig;
@@ -27,7 +27,7 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     private NWorkspaceConfigRuntime storedConfigRuntime;
     private NanoDB varDB;
     private NanoDB cacheDB;
-    private HashMap<NLocationKey, Object> locationKeyToObjectConfMap = new HashMap<>();
+    private HashMap<NStoreKey, Object> locationKeyToObjectConfMap = new HashMap<>();
     private Map<NId, Map<NId, InstallInfoConfig>> shortToLongToInstallInfoConfigMap = new HashMap<>();
     private Map<NId, String> shortToDefaultVersionMap = new HashMap<>();
 
@@ -195,13 +195,13 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
 
 
     @Override
-    public void saveLocationKey(NLocationKey k, Object value) {
+    public void saveLocationKey(NStoreKey k, Object value) {
         locationKeyToObjectConfMap.put(k, value);
 
     }
 
     @Override
-    public <T> T loadLocationKey(NLocationKey k, Class<T> type) {
+    public <T> T loadLocationKey(NStoreKey k, Class<T> type) {
         Object obj = locationKeyToObjectConfMap.get(k);
         if (obj == null) {
             return null;
@@ -210,7 +210,7 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     }
 
     @Override
-    public boolean deleteLocationKey(NLocationKey k) {
+    public boolean deleteLocationKey(NStoreKey k) {
         return locationKeyToObjectConfMap.remove(k) != null;
     }
 }
