@@ -3,6 +3,7 @@ package net.thevpc.nuts.internal.rpi;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExecutionEntry;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NComponent;
@@ -66,6 +67,7 @@ public interface NIORPI extends NComponent {
     NInputSource ofInputSource(NInputStreamProvider inputStream);
 
     NInputSource ofInputSource(NInputStreamProvider inputStream, NContentMetadata metadata);
+
     NInputSource ofInputSource(NReaderProvider inputStream, NContentMetadata metadata);
 
     NInputSource ofInputSource(Reader inputStream);
@@ -73,6 +75,7 @@ public interface NIORPI extends NComponent {
     NInputSource ofInputSource(Reader inputStream, NContentMetadata metadata);
 
     NInputSource ofInputSource(byte[] inputStream);
+
     NInputSource ofEmptyInputSource();
 
     NInputSource ofInputSource(byte[] inputStream, NContentMetadata metadata);
@@ -161,6 +164,7 @@ public interface NIORPI extends NComponent {
     List<NExecutionEntry> parseExecutionEntries(InputStream inputStream, String type, String sourceName);
 
     NTextCursorTracker createTextCursorTracker();
+
     NTextCursorTracker createTextCursorTracker(int tabSize, int maxRewindDepth);
 
     /**
@@ -250,4 +254,5 @@ public interface NIORPI extends NComponent {
 
     NPath createPath(NPathSPI path);
 
+    NPath getStoreLocation(NStoreKey nLocationKey) ;
 }
