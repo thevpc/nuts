@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathImpl;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NTreeVisitResult;
@@ -58,6 +59,11 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
     }
 
     @Override
+    public List<NPairElement> namedPairs() {
+        return values.stream().filter(NElement::isNamedPair).map(x -> x.asPair().get()).collect(Collectors.toList());
+    }
+
+    @Override
     public Iterator<NElement> iterator() {
         return children().iterator();
     }
@@ -80,22 +86,7 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
 
     @Override
     public NOptional<NElement> get(String s) {
-//        NElements elements = NElements.of();
-        for (NElement x : values) {
-            if (x instanceof NPairElement) {
-                NPairElement e = (NPairElement) x;
-                if (s == null) {
-                    if (e.key().isNull()) {
-                        return NOptional.of(e.value());
-                    }
-                } else if (e.key().isAnyString()) {
-                    if (Objects.equals(e.key().asStringValue().get(), s)) {
-                        return NOptional.of(e.value());
-                    }
-                }
-            }
-        }
-        return NOptional.ofNamedEmpty("property " + s);
+        return CoreNElementUtils.getByName(values,s);
     }
 
     @Override
@@ -204,6 +195,11 @@ public class DefaultNObjectElement extends AbstractNListContainerElement impleme
 
     public NElement param(int index) {
         return params == null ? null : params.get(index);
+    }
+
+    @Override
+    public NOptional<NElement> param(String name) {
+        return CoreNElementUtils.getByName(params,name);
     }
 
     @Override
