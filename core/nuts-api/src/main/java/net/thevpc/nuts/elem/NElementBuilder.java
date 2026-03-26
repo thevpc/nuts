@@ -72,7 +72,11 @@ public interface NElementBuilder {
 
     NElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NElementBuilder removeAffix(int index);
+    NElementBuilder removeAffix(int affix);
+
+    NElementBuilder removeAffix(NAffix affix);
+
+    NElementBuilder removeAffix(NBoundAffix affix);
 
     NElementBuilder removeAnnotation(NElementAnnotation annotation);
 
@@ -91,6 +95,7 @@ public interface NElementBuilder {
     NElementBuilder clearComments();
 
     NElementBuilder addAffixes(List<NBoundAffix> affixes);
+
     NElementMetadata metadata();
 
     /// /////////////
@@ -120,5 +125,6 @@ public interface NElementBuilder {
     NElementBuilder addDiagnostic(NElementDiagnostic error);
 
     NElementBuilder removeDiagnostic(NElementDiagnostic error);
+
     NElementBuilder metadata(NElementMetadata metadata);
 }
