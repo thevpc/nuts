@@ -13,6 +13,18 @@ public interface NElementAnnotationBuilder extends NBlankable {
 
     NElement param(int index);
 
+    NElementAnnotationBuilder remove(NElement child);
+
+    NElementAnnotationBuilder removePair(NElement entryKey);
+
+    NElementAnnotationBuilder removeAll(NElement child);
+
+    NElementAnnotationBuilder removeAllPairs(NElement name);
+
+    NElementAnnotationBuilder removePair(String name);
+
+    NElementAnnotationBuilder removeAllPairs(String name);
+
     NElementAnnotationBuilder clear();
 
     NElementAnnotationBuilder setName(String name);
