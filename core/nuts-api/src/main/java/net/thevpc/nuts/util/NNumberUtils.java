@@ -58,12 +58,6 @@ public class NNumberUtils {
                 return NElementType.BIG_DECIMAL;
             case "java.math.BigInteger":
                 return NElementType.BIG_INT;
-            case "net.thevpc.nuts.math.NBigComplex":
-                return NElementType.BIG_COMPLEX;
-            case "net.thevpc.nuts.math.NDoubleComplex":
-                return NElementType.DOUBLE_COMPLEX;
-            case "net.thevpc.nuts.math.NFloatComplex":
-                return NElementType.FLOAT_COMPLEX;
             case "java.lang.Double":
                 return NElementType.DOUBLE;
             case "java.lang.Float":
@@ -392,7 +386,7 @@ public class NNumberUtils {
     }
 
     public static BigDecimal powBigDecimals(BigDecimal x, BigDecimal y, MathContext mc) {
-        mc= getContextMathContext(mc);
+        mc = getContextMathContext(mc);
 
         if (y.scale() <= 0 && y.stripTrailingZeros().scale() <= 0) {
             return x.pow(y.intValueExact(), mc);
@@ -415,7 +409,7 @@ public class NNumberUtils {
     public static BigDecimal exp(BigDecimal x, MathContext mc) {
         BigDecimal sum = BigDecimal.ONE;
         BigDecimal term = BigDecimal.ONE;
-        mc= getContextMathContext(mc);
+        mc = getContextMathContext(mc);
         int n = 1;
         while (term.compareTo(BigDecimal.ZERO) != 0) {
             term = term.multiply(x, mc).divide(BigDecimal.valueOf(n), mc);
@@ -428,7 +422,7 @@ public class NNumberUtils {
 
     public static BigDecimal lnBigDecimals(BigDecimal x, MathContext mc) {
         if (x.compareTo(BigDecimal.ZERO) <= 0) throw new ArithmeticException("ln(x) undefined for x <= 0");
-        mc= getContextMathContext(mc);
+        mc = getContextMathContext(mc);
 
         BigDecimal two = BigDecimal.valueOf(2);
         BigDecimal y = x.subtract(BigDecimal.ONE).divide(x.add(BigDecimal.ONE), mc);
@@ -438,7 +432,7 @@ public class NNumberUtils {
         BigDecimal term = y;
         int n = 0;
         while (term.abs().compareTo(BigDecimal.ONE.scaleByPowerOfTen(-mc.getPrecision())) > 0) {
-            BigDecimal denom = BigDecimal.valueOf(2 * n + 1);
+            BigDecimal denom = BigDecimal.valueOf(2L * n + 1);
             sum = sum.add(term.divide(denom, mc), mc);
             term = term.multiply(y2, mc);
             n++;
@@ -778,7 +772,49 @@ public class NNumberUtils {
         }
     }
 
-    public static Class<? extends Number> commonNumberType(Class<? extends Number> aa, Class<? extends Number> bb) {
+    public static Class<?> numberType(Class<? extends Number> aa) {
+        if (aa == null) {
+            return Number.class;
+        }
+        if (NBigComplex.class.isAssignableFrom(aa)) {
+            return NBigComplex.class;
+        }
+        if (BigDecimal.class.isAssignableFrom(aa)) {
+            return NBigComplex.class;
+        }
+        if (BigInteger.class.isAssignableFrom(aa)) {
+            return NBigComplex.class;
+        }
+        if (NDoubleComplex.class.isAssignableFrom(aa)) {
+            return NDoubleComplex.class;
+        }
+        if (NFloatComplex.class.isAssignableFrom(aa)) {
+            return NFloatComplex.class;
+        }
+        switch (aa.getName()) {
+            case "byte":
+            case "java.lang.Byte":
+                return Byte.class;
+            case "short":
+            case "java.lang.Short":
+                return Short.class;
+            case "int":
+            case "java.lang.Integer":
+                return Integer.class;
+            case "long":
+            case "java.lang.Long":
+                return Long.class;
+            case "float":
+            case "java.lang.Float":
+                return Float.class;
+            case "double":
+            case "java.lang.Double":
+                return Double.class;
+        }
+        return aa;
+    }
+
+    public static Class<?> commonNumberType(Class<? extends Number> aa, Class<? extends Number> bb) {
         if (aa == null && bb == null) {
             return Number.class;
         }
@@ -788,17 +824,17 @@ public class NNumberUtils {
         if (bb == null) {
             return aa;
         }
-        if (NBigComplex.class.equals(aa) || NBigComplex.class.equals(bb)) {
+        if (NBigComplex.class.isAssignableFrom(aa) || NBigComplex.class.isAssignableFrom(bb)) {
             return NBigComplex.class;
         }
-        if (NDoubleComplex.class.equals(aa) || NDoubleComplex.class.equals(bb)) {
-            if (BigInteger.class.equals(aa) || BigInteger.class.equals(bb)) {
+        if (NDoubleComplex.class.isAssignableFrom(aa) || NDoubleComplex.class.isAssignableFrom(bb)) {
+            if (BigInteger.class.isAssignableFrom(aa) || BigInteger.class.isAssignableFrom(bb)) {
                 return NBigComplex.class;
             }
             return NDoubleComplex.class;
         }
-        if (NFloatComplex.class.equals(aa) || NFloatComplex.class.equals(bb)) {
-            if (BigInteger.class.equals(aa) || BigInteger.class.equals(bb)) {
+        if (NFloatComplex.class.isAssignableFrom(aa) || NFloatComplex.class.isAssignableFrom(bb)) {
+            if (BigInteger.class.isAssignableFrom(aa) || BigInteger.class.isAssignableFrom(bb)) {
                 return NBigComplex.class;
             }
             if (Long.class.equals(aa) || Long.class.equals(bb)) {
@@ -806,10 +842,10 @@ public class NNumberUtils {
             }
             return NFloatComplex.class;
         }
-        if (BigDecimal.class.equals(aa) || BigDecimal.class.equals(bb)) {
+        if (BigDecimal.class.isAssignableFrom(aa) || BigDecimal.class.isAssignableFrom(bb)) {
             return BigDecimal.class;
         }
-        if (BigInteger.class.equals(aa) || BigInteger.class.equals(bb)) {
+        if (BigInteger.class.isAssignableFrom(aa) || BigInteger.class.isAssignableFrom(bb)) {
             if (Double.class.equals(aa) || Double.class.equals(bb) || Float.class.equals(aa) || Float.class.equals(bb)) {
                 return BigDecimal.class;
             }
@@ -890,7 +926,7 @@ public class NNumberUtils {
         if (b == null) {
             return a;
         }
-        Class<? extends Number> ct = commonNumberType(a.getClass(), b.getClass());
+        Class<?> ct = commonNumberType(a.getClass(), b.getClass());
         switch (ct.getName()) {
             case "java.lang.Byte": {
                 return (byte) (NLiteral.of(a).asByte().get() + NLiteral.of(b).asByte().get());
@@ -917,15 +953,16 @@ public class NNumberUtils {
                 return NLiteral.of(a).asBigDecimal().get().add(NLiteral.of(b).asBigDecimal().get());
             }
             case "net.thevpc.nuts.math.NFloatComplex": {
-                return NLiteral.of(a).asFloatComplex().get().add(NLiteral.of(b).asFloatComplex().get());
+                return NLiteral.of(a).asFloatComplex().get().addFloatComplex(NLiteral.of(b).asFloatComplex().get()).numberValue();
             }
             case "net.thevpc.nuts.math.NDoubleComplex": {
-                return NLiteral.of(a).asDoubleComplex().get().add(NLiteral.of(b).asDoubleComplex().get());
+                return NLiteral.of(a).asDoubleComplex().get().addDoubleComplex(NLiteral.of(b).asDoubleComplex().get()).numberValue();
             }
             case "net.thevpc.nuts.math.NBigComplex": {
-                return NLiteral.of(a).asBigComplex().get().add(NLiteral.of(b).asBigComplex().get());
+                return NLiteral.of(a).asBigComplex().get().addBigComplex(NLiteral.of(b).asBigComplex().get()).numberValue();
             }
         }
+
         throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
     }
 
@@ -939,7 +976,7 @@ public class NNumberUtils {
         if (b == null) {
             return a;
         }
-        Class<? extends Number> ct = commonNumberType(a.getClass(), b.getClass());
+        Class<?> ct = commonNumberType(a.getClass(), b.getClass());
         switch (ct.getName()) {
             case "java.lang.Byte": {
                 return (byte) (NLiteral.of(a).asByte().get() - NLiteral.of(b).asByte().get());
@@ -966,13 +1003,13 @@ public class NNumberUtils {
                 return NLiteral.of(a).asBigDecimal().get().subtract(NLiteral.of(b).asBigDecimal().get());
             }
             case "net.thevpc.nuts.math.NFloatComplex": {
-                return NLiteral.of(a).asFloatComplex().get().subtract(NLiteral.of(b).asFloatComplex().get());
+                return NLiteral.of(a).asFloatComplex().get().subtractFloatComplex(NLiteral.of(b).asFloatComplex().get()).numberValue();
             }
             case "net.thevpc.nuts.math.NDoubleComplex": {
-                return NLiteral.of(a).asDoubleComplex().get().subtract(NLiteral.of(b).asDoubleComplex().get());
+                return NLiteral.of(a).asDoubleComplex().get().subtractDoubleComplex(NLiteral.of(b).asDoubleComplex().get()).numberValue();
             }
             case "net.thevpc.nuts.math.NBigComplex": {
-                return NLiteral.of(a).asBigComplex().get().subtract(NLiteral.of(b).asBigComplex().get());
+                return NLiteral.of(a).asBigComplex().get().subtractBigComplex(NLiteral.of(b).asBigComplex().get()).numberValue();
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
@@ -988,7 +1025,7 @@ public class NNumberUtils {
         if (b == null) {
             return a;
         }
-        Class<? extends Number> ct = commonNumberType(a.getClass(), b.getClass());
+        Class<?> ct = commonNumberType(a.getClass(), b.getClass());
         switch (ct.getName()) {
             case "java.lang.Byte": {
                 return (byte) (NLiteral.of(a).asByte().get() * NLiteral.of(b).asByte().get());
@@ -1015,13 +1052,13 @@ public class NNumberUtils {
                 return NLiteral.of(a).asBigDecimal().get().multiply(NLiteral.of(b).asBigDecimal().get());
             }
             case "net.thevpc.nuts.math.NFloatComplex": {
-                return NLiteral.of(a).asFloatComplex().get().multiply(NLiteral.of(b).asFloatComplex().get());
+                return NLiteral.of(a).asFloatComplex().get().multiplyFloatComplex(NLiteral.of(b).asFloatComplex().get()).numberValue();
             }
             case "net.thevpc.nuts.math.NDoubleComplex": {
-                return NLiteral.of(a).asDoubleComplex().get().multiply(NLiteral.of(b).asDoubleComplex().get());
+                return NLiteral.of(a).asDoubleComplex().get().multiplyDoubleComplex(NLiteral.of(b).asDoubleComplex().get()).numberValue();
             }
             case "net.thevpc.nuts.math.NBigComplex": {
-                return NLiteral.of(a).asBigComplex().get().multiply(NLiteral.of(b).asBigComplex().get(), mc);
+                return NLiteral.of(a).asBigComplex().get().multiplyBigComplex(NLiteral.of(b).asBigComplex().get(), mc).numberValue();
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
@@ -1037,7 +1074,7 @@ public class NNumberUtils {
         if (b == null) {
             return a;
         }
-        Class<? extends Number> ct = commonNumberType(a.getClass(), b.getClass());
+        Class<?> ct = commonNumberType(a.getClass(), b.getClass());
         switch (ct.getName()) {
             case "java.lang.Byte": {
                 return (byte) (NLiteral.of(a).asByte().get() / NLiteral.of(b).asByte().get());
@@ -1064,13 +1101,13 @@ public class NNumberUtils {
                 return NLiteral.of(a).asBigDecimal().get().divide(NLiteral.of(b).asBigDecimal().get(), RoundingMode.HALF_EVEN);
             }
             case "net.thevpc.nuts.math.NFloatComplex": {
-                return NLiteral.of(a).asFloatComplex().get().divide(NLiteral.of(b).asFloatComplex().get());
+                return NLiteral.of(a).asFloatComplex().get().divideFloatComplex(NLiteral.of(b).asFloatComplex().get()).numberValue();
             }
             case "net.thevpc.nuts.math.NDoubleComplex": {
-                return NLiteral.of(a).asDoubleComplex().get().divide(NLiteral.of(b).asDoubleComplex().get());
+                return NLiteral.of(a).asDoubleComplex().get().divideDoubleComplex(NLiteral.of(b).asDoubleComplex().get()).numberValue();
             }
             case "net.thevpc.nuts.math.NBigComplex": {
-                return NLiteral.of(a).asBigComplex().get().divide(NLiteral.of(b).asBigComplex().get(), mc);
+                return NLiteral.of(a).asBigComplex().get().divideBigComplex(NLiteral.of(b).asBigComplex().get(), mc).numberValue();
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
@@ -1086,7 +1123,7 @@ public class NNumberUtils {
         if (b == null) {
             return a;
         }
-        Class<? extends Number> ct = commonNumberType(a.getClass(), b.getClass());
+        Class<?> ct = commonNumberType(a.getClass(), b.getClass());
         switch (ct.getName()) {
             case "java.lang.Byte": {
                 return (byte) (NLiteral.of(a).asByte().get() % NLiteral.of(b).asByte().get());
@@ -1135,7 +1172,7 @@ public class NNumberUtils {
         if (b == null) {
             return a;
         }
-        Class<? extends Number> ct = commonNumberType(a.getClass(), b.getClass());
+        Class<?> ct = commonNumberType(a.getClass(), b.getClass());
         switch (ct.getName()) {
             case "java.lang.Byte": {
                 return (byte) Math.pow(NLiteral.of(a).asByte().get(), NLiteral.of(b).asByte().get());
@@ -1204,13 +1241,13 @@ public class NNumberUtils {
                 return NLiteral.of(a).asBigDecimal().get().negate();
             }
             case "net.thevpc.nuts.math.NFloatComplex": {
-                return NLiteral.of(a).asFloatComplex().get().negate();
+                return NLiteral.of(a).asFloatComplex().get().negateFloatComplex().numberValue();
             }
             case "net.thevpc.nuts.math.NDoubleComplex": {
-                return NLiteral.of(a).asDoubleComplex().get().negate();
+                return NLiteral.of(a).asDoubleComplex().get().negateDoubleComplex().numberValue();
             }
             case "net.thevpc.nuts.math.NBigComplex": {
-                return NLiteral.of(a).asBigComplex().get().negate();
+                return NLiteral.of(a).asBigComplex().get().negateBigComplex().numberValue();
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", a.getClass()));
@@ -1240,21 +1277,21 @@ public class NNumberUtils {
                 return 1.0 / NLiteral.of(a).asDouble().get();
             }
             case "java.math.BigInteger": {
-                mc= getContextMathContext(mc);
+                mc = getContextMathContext(mc);
                 return BigDecimal.ONE.divide(NLiteral.of(a).asBigDecimal().get(), mc);
             }
             case "java.math.BigDecimal": {
-                mc= getContextMathContext(mc);
+                mc = getContextMathContext(mc);
                 return BigDecimal.ONE.divide(NLiteral.of(a).asBigDecimal().get(), mc);
             }
             case "net.thevpc.nuts.math.NFloatComplex": {
-                return NLiteral.of(a).asFloatComplex().get().inv();
+                return NLiteral.of(a).asFloatComplex().get().invFloatComplex().numberValue();
             }
             case "net.thevpc.nuts.math.NDoubleComplex": {
-                return NLiteral.of(a).asDoubleComplex().get().inv();
+                return NLiteral.of(a).asDoubleComplex().get().invDoubleComplex().numberValue();
             }
             case "net.thevpc.nuts.math.NBigComplex": {
-                return NLiteral.of(a).asBigComplex().get().inv(mc);
+                return NLiteral.of(a).asBigComplex().get().invBigComplex(mc).numberValue();
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", a.getClass()));
