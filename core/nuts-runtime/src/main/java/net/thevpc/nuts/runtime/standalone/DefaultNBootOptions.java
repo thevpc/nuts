@@ -1112,7 +1112,7 @@ public class DefaultNBootOptions implements NBootOptions {
                 for (Map.Entry<NHomeLocation, String> e : c.entrySet()) {
                     v.put(NBootHomeLocation.of(
                             e.getKey().getOsFamily().id(),
-                            e.getKey().getStoreLocation().id()
+                            e.getKey().getStoreType().id()
                     ), e.getValue());
                 }
             }
