@@ -128,8 +128,20 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
     }
 
     @Override
-    public NElementBuilder removeAffix(int index) {
-        this.affixes.removeAffix(index);
+    public NElementBuilder removeAffix(int affix) {
+        this.affixes.removeAffix(affix);
+        return this;
+    }
+
+    @Override
+    public NElementBuilder removeAffix(NAffix affix) {
+        this.affixes.removeAffix(affix);
+        return this;
+    }
+
+    @Override
+    public NElementBuilder removeAffix(NBoundAffix affix) {
+        this.affixes.removeAffix(affix);
         return this;
     }
 
