@@ -3,12 +3,10 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NBootOptions;
-import net.thevpc.nuts.core.NLocationKey;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.platform.NHomeLocation;
-import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -21,6 +19,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.*;
 
+import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Map;
 
 public class DefaultNWorkspaceLocationModel {
@@ -62,14 +62,37 @@ public class DefaultNWorkspaceLocationModel {
     }
 
 
-    public NPath getStoreLocation(NStoreType folderType) {
-        try {
-            return cfg().current().getStoreLocation(folderType);
-        } catch (IllegalStateException stillInitializing) {
-            NBootOptions info = NWorkspaceExt.of().getModel().bootModel.getBootUserOptions();
-            String h = info.getStoreType(folderType).orNull();
-            return h==null?null: NPath.of(h);
+    public NPath getStoreLocation(NStoreScope storeScope,NStoreType storeType) {
+        NAssert.requireNamedNonNull(storeScope, "storeScope");
+        NAssert.requireNamedNonNull(storeType, "storeType");
+        switch (storeScope){
+            case WORKSPACE:{
+                try {
+                    return cfg().current().getStoreLocation(storeType);
+                } catch (IllegalStateException stillInitializing) {
+                    NBootOptions info = NWorkspaceExt.of().getModel().bootModel.getBootUserOptions();
+                    String h = info.getStoreType(storeType).orNull();
+                    return h==null?null: NPath.of(h);
+                }
+            }
+            case USER:{
+                return NPath.of(Paths.get(NPlatformHome.of(getStoreLayout(), false).getWorkspaceLocation(
+                        storeType, getHomeLocations(),
+                        null
+                )));
+            }
+            case SYSTEM:{
+                return NPath.of(Paths.get(NPlatformHome.of(getStoreLayout(), true).getWorkspaceLocation(
+                        storeType, getHomeLocations(),
+                        null
+                )));
+            }
+            case BASE:{
+                return NPath.of(Paths.get(NPlatformHome.of(getStoreLayout(), cfg().current().isSystem())
+                        .getBaseLocation(storeType, getHomeLocations())));
+            }
         }
+        throw new NIllegalArgumentException(NMsg.ofC("not support store scope %s", storeScope));
     }
 
 
@@ -100,9 +123,9 @@ public class DefaultNWorkspaceLocationModel {
     }
 
 
-    public NPath getStoreLocation(NStoreType folderType, String repositoryIdOrName) {
+    public NPath getStoreLocation(NStoreScope storeScope, NStoreType folderType, String repositoryIdOrName) {
         if (repositoryIdOrName == null) {
-            return getStoreLocation(folderType);
+            return getStoreLocation(storeScope, folderType);
         }
         NRepository repositoryById = workspace.findRepository(repositoryIdOrName).get();
         NRepositorySPI nRepositorySPI = NWorkspaceUtils.of().toRepositorySPI(repositoryById);
@@ -110,36 +133,57 @@ public class DefaultNWorkspaceLocationModel {
     }
 
 
-    public NPath getStoreLocation(NLocationKey locationKey) {
-        NPath u = getStoreLocation(locationKey.getId(), locationKey.getStoreType(), locationKey.getRepoUuid());
-        if(!NBlankable.isBlank(locationKey.getName())){
-            u=u.resolve(locationKey.getName());
+
+    public NPath getStoreLocation(NStoreKey key) {
+        NAssert.requireNamedNonNull(key.scope(), "storeScope");
+        NAssert.requireNamedNonNull(key.type(), "storeType");
+
+        NPath base;
+        if (key.repo() != null) {
+            NRepository repo = workspace.findRepository(key.repo()).get();
+            NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(repo);
+            base = repoSPI.config().getStoreLocation(key.type());
+            if (key.id() != null) {
+                base = base.resolve(NConstants.Folders.ID).resolve(getDefaultIdBasedir(key.id()));
+            }
+        } else {
+            switch (key.scope()) {
+                case WORKSPACE: {
+                    try {
+                        base = cfg().current().getStoreLocation(key.type());
+                    } catch (IllegalStateException stillInitializing) {
+                        NBootOptions info = NWorkspaceExt.of().getModel().bootModel.getBootUserOptions();
+                        String h = info.getStoreType(key.type()).orNull();
+                        base = h == null ? null : NPath.of(h);
+                    }
+                    break;
+                }
+                case USER: {
+                    base = NPath.of(Paths.get(NPlatformHome.of(false).getGlobalLocation(key.type(), getGlobalUserHomeLocations())));
+                    break;
+                }
+                case SYSTEM: {
+                    base = NPath.of(Paths.get(NPlatformHome.of(true).getGlobalLocation(key.type(), getGlobalSystemHomeLocations())));
+                    break;
+                }
+                case BASE:{
+                    return NPath.of(Paths.get(NPlatformHome.of(getStoreLayout(), cfg().current().isSystem())
+                            .getBaseLocation(key.type(), getHomeLocations())));
+                }
+                default:
+                    throw new NIllegalArgumentException(NMsg.ofC("not supported store scope %s", key.scope()));
+            }
+            if (base != null && key.id() != null) {
+                base = base.resolve(NConstants.Folders.ID).resolve(getDefaultIdBasedir(key.id()));
+            }
         }
-        return u;
-    }
-    public NPath getStoreLocation(NId id, NStoreType folderType, String repositoryIdOrName) {
-        if (repositoryIdOrName == null) {
-            return getStoreLocation(id, folderType);
+
+        if (base != null && !NBlankable.isBlank(key.name())) {
+            base = base.resolve(key.name());
         }
-        NPath storeLocation = getStoreLocation(folderType, repositoryIdOrName);
-        return storeLocation.resolve(NConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
+        return base;
     }
 
-
-    public NPath getStoreLocation(NId id, NStoreType folderType) {
-        NPath storeLocation = getStoreLocation(folderType);
-        if (storeLocation == null) {
-            return null;
-        }
-        return storeLocation.resolve(NConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
-//        switch (folderType) {
-//            case CACHE:
-//                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
-//            case CONFIG:
-//                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
-//        }
-//        return storeLocation.resolve(getDefaultIdBasedir(id));
-    }
 
     public NStoreStrategy getStoreStrategy() {
         return cfg().current().getStoreStrategy();
@@ -163,6 +207,14 @@ public class DefaultNWorkspaceLocationModel {
 
     public Map<NHomeLocation, String> getHomeLocations() {
         return cfg().current().getHomeLocations();
+    }
+
+    public Map<NHomeLocation, String> getGlobalUserHomeLocations() {
+        return new HashMap<>();
+    }
+
+    public Map<NHomeLocation, String> getGlobalSystemHomeLocations() {
+        return new HashMap<>();
     }
 
 
