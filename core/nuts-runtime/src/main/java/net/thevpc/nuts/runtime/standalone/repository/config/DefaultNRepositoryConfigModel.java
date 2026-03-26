@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.config;
 
 import net.thevpc.nuts.core.*;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.security.NSecurityManager;
@@ -226,12 +227,12 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     }
 
     @Override
-    public NPath getStoreLocation(NStoreType folderType) {
+    public NPath getStoreLocation(NStoreType storeType) {
         NStoreLocationsMap hlm = new NStoreLocationsMap(config.getStoreLocations());
-        String n = hlm.get(folderType);
+        String n = hlm.get(storeType);
         if (temporary) {
             if (NBlankable.isBlank(n)) {
-                n = folderType.toString().toLowerCase();
+                n = storeType.toString().toLowerCase();
                 n = n.trim();
             }
             return getStoreLocation().resolve(n);
@@ -239,13 +240,13 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
             switch (getStoreStrategy()) {
                 case STANDALONE: {
                     if (NBlankable.isBlank(n)) {
-                        n = folderType.toString().toLowerCase();
+                        n = storeType.toString().toLowerCase();
                     }
                     n = n.trim();
                     return getStoreLocation().resolve(n);
                 }
                 case EXPLODED: {
-                    NPath storeLocation = NPath.ofWorkspaceStore(folderType);
+                    NPath storeLocation = NPath.of(NStoreKey.of(storeType));
                     //uuid is added as
                     return storeLocation.resolve(NConstants.Folders.REPOSITORIES).resolve(getName()).resolve(getUuid());
 
