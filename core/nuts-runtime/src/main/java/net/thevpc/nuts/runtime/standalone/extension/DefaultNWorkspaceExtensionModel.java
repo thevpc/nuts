@@ -15,11 +15,11 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.*;
 
 
-import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.util.NDefaultClassLoaderNode;
 import net.thevpc.nuts.text.NMsg;
@@ -557,7 +557,7 @@ public class DefaultNWorkspaceExtensionModel {
         _LOG().log(NMsg.ofC("installing extension %s", id)
                 .withLevel(Level.FINE).withIntent(NMsgIntent.ADD)
         );
-        NPath cacheFile = NPath.ofIdStore(NWorkspace.of().getRuntimeId(), NStoreType.CACHE).resolve("extensions-" + id.getMavenFileName("cache"));
+        NPath cacheFile = NPath.of(NStoreKey.ofCache(NWorkspace.of().getRuntimeId())).resolve("extensions-" + id.getMavenFileName("cache"));
         ExtensionCacheNode ec = null;
         NClassLoaderNode node = null;
         if (cacheFile.isRegularFile()) {
