@@ -9,6 +9,6 @@ import java.util.List;
 public interface NMutableClassLoader {
     ClassLoader asClassLoader();
     List<NDefinition> getLoadedDependencies();
-    NId[] loadDependencies(NDependency... dependencies);
+    NDefinition[] loadDependencies(NDependency... dependencies);
     boolean isLoadedDependency(NId id);
 }
