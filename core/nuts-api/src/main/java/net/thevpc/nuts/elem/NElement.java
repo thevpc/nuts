@@ -58,7 +58,7 @@ import java.util.function.Predicate;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NElement extends NDescribable, NBlankable/*, NLiteral*/ {
+public interface NElement extends NDescribable, NBlankable,NElementAutoUndestructable {
 
     /// ///////////////////////////////////////////////////////////////////////////////////
 
