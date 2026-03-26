@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NMsg;
@@ -364,12 +365,10 @@ public class NPathFromSPI extends NPathBase {
         if (s.length() > 0) {
             if (s.startsWith("~")) {
                 if (s.equals("~~")) {
-                    NWorkspace workspace = NWorkspace.of();
-                    NPath nutsHome = workspace.getHomeLocation(NStoreType.CONF);
+                    NPath nutsHome = NPath.of(NStoreKey.ofBase(NStoreType.CONF));
                     return nutsHome.normalize();
                 } else if (s.startsWith("~~") && s.length() > 2 && (s.charAt(2) == '/' || s.charAt(2) == '\\')) {
-                    NWorkspace workspace = NWorkspace.of();
-                    NPath nutsHome = workspace.getHomeLocation(NStoreType.CONF);
+                    NPath nutsHome =NPath.of(NStoreKey.ofBase(NStoreType.CONF));
                     return nutsHome.resolve(s.substring(3)).normalize();
                 } else if (s.equals("~")) {
                     return NPath.ofUserHome();
