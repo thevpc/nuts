@@ -42,7 +42,7 @@ public interface NListElementBuilder extends NElementBuilder {
 
     NListElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NListElementBuilder removeAffix(int index);
+    NListElementBuilder removeAffix(int affix);
 
     NListElementBuilder removeAnnotation(NElementAnnotation annotation);
 
