@@ -66,7 +66,7 @@ public interface NCharStreamElementBuilder extends NElementBuilder {
 
     NCharStreamElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NCharStreamElementBuilder removeAffix(int index);
+    NCharStreamElementBuilder removeAffix(int affix);
 
     NCharStreamElementBuilder removeAnnotation(NElementAnnotation annotation);
 
