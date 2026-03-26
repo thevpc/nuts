@@ -44,6 +44,10 @@ public class NPlatformHome {
         return new NPlatformHome(platformOsFamily, system, null, null);
     }
 
+    public static NPlatformHome of(boolean system) {
+        return new NPlatformHome(null, system, null, null);
+    }
+
     public static NPlatformHome ofPortable(NOsFamily platformOsFamily, String userName) {
         return ofPortable(platformOsFamily, false, userName);
     }
@@ -187,6 +191,28 @@ public class NPlatformHome {
         return getWorkspaceStore(location, workspaceName);
     }
 
+    public String getBaseLocation(NStoreType location, Map<NHomeLocation, String> homeLocations) {
+        if (location == null) {
+            return getHome() + getNativePath("/ws");
+        }
+        String s = getCustomPlatformHomeFolder(location, homeLocations);
+        if (!NBlankable.isBlank(s)) {
+            return s;
+        }
+        return getStore(location) + getNativePath("/ws/");
+    }
+
+    public String getGlobalLocation(NStoreType location, Map<NHomeLocation, String> homeLocations) {
+        if (location == null) {
+            return getGlobalLocation();
+        }
+        String s = getCustomPlatformHomeFolder(location, homeLocations);
+        if (s != null) {
+            return s;
+        }
+        return getGlobalStore(location);
+    }
+
     public String getWorkspaceLocation(String workspaceName) {
         if (NBlankable.isBlank(workspaceName)) {
             workspaceName = NConstants.Names.DEFAULT_WORKSPACE_NAME;
@@ -196,6 +222,10 @@ public class NPlatformHome {
             return Paths.get(workspaceName).normalize().toAbsolutePath().toString();
         }
         return getHome() + getNativePath("/ws/" + workspaceName);
+    }
+
+    public String getGlobalLocation() {
+        return getHome() + getNativePath("/global");
     }
 
     public String getHome() {
@@ -241,6 +271,10 @@ public class NPlatformHome {
             }
         }
         return getStore(location) + getNativePath("/ws/" + getNativePath(workspaceName));
+    }
+
+    public String getGlobalStore(NStoreType storeType) {
+        return getStore(storeType) + getNativePath("/global");
     }
 
     public String getStore(NStoreType location) {
