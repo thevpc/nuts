@@ -4,6 +4,7 @@ import net.thevpc.nuts.text.NMsgFormattable;
 import net.thevpc.nuts.io.NInputContentProvider;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.time.NDuration;
 
 import java.util.List;
 import java.util.Map;
@@ -115,7 +116,8 @@ public interface NWebRequest extends NMsgFormattable {
     NWebRequest setContentLanguage(String contentLanguage);
 
     NWebRequest setAuthorizationBearer(String authorizationBearer);
-    NWebRequest setAuthorizationBasic(String username,String password);
+
+    NWebRequest setAuthorizationBasic(String username, String password);
 
     NWebRequest setAuthorization(String authorization);
 
@@ -149,9 +151,13 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest setReadTimeout(Integer readTimeout);
 
+    NWebRequest setReadTimeout(NDuration readTimeout);
+
     Integer getConnectTimeout();
 
     NWebRequest setConnectTimeout(Integer connectTimeout);
+
+    NWebRequest setConnectTimeout(NDuration duration);
 
     List<NWebRequestBody> getParts();
 
