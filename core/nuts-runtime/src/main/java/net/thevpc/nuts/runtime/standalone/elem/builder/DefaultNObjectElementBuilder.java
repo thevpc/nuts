@@ -700,8 +700,8 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NObjectElementBuilder removeAffix(int index) {
-        super.removeAffix(index);
+    public NObjectElementBuilder removeAffix(int affix) {
+        super.removeAffix(affix);
         return this;
     }
 
