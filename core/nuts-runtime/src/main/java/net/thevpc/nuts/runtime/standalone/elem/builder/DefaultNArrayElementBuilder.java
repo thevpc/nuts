@@ -684,8 +684,8 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NArrayElementBuilder removeAffix(int index) {
-        super.removeAffix(index);
+    public NArrayElementBuilder removeAffix(int affix) {
+        super.removeAffix(affix);
         return this;
     }
 
