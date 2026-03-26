@@ -25,6 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathImpl;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NMsg;
@@ -165,21 +166,7 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
 
     @Override
     public NOptional<NElement> get(String s) {
-        for (NElement x : params) {
-            if (x instanceof NPairElement) {
-                NPairElement e = (NPairElement) x;
-                if (s == null) {
-                    if (e.key().isNull()) {
-                        return NOptional.of(e.value());
-                    }
-                } else if (e.key().isAnyString()) {
-                    if (Objects.equals(e.key().asStringValue().get(), s)) {
-                        return NOptional.of(e.value());
-                    }
-                }
-            }
-        }
-        return NOptional.ofNamedEmpty("property " + s);
+        return CoreNElementUtils.getByName(params,s);
     }
 
     @Override
