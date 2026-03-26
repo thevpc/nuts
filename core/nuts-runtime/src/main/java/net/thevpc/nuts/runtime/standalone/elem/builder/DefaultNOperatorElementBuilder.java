@@ -408,8 +408,8 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
-    public NOperatorElementBuilder removeAffix(int index) {
-        super.removeAffix(index);
+    public NOperatorElementBuilder removeAffix(int affix) {
+        super.removeAffix(affix);
         return this;
     }
 
