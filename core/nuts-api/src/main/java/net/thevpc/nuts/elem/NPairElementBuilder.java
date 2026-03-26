@@ -42,7 +42,7 @@ public interface NPairElementBuilder extends NElementBuilder {
 
     NPairElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NPairElementBuilder removeAffix(int index);
+    NPairElementBuilder removeAffix(int affix);
 
     NPairElementBuilder removeAnnotation(NElementAnnotation annotation);
 
