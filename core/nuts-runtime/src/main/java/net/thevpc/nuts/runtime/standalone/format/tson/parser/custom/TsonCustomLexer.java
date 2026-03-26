@@ -1800,10 +1800,10 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 case BIG: {
                     numberElementType = NElementType.BIG_COMPLEX;
                     try {
-                        numberValue = (new NBigComplex(new BigDecimal(info.baseValue), new BigDecimal(info.imaginaryValue)));
+                        numberValue = NBigComplex.of(new BigDecimal(info.baseValue), new BigDecimal(info.imaginaryValue)).numberValue();
                     } catch (Exception ex) {
                         errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                        numberValue = (NBigComplex.ZERO);
+                        numberValue = (NBigComplex.ZERO).numberValue();
                     }
                     break;
                 }
@@ -1812,10 +1812,10 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 case S32: {
                     numberElementType = NElementType.FLOAT_COMPLEX;
                     try {
-                        numberValue = (new NFloatComplex(Float.parseFloat(info.baseValue), Float.parseFloat(info.imaginaryValue)));
+                        numberValue = NFloatComplex.of(Float.parseFloat(info.baseValue), Float.parseFloat(info.imaginaryValue)).numberValue();
                     } catch (Exception ex) {
                         errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                        numberValue = (NFloatComplex.ZERO);
+                        numberValue = NFloatComplex.ZERO.numberValue();
                     }
                     break;
                 }
@@ -1823,10 +1823,10 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 case S64: {
                     numberElementType = NElementType.DOUBLE_COMPLEX;
                     try {
-                        numberValue = (new NDoubleComplex(Double.parseDouble(info.baseValue), Double.parseDouble(info.imaginaryValue)));
+                        numberValue = NDoubleComplex.of(Double.parseDouble(info.baseValue), Double.parseDouble(info.imaginaryValue)).numberValue();
                     } catch (Exception ex) {
                         errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
-                        numberValue = (NDoubleComplex.ZERO);
+                        numberValue = NDoubleComplex.ZERO.numberValue();
                     }
                 }
             }
