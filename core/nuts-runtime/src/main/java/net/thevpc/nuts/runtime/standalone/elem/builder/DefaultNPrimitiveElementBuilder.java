@@ -710,8 +710,8 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NPrimitiveElementBuilder removeAffix(int index) {
-        super.removeAffix(index);
+    public NPrimitiveElementBuilder removeAffix(int affix) {
+        super.removeAffix(affix);
         return this;
     }
 
