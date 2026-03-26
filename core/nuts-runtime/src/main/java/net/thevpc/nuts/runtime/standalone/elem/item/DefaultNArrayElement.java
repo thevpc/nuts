@@ -25,6 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathImpl;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NMsg;
@@ -155,24 +156,7 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
 
     @Override
     public NOptional<NElement> get(String s) {
-        for (NElement x : values) {
-            if (x instanceof NPairElement) {
-                NPairElement e = (NPairElement) x;
-                if (s == null) {
-                    if (e.key().isNull()) {
-                        return NOptional.of(e.value());
-                    }
-                } else if (e.key().isAnyString()) {
-                    if (Objects.equals(e.key().asStringValue().get(), s)) {
-                        return NOptional.of(e.value());
-                    }
-                }
-            }
-        }
-        if (NLiteral.of(s).asInt().isPresent()) {
-            return get(NLiteral.of(s).asInt().get());
-        }
-        return NOptional.ofNamedEmpty("property " + s);
+        return CoreNElementUtils.getByName(values,s);
     }
 
     @Override
@@ -246,6 +230,11 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
 
     public NOptional<List<NElement>> params() {
         return params == null ? NOptional.ofNamedEmpty("params") : NOptional.of(Collections.unmodifiableList(params));
+    }
+
+    @Override
+    public NOptional<NElement> param(String name) {
+        return CoreNElementUtils.getByName(params,name);
     }
 
     public int paramsCount() {
