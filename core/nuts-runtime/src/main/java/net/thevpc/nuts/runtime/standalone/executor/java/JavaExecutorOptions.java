@@ -2,18 +2,13 @@ package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NSearch;
-import net.thevpc.nuts.core.NClassLoaderNode;
-import net.thevpc.nuts.core.NWorkspaceCmdLineParser;
+import net.thevpc.nuts.core.*;
 
 import net.thevpc.nuts.command.NExecutionEntry;
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.platform.NExecutionEngines;
 import net.thevpc.nuts.platform.NExecutionEngineLocation;
-import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -32,20 +27,14 @@ import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.util.NDefaultClassLoaderNode;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.command.NFetchStrategy;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public final class JavaExecutorOptions {
 
@@ -478,7 +467,7 @@ public final class JavaExecutorOptions {
         dh.append(j9_modulePath.stream().sorted().collect(Collectors.joining(":")).getBytes());
         dh.append(j9_upgradeModulePath.stream().sorted().collect(Collectors.joining(":")).getBytes());
         String cacheKey = dh.getDigest();
-        NPath cacheFile = NWorkspace.of().getStoreLocation(NWorkspace.of().getApiId(), NStoreType.CACHE).resolve("classpaths").resolve(cacheKey);
+        NPath cacheFile = NPath.of(NStoreKey.ofCache(NWorkspace.of().getApiId())).resolve("classpaths").resolve(cacheKey);
         if (cacheFile != null && cacheFile.exists()) {
             try (BufferedReader br = cacheFile.getBufferedReader()) {
                 String line;
