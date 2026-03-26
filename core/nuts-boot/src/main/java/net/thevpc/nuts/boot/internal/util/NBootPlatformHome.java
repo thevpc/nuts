@@ -41,6 +41,10 @@ public class NBootPlatformHome {
         return new NBootPlatformHome(platformOsFamily, system, null, null);
     }
 
+    public static NBootPlatformHome of(boolean system) {
+        return new NBootPlatformHome(null, system, null, null);
+    }
+
     public static NBootPlatformHome ofPortable(String platformOsFamily, String userName) {
         return ofPortable(platformOsFamily, false, userName);
     }
@@ -184,6 +188,17 @@ public class NBootPlatformHome {
         return getWorkspaceStore(location, workspaceName);
     }
 
+    public String getGlobalLocation(String location, Map<NBootHomeLocation, String> homeLocations) {
+        if (location == null) {
+            return getGlobalLocation();
+        }
+        String s = getCustomPlatformHomeFolder(location, homeLocations);
+        if (s != null) {
+            return s;
+        }
+        return getGlobalStore(location);
+    }
+
     public String getWorkspaceLocation(String workspaceName) {
         if (NBootUtils.isBlank(workspaceName)) {
             workspaceName = NBootConstants.Names.DEFAULT_WORKSPACE_NAME;
@@ -193,6 +208,10 @@ public class NBootPlatformHome {
             return Paths.get(workspaceName).normalize().toAbsolutePath().toString();
         }
         return getHome() + getNativePath("/ws/" + workspaceName);
+    }
+
+    public String getGlobalLocation() {
+        return getHome() + getNativePath("/global");
     }
 
     public String getHome() {
@@ -238,6 +257,10 @@ public class NBootPlatformHome {
             }
         }
         return getStore(storeType) + getNativePath("/ws/" + getNativePath(workspaceName));
+    }
+
+    public String getGlobalStore(String storeType) {
+        return getStore(storeType) + getNativePath("/global");
     }
 
     public static String currentOsFamily() {
