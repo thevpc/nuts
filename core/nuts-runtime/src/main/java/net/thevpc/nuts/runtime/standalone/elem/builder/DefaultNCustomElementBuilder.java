@@ -100,8 +100,8 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NCustomElementBuilder removeAffix(int index) {
-        super.removeAffix(index);
+    public NCustomElementBuilder removeAffix(int affix) {
+        super.removeAffix(affix);
         return this;
     }
 
