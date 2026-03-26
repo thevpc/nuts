@@ -9,12 +9,14 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NObjectElement;
 
 
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.text.NMsg;
@@ -59,8 +61,8 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 all.add(NWorkspace.of().getWorkspaceLocation().toPath().get()
                         .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME).toString()
                 );
-                for (NStoreType value : NStoreType.values()) {
-                    NPath r = NPath.ofWorkspaceStore(value);
+                for (NStoreType storeType : NStoreType.values()) {
+                    NPath r = NPath.of(NStoreKey.of(storeType));
                     if (r.isDirectory()) {
                         all.add(r.toString());
                     }
