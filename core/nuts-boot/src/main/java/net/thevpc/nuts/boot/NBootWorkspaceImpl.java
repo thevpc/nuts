@@ -694,7 +694,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                         //this is a protocol based workspace
                         //String protocol=ws.substring(0,ws.indexOf("://"));
                         workspaceName = "remote-bootstrap";
-                        lastNutsWorkspaceJsonConfigPath = NBootPlatformHome.of(null, systemWorkspace).getWorkspaceLocation(NBootUtils.resolveValidWorkspaceName(workspaceName));
+                        lastNutsWorkspaceJsonConfigPath = NBootPlatformHome.of(systemWorkspace).getWorkspaceLocation(NBootUtils.resolveValidWorkspaceName(workspaceName));
                         lastConfigLoaded = NBootBootConfigLoader.loadBootConfig(lastNutsWorkspaceJsonConfigPath);
                         immediateLocation = true;
 
@@ -702,7 +702,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                         immediateLocation = NBootUtils.isValidWorkspaceName(_ws);
                         int maxDepth = 36;
                         for (int i = 0; i < maxDepth; i++) {
-                            lastNutsWorkspaceJsonConfigPath = NBootUtils.isValidWorkspaceName(_ws) ? NBootPlatformHome.of(null, systemWorkspace).getWorkspaceLocation(NBootUtils.resolveValidWorkspaceName(_ws)) : NBootUtils.getAbsolutePath(_ws);
+                            lastNutsWorkspaceJsonConfigPath = NBootUtils.isValidWorkspaceName(_ws) ? NBootPlatformHome.of(systemWorkspace).getWorkspaceLocation(NBootUtils.resolveValidWorkspaceName(_ws)) : NBootUtils.getAbsolutePath(_ws);
 
                             NBootOptionsInfo configLoaded = NBootBootConfigLoader.loadBootConfig(lastNutsWorkspaceJsonConfigPath);
                             if (configLoaded == null) {
