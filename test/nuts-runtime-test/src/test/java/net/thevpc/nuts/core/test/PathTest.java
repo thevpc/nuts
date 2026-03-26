@@ -25,6 +25,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.concurrent.NScoredCallable;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.*;
@@ -56,21 +57,28 @@ public class PathTest {
 
     @Test
     public void testPaths() {
-        NOut.println("----------------------------ofUserStore");
+        NOut.println("----------------------------BaseLocation");
         for (NStoreType value : NStoreType.values()) {
-            NOut.println(NMsg.ofC("ofUserStore(%s) => %s",value,NPath.ofUserStore(value)));
+            NOut.println(NMsg.ofC("NPath.of(NStoreKey.ofBase(%s))) => %s", value, NPath.of(NStoreKey.ofBase(value))));
         }
-        NOut.println("----------------------------ofSystemStore");
+
+        NOut.println("----------------------------SystemStore : all users, all workspaces");
         for (NStoreType value : NStoreType.values()) {
-            NOut.println(NMsg.ofC("ofSystemStore(%s) => %s",value,NPath.ofSystemStore(value)));
+            NOut.println(NMsg.ofC("ofSystemStore(%s) => %s", value, NPath.of(NStoreKey.ofSystem(value))));
         }
-        NOut.println("----------------------------ofWorkspaceStore");
+
+        NOut.println("----------------------------UserStore : current user, all workspaces");
         for (NStoreType value : NStoreType.values()) {
-            NOut.println(NMsg.ofC("ofIdStore(%s) => %s",value,NPath.ofWorkspaceStore(value)));
+            NOut.println(NMsg.ofC("ofUserStore(%s) => %s", value, NPath.of(NStoreKey.ofUser(value))));
         }
-        NOut.println("----------------------------ofIdStore");
+
+        NOut.println("----------------------------WorkspaceStore");
+        for (NStoreType type : NStoreType.values()) {
+            NOut.println(NMsg.ofC("NPath.of(NStoreKey.of((%s)) => %s", type, NPath.of(NStoreKey.of(type))));
+        }
+        NOut.println("----------------------------IdStore");
         for (NStoreType value : NStoreType.values()) {
-            NOut.println(NMsg.ofC("ofIdStore(%s) => %s",value,NPath.ofIdStore(NWorkspace.of().getApiId(),value)));
+            NOut.println(NMsg.ofC("NPath.of(NStoreKey.of(NWorkspace.of().getApiId()).type(%s))) => %s", value, NPath.of(NStoreKey.of(NWorkspace.of().getApiId()).type(value))));
         }
     }
 
@@ -137,7 +145,7 @@ public class PathTest {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
-        Assertions.assertTrue(!children.isEmpty());
+        Assertions.assertFalse(children.isEmpty());
         TestUtils.println("------------ WALK ----------");
         s.walk().forEach(x -> {
             TestUtils.println(x);
@@ -243,7 +251,7 @@ public class PathTest {
         List<NPath> found = a.walkGlob().toList();
         TestUtils.println(found);
         String[] expected = new File(System.getProperty("user.home")).list();
-        Assertions.assertEquals(expected==null?0:expected.length,found.size());
+        Assertions.assertEquals(expected == null ? 0 : expected.length, found.size());
     }
 
     @Test
@@ -259,7 +267,7 @@ public class PathTest {
         List<NPath> found = a.walkGlob().toList();
         TestUtils.println(found);
         String[] expected = new File(".").list();
-        Assertions.assertEquals(expected==null?0:expected.length,found.size());
+        Assertions.assertEquals(expected == null ? 0 : expected.length, found.size());
     }
 
     @Test
