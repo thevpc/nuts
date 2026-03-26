@@ -27,11 +27,8 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.app.NApplicationHandleMode;
-import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
 import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NSecurityManager;
@@ -1418,7 +1415,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (!descriptor.getId().getVersion().isBlank() && descriptor.getId().getVersion().isSingleValue()
                     && descriptor.getId().toString().indexOf('$') < 0) {
                 try {
-                    NDescriptor d = store().loadLocationKey(NLocationKey.ofCacheFaced(descriptor.getId(), null, cacheId), NDescriptor.class);
+                    NDescriptor d = store().loadLocationKey(NStoreKey.ofCacheFaced(descriptor.getId(), null, cacheId), NDescriptor.class);
                     if (d != null) {
                         return d;
                     }
@@ -1434,7 +1431,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
         if (cacheId != null) {
             try {
-                store().saveLocationKey(NLocationKey.ofCacheFaced(effectiveDescriptor.getId(), null, cacheId), effectiveDescriptor);
+                store().saveLocationKey(NStoreKey.ofCacheFaced(effectiveDescriptor.getId(), null, cacheId), effectiveDescriptor);
             } catch (Exception ex) {
                 wsModel.LOG
                         .log(NMsg.ofC("failed to save eff-nuts.cache for %s", effectiveDescriptor.getId()).asError(ex));
@@ -1504,7 +1501,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
             }
             for (NDefinition def : defs.values()) {
-                NPath bootstrapFolder = getLocationModel().getStoreLocation(NStoreType.LIB).resolve(NConstants.Folders.ID);
+                NPath bootstrapFolder = getLocationModel().getStoreLocation(NStoreScope.WORKSPACE, NStoreType.LIB).resolve(NConstants.Folders.ID);
                 NId id2 = def.getId();
                 NCp.of().from(def.getContent().get())
                         .to(bootstrapFolder.resolve(this.getDefaultIdBasedir(id2))
@@ -1643,7 +1640,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     @Override
     public void setInstallationDigest(String value) {
         this.wsModel.installationDigest = value;
-        store().saveLocationKey(NLocationKey.ofConf(getApiId(), null, "installation-digest"), NStringUtils.trimToNull(value));
+        store().saveLocationKey(NStoreKey.ofConf(getApiId(), null, "installation-digest"), NStringUtils.trimToNull(value));
     }
 
     @Override
@@ -1811,32 +1808,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     public DefaultNWorkspaceLocationModel getLocationModel() {
         return NWorkspaceExt.of().getModel().locationsModel;
-    }
-
-
-    @Override
-    public NPath getStoreLocation(NStoreType folderType) {
-        return getLocationModel().getStoreLocation(folderType);
-    }
-
-    @Override
-    public NPath getStoreLocation(NId id, NStoreType folderType) {
-        return getLocationModel().getStoreLocation(id, folderType);
-    }
-
-    @Override
-    public NPath getStoreLocation(NStoreType folderType, String repositoryIdOrName) {
-        return getLocationModel().getStoreLocation(folderType, repositoryIdOrName);
-    }
-
-    @Override
-    public NPath getStoreLocation(NId id, NStoreType folderType, String repositoryIdOrName) {
-        return getLocationModel().getStoreLocation(id, folderType, repositoryIdOrName);
-    }
-
-    @Override
-    public NPath getStoreLocation(NLocationKey nLocationKey) {
-        return getLocationModel().getStoreLocation(nLocationKey);
     }
 
     @Override
