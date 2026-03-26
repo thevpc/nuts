@@ -86,8 +86,8 @@ public class DefaultNOperatorSymbolElementBuilder extends AbstractNElementBuilde
     }
 
     @Override
-    public DefaultNOperatorSymbolElementBuilder removeAffix(int index) {
-        super.removeAffix(index);
+    public DefaultNOperatorSymbolElementBuilder removeAffix(int affix) {
+        super.removeAffix(affix);
         return this;
     }
 
