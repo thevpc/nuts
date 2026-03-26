@@ -328,7 +328,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     NUpletElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NUpletElementBuilder removeAffix(int index);
+    NUpletElementBuilder removeAffix(int affix);
 
     NUpletElementBuilder removeAnnotation(NElementAnnotation annotation);
 
