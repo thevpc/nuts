@@ -4,14 +4,14 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.NConstants;
 
 
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NInfoCmd;
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
 
 import java.util.function.Function;
@@ -36,21 +36,21 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
     public String apply(String from) {
         switch (from) {
             case "home.conf":
-                return str(NWorkspace.of().getHomeLocation(NStoreType.CONF));
+                return str(NPath.of(NStoreKey.ofBase(NStoreType.CONF)));
             case "home.bin":
-                return str(NWorkspace.of().getHomeLocation(NStoreType.BIN));
+                return str(NPath.of(NStoreKey.ofBase(NStoreType.BIN)));
             case "home.lib":
-                return str(NWorkspace.of().getHomeLocation(NStoreType.LIB));
+                return str(NPath.of(NStoreKey.ofBase(NStoreType.LIB)));
             case "home.temp":
-                return str(NWorkspace.of().getHomeLocation(NStoreType.TEMP));
+                return str(NPath.of(NStoreKey.ofBase(NStoreType.TEMP)));
             case "home.var":
-                return str(NWorkspace.of().getHomeLocation(NStoreType.VAR));
+                return str(NPath.of(NStoreKey.ofBase(NStoreType.VAR)));
             case "home.cache":
-                return str(NWorkspace.of().getHomeLocation(NStoreType.CACHE));
+                return str(NPath.of(NStoreKey.ofBase(NStoreType.CACHE)));
             case "home.log":
-                return str(NWorkspace.of().getHomeLocation(NStoreType.LOG));
+                return str(NPath.of(NStoreKey.ofBase(NStoreType.LOG)));
             case "home.run":
-                return str(NWorkspace.of().getHomeLocation(NStoreType.RUN));
+                return str(NPath.of(NStoreKey.ofBase(NStoreType.RUN)));
             case "workspace.hash-name":
                 return workspace.getDigestName();
             case "workspace.name":
@@ -61,21 +61,21 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
             case "user.home":
                 return System.getProperty("user.home");
             case "workspace.config":
-                return str(NPath.ofWorkspaceStore(NStoreType.CONF));
+                return str(NPath.of(NStoreKey.ofConf()));
             case "workspace.lib":
-                return str(NPath.ofWorkspaceStore(NStoreType.LIB));
+                return str(NPath.of(NStoreKey.ofLib()));
             case "workspace.apps":
-                return str(NPath.ofWorkspaceStore(NStoreType.BIN));
+                return str(NPath.of(NStoreKey.ofBin()));
             case "workspace.cache":
-                return str(NPath.ofWorkspaceStore(NStoreType.CACHE));
+                return str(NPath.of(NStoreKey.ofCache()));
             case "workspace.run":
-                return str(NPath.ofWorkspaceStore(NStoreType.RUN));
+                return str(NPath.of(NStoreKey.ofRun()));
             case "workspace.temp":
-                return str(NPath.ofWorkspaceStore(NStoreType.TEMP));
+                return str(NPath.of(NStoreKey.ofTemp()));
             case "workspace.log":
-                return str(NPath.ofWorkspaceStore(NStoreType.LOG));
+                return str(NPath.of(NStoreKey.ofLog()));
             case "workspace.var":
-                return str(NPath.ofWorkspaceStore(NStoreType.VAR));
+                return str(NPath.of(NStoreKey.ofVar()));
             case "nuts.boot.version":
                 return str(workspace.getApiVersion());
             case "nuts.boot.id":
