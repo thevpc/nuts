@@ -60,7 +60,7 @@ public interface NCustomElementBuilder extends NElementBuilder {
 
     NCustomElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NCustomElementBuilder removeAffix(int index);
+    NCustomElementBuilder removeAffix(int affix);
 
     NCustomElementBuilder removeAnnotation(NElementAnnotation annotation);
 
