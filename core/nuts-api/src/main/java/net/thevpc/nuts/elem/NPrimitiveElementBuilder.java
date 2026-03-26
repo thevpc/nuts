@@ -161,7 +161,7 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
 
     NPrimitiveElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NPrimitiveElementBuilder removeAffix(int index);
+    NPrimitiveElementBuilder removeAffix(int affix);
 
     NPrimitiveElementBuilder removeAnnotation(NElementAnnotation annotation);
 
