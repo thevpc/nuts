@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.store;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
-import net.thevpc.nuts.core.NLocationKey;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfig;
@@ -47,13 +47,13 @@ public interface NWorkspaceStore {
     NRepositoryConfig loadRepoConfig(String location, String name);
 
 
-    void saveLocationKey(NLocationKey k, Object value);
+    void saveLocationKey(NStoreKey k, Object value);
 
-    <T> T loadLocationKey(NLocationKey k, Class<T> type);
+    <T> T loadLocationKey(NStoreKey k, Class<T> type);
 
-    boolean deleteLocationKey(NLocationKey k);
+    boolean deleteLocationKey(NStoreKey k);
 
-    <T> T supplyWithCache(NLocationKey k, Class<T> type, Supplier<T> supplier);
+    <T> T supplyWithCache(NStoreKey k, Class<T> type, Supplier<T> supplier);
 
     void saveInstallInfoConfig(InstallInfoConfig installInfoConfig);
 
