@@ -310,7 +310,7 @@ public interface NFragmentElementBuilder extends NElementBuilder {
 
     NFragmentElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NFragmentElementBuilder removeAffix(int index);
+    NFragmentElementBuilder removeAffix(int affix);
 
     NFragmentElementBuilder removeAnnotation(NElementAnnotation annotation);
 
