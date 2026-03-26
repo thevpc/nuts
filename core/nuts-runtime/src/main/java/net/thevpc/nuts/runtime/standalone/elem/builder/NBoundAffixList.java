@@ -225,6 +225,26 @@ public class NBoundAffixList {
         return this;
     }
 
+    public NBoundAffixList removeAffix(NAffix affix) {
+        for (int i = 0; i < affixes.size(); i++) {
+            if (affixes.get(i).affix().equals(affix)) {
+                removeAffix(i);
+                break;
+            }
+        }
+        return this;
+    }
+
+    public NBoundAffixList removeAffix(NBoundAffix affix) {
+        for (int i = 0; i < affixes.size(); i++) {
+            if (affixes.get(i).equals(affix)) {
+                removeAffix(i);
+                break;
+            }
+        }
+        return this;
+    }
+
     public NBoundAffixList clearAnnotations() {
         affixes.removeIf(x -> x.affix().type() == NAffixType.ANNOTATION);
         return this;
