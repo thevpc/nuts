@@ -7,7 +7,7 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.core.NLocationKey;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NBlankable;
@@ -26,7 +26,7 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
     private NPath cachePath;
     private NPath cacheIdPath;
     private NCacheLevel level;
-    private NLocationKey key;
+    private NStoreKey key;
 
 
     public static <T> DefaultCachedSupplier<T> ofMem(Supplier<T> supplier, CacheValidator<T> validator) {
@@ -46,7 +46,7 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
     }
 
     public static <T> DefaultCachedSupplier<T> ofStore(Class<T> clazz,
-                                                       NLocationKey key, Supplier<T> supplier, CacheValidator<T> validator) {
+                                                       NStoreKey key, Supplier<T> supplier, CacheValidator<T> validator) {
         return new DefaultCachedSupplier<>(NCacheLevel.STORE,
                 clazz,
                 key, supplier, validator
@@ -55,7 +55,7 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
 
     public static <T> DefaultCachedSupplier<T> of(NCacheLevel level,
                                                   Class<T> clazz,
-                                                  NLocationKey key, Supplier<T> supplier, CacheValidator<T> validator) {
+                                                  NStoreKey key, Supplier<T> supplier, CacheValidator<T> validator) {
         return new DefaultCachedSupplier<>(level,
                 clazz,
                 key, supplier, validator
@@ -64,21 +64,21 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
 
     public DefaultCachedSupplier(NCacheLevel level,
                                  Class<T> clazz,
-                                 NLocationKey key, Supplier<T> supplier, CacheValidator<T> validator) {
+                                 NStoreKey key, Supplier<T> supplier, CacheValidator<T> validator) {
         this.level = level;
         this.key = key;
         this.clazz = clazz;
         this.validator = validator;
         this.supplier = supplier;
         if (this.level.ordinal() >= NCacheLevel.STORE.ordinal()) {
-            if (key.getStoreType() != NStoreType.CACHE) {
+            if (key.type() != NStoreType.CACHE) {
                 throw new IllegalArgumentException("expected cache store");
             }
             NWorkspace ws = NWorkspace.of();
-            this.cachePath = ws.getStoreLocation(key.getId(), key.getStoreType(), key.getRepoUuid())
-                    .resolve(ws.getDefaultIdFilename(key.getId().builder().setFace(key.getName() + ".value.cache").build()));
-            this.cacheIdPath = ws.getStoreLocation(key.getId(), key.getStoreType(), key.getRepoUuid())
-                    .resolve(ws.getDefaultIdFilename(key.getId().builder().setFace(key.getName() + ".id.cache").build()));
+            this.cachePath = NPath.of(key)
+                    .resolve(ws.getDefaultIdFilename(key.id().builder().setFace(key.name() + ".value.cache").build()));
+            this.cacheIdPath = NPath.of(key)
+                    .resolve(ws.getDefaultIdFilename(key.id().builder().setFace(key.name() + ".id.cache").build()));
         }
     }
 
