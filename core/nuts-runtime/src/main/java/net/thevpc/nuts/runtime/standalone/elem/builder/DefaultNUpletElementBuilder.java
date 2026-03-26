@@ -459,8 +459,8 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder removeAffix(int index) {
-        super.removeAffix(index);
+    public NUpletElementBuilder removeAffix(int affix) {
+        super.removeAffix(affix);
         return this;
     }
 
