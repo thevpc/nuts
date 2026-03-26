@@ -141,8 +141,8 @@ public class DefaultNListElementBuilder extends AbstractNElementBuilder implemen
     }
 
     @Override
-    public NListElementBuilder removeAffix(int index) {
-        super.removeAffix(index);
+    public NListElementBuilder removeAffix(int affix) {
+        super.removeAffix(affix);
         return this;
     }
 
