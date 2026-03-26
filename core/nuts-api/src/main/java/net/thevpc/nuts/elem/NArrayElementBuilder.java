@@ -324,7 +324,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
 
     NArrayElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NArrayElementBuilder removeAffix(int index);
+    NArrayElementBuilder removeAffix(int affix);
 
     NArrayElementBuilder removeAnnotation(NElementAnnotation annotation);
 
