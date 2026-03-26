@@ -65,7 +65,7 @@ public interface NBinaryStreamElementBuilder extends NElementBuilder {
 
     NBinaryStreamElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NBinaryStreamElementBuilder removeAffix(int index);
+    NBinaryStreamElementBuilder removeAffix(int affix);
 
     NBinaryStreamElementBuilder removeAnnotation(NElementAnnotation annotation);
 
