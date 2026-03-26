@@ -24,17 +24,14 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
-import net.thevpc.nuts.core.NBootOptions;
-import net.thevpc.nuts.core.NConfirmationMode;
-import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.*;
 
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
-import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
@@ -346,7 +343,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public NId pathToId(NPath path) {
-        NPath rootFolder = NPath.ofWorkspaceStore(NStoreType.CONF).resolve(NConstants.Folders.ID);
+        NPath rootFolder = NPath.of(NStoreKey.ofConf()).resolve(NConstants.Folders.ID);
         String p = path.toString().substring(rootFolder.toString().length());
         List<String> split = StringTokenizerUtils.split(p, "/\\");
         if (split.size() >= 4) {
@@ -410,7 +407,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         NInstallStatus s = NInstallStatus.of(ii.isDeployed(), ii.isInstalled(), ii.isRequired(), obsolete, defaultVersion);
         return new DefaultNInstallInfo(ii.getId(),
                 s,
-                NPath.ofIdStore(ii.getId(), NStoreType.BIN),
+                NPath.of(NStoreKey.ofBin(ii.getId())),
                 ii.getCreationDate(),
                 ii.getLastModificationDate(),
                 ii.getCreationUser(),
@@ -571,7 +568,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public NPath getPath(NId id, String name) {
-        return NPath.ofIdStore(id, NStoreType.CONF).resolve(name);
+        return NPath.of(NStoreKey.ofConf(id)).resolve(name);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
