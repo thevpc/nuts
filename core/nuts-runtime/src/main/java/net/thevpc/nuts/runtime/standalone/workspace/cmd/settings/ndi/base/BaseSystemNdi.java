@@ -1,15 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base;
 
-import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NSearch;
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.core.NWorkspaceBootConfig;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -777,7 +774,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             NPath p0 = NPath.of(descAppIcon);
             descAppIcon=toAbsoluteIconPath(appId, descAppIcon);
             String bestName = descAppIconDigest + "." + p0.nameParts(NPathExtensionType.SHORT).getExtension();
-            NPath localIconPath = NPath.ofIdStore(appDef.getId(), NStoreType.CACHE)
+            NPath localIconPath = NPath.of(NStoreKey.ofConf(appDef.getId()))
                     .resolve("icons")
                     .resolve(bestName);
             if (localIconPath.isRegularFile()) {
