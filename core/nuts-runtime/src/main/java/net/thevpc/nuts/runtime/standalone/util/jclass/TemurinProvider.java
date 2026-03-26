@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.command.NExec;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NCp;
@@ -9,6 +10,7 @@ import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.io.NUncompress;
 import net.thevpc.nuts.platform.NArchFamily;
 import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -27,8 +29,8 @@ public class TemurinProvider implements JavaProvider {
     public NOptional<NPath> resolveAndInstall(String product, int version, NOsFamily os, NArchFamily arch) {
         NOptional<Info> p = resolveDownloadUrl(product, version, os, arch);
         if (p.isPresent()) {
-            NPath folderCache = NPath.ofIdStore(NWorkspace.of().getApiId(), NStoreType.CACHE).resolve("sdk/java/" + getName() + "/").resolve(getName() + "-" + version + "-" + os.id() + "-" + arch.id());
-            NPath folderBin = NPath.ofIdStore(NWorkspace.of().getApiId(), NStoreType.BIN).resolve("sdk/java/" + getName() + "/").resolve(getName() + "-" + version + "-" + os.id() + "-" + arch.id());
+            NPath folderCache = NPath.of(NStoreKey.ofCache(NWorkspace.of().getApiId())).resolve("sdk/java/" + getName() + "/").resolve(getName() + "-" + version + "-" + os.id() + "-" + arch.id());
+            NPath folderBin = NPath.of(NStoreKey.ofBin(NWorkspace.of().getApiId())).resolve("sdk/java/" + getName() + "/").resolve(getName() + "-" + version + "-" + os.id() + "-" + arch.id());
             if (folderCache.resolve("dist/nuts-install-info.tson").isRegularFile()) {
                 return NOptional.of(folderCache.resolve("dist"));
             }
