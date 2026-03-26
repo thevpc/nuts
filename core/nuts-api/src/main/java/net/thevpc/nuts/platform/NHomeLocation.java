@@ -46,21 +46,21 @@ import java.util.Objects;
 public class NHomeLocation implements NEnum {
     private static final Map<String, NHomeLocation> CACHE = new HashMap<>();
     private final NOsFamily osFamily;
-    private final NStoreType storeLocation;
+    private final NStoreType storeType;
 
-    private NHomeLocation(NOsFamily osFamily, NStoreType storeLocation) {
+    private NHomeLocation(NOsFamily osFamily, NStoreType storeType) {
         this.osFamily = osFamily;
-        this.storeLocation = storeLocation;
+        this.storeType = storeType;
     }
 
-    public static NHomeLocation of(NOsFamily osFamily, NStoreType storeLocation) {
-        String key = (osFamily == null ? "system" : osFamily.id()) + "_" + (storeLocation == null ? "system" : storeLocation.id());
+    public static NHomeLocation of(NOsFamily osFamily, NStoreType storeType) {
+        String key = (osFamily == null ? "system" : osFamily.id()) + "_" + (storeType == null ? "system" : storeType.id());
         NHomeLocation instance = CACHE.get(key);
         if (instance == null) {
             synchronized (CACHE) {
                 instance = CACHE.get(key);
                 if (instance == null) {
-                    instance = new NHomeLocation(osFamily, storeLocation);
+                    instance = new NHomeLocation(osFamily, storeType);
                     CACHE.put(key, instance);
                 }
             }
@@ -115,13 +115,13 @@ public class NHomeLocation implements NEnum {
      *
      * @return Store Location
      */
-    public NStoreType getStoreLocation() {
-        return storeLocation;
+    public NStoreType getStoreType() {
+        return storeType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(osFamily, storeLocation);
+        return Objects.hash(osFamily, storeType);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class NHomeLocation implements NEnum {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NHomeLocation that = (NHomeLocation) o;
-        return osFamily == that.osFamily && storeLocation == that.storeLocation;
+        return osFamily == that.osFamily && storeType == that.storeType;
     }
 
     @Override
@@ -144,7 +144,7 @@ public class NHomeLocation implements NEnum {
      * @return the name of this pseudo enum constant
      */
     public String name() {
-        return (osFamily == null ? "SYSTEM" : osFamily.name()) + "_" + (storeLocation == null ? "SYSTEM" : storeLocation.name());
+        return (osFamily == null ? "SYSTEM" : osFamily.name()) + "_" + (storeType == null ? "SYSTEM" : storeType.name());
     }
 
     /**
@@ -154,6 +154,6 @@ public class NHomeLocation implements NEnum {
      * @return the id of this pseudo enum constant
      */
     public String id() {
-        return (osFamily == null ? "system" : osFamily.id()) + "-" + (storeLocation == null ? "system" : storeLocation.id());
+        return (osFamily == null ? "system" : osFamily.id()) + "-" + (storeType == null ? "system" : storeType.id());
     }
 }
