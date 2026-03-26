@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPairElement;
 import net.thevpc.nuts.text.NFormatted;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 import java.lang.reflect.*;
 import java.time.temporal.Temporal;
@@ -209,9 +210,7 @@ public class CoreNElementUtils {
                     case "java.math.BigInteger":
                     case "java.util.Date":
                     case "java.sql.Time":
-                    case "net.thevpc.nuts.math.NDoubleComplex":
-                    case "net.thevpc.nuts.math.NFloatComplex":
-                    case "net.thevpc.nuts.math.NBigComplex":
+                    case "java.time.Duration":
                         return true;
                 }
                 if (Temporal.class.isAssignableFrom(cls)) {
@@ -220,12 +219,7 @@ public class CoreNElementUtils {
                 if (java.util.Date.class.isAssignableFrom(cls)) {
                     return true;
                 }
-                return (
-                        NText.class.isAssignableFrom(cls)
-                                || NElement.class.isAssignableFrom(cls)
-                                || NFormatted.class.isAssignableFrom(cls)
-                                || NMsg.class.isAssignableFrom(cls)
-                );
+                return net.thevpc.nuts.elem.NElementAutoUndestructable.class.isAssignableFrom(cls);
             } else if (type instanceof ParameterizedType) {
                 // e.g. List<String> -> get raw type List
                 Type rawType = ((ParameterizedType) type).getRawType();
@@ -592,5 +586,26 @@ public class CoreNElementUtils {
             }
         }
         return ret;
+    }
+
+    public static NOptional<NElement> getByName(List<NElement> values,String s) {
+        if(values==null){
+            return NOptional.ofNamedEmpty("property " + s);
+        }
+        for (NElement x : values) {
+            if (x instanceof NPairElement) {
+                NPairElement e = (NPairElement) x;
+                if (s == null) {
+                    if (e.key().isNull()) {
+                        return NOptional.of(e.value());
+                    }
+                } else if (e.key().isAnyStringOrName()) {
+                    if (Objects.equals(e.key().asStringValue().get(), s)) {
+                        return NOptional.of(e.value());
+                    }
+                }
+            }
+        }
+        return NOptional.ofNamedEmpty("property " + s);
     }
 }
