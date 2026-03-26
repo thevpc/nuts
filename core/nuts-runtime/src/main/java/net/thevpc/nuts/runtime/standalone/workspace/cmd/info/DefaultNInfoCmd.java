@@ -18,10 +18,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NInfoCmd;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.platform.NDesktopIntegrationItem;
-import net.thevpc.nuts.platform.NEnv;
-import net.thevpc.nuts.platform.NShellFamily;
-import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.*;
@@ -352,8 +349,8 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("nuts-repo-store-strategy", () -> NWorkspace.of().getRepositoryStoreStrategy());
         props.put("nuts-global", () -> NWorkspace.of().getBootOptions().getSystem().orNull());
         props.put("nuts-workspace", () -> NWorkspace.of().getWorkspaceLocation());
-        for (NStoreType folderType : NStoreType.values()) {
-            props.put("nuts-workspace-" + folderType.id(), () -> NPath.ofWorkspaceStore(folderType));
+        for (NStoreType storeType : NStoreType.values()) {
+            props.put("nuts-workspace-" + storeType.id(), () -> NPath.of(NStoreKey.of(storeType)));
         }
         props.put("nuts-open-mode", () -> NWorkspace.of().getBootOptions().getOpenMode().orNull());
         props.put("nuts-isolation-level", () -> NWorkspace.of().getBootOptions().getIsolationLevel().orNull());
@@ -544,8 +541,17 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("nuts-repo-store-strategy", workspace.getRepositoryStoreStrategy());
         props.put("nuts-global", options.getSystem().orNull());
         props.put("nuts-workspace", workspace.getWorkspaceLocation());
-        for (NStoreType folderType : NStoreType.values()) {
-            props.put("nuts-workspace-" + folderType.id(), NPath.ofWorkspaceStore(folderType));
+        for (NStoreType storeType : NStoreType.values()) {
+            props.put("nuts-workspace-" + storeType.id(), NPath.of(NStoreKey.of(storeType)));
+        }
+        for (NStoreType storeType : NStoreType.values()) {
+            props.put("nuts-system-" + storeType.id(), NPath.of(NStoreKey.ofSystem(storeType)));
+        }
+        for (NStoreType storeType : NStoreType.values()) {
+            props.put("nuts-user-" + storeType.id(), NPath.of(NStoreKey.ofUser(storeType)));
+        }
+        for (NStoreType storeType : NStoreType.values()) {
+            props.put("nuts-base-" + storeType.id(), NPath.of(NStoreKey.ofBase(storeType)));
         }
         props.put("nuts-open-mode", options.getOpenMode().orNull());
         props.put("nuts-isolation-level", options.getIsolationLevel().orNull());
