@@ -70,7 +70,7 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
         return new ArrayList<>(dependencies);
     }
 
-    public NId[] loadDependencies(NDependency... allDefinitions) {
+    public NDefinition[] loadDependencies(NDependency... allDefinitions) {
         List<NDefinition> ok = new ArrayList<>();
         for (NDependency dep : allDefinitions) {
             NDependency id = dep;
@@ -98,7 +98,7 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
         return load(ok.toArray(new NDefinition[0]));
     }
 
-    private NId[] load(NDefinition... allDefinitions) {
+    private NDefinition[] load(NDefinition... allDefinitions) {
         List<NDefinition> ok = new ArrayList<>();
         List<URL> urls = new ArrayList<>();
         for (NDefinition id : allDefinitions) {
@@ -124,7 +124,7 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
         for (URL a : urls) {
             super.addURL(a);
         }
-        return ok.stream().map(NDefinition::getId).toArray(NId[]::new);
+        return ok.toArray(new NDefinition[0]);
     }
 
     public boolean isLoadedDependency(NId id) {
