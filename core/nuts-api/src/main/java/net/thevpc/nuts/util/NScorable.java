@@ -75,7 +75,7 @@ public interface NScorable {
      * @return true if the score is positive, false otherwise
      * @throws NAssertException,NDetachedAssertException if {@code scorable} is null
      */
-    static boolean isValidScore(NScorable scorable,NScorableContext context) {
+    static boolean isValidScore(NScorable scorable, NScorableContext context) {
         NAssert.requireNamedNonNull(scorable,"scorable");
         return scorable.getScore(context) > 0;
     }

@@ -4,7 +4,6 @@ import net.thevpc.nuts.internal.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 public class NFloatComplexImpl extends Number implements NFloatComplex {
@@ -54,15 +53,15 @@ public class NFloatComplexImpl extends Number implements NFloatComplex {
         return this;
     }
 
-    public float real() {
+    public float realValue() {
         return real;
     }
 
-    public float imag() {
+    public float imagValue() {
         return imag;
     }
 
-    public float abs() {
+    public float absFloat() {
         return (float) Math.sqrt(real * real + imag * imag);
     }
 
@@ -148,7 +147,7 @@ public class NFloatComplexImpl extends Number implements NFloatComplex {
     }
 
     public NFloatComplex addFloatComplex(NFloatComplex other) {
-        return new NFloatComplexImpl(real + other.real(), imag + other.imag());
+        return new NFloatComplexImpl(real + other.realValue(), imag + other.imagValue());
     }
 
     public NFloatComplex negateFloatComplex() {
@@ -156,20 +155,20 @@ public class NFloatComplexImpl extends Number implements NFloatComplex {
     }
 
     public NFloatComplex subtractFloatComplex(NFloatComplex other) {
-        return new NFloatComplexImpl(real - other.real(), imag - other.imag());
+        return new NFloatComplexImpl(real - other.realValue(), imag - other.imagValue());
     }
 
     public NFloatComplex multiplyFloatComplex(NFloatComplex z2) {
-        float oreal = z2.real();
-        float oimag = z2.imag();
+        float oreal = z2.realValue();
+        float oimag = z2.imagValue();
         float real = this.real * oreal - this.imag * oimag;
         float imag = this.real * oimag + this.imag * oreal;
         return new NFloatComplexImpl(real, imag);
     }
 
     public NFloatComplex divideFloatComplex(NFloatComplex other) {
-        float c = other.real();
-        float d = other.imag();
+        float c = other.realValue();
+        float d = other.imagValue();
         float denominator = c * c + d * d;
         return new NFloatComplexImpl(
                 (this.real * c + this.imag * d) / denominator,

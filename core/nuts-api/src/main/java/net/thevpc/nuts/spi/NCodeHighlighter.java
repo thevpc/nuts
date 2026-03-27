@@ -26,7 +26,6 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NScorableContext;
 
 /**
  * Code Format to help formatting (syntax coloring) to NTF some code

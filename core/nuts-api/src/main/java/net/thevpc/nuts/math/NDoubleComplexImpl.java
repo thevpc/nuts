@@ -1,11 +1,9 @@
 package net.thevpc.nuts.math;
 
-import net.thevpc.nuts.elem.NElementAutoUndestructable;
 import net.thevpc.nuts.internal.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 public class NDoubleComplexImpl extends Number implements NDoubleComplex {
@@ -60,15 +58,15 @@ public class NDoubleComplexImpl extends Number implements NDoubleComplex {
         return this;
     }
 
-    public double real() {
+    public double realValue() {
         return real;
     }
 
-    public double imag() {
+    public double imagValue() {
         return imag;
     }
 
-    public double abs() {
+    public double absDouble() {
         return Math.sqrt(real * real + imag * imag);
     }
 
@@ -137,8 +135,8 @@ public class NDoubleComplexImpl extends Number implements NDoubleComplex {
 
     public int compareToDoubleComplex(NDoubleComplex other) {
         boolean thisNaN = Double.isNaN(this.real) || Double.isNaN(this.imag);
-        double oreal = other.real();
-        double oimag = other.imag();
+        double oreal = other.realValue();
+        double oimag = other.imagValue();
         boolean otherNaN = Double.isNaN(oreal) || Double.isNaN(oimag);
         if (thisNaN && otherNaN) return 0;
         if (thisNaN) return 1;
@@ -156,7 +154,7 @@ public class NDoubleComplexImpl extends Number implements NDoubleComplex {
     }
 
     public NDoubleComplex addDoubleComplex(NDoubleComplex other) {
-        return new NDoubleComplexImpl(real + other.real(), imag + other.imag());
+        return new NDoubleComplexImpl(real + other.realValue(), imag + other.imagValue());
     }
 
     public NDoubleComplex negateDoubleComplex() {
@@ -164,20 +162,20 @@ public class NDoubleComplexImpl extends Number implements NDoubleComplex {
     }
 
     public NDoubleComplex subtractDoubleComplex(NDoubleComplex other) {
-        return new NDoubleComplexImpl(real - other.real(), imag - other.imag());
+        return new NDoubleComplexImpl(real - other.realValue(), imag - other.imagValue());
     }
 
     public NDoubleComplex multiplyDoubleComplex(NDoubleComplex z2) {
-        double oreal = z2.real();
-        double oimag = z2.imag();
+        double oreal = z2.realValue();
+        double oimag = z2.imagValue();
         double real = this.real * oreal - this.imag * oimag;
         double imag = this.real * oimag + this.imag * oreal;
         return new NDoubleComplexImpl(real, imag);
     }
 
     public NDoubleComplex divideDoubleComplex(NDoubleComplex other) {
-        double c = other.real();
-        double d = other.imag();
+        double c = other.realValue();
+        double d = other.imagValue();
         double denominator = c * c + d * d;
         return new NDoubleComplexImpl(
                 (this.real * c + this.imag * d) / denominator,

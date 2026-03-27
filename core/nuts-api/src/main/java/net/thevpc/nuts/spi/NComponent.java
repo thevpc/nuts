@@ -26,9 +26,6 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
-
 /**
  * Top Level extension Point in Nuts.
  * Extension mechanism in nuts is based on a factory that selects the best

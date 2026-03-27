@@ -29,9 +29,7 @@ package net.thevpc.nuts.concurrent;
 import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -190,18 +188,18 @@ public interface NScoredCallable<T> extends NScorable {
     int getScore(NScorableContext scorableContext);
 
 
-    default <R> NScoredCallable<R> map(Function<? super T, ? extends R> mapper) {
-        return new NScoredCallable<R>() {
-            @Override
-            public R call() {
-                return mapper.apply(NScoredCallable.this.call());
-            }
-
-            @Override
-            public int getScore(NScorableContext scorableContext) {
-                return NScoredCallable.this.getScore(scorableContext);
-            }
-        };
-    }
+//    default <R> NScoredCallable<R> map(Function<? super T, ? extends R> mapper) {
+//        return new NScoredCallable<R>() {
+//            @Override
+//            public R call() {
+//                return mapper.apply(NScoredCallable.this.call());
+//            }
+//
+//            @Override
+//            public int getScore(NScorableContext<R> scorableContext) {
+//                return NScoredCallable.this.getScore((NScorableContext) scorableContext);
+//            }
+//        };
+//    }
 
 }

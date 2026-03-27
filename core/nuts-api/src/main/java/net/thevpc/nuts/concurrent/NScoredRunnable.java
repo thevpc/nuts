@@ -40,7 +40,7 @@ import java.util.function.Supplier;
  * or less generally indicates an invalid runnable. Optionally, an empty message
  * can describe why the runnable is invalid.
  */
-public interface NScoredRunnable extends NScorable {
+public interface NScoredRunnable<T> extends NScorable {
 
     /**
      * Creates a scored runnable with the given score and action.
@@ -51,7 +51,7 @@ public interface NScoredRunnable extends NScorable {
      * @param supplier the action to run
      * @return a new {@code NScoredRunnable} instance
      */
-    static NScoredRunnable of(int score, Runnable supplier) {
+    static <T> NScoredRunnable<T> of(int score, Runnable supplier) {
         return of(score, supplier, null);
     }
 
@@ -63,9 +63,9 @@ public interface NScoredRunnable extends NScorable {
      * @param emptyMessage a supplier providing a message if the runnable is invalid
      * @return a new {@code NScoredRunnable} instance
      */
-    static NScoredRunnable of(int score, Runnable supplier, Supplier<NMsg> emptyMessage) {
+    static <T> NScoredRunnable<T> of(int score, Runnable supplier, Supplier<NMsg> emptyMessage) {
         return (score <= 0 || supplier == null) ? ofInvalid(emptyMessage)
-                : new DefaultNScoredRunnable(supplier, score, emptyMessage)
+                : new DefaultNScoredRunnable<T>(supplier, score, emptyMessage)
                 ;
     }
 
@@ -76,8 +76,8 @@ public interface NScoredRunnable extends NScorable {
      * @return an invalid {@code NScoredRunnable} instance
      */
     @SuppressWarnings("unchecked")
-    static NScoredRunnable ofInvalid(Supplier<NMsg> emptyMessage) {
-        return new DefaultNScoredRunnable(null, UNSUPPORTED_SCORE, emptyMessage);
+    static <T> NScoredRunnable<T> ofInvalid(Supplier<NMsg> emptyMessage) {
+        return new DefaultNScoredRunnable<T>(null, UNSUPPORTED_SCORE, emptyMessage);
     }
 
     /**

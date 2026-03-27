@@ -169,8 +169,8 @@ public class DefaultNLiteral implements NLiteral {
         }
         if (value instanceof NDoubleComplex) {
             return NOptional.of(NFloatComplex.of(
-                    (float) ((NDoubleComplex) value).real(),
-                    (float) ((NDoubleComplex) value).imag()
+                    (float) ((NDoubleComplex) value).realValue(),
+                    (float) ((NDoubleComplex) value).imagValue()
             ));
         }
         if (value instanceof NFloatComplex) {
@@ -178,8 +178,8 @@ public class DefaultNLiteral implements NLiteral {
         }
         if (value instanceof NBigComplex) {
             return NOptional.of(NFloatComplex.of(
-                    ((NBigComplex) value).real().floatValue(),
-                    ((NBigComplex) value).imag().floatValue()
+                    ((NBigComplex) value).realValue().floatValue(),
+                    ((NBigComplex) value).imagValue().floatValue()
             ));
         }
         return asFloat().map(x -> NFloatComplex.of((float) value, 0));
@@ -195,14 +195,14 @@ public class DefaultNLiteral implements NLiteral {
         }
         if (value instanceof NFloatComplex) {
             return NOptional.of(NDoubleComplex.of(
-                    ((NFloatComplex) value).real(),
-                    ((NFloatComplex) value).imag()
+                    ((NFloatComplex) value).realValue(),
+                    ((NFloatComplex) value).imagValue()
             ));
         }
         if (value instanceof NBigComplex) {
             return NOptional.of(NDoubleComplex.of(
-                    ((NBigComplex) value).real().doubleValue(),
-                    ((NBigComplex) value).imag().doubleValue()
+                    ((NBigComplex) value).realValue().doubleValue(),
+                    ((NBigComplex) value).imagValue().doubleValue()
             ));
         }
         return asDouble().map(x -> NDoubleComplex.of(x, 0));
@@ -215,14 +215,14 @@ public class DefaultNLiteral implements NLiteral {
         }
         if (value instanceof NDoubleComplex) {
             return NOptional.of(NBigComplex.of(
-                    BigDecimal.valueOf(((NDoubleComplex) value).real()),
-                    BigDecimal.valueOf(((NDoubleComplex) value).real())
+                    BigDecimal.valueOf(((NDoubleComplex) value).realValue()),
+                    BigDecimal.valueOf(((NDoubleComplex) value).realValue())
             ));
         }
         if (value instanceof NFloatComplex) {
             return NOptional.of(NBigComplex.of(
-                    BigDecimal.valueOf(((NFloatComplex) value).real()),
-                    BigDecimal.valueOf(((NFloatComplex) value).real())
+                    BigDecimal.valueOf(((NFloatComplex) value).realValue()),
+                    BigDecimal.valueOf(((NFloatComplex) value).realValue())
             ));
         }
         if (value instanceof NBigComplex) {

@@ -1,12 +1,6 @@
 package net.thevpc.nuts.math;
 
-import net.thevpc.nuts.elem.NElementAutoUndestructable;
-import net.thevpc.nuts.internal.NReservedUtils;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
-
-import java.io.Serializable;
-import java.util.Objects;
 
 public interface NFloatComplex extends NNumber {
     NFloatComplex ZERO = NFloatComplexImpl.ZERO;
@@ -34,11 +28,11 @@ public interface NFloatComplex extends NNumber {
         return NFloatComplexImpl.of(r, theta);
     }
 
-    float real();
+    float realValue();
 
-    float imag();
+    float imagValue();
 
-    float abs();
+    float absFloat();
 
     NFloatComplex addFloatComplex(NFloatComplex other);
 

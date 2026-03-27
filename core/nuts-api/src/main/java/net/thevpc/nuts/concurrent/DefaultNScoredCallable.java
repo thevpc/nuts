@@ -5,13 +5,11 @@
  */
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.internal.NApiUtilsRPI;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
 import java.util.function.Supplier;
 

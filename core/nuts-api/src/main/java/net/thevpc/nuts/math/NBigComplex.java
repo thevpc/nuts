@@ -30,9 +30,9 @@ public interface NBigComplex extends NNumber {
         return NBigComplexImpl.ofPolar(r,theta);
     }
 
-    BigDecimal real();
+    BigDecimal realValue();
 
-    BigDecimal imag();
+    BigDecimal imagValue();
 
 
     NBigComplex addBigComplex(NBigComplex other);

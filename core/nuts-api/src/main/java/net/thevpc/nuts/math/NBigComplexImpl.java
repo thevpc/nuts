@@ -1,13 +1,11 @@
 package net.thevpc.nuts.math;
 
-import net.thevpc.nuts.elem.NElementAutoUndestructable;
 import net.thevpc.nuts.internal.NReservedUtils;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NNumberUtils;
 import net.thevpc.nuts.util.NOptional;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Objects;
@@ -59,17 +57,17 @@ public class NBigComplexImpl extends Number implements NBigComplex{
         return this;
     }
 
-    public BigDecimal real() {
+    public BigDecimal realValue() {
         return real;
     }
 
-    public BigDecimal imag() {
+    public BigDecimal imagValue() {
         return imag;
     }
 
     @Override
     public double doubleValue() {
-        return real().doubleValue();
+        return realValue().doubleValue();
     }
 
     @Override
@@ -128,8 +126,8 @@ public class NBigComplexImpl extends Number implements NBigComplex{
     }
 
     public int compareTo(NBigComplex other) {
-        BigDecimal oreal = other.real();
-        BigDecimal oimag = other.imag();
+        BigDecimal oreal = other.realValue();
+        BigDecimal oimag = other.imagValue();
 
         BigDecimal mag1 = real.multiply(real).add(imag.multiply(imag));
         BigDecimal mag2 = oreal.multiply(oreal).add(oimag.multiply(oimag));
@@ -143,7 +141,7 @@ public class NBigComplexImpl extends Number implements NBigComplex{
     }
 
     public NBigComplex addBigComplex(NBigComplex other) {
-        return new NBigComplexImpl(real.add(other.real()), imag.add(other.imag()));
+        return new NBigComplexImpl(real.add(other.realValue()), imag.add(other.imagValue()));
     }
 
 
@@ -152,15 +150,15 @@ public class NBigComplexImpl extends Number implements NBigComplex{
     }
 
     public NBigComplex subtractBigComplex(NBigComplex other) {
-        return new NBigComplexImpl(real.subtract(other.real()), imag.subtract(other.imag()));
+        return new NBigComplexImpl(real.subtract(other.realValue()), imag.subtract(other.imagValue()));
     }
 
 
     public NBigComplex multiplyBigComplex(NBigComplex z2, MathContext mc) {
         BigDecimal a = this.real;
         BigDecimal b = this.imag;
-        BigDecimal c = z2.real();
-        BigDecimal d = z2.imag();
+        BigDecimal c = z2.realValue();
+        BigDecimal d = z2.imagValue();
         mc= NNumberUtils.getContextMathContext(mc);
         BigDecimal p1 = a.multiply(c, mc);
         BigDecimal p2 = b.multiply(d, mc);
@@ -174,8 +172,8 @@ public class NBigComplexImpl extends Number implements NBigComplex{
 
     public NBigComplex divideBigComplex(NBigComplex other, MathContext mc) {
         mc= NNumberUtils.getContextMathContext(mc);
-        BigDecimal c = other.real();
-        BigDecimal d = other.imag();
+        BigDecimal c = other.realValue();
+        BigDecimal d = other.imagValue();
         BigDecimal denominator = c.multiply(c, mc).add(d.multiply(d, mc), mc);
 
         if (denominator.compareTo(BigDecimal.ZERO) == 0) {

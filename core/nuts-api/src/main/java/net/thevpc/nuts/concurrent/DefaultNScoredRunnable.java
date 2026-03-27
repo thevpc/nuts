@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.text.NI18n;
@@ -19,7 +18,7 @@ import java.util.function.Supplier;
  *
  * @author thevpc
  */
-public class DefaultNScoredRunnable implements NScoredRunnable {
+public class DefaultNScoredRunnable<T> implements NScoredRunnable<T> {
     private final Runnable value;
     private final int score;
     private final Supplier<NMsg> emptyMessage;

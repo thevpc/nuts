@@ -1,6 +1,5 @@
 package net.thevpc.nuts.math;
 
-import net.thevpc.nuts.elem.NElementAutoUndestructable;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.Serializable;
@@ -36,11 +35,11 @@ public interface NDoubleComplex extends Serializable, NNumber {
         return NDoubleComplexImpl.ofPolar(r, theta);
     }
 
-    double real();
+    double realValue();
 
-    double imag();
+    double imagValue();
 
-    double abs();
+    double absDouble();
 
     double doubleValue();
 

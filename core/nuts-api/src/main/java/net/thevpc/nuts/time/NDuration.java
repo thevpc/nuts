@@ -483,15 +483,15 @@ public class NDuration implements Serializable, NElementAutoUndestructable {
         } else {
             return nanos != 0 ? ChronoUnit.NANOS :
                     micros != 0 ? ChronoUnit.MICROS :
-                    milliSeconds != 0 ? ChronoUnit.MILLIS :
-                    seconds != 0 ? ChronoUnit.SECONDS :
-                    minutes != 0 ? ChronoUnit.MINUTES :
-                    hours != 0 ? ChronoUnit.HOURS :
-                    days != 0 ? ChronoUnit.DAYS :
-                    weeks != 0 ? ChronoUnit.WEEKS :
-                    months != 0 ? ChronoUnit.MONTHS :
-                    years != 0 ? ChronoUnit.YEARS :
-                    normalize(ChronoUnit.FOREVER);
+                            milliSeconds != 0 ? ChronoUnit.MILLIS :
+                                    seconds != 0 ? ChronoUnit.SECONDS :
+                                            minutes != 0 ? ChronoUnit.MINUTES :
+                                                    hours != 0 ? ChronoUnit.HOURS :
+                                                            days != 0 ? ChronoUnit.DAYS :
+                                                                    weeks != 0 ? ChronoUnit.WEEKS :
+                                                                            months != 0 ? ChronoUnit.MONTHS :
+                                                                                    years != 0 ? ChronoUnit.YEARS :
+                                                                                            normalize(ChronoUnit.FOREVER);
         }
     }
 
@@ -501,15 +501,15 @@ public class NDuration implements Serializable, NElementAutoUndestructable {
         } else {
             return years != 0 ? ChronoUnit.YEARS :
                     months != 0 ? ChronoUnit.MONTHS :
-                    weeks != 0 ? ChronoUnit.WEEKS :
-                    days != 0 ? ChronoUnit.DAYS :
-                    hours != 0 ? ChronoUnit.HOURS :
-                    minutes != 0 ? ChronoUnit.MINUTES :
-                    seconds != 0 ? ChronoUnit.SECONDS :
-                    milliSeconds != 0 ? ChronoUnit.MILLIS :
-                    micros != 0 ? ChronoUnit.MICROS :
-                    nanos != 0 ? ChronoUnit.NANOS :
-                    normalize(ChronoUnit.FOREVER);
+                            weeks != 0 ? ChronoUnit.WEEKS :
+                                    days != 0 ? ChronoUnit.DAYS :
+                                            hours != 0 ? ChronoUnit.HOURS :
+                                                    minutes != 0 ? ChronoUnit.MINUTES :
+                                                            seconds != 0 ? ChronoUnit.SECONDS :
+                                                                    milliSeconds != 0 ? ChronoUnit.MILLIS :
+                                                                            micros != 0 ? ChronoUnit.MICROS :
+                                                                                    nanos != 0 ? ChronoUnit.NANOS :
+                                                                                            normalize(ChronoUnit.FOREVER);
         }
     }
 
@@ -914,27 +914,56 @@ public class NDuration implements Serializable, NElementAutoUndestructable {
         return Duration.ofSeconds(secondsFromMillis + secondsFromNanos, remainingNanos);
     }
 
+
+    public NDuration truncatedToMillis() {
+        return truncatedTo(ChronoUnit.MILLIS);
+    }
+
+    public NDuration truncatedToSeconds() {
+        return truncatedTo(ChronoUnit.SECONDS);
+    }
+
+    public NDuration truncatedToMinutes() {
+        return truncatedTo(ChronoUnit.MINUTES);
+    }
+
+    public NDuration truncatedToDays() {
+        return truncatedTo(ChronoUnit.DAYS);
+    }
+
+    public NDuration truncatedTo(ChronoUnit smallestUnit) {
+        return withSmallestUnit(smallestUnit);
+    }
+
     public NDuration withSmallestUnit(ChronoUnit smallestUnit) {
         NDuration d = new NDuration(toUnitsArray(), smallestUnit, largestUnit);
-        if (this.timeMillis != d.timeMillis || this.timeNanos != d.timeNanos) {
-            throw new IllegalArgumentException("unexpected");
-        }
+//        if (this.timeMillis != d.timeMillis || this.timeNanos != d.timeNanos) {
+//            throw new IllegalArgumentException("unexpected");
+//        }
         return d;
+    }
+
+    public NDuration collapsedTo(ChronoUnit largestUnit) {
+        return withLargestUnit(largestUnit);
     }
 
     public NDuration withLargestUnit(ChronoUnit largestUnit) {
         NDuration d = new NDuration(toUnitsArray(), smallestUnit, largestUnit);
-        if (this.timeMillis != d.timeMillis || this.timeNanos != d.timeNanos) {
-            throw new IllegalArgumentException("unexpected");
-        }
+//        if (this.timeMillis != d.timeMillis || this.timeNanos != d.timeNanos) {
+//            throw new IllegalArgumentException("unexpected");
+//        }
         return d;
+    }
+
+    public NDuration clampedTo(ChronoUnit smallestUnit, ChronoUnit largestUnit) {
+        return withUnits(smallestUnit, largestUnit);
     }
 
     public NDuration withUnits(ChronoUnit smallestUnit, ChronoUnit largestUnit) {
         NDuration d = new NDuration(toUnitsArray(), smallestUnit, largestUnit);
-        if (this.timeMillis != d.timeMillis || this.timeNanos != d.timeNanos) {
-            throw new IllegalArgumentException("unexpected");
-        }
+//        if (this.timeMillis != d.timeMillis || this.timeNanos != d.timeNanos) {
+//            throw new IllegalArgumentException("unexpected");
+//        }
         return d;
     }
 
@@ -1079,10 +1108,10 @@ public class NDuration implements Serializable, NElementAutoUndestructable {
         // (don't carry beyond largestUnit)
 
         NDuration d = new NDuration(values, smallestUnit, largestUnit);
-        if (this.timeMillis != d.timeMillis || this.timeNanos != d.timeNanos) {
-            throw new IllegalArgumentException(NI18n.of("unexpected chronometer value: expected " +
-                    timeMillis + "ms " + timeNanos + "ns, got " + d.timeMillis + "ms " + d.timeNanos + "ns"));
-        }
+//        if (this.timeMillis != d.timeMillis || this.timeNanos != d.timeNanos) {
+//            throw new IllegalArgumentException(NI18n.of("unexpected chronometer value: expected " +
+//                    timeMillis + "ms " + timeNanos + "ns, got " + d.timeMillis + "ms " + d.timeNanos + "ns"));
+//        }
         return d;
     }
 
