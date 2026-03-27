@@ -1,10 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.util;
 
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.text.DecimalFormat;
@@ -12,9 +9,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-public class DefaultUnitFormat {
+public class DefaultUnitFormat implements NTextFormat<Number> {
 
-    private static int[] ALL_POWS = {-12, -9, -6, -3, -2, -1, 0, 1, 2, 3, 6, 9, 12};
+    private static final int[] ALL_POWS = {-12, -9, -6, -3, -2, -1, 0, 1, 2, 3, 6, 9, 12};
     boolean leadingZeros = false;
     boolean intermediateZeros = true;
     private boolean fixedLength = false;
@@ -25,8 +22,8 @@ public class DefaultUnitFormat {
     private int integerDigits = 3;
     private DecimalFormat decimalFormat = null;
     private int[] validPows = {};
-    private Set<Integer> excludedPows = new HashSet<>();
-    private String mainUnitName;
+    private final Set<Integer> excludedPows = new HashSet<>();
+    private final String mainUnitName;
 
     public DefaultUnitFormat(String mainUnitName, boolean leadingZeros, boolean intermediateZeros, boolean fixedLength, int high, int low, boolean decimal) {
         this.mainUnitName = mainUnitName;
@@ -39,10 +36,10 @@ public class DefaultUnitFormat {
     }
 
     public DefaultUnitFormat(String format) {
-        if(format==null){
-            format="";
+        if (format == null) {
+            format = "";
         }
-        format=format.trim();
+        format = format.trim();
         int e = format.indexOf(' ');
         if (e < 0) {
             this.mainUnitName = format.trim();
@@ -151,6 +148,15 @@ public class DefaultUnitFormat {
         }
     }
 
+
+    @Override
+    public NText toText(Number object) {
+        if (object == null) {
+            return NText.ofBlank();
+        }
+        return format(object.longValue());
+    }
+
     private void requireValidMultiplier(ValAndI t) {
         if (!isValidGenPow(t.v)) {
             throw new IllegalArgumentException("Invalid Power " + t.v);
@@ -190,7 +196,7 @@ public class DefaultUnitFormat {
 
 
     private String formatLeftPow(double number, int pow) {
-        return formatLeft(number * 1.0 / Math.pow(10, pow));
+        return formatLeft(number / Math.pow(10, pow));
     }
 
     private String formatLeft(double number) {

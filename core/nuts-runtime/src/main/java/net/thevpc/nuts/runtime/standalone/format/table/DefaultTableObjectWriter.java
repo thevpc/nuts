@@ -213,7 +213,7 @@ public class DefaultTableObjectWriter extends DefaultObjectWriterBase<NTableWrit
                             if (cell.value != null) {
                                 model.addCell(formatObject(cell.value));
                             } else {
-                                model.addCell(NText.of(""));
+                                model.addCell(NText.ofBlank());
                             }
                             visited[i] = true;
                             break;

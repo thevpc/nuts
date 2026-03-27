@@ -1,17 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.text.NPositionType;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Created by vpc on 3/20/17.
  */
-public class BytesSizeFormat {
+public class BytesSizeFormat implements NTextFormat<Number> {
 
     public static final long BYTE = 1;
     /**
@@ -100,7 +96,15 @@ public class BytesSizeFormat {
         this.depth = depth <= 0 ? Integer.MAX_VALUE : depth;
     }
 
-//    public BytesSizeFormat() {
+    @Override
+    public NText toText(Number object) {
+        if(object == null) {
+            return NText.ofBlank();
+        }
+        return formatText(object.longValue());
+    }
+
+    //    public BytesSizeFormat() {
 //        this("B0EF");
 //    }
 

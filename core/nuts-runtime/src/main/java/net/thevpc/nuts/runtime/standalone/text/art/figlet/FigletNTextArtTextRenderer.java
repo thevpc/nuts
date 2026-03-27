@@ -284,7 +284,7 @@ public class FigletNTextArtTextRenderer implements NTextArtTextRenderer, Cloneab
 
         String textToRender = processedText.toString();
         if (textToRender.isEmpty()) {
-            return NText.of("");
+            return NText.ofBlank();
         }
 
         NTextBuilder[] rows = new NTextBuilder[height];

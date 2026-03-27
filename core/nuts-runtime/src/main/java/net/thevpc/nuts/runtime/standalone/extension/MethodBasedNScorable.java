@@ -6,11 +6,11 @@ import net.thevpc.nuts.util.NScorableContext;
 
 import java.lang.reflect.Method;
 
-class MethodBasedNScorable implements NScorable {
-    private final NExtensionTypeInfo nExtensionTypeInfo;
+class MethodBasedNScorable<T> implements NScorable {
+    private final NExtensionTypeInfo<T> nExtensionTypeInfo;
     private final Method declaredMethod;
 
-    public MethodBasedNScorable(NExtensionTypeInfo nExtensionTypeInfo, Method declaredMethod) {
+    public MethodBasedNScorable(NExtensionTypeInfo<T> nExtensionTypeInfo, Method declaredMethod) {
         this.nExtensionTypeInfo = nExtensionTypeInfo;
         this.declaredMethod = declaredMethod;
         declaredMethod.setAccessible(true);

@@ -159,7 +159,7 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
         TableModelRenderHelper ctx = new TableModelRenderHelper(model);
         ctx.prepare(visibleColumns, visibleHeader, defaultHeaderFormatter, defaultHeaderFormatter);
 //        ctx.dump();
-        if (ctx.isEmpty()) return NText.of("");
+        if (ctx.isEmpty()) return NText.ofBlank();
         NTextRegion nTextRegion = ctx.renderTable(border);
         out.append(nTextRegion.toText());
         return out.build();

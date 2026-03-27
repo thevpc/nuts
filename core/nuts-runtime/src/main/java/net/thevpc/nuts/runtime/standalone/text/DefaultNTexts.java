@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NExec;
+import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
@@ -20,6 +21,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.NInputStreamSource;
 import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.reflect.NUseDefaultUtils;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
+import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.collections.NClassMapImpl;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.spi.*;
@@ -33,7 +35,6 @@ import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighli
 import net.thevpc.nuts.runtime.standalone.text.parser.*;
 import net.thevpc.nuts.runtime.standalone.text.util.DefaultNDurationFormat2;
 import net.thevpc.nuts.runtime.standalone.text.util.DefaultUnitFormat;
-import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.util.NClassMap;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -58,13 +59,28 @@ import java.util.logging.Level;
 public class DefaultNTexts implements NTexts {
 
     private final DefaultNTextManagerModel shared;
-    private NClassMap<NTextMapper> textMappers = new NClassMapImpl<>(NTextMapper.class);
-    private NClassMap<NObjectWriterMapper> writerMappers = new NClassMapImpl<>(NObjectWriterMapper.class);
+    private final NClassMap<NTextMapper> textMappers = new NClassMapImpl<>(NTextMapper.class);
+    private final NClassMap<NObjectWriterMapper> writerMappers = new NClassMapImpl<>(NObjectWriterMapper.class);
+    private final Map<String, Set<NTextFormatProvider>> providers = new HashMap<>();
 
     public DefaultNTexts() {
         this.shared = NWorkspaceExt.of().getModel().textModel;
         registerDefaultTextMappers();
         registerDefaultsObjectWriters();
+        registerDefaultTextFormatProviders();
+    }
+
+    private void registerTextFormatProvider(NTextFormatProvider provider) {
+        NAssert.requireNamedNonNull(provider, "provider");
+        String[] types = provider.types();
+        if(types!=null) {
+            for (String type : types) {
+                if(!NBlankable.isBlank(type)) {
+                    String type2 = NNameFormat.LOWER_KEBAB_CASE.format(NStringUtils.trim(type));
+                    providers.computeIfAbsent(type2, r -> new LinkedHashSet<>()).add(provider);
+                }
+            }
+        }
     }
 
     private void registerDefaultTextMappers() {
@@ -182,6 +198,93 @@ public class DefaultNTexts implements NTexts {
         });
     }
 
+    private void registerDefaultTextFormatProviders() {
+        registerTextFormatProvider(new NTextFormatProvider() {
+            @Override
+            public String[] types() {
+                return new String[]{"duration", "time", "period"};
+            }
+
+            @Override
+            public <T> NScoredCallable<NTextFormat<T>> resolveFormat(String pattern, Class<T> expectedType) {
+                if (NDuration.class.equals(expectedType)) {
+                    return NScoredCallable.ofValid((NTextFormat<T>) new DurationNTextFormatFromNDuration(pattern));
+                }
+                if (Duration.class.equals(expectedType)) {
+                    return NScoredCallable.ofValid((NTextFormat<T>) new DurationNTextFormatFromDuration(pattern));
+                }
+                if (Number.class.equals(expectedType)) {
+                    return NScoredCallable.ofValid((NTextFormat<T>) new DurationNTextFormatFromNumber(pattern));
+                }
+                return NScoredCallable.ofInvalid(NMsg.ofC("unknown duration format with type %s. Expected Duration or NDuration.", expectedType));
+            }
+        });
+        registerTextFormatProvider(new NTextFormatProvider() {
+            @Override
+            public String[] types() {
+                return new String[]{"double", "decimal", "number"};
+            }
+
+            @Override
+            public <T> NScoredCallable<NTextFormat<T>> resolveFormat(String pattern, Class<T> expectedType) {
+                if (Number.class.isAssignableFrom(expectedType)) {
+                    return NScoredCallable.ofValid(new CustomNumberNTextFormat<T>(pattern, expectedType));
+                }
+                return NScoredCallable.ofInvalid(NMsg.ofC("unknown duration format with type %s. Expected Number.", expectedType));
+            }
+        });
+
+        registerTextFormatProvider(new NTextFormatProvider() {
+            private final Set<String> types = Collections.unmodifiableSet(new HashSet<>(Arrays.asList()));
+
+            @Override
+            public String[] types() {
+                return new String[]{"m", "meter", "meters", "metric"};
+            }
+
+            @Override
+            public <T> NScoredCallable<NTextFormat<T>> resolveFormat(String pattern, Class<T> expectedType) {
+                if (Number.class.isAssignableFrom(expectedType)) {
+                    String p = NStringUtils.trim(pattern);
+                    return NScoredCallable.ofValid((NTextFormat<T>) new DefaultUnitFormat("m " + (p.isEmpty() ? "M-3 M3 I2 D2" : p)));
+                }
+                return NScoredCallable.ofInvalid(NMsg.ofC("unknown metric format with type %s. Expected Number.", expectedType));
+            }
+        });
+
+        registerTextFormatProvider(new NTextFormatProvider() {
+            @Override
+            public String[] types() {
+                return new String[]{"memory", "bytes", "size"};
+            }
+
+            @Override
+            public <T> NScoredCallable<NTextFormat<T>> resolveFormat(String pattern, Class<T> expectedType) {
+                if (Number.class.isAssignableFrom(expectedType)) {
+                    String p = NStringUtils.trim(pattern);
+                    return NScoredCallable.ofValid((NTextFormat<T>) new BytesSizeFormat(p));
+                }
+                return NScoredCallable.ofInvalid(NMsg.ofC("unknown memory format with type %s. Expected Number.", expectedType));
+            }
+        });
+
+        registerTextFormatProvider(new NTextFormatProvider() {
+            @Override
+            public String[] types() {
+                return new String[]{"freq", "freqs", "frequency", "frequencies", "hz"};
+            }
+
+            @Override
+            public <T> NScoredCallable<NTextFormat<T>> resolveFormat(String pattern, Class<T> expectedType) {
+                if (Number.class.isAssignableFrom(expectedType)) {
+                    String p = NStringUtils.trim(pattern);
+                    return NScoredCallable.ofValid((NTextFormat<T>) new DefaultUnitFormat("Hz " + (p.isEmpty() ? "M1 M12 I2 D3" : p)));
+                }
+                return NScoredCallable.ofInvalid(NMsg.ofC("unknown frequency format with type %s. Expected Number.", expectedType));
+            }
+        });
+    }
+
     private void registerDefaultsObjectWriters() {
         registerObjectWriter(NExec.class, (o, f) -> NExecWriter.of());
 
@@ -202,7 +305,7 @@ public class DefaultNTexts implements NTexts {
         registerObjectWriter(NCompressedPathBase.class, (o, f) -> new NCompressedPathBase.MyPathObjectWriter());
         registerObjectWriter(NPathBase.class, (o, f) -> new NPathBase.PathObjectWriter());
 
-        registerObjectWriter(NObjectWriterSPI.class, (o, f) -> NObjectWriter.of(((NObjectWriterSPI) o)));
+        registerObjectWriter(NObjectWriterSPI.class, (o, f) -> NObjectWriter.of(o));
         registerObjectWriterFromSPI(NChronometer.class, o -> new NChronometerWriterSPI((NChronometer) o));
         registerObjectWriterFromSPI(NDuration.class, o -> new NDurationWriterSPI((NDuration) o));
         registerObjectWriterFromConverter(NByteArrayPrintStream.MyAbstractMultiReadNInputSource.class, o -> ((NByteArrayPrintStream.MyAbstractMultiReadNInputSource) o).getValue());
@@ -230,7 +333,7 @@ public class DefaultNTexts implements NTexts {
                         if (fspi != null) {
                             return new NFormatAndValue<>(fspi, new NObjectWriterFromSPI(fspi));
                         }
-                        return new NFormatAndValue<>((NPathBase) o, new NPathBase.PathObjectWriter());
+                        return new NFormatAndValue<>(o, new NPathBase.PathObjectWriter());
                     }
                 }
         );
@@ -525,7 +628,7 @@ public class DefaultNTexts implements NTexts {
         }
         DefaultNTexts factory0 = (DefaultNTexts) NTexts.of();
         return factory0.createCode("```",
-                lang, "" + sep, "```", text
+                lang, sep, "```", text
         );
     }
 
@@ -549,7 +652,7 @@ public class DefaultNTexts implements NTexts {
         checkValidSeparator(sep);
         return createAnchor(
                 "```!",
-                "" + sep, "```", anchorName
+                sep, "```", anchorName
         );
     }
 
@@ -561,7 +664,7 @@ public class DefaultNTexts implements NTexts {
     @Override
     public NTextLink ofLink(String value, String sep) {
         checkValidSeparator(sep);
-        return new DefaultNTextLink("" + sep, value);
+        return new DefaultNTextLink(sep, value);
     }
 
     @Override
@@ -572,7 +675,7 @@ public class DefaultNTexts implements NTexts {
     @Override
     public NTextInclude ofInclude(String value, String sep) {
         checkValidSeparator(sep);
-        return new DefaultNTextInclude("" + sep, value);
+        return new DefaultNTextInclude(sep, value);
     }
 
     public NOptional<NTextFormatTheme> getTheme(String name) {
@@ -791,7 +894,7 @@ public class DefaultNTexts implements NTexts {
         config.setNormalize(true);
         NText z = transform(text, transformer, config);
         return NStream.ofIterator(new Iterator<NText>() {
-            Deque<NText> queue = new ArrayDeque<>();
+            final Deque<NText> queue = new ArrayDeque<>();
 
             {
                 if (z != null) {
@@ -1252,170 +1355,31 @@ public class DefaultNTexts implements NTexts {
         return e.map(x -> x);
     }
 
+    private <T> NOptional<NTextFormat<T>> createTextFormatDefault(String type, String pattern, Class<T> expectedType) {
+        String p = NStringUtils.trim(pattern);
+        if (Number.class.isAssignableFrom(expectedType)) {
+            return NOptional.of((NTextFormat<T>) new DefaultUnitFormat(type + " " + (p.isEmpty() ? "M-6 M12 I2 D3" : p)));
+        }
+        return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected %s.", type, expectedType, "Number"));
+    }
+
     public <T> NOptional<NTextFormat<T>> createTextFormat(String type, String pattern, Class<T> expectedType) {
-        Class<T> finalExpectedType = expectedType;
         NAssert.requireNamedNonNull(type, "type");
         NAssert.requireNamedNonNull(expectedType, "expectedType");
-        NAssert.requireNamedNonNull(pattern, "pattern");
         if (expectedType.isPrimitive()) {
             expectedType = (Class) NReflectUtils.toBoxedType(expectedType).get();
         }
-        switch (type.toLowerCase().trim()) {
-            case "duration": {
-                DefaultNDurationFormat2 d = new DefaultNDurationFormat2(pattern);
-                if (NDuration.class.equals(expectedType)) {
-                    return NOptional.of(
-                            (NTextFormat<T>) new NTextFormat<NDuration>() {
-                                @Override
-                                public NText toText(NDuration object) {
-                                    return d.format(object);
-                                }
-                            }
-                    );
-                }
-                if (Duration.class.equals(expectedType)) {
-                    return NOptional.of(
-                            (NTextFormat<T>) new NTextFormat<Duration>() {
-                                @Override
-                                public NText toText(Duration object) {
-                                    return d.format(object);
-                                }
-                            }
-                    );
-                }
-                return NOptional.ofEmpty(() -> NMsg.ofC("unknown duration format with type %s. Expected Duration or NDuration.", finalExpectedType));
-            }
-            case "double":
-            case "decimal":
-            case "number": {
-                if (pattern.endsWith("%")) {
-                    DecimalFormat d = new DecimalFormat(pattern.substring(0, pattern.length() - 1));
-                    if (Number.class.isAssignableFrom(expectedType)) {
-                        return NOptional.of(
-                                (NTextFormat<T>) new NTextFormat<Number>() {
-                                    @Override
-                                    public NText toText(Number object) {
-                                        if (object == null) {
-                                            return NTextBuilder.of().build();
-                                        }
-                                        return NTextBuilder.of()
-                                                .append(d.format(object.doubleValue() * 100.0), NTextStyle.number())
-                                                .append("%", NTextStyle.separator())
-                                                .build()
-                                                ;
-                                    }
-                                }
-                        );
-                    }
-                    return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
-                } else if (pattern.endsWith("'°'")) {
-                    DecimalFormat d = new DecimalFormat(pattern.substring(0, pattern.length() - 3));
-                    if (Number.class.isAssignableFrom(expectedType)) {
-                        return NOptional.of(
-                                (NTextFormat<T>) new NTextFormat<Number>() {
-                                    @Override
-                                    public NText toText(Number object) {
-                                        if (object == null) {
-                                            return NTextBuilder.of().build();
-                                        }
-                                        return NTextBuilder.of()
-                                                .append(d.format(object), NTextStyle.number())
-                                                .append("°", NTextStyle.separator())
-                                                .build()
-                                                ;
-                                    }
-                                }
-                        );
-                    }
-                    return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
-                } else {
-                    DecimalFormat d = new DecimalFormat(pattern);
-                    if (Number.class.isAssignableFrom(expectedType)) {
-                        return NOptional.of(
-                                (NTextFormat<T>) new NTextFormat<Number>() {
-                                    @Override
-                                    public NText toText(Number object) {
-                                        if (object == null) {
-                                            return NTextBuilder.of().build();
-                                        }
-                                        return NTextBuilder.of()
-                                                .append(d.format(object), NTextStyle.number())
-                                                .build()
-                                                ;
-                                    }
-                                }
-                        );
-                    }
-                    return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
-                }
-            }
-            case "m":
-            case "meter":
-            case "metric": {
-                String p = NStringUtils.trim(pattern);
-                DefaultUnitFormat d = new DefaultUnitFormat("m " + (p.isEmpty() ? "M-3 M3 I2 D2" : p));
-                if (Number.class.isAssignableFrom(expectedType)) {
-                    return NOptional.of(
-                            (NTextFormat<T>) new NTextFormat<Number>() {
-                                @Override
-                                public NText toText(Number object) {
-                                    return d.format(object.doubleValue());
-                                }
-                            }
-                    );
-                }
-                return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
-            }
-            case "memory":
-            case "bytes":
-            case "size": {
-                String p = NStringUtils.trim(pattern);
-                BytesSizeFormat d = new BytesSizeFormat(null);
-                if (Number.class.isAssignableFrom(expectedType)) {
-                    return NOptional.of(
-                            (NTextFormat<T>) new NTextFormat<Number>() {
-                                @Override
-                                public NText toText(Number object) {
-                                    return d.formatText(object.longValue());
-                                }
-                            }
-                    );
-                }
-                return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
-            }
-            case "freq":
-            case "frequency":
-            case "hz": {
-                String p = NStringUtils.trim(pattern);
-                DefaultUnitFormat d = new DefaultUnitFormat("Hz " + (p.isEmpty() ? "M1 M12 I2 D3" : p));
-                if (Number.class.isAssignableFrom(expectedType)) {
-                    return NOptional.of(
-                            (NTextFormat<T>) new NTextFormat<Number>() {
-                                @Override
-                                public NText toText(Number object) {
-                                    return d.format(object.longValue());
-                                }
-                            }
-                    );
-                }
-                return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
-            }
-            default: {
-                String p = NStringUtils.trim(pattern);
-                DefaultUnitFormat d = new DefaultUnitFormat(type + " " + (p.isEmpty() ? "M-6 M12 I2 D3" : p));
-                if (Number.class.isAssignableFrom(expectedType)) {
-                    return NOptional.of(
-                            (NTextFormat<T>) new NTextFormat<Number>() {
-                                @Override
-                                public NText toText(Number object) {
-                                    return d.format(object.doubleValue());
-                                }
-                            }
-                    );
-                }
-                return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected %s.", type, finalExpectedType, "Number"));
-            }
+        Class<T> finalExpectedType = expectedType;
+        Set<NTextFormatProvider> p = providers.get(NNameFormat.LOWER_KEBAB_CASE.format(NStringUtils.trim(type)));
+        if (p != null) {
+            NOptional<NScoredCallable<NTextFormat<T>>> b = NScorable.<NScoredCallable<NTextFormat<T>>>query()
+                    .fromStream(p.stream().map(x -> x.resolveFormat(pattern, finalExpectedType)))
+                    .getBest();
+            return b.map(NScoredCallable::call)
+                    .orElseGetOptionalFrom(() -> createTextFormatDefault(type, pattern, finalExpectedType))
+                    .withMessage(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
         }
+        return createTextFormatDefault(type, pattern, expectedType);
     }
 
     private interface NTextMapper {
@@ -1448,6 +1412,88 @@ public class DefaultNTexts implements NTexts {
 
     private interface NObjectWriterMapper {
         NObjectWriter ofFormat(Object t, NTexts texts);
+    }
+
+    private static class DurationNTextFormatFromNDuration implements NTextFormat<NDuration> {
+        DefaultNDurationFormat2 d;
+
+        public DurationNTextFormatFromNDuration(String pattern) {
+            this.d = new DefaultNDurationFormat2(pattern);
+        }
+
+        @Override
+        public NText toText(NDuration object) {
+            return d.format(object);
+        }
+    }
+
+    private static class DurationNTextFormatFromDuration implements NTextFormat<Duration> {
+        DefaultNDurationFormat2 d;
+
+        public DurationNTextFormatFromDuration(String pattern) {
+            this.d = new DefaultNDurationFormat2(pattern);
+        }
+
+        @Override
+        public NText toText(Duration object) {
+            return d.format(object);
+        }
+    }
+
+    private static class CustomNumberNTextFormat<T> implements NTextFormat<T> {
+        private final DecimalFormat d;
+        private final Class<T> expectedType;
+        private final String suffix;
+
+        public CustomNumberNTextFormat(String pattern, Class<T> expectedType) {
+            this.expectedType = expectedType;
+            NAssert.requireNamedTrue(Number.class.isAssignableFrom(expectedType), expectedType.getSimpleName());
+            if (pattern.endsWith("%")) {
+                d = new DecimalFormat(pattern.substring(0, pattern.length() - 1));
+                suffix = "%";
+            } else if (pattern.endsWith("'°'")) {
+                d = new DecimalFormat(pattern.substring(0, pattern.length() - 3));
+                suffix = "°";
+            } else if (pattern.endsWith("°")) {
+                d = new DecimalFormat(pattern.substring(0, pattern.length() - 1));
+                suffix = "°";
+            } else {
+                d = new DecimalFormat(pattern);
+                suffix = "";
+            }
+        }
+
+        public NText toText(T object) {
+            return toText((Number) object);
+        }
+
+        public NText toText(Number object) {
+            if (object == null) {
+                return NTextBuilder.of().build();
+            }
+            NTextBuilder b = NTextBuilder.of()
+                    .append(d.format(object.doubleValue() * 100.0), NTextStyle.number());
+            if (!NBlankable.isBlank(suffix)) {
+                b.append("%", NTextStyle.separator());
+            }
+            return b.build();
+        }
+    }
+
+    private static class DurationNTextFormatFromNumber implements NTextFormat<Number> {
+        DefaultNDurationFormat2 d;
+
+        public DurationNTextFormatFromNumber(String pattern) {
+            d = new DefaultNDurationFormat2(pattern);
+        }
+
+        @Override
+        public NText toText(Number object) {
+            if (object == null) {
+                return NText.ofBlank();
+            }
+            return d.format(NDuration.ofMillis(object.longValue()));
+        }
     }
 
     private abstract class NObjectWriterMapperFromSPI implements NObjectWriterMapper {
