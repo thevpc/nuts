@@ -30,6 +30,9 @@ import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.reflect.NClassMap;
+import net.thevpc.nuts.reflect.NClassPairMap;
+import net.thevpc.nuts.reflect.NClassPairMultiMap;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.*;
 
@@ -52,7 +55,8 @@ public interface NCollectionsRPI extends NComponent {
     <T> NStream<T> iterableToStream(Iterable<T> str);
 
     <T> NStream<T> iteratorToStream(Iterator<T> str);
-    <T> NStream<T> iteratorToStream(Iterator<T> str,Runnable onClose);
+
+    <T> NStream<T> iteratorToStream(Iterator<T> str, Runnable onClose);
 
     <T> NStream<T> toStream(Stream<T> str);
 
@@ -78,15 +82,20 @@ public interface NCollectionsRPI extends NComponent {
     <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(int m, boolean allowDuplicates);
 
     <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(int m);
+
     <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(NBPlusTreeStore<K, V> store);
 
-    <V> NClassMap<V> classMap(Class<V> valueType);
+    <K, V> NClassMap<K, V> classMap(Class<V> valueType);
 
-    <V> NClassMap<V> classMap(Class keyType, Class<V> valueType);
+    <K, V> NClassMap<K, V> classMap(Class<K> keyType, Class<V> valueType);
 
-    <V> NClassMap<V> classMap(Class keyType, Class<V> valueType, int initialCapacity);
+    <A, B, V> NClassPairMap<A, B, V> classPairMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric);
 
-    NClassMap<Class<?>> classClassMap();
+    <A, B, V> NClassPairMultiMap<A, B, V> classPairMultiMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric);
+
+    <K, V> NClassMap<K, V> classMap(Class<K> keyType, Class<V> valueType, int initialCapacity);
+
+    NClassMap<Object, Class> classClassMap();
 
     <T> Map<String, T> caseInsensitiveMap();
 
@@ -161,4 +170,6 @@ public interface NCollectionsRPI extends NComponent {
     <T> NIteratorBuilder<T> iteratorEmptyBuilder();
 
     <T> NIteratorBuilder<T> iteratorBuilderOfFlatMap(NIterator<? extends Collection<T>> from);
+
+    NIterator<NIntUplet2> int2Iterator(int a, int b);
 }
