@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class DefaultNLiteral implements NLiteral {
-    private static NLiteral NULL = new DefaultNLiteral(null);
+    private static final NLiteral NULL = new DefaultNLiteral(null);
 
     public static NLiteral of(Object any) {
         if (any == null) {
@@ -36,25 +36,25 @@ public class DefaultNLiteral implements NLiteral {
 
     public static final DateTimeFormatter[] DATE_TIME_FORMATS = {
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"),
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
-                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX"),
-                                    DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS"),
-                                            DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX"),
+            DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS"),
+            DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")
     };
 
     public static final DateTimeFormatter[] TIME_FORMATS = {
             DateTimeFormatter.ofPattern("HH:mm:ss.SSSX"),
-                    DateTimeFormatter.ofPattern("HH:mm:ss.SSS"),
-                            DateTimeFormatter.ofPattern("HH:mm:ss"),
-                                    DateTimeFormatter.ofPattern("HH:mm")
+            DateTimeFormatter.ofPattern("HH:mm:ss.SSS"),
+            DateTimeFormatter.ofPattern("HH:mm:ss"),
+            DateTimeFormatter.ofPattern("HH:mm")
     };
 
     public static final DateTimeFormatter[] DATE_FORMATS = {
             DateTimeFormatter.ofPattern("yyyy-MM-dd"),
-                    DateTimeFormatter.ofPattern("yyyy/MM/dd"),
+            DateTimeFormatter.ofPattern("yyyy/MM/dd"),
     };
 
-    private Object value;
+    private final Object value;
     private NElementType type;
 
     public static NOptional<Instant> parseInstant(String text) {
@@ -131,13 +131,13 @@ public class DefaultNLiteral implements NLiteral {
                     return NElementType.NAME;
             }
             if (value instanceof NDoubleComplex) {
-                return  NElementType.DOUBLE_COMPLEX;
+                return NElementType.DOUBLE_COMPLEX;
             }
             if (value instanceof NFloatComplex) {
-                return  NElementType.FLOAT_COMPLEX;
+                return NElementType.FLOAT_COMPLEX;
             }
             if (value instanceof NBigComplex) {
-                return  NElementType.BIG_COMPLEX;
+                return NElementType.BIG_COMPLEX;
             }
             if (value instanceof Number) {
                 return NElementType.DOUBLE;
@@ -321,7 +321,7 @@ public class DefaultNLiteral implements NLiteral {
             //
         }
         Instant instant = parseInstant(s).orNull();
-        if(instant!=null){
+        if (instant != null) {
             return NOptional.of(instant);
         }
         try {
@@ -390,7 +390,7 @@ public class DefaultNLiteral implements NLiteral {
             return NOptional.of(((Instant) value).toEpochMilli());
         }
         String s = String.valueOf(value);
-        if(isCouldBeNumber(s)) {
+        if (isCouldBeNumber(s)) {
             if (s.indexOf('.') >= 0 || s.toLowerCase().indexOf('e') >= 0) {
                 try {
                     return NOptional.of(Double.parseDouble(s));
@@ -465,15 +465,59 @@ public class DefaultNLiteral implements NLiteral {
                 if (BigInteger.valueOf(ln).equals(value)) {
                     return NOptional.of(ln);
                 }
+                return NOptional.ofError(() -> NMsg.ofC("invalid Long %s", value));
             }
-            return NOptional.of(((Number) value).longValue());
+            if (value instanceof BigDecimal) {
+                long ln = ((BigDecimal) value).longValue();
+                if (BigDecimal.valueOf(ln).equals(value)) {
+                    return NOptional.of(ln);
+                }
+                return NOptional.ofError(() -> NMsg.ofC("invalid Long %s", value));
+            }
+            if (value instanceof Double || value instanceof Float) {
+                double dd = ((Number) value).doubleValue();
+                long li = (long)dd;
+                if ((double) li == dd) {
+                    return NOptional.of(li);
+                }
+                return NOptional.ofError(() -> NMsg.ofC("invalid Long %s", value));
+            }
+            if (value instanceof NDoubleComplex) {
+                NDoubleComplex dd = (NDoubleComplex) value;
+                long li = dd.longValue();
+                if (dd.isReal() && dd.realValue()==li) {
+                    return NOptional.of(li);
+                }
+                return NOptional.ofError(() -> NMsg.ofC("invalid Long %s", value));
+            }
+            if (value instanceof NFloatComplex) {
+                NFloatComplex dd = (NFloatComplex) value;
+                long li = dd.longValue();
+                if (dd.isReal() && dd.realValue()==li) {
+                    return NOptional.of(li);
+                }
+                return NOptional.ofError(() -> NMsg.ofC("invalid Long %s", value));
+            }
+            if (value instanceof NBigComplex) {
+                NBigComplex dd = (NBigComplex) value;
+                long li = dd.longValue();
+                if (dd.isReal() && dd.realValue().equals(BigDecimal.valueOf(li))) {
+                    return NOptional.of(li);
+                }
+                return NOptional.ofError(() -> NMsg.ofC("invalid Long %s", value));
+            }
+            if (value instanceof Long || value instanceof Integer || value instanceof Byte || value instanceof Short) {
+                return NOptional.of(((Number) value).longValue());
+            }
+            //apache and spring has some uncommon numbers
+            return NOptional.ofError(() -> NMsg.ofC("invalid Long %s", value));
         }
         if (value instanceof Date) {
             return NOptional.of(((Date) value).getTime());
         }
         if (value instanceof CharSequence) {
             String s = value.toString().trim();
-            if(isCouldBeNumber(s)) {
+            if (isCouldBeNumber(s)) {
                 if (s.indexOf('.') >= 0 || s.toLowerCase().indexOf('e') >= 0) {
                     try {
                         double a = Double.parseDouble(s);
@@ -786,10 +830,7 @@ public class DefaultNLiteral implements NLiteral {
             return false;
         }
         final DefaultNLiteral other = (DefaultNLiteral) obj;
-        if (!Objects.equals(this.value, other.value)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.value, other.value);
     }
 
 
@@ -847,8 +888,7 @@ public class DefaultNLiteral implements NLiteral {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
-            case BLOCK_STRING:
-            {
+            case BLOCK_STRING: {
                 return toString().isEmpty();
             }
         }
@@ -1042,8 +1082,7 @@ public class DefaultNLiteral implements NLiteral {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case TRIPLE_BACKTICK_STRING:
             case LINE_STRING:
-            case BLOCK_STRING:
-            {
+            case BLOCK_STRING: {
                 String s = asString().get();
                 s = s.trim();
                 try {
@@ -1118,7 +1157,7 @@ public class DefaultNLiteral implements NLiteral {
             return (NOptional<ET>) asType((Class<?>) expectedType);
         }
         if (expectedType instanceof ParameterizedType) {
-            return (NOptional<ET>) asType(((ParameterizedType) expectedType).getRawType());
+            return asType(((ParameterizedType) expectedType).getRawType());
         }
         return NOptional.ofError(() -> NMsg.ofC("unsupported type %s", expectedType));
     }
@@ -1246,7 +1285,7 @@ public class DefaultNLiteral implements NLiteral {
                 ET[] enumConstants = type.getEnumConstants();
                 Integer ordinal = asInt().get();
                 if (ordinal >= 0 && ordinal <= enumConstants.length) {
-                    return (NOptional<ET>) NOptional.of(enumConstants[ordinal]);
+                    return NOptional.of(enumConstants[ordinal]);
                 }
                 NOptional.ofError(() -> NMsg.ofC("invalid ordinal %s for %s", ordinal, type));
             }
@@ -1276,7 +1315,7 @@ public class DefaultNLiteral implements NLiteral {
             case "short":
                 return (short) 0;
             case "int":
-                return (int) 0;
+                return 0;
             case "long":
                 return 0L;
             case "char":
