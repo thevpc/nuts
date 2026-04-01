@@ -10,6 +10,24 @@ import java.util.function.Consumer;
 
 public class NReflectUtils {
     private static final Map<Class<?>, Object> DEFAULTS_CACHE = new ConcurrentHashMap<>();
+    private static final Comparator<Class> CLASS_HIERARCHY_COMPARATOR = new Comparator<Class>() {
+        @Override
+        public int compare(Class o1, Class o2) {
+            if (o1.isAssignableFrom(o2)) {
+                return 1;
+            } else if (o2.isAssignableFrom(o1)) {
+                return -1;
+            }
+            if (o1.isInterface() && !o2.isInterface()) {
+                return 1;
+            }
+            if (o2.isInterface() && !o1.isInterface()) {
+                return -1;
+            }
+            return 0;
+        }
+    };
+
 
     private NReflectUtils() {
     }
@@ -268,29 +286,29 @@ public class NReflectUtils {
     }
 
 
-    public static <T> List<T> listServices(Class<T> type,Class<?>...sources) {
+    public static <T> List<T> listServices(Class<T> type, Class<?>... sources) {
         List<T> instances = new ArrayList<>();
-        loadServices(type, e -> instances.add(e),sources);
+        loadServices(type, e -> instances.add(e), sources);
         return instances;
     }
 
-    public static <T> void loadServices(Class<T> type, Consumer<T> consumer,Class<?>...sources) {
-        NAssert.requireNamedNonNull(type,"serviceType");
-        NAssert.requireNamedNonNull(consumer,"consumer");
+    public static <T> void loadServices(Class<T> type, Consumer<T> consumer, Class<?>... sources) {
+        NAssert.requireNamedNonNull(type, "serviceType");
+        NAssert.requireNamedNonNull(consumer, "consumer");
         LinkedHashSet<Class<?>> uniqueClasses = new LinkedHashSet<>();
         LinkedHashSet<ClassLoader> uniqueClassLoaders = new LinkedHashSet<>();
         Set<String> implementedClasses = new HashSet<>(); // To prevent duplicates
-        if(sources!=null){
+        if (sources != null) {
             for (Class<?> c : sources) {
-                if(c!=null){
-                    if(uniqueClasses.add(c)){
+                if (c != null) {
+                    if (uniqueClasses.add(c)) {
                         uniqueClassLoaders.add(c.getClassLoader());
                     }
                 }
             }
         }
 
-        if(uniqueClasses.add(type)){
+        if (uniqueClasses.add(type)) {
             uniqueClassLoaders.add(type.getClassLoader());
         }
         uniqueClassLoaders.add(Thread.currentThread().getContextClassLoader());
@@ -302,7 +320,7 @@ public class NReflectUtils {
             try {
                 ServiceLoader<T> sl = ServiceLoader.load(type, loader);
                 for (T lib : sl) {
-                    if(implementedClasses.add(lib.getClass().getName())) {
+                    if (implementedClasses.add(lib.getClass().getName())) {
                         consumer.accept(lib);
                     }
                 }
@@ -312,4 +330,103 @@ public class NReflectUtils {
         }
     }
 
+    public static Class[] findClassHierarchy(Class clazz, Class baseType, NTypeNameDomain domain) {
+        HashSet<Class> seen = new HashSet<Class>();
+        Queue<Class> queue = new LinkedList<Class>();
+        List<Class> result = new LinkedList<Class>();
+        queue.add(clazz);
+        while (!queue.isEmpty()) {
+            Class i = queue.remove();
+            if (baseType == null || baseType.isAssignableFrom(i)) {
+                if (!seen.contains(i)) {
+                    seen.add(i);
+                    result.add(i);
+                    if (i.getSuperclass() != null) {
+                        queue.add(i.getSuperclass());
+                    }
+                    Collections.addAll(queue, i.getInterfaces());
+                }
+            }
+        }
+        Collections.sort(result, CLASS_HIERARCHY_COMPARATOR);
+        return result.toArray(new Class[result.size()]);
+    }
+
+    public static NTypeName[] findClassHierarchy(NTypeName clazz, NTypeName baseType, NTypeNameDomain domain) {
+        HashSet<NTypeName> seen = new HashSet<NTypeName>();
+        Queue<NTypeName> queue = new LinkedList<NTypeName>();
+        List<NTypeName> result = new LinkedList<NTypeName>();
+        queue.add(clazz);
+        while (!queue.isEmpty()) {
+            NTypeName i = queue.remove();
+            if (baseType == null || domain.isAssignableFrom(baseType, i)) {
+                if (!seen.contains(i)) {
+                    seen.add(i);
+                    result.add(i);
+                    NTypeName s = domain.getSuperType(i);
+                    if (s != null) {
+                        queue.add(s);
+                    }
+                    NTypeName[] ii = domain.getInterfaces(i);
+                    Collections.addAll(queue, ii);
+                }
+            }
+        }
+        Collections.sort(result, new NTypeNameHierarchyComparator(domain));
+        return result.toArray(new NTypeName[0]);
+    }
+
+    public static <A, B> NTypeName<?> lowestCommonAncestor(NTypeName<A> a, NTypeName<B> b, NTypeNameDomain domain) {
+        if (a.equals(b)) {
+            return a;
+        }
+        if (domain.isAssignableFrom(a, b)) {
+            return a;
+        }
+        if (domain.isAssignableFrom(b, a)) {
+            return b;
+        }
+        NTypeName[] aHierarchy = findClassHierarchy(a, null, domain);
+        NTypeName[] bHierarchy = findClassHierarchy(b, null, domain);
+        int i1 = -1;
+        int i2 = -1;
+        for (int ii = 0; ii < aHierarchy.length; ii++) {
+            for (int jj = 0; jj < bHierarchy.length; jj++) {
+                if (aHierarchy[ii].equals(bHierarchy[jj])) {
+                    if (i1 < 0 || ii + jj < i1 + i2) {
+                        i1 = ii;
+                        i2 = jj;
+                    }
+                }
+            }
+        }
+        if (i1 < 0) {
+            return new NTypeName<>(Object.class.getName());
+        }
+        return aHierarchy[i1];
+    }
+
+    private static class NTypeNameHierarchyComparator implements Comparator<NTypeName> {
+        NTypeNameDomain domain;
+
+        public NTypeNameHierarchyComparator(NTypeNameDomain domain) {
+            this.domain = domain;
+        }
+
+        @Override
+        public int compare(NTypeName o1, NTypeName o2) {
+            if (domain.isAssignableFrom(o1, o2)) {
+                return 1;
+            } else if (domain.isAssignableFrom(o2, o1)) {
+                return -1;
+            }
+            if (domain.isInterface(o1) && !domain.isInterface(o2)) {
+                return 1;
+            }
+            if (domain.isInterface(o2) && !domain.isInterface(o1)) {
+                return -1;
+            }
+            return 0;
+        }
+    }
 }
