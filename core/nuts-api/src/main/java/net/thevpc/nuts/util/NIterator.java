@@ -40,9 +40,17 @@ import java.util.function.Supplier;
  *
  * @param <T> T
  */
-public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>, AutoCloseable{
+public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>, AutoCloseable {
     static <T> NIterator<T> of(Iterator<T> o) {
         return NCollectionsRPI.of().toIterator(o);
+    }
+
+    static NIterator<NIntUplet2> ofInt2(int a, int b) {
+        return NCollectionsRPI.of().int2Iterator(a, b);
+    }
+
+    static NIterator<NIntUplet2> ofInt2() {
+        return NCollectionsRPI.of().int2Iterator(0, 0);
     }
 
     static <T> NIterator<T> ofEmpty() {
@@ -152,7 +160,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
 
     NIterator<T> onClose(Runnable closeHandler);
 
-    default void close(){
+    default void close() {
 
     }
 }
