@@ -1,10 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.reflect;
 
+import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.util.NExceptions;
-import net.thevpc.nuts.reflect.NReflectMethod;
-import net.thevpc.nuts.reflect.NReflectParameter;
-import net.thevpc.nuts.reflect.NReflectType;
-import net.thevpc.nuts.reflect.NSignature;
 import net.thevpc.nuts.text.NMsg;
 
 import java.lang.reflect.InvocationTargetException;
@@ -17,7 +14,7 @@ public class DefaultNReflectMethod implements NReflectMethod {
     private Method method;
     private NReflectType declaringType;
     private NReflectParameter[] cachedParams;
-    private NSignature signature;
+    private NReflectSignature signature;
     private boolean accessible;
 
     public DefaultNReflectMethod(Method method, NReflectType declaringType) {
@@ -73,12 +70,12 @@ public class DefaultNReflectMethod implements NReflectMethod {
     }
 
     @Override
-    public NSignature getSignature() {
+    public NReflectSignature getSignature() {
         if(signature==null){
             Parameter[] mp = method.getParameters();
             boolean varargs=(mp.length>0 && mp[mp.length-1].isVarArgs());
             NReflectType[] p = Arrays.stream(getParameters()).map(x->x.getParameterType()).toArray(NReflectType[]::new);
-            signature=varargs?NSignature.ofVarArgs(p) : NSignature.of(p);
+            signature=varargs? NReflectSignatureImpl.ofVarArgs(p) : NReflectSignatureImpl.of(p);
         }
         return signature;
     }
