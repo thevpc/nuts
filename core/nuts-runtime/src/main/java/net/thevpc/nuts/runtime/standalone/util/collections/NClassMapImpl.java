@@ -25,7 +25,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.util.NClassMap;
+import net.thevpc.nuts.reflect.NClassMap;
+import net.thevpc.nuts.reflect.NReflectUtils;
+import net.thevpc.nuts.reflect.NTypeNamePlatformDomain;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -35,26 +37,10 @@ import java.util.*;
  *
  * @author thevpc
  */
-public class NClassMapImpl<V> implements NClassMap<V> {
+public class NClassMapImpl<K, V> implements NClassMap<K, V> {
 
     private static final long serialVersionUID = 1L;
-    private static final Comparator<Class> CLASS_HIERARCHY_COMPARATOR = new Comparator<Class>() {
-        @Override
-        public int compare(Class o1, Class o2) {
-            if (o1.isAssignableFrom(o2)) {
-                return 1;
-            } else if (o2.isAssignableFrom(o1)) {
-                return -1;
-            }
-            if (o1.isInterface() && !o2.isInterface()) {
-                return 1;
-            }
-            if (o2.isInterface() && !o1.isInterface()) {
-                return -1;
-            }
-            return 0;
-        }
-    };
+
     protected HashMap<Class, V> values;
     protected HashMap<Class, V[]> cachedValues;
     private final Class keyType;
@@ -65,11 +51,11 @@ public class NClassMapImpl<V> implements NClassMap<V> {
         this(null, valueType);
     }
 
-    public NClassMapImpl(Class keyType, Class<V> valueType) {
+    public NClassMapImpl(Class<K> keyType, Class<V> valueType) {
         this(keyType, valueType, 0);
     }
 
-    public NClassMapImpl(Class keyType, Class<V> valueType, int initialCapacity) {
+    public NClassMapImpl(Class<K> keyType, Class<V> valueType, int initialCapacity) {
         this.keyType = keyType;
         this.valueType = valueType;
         values = new HashMap<Class, V>(initialCapacity);
@@ -77,29 +63,6 @@ public class NClassMapImpl<V> implements NClassMap<V> {
         cachedHierarchy = new HashMap<Class, Class[]>(initialCapacity * 2);
     }
 
-    public static Class[] findClassHierarchy(Class clazz, Class baseType) {
-        HashSet<Class> seen = new HashSet<Class>();
-        Queue<Class> queue = new LinkedList<Class>();
-        List<Class> result = new LinkedList<Class>();
-        queue.add(clazz);
-        while (!queue.isEmpty()) {
-            Class i = queue.remove();
-            if (baseType == null || baseType.isAssignableFrom(i)) {
-                if (!seen.contains(i)) {
-                    seen.add(i);
-                    result.add(i);
-                    if (i.getSuperclass() != null) {
-                        queue.add(i.getSuperclass());
-                    }
-                    for (Class ii : i.getInterfaces()) {
-                        queue.add(ii);
-                    }
-                }
-            }
-        }
-        Collections.sort(result, CLASS_HIERARCHY_COMPARATOR);
-        return result.toArray(new Class[result.size()]);
-    }
 
     public Set<Class<?>> cacheKeySet() {
         HashSet<Class<?>> r = new HashSet<>();
@@ -112,12 +75,12 @@ public class NClassMapImpl<V> implements NClassMap<V> {
         Set<Class> ks0 = values.keySet();
         HashSet u = new HashSet(ks0);
         for (Class a : ks0) {
-            u.addAll(Arrays.asList(getKeys(a)));
+            u.addAll(Arrays.asList(getSearchPath(a)));
         }
         return u;
     }
 
-    public Set<Class> keySet() {
+    public Set<Class<? extends K>> keySet() {
         return new HashSet(values.keySet());
     }
 
@@ -125,56 +88,43 @@ public class NClassMapImpl<V> implements NClassMap<V> {
         return values.values();
     }
 
-    public V put(Class classKey, V value) {
+    public V put(Class<? extends K> classKey, V value) {
         cachedValues.clear();
         return values.put(classKey, value);
     }
 
-    public V remove(Class classKey) {
+    public V remove(Class<? extends K> classKey) {
         cachedValues.clear();
         return values.remove(classKey);
     }
 
-    public Class[] getKeys(Class classKey) {
+    public Class[] getSearchPath(Class classKey) {
         Class[] keis = cachedHierarchy.get(classKey);
         if (keis == null) {
-            keis = findClassHierarchy(classKey, keyType);
+            keis = NReflectUtils.findClassHierarchy(classKey, keyType, NTypeNamePlatformDomain.of());
             cachedHierarchy.put(classKey, keis);
         }
         return keis;
     }
 
-    public V getRequired(Class key) {
-        V[] found = getAllRequired(key);
-        return found[0];
-    }
-
-    public boolean containsExactKey(Class key) {
+    public boolean containsExactKey(Class<? extends K> key) {
         return values.containsKey(key);
     }
 
-    public V getExact(Class key) {
+    public V getExact(Class<? extends K> key) {
         return values.get(key);
     }
 
-    public V get(Class key) {
-        V[] found = getAll(key);
-        if (found.length > 0) {
-            return found[0];
+    public V get(Class<? extends K> key) {
+        List<V> found = findMatches(key);
+        if (found.size() > 0) {
+            return found.get(0);
         }
         return null;
     }
 
-    public V[] getAllRequired(Class key) {
-        V[] found = getAll(key);
-        if (found.length > 0) {
-            return found;
-        }
-        throw new NoSuchElementException(key.getName());
-    }
-
-    protected V[] getAllImpl(Class key) {
-        Class[] keis = getKeys(key);
+    protected V[] getAllImpl(Class<? extends K> key) {
+        Class[] keis = getSearchPath(key);
         List<V> all = new ArrayList<V>(keis.length);
         for (Class c : keis) {
             V u = values.get(c);
@@ -185,13 +135,13 @@ public class NClassMapImpl<V> implements NClassMap<V> {
         return all.toArray((V[]) Array.newInstance(valueType, 0));
     }
 
-    public V[] getAll(Class key) {
+    public List<V> findMatches(Class<? extends K> key) {
         V[] found = cachedValues.get(key);
         if (found == null) {
             found = getAllImpl(key);
             cachedValues.put(key, found);
         }
-        return found;
+        return Arrays.asList(found);
     }
 
     @Override
@@ -223,13 +173,13 @@ public class NClassMapImpl<V> implements NClassMap<V> {
 
         NClassMapImpl classMap = (NClassMapImpl) o;
 
-        if (keyType != null ? !keyType.equals(classMap.keyType) : classMap.keyType != null) {
+        if (!Objects.equals(keyType, classMap.keyType)) {
             return false;
         }
-        if (valueType != null ? !valueType.equals(classMap.valueType) : classMap.valueType != null) {
+        if (!Objects.equals(valueType, classMap.valueType)) {
             return false;
         }
-        return values != null ? values.equals(classMap.values) : classMap.values == null;
+        return Objects.equals(values, classMap.values);
     }
 
     public void clear() {
@@ -244,7 +194,7 @@ public class NClassMapImpl<V> implements NClassMap<V> {
 
     public void expand() {
         for (Class k : values.keySet()) {
-            getKeys(k);
+            getSearchPath(k);
         }
     }
 }
