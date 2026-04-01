@@ -42,5 +42,5 @@ public interface NReflectMethod {
 
     boolean isVarArgs();
 
-    NSignature getSignature();
+    NReflectSignature getSignature();
 }
