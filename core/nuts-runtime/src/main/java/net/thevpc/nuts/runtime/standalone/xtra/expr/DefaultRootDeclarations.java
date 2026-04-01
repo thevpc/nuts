@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.elem.NOperatorAssociativity;
+import net.thevpc.nuts.runtime.standalone.reflect.NReflectSignatureImpl;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.reflect.*;
@@ -53,7 +54,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
                         if (property.isPresent() && property.get().isRead()) {
                             return property.get().read(instance);
                         }
-                        NOptional<NReflectMethod> method = t.getMethod(n, NSignature.of());
+                        NOptional<NReflectMethod> method = t.getMethod(n, NReflectSignatureImpl.of());
                         if (method.isPresent() && method.get().isAccessible()) {
                             return method.get().invoke(instance);
                         }
@@ -64,7 +65,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
                         String n = w.getName();
                         NReflectType t = reflectRepository.getType(instance.getClass());
                         if (w.getArguments().size() == 0) {
-                            NOptional<NReflectMethod> method = t.getMethod(n, NSignature.of());
+                            NOptional<NReflectMethod> method = t.getMethod(n, NReflectSignatureImpl.of());
                             if (method.isPresent() && method.get().isAccessible()) {
                                 return method.get().invoke(instance);
                             }
@@ -89,7 +90,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
                                 throw new NIllegalArgumentException(NMsg.ofC("method not found to match  %s", w));
                             }
                             List<Object> values=w.getArguments().stream().map(x->x.eval(context)).collect(Collectors.toList());
-                            NOptional<NReflectMethod> matchingMethod = t.getMatchingMethod(n, NSignature.of(values.stream().map(x -> x == null ? null : reflectRepository.getType(x.getClass())).toArray(NReflectType[]::new)));
+                            NOptional<NReflectMethod> matchingMethod = t.getMatchingMethod(n, NReflectSignatureImpl.of(values.stream().map(x -> x == null ? null : reflectRepository.getType(x.getClass())).toArray(NReflectType[]::new)));
                             goodMethod=matchingMethod.get();
                             return goodMethod.invoke(instance,values.toArray());
                         }
