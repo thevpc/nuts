@@ -47,4 +47,8 @@ public interface NBigComplex extends NNumber {
     NBigComplex divideBigComplex(NBigComplex other, MathContext mc);
 
     NBigComplex invBigComplex(MathContext mc) ;
+
+    boolean isReal();
+
+    boolean isImaginary();
 }
