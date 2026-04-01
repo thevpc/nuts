@@ -11,6 +11,10 @@ public class NLRUMap<A, B> extends LinkedHashMap<A, B> {
 
     private int maxEntries;
 
+    public static <A, B> NLRUMap<A, B> of(final int maxEntries) {
+        return new NLRUMap<>(maxEntries);
+    }
+
     public NLRUMap(final int maxEntries) {
         super(maxEntries + 1, 1.0f, true);
         this.maxEntries = maxEntries;
@@ -28,8 +32,8 @@ public class NLRUMap<A, B> extends LinkedHashMap<A, B> {
      * <br>
      *
      * @param eldest the <code>Entry</code> in question; this implementation
-     * doesn't care what It's, since the implementation is only dependent on
-     * the size of the cache
+     *               doesn't care what It's, since the implementation is only dependent on
+     *               the size of the cache
      * @return {@code true} if the oldest
      * @see java.util.LinkedHashMap#removeEldestEntry(Map.Entry)
      */
@@ -45,7 +49,7 @@ public class NLRUMap<A, B> extends LinkedHashMap<A, B> {
         this.maxEntries = maxEntries;
         if (old > maxEntries) {
             int size = size();
-            for (Iterator<Map.Entry<A, B>> iterator = this.entrySet().iterator(); iterator.hasNext();) {
+            for (Iterator<Map.Entry<A, B>> iterator = this.entrySet().iterator(); iterator.hasNext(); ) {
                 Map.Entry<A, B> abEntry = iterator.next();
                 iterator.remove();
                 size--;
