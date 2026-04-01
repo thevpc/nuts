@@ -129,6 +129,11 @@ public class DefaultNReflectType implements NReflectType {
         return NOptional.ofNamed(propertiesDeclaredMap.get(name), "property " + name);
     }
 
+    public boolean isInterface(){
+        return javaType instanceof Class && ((Class<?>) javaType).isInterface();
+    }
+
+
     private Supplier<Object> resolveNoArgsConstr() {
         if (noArgConstr == null) {
             Supplier<Object> instanceSupplier = null;
@@ -284,6 +289,19 @@ public class DefaultNReflectType implements NReflectType {
         return null;
     }
 
+    @Override
+    public NReflectType[] getInterfaces() {
+        if (javaType instanceof Class<?>) {
+            Type[] all = ((Class<?>) javaType).getGenericInterfaces();
+            return Arrays.stream(all).map(x->repo.getType(x)).toArray(NReflectType[]::new);
+        }
+//        if (javaType instanceof ParameterizedType) {
+//            Type rt = ((ParameterizedType) javaType).getRawType();
+//            return repo.getType(rt).replaceVars(x -> getActualTypeArgument(x).orElse(x));
+//        }
+        return new NReflectType[0];
+    }
+
     private void build() {
         if (propertiesDeclaredMap == null) {
             Object cleanInstance = null;
@@ -345,7 +363,7 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     @Override
-    public NOptional<NReflectMethod> getMethod(String name,NSignature signature) {
+    public NOptional<NReflectMethod> getMethod(String name, NReflectSignature signature) {
         if(NBlankable.isBlank(name)){
             //TODO
             return NOptional.ofNamedEmpty(signature.toString());
@@ -359,7 +377,7 @@ public class DefaultNReflectType implements NReflectType {
         }
     }
 
-    private String normalizeSig(String name,NSignature signature) {
+    private String normalizeSig(String name, NReflectSignature signature) {
         return name+signature.setVararg(false).toString();
     }
 
@@ -369,7 +387,7 @@ public class DefaultNReflectType implements NReflectType {
      * @return
      */
     @Override
-    public List<NReflectMethod> getMatchingMethods(String name,NSignature signature) {
+    public List<NReflectMethod> getMatchingMethods(String name, NReflectSignature signature) {
         NOptional<NReflectMethod> m = getMethod(name,signature);
         if(m.isPresent()){
             return Arrays.asList(m.get());
@@ -383,7 +401,7 @@ public class DefaultNReflectType implements NReflectType {
      * @return
      */
     @Override
-    public NOptional<NReflectMethod> getMatchingMethod(String name,NSignature signature) {
+    public NOptional<NReflectMethod> getMatchingMethod(String name, NReflectSignature signature) {
         return getMethod(name,signature);
     }
 
