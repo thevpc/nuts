@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.util.NMemorySizeFormat;
+import net.thevpc.nuts.util.NMemoryFormat;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgParam;
 import net.thevpc.nuts.text.NMsgTemplate;
@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.logging.Level;
 
 public class JLogProgressHandler implements NProgressHandler {
-    private static NMemorySizeFormat MF = NMemorySizeFormat.FIXED;
+    private static NMemoryFormat MF = NMemoryFormat.FIXED;
     public static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("#00.00%");
 //    private static Logger defaultLog = Logger.getLogger(JLogProgressHandler.class.getName());
 //
