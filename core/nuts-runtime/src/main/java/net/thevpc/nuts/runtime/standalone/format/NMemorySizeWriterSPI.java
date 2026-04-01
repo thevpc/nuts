@@ -5,7 +5,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.util.NMemorySize;
-import net.thevpc.nuts.util.NMemorySizeFormat;
+import net.thevpc.nuts.util.NMemoryFormat;
 
 public class NMemorySizeWriterSPI implements NObjectWriterSPI {
     private Boolean iec;
@@ -23,7 +23,7 @@ public class NMemorySizeWriterSPI implements NObjectWriterSPI {
 
     @Override
     public void print(NPrintStream out) {
-        NMemorySizeFormat.of(fixed, iec).print(value, out);
+        NMemoryFormat.of(fixed, iec).print(value, out);
     }
 
     @Override
