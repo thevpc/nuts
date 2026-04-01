@@ -52,6 +52,18 @@ public class NBigComplexImpl extends Number implements NBigComplex{
         this.imag = NAssert.requireNamedNonNull(imag, "imag");
     }
 
+
+    @Override
+    public boolean isReal() {
+        return imag.equals(BigDecimal.ZERO);
+    }
+
+    @Override
+    public boolean isImaginary() {
+        return real.equals(BigDecimal.ZERO) && !imag.equals(BigDecimal.ZERO);
+    }
+
+
     @Override
     public Number numberValue() {
         return this;
