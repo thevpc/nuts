@@ -136,7 +136,7 @@ class IdCache {
         Set<Class<? extends T>> all = new LinkedHashSet<>();
         for (Map.Entry<Class<?>, NClassClassMap> rr : this.classes.entrySet()) {
             if (rr.getKey().isAssignableFrom(extensionPoint)) {
-                all.addAll((Collection) Arrays.asList(rr.getValue().getAll(extensionPoint)));
+                all.addAll((Collection) Arrays.asList(rr.getValue().findMatches(extensionPoint)));
             }
         }
         return all;
@@ -145,7 +145,7 @@ class IdCache {
     public <T> Set<Class<? extends T>> getExtensionTypesNoCache2(Class<T> extensionPoint) {
         Set<Class<? extends T>> all = new LinkedHashSet<>();
         for (Map.Entry<Class<?>, NClassClassMap> rr : this.classes.entrySet()) {
-            all.addAll((Collection) Arrays.asList(rr.getValue().getAll(extensionPoint)));
+            all.addAll((Collection) Arrays.asList(rr.getValue().findMatches(extensionPoint)));
         }
         return all;
     }
