@@ -857,15 +857,15 @@ public class NMemorySize implements Serializable{
 
     @Override
     public String toString() {
-        return NMemorySizeFormat.DEFAULT.format(this);
+        return NMemoryFormat.DEFAULT.format(this);
     }
 
     public String toString(boolean fixed, Boolean iec) {
-        return NMemorySizeFormat.of(fixed, iec).format(this);
+        return NMemoryFormat.of(fixed, iec).format(this);
     }
 
     public String toString(boolean fixed) {
-        return NMemorySizeFormat.of(fixed, null).format(this);
+        return NMemoryFormat.of(fixed, null).format(this);
     }
 
     public static NOptional<NMemorySize> parse(String value, NMemoryUnit defaultUnit) {
