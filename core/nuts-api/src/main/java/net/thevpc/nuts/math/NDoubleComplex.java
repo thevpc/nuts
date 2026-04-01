@@ -67,4 +67,8 @@ public interface NDoubleComplex extends Serializable, NNumber {
     NDoubleComplex divideDoubleComplex(NDoubleComplex other);
 
     NDoubleComplex invDoubleComplex();
+
+    boolean isReal();
+
+    boolean isImaginary();
 }
