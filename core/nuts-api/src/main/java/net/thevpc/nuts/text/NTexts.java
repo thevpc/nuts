@@ -148,8 +148,6 @@ public interface NTexts extends NComponent {
 
     <T> NOptional<NStringFormat<T>> createStringFormat(String type, String pattern, Class<T> expectedType);
 
-    NOptional<NTextFormat<Number>> createNumberTextFormat(String type, String pattern);
-
     NOptional<NStringFormat<Number>> createNumberStringFormat(String type, String pattern);
 
     public static NText[] trimLeft(NText[] value) {
