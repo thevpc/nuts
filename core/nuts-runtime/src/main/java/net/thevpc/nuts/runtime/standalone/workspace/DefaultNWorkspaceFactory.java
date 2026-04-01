@@ -504,7 +504,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                                     err.println("\t\t --->  " + k + "->" + vv.get(k) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
                                 }
                                 err.println("\t\t\t --->  " + type + "->" + vv.get(type) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
-                                err.println("\t\t\t\t --->  getAll => " + type + "->" + Arrays.asList(vv.getAll(type)));
+                                err.println("\t\t\t\t --->  getAll => " + type + "->" + Arrays.asList(vv.findMatches(type)));
                                 err.println("\t\t\t\t --->  getExtensionTypes => " + getExtensionTypes((Class) type));
                                 err.println("\t\t\t\t --->  getExtensionTypesNoCache => " + getExtensionTypesNoCache((Class) type));
                                 err.println("\t\t\t\t --->  getExtensionTypesNoCache2 => " + getExtensionTypesNoCache2((Class) type));
