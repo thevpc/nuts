@@ -4,6 +4,9 @@ import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.reflect.NClassMap;
+import net.thevpc.nuts.reflect.NClassPairMap;
+import net.thevpc.nuts.reflect.NClassPairMultiMap;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamBase;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -150,22 +153,32 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
     }
 
     @Override
-    public <V> NClassMap<V> classMap(Class<V> valueType) {
+    public <K,V> NClassMap<K,V> classMap(Class<V> valueType) {
         return new NClassMapImpl<>(valueType);
     }
 
     @Override
-    public <V> NClassMap<V> classMap(Class keyType, Class<V> valueType) {
+    public <K,V> NClassMap<K,V> classMap(Class<K> keyType, Class<V> valueType) {
         return new NClassMapImpl<>(keyType, valueType);
     }
 
     @Override
-    public <V> NClassMap<V> classMap(Class keyType, Class<V> valueType, int initialCapacity) {
+    public <A,B,V> NClassPairMap<A,B,V> classPairMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric) {
+        return new NClassPairMapImpl<>(baseKey1Type,baseKey2Type, valueType,symmetric);
+    }
+
+    @Override
+    public <A,B,V> NClassPairMultiMap<A,B,V> classPairMultiMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric) {
+        return new NClassPairMultiMapImpl<>(baseKey1Type,baseKey2Type, valueType,symmetric);
+    }
+
+    @Override
+    public <K,V> NClassMap<K,V> classMap(Class<K> keyType, Class<V> valueType, int initialCapacity) {
         return new NClassMapImpl<>(keyType, valueType, initialCapacity);
     }
 
     @Override
-    public NClassMap<Class<?>> classClassMap() {
+    public NClassMap<Object,Class> classClassMap() {
         return new NClassClassMap();
     }
 
@@ -363,4 +376,8 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
         return NIteratorsImpl.ofFlatMap(from);
     }
 
+    @Override
+    public NIterator<NIntUplet2> int2Iterator(int a, int b) {
+        return NIterator.of(new NIntUplet2Iterator(a,b));
+    }
 }
