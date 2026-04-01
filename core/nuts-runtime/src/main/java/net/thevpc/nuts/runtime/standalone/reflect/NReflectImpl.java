@@ -4,7 +4,6 @@ import net.thevpc.nuts.concurrent.NScopedStack;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.runtime.standalone.reflect.mapper.NReflectMapperImpl;
 import net.thevpc.nuts.runtime.standalone.reflect.mapper.TypeHelper;
-import net.thevpc.nuts.runtime.standalone.reflect.mapper.TypeMapperRepositoryDef;
 import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NImmutable;
@@ -20,6 +19,7 @@ import java.util.UUID;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NReflectImpl implements NReflect {
+    private static NTypeNamePlatformDomain PLATFORM = new JavaNTypeNameDomain();
 
     @Override
     public NScopedStack<NBeanContainer> scopedBeanContainerStack() {
@@ -78,12 +78,9 @@ public class NReflectImpl implements NReflect {
         }
 
         // Classes annotated with @NImmutable
-        if (cls.getAnnotation(NImmutable.class) != null) {
-            return true;
-        }
+        return cls.getAnnotation(NImmutable.class) != null;
 
         // By default, not immutable
-        return false;
     }
 
     @Override
@@ -98,5 +95,101 @@ public class NReflectImpl implements NReflect {
     @Override
     public NTypeLoader createTypeLoader(String name) {
         return new NTypeLoaderImpl(name);
+    }
+
+
+    @Override
+    public NPlatformSignature ofPlatformSignature(Type... types) {
+        return NPlatformSignatureImpl.of(types);
+    }
+
+    @Override
+    public NPlatformSignature ofVarArgsPlatformSignature(Type... types) {
+        return NPlatformSignatureImpl.ofVarArgs(types);
+    }
+
+    @Override
+    public NPlatformSignature ofPlatformSignature(String name, Type... types) {
+        return NPlatformSignatureImpl.of(name, types);
+    }
+
+    @Override
+    public NPlatformSignature ofVarArgsPlatformSignature(String name, Type... types) {
+        return NPlatformSignatureImpl.ofVarArgs(name, types);
+    }
+
+    /// ////////
+
+    @Override
+    public NTypeNameSignature ofTypeNameSignature(NTypeNameDomain domain, NTypeName... types) {
+        return NTypeNameSignatureImpl.of(domain, types);
+    }
+
+    @Override
+    public NTypeNameSignature ofVarArgsTypeNameSignature(NTypeNameDomain domain, NTypeName... types) {
+        return NTypeNameSignatureImpl.ofVarArgs(domain, types);
+    }
+
+    @Override
+    public NTypeNameSignature ofTypeNameSignature(NTypeNameDomain domain, String name, NTypeName... types) {
+        return NTypeNameSignatureImpl.of(domain, name, types);
+    }
+
+    @Override
+    public NTypeNameSignature ofVarArgsTypeNameSignature(NTypeNameDomain domain, String name, NTypeName... types) {
+        return NTypeNameSignatureImpl.ofVarArgs(domain, name, types);
+    }
+
+    /// ////////
+
+    @Override
+    public NReflectSignature ofReflectSignature(NReflectType... types) {
+        return NReflectSignatureImpl.of(types);
+    }
+
+    @Override
+    public NReflectSignature ofVarArgsReflectSignature(NReflectType... types) {
+        return NReflectSignatureImpl.ofVarArgs(types);
+    }
+
+    @Override
+    public NReflectSignature ofReflectSignature(String name, NReflectType... types) {
+        return NReflectSignatureImpl.of(name, types);
+    }
+
+    @Override
+    public NReflectSignature ofVarArgsReflectSignature(String name, NReflectType... types) {
+        return NReflectSignatureImpl.ofVarArgs(name, types);
+    }
+
+
+    @Override
+    public <S extends NSignature<T, ?>, T, V> NSignatureMap<S, T, V> ofSignatureMap(NSignatureDomain<T> domain) {
+        return new NSignatureMapImpl<>(domain);
+    }
+
+    @Override
+    public <V> NSignatureMap<NPlatformSignature, Type, V> ofPlatformSignatureMap(NSignatureDomain<Type> domain) {
+        return new NSignatureMapImpl<>(domain);
+    }
+
+    @Override
+    public <V> NSignatureMap<NPlatformSignature, Type, V> ofPlatformSignatureMap() {
+        return new NSignatureMapImpl<>(NPlatformSignatureImpl.DOMAIN);
+    }
+
+    @Override
+    public <V> NSignatureMap<NReflectSignature, NReflectType, V> ofReflectSignatureMap() {
+        return new NSignatureMapImpl<>(NReflectSignatureImpl.DOMAIN);
+    }
+
+    @Override
+    public <V> NSignatureMap<NTypeNameSignature, NTypeName<?>, V> ofTYpeNameSignatureMap(NTypeNameDomain domain) {
+        return new NSignatureMapImpl<NTypeNameSignature, NTypeName<?>, V>(domain);
+    }
+
+    @Override
+    public NTypeNamePlatformDomain platformDomain() {
+        return PLATFORM;
     }
 }
