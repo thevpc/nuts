@@ -49,6 +49,16 @@ public class NFloatComplexImpl extends Number implements NFloatComplex {
     }
 
     @Override
+    public boolean isReal() {
+        return imag == 0;
+    }
+
+    @Override
+    public boolean isImaginary() {
+        return real == 0 && imag !=0;
+    }
+
+    @Override
     public Number numberValue() {
         return this;
     }
