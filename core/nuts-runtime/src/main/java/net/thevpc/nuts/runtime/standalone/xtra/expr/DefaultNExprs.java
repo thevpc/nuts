@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.expr.*;
-import net.thevpc.nuts.reflect.NPlatformArgsSignature;
+import net.thevpc.nuts.runtime.standalone.reflect.NPlatformSignatureImpl;
 import net.thevpc.nuts.util.*;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
@@ -64,17 +64,17 @@ public class DefaultNExprs implements NExprs {
 
     @Override
     public <A, B> NOptional<NFunction2<A, B, ?>> findCommonInfixOp(NExprCommonOp op, Class<? extends A> firstArgType, Class<? extends B> secondArgType) {
-        return (NOptional) defaultNExprsCommonOps.findFunction2(op, NExprOpType.INFIX, NPlatformArgsSignature.of(firstArgType, secondArgType));
+        return (NOptional) defaultNExprsCommonOps.findFunction2(op, NExprOpType.INFIX, NPlatformSignatureImpl.of(firstArgType, secondArgType));
     }
 
     @Override
     public <A> NOptional<NFunction<A, ?>> findCommonPrefixOp(NExprCommonOp op, Class<? extends A> argType) {
-        return (NOptional) defaultNExprsCommonOps.findFunction1(op, NExprOpType.PREFIX, NPlatformArgsSignature.of(argType));
+        return (NOptional) defaultNExprsCommonOps.findFunction1(op, NExprOpType.PREFIX, NPlatformSignatureImpl.of(argType));
     }
 
     @Override
     public <A> NOptional<NFunction<A, ?>> findCommonPostfixOp(NExprCommonOp op, Class<? extends A> argType) {
-        return (NOptional) defaultNExprsCommonOps.findFunction1(op, NExprOpType.POSTFIX, NPlatformArgsSignature.of(argType));
+        return (NOptional) defaultNExprsCommonOps.findFunction1(op, NExprOpType.POSTFIX, NPlatformSignatureImpl.of(argType));
     }
 
 
