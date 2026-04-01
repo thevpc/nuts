@@ -25,8 +25,6 @@
 */
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.util.NClassMap;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,29 +32,17 @@ import java.util.List;
  *
  * @author thevpc
  */
-public class NClassClassMap extends NClassMapImpl<Class<?>> {
+public class NClassClassMap<K,V> extends NClassMapImpl<K,Class<? extends V>> {
 
     public NClassClassMap() {
-        super(Object.class, (Class)Class.class);
+        super(null, (Class)Class.class);
     }
 
-    public void add(Class key) {
-        super.put(key, key);
+    public void add(Class<V> key) {
+        super.put((Class<? extends K>)key, key);
     }
 
-    /**
-     * Unsupported. use add() instead.
-     *
-     * @param classKey classKey
-     * @param value value
-     * @return throw error
-     * @deprecated throw error, use add() instead.
-     */
-    @Override
-    @Deprecated
-    public Class put(Class classKey, Class value) {
-        throw new IllegalArgumentException("unsupported. use add() instead.");
-    }
+
 
     @Override
     public Class[] getAllImpl(Class key) {
