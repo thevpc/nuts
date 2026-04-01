@@ -10,7 +10,7 @@ import net.thevpc.nuts.runtime.standalone.elem.mapper.builder.DefaultNElementMap
 import net.thevpc.nuts.runtime.standalone.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NClassMap;
+import net.thevpc.nuts.reflect.NClassMap;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NNameFormat;
 
@@ -24,7 +24,7 @@ public class UserElementMapperStore implements NElementMapperStore {
     public static final NElementTypeAndNameNoCaseNElementKeyResolver CASE_INSENSITIVE_NAME_RESOLVER = new NElementTypeAndNameNoCaseNElementKeyResolver();
     public static final NElementTypeAndNameNoFormatNElementKeyResolver FORMAT_INSENSITIVE_NAME_RESOLVER = new NElementTypeAndNameNoFormatNElementKeyResolver();
     private DefaultElementMapperStore defaultElementMapperStore;
-    private final NClassMap<NElementMapper> lvl1_customMappersByType = new NClassMapImpl<>(null, NElementMapper.class);
+    private final NClassMap<Object,NElementMapper> lvl1_customMappersByType = new NClassMapImpl<>(null, NElementMapper.class);
     private final List<NElementKeyResolverEntry> lvl2_customMappersByKey = new ArrayList<>();
     private List<Predicate<Type>> indestructibleTypesFilters = new ArrayList<>();//CoreNElementUtils.DEFAULT_INDESTRUCTIBLE;
     private NReflectRepository reflectRepository;
