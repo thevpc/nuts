@@ -48,7 +48,9 @@ public interface NReflectType {
 
     Type getJavaType();
 
+    boolean isInterface();
     NReflectType getSuperType();
+    NReflectType[] getInterfaces();
 
     boolean isParametrizedType();
 
@@ -69,11 +71,11 @@ public interface NReflectType {
      */
     List<NReflectMethod> getMethods();
 
-    NOptional<NReflectMethod> getMethod(String name,NSignature signature);
+    NOptional<NReflectMethod> getMethod(String name, NReflectSignature signature);
 
-    List<NReflectMethod> getMatchingMethods(String name,NSignature signature);
+    List<NReflectMethod> getMatchingMethods(String name, NReflectSignature signature);
 
-    NOptional<NReflectMethod> getMatchingMethod(String name,NSignature signature);
+    NOptional<NReflectMethod> getMatchingMethod(String name, NReflectSignature signature);
 
     /**
      * only declared methods
@@ -99,6 +101,8 @@ public interface NReflectType {
     Object newInstance();
 
     boolean isArrayType();
+
+    NReflectType getComponentType();
 
     NReflectType toArray();
 
