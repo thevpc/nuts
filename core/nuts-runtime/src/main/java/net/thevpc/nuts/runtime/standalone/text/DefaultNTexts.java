@@ -36,7 +36,7 @@ import net.thevpc.nuts.runtime.standalone.text.parser.*;
 import net.thevpc.nuts.runtime.standalone.text.util.DefaultNDurationFormat2;
 import net.thevpc.nuts.runtime.standalone.text.util.DefaultUnitFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.util.NClassMap;
+import net.thevpc.nuts.reflect.NClassMap;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.time.NDuration;
@@ -59,8 +59,8 @@ import java.util.logging.Level;
 public class DefaultNTexts implements NTexts {
 
     private final DefaultNTextManagerModel shared;
-    private final NClassMap<NTextMapper> textMappers = new NClassMapImpl<>(NTextMapper.class);
-    private final NClassMap<NObjectWriterMapper> writerMappers = new NClassMapImpl<>(NObjectWriterMapper.class);
+    private final NClassMap<Object, NTextMapper> textMappers = new NClassMapImpl<>(NTextMapper.class);
+    private final NClassMap<Object, NObjectWriterMapper> writerMappers = new NClassMapImpl<>(NObjectWriterMapper.class);
     private final Map<String, Set<NTextFormatProvider>> providers = new HashMap<>();
 
     public DefaultNTexts() {
@@ -73,9 +73,9 @@ public class DefaultNTexts implements NTexts {
     private void registerTextFormatProvider(NTextFormatProvider provider) {
         NAssert.requireNamedNonNull(provider, "provider");
         String[] types = provider.types();
-        if(types!=null) {
+        if (types != null) {
             for (String type : types) {
-                if(!NBlankable.isBlank(type)) {
+                if (!NBlankable.isBlank(type)) {
                     String type2 = NNameFormat.LOWER_KEBAB_CASE.format(NStringUtils.trim(type));
                     providers.computeIfAbsent(type2, r -> new LinkedHashSet<>()).add(provider);
                 }
@@ -235,11 +235,11 @@ public class DefaultNTexts implements NTexts {
         });
 
         registerTextFormatProvider(new NTextFormatProvider() {
-            private final Set<String> types = Collections.unmodifiableSet(new HashSet<>(Arrays.asList()));
+            private final Set<String> types = Collections.unmodifiableSet(new HashSet<>(Collections.emptyList()));
 
             @Override
             public String[] types() {
-                return new String[]{"m", "meter", "meters", "metric"};
+                return new String[]{"m", "meter", "meters", "metric","distance"};
             }
 
             @Override
@@ -255,7 +255,7 @@ public class DefaultNTexts implements NTexts {
         registerTextFormatProvider(new NTextFormatProvider() {
             @Override
             public String[] types() {
-                return new String[]{"memory", "bytes", "size"};
+                return new String[]{"memory", "bytes","byte", "size"};
             }
 
             @Override
@@ -1326,20 +1326,6 @@ public class DefaultNTexts implements NTexts {
         }
         return NOptional.ofNamedEmpty("format for " + format.getClass().getSimpleName());
     }
-//    @Override
-//    public NObjectWriter createFormat(NFormatSPI format) {
-//        return new NObjectWriterFromSPI(format);
-//    }
-
-//    @Override
-//    public <T> NObjectWriter createFormat(T object, NTextFormat<T> format) {
-//        return new NFormatDefaultObjectWriterBase<>(format, object);
-//    }
-
-    @Override
-    public NOptional<NTextFormat<Number>> createNumberTextFormat(String type, String pattern) {
-        return createTextFormat(type, pattern, Number.class);
-    }
 
     @Override
     public NOptional<NStringFormat<Number>> createNumberStringFormat(String type, String pattern) {
@@ -1440,26 +1426,35 @@ public class DefaultNTexts implements NTexts {
         }
     }
 
-    private static class CustomNumberNTextFormat<T> implements NTextFormat<T> {
+    private static class CustomNumberNTextFormat<T> implements NTextFormat<T>, NNumberFormat, NDoubleFormat {
         private final DecimalFormat d;
         private final Class<T> expectedType;
         private final String suffix;
+        private final boolean percent;
 
         public CustomNumberNTextFormat(String pattern, Class<T> expectedType) {
             this.expectedType = expectedType;
             NAssert.requireNamedTrue(Number.class.isAssignableFrom(expectedType), expectedType.getSimpleName());
-            if (pattern.endsWith("%")) {
+            if (NBlankable.isBlank(pattern)) {
+                d = null;
+                suffix = "";
+                percent = false;
+            } else if (pattern.endsWith("%")) {
                 d = new DecimalFormat(pattern.substring(0, pattern.length() - 1));
                 suffix = "%";
+                percent = true;
             } else if (pattern.endsWith("'°'")) {
                 d = new DecimalFormat(pattern.substring(0, pattern.length() - 3));
                 suffix = "°";
+                percent = false;
             } else if (pattern.endsWith("°")) {
                 d = new DecimalFormat(pattern.substring(0, pattern.length() - 1));
                 suffix = "°";
+                percent = false;
             } else {
                 d = new DecimalFormat(pattern);
                 suffix = "";
+                percent = false;
             }
         }
 
@@ -1471,12 +1466,39 @@ public class DefaultNTexts implements NTexts {
             if (object == null) {
                 return NTextBuilder.of().build();
             }
-            NTextBuilder b = NTextBuilder.of()
-                    .append(d.format(object.doubleValue() * 100.0), NTextStyle.number());
-            if (!NBlankable.isBlank(suffix)) {
-                b.append("%", NTextStyle.separator());
+            if (d == null) {
+                if (!NBlankable.isBlank(suffix)) {
+                    return NTextBuilder.of()
+                            .append(object).append(suffix, NTextStyle.separator())
+                            .build();
+                }
+                return NText.of(object);
             }
-            return b.build();
+            if (percent) {
+                NTextBuilder b = NTextBuilder.of()
+                        .append(d.format(object.doubleValue() * 100.0), NTextStyle.number());
+                if (!NBlankable.isBlank(suffix)) {
+                    b.append(suffix, NTextStyle.separator());
+                }
+                return b.build();
+            } else {
+                NTextBuilder b = NTextBuilder.of()
+                        .append(d.format(object.doubleValue()), NTextStyle.number());
+                if (!NBlankable.isBlank(suffix)) {
+                    b.append(suffix, NTextStyle.separator());
+                }
+                return b.build();
+            }
+        }
+
+        @Override
+        public String formatDouble(double value) {
+            return toText(value).toString();
+        }
+
+        @Override
+        public String formatNumber(Number value) {
+            return toText(value).toString();
         }
     }
 
