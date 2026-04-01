@@ -45,4 +45,8 @@ public interface NFloatComplex extends NNumber {
     NFloatComplex divideFloatComplex(NFloatComplex other);
 
     NFloatComplex invFloatComplex();
+
+    boolean isReal();
+
+    boolean isImaginary();
 }
