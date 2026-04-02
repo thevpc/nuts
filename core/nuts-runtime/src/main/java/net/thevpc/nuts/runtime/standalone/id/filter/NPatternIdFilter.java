@@ -40,7 +40,7 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
         this.wildcard = containsWildcard(id.toString());
         g = GlobUtils.ofExact(id.getGroupId());
         n = GlobUtils.ofExact(id.getArtifactId());
-        v = id.getVersion().filter();
+        v = id.getVersion().toFilter();
         qm = id.getProperties();
         for (Map.Entry<String, String> entry : id.getProperties().entrySet()) {
             String key = entry.getKey();
