@@ -251,7 +251,7 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
 
     @Override
     public NDefinitionFilter byVersion(NVersion version) {
-        return new NDefinitionFilterByMapVersion(version.filter());
+        return new NDefinitionFilterByMapVersion(version.toFilter());
     }
 
     @Override
