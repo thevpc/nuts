@@ -39,7 +39,7 @@ public class NIdIdFilter extends AbstractIdFilter implements NIdFilter, NSimplif
             LOG= NLog.of(NIdIdFilter.class);
         }
         if(id.getShortName().equals(filter.getShortName())){
-            if (!filter.getVersion().filter().acceptVersion(id.getVersion())) {
+            if (!filter.getVersion().toFilter().acceptVersion(id.getVersion())) {
                 return false;
             }
             Map<String, String> e = filter.getProperties();
