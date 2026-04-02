@@ -17,7 +17,7 @@ public enum NExprOpType implements NEnum {
 
     public static NOptional<NExprOpType> parse(String value) {
         return NEnumUtils.parseEnum(value, NExprOpType.class, s -> {
-            switch (s.getNormalizedValue()) {
+            switch (s.normalizedValue()) {
                 case "INFIX_OPERATOR":
                 case "INFIX":
                     return NOptional.of(INFIX);
