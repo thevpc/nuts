@@ -31,10 +31,10 @@ public enum NIndexSelectionStrategy implements NEnum {
     }
 
     public static NOptional<NIndexSelectionStrategy> parse(String value) {
-        return NEnumUtils.parseEnum(value, NIndexSelectionStrategy.class, new Function<NEnumUtils.EnumValue, NOptional<NIndexSelectionStrategy>>() {
+        return NEnumUtils.parseEnum(value, NIndexSelectionStrategy.class, new Function<NEnumUtils.NEnumCandidate, NOptional<NIndexSelectionStrategy>>() {
             @Override
-            public NOptional<NIndexSelectionStrategy> apply(NEnumUtils.EnumValue s) {
-                String normalizedValue = s.getNormalizedValue();
+            public NOptional<NIndexSelectionStrategy> apply(NEnumUtils.NEnumCandidate s) {
+                String normalizedValue = s.normalizedValue();
                 return null;
             }
         });
