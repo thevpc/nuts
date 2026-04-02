@@ -5,6 +5,9 @@ package net.thevpc.nuts.util;
  * @author vpc
  */
 public class NDoubleRef extends NObjectRef<Double> {
+    public static NDoubleRef of(){
+        return new NDoubleRef(null);
+    }
 
     public NDoubleRef(Double value) {
         super(value);
