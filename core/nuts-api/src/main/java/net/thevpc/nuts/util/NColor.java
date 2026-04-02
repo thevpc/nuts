@@ -490,7 +490,7 @@ public interface NColor {
 
         public static NOptional<Bits> parse(String value) {
             return NEnumUtils.parseEnum(value, Bits.class, enumValue -> {
-                switch (enumValue.getNormalizedValue()) {
+                switch (enumValue.normalizedValue()) {
                     case "STANDARD":
                         return NOptional.of(Bits.BITS_32);
                     case "BITS4":
