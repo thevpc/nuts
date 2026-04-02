@@ -84,7 +84,7 @@ public enum NExecutionEngineFamily implements NEnum {
 
     public static NOptional<NExecutionEngineFamily> parse(String value) {
         return NEnumUtils.parseEnum(value, NExecutionEngineFamily.class, s->{
-            switch (s.getNormalizedValue()) {
+            switch (s.normalizedValue()) {
                 case "OS":
                     return NOptional.of(OS);
 
