@@ -128,7 +128,7 @@ public enum NDependencyScope implements NEnum {
 
     public static NOptional<NDependencyScope> parse(String value) {
         return NEnumUtils.parseEnum(value, NDependencyScope.class, s -> {
-            switch (s.getNormalizedValue()) {
+            switch (s.normalizedValue()) {
                 case "COMPILEONLY": //gradle
                 case "COMPILE_ONLY": //gradle
                 case "PROVIDED": //gradle
