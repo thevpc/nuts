@@ -16,10 +16,10 @@ public enum NMemoryUnit implements NEnum {
     }
 
     public static NOptional<NMemoryUnit> parse(String value) {
-        return NEnumUtils.parseEnum(value, NMemoryUnit.class, new Function<NEnumUtils.EnumValue, NOptional<NMemoryUnit>>() {
+        return NEnumUtils.parseEnum(value, NMemoryUnit.class, new Function<NEnumUtils.NEnumCandidate, NOptional<NMemoryUnit>>() {
             @Override
-            public NOptional<NMemoryUnit> apply(NEnumUtils.EnumValue enumValue) {
-                switch (enumValue.getNormalizedValue()) {
+            public NOptional<NMemoryUnit> apply(NEnumUtils.NEnumCandidate enumValue) {
+                switch (enumValue.normalizedValue()) {
                     case "B":
                     case "O":
                         return NOptional.of(BYTE);
