@@ -111,7 +111,7 @@ public class DefaultFileNLock extends AbstractNLock {
     @Override
     public synchronized void lock() {
         NLog _log = NLog.of(DefaultFileNLock.class);
-        NChronometer chrono = NChronometer.startNow();
+        NChronometer chrono = NChronometer.of();
         try {
             long now = System.currentTimeMillis();
             long maxWaitingTime = 30000;
