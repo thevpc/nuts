@@ -92,7 +92,7 @@ public class SearchTest {
 //        q.setRepositoryFilter(NRepositoryFilters.of().byName("preview"));
 //        q.setRepositoryFilter(NRepositoryFilters.of().byName("local"));
         NOut.println(q.getResultQueryPlan());
-        NChronometer cr = NChronometer.startNow();
+        NChronometer cr = NChronometer.of();
         for (NDefinition d : q.getResultDefinitions().toList()) {
             NPath c = d.getContent().orNull();
                 NOut.println(c);
