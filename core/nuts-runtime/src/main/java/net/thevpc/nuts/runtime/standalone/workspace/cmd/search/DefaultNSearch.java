@@ -101,10 +101,10 @@ public class DefaultNSearch extends AbstractNSearch {
                         NId nutsIdNonLatest = nutsId1;
                         boolean latestVersion = false;
                         boolean releaseVersion = false;
-                        if (nutsIdNonLatest.getVersion().isLatestVersion()) {
+                        if (nutsIdNonLatest.getVersion().isLatest()) {
                             latestVersion = true;
                             nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
-                        } else if (nutsIdNonLatest.getVersion().isReleaseVersion()) {
+                        } else if (nutsIdNonLatest.getVersion().isRelease()) {
                             releaseVersion = true;
                             nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
                         }
