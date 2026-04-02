@@ -53,7 +53,7 @@ public class ClassParserTest {
     }
 
     private static void parseRegularFile(Path file) throws IOException {
-        NChronometer from = NChronometer.startNow();
+        NChronometer from = NChronometer.of();
         if (file.getFileName().toString().endsWith(".class")) {
             parseClassFile(file.toAbsolutePath().normalize());
         }
