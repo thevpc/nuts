@@ -12,7 +12,6 @@ import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
-import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
@@ -237,12 +236,12 @@ public class NdiScriptOptions implements Cloneable {
                                             .getParent())
                             .filter(
                                     f
-                                            -> NVersion.get(f.getFileName().toString())
-                                            .flatMap(v->v.getNumberLiteralAt(0))
-                                            .flatMap(NLiteral::asLong).isPresent()
+                                            -> NVersion.getPartAt(f.getFileName().toString())
+                                            .flatMap(v->v.getLongAt(0))
+                                            .isPresent()
                                             && Files.exists(f.resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME))
                             ).map(
-                                    f -> NVersion.get(f.getFileName().toString()).get()
+                                    f -> NVersion.getPartAt(f.getFileName().toString()).get()
                             ).max(Comparator.naturalOrder()).orElse(null);
                 } catch (IOException e) {
                     throw new NIOException(e);
