@@ -28,7 +28,8 @@ import net.thevpc.nuts.runtime.standalone.platform.NEnvLocal;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreInMemory;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreOnDisk;
-import net.thevpc.nuts.runtime.standalone.util.collections.NCaseInsensitiveStringMap;
+import net.thevpc.nuts.runtime.standalone.util.collections.NLRUMapImpl;
+import net.thevpc.nuts.runtime.standalone.util.collections.NNormalizedStringMapImpl;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NScopeType;
@@ -87,7 +88,7 @@ public class NWorkspaceModel {
     public NVersion askedApiVersion;
     public NId askedRuntimeId;
     public NBootOptions initialBootOptions;
-    public NLRUMap<NId, CachedSupplier<NDefinition>> cachedDefs = new NLRUMap<>(100);
+    public NLRUMap<NId, CachedSupplier<NDefinition>> cachedDefs = new NLRUMapImpl<>(100);
     public DefaultNExtensions extensions;
     public NWorkspaceStore store;
     public DefaultElementMapperStore defaultElementMapperStore = new DefaultElementMapperStore();
@@ -131,7 +132,7 @@ public class NWorkspaceModel {
         this.runtimeId = NId.get(
                 askedRuntimeId.getGroupId(),
                 askedRuntimeId.getArtifactId(),
-                NVersion.get(askedRuntimeId.getVersion().toString()).get()).get();
+                NVersion.getPartAt(askedRuntimeId.getVersion().toString()).get()).get();
         this.logModel.init(this.bootModel.getBootEffectiveOptions(), initialBootOptions);
         this.bootModel.init();
     }
@@ -166,7 +167,7 @@ public class NWorkspaceModel {
     public Map<String, String> newSysEnvEmptyMap() {
         switch (getEnv().getOsFamily()) {
             case WINDOWS: {
-                return new NCaseInsensitiveStringMap<>();
+                return NNormalizedStringMapImpl.ofCaseInsensitive();
             }
         }
         return new HashMap<>();
