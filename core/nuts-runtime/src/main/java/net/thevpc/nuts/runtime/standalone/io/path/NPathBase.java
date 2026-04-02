@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.artifact.NVersionPart;
+import net.thevpc.nuts.artifact.NVersionPartType;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
 import net.thevpc.nuts.text.NObjectWriter;
@@ -303,22 +305,22 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         if (li < 0) {
             return new NPathNameParts(n, "", "", NPathExtensionType.SMART);
         }
-        NLiteral[] vals = NVersion.get(n).get().split();
+        List<NVersionPart> vals = NVersion.getPartAt(n).get().parts();
         int lastDot = -1;
-        for (int i = vals.length - 1; i >= 0; i--) {
-            NLiteral v = vals[i];
-            String u = v.asString().get();
+        for (int i = vals.size() - 1; i >= 0; i--) {
+            NVersionPart v = vals.get(i);
+            String u = v.value();
             if (u.equals(".")) {
-                if (i == vals.length - 1) {
+                if (i == vals.size() - 1) {
                     return rebuildSmartParts(vals, i);
                 }
-                NLiteral v2 = vals[i + 1];
-                if (v2.asNumber().isPresent()) {
+                NVersionPart v2 = vals.get(i + 1);
+                if (v2.type()== NVersionPartType.NUMBER) {
                     //check if the part before is also a number
-                    if (i > 0 && vals[i - 1].asNumber().isPresent()) {
-                        if (i + 1 == vals.length - 1) {
+                    if (i > 0 && vals.get(i - 1).type()==NVersionPartType.NUMBER) {
+                        if (i + 1 == vals.size() - 1) {
                             return rebuildSmartParts(vals, i + 2);
-                        } else if (vals[i + 1].asString().get().equals(".")) {
+                        } else if (vals.get(i + 1).value().equals(".")) {
                             return rebuildSmartParts(vals, i + 1);
                         }
                     }
@@ -338,8 +340,8 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         return rebuildSmartParts(vals, lastDot);
     }
 
-    private NPathNameParts rebuildSmartParts(NLiteral[] vals, int split) {
-        String fe = concatSmartParts(vals, split, vals.length);
+    private NPathNameParts rebuildSmartParts(List<NVersionPart> vals, int split) {
+        String fe = concatSmartParts(vals, split, vals.size());
         String e = fe.startsWith(".") ? fe.substring(1) : fe;
 
         return new NPathNameParts(
@@ -350,10 +352,10 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         );
     }
 
-    private String concatSmartParts(NLiteral[] vals, int from, int to) {
+    private String concatSmartParts(List<NVersionPart> vals, int from, int to) {
         StringBuilder sb = new StringBuilder();
         for (int i = from; i < to; i++) {
-            sb.append(vals[i].asString().get());
+            sb.append(vals.get(i).value());
         }
         return sb.toString();
     }
