@@ -43,7 +43,7 @@ public interface NClassMap<K,V> {
         return NCollectionsRPI.of().classMap(keyType, valueType);
     }
 
-    static <K,V> NClassMap<K,V> of(Class keyType, Class<V> valueType, int initialCapacity) {
+    static <K,V> NClassMap<K,V> of(Class<K> keyType, Class<V> valueType, int initialCapacity) {
         return NCollectionsRPI.of().classMap(keyType, valueType, initialCapacity);
     }
 
@@ -51,9 +51,9 @@ public interface NClassMap<K,V> {
         return (NClassMap) NCollectionsRPI.of().classClassMap();
     }
 
-    Set<V> allKeySet();
-
     Set<Class<? extends K>> keySet();
+
+    Set<Map.Entry<Class<? extends K>, V>> entrySet();
 
     Collection<V> values();
 
@@ -61,7 +61,7 @@ public interface NClassMap<K,V> {
 
     V remove(Class<? extends K> classKey);
 
-    Class[] getSearchPath(Class<? extends K> classKey);
+    List<Class<? extends K>> getSearchPath(Class<? extends K> classKey);
 
     boolean containsExactKey(Class<? extends K> key);
 
@@ -71,6 +71,7 @@ public interface NClassMap<K,V> {
 
     List<V> findMatches(Class<? extends K> key);
 
+    boolean isEmpty();
     void clear();
 
     int size();
