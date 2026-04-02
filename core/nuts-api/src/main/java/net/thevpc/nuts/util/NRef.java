@@ -145,6 +145,8 @@ public interface NRef<T> extends Supplier<T> {
 
     void setNonNull(T value);
 
+    void setIfNull(T value);
+
     void set(T value);
 
     void unset();
