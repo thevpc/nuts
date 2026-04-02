@@ -39,9 +39,9 @@ public enum NAffixAnchor implements NEnum {
     }
 
     public static NOptional<NAffixAnchor> parse(String value) {
-        return NEnumUtils.parseEnum(value, NAffixAnchor.class, new Function<NEnumUtils.EnumValue, NOptional<NAffixAnchor>>() {
+        return NEnumUtils.parseEnum(value, NAffixAnchor.class, new Function<NEnumUtils.NEnumCandidate, NOptional<NAffixAnchor>>() {
             @Override
-            public NOptional<NAffixAnchor> apply(NEnumUtils.EnumValue enumValue) {
+            public NOptional<NAffixAnchor> apply(NEnumUtils.NEnumCandidate enumValue) {
                 return null;
             }
         });
