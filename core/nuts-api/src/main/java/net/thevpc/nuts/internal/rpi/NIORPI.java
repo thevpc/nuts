@@ -10,6 +10,7 @@ import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.io.NAsk;
+import net.thevpc.nuts.util.NOptional;
 
 import java.io.*;
 import java.net.URL;
@@ -255,4 +256,29 @@ public interface NIORPI extends NComponent {
     NPath createPath(NPathSPI path);
 
     NPath getStoreLocation(NStoreKey nLocationKey) ;
+
+    List<NPath> ofOrigins(Class<?> clazz);
+
+    NOptional<NPath> ofOrigin(Class<?> clazz);
+
+    /**
+     * detect nuts id from resources containing the given class
+     * or null if not found. If multiple resolutions return the first.
+     *
+     * @param clazz to search for
+     * @return nuts id detected from resources containing the given class
+     */
+    NOptional<NId> resolveId(Class<?> clazz);
+
+    NOptional<NId> resolveId(NPath path);
+
+    /**
+     * detect all nuts ids from resources containing the given class.
+     *
+     * @param clazz to search for
+     * @return all nuts ids detected from resources containing the given class
+     */
+    List<NId> resolveIds(Class<?> clazz);
+
+    List<NId> resolveIds(NPath path);
 }
