@@ -1,6 +1,5 @@
 package net.thevpc.nuts.net;
 
-import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
