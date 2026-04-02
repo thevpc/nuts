@@ -1,7 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.io.NpsStatus;
-
 public enum NDiffMode implements NEnum{
     ADDED, REMOVED, CHANGED, UNCHANGED;
 
