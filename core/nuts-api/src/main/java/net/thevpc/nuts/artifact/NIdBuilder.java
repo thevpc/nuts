@@ -349,7 +349,7 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
 
     NDependency toDependency();
 
-    NIdFilter filter();
+    NIdFilter toFilter();
 
     /**
      * filter accepted any id with the defined version or greater
