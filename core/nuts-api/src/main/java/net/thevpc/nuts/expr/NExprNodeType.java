@@ -22,7 +22,7 @@ public enum NExprNodeType implements NEnum {
 
     public static NOptional<NExprNodeType> parse(String value) {
         return NEnumUtils.parseEnum(value, NExprNodeType.class, s -> {
-            switch (s.getNormalizedValue()) {
+            switch (s.normalizedValue()) {
                 case "VAR":
                 case "VARIABLE":
                     return NOptional.of(WORD);
