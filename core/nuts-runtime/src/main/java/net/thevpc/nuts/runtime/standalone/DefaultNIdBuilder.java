@@ -131,7 +131,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
 
     @Override
     public NIdBuilder setVersion(String value) {
-        this.version = NVersion.get(value).get();
+        this.version = NVersion.getPartAt(value).get();
         return this;
     }
 
@@ -457,18 +457,18 @@ public class DefaultNIdBuilder implements NIdBuilder {
     }
 
     @Override
-    public NIdFilter filter() {
-        return build().filter();
+    public NIdFilter toFilter() {
+        return build().toFilter();
     }
 
     @Override
     public NId compatNewer() {
-        return build().compatNewer();
+        return build().toAtLeast();
     }
 
     @Override
     public NId compatOlder() {
-        return build().compatOlder();
+        return build().toAtMost();
     }
 
     @Override
