@@ -37,164 +37,175 @@ import java.util.*;
  *
  * @author thevpc
  */
-public class NClassMapImpl<K, V> implements NClassMap<K, V> {
+    public class NClassMapImpl<K, V> implements NClassMap<K, V> {
 
-    private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-    protected HashMap<Class, V> values;
-    protected HashMap<Class, V[]> cachedValues;
-    private final Class keyType;
-    private final Class<V> valueType;
-    private final HashMap<Class, Class[]> cachedHierarchy;
+        protected Map<Class<? extends K>, V> values;
+        protected Map<Class<? extends K>, V[]> cachedValues;
+        private final Class keyType;
+        private final Class<V> valueType;
+        private final HashMap<Class, Class[]> cachedHierarchy;
 
-    public NClassMapImpl(Class<V> valueType) {
-        this(null, valueType);
-    }
-
-    public NClassMapImpl(Class<K> keyType, Class<V> valueType) {
-        this(keyType, valueType, 0);
-    }
-
-    public NClassMapImpl(Class<K> keyType, Class<V> valueType, int initialCapacity) {
-        this.keyType = keyType;
-        this.valueType = valueType;
-        values = new HashMap<Class, V>(initialCapacity);
-        cachedValues = new HashMap<Class, V[]>(initialCapacity * 2);
-        cachedHierarchy = new HashMap<Class, Class[]>(initialCapacity * 2);
-    }
-
-
-    public Set<Class<?>> cacheKeySet() {
-        HashSet<Class<?>> r = new HashSet<>();
-        r.addAll((Collection) this.values.keySet());
-        r.addAll((Collection) cachedValues.keySet());
-        return r;
-    }
-
-    public Set<V> allKeySet() {
-        Set<Class> ks0 = values.keySet();
-        HashSet u = new HashSet(ks0);
-        for (Class a : ks0) {
-            u.addAll(Arrays.asList(getSearchPath(a)));
+        public NClassMapImpl(Class<V> valueType) {
+            this(null, valueType);
         }
-        return u;
-    }
 
-    public Set<Class<? extends K>> keySet() {
-        return new HashSet(values.keySet());
-    }
-
-    public Collection<V> values() {
-        return values.values();
-    }
-
-    public V put(Class<? extends K> classKey, V value) {
-        cachedValues.clear();
-        return values.put(classKey, value);
-    }
-
-    public V remove(Class<? extends K> classKey) {
-        cachedValues.clear();
-        return values.remove(classKey);
-    }
-
-    public Class[] getSearchPath(Class classKey) {
-        Class[] keis = cachedHierarchy.get(classKey);
-        if (keis == null) {
-            keis = NReflectUtils.findClassHierarchy(classKey, keyType, NTypeNamePlatformDomain.of());
-            cachedHierarchy.put(classKey, keis);
+        public NClassMapImpl(Class<K> keyType, Class<V> valueType) {
+            this(keyType, valueType, 0);
         }
-        return keis;
-    }
 
-    public boolean containsExactKey(Class<? extends K> key) {
-        return values.containsKey(key);
-    }
-
-    public V getExact(Class<? extends K> key) {
-        return values.get(key);
-    }
-
-    public V get(Class<? extends K> key) {
-        List<V> found = findMatches(key);
-        if (found.size() > 0) {
-            return found.get(0);
+        public NClassMapImpl(Class<K> keyType, Class<V> valueType, int initialCapacity) {
+            this.keyType = keyType;
+            this.valueType = valueType;
+            values = new HashMap<Class<? extends K>, V>(initialCapacity);
+            cachedValues = new HashMap<Class<? extends K>, V[]>(initialCapacity * 2);
+            cachedHierarchy = new HashMap<Class, Class[]>(initialCapacity * 2);
         }
-        return null;
-    }
 
-    protected V[] getAllImpl(Class<? extends K> key) {
-        Class[] keis = getSearchPath(key);
-        List<V> all = new ArrayList<V>(keis.length);
-        for (Class c : keis) {
-            V u = values.get(c);
-            if (u != null) {
-                all.add(u);
+
+        public Set<Class<?>> cacheKeySet() {
+            HashSet<Class<?>> r = new HashSet<>();
+            r.addAll((Collection) this.values.keySet());
+            r.addAll((Collection) cachedValues.keySet());
+            return r;
+        }
+
+//        public Set<Class<? extends K>> allKeySet() {
+//            Set<Class<? extends K>> ks0 = values.keySet();
+//            Set<Class<? extends K>> u = new HashSet<>(ks0);
+//            for (Class<? extends K> a : ks0) {
+//                u.addAll(getSearchPath(a));
+//            }
+//            return u;
+//        }
+
+        public Set<Class<? extends K>> keySet() {
+            return Collections.unmodifiableSet(values.keySet());
+        }
+
+        @Override
+        public Set<Map.Entry<Class<? extends K>, V>> entrySet() {
+            Set<Map.Entry<Class<? extends K>, V>> entries = values.entrySet();
+            return Collections.unmodifiableSet((Set) entries);
+        }
+
+        public Collection<V> values() {
+            return values.values();
+        }
+
+        public V put(Class<? extends K> classKey, V value) {
+            cachedValues.clear();
+            return values.put(classKey, value);
+        }
+
+        public V remove(Class<? extends K> classKey) {
+            cachedValues.clear();
+            return values.remove(classKey);
+        }
+
+        public List<Class<? extends K>> getSearchPath(Class<? extends K> classKey) {
+            Class[] keis = cachedHierarchy.get(classKey);
+            if (keis == null) {
+                keis = NReflectUtils.findClassHierarchy(classKey, keyType, NTypeNamePlatformDomain.of());
+                cachedHierarchy.put(classKey, keis);
+            }
+            return Arrays.asList(keis);
+        }
+
+        public boolean containsExactKey(Class<? extends K> key) {
+            return values.containsKey(key);
+        }
+
+        public V getExact(Class<? extends K> key) {
+            return values.get(key);
+        }
+
+        public V get(Class<? extends K> key) {
+            List<V> found = findMatches(key);
+            if (found.size() > 0) {
+                return found.get(0);
+            }
+            return null;
+        }
+
+        protected V[] getAllImpl(Class<? extends K> key) {
+            List<Class<? extends K>> keis = getSearchPath(key);
+            List<V> all = new ArrayList<V>(keis.size());
+            for (Class<? extends K> c : keis) {
+                V u = values.get(c);
+                if (u != null) {
+                    all.add(u);
+                }
+            }
+            return all.toArray((V[]) Array.newInstance(valueType, 0));
+        }
+
+        public List<V> findMatches(Class<? extends K> key) {
+            V[] found = cachedValues.get(key);
+            if (found == null) {
+                found = getAllImpl(key);
+                cachedValues.put(key, found);
+            }
+            return Arrays.asList(found);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            //transform map hashcode according to names and not class references
+            if (values != null) {
+                int h = 0;
+                Iterator<Map.Entry<Class<? extends K>, V>> i = values.entrySet().iterator();
+                while (i.hasNext()) {
+                    Map.Entry<Class<? extends K>, V> next = i.next();
+                    h += (next.getKey().getName().hashCode() ^ (next.getValue() == null ? 0 : next.getValue().hashCode()));
+                }
+                result = h;
+            }
+            result = 31 * result + (keyType != null ? keyType.getName().hashCode() : 0);
+            result = 31 * result + (valueType != null ? valueType.getName().hashCode() : 0);
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof NClassMapImpl)) {
+                return false;
+            }
+
+            NClassMapImpl classMap = (NClassMapImpl) o;
+
+            if (!Objects.equals(keyType, classMap.keyType)) {
+                return false;
+            }
+            if (!Objects.equals(valueType, classMap.valueType)) {
+                return false;
+            }
+            return Objects.equals(values, classMap.values);
+        }
+
+        public void clear() {
+            values.clear();
+            cachedValues.clear();
+            cachedHierarchy.clear();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return values.isEmpty();
+        }
+
+        public int size() {
+            return values.size();
+        }
+
+        public void expand() {
+            for (Class k : values.keySet()) {
+                getSearchPath(k);
             }
         }
-        return all.toArray((V[]) Array.newInstance(valueType, 0));
     }
-
-    public List<V> findMatches(Class<? extends K> key) {
-        V[] found = cachedValues.get(key);
-        if (found == null) {
-            found = getAllImpl(key);
-            cachedValues.put(key, found);
-        }
-        return Arrays.asList(found);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 0;
-        //transform map hashcode according to names and not class references
-        if (values != null) {
-            int h = 0;
-            Iterator<Map.Entry<Class, V>> i = values.entrySet().iterator();
-            while (i.hasNext()) {
-                Map.Entry<Class, V> next = i.next();
-                h += (next.getKey().getName().hashCode() ^ (next.getValue() == null ? 0 : next.getValue().hashCode()));
-            }
-            result = h;
-        }
-        result = 31 * result + (keyType != null ? keyType.getName().hashCode() : 0);
-        result = 31 * result + (valueType != null ? valueType.getName().hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof NClassMapImpl)) {
-            return false;
-        }
-
-        NClassMapImpl classMap = (NClassMapImpl) o;
-
-        if (!Objects.equals(keyType, classMap.keyType)) {
-            return false;
-        }
-        if (!Objects.equals(valueType, classMap.valueType)) {
-            return false;
-        }
-        return Objects.equals(values, classMap.values);
-    }
-
-    public void clear() {
-        values.clear();
-        cachedValues.clear();
-        cachedHierarchy.clear();
-    }
-
-    public int size() {
-        return values.size();
-    }
-
-    public void expand() {
-        for (Class k : values.keySet()) {
-            getSearchPath(k);
-        }
-    }
-}
