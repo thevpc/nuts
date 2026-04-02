@@ -543,6 +543,7 @@ public class NArrays {
         return d;
     }
 
+    // old times
     public static double[] linear(double min, double max, int count) {
         if (count <= 0) return new double[0];
         double[] d = new double[count];
