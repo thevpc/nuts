@@ -79,7 +79,7 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
     }
 
     @Override
-    public BigInteger bigIntegerValue() {
+    public BigInteger bigIntValue() {
         Number d = numberValue();
         if (d instanceof BigDecimal) {
             return ((BigDecimal) d).toBigInteger();
