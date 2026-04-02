@@ -70,7 +70,7 @@ public enum NArchFamily implements NEnum {
 
     public static NOptional<NArchFamily> parse(String value) {
         return NEnumUtils.parseEnum(value, NArchFamily.class, s -> {
-            String arch = s.getNormalizedValue();
+            String arch = s.normalizedValue();
             switch (arch) {
                 case "X8632":
                 case "X86":
