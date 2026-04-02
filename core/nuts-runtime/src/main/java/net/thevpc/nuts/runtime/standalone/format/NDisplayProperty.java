@@ -74,7 +74,7 @@ public enum NDisplayProperty implements NEnum {
 
     public static NOptional<NDisplayProperty> parse(String value) {
         return NEnumUtils.parseEnum(value, NDisplayProperty.class, s->{
-            switch (s.getNormalizedValue()){
+            switch (s.normalizedValue()){
                 case "DE":
                 case "DESKTOP":
                     return NOptional.of(DESKTOP_ENVIRONMENT);
