@@ -18,7 +18,7 @@ public class ChunkedStoreTest {
         if(!_TestConfig.ENABLE_PERF){
             return;
         }
-        NChronometer chronometer = NChronometer.startNow();
+        NChronometer chronometer = NChronometer.of();
         try (NChunkedStore<String> fq = NChunkedStoreBuilder.ofLines(NPath.ofUserHome().resolve("test-file-queue"))
                 .setAppend(false)
                 .setBufferSize(1000)
@@ -33,7 +33,7 @@ public class ChunkedStoreTest {
         System.out.println("write in "+chronometer.stop());
 
 
-        chronometer = NChronometer.startNow();
+        chronometer = NChronometer.of();
         try (NChunkedStore<String> fq = NChunkedStoreBuilder.ofLines(NPath.ofUserHome().resolve("test-file-queue"))
                 .setMetadataBufferSize(100)
                 .setNumberLayout(3)
