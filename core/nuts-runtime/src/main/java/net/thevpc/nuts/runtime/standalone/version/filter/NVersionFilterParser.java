@@ -35,7 +35,7 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
         if (s.isEmpty()) {
             return null;
         }
-        NVersion e = NVersion.get(s).orNull();
+        NVersion e = NVersion.getPartAt(s).orNull();
         if (e != null) {
             switch (e.getValue()) {
                 case "true":
@@ -53,7 +53,7 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
         }
         NVersion v = asVersion();
         if (v != null) {
-            List<NVersionInterval> intervals = v.intervals().orNull();
+            List<NVersionInterval> intervals = v.toIntervals().orNull();
             if (intervals != null && intervals.size() > 0) {
                 return new NVersionIntervalsVersionFilter(v,comparator);
             }
@@ -78,7 +78,7 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
 
         @Override
         public boolean acceptVersion(NVersion version) {
-            for (NVersionInterval i : version.intervals(versionComparator).orElse(new ArrayList<>())) {
+            for (NVersionInterval i : version.toIntervals(versionComparator).orElse(new ArrayList<>())) {
                 if (i.acceptVersion(version)) {
                     return true;
                 }
@@ -88,7 +88,7 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
 
         @Override
         public String toString() {
-            List<NVersionInterval> intervals = version.intervals(versionComparator).orElse(new ArrayList<>());
+            List<NVersionInterval> intervals = version.toIntervals(versionComparator).orElse(new ArrayList<>());
             StringBuffer sb=new StringBuffer();
             for (int i = 0; i < intervals.size(); i++) {
                 if(i>0){
