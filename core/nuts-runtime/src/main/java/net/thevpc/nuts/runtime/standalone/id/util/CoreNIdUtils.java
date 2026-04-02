@@ -14,8 +14,6 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementReader;
 
 
-import net.thevpc.nuts.platform.NStoreScope;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigApi;
@@ -156,14 +154,14 @@ public class CoreNIdUtils {
                 .setFetchStrategy(NFetchStrategy.OFFLINE)
                 .addId(NId.getRuntime("").get())
                 .setLatest(true)
-                .setTargetApiVersion(NVersion.get(apiVersion).get())
+                .setTargetApiVersion(NVersion.getPartAt(apiVersion).get())
                 .getResultIds().
                 findFirst().orNull();
         NSession session = workspace.currentSession();
         if (foundRT == null && session.getFetchStrategy().orDefault() != NFetchStrategy.OFFLINE) {
             foundRT = NSearch.of().addId(NId.getRuntime("").get())
                     .setLatest(true)
-                    .setTargetApiVersion(NVersion.get(apiVersion).get())
+                    .setTargetApiVersion(NVersion.getPartAt(apiVersion).get())
                     .getResultIds().
                     findFirst().orNull();
         }
