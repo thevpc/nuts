@@ -37,7 +37,7 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
         if (log != null) {
             log.log(NMsg.ofC("download %s", url).asFinest().withIntent(NMsgIntent.START));
         }
-        NChronometer chronometer = NChronometer.startNow();
+        NChronometer chronometer = NChronometer.of();
         URLConnection c = null;
         try {
             c = url.openConnection();
