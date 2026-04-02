@@ -4,9 +4,7 @@ import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.reflect.NClassMap;
-import net.thevpc.nuts.reflect.NClassPairMap;
-import net.thevpc.nuts.reflect.NClassPairMultiMap;
+import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamBase;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -153,43 +151,53 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
     }
 
     @Override
-    public <K,V> NClassMap<K,V> classMap(Class<V> valueType) {
+    public <K, V> NClassMap<K, V> classMap(Class<V> valueType) {
         return new NClassMapImpl<>(valueType);
     }
 
     @Override
-    public <K,V> NClassMap<K,V> classMap(Class<K> keyType, Class<V> valueType) {
+    public <K, V> NClassMap<K, V> classMap(Class<K> keyType, Class<V> valueType) {
         return new NClassMapImpl<>(keyType, valueType);
     }
 
     @Override
-    public <A,B,V> NClassPairMap<A,B,V> classPairMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric) {
-        return new NClassPairMapImpl<>(baseKey1Type,baseKey2Type, valueType,symmetric);
+    public <A, B, V> NClassPairMap<A, B, V> classPairMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric) {
+        return new NClassPairMapImpl<>(baseKey1Type, baseKey2Type, valueType, symmetric);
     }
 
     @Override
-    public <A,B,V> NClassPairMultiMap<A,B,V> classPairMultiMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric) {
-        return new NClassPairMultiMapImpl<>(baseKey1Type,baseKey2Type, valueType,symmetric);
+    public <A, B, V> NClassPairMultiMap<A, B, V> classPairMultiMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric) {
+        return new NClassPairMultiMapImpl<>(baseKey1Type, baseKey2Type, valueType, symmetric);
     }
 
     @Override
-    public <K,V> NClassMap<K,V> classMap(Class<K> keyType, Class<V> valueType, int initialCapacity) {
+    public <K, V> NClassMap<K, V> classMap(Class<K> keyType, Class<V> valueType, int initialCapacity) {
         return new NClassMapImpl<>(keyType, valueType, initialCapacity);
     }
 
     @Override
-    public NClassMap<Object,Class> classClassMap() {
+    public NClassMap<Object, Class> classClassMap() {
         return new NClassClassMap();
     }
 
     @Override
-    public <T> Map<String, T> caseInsensitiveMap() {
-        return new NCaseInsensitiveStringMap<>();
+    public <T> NNormalizedStringMap<T> createInsensitiveMap() {
+        return NNormalizedStringMapImpl.ofCaseInsensitive();
     }
 
     @Override
-    public <T> Map<String, T> caseInsensitiveMap(Map<String, T> other) {
-        return new NCaseInsensitiveStringMap<>(other);
+    public <T> NNormalizedStringMap<T> createFormatInsensitiveMap() {
+        return NNormalizedStringMapImpl.ofFormatInsensitive();
+    }
+
+    @Override
+    public <T> NNormalizedStringMap<T> createNormalizedMap(Function<String, String> normalizer) {
+        return new NNormalizedStringMapImpl<>(normalizer);
+    }
+
+    @Override
+    public <K, V> NLRUMap<K, V> createLruMap(int size) {
+        return new NLRUMapImpl<>(size);
     }
 
     @Override
@@ -378,6 +386,62 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
 
     @Override
     public NIterator<NIntUplet2> int2Iterator(int a, int b) {
-        return NIterator.of(new NIntUplet2Iterator(a,b));
+        return NIterator.of(new NIntUplet2Iterator(a, b));
+    }
+
+    @Override
+    public <K, V> NClassMultiMap<K, V> createClassMultiMap(Class<K> key1Type, Class<V> valueType) {
+        return new NClassMultiMapImpl<>(key1Type, valueType);
+    }
+
+    @Override
+    public <T> NClassDecisionFilter<T> createClassDecisionFilter(Class<T> type, NDecision defaultDecision) {
+        return new NClassDecisionFilterImpl<>(type, defaultDecision);
+    }
+
+    @Override
+    public <T> NDecisionFilter<T> createDecisionFilter(Class<T> type, NDecisionConflict decisionConflict, NDecision defaultDecision) {
+        return new NDecisionFilterImpl<>(type, decisionConflict, defaultDecision);
+    }
+
+    @Override
+    public <K, V> NListMultiValueMap<K, V> createListMultiValueMap() {
+        return new NListMultiValueMapImpl<>();
+    }
+
+    @Override
+    public <K, V> NListMultiValueMap<K, V> createListMultiValueMap(Map<K, List<V>> map) {
+        return new NListMultiValueMapImpl<>(map);
+    }
+
+    @Override
+    public NEvictingCharQueue createEvictingCharQueue(int size) {
+        return new NEvictingCharQueueImpl(size);
+    }
+
+    @Override
+    public NEvictingIntQueue createEvictingIntQueue(int size) {
+        return new NEvictingIntQueueImpl(size);
+    }
+
+    @Override
+    public <T> NEvictingQueue<T> createEvictingQueue(int size) {
+        return new NEvictingQueueImpl<>(size);
+    }
+
+    @Override
+    public <K, V> NIndexedMap<K, V> createIndexedMap() {
+        return new NIndexedMapImpl<>();
+    }
+
+    @Override
+    public <K, V> NSetMultiValueMap<K, V> createSetMultiValueMap() {
+        return new NSetMultiValueMapImpl<>();
+    }
+
+
+    @Override
+    public <K, V> NSetMultiValueMap<K, V> createSetMultiValueMap(Map<K, Set<V>> map) {
+        return new NSetMultiValueMapImpl<>(map);
     }
 }
