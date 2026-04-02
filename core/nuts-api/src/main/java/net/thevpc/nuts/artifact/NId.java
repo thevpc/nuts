@@ -26,7 +26,7 @@
 package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.io.NLibPaths;
+import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.internal.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
@@ -70,7 +70,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     static NOptional<NId> get(String groupId, String artifactId, String version) {
-        return NVersion.get(version).map(x -> new DefaultNId(groupId, artifactId, x));
+        return NVersion.getPartAt(version).map(x -> new DefaultNId(groupId, artifactId, x));
     }
 
     static NOptional<NId> getApi(NVersion version) {
@@ -106,11 +106,11 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     static NOptional<NId> getForClass(Class<?> value) {
-        return NLibPaths.of().resolveId(value);
+        return NIORPI.of().resolveId(value);
     }
 
     static NOptional<NId> getForPath(NPath value) {
-        return NLibPaths.of().resolveId(value);
+        return NIORPI.of().resolveId(value);
     }
 
     static List<NId> ofList(String value) {
@@ -162,12 +162,12 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
 
-    static List<NId> findAllByClass(Class<?> value) {
-        return NLibPaths.of().resolveIds(value);
+    static List<NId> findByClass(Class<?> value) {
+        return NIORPI.of().resolveIds(value);
     }
 
     static List<NId> findByPath(NPath value) {
-        return NLibPaths.of().resolveIds(value);
+        return NIORPI.of().resolveIds(value);
     }
 
     /**
@@ -322,12 +322,13 @@ public interface NId extends Comparable<NId>, NBlankable {
 
     NDependency toDependency();
 
-    NIdFilter filter();
-
     /**
      * filter accepted any id with the defined version or greater
      * @return filter accepted any id with the defined version or greater
      */
+    NIdFilter toFilter();
+
+
     /**
      * when the current version is a single value version X , returns ],X] version that guarantees backward compatibility
      * in all other cases returns the current version
@@ -335,7 +336,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      * @return when the current version is a single value version X , returns ],X] version that guarantees backward compatibility in all other cases returns the current version
      * @since 0.8.3
      */
-    NId compatNewer();
+    NId toAtLeast();
 
     /**
      * when the current version is a single value version X , returns [X,[ version that guarantees forward compatibility
@@ -344,7 +345,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      * @return when the current version is a single value version X , returns [X,[ version that guarantees forward compatibility in all other cases returns the current version
      * @since 0.8.3
      */
-    NId compatOlder();
+    NId toAtMost();
 
     boolean isNull();
 
