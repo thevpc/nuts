@@ -38,8 +38,8 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
         if (r == null) {
             return null;
         }
-        int i = id.getVersion().getIntegerAt(0).orElse(-1);
-        int j = id.getVersion().getIntegerAt(1).orElse(-1);
+        int i = id.getVersion().getIntAt(0).orElse(-1);
+        int j = id.getVersion().getIntAt(1).orElse(-1);
         String javaVersion = "java";
         if (i <= 0) {
             //
