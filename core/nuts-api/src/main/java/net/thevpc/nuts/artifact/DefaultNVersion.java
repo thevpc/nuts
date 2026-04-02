@@ -59,10 +59,10 @@ public class DefaultNVersion implements NVersion {
             count = BigInteger.ZERO;
         }
         VersionParts parts = splitVersionParts2(oldVersion);
-        int digitCount = parts.getNumbersCount();
+        int digitCount = parts.numberCount();
         if (digitCount == 0) {
             parts.addNumber(BigInteger.ZERO, ".");
-            digitCount = parts.getNumbersCount();
+            digitCount = parts.numberCount();
         }
         if (level < 0) {
             level = digitCount + level;
@@ -157,18 +157,18 @@ public class DefaultNVersion implements NVersion {
     }
 
 
-    public boolean isLatestVersion() {
+    public boolean isLatest() {
         String s = asSingleValue().orNull();
         return NConstants.Versions.LATEST.equalsIgnoreCase(s);
     }
 
-    public boolean isReleaseVersion() {
+    public boolean isRelease() {
         String s = asSingleValue().orNull();
         return NConstants.Versions.RELEASE.equalsIgnoreCase(s);
     }
 
     @Override
-    public boolean isSnapshotVersion() {
+    public boolean isSnapshot() {
         String s = asSingleValue().orNull();
         return s != null && s.toUpperCase().endsWith("-SNAPSHOT");
     }
@@ -249,17 +249,17 @@ public class DefaultNVersion implements NVersion {
     }
 
     @Override
-    public NVersionFilter filter() {
-        return filter(null);
+    public NVersionFilter toFilter() {
+        return toFilter(null);
     }
 
     @Override
-    public NVersionFilter filter(NVersionComparator comparator) {
+    public NVersionFilter toFilter(NVersionComparator comparator) {
         return NVersionFilters.of().byValue(expression,comparator).get();
     }
 
     @Override
-    public NVersion compatNewer() {
+    public NVersion toAtMost() {
         String v = toExplicitSingleValueOrNullString();
         if (v == null) {
             return this;
@@ -268,7 +268,7 @@ public class DefaultNVersion implements NVersion {
     }
 
     @Override
-    public NVersion compatOlder() {
+    public NVersion toAtLeast() {
         String v = toExplicitSingleValueOrNullString();
         if (v == null) {
             return this;
@@ -277,12 +277,12 @@ public class DefaultNVersion implements NVersion {
     }
 
     @Override
-    public NOptional<List<NVersionInterval>> intervals() {
-        return intervals(null);
+    public NOptional<List<NVersionInterval>> toIntervals() {
+        return toIntervals(null);
     }
 
     @Override
-    public NOptional<List<NVersionInterval>> intervals(NVersionComparator comparator) {
+    public NOptional<List<NVersionInterval>> toIntervals(NVersionComparator comparator) {
         return NVersionInterval.ofList(expression,comparator);
     }
 
@@ -417,69 +417,154 @@ public class DefaultNVersion implements NVersion {
         return new DefaultNVersion(incVersion(getValue(), index, amount));
     }
 
-    public int size() {
-        VersionParts parts = getParts();
-        return parts.size();
+    public int partCount() {
+        return getParts().size();
     }
 
     @Override
-    public int numberSize() {
-        return getParts().getNumbersCount();
+    public int numberCount() {
+        return getParts().numberCount();
     }
 
-    public NLiteral[] split() {
-        VersionParts parts = getParts();
-        int size = parts.size();
-        NLiteral[] all = new NLiteral[size];
-        for (int i = 0; i < size; i++) {
-            all[i] = NLiteral.of(parts.get(i).value());
-        }
-        return all;
-    }
-
-    public NOptional<NLiteral> get(int index) {
+    public NOptional<NVersionPart> getPartAt(int index) {
         VersionParts parts = getParts();
         int size = parts.size();
         if (index >= 0) {
             if (index < parts.size()) {
-                return NOptional.of(NLiteral.of(parts.get(index).value()));
+                return NOptional.of(parts.get(index));
             }
         } else {
             int x = size + index;
             if (x >= 0 && x < parts.size()) {
-                return NOptional.of(NLiteral.of(parts.get(x).value()));
+                return NOptional.of(parts.get(x));
             }
         }
         return NOptional.ofEmpty(() -> NMsg.ofC("version part not found : %s", index));
     }
 
-    public NOptional<NLiteral> getNumberLiteralAt(int level) {
+    public NOptional<Number> getNumberAt(int level) {
         VersionParts parts = getParts();
-        int size = parts.getNumbersCount();
+        int size = parts.numberCount();
         if (level >= 0) {
             NVersionPart digit = parts.getNumberAt(level);
             return NOptional.of(
-                    digit == null ? null : NLiteral.of(digit.value()),
+                    digit == null ? null : _number(digit.value()),
                     () -> NMsg.ofC("missing number at %s", level)
             );
         } else {
             int x = size + level;
             NVersionPart digit = x >= 0 ? parts.getNumberAt(x) : null;
             return NOptional.of(
-                    digit == null ? null : NLiteral.of(digit.value()),
+                    digit == null ? null : _number(digit.value()),
                     () -> NMsg.ofC("missing number at %s", level)
             );
         }
     }
 
-    @Override
-    public NOptional<Integer> getIntegerAt(int index) {
-        return getNumberLiteralAt(index).flatMap(NLiteral::asInt);
+    private Number _number(String any){
+        try{
+            return Integer.parseInt(any);
+        }catch (Exception e){
+            //
+        }
+        try{
+            return Long.parseLong(any);
+        }catch (Exception e){
+            //
+        }
+        try {
+            return new BigInteger(any);
+        }catch (Exception e){
+            //
+        }
+        return null;
+    }
+
+    private Integer _int(String any){
+        try{
+            return Integer.parseInt(any);
+        }catch (Exception e){
+            //
+        }
+        return null;
+    }
+
+    private Long _long(String any){
+        try{
+            return Long.parseLong(any);
+        }catch (Exception e){
+            //
+        }
+        return null;
+    }
+
+    private BigInteger _bigint(String any){
+        try{
+            return new BigInteger(any);
+        }catch (Exception e){
+            //
+        }
+        return null;
     }
 
     @Override
-    public NOptional<Long> getLongAt(int index) {
-        return getNumberLiteralAt(index).flatMap(NLiteral::asLong);
+    public NOptional<Integer> getIntAt(int level) {
+        VersionParts parts = getParts();
+        int size = parts.numberCount();
+        if (level >= 0) {
+            NVersionPart digit = parts.getNumberAt(level);
+            return NOptional.of(
+                    digit == null ? null : _int(digit.value()),
+                    () -> NMsg.ofC("missing int at %s", level)
+            );
+        } else {
+            int x = size + level;
+            NVersionPart digit = x >= 0 ? parts.getNumberAt(x) : null;
+            return NOptional.of(
+                    digit == null ? null : _int(digit.value()),
+                    () -> NMsg.ofC("missing int at %s", level)
+            );
+        }
+    }
+
+    @Override
+    public NOptional<Long> getLongAt(int level) {
+        VersionParts parts = getParts();
+        int size = parts.numberCount();
+        if (level >= 0) {
+            NVersionPart digit = parts.getNumberAt(level);
+            return NOptional.of(
+                    digit == null ? null : _long(digit.value()),
+                    () -> NMsg.ofC("missing int at %s", level)
+            );
+        } else {
+            int x = size + level;
+            NVersionPart digit = x >= 0 ? parts.getNumberAt(x) : null;
+            return NOptional.of(
+                    digit == null ? null : _long(digit.value()),
+                    () -> NMsg.ofC("missing int at %s", level)
+            );
+        }
+    }
+
+    @Override
+    public NOptional<BigInteger> getBigIntAt(int level) {
+        VersionParts parts = getParts();
+        int size = parts.numberCount();
+        if (level >= 0) {
+            NVersionPart digit = parts.getNumberAt(level);
+            return NOptional.of(
+                    digit == null ? null : _bigint(digit.value()),
+                    () -> NMsg.ofC("missing int at %s", level)
+            );
+        } else {
+            int x = size + level;
+            NVersionPart digit = x >= 0 ? parts.getNumberAt(x) : null;
+            return NOptional.of(
+                    digit == null ? null : _bigint(digit.value()),
+                    () -> NMsg.ofC("missing int at %s", level)
+            );
+        }
     }
 
     private String toExplicitSingleValueOrNullString() {
@@ -537,7 +622,7 @@ public class DefaultNVersion implements NVersion {
             return all.size();
         }
 
-        public int getNumbersCount() {
+        public int numberCount() {
             int c = 0;
             for (NVersionPart s : all) {
                 if (s.type() == NVersionPartType.NUMBER) {
