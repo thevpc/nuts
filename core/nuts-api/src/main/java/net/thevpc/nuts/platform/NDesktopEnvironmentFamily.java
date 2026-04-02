@@ -70,7 +70,7 @@ public enum NDesktopEnvironmentFamily implements NEnum {
 
     public static NOptional<NDesktopEnvironmentFamily> parse(String value) {
         return NEnumUtils.parseEnum(value, NDesktopEnvironmentFamily.class, s -> {
-            switch (s.getNormalizedValue()) {
+            switch (s.normalizedValue()) {
                 case "WIN":
                 case "WINDOWS":
                 case "WINDOWSSHELL":
