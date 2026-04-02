@@ -30,9 +30,7 @@ import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.reflect.NClassMap;
-import net.thevpc.nuts.reflect.NClassPairMap;
-import net.thevpc.nuts.reflect.NClassPairMultiMap;
+import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.*;
 
@@ -97,9 +95,7 @@ public interface NCollectionsRPI extends NComponent {
 
     NClassMap<Object, Class> classClassMap();
 
-    <T> Map<String, T> caseInsensitiveMap();
-
-    <T> Map<String, T> caseInsensitiveMap(Map<String, T> other);
+    <T> NNormalizedStringMap<T> createInsensitiveMap();
 
     <K, V> NMultiKeyMap<K, V> multiKeyMap();
 
@@ -172,4 +168,32 @@ public interface NCollectionsRPI extends NComponent {
     <T> NIteratorBuilder<T> iteratorBuilderOfFlatMap(NIterator<? extends Collection<T>> from);
 
     NIterator<NIntUplet2> int2Iterator(int a, int b);
+
+    <K, V> NClassMultiMap<K, V> createClassMultiMap(Class<K> key1Type, Class<V> valueType);
+
+    <T> NClassDecisionFilter<T> createClassDecisionFilter(Class<T> type, NDecision defaultDecision);
+
+    <T> NDecisionFilter<T> createDecisionFilter(Class<T> type, NDecisionConflict decisionConflict, NDecision defaultDecision);
+
+    <K, V> NListMultiValueMap<K, V> createListMultiValueMap();
+
+    <K, V> NListMultiValueMap<K, V> createListMultiValueMap(Map<K, List<V>> map);
+
+    <T> NNormalizedStringMap<T> createFormatInsensitiveMap();
+
+    <T> NNormalizedStringMap<T> createNormalizedMap(Function<String, String> normalizer);
+
+    <K, V> NLRUMap<K, V> createLruMap(int size);
+
+    NEvictingCharQueue createEvictingCharQueue(int size);
+
+    NEvictingIntQueue createEvictingIntQueue(int size);
+
+    <T> NEvictingQueue<T> createEvictingQueue(int size);
+
+    <K, V> NIndexedMap<K, V> createIndexedMap();
+
+    <K, V> NSetMultiValueMap<K, V> createSetMultiValueMap();
+
+    <K, V> NSetMultiValueMap<K, V> createSetMultiValueMap(Map<K, Set<V>> map);
 }
