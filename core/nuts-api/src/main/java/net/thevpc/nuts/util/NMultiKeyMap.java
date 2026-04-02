@@ -1,26 +1,31 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+
 import java.util.*;
 
 public interface NMultiKeyMap<K, V> {
+    static <K, V> NMultiKeyMap<K, V> of() {
+        return NCollectionsRPI.of().multiKeyMap();
+    }
 
-    public void clear();
+    void clear();
 
-    public Set<K> allKeys();
+    Set<K> allKeys();
 
-    public Set<K> mainKeys() ;
+    Set<K> mainKeys();
 
-    public int mainSize();
+    int mainSize();
 
-    public int allSize();
+    int allSize();
 
-    public V remove(K k) ;
+    V remove(K k);
 
-    public V putMulti(K[] k, V v) ;
+    V putMulti(K[] k, V v);
 
-    public V put(K k, V v) ;
+    V put(K k, V v);
 
-    public V get(K k) ;
+    V get(K k);
 
-    public void mergeKeys(K k1, K k2) ;
+    void mergeKeys(K k1, K k2);
 }
