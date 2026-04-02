@@ -690,7 +690,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
                 return cmdLine.matcher().matchFlag((v) -> this.setRuntime(v.booleanValue())).anyMatch();
             }
             case "--api-version": {
-                return cmdLine.matcher().matchEntry((v) -> this.setTargetApiVersion(NVersion.get(v.stringValue()).get())).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> this.setTargetApiVersion(NVersion.getPartAt(v.stringValue()).get())).anyMatch();
             }
             case "--nuts-app":
             case "--nuts-apps": {
