@@ -31,5 +31,6 @@ public interface NClassPairMap<A,B,V> {
 
     List<V> findMatches(Class<? extends A> classKey1, Class<? extends B> classKey2);
 
-    void clear();
+    boolean isEmpty();
+    boolean clear();
 }
