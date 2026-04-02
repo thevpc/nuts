@@ -67,8 +67,8 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
         }
         if (found) {
             // http://tomcat.apache.org/whichversion.html
-            int i = id.getVersion().getIntegerAt(0).orElse(-1);
-            int j = id.getVersion().getIntegerAt(1).orElse(-1);
+            int i = id.getVersion().getIntAt(0).orElse(-1);
+            int j = id.getVersion().getIntAt(1).orElse(-1);
             String javaVersion = "";
             if (i <= 0) {
                 //
@@ -166,7 +166,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                                             //will ignore all alpha versions
                                                             return NStream.ofEmpty();
                                                         }
-                                                        NVersion version = NVersion.get(s2n.substring(1, s2n.length() - 1)).get();
+                                                        NVersion version = NVersion.getPartAt(s2n.substring(1, s2n.length() - 1)).get();
                                                         if (version.compareTo("4.1.32") < 0) {
                                                             prefix = "jakarta-tomcat-";
                                                         }
@@ -187,7 +187,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                                                             (NPath x5) -> {
                                                                                 String s3 = x5.getName();
                                                                                 String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
-                                                                                NVersion v = NVersion.get(v0).get();
+                                                                                NVersion v = NVersion.getPartAt(v0).get();
                                                                                 NId id2 = idBuilder.setVersion(v).build();
                                                                                 if (safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id2, repository, "TomcatRepoHelper 1"))) {
                                                                                     return id2;
@@ -229,7 +229,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
         if (version.compareTo("4.1.27") == 0) {
             bin = "binaries";
         }
-        return HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT + "tomcat-" + version.get(0).flatMap(NLiteral::asString).orElse("unknown") + "/v" + version + "/" + bin + "/" + prefix + version + extension;
+        return HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT + "tomcat-" + version.getPartAt(0).map(NVersionPart::value).orElse("unknown") + "/v" + version + "/" + bin + "/" + prefix + version + extension;
     }
 
 //    public boolean catalinaMatchesJavaVersion(NutsVersion cv, String javaVersion, NSession session) {
