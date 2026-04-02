@@ -144,7 +144,7 @@ public enum NDependencyScopePattern implements NEnum {
 
     public static NOptional<NDependencyScopePattern> parse(String value) {
         return NEnumUtils.parseEnum(value, NDependencyScopePattern.class, s->{
-            switch (s.getNormalizedValue()) {
+            switch (s.normalizedValue()) {
                 case "COMPILEONLY": //gradle
                 case "COMPILE_ONLY": //gradle
                 case "PROVIDED": //gradle
