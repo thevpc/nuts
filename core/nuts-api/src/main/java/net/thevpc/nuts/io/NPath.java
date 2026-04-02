@@ -396,6 +396,14 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
         return NIORPI.of().ofTempIdFolder(id);
     }
 
+
+    static NOptional<NPath> ofOrigin(Class<?> clazz){
+        return NIORPI.of().ofOrigin(clazz);
+    }
+
+    static List<NPath> ofOrigins(Class<?> clazz){
+        return NIORPI.of().ofOrigins(clazz);
+    }
     /**
      * content encoding if explicitly defined (from HTTP headers for instance).
      * return null when unknown.
