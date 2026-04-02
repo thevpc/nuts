@@ -55,7 +55,7 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
                     this.wildcard = containsWildcad(sid);
                     g = GlobUtils.ofExact(id.getGroupId());
                     n = GlobUtils.ofExact(id.getArtifactId());
-                    v = id.getVersion().filter();
+                    v = id.getVersion().toFilter();
                     qm = id.getProperties();
                     for (Map.Entry<String, String> entry : id.getProperties().entrySet()) {
                         String key = entry.getKey();
