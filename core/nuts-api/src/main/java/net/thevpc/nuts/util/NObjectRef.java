@@ -32,6 +32,11 @@ public class NObjectRef<T> implements NRef<T> {
             set(value);
         }
     }
+    public void setIfNull(T value) {
+        if (this.value==null) {
+            set(value);
+        }
+    }
 
     public void set(T value) {
         this.value = value;
