@@ -22,7 +22,7 @@ public enum NOperatorPosition implements NEnum {
 
     public static NOptional<NOperatorPosition> parse(String value) {
         return NEnumUtils.parseEnum(value, NOperatorPosition.class, ev -> {
-            switch (ev.getNormalizedValue()) {
+            switch (ev.normalizedValue()) {
                 case "IN":
                 case "INFIX":
                     return NOptional.of(NOperatorPosition.INFIX);
