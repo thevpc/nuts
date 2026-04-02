@@ -22,7 +22,7 @@ public enum NNumberLayout implements NEnum {
 
     public static NOptional<NNumberLayout> parse(String value) {
         return NEnumUtils.parseEnum(value, NNumberLayout.class, ev -> {
-            switch (ev.getNormalizedValue()) {
+            switch (ev.normalizedValue()) {
                 case "BINARY":
                 case "BIN":
                     return NOptional.of(NNumberLayout.BINARY);
