@@ -58,7 +58,7 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      * @param version string value
      * @return parsed value
      */
-    static NOptional<NVersion> get(String version) {
+    static NOptional<NVersion> getPartAt(String version) {
         if (NBlankable.isBlank(version)) {
             return NOptional.of(BLANK);
         }
@@ -70,7 +70,7 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
     }
 
     static NVersion of(String version) {
-        return get(version).get();
+        return getPartAt(version).get();
     }
 
     /**
@@ -130,9 +130,9 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      *
      * @return new instance of {@link NVersionFilter}
      */
-    NVersionFilter filter();
+    NVersionFilter toFilter();
 
-    NVersionFilter filter(NVersionComparator comparator);
+    NVersionFilter toFilter(NVersionComparator comparator);
 
     /**
      * when the current version is a single value version X , returns ],X] version that guarantees backward compatibility
@@ -141,7 +141,7 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      * @return when the current version is a single value version X , returns ],X] version that guarantees backward compatibility in all other cases returns the current version
      * @since 0.8.3
      */
-    NVersion compatNewer();
+    NVersion toAtMost();
 
     /**
      * when the current version is a single value version X , returns [X,[ version that guarantees forward compatibility
@@ -150,16 +150,16 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      * @return when the current version is a single value version X , returns [X,[ version that guarantees forward compatibility in all other cases returns the current version
      * @since 0.8.3
      */
-    NVersion compatOlder();
+    NVersion toAtLeast();
 
     /**
      * parse the current version as an interval array
      *
      * @return new interval array
      */
-    NOptional<List<NVersionInterval>> intervals();
+    NOptional<List<NVersionInterval>> toIntervals();
 
-    NOptional<List<NVersionInterval>> intervals(NVersionComparator comparator);
+    NOptional<List<NVersionInterval>> toIntervals(NVersionComparator comparator);
 
     /**
      * return true if this version denotes as single value and does not match an interval.
@@ -212,7 +212,7 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
     NVersion inc(int index, BigInteger amount);
 
     /**
-     * number of elements in the version.
+     * number of parts in the version.
      * <ul>
      *     <li>size(1.22)=3 {'1','.','22'}</li>
      *     <li>size(1.22_u1)=5 {'1','.','22','_u','1'}</li>
@@ -220,18 +220,18 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      *
      * @return number of elements in the version.
      */
-    int size();
+    int partCount();
 
     /**
-     * number of elements in the version.
+     * number of numeric parts in the version.
      * <ul>
      *     <li>numberSize(1.22)=2 {1,22}</li>
      *     <li>numberSize(1.22_u1)=3 {1,22,1}</li>
      * </ul>
      *
-     * @return number of elements in the version.
+     * @return number of numeric parts in the version.
      */
-    int numberSize();
+    int numberCount();
 
     /**
      * element at given index. if the index is negative will return from right.
@@ -244,18 +244,8 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      * @param index version part index
      * @return element at given index.
      */
-    NOptional<NLiteral> get(int index);
+    NOptional<NVersionPart> getPartAt(int index);
 
-
-    /**
-     * split all elements
-     * <ul>
-     *     <li>(1.a22).split()=['1','.','a','22']</li>
-     * </ul>
-     *
-     * @return all elements
-     */
-    NLiteral[] split();
 
     /**
      * number element at given index. if the index is negative will return from right (-1 is the first starting from the right).
@@ -273,17 +263,19 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      * @param index version part index
      * @return element at given index.
      */
-    NOptional<NLiteral> getNumberLiteralAt(int index);
+    NOptional<Number> getNumberAt(int index);
 
-    NOptional<Integer> getIntegerAt(int index);
+    NOptional<Integer> getIntAt(int index);
 
     NOptional<Long> getLongAt(int index);
 
-    boolean isLatestVersion();
+    NOptional<BigInteger> getBigIntAt(int level);
 
-    boolean isReleaseVersion();
+    boolean isLatest();
 
-    boolean isSnapshotVersion();
+    boolean isRelease();
+
+    boolean isSnapshot();
 
     List<NVersionPart> parts();
 }
