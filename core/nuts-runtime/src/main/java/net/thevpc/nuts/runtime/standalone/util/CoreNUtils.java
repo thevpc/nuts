@@ -239,7 +239,7 @@ public class CoreNUtils {
         }
         String s2 = applyStringProperties(s, properties);
         if (!NStringUtils.trim(s2).equals(s)) {
-            return NVersion.get(s2).orElse(NVersion.BLANK);
+            return NVersion.getPartAt(s2).orElse(NVersion.BLANK);
         }
         return child;
     }
@@ -557,7 +557,7 @@ public class CoreNUtils {
                 if (rt.equals(depId.getShortName())) {
                     return NIdType.RUNTIME;
                 } else {
-                    for (NClassLoaderNode n : NWorkspace.of().getBootExtensionClassLoaderNode()) {
+                    for (NClassLoaderNode n : NWorkspace.of().getBootExtensionClassLoaderNodes()) {
                         if (n.getId() != null) {
                             if (n.getId().equalsShortId(depId)) {
                                 return NIdType.EXTENSION;
