@@ -20,7 +20,7 @@ public class TaskSetTest {
     @Test
     public void test1() throws Exception {
         NTaskSet nTaskSet = NTaskSet.of();
-        NChronometer ch = NChronometer.startNow();
+        NChronometer ch = NChronometer.of();
         NOptional<NTaskResult<Boolean>> firstError = nTaskSet
                 .call("verif1",() -> verify1())
                 .call("verif2",() -> verify2())
