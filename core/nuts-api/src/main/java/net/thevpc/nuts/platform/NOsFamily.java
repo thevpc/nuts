@@ -69,7 +69,7 @@ public enum NOsFamily implements NEnum {
 
     public static NOptional<NOsFamily> parse(String value) {
         return NEnumUtils.parseEnum(value, NOsFamily.class, s -> {
-            String e = s.getNormalizedValue();
+            String e = s.normalizedValue();
             switch (e) {
                 case "W":
                 case "WIN":
