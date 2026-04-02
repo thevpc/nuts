@@ -1,6 +1,9 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.text.NTextFormat;
+import net.thevpc.nuts.text.NTextFormattable;
 
 import java.util.Objects;
 
@@ -8,41 +11,13 @@ import java.util.Objects;
  * Created by vpc on 3/24/17.
  */
 public final class NMemoryUsage implements NTextFormattable {
-    private final long maxMemory;
     private final long totalMemory;
     private final long freeMemory;
+    public static final NMemoryUsage ZERO=new NMemoryUsage(0,0);
 
-    public static NMemoryUsage of() {
-        return new NMemoryUsage();
-    }
-
-    public NMemoryUsage() {
-        Runtime rt = Runtime.getRuntime();
-        maxMemory = rt.maxMemory();
-        totalMemory = rt.totalMemory();
-        freeMemory = rt.freeMemory();
-    }
-
-    public NMemoryUsage(long maxMemory, long totalMemory, long freeMemory) {
-        this.maxMemory = maxMemory;
+    public NMemoryUsage(long totalMemory, long freeMemory) {
         this.totalMemory = totalMemory;
         this.freeMemory = freeMemory;
-    }
-
-    public NMemoryUsage diff(NMemoryUsage other) {
-        if (other == null) {
-            return this;
-        }
-        return new NMemoryUsage(
-                maxMemory,
-                totalMemory,
-                freeMemory - other.freeMemory
-        );
-    }
-
-
-    public long maxMemory() {
-        return maxMemory;
     }
 
     public long totalMemory() {
@@ -59,7 +34,7 @@ public final class NMemoryUsage implements NTextFormattable {
 
     @Override
     public NText toText() {
-        NTextFormat<Number> p = NTextFormat.ofBytes( null);
+        NTextFormat<Number> p = NTextFormat.ofBytes(null);
         return NTextBuilder.of()
                 .append("free : ")
                 .append(p.toText(freeMemory()))
@@ -67,8 +42,6 @@ public final class NMemoryUsage implements NTextFormattable {
                 .append("total : ")
                 .append(p.toText(totalMemory()))
                 .append(" ; ")
-                .append("max : ")
-                .append(p.toText(maxMemory()))
                 .append(" ; ")
                 .append("inUse : ")
                 .append(p.toText(inUseMemory()))
@@ -80,19 +53,18 @@ public final class NMemoryUsage implements NTextFormattable {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         NMemoryUsage that = (NMemoryUsage) o;
-        return maxMemory == that.maxMemory && totalMemory == that.totalMemory && freeMemory == that.freeMemory;
+        return totalMemory == that.totalMemory && freeMemory == that.freeMemory;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(maxMemory, totalMemory, freeMemory);
+        return Objects.hash(totalMemory, freeMemory);
     }
 
     public String toString() {
         return
                 "free : " + freeMemory() + " ; "
                         + "total : " + totalMemory() + " ; "
-                        + "max : " + maxMemory() + " ; "
                         + "inUse : " + inUseMemory()
                 ;
     }
