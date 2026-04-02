@@ -9,7 +9,7 @@ import net.thevpc.nuts.util.NUplet;
 import java.lang.reflect.Array;
 import java.util.*;
 
-public class NClassPairMapImpl<A,B,V> implements NClassPairMap<A,B,V> {
+public class NClassPairMapImpl<A, B, V> implements NClassPairMap<A, B, V> {
     private static final long serialVersionUID = 1L;
     private final boolean symmetric;
     private final Class<? extends A> baseKey1Type;
@@ -27,14 +27,22 @@ public class NClassPairMapImpl<A,B,V> implements NClassPairMap<A,B,V> {
     }
 
     @Override
-    public Set<NUplet<Class>> keySet(){
+    public Set<NUplet<Class>> keySet() {
         return values.keySet();
     }
 
-    public void clear(){
+    public boolean clear() {
+        boolean result = !values.isEmpty();
         values.clear();
         cachedValues.clear();
+        return result;
     }
+
+    @Override
+    public boolean isEmpty() {
+        return values.isEmpty();
+    }
+
     @Override
     public V put(Class<? extends A> classKey1, Class<? extends B> classKey2, V value) {
         cachedValues.clear();
@@ -103,7 +111,6 @@ public class NClassPairMapImpl<A,B,V> implements NClassPairMap<A,B,V> {
     }
 
 
-
     public NUplet<Class>[] evalHierarchy(NUplet<Class> clazz) {
         Class[] first = NReflectUtils.findClassHierarchy(clazz.get(0), baseKey1Type, NTypeNamePlatformDomain.of());
         Class[] second = NReflectUtils.findClassHierarchy(clazz.get(1), baseKey2Type, NTypeNamePlatformDomain.of());
@@ -163,12 +170,10 @@ public class NClassPairMapImpl<A,B,V> implements NClassPairMap<A,B,V> {
         NClassPairMapImpl that = (NClassPairMapImpl) o;
 
         if (symmetric != that.symmetric) return false;
-        if (baseKey1Type != null ? !baseKey1Type.equals(that.baseKey1Type) : that.baseKey1Type != null) return false;
-        if (baseKey2Type != null ? !baseKey2Type.equals(that.baseKey2Type) : that.baseKey2Type != null) return false;
-        if (valueType != null ? !valueType.equals(that.valueType) : that.valueType != null) return false;
-        if (values != null ? !values.equals(that.values) : that.values != null) return false;
-
-        return true;
+        if (!Objects.equals(baseKey1Type, that.baseKey1Type)) return false;
+        if (!Objects.equals(baseKey2Type, that.baseKey2Type)) return false;
+        if (!Objects.equals(valueType, that.valueType)) return false;
+        return values != null ? values.equals(that.values) : that.values == null;
     }
 
     @Override
@@ -180,9 +185,6 @@ public class NClassPairMapImpl<A,B,V> implements NClassPairMap<A,B,V> {
         result = 31 * result + (values != null ? values.hashCode() : 0);
         return result;
     }
-
-
-
 
 
 }
