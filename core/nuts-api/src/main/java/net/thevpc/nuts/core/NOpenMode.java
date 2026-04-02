@@ -76,7 +76,7 @@ public enum NOpenMode implements NEnum {
 
     public static NOptional<NOpenMode> parse(String value) {
         return NEnumUtils.parseEnum(value, NOpenMode.class, s->{
-            switch (s.getNormalizedValue()) {
+            switch (s.normalizedValue()) {
                 case "R":
                 case "READ":
                 case "O":
