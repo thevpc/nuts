@@ -638,7 +638,7 @@ public class DefaultNWorkspaceConfigModel {
                 .getParent();
         List<NId> olderIds = path.stream().filter(NPath::isDirectory)
                 .withDescription(NDescribables.ofDesc("isDirectory"))
-                .map(x -> NVersion.get(x.getName()).get())
+                .map(x -> NVersion.getPartAt(x.getName()).get())
                 .withDescription(NDescribables.ofDesc("toVersion"))
                 .filter(x -> x.compareTo(apiId.getVersion()) < 0)
                 .withDescription(NDescribables.ofDesc("older"))
@@ -1308,7 +1308,7 @@ public class DefaultNWorkspaceConfigModel {
     private NClassLoaderNode searchBootNode(NId id) {
         List<NClassLoaderNode> all = new ArrayList<>();
         all.add(workspace.getBootRuntimeClassLoaderNode());
-        all.addAll(workspace.getBootExtensionClassLoaderNode());
+        all.addAll(workspace.getBootExtensionClassLoaderNodes());
         return searchBootNode(id, all);
     }
 
