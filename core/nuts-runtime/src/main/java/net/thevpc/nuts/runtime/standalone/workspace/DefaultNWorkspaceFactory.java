@@ -35,7 +35,6 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIO;
-import net.thevpc.nuts.io.NLibPaths;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl;
@@ -46,6 +45,7 @@ import net.thevpc.nuts.runtime.standalone.platform.NEnvLocal;
 import net.thevpc.nuts.runtime.standalone.util.FixedNScoredValue;
 import net.thevpc.nuts.runtime.standalone.util.NUtilSPIImpl;
 import net.thevpc.nuts.runtime.standalone.util.collections.NClassClassMap;
+import net.thevpc.nuts.runtime.standalone.util.collections.NListMultiValueMapImpl;
 import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -67,7 +67,6 @@ import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.io.NDigest;
-import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNLibPaths;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.net.NWebCli;
@@ -83,7 +82,7 @@ import java.util.stream.Collectors;
 public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     private final NLog LOG;
-    private final NListValueMap<Class<?>, Object> instances = new NListValueMap<>();
+    private final NListMultiValueMap<Class<?>, Object> instances = new NListMultiValueMapImpl<>();
     private final Map<NId, IdCache> discoveredCacheById = new HashMap<>();
     private final NWorkspace workspace;
     private final NExtensionTypeInfoPool extensionTypeInfoPool;
@@ -173,10 +172,6 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             }
             case "net.thevpc.nuts.elem.NElementFactory": {
                 NElementFactory p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNElementFactory.class, NElementFactory.class, NScopeType.SESSION, DefaultNElementFactory::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.io.NLibPaths": {
-                NLibPaths p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNLibPaths.class, NLibPaths.class, NScopeType.SESSION, DefaultNLibPaths::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.io.NDigest": {
@@ -336,7 +331,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     @Override
     public <T> List<NScoredValue<T>> createAllScored(Class<T> type, NScorableContext supportCriteria) {
         List<NScoredValue<T>> all = new ArrayList<>();
-        for (Object obj : instances.getAll(type)) {
+        for (Object obj : instances.get(type)) {
             T o = (T) obj;
             int s = getInstanceScorer(o, type).get().getScore(supportCriteria);
             if (s > 0) {
@@ -359,7 +354,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     @Override
     public <T> List<T> createAll(Class<T> type) {
         List<T> all = new ArrayList<T>();
-        for (Object obj : instances.getAll(type)) {
+        for (Object obj : instances.get(type)) {
             all.add((T) obj);
         }
         for (Class<? extends T> c : getExtensionTypes(type)) {
@@ -378,7 +373,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     @Override
     public <T> T createFirst(Class<T> type) {
-        for (Object obj : instances.getAll(type)) {
+        for (Object obj : instances.get(type)) {
             return (T) obj;
         }
         for (Class c : getExtensionTypes(type)) {
@@ -414,7 +409,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     @Override
     public <T> List<T> getExtensionObjects(Class<T> extensionPoint) {
-        return new ArrayList<T>((List) instances.getAll(extensionPoint));
+        return new ArrayList<T>((List) instances.get(extensionPoint));
     }
 
     @Override
@@ -424,7 +419,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     @Override
     public <T> boolean isRegisteredInstance(Class<T> extensionPoint, T implementation) {
-        return instances.contains(extensionPoint, implementation);
+        return instances.containsEntry(extensionPoint, implementation);
     }
 
     @Override
@@ -494,7 +489,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 err.println("\t" + e.getKey() + " :: " + idCache.url);
                 for (Map.Entry<Class<?>, NClassClassMap> v : idCache.classes.entrySet()) {
                     NClassClassMap vv = v.getValue();
-                    Set<Class<?>> classes = vv.allKeySet();
+                    Set<Class<?>> classes = vv.keySet();
                     for (Class<?> k : classes) {
                         if (k.isInterface()) {
                             if (k.getName().equals(tname)) {
