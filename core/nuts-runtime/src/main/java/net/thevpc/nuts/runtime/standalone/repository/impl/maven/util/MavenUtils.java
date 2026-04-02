@@ -320,7 +320,7 @@ public class MavenUtils {
                 String vv = pom.getProperties().get(v);
                 if (!NBlankable.isBlank(vv)) {
                     if (mavenCompilerTarget == null || mavenCompilerTarget.compareTo(vv) < 0) {
-                        mavenCompilerTarget = NVersion.get(vv).get();
+                        mavenCompilerTarget = NVersion.getPartAt(vv).get();
                     }
                 }
             }
