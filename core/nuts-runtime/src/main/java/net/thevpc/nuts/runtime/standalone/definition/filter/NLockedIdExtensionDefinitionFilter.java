@@ -31,7 +31,7 @@ public class NLockedIdExtensionDefinitionFilter extends AbstractDefinitionFilter
     public boolean acceptId(NId id) {
         for (NId nutsId : lockedIds) {
             if (nutsId.getShortId().equalsShortId(id.getShortId())) {
-                return (id.getVersion().filter().acceptVersion(nutsId.getVersion()));
+                return (id.getVersion().toFilter().acceptVersion(nutsId.getVersion()));
             }
         }
         return true;
