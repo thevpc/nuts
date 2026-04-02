@@ -29,13 +29,13 @@ import net.thevpc.nuts.core.*;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
-import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
+import net.thevpc.nuts.runtime.standalone.util.collections.NLRUMapImpl;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -56,7 +56,6 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUp
 import net.thevpc.nuts.runtime.standalone.repository.impl.AbstractNRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt0;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryFolderHelper;
-import net.thevpc.nuts.util.NLRUMap;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -76,7 +75,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     public static final String INSTALLED_REPO_UUID = "<main>";
     public static final String NUTS_INSTALL_FILE = "nuts-install.json";
     private final NRepositoryFolderHelper deployments;
-    private final Map<NId, String> cachedDefaultVersions = new NLRUMap<>(200);
+    private final Map<NId, String> cachedDefaultVersions = new NLRUMapImpl<>(200);
 
     public DefaultNInstalledRepository(NBootOptions bOptions) {
         super();
@@ -683,7 +682,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNSearchVersionsRepositoryCmd(this) {
             @Override
             public NSearchVersionsRepositoryCmd run() {
-                final NVersionFilter filter0 = getId().getVersion().filter();
+                final NVersionFilter filter0 = getId().getVersion().toFilter();
                 SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("<installed>"));
                 result = NStream.ofIterator(_wstore().searchInstalledVersions(getId()))
                         .map(NFunction.of(vv -> {
