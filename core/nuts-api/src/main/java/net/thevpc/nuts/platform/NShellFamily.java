@@ -105,15 +105,15 @@ public enum NShellFamily implements NEnum {
     public static NOptional<NShellFamily> parse(String value) {
         return NEnumUtils.parseEnum(value, NShellFamily.class, s -> {
             String n = null;
-            if (s.getValue().contains("/")) {
-                List<String> parts = NStringUtils.split(s.getValue().trim().toUpperCase(), "/",true,true);
+            if (s.value().contains("/")) {
+                List<String> parts = NStringUtils.split(s.value().trim().toUpperCase(), "/",true,true);
                 if (parts.size() > 0) {
                     n = parts.get(parts.size() - 1);
                 } else {
                     n = "";
                 }
             } else {
-                n = s.getNormalizedValue();
+                n = s.normalizedValue();
             }
             switch (n) {
                 case "":
