@@ -76,7 +76,7 @@ public enum NTextStyleType implements NEnum {
 
     public static NOptional<NTextStyleType> parse(String value) {
         return NEnumUtils.parseEnum(value, NTextStyleType.class, s -> {
-            switch (s.getNormalizedValue()) {
+            switch (s.normalizedValue()) {
                 case "F":
                 case "FOREGROUND":
                 case "FOREGROUNDCOLOR":
