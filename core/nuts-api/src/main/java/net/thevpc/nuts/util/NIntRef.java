@@ -5,7 +5,9 @@ package net.thevpc.nuts.util;
  * @author vpc
  */
 public class NIntRef extends NObjectRef<Integer> {
-
+    public static NIntRef of(){
+        return new NIntRef(null);
+    }
     public NIntRef(Integer value) {
         super(value);
     }
