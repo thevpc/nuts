@@ -104,7 +104,6 @@ net.thevpc.nuts.runtime.standalone.text.highlighter.PlainCodeHighlighter
 net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNContentTypeResolver
 net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO
 net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI
-net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNLibPaths
 net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest
 net.thevpc.nuts.runtime.standalone.xtra.time.DefaultNInputStreamMonitor
 net.thevpc.nuts.runtime.standalone.xtra.cp.DefaultNCp
