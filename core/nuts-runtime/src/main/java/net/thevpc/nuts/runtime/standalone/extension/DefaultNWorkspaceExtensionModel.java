@@ -19,9 +19,8 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.platform.NStoreScope;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.util.NDefaultClassLoaderNode;
+import net.thevpc.nuts.runtime.standalone.util.collections.NListMultiValueMapImpl;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.ext.NExtensionAlreadyRegisteredException;
@@ -36,7 +35,7 @@ import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NFormattedPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.util.NListValueMap;
+import net.thevpc.nuts.util.NListMultiValueMap;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -89,7 +88,7 @@ public class DefaultNWorkspaceExtensionModel {
                     NWorkspaceArchetypeComponent.class
             )
     );
-    private final NListValueMap<String, String> defaultWiredComponents = new NListValueMap<>();
+    private final NListMultiValueMap<String, String> defaultWiredComponents = new NListMultiValueMapImpl<>();
     private final Set<String> exclusions = new HashSet<String>();
     private final NWorkspace workspace;
     private final NBootWorkspaceFactory bootFactory;
