@@ -25,20 +25,36 @@ public class NChronometer implements Serializable {
     private ChronoUnit smallestUnit;
     private ChronoUnit largestUnit;
 
-    public static NChronometer startNow() {
-        return startNow(null, null);
+    public static NChronometer of() {
+        return of(null, null);
     }
 
-    public static NChronometer startNow(String name) {
-        return startNow(name, null);
+    public static NChronometer of(String name) {
+        return of(name, null);
     }
 
-    public static NChronometer startNow(ChronoUnit smallestUnit) {
-        return startNow(null, smallestUnit);
+    public static NChronometer of(ChronoUnit smallestUnit) {
+        return of(null, smallestUnit);
     }
 
-    public static NChronometer startNow(String name, ChronoUnit smallestUnit) {
+    public static NChronometer of(String name, ChronoUnit smallestUnit) {
         return new NChronometer(name, smallestUnit).start();
+    }
+
+    public static NChronometer ofUnstarted() {
+        return ofUnstarted(null, null);
+    }
+
+    public static NChronometer ofUnstarted(String name) {
+        return ofUnstarted(name, null);
+    }
+
+    public static NChronometer ofUnstarted(ChronoUnit smallestUnit) {
+        return ofUnstarted(null, smallestUnit);
+    }
+
+    public static NChronometer ofUnstarted(String name, ChronoUnit smallestUnit) {
+        return new NChronometer(name, smallestUnit);
     }
 
     public NChronometer() {
@@ -108,11 +124,6 @@ public class NChronometer implements Serializable {
 
     public NChronometer setName(String desc) {
         this.name = desc;
-        return this;
-    }
-
-    public NChronometer updateDescription(String desc) {
-        setName(desc);
         return this;
     }
 
