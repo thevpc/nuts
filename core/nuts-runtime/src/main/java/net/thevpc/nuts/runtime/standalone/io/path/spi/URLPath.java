@@ -9,6 +9,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
+import net.thevpc.nuts.runtime.standalone.util.collections.NLRUMapImpl;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
@@ -38,7 +39,7 @@ public class URLPath implements NPathSPI {
     public static final Pattern MOSTLY_URL_PATTERN = Pattern.compile("([a-zA-Z][a-zA-Z0-9_-]+):.*");
 
     protected URL url;
-    protected static final NLRUMap<URL, NCachedValue<CacheInfo>> cacheManager = new NLRUMap<URL, NCachedValue<CacheInfo>>(1024);
+    protected static final NLRUMapImpl<URL, NCachedValue<CacheInfo>> cacheManager = new NLRUMapImpl<URL, NCachedValue<CacheInfo>>(1024);
 
 
     public URLPath(URL url) {
@@ -624,7 +625,7 @@ public class URLPath implements NPathSPI {
     }
 
     private static CacheInfo loadCacheInfo(URL url) {
-        NChronometer chrono = NChronometer.startNow();
+        NChronometer chrono = NChronometer.of();
         boolean success = true;
         try {
             URLConnection c = url.openConnection();
