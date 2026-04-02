@@ -837,10 +837,10 @@ public enum NOperatorSymbol implements NEnum {
     }
 
     public static NOptional<NOperatorSymbol> parse(String value) {
-        return NEnumUtils.parseEnum(value, NOperatorSymbol.class, new Function<NEnumUtils.EnumValue, NOptional<NOperatorSymbol>>() {
+        return NEnumUtils.parseEnum(value, NOperatorSymbol.class, new Function<NEnumUtils.NEnumCandidate, NOptional<NOperatorSymbol>>() {
             @Override
-            public NOptional<NOperatorSymbol> apply(NEnumUtils.EnumValue enumValue) {
-                String s = enumValue.getValue().trim();
+            public NOptional<NOperatorSymbol> apply(NEnumUtils.NEnumCandidate enumValue) {
+                String s = enumValue.value().trim();
                 NOperatorSymbol u = BY_LEXEME.get(s);
                 if (u != null) {
                     return NOptional.of(u);
