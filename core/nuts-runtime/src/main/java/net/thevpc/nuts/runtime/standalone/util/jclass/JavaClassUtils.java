@@ -193,9 +193,9 @@ public class JavaClassUtils {
     }
 
     public static String sourceVersionToClassVersion(String sourceVersion) {
-        NVersion v = NVersion.get(sourceVersion).get();
-        int major = v.getIntegerAt(0).orElse(0);
-        int minor = v.getIntegerAt(1).orElse(-1);
+        NVersion v = NVersion.getPartAt(sourceVersion).get();
+        int major = v.getIntAt(0).orElse(0);
+        int minor = v.getIntAt(1).orElse(-1);
         if (major < 1) {
             throw new NIllegalArgumentException(NMsg.ofC("invalid sourceVersion %s", sourceVersion));
         }
