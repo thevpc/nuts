@@ -272,7 +272,7 @@ public class DefaultNExec extends AbstractNExec {
     private void runOnce(NExecutableInformationExt exec) {
         executed = true;
         executionTime = null;
-        NChronometer chrono = NChronometer.startNow();
+        NChronometer chrono = NChronometer.of();
         try {
             int exitCode = NExecutionException.SUCCESS;
             try {
