@@ -228,7 +228,7 @@ public class TextArtTest {
 
     @Test
     public void testAll() {
-        NChronometer nChronometer = NChronometer.startNow();
+        NChronometer nChronometer = NChronometer.of();
         {
             NOut.println("TEST 5 ");
             NTextArt art = NTextArt.of();
