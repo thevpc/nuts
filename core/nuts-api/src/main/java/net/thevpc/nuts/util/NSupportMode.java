@@ -42,7 +42,7 @@ public enum NSupportMode implements NEnum {
 
     public static NOptional<NSupportMode> parse(String value) {
         return NEnumUtils.parseEnum(value, NSupportMode.class, s -> {
-            switch (s.getNormalizedValue()){
+            switch (s.normalizedValue()){
                 case "UNSUPPORTED":
                 case "NO":
                 case "FALSE":
