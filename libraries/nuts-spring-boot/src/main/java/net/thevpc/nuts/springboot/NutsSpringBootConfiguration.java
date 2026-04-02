@@ -15,7 +15,6 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.expr.NExprs;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.io.NLibPaths;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NReflect;
 import net.thevpc.nuts.io.NIO;
@@ -104,14 +103,6 @@ public class NutsSpringBootConfiguration {
             return NDefinitionFilters.of();
         });
     }
-
-    @Bean
-    public NLibPaths nutsLibPaths(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(() -> {
-            return NLibPaths.of();
-        });
-    }
-
 
     @Bean
     public NProgressMonitors nutsProgressMonitors(@Autowired ApplicationArguments applicationArguments) {
