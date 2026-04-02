@@ -79,7 +79,7 @@ public class NDescriptorUtils {
                                 .setDefaultValue(ov)
                                 .setHintMessage(NBlankable.isBlank(ov) ? null : NMsg.ofPlain(ov))
                                 .getValue();
-                        version = NVersion.get(v).get();
+                        version = NVersion.getPartAt(v).get();
                     }
                     break;
                 }
