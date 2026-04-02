@@ -389,17 +389,17 @@ public class DefaultNId implements NId {
     }
 
     @Override
-    public NIdFilter filter() {
+    public NIdFilter toFilter() {
         return NIdFilters.of().byValue(this);
     }
 
     @Override
-    public NId compatNewer() {
-        return builder().setVersion(getVersion().compatNewer()).build();
+    public NId toAtLeast() {
+        return builder().setVersion(getVersion().toAtMost()).build();
     }
 
     @Override
-    public NId compatOlder() {
-        return builder().setVersion(getVersion().compatOlder()).build();
+    public NId toAtMost() {
+        return builder().setVersion(getVersion().toAtLeast()).build();
     }
 }
