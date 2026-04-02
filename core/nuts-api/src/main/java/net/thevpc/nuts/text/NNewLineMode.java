@@ -21,10 +21,10 @@ public enum NNewLineMode implements NEnum {
     }
 
     public static NOptional<NNewLineMode> parse(String value) {
-        return NEnumUtils.parseEnum(value, NNewLineMode.class, new Function<NEnumUtils.EnumValue, NOptional<NNewLineMode>>() {
+        return NEnumUtils.parseEnum(value, NNewLineMode.class, new Function<NEnumUtils.NEnumCandidate, NOptional<NNewLineMode>>() {
             @Override
-            public NOptional<NNewLineMode> apply(NEnumUtils.EnumValue enumValue) {
-                switch (enumValue.getValue()) {
+            public NOptional<NNewLineMode> apply(NEnumUtils.NEnumCandidate enumValue) {
+                switch (enumValue.value()) {
                     case "\n": {
                         return NOptional.of(NNewLineMode.LF);
                     }
