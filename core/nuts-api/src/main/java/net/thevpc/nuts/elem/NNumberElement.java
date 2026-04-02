@@ -9,7 +9,7 @@ public interface NNumberElement extends NPrimitiveElement {
 
     BigDecimal bigDecimalValue();
 
-    BigInteger bigIntegerValue();
+    BigInteger bigIntValue();
 
     NNumberLayout numberLayout();
 
