@@ -38,8 +38,10 @@ public interface NClassPairMultiMap<A, B, V> {
      */
     List<V> getExact(Class<? extends A> a, Class<? extends B> b);
 
-    void clear(Class<? extends A> a, Class<? extends B> b);
+    boolean clear(Class<? extends A> a, Class<? extends B> b);
 
-    void clear();
+    boolean clear();
+
+    boolean isEmpty();
 
 }
