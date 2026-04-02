@@ -504,7 +504,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     boolean addCommand(NCommandConfig command);
 
     /**
-     * update command. if the command does not exists (not registered, regardless off being defined by command factories) a NutsIllegalArgumentException is thrown.
+     * update command. if the command does not exist (not registered, regardless off being defined by command factories) a NutsIllegalArgumentException is thrown.
      *
      * @param command command
      * @return true if successfully updated
@@ -588,7 +588,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     NClassLoaderNode getBootRuntimeClassLoaderNode();
 
-    List<NClassLoaderNode> getBootExtensionClassLoaderNode();
+    List<NClassLoaderNode> getBootExtensionClassLoaderNodes();
 
     NWorkspaceTerminalOptions getBootTerminal();
 
