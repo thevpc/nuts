@@ -78,7 +78,7 @@ public enum NTerminalMode implements NEnum {
 
     public static NOptional<NTerminalMode> parse(String value) {
         return NEnumUtils.parseEnum(value, NTerminalMode.class, s -> {
-            String normalizedValue = s.getNormalizedValue();
+            String normalizedValue = s.normalizedValue();
             switch (normalizedValue){
                 case "SYSTEM":
                 case "S":
