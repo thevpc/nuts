@@ -67,7 +67,7 @@ public class CoreAnsiTermHelper {
     }
 
     public static String evalCommand(String... cmd) {
-        NChronometer chronometer = NChronometer.startNow();
+        NChronometer chronometer = NChronometer.of();
         try {
             try {
                 String s = NExec.of()
