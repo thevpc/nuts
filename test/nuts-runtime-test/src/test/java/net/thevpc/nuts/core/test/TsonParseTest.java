@@ -933,29 +933,29 @@ public class TsonParseTest {
 
     @Test
     public void testSpecial23() {
-        NChronometer c = NChronometer.startNow();
+        NChronometer c = NChronometer.of();
         String expected = NIOUtils.readString(
                 TsonParseTest.class.getResourceAsStream("bigtson.tson")
         );
         c.stop();
         TestUtils.println("load in " + c);
 
-        c = NChronometer.startNow();
+        c = NChronometer.of();
         NElement e = NElementReader.ofTson().read(expected);
         c.stop();
         TestUtils.println("read in " + c);
 
-        c = NChronometer.startNow();
+        c = NChronometer.of();
         String s2 = e.toString();
         c.stop();
         TestUtils.println("toString in " + c);
 
-        c = NChronometer.startNow();
+        c = NChronometer.of();
         s2 = e.toPrettyString();
         c.stop();
         TestUtils.println("toPrettyString in " + c);
 
-        c = NChronometer.startNow();
+        c = NChronometer.of();
         s2 = e.toCompactString();
         c.stop();
         TestUtils.println("toCompactString in " + c);
