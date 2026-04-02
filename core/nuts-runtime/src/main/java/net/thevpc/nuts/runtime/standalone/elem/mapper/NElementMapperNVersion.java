@@ -4,7 +4,6 @@ import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.text.NObjectWriter;
 
 import java.lang.reflect.Type;
@@ -31,7 +30,7 @@ public class NElementMapperNVersion implements NElementMapper<NVersion> {
 
     @Override
     public NVersion createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        return NVersion.get(o.asStringValue().get()).get();
+        return NVersion.getPartAt(o.asStringValue().get()).get();
     }
 
 }
