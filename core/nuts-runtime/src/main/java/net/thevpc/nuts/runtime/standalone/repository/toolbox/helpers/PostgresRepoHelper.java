@@ -146,7 +146,7 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
     }
 
     private String getUrl(NVersion version) {
-        return POSTGRESQL_SOURCE_BASE_URL + version.get(0).flatMap(NLiteral::asString) + "/postgresql-" + version.get(0).flatMap(NLiteral::asString) + ".tar.gz";
+        return POSTGRESQL_SOURCE_BASE_URL + version.getPartAt(0).map(NVersionPart::value).orElse("unknown") + "/postgresql-" + version.getPartAt(0).map(NVersionPart::value).orElse("unknown") + ".tar.gz";
     }
 
 
