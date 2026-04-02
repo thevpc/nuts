@@ -60,9 +60,9 @@ public enum NElementTypeGroup implements NEnum {
     }
 
     public static NOptional<NElementTypeGroup> parse(String value) {
-        return NEnumUtils.parseEnum(value, NElementTypeGroup.class, new Function<NEnumUtils.EnumValue, NOptional<NElementTypeGroup>>() {
+        return NEnumUtils.parseEnum(value, NElementTypeGroup.class, new Function<NEnumUtils.NEnumCandidate, NOptional<NElementTypeGroup>>() {
             @Override
-            public NOptional<NElementTypeGroup> apply(NEnumUtils.EnumValue enumValue) {
+            public NOptional<NElementTypeGroup> apply(NEnumUtils.NEnumCandidate enumValue) {
                 return null;
             }
         });
