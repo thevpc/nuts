@@ -9,22 +9,19 @@ import net.thevpc.nuts.text.NTextFormattable;
  */
 public class NMemoryMeter implements NTextFormattable {
 
-    private NMemoryUsage startMemory;
-    private NMemoryUsage endMemory;
+    private NMemorySnapshot startMemory;
+    private NMemorySnapshot endMemory;
     private String name;
 
-    public static NMemoryMeter startNow() {
+    public static NMemoryMeter of() {
         return new NMemoryMeter().start();
     }
 
-    public NMemoryMeter() {
-        start();
+    public static NMemoryMeter ofUnstarted() {
+        return new NMemoryMeter();
     }
 
-    public NMemoryMeter(boolean start) {
-        if (start) {
-            start();
-        }
+    public NMemoryMeter() {
     }
 
     public NMemoryMeter copy() {
@@ -36,7 +33,7 @@ public class NMemoryMeter implements NTextFormattable {
     }
 
     /**
-     * restart chronometer and returns a stopped snapshot/copy of the current
+     * restart memory meter and returns a stopped snapshot/copy of the current
      *
      * @return
      */
@@ -48,30 +45,21 @@ public class NMemoryMeter implements NTextFormattable {
     }
 
     /**
-     * restart chronometer with new name and returns a stopped snapshot/copy of the current (with old name)
+     * restart memory meter with new name and returns a stopped snapshot/copy of the current (with old name)
      *
-     * @param newName
+     * @param name
      * @return
      */
-    public NMemoryMeter restart(String newName) {
+    public NMemoryMeter restart(String name) {
         stop();
         NMemoryMeter c = copy();
-        setName(newName);
+        setName(name);
         start();
         return c;
     }
 
-    public NMemoryMeter(String name) {
+    public NMemoryMeter setName(String name) {
         this.name = name;
-    }
-
-    public NMemoryMeter setName(String desc) {
-        this.name = desc;
-        return this;
-    }
-
-    public NMemoryMeter updateDescription(String desc) {
-        setName(desc);
         return this;
     }
 
@@ -80,29 +68,33 @@ public class NMemoryMeter implements NTextFormattable {
     }
 
     public boolean isStarted() {
-        return startMemory != null && endMemory == null;
+        return startMemory != null;
     }
 
     public boolean isStopped() {
-        return endMemory == null;
+        return endMemory != null;
+    }
+
+    public boolean isRunning() {
+        return startMemory != null && endMemory == null;
     }
 
     public NMemoryMeter start() {
         endMemory = null;
-        startMemory = new NMemoryUsage();
+        startMemory = NMemorySnapshot.now();
         return this;
     }
 
     public NMemoryMeter stop() {
-        endMemory = new NMemoryUsage();
+        endMemory = NMemorySnapshot.now();
         return this;
     }
 
-    public NMemoryUsage getStartMemory() {
+    public NMemorySnapshot startSnapshot() {
         return startMemory;
     }
 
-    public NMemoryUsage getEndMemory() {
+    public NMemorySnapshot endSnapshot() {
         return endMemory;
     }
 
@@ -111,7 +103,7 @@ public class NMemoryMeter implements NTextFormattable {
     }
 
     public NMemoryUsage usage() {
-        return ((endMemory == null) ? new NMemoryUsage() : endMemory).diff(startMemory);
+        return ((endMemory == null) ? NMemorySnapshot.now() : endMemory).minus(startMemory);
     }
 
 
