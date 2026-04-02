@@ -56,7 +56,7 @@ public enum NStoreStrategy implements NEnum {
 
     public static NOptional<NStoreStrategy> parse(String value) {
         return NEnumUtils.parseEnum(value, NStoreStrategy.class, s->{
-            switch (s.getNormalizedValue()) {
+            switch (s.normalizedValue()) {
                 case "S":
                     return NOptional.of(NStoreStrategy.STANDALONE);
                 case "E":
