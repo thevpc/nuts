@@ -6,7 +6,6 @@ import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
@@ -182,11 +181,11 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         boolean folders = false;
         boolean files = true;
         List<String> all = new ArrayList<>();
-        NChronometer c = NChronometer.startNow();
+        NChronometer c = NChronometer.of();
         String dotFilesContent = null;
         String dotFilesUrl = NStringUtils.pjoin("/", baseUrl, CoreNConstants.Files.DOT_FILES);
         NSession session = NSession.of();
-        NVersion versionString = NVersion.get("0.5.5").get();
+        NVersion versionString = NVersion.getPartAt("0.5.5").get();
         try (InputStream foldersFileStream = NInputStreamMonitor.of().setSource(NPath.of(dotFilesUrl)).create()) {
             session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", NCoreLogUtils.forProgress(NPath.of(baseUrl))));
             dotFilesContent=NIOUtils.loadString(foldersFileStream, false);
@@ -204,7 +203,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                             if (all.isEmpty()) {
                                 s = s.substring(1).trim();
                                 if (s.startsWith("version=")) {
-                                    versionString = NVersion.get(s.substring("version=".length()).trim()).get();
+                                    versionString = NVersion.getPartAt(s.substring("version=".length()).trim()).get();
                                 }
                             }
                         } else {
@@ -258,7 +257,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
             if (folders) {
                 String[] dotFoldersContent = null;
                 String dotFolderUrl = NStringUtils.pjoin("/", baseUrl, CoreNConstants.Files.DOT_FOLDERS);
-                c = NChronometer.startNow();
+                c = NChronometer.of();
                 try (InputStream stream = NInputStreamMonitor.of().setSource(NPath.of(dotFolderUrl))
                         .create()) {
                     dotFoldersContent = StringTokenizerUtils.splitNewLine(NIOUtils.loadString(stream, true))
