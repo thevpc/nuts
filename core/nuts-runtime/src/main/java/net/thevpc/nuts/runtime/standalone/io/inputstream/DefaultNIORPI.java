@@ -1,11 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
 import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NAppDefinition;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.*;
 
 import net.thevpc.nuts.command.NExecutionEntry;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
@@ -18,12 +21,16 @@ import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFro
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractNInputSource;
 import net.thevpc.nuts.runtime.standalone.io.util.NInputStreamSource;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParser;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.text.SimpleWriterOutputStream;
 import net.thevpc.nuts.runtime.standalone.util.DefaultNTextCursorTracker;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
+import net.thevpc.nuts.runtime.standalone.xtra.idresolver.NMetaInfIdResolver;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
@@ -37,8 +44,9 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNIORPI implements NIORPI {
@@ -661,6 +669,91 @@ public class DefaultNIORPI implements NIORPI {
             return u == null ? Collections.emptyList() : Collections.singletonList(u);
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public List<NPath> ofOrigins(Class<?> clazz) {
+        return JavaClassUtils.resolveURLs(clazz).stream().map(x->NPath.of(x)).collect(Collectors.toList());
+    }
+
+    @Override
+    public NOptional<NPath> ofOrigin(Class<?> clazz) {
+        List<NPath> c = ofOrigins(clazz);
+        return c.isEmpty() ?
+                NOptional.ofNamedEmpty("LibPath fo "+clazz)
+                : NOptional.of(c.get(0));
+    }
+
+
+    @Override
+    public NOptional<NId> resolveId(Class<?> clazz) {
+        clazz=JavaClassUtils.unwrapCGLib(clazz);
+        List<NId> pomIds = resolveIds(clazz);
+        NId defaultValue = null;
+        if (pomIds.isEmpty()) {
+            return NOptional.ofNamedEmpty("Id fo "+clazz);
+        }
+        if (pomIds.size() > 1) {
+            NLog.of(NPomXmlParser.class)
+                    .log(NMsg.ofC(
+                                    "multiple ids found : %s for class %s and id %s",
+                                    Arrays.asList(pomIds), clazz, defaultValue
+                            ).withIntent(NMsgIntent.ALERT)
+                            .withLevel(Level.FINEST));
+        }
+        return NOptional.of(pomIds.get(0));
+    }
+
+    @Override
+    public NOptional<NId> resolveId(NPath path) {
+        List<NId> pomIds = resolveIds(path);
+        NId defaultValue = null;
+        if (pomIds.isEmpty()) {
+            return NOptional.ofNamedEmpty("Id fo "+path);
+        }
+        if (pomIds.size() > 1) {
+            NLog.of(NPomXmlParser.class)
+
+                    .log(NMsg.ofC(
+                                    "multiple ids found : %s for path %s and id %s",
+                                    Arrays.asList(pomIds), path, defaultValue
+                            ).withIntent(NMsgIntent.ALERT)
+                            .withLevel(Level.FINEST));
+        }
+        return NOptional.of(pomIds.get(0));
+    }
+
+    @Override
+    public List<NId> resolveIds(NPath path) {
+        LinkedHashSet<NId> all = new LinkedHashSet<>();
+        NPomId[] u = MavenUtils.createPomIdResolver(NWorkspace.of()).resolvePomIds(path);
+        all.addAll(
+                Arrays.asList(new NMetaInfIdResolver().resolvePomIds(path))
+        );
+        for (NPomId uu : u) {
+            all.add(NId.get(uu.getGroupId() + ":" + uu.getArtifactId() + "#" + uu.getVersion()).get());
+        }
+        return new ArrayList<>(all);
+    }
+
+    @Override
+    public List<NId> resolveIds(Class<?> clazz) {
+        clazz=JavaClassUtils.unwrapCGLib(clazz);
+        LinkedHashSet<NId> all = new LinkedHashSet<>();
+        NAppDefinition annotation = (NAppDefinition) clazz.getAnnotation(NAppDefinition.class);
+        if (annotation != null) {
+            if (!NBlankable.isBlank(annotation.id())) {
+                all.add(NId.get(annotation.id()).get());
+            }
+        }
+        NPomId[] u = MavenUtils.createPomIdResolver(NWorkspace.of()).resolvePomIds(clazz);
+        all.addAll(
+                Arrays.asList(new NMetaInfIdResolver().resolvePomIds(clazz))
+        );
+        for (NPomId uu : u) {
+            all.add(NId.get(uu.getGroupId() + ":" + uu.getArtifactId() + "#" + uu.getVersion()).get());
+        }
+        return new ArrayList<>(all);
     }
 
     private class InputStreamProviderToNInputSourceAdapter extends AbstractNInputSource {
