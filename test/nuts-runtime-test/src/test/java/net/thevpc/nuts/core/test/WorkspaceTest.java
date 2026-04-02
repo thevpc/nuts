@@ -226,12 +226,6 @@ public class WorkspaceTest {
             Assertions.assertNotNull(h);
         }
 
-
-        {
-            NLibPaths c = NLibPaths.of();
-            Assertions.assertNotNull(c);
-        }
-
         {
             NDigest c = NDigest.of();
             Assertions.assertNotNull(c);
