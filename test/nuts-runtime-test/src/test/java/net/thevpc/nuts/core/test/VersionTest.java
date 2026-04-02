@@ -93,16 +93,16 @@ public class VersionTest {
 
     @Test
     public void test10() {
-        NVersion v1 = NVersion.get("1.2-preview").get();
-        NVersion v2 = NVersion.get("1.2").get();
+        NVersion v1 = NVersion.getPartAt("1.2-preview").get();
+        NVersion v2 = NVersion.getPartAt("1.2").get();
         // preview is unsupported qualifier so it is after final
         Assertions.assertTrue(v1.compareTo(v2)>0);
     }
 
     @Test
     public void test11() {
-        NVersion v1 = NVersion.get("1.2-preview").get();
-        NVersion v2 = NVersion.get("1.2.1").get();
+        NVersion v1 = NVersion.getPartAt("1.2-preview").get();
+        NVersion v2 = NVersion.getPartAt("1.2.1").get();
         Assertions.assertTrue(v1.compareTo(v2)<0);
     }
 
@@ -132,18 +132,18 @@ public class VersionTest {
     @Test
     public void test14() {
         String version = "";
-        Assertions.assertEquals(true, NVersion.get(version).get().isBlank());
-        Assertions.assertEquals(false, NVersion.get(version).get().isFilter());
-        Assertions.assertEquals(false, NVersion.get(version).get().isNull());
-        Assertions.assertEquals(false, NVersion.get(version).get().isSingleValue());
+        Assertions.assertEquals(true, NVersion.getPartAt(version).get().isBlank());
+        Assertions.assertEquals(false, NVersion.getPartAt(version).get().isFilter());
+        Assertions.assertEquals(false, NVersion.getPartAt(version).get().isNull());
+        Assertions.assertEquals(false, NVersion.getPartAt(version).get().isSingleValue());
     }
     @Test
     public void test15() {
         String version = "a";
-        Assertions.assertEquals(false, NVersion.get(version).get().isBlank());
-        Assertions.assertEquals(false, NVersion.get(version).get().isFilter());
-        Assertions.assertEquals(false, NVersion.get(version).get().isNull());
-        Assertions.assertEquals(true, NVersion.get(version).get().isSingleValue());
+        Assertions.assertEquals(false, NVersion.getPartAt(version).get().isBlank());
+        Assertions.assertEquals(false, NVersion.getPartAt(version).get().isFilter());
+        Assertions.assertEquals(false, NVersion.getPartAt(version).get().isNull());
+        Assertions.assertEquals(true, NVersion.getPartAt(version).get().isSingleValue());
     }
 
     @Test
@@ -152,12 +152,12 @@ public class VersionTest {
                 "[a]","[a,a]","a,a",
                 "a,",
                 ",a"}) {
-            NVersion nutsVersion = NVersion.get(version).get();
+            NVersion nutsVersion = NVersion.getPartAt(version).get();
             Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
             Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
             Assertions.assertEquals(true, nutsVersion.isFilter(),version+".isFilter");
             Assertions.assertEquals(true, nutsVersion.isSingleValue(),version+".isSingleValue");
-            Assertions.assertEquals(false, nutsVersion.intervals().isError(),version+".isError");
+            Assertions.assertEquals(false, nutsVersion.toIntervals().isError(),version+".isError");
         }
     }
     @Test
@@ -173,12 +173,12 @@ public class VersionTest {
                 ,"[,a]"
                 ,"[,]"
         }) {
-            NVersion nutsVersion = NVersion.get(version).get();
+            NVersion nutsVersion = NVersion.getPartAt(version).get();
             Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
             Assertions.assertEquals(true, nutsVersion.isFilter(),version+".isFilter");
             Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
             Assertions.assertEquals(false, nutsVersion.isSingleValue(),version+".isSingleValue");
-            Assertions.assertEquals(false, nutsVersion.intervals().isError(),version+".isError");
+            Assertions.assertEquals(false, nutsVersion.toIntervals().isError(),version+".isError");
         }
     }
 
@@ -189,12 +189,12 @@ public class VersionTest {
                 ,"[a,a[a"
                 ,"],a"
         }) {
-            NVersion nutsVersion = NVersion.get(version).get();
+            NVersion nutsVersion = NVersion.getPartAt(version).get();
             Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
             Assertions.assertEquals(true, nutsVersion.isFilter(),version+".isFilter");
             Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
             Assertions.assertEquals(false, nutsVersion.isSingleValue(),version+".isSingleValue");
-            Assertions.assertEquals(true, nutsVersion.intervals().isError(),version+".isError");
+            Assertions.assertEquals(true, nutsVersion.toIntervals().isError(),version+".isError");
         }
     }
 
@@ -203,12 +203,12 @@ public class VersionTest {
         for (String version : new String[]{
                 " a a "
         }) {
-            NVersion nutsVersion = NVersion.get(version).get();
+            NVersion nutsVersion = NVersion.getPartAt(version).get();
             Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
             Assertions.assertEquals(false, nutsVersion.isFilter(),version+".isFilter");
             Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
             Assertions.assertEquals(false, nutsVersion.isSingleValue(),version+".isSingleValue");
-            Assertions.assertEquals(true, nutsVersion.intervals().isError(),version+".isError");
+            Assertions.assertEquals(true, nutsVersion.toIntervals().isError(),version+".isError");
         }
     }
 
@@ -219,14 +219,14 @@ public class VersionTest {
 
     @Test
     public void test21() {
-        NVersion r = NVersion.get("0.8.5.0").get().inc(-1, 10);
+        NVersion r = NVersion.getPartAt("0.8.5.0").get().inc(-1, 10);
         Assertions.assertEquals(r.toString(),"0.8.5.10");
     }
 
     @Test
     public void test22() {
         NVersion v = NVersion.of("1.2.3.Final");
-        Assertions.assertTrue(v.filter().acceptVersion(v));
+        Assertions.assertTrue(v.toFilter().acceptVersion(v));
     }
 
 
@@ -289,17 +289,17 @@ public class VersionTest {
     @Test
     public void test24() {
         Nuts.require();
-        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4[").filter().acceptVersion(NVersion.of("1.2.3.Final")));
-        Assertions.assertFalse(NVersion.of("[1.2.3,1.2.4[").filter().acceptVersion(NVersion.of("1.2.3.beta")));
-        Assertions.assertFalse(NVersion.of("[1.2.3,1.2.4[").filter().acceptVersion(NVersion.of("1.2.3.SNAPSHOT")));
-        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4[").filter().acceptVersion(NVersion.of("1.2.3.SOMETHING"))); // SOMETHING is after final
-        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4]").filter().acceptVersion(NVersion.of("1.2.3")));
-        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4)").filter().acceptVersion(NVersion.of("1.2.3")));
-        Assertions.assertFalse(NVersion.of("[1.2.3,1.2.4)").filter().acceptVersion(NVersion.of("1.2.4")));
-        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4)").filter().acceptVersion(NVersion.of("1.2.3.1")));
-        Assertions.assertTrue(NVersion.of("[1.0,1.1],[1.2,1.3)").filter().acceptVersion(NVersion.of("1.0.5")));
-        Assertions.assertFalse(NVersion.of("[1.0,1.1],[1.2,1.3)").filter().acceptVersion(NVersion.of("1.1.5")));
-        Assertions.assertTrue(NVersion.of("[1.0,1.1],[1.2,1.3)").filter().acceptVersion(NVersion.of("1.2.0")));
+        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4[").toFilter().acceptVersion(NVersion.of("1.2.3.Final")));
+        Assertions.assertFalse(NVersion.of("[1.2.3,1.2.4[").toFilter().acceptVersion(NVersion.of("1.2.3.beta")));
+        Assertions.assertFalse(NVersion.of("[1.2.3,1.2.4[").toFilter().acceptVersion(NVersion.of("1.2.3.SNAPSHOT")));
+        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4[").toFilter().acceptVersion(NVersion.of("1.2.3.SOMETHING"))); // SOMETHING is after final
+        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4]").toFilter().acceptVersion(NVersion.of("1.2.3")));
+        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4)").toFilter().acceptVersion(NVersion.of("1.2.3")));
+        Assertions.assertFalse(NVersion.of("[1.2.3,1.2.4)").toFilter().acceptVersion(NVersion.of("1.2.4")));
+        Assertions.assertTrue(NVersion.of("[1.2.3,1.2.4)").toFilter().acceptVersion(NVersion.of("1.2.3.1")));
+        Assertions.assertTrue(NVersion.of("[1.0,1.1],[1.2,1.3)").toFilter().acceptVersion(NVersion.of("1.0.5")));
+        Assertions.assertFalse(NVersion.of("[1.0,1.1],[1.2,1.3)").toFilter().acceptVersion(NVersion.of("1.1.5")));
+        Assertions.assertTrue(NVersion.of("[1.0,1.1],[1.2,1.3)").toFilter().acceptVersion(NVersion.of("1.2.0")));
 
     }
 
