@@ -48,9 +48,9 @@ public interface NEnum {
     /**
      * parse the given value and return a valid value or a default value (mostly null, but can be other)
      *
-     * @param type    enum type
-     * @param value   string value to parse
-     * @param <T>     enum Type
+     * @param type  enum type
+     * @param value string value to parse
+     * @param <T>   enum Type
      * @return valid instance by calling {@code T.parse(value)}
      * @since 0.8.3
      */
@@ -61,7 +61,7 @@ public interface NEnum {
             m = type.getMethod("parse", String.class);
         } catch (Exception ex) {
             NMsg msg = NMsg.ofC("NutsEnum %s must implement a public static method parse(String,NSession)", type.getName());
-            return NOptional.ofError(() -> msg,ex);
+            return NOptional.ofError(() -> msg, ex);
         }
         if (!Modifier.isStatic(m.getModifiers()) || !Modifier.isPublic(m.getModifiers()) || !m.getReturnType().equals(NOptional.class)) {
             NMsg msg = NMsg.ofC("NutsEnum %s must implement a public static method parse(String,NSession)", type.getName());
@@ -72,7 +72,7 @@ public interface NEnum {
             r = (NOptional<T>) m.invoke(null, value);
         } catch (Exception ex) {
             NMsg msg = NMsg.ofC("failed executing %s.parse(String) ", type.getName());
-            return NOptional.ofError(() -> msg,ex);
+            return NOptional.ofError(() -> msg, ex);
         }
         return r;
     }
