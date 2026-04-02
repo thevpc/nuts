@@ -769,7 +769,7 @@ public class DefaultNCp implements NCp {
                             .setLogProgress(options.contains(NPathOption.LOG))
                             .create());
         }
-        NChronometer chrono = NChronometer.startNow();
+        NChronometer chrono = NChronometer.of();
         if (_LOG().isLoggable(Level.FINEST)) {
             _LOG().log(NMsg.ofC("%s %s to %s",
                     m,
