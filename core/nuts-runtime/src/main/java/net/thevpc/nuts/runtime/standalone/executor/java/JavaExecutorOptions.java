@@ -8,7 +8,6 @@ import net.thevpc.nuts.command.NExecutionEntry;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.platform.NExecutionEngineLocation;
-import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -25,7 +24,6 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 
 import net.thevpc.nuts.runtime.standalone.util.NDefaultClassLoaderNode;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.command.NFetchStrategy;
 
@@ -745,11 +743,11 @@ public final class JavaExecutorOptions {
                 extraExecutorOptions.add(varg.toString());
             }
         }
-        java9 = NVersion.get(javaVersion).get().compareTo("9") >= 0;
+        java9 = NVersion.getPartAt(javaVersion).get().compareTo("9") >= 0;
         for (NArg extraMayBeJvmOption : extraMayBeJvmOptions) {
             if (extraMayBeJvmOption.toString().startsWith("--jvm-")) {
                 getJvmArgs().add(extraMayBeJvmOption.toString().substring("--jvm".length()));
-            } else if (isJvmOption(extraMayBeJvmOption, NVersion.get(javaVersion).get())) {
+            } else if (isJvmOption(extraMayBeJvmOption, NVersion.getPartAt(javaVersion).get())) {
                 getJvmArgs().add(extraMayBeJvmOption.toString());
             }
         }
