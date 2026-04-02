@@ -673,8 +673,8 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public List<NClassLoaderNode> getBootExtensionClassLoaderNode() {
-        return base.getBootExtensionClassLoaderNode();
+    public List<NClassLoaderNode> getBootExtensionClassLoaderNodes() {
+        return base.getBootExtensionClassLoaderNodes();
     }
 
     @Override
