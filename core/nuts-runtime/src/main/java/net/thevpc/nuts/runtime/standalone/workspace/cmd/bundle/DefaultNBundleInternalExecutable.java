@@ -66,7 +66,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
 
     @Override
     public int execute() {
-        NChronometer allChrono = NChronometer.startNow();
+        NChronometer allChrono = NChronometer.of();
         NSession session = NSession.of();
         if (session.isDry()) {
             dryExecute();
@@ -97,7 +97,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         ResultingIds resultingIds = new ResultingIds();
 
         NTrace.println(NMsg.ofC(NI18n.of("resolving dependencies for %s"), boptions.ids));
-        NChronometer chrono = NChronometer.startNow();
+        NChronometer chrono = NChronometer.of();
         resultingIds
                 .addAllId(boptions.ids.toArray(new String[0]))
                 .addAllLibs(boptions.lib.toArray(new String[0]))
