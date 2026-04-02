@@ -29,10 +29,10 @@ public enum NSysEditorFamily implements NEnum {
     }
 
     public static NOptional<NSysEditorFamily> parse(String value) {
-        return NEnumUtils.parseEnum(value, NSysEditorFamily.class, new NFunction<NEnumUtils.EnumValue, NOptional<NSysEditorFamily>>() {
+        return NEnumUtils.parseEnum(value, NSysEditorFamily.class, new NFunction<NEnumUtils.NEnumCandidate, NOptional<NSysEditorFamily>>() {
             @Override
-            public NOptional<NSysEditorFamily> apply(NEnumUtils.EnumValue enumValue) {
-                switch (enumValue.getNormalizedValue()) {
+            public NOptional<NSysEditorFamily> apply(NEnumUtils.NEnumCandidate enumValue) {
+                switch (enumValue.normalizedValue()) {
                     case "IDEA":
                     case "INTELLIJI":
                     case "INTELLIJI_IDEA":
