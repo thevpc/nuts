@@ -103,7 +103,7 @@ public class SshConnectionPool {
         // If the pool isn't full yet, create a new one
         synchronized (this) {
             if (idle.available.size() < maxSize) {
-                NChronometer s = NChronometer.startNow();
+                NChronometer s = NChronometer.of();
                 SShPooledConnection newConn = new SShPooledConnection(connectionString, factory.apply(connectionString));
                 NLog.of(SshConnectionPool.class).log(NMsg.ofC("create ssh connection %s in %s", connectionString, s).withIntent(NMsgIntent.ADD).asDebug());
                 idle.running.add(newConn);
