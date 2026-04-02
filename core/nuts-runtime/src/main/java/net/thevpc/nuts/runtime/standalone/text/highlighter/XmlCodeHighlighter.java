@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
+import net.thevpc.nuts.runtime.standalone.util.collections.NEvictingQueueImpl;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.expr.NToken;
@@ -54,7 +55,7 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
 
         List<NText> nodes = new ArrayList<>();
         int s;
-        NEvictingQueue<String> last = new NEvictingQueue<>(3);
+        NEvictingQueueImpl<String> last = new NEvictingQueueImpl<>(3);
         while ((s = st.nextToken()) != NToken.TT_EOF) {
             switch (s) {
                 case NToken.TT_SPACE: {
