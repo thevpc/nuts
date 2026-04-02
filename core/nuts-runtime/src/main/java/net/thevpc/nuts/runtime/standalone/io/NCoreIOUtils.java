@@ -26,7 +26,6 @@ import java.nio.file.attribute.FileTime;
 import java.security.MessageDigest;
 import java.time.Instant;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -338,7 +337,7 @@ public class NCoreIOUtils {
     }
 
     public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache, NLog bLog) {
-        NChronometer chrono = NChronometer.startNow();
+        NChronometer chrono = NChronometer.of();
         Properties props = new Properties();
         InputStream inputStream = null;
         File urlFile = toFile(url);
