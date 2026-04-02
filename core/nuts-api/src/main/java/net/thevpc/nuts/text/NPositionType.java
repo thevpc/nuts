@@ -67,7 +67,7 @@ public enum NPositionType implements NEnum {
 
     public static NOptional<NPositionType> parse(String value) {
         return NEnumUtils.parseEnum(value, NPositionType.class, s -> {
-            switch (s.getNormalizedValue()){
+            switch (s.normalizedValue()){
                 case "LEFT":
                 case "TOP":
                 case "BEFORE":
