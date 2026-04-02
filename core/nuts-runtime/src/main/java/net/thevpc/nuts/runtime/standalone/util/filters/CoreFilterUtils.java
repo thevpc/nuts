@@ -26,11 +26,9 @@
 package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.platform.*;
-import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.ext.NExtensionInformation;
 import net.thevpc.nuts.spi.base.AbstractNPredicate;
@@ -152,7 +150,7 @@ public class CoreFilterUtils {
             return _v == _v2;
         }
         if (_v.equalsShortId(_v2)) {
-            if (_v.getVersion().filter().acceptVersion(_v2.getVersion())) {
+            if (_v.getVersion().toFilter().acceptVersion(_v2.getVersion())) {
                 return true;
             }
         }
@@ -354,7 +352,7 @@ public class CoreFilterUtils {
                     idCond = idCond.builder().setArtifactId(w.id()).build();
                 }
                 if (idCond.equalsShortId(currentId)) {
-                    if (idCond.getVersion().filter().acceptVersion(currentId.getVersion())) {
+                    if (idCond.getVersion().toFilter().acceptVersion(currentId.getVersion())) {
                         return true;
                     }
                 }
@@ -380,7 +378,7 @@ public class CoreFilterUtils {
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
                 }
-                return condId.compatNewer().filter().acceptId(currentId);
+                return condId.toAtLeast().toFilter().acceptId(currentId);
             }
             return false;
         } else {
@@ -399,7 +397,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NId condId = NId.get(cond).get();
-                return condId.compatNewer().filter().acceptId(currentId);
+                return condId.toAtLeast().toFilter().acceptId(currentId);
             }
             return false;
         } else {
@@ -456,7 +454,7 @@ public class CoreFilterUtils {
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
                 }
-                return condId.compatNewer().filter().acceptId(currentId);
+                return condId.toAtLeast().toFilter().acceptId(currentId);
             }
             return false;
         } else {
@@ -488,7 +486,7 @@ public class CoreFilterUtils {
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
                 }
-                return condId.compatNewer().filter().acceptId(currentId);
+                return condId.toAtLeast().toFilter().acceptId(currentId);
             }
             return false;
         } else {
