@@ -469,7 +469,24 @@ public class NIOUtils {
         throw new NUnexpectedException(NMsg.ofC("%s not supported", type));
     }
 
+    public static String getFileExtension(Path s) {
+        if(s==null){
+            return "";
+        }
+        return getFileExtension(s.getFileName().toString());
+    }
+
+    public static String getFileExtension(File s) {
+        if(s==null){
+            return "";
+        }
+        return getFileExtension(s.getName());
+    }
+
     public static String getFileExtension(String s) {
+        if(s==null){
+            return "";
+        }
         int i = s.lastIndexOf('.');
         if (i == 0) {
             return s.substring(1);
@@ -737,6 +754,33 @@ public class NIOUtils {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
+    }
+
+    public static File expandFile(String path) {
+        final String p = expandPath(path);
+        if (p == null) {
+            return null;
+        }
+        return new File(p);
+    }
+
+    /**
+     * path expansion replaces ~ with ${user.home} property value
+     *
+     * @param path to expand
+     * @return expanded path
+     */
+    public static String expandPath(String path) {
+        if (path == null) {
+            return path;
+        }
+        if (path.equals("~")) {
+            return System.getProperty("user.home");
+        }
+        if (path.startsWith("~") && path.length() > 1 && (path.charAt(1) == '/' || path.charAt(1) == '\\')) {
+            return System.getProperty("user.home") + path.substring(1);
+        }
+        return path;
     }
 
 }
