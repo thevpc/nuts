@@ -200,7 +200,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
                 if (regularUpdates.containsKey(dd.getShortName())) {
                     NUpdateResult updated = regularUpdates.get(dd.getShortName());
                     //FIX ME
-                    if (!dd.getVersion().filter().acceptVersion(updated.getId().getVersion())) {
+                    if (!dd.getVersion().toFilter().acceptVersion(updated.getId().getVersion())) {
                         throw new NIllegalArgumentException(
                                 NMsg.ofC("%s unsatisfied  : %s", dd, updated.getId().getVersion())
                         );
@@ -701,7 +701,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
                 }
                 NVersion v = bootApiVersion;
                 if (v == null || v.isBlank()) {
-                    v = NVersion.get(NConstants.Versions.LATEST).get();
+                    v = NVersion.getPartAt(NConstants.Versions.LATEST).get();
                 }
                 try {
                     NId finalOldId = oldId;
