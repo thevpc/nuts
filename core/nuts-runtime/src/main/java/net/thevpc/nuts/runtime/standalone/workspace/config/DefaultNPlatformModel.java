@@ -66,7 +66,7 @@ public class DefaultNPlatformModel {
                             location.getVendor(),
                             location.getProduct(),
                             location.getVariant(),
-                            NVersion.get(location.getVersion()).get(),
+                            NVersion.getPartAt(location.getVersion()).get(),
                             NPath.of(location.getPath())
                     ));
                 }
@@ -147,7 +147,7 @@ public class DefaultNPlatformModel {
                         return true;
                     }
                     String sVersion = location.getVersion();
-                    NVersion version = NVersion.get(sVersion).get();
+                    NVersion version = NVersion.getPartAt(sVersion).get();
                     if (versionFilter.acceptVersion(version)) {
                         return true;
                     }
@@ -158,7 +158,7 @@ public class DefaultNPlatformModel {
                             NLiteral p = NLiteral.of(sVersion.substring(0, a));
                             if (p.asInt().isPresent() && p.asInt().get() == 1) {
                                 String sVersion2 = sVersion.substring(a + 1);
-                                NVersion version2 = NVersion.get(sVersion2).get();
+                                NVersion version2 = NVersion.getPartAt(sVersion2).get();
                                 if (versionFilter.acceptVersion(version2)) {
                                     return true;
                                 }
@@ -222,8 +222,8 @@ public class DefaultNPlatformModel {
         //find the best minimum version that is applicable!
         NExecutionEngineLocation best = a[0];
         for (int i = 1; i < a.length; i++) {
-            NVersion v1 = NVersion.get(best.getVersion()).get();
-            NVersion v2 = NVersion.get(a[i].getVersion()).get();
+            NVersion v1 = NVersion.getPartAt(best.getVersion()).get();
+            NVersion v2 = NVersion.getPartAt(a[i].getVersion()).get();
             if (executionEngineType == NExecutionEngineFamily.JAVA) {
                 double d1 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersion(v1.getValue()));
                 double d2 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersion(v2.getValue()));
