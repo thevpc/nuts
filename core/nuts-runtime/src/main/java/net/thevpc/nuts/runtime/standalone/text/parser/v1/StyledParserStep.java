@@ -8,6 +8,7 @@ import net.thevpc.nuts.io.NErr;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NDebugString;
+import net.thevpc.nuts.runtime.standalone.util.collections.NEvictingCharQueueImpl;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.*;
 
@@ -30,7 +31,7 @@ public class StyledParserStep extends ParserStep {
     boolean lineStart;
 //    List<ParserStep> children = new ArrayList<>();
     int maxSize = 10;
-    private NEvictingCharQueue charQueue = new NEvictingCharQueue(5);
+    private NEvictingCharQueue charQueue = new NEvictingCharQueueImpl(5);
     private DefaultNTextNodeParser.State state;
     private StyledParserStepCmdParser parseHelper = new StyledParserStepCmdParser();
     private boolean wasEscape;
