@@ -3,20 +3,17 @@ package net.thevpc.nuts.runtime.standalone.util.collections;
 import net.thevpc.nuts.reflect.NClassPairMultiMap;
 import net.thevpc.nuts.util.NUplet;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class NClassPairMultiMapImpl<A,B,V> implements NClassPairMultiMap<A,B,V> {
-    private NClassPairMapImpl<A,B,List<V>> base;
+public class NClassPairMultiMapImpl<A, B, V> implements NClassPairMultiMap<A, B, V> {
+    private final NClassPairMapImpl<A, B, List<V>> base;
 
     public NClassPairMultiMapImpl(Class<? extends A> baseKey1Type, Class<? extends B> baseKey2Type, Class<V> valueType, boolean symmetric) {
-        base = new NClassPairMapImpl<A,B,List<V>>(baseKey1Type, baseKey2Type, (Class) List.class, symmetric);
+        base = new NClassPairMapImpl<A, B, List<V>>(baseKey1Type, baseKey2Type, (Class) List.class, symmetric);
     }
 
     @Override
-    public Set<NUplet<Class>> keySet(){
+    public Set<NUplet<Class>> keySet() {
         return base.keySet();
     }
 
@@ -39,23 +36,28 @@ public class NClassPairMultiMapImpl<A,B,V> implements NClassPairMultiMap<A,B,V> 
     }
 
     @Override
-    public void clear(Class<? extends A> a, Class<? extends B> b) {
+    public boolean clear(Class<? extends A> a, Class<? extends B> b) {
         List<V> t = base.getExact(a, b);
         if (t != null) {
-            base.remove(a, b);
+            return base.remove(a, b) != null;
         }
+        return false;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return base.isEmpty();
+    }
 
     @Override
-    public void clear() {
-        base.clear();
+    public boolean clear() {
+        return base.clear();
     }
 
     @Override
     public List<V> get(Class<? extends A> a, Class<? extends B> b) {
         List<V> lv = base.get(a, b);
-        if(lv!=null){
+        if (lv != null) {
             return lv;
         }
         return Collections.EMPTY_LIST;
@@ -86,9 +88,7 @@ public class NClassPairMultiMapImpl<A,B,V> implements NClassPairMultiMap<A,B,V> 
 
         NClassPairMultiMapImpl that = (NClassPairMultiMapImpl) o;
 
-        if (base != null ? !base.equals(that.base) : that.base != null) return false;
-
-        return true;
+        return Objects.equals(base, that.base);
     }
 
     @Override
