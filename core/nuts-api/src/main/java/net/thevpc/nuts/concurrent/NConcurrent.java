@@ -93,56 +93,56 @@ public interface NConcurrent extends NComponent {
 
 
     // --------------------
-    // Stable Values
+    // once values
     // --------------------
 
     /**
-     * Creates a stable value using the default stable value factory.
+     * Creates a once value using the default once value factory.
      *
-     * @param <T> the type of the stable value
+     * @param <T> the type of the once value
      * @param supplier the supplier to produce the value
-     * @return stable value instance
+     * @return once value instance
      */
-    <T> NOnceValue<T> stableValue(Supplier<T> supplier);
+    <T> NOnceValue<T> onceValue(Supplier<T> supplier);
 
     /**
-     * Creates a stable value with the given identifier and supplier.
+     * Creates a once value with the given identifier and supplier.
      *
-     * @param <T> the type of the stable value
-     * @param id identifier for the stable value
+     * @param <T> the type of the once value
+     * @param id identifier for the once value
      * @param supplier the supplier to produce the value
-     * @return stable value instance
+     * @return once value instance
      */
-    <T> NOnceValue<T> stableValue(String id, Supplier<T> supplier);
+    <T> NOnceValue<T> onceValue(String id, Supplier<T> supplier);
 
     /**
-     * Sets the stable value factory used by this component.
+     * Sets the once value factory used by this component.
      *
-     * @param stableValueFactory the factory to set
+     * @param onceValueFactory the factory to set
      * @return this instance
      */
-    NConcurrent setStableValueFactory(NOnceValueFactory stableValueFactory);
+    NConcurrent setOnceValueFactory(NOnceValueFactory onceValueFactory);
 
     /**
-     * Returns a memory-only stable value factory.
+     * Returns a memory-only once value factory.
      *
-     * @return memory stable value factory
+     * @return memory once value factory
      */
-    NOnceValueFactory memoryStableValueFactory();
+    NOnceValueFactory memoryOnceValueFactory();
 
     /**
-     * Returns the default stable value factory.
+     * Returns the default once value factory.
      *
-     * @return default stable value factory
+     * @return default once value factory
      */
-    NOnceValueFactory defaultStableValueFactory();
+    NOnceValueFactory defaultOnceValueFactory();
 
     /**
-     * Returns the currently configured stable value factory.
+     * Returns the currently configured once value factory.
      *
-     * @return stable value factory
+     * @return once value factory
      */
-    NOnceValueFactory stableValueFactory();
+    NOnceValueFactory onceValueFactory();
 
 
     // --------------------

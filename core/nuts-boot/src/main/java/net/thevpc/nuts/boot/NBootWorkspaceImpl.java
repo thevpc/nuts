@@ -1199,7 +1199,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                         options.setBootWorkspaceFactory(factoryInstance);
                         wsInstance = a.createWorkspace(options);
                     } catch (UnsatisfiedLinkError | Exception ex) {
-                        exceptions.add(ex);
+                        exceptions.add(ex.fillInStackTrace());
                         log.error(NBootMsg.ofC(NBootI18n.of("unable to create workspace using factory %s"), a), ex);
                         // if the creation generates an error
                         // just stop

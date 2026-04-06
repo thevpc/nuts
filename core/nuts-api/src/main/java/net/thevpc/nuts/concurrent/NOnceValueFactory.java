@@ -5,10 +5,10 @@ import java.util.function.Supplier;
 /**
  * Factory interface for creating {@link NOnceValue} instances.
  * <p>
- * A stable value represents a lazily computed value that can be cached
+ * A once value represents a lazily computed value that can be cached
  * and optionally stored in a backing {@link NOnceValueStore} for reuse
  * across threads or executions. This factory provides methods to create
- * such stable values, either with or without a store.
+ * such once values, either with or without a store.
  *
  * <p>Example usage:
  * <pre>{@code
@@ -22,20 +22,20 @@ public interface NOnceValueFactory {
     /**
      * Creates a new {@link NOnceValueFactory} using the default store.
      *
-     * @return a new stable value factory instance
+     * @return a new once value factory instance
      */
     static NOnceValueFactory of() {
-        return NConcurrent.of().stableValueFactory();
+        return NConcurrent.of().onceValueFactory();
     }
 
     /**
      * Creates a new {@link NOnceValueFactory} with a custom {@link NOnceValueStore}.
      *
-     * @param store the backing store for stable values
-     * @return a new stable value factory instance using the provided store
+     * @param store the backing store for once values
+     * @return a new once value factory instance using the provided store
      */
     static NOnceValueFactory of(NOnceValueStore store) {
-        return NConcurrent.of().stableValueFactory().withStore(store);
+        return NConcurrent.of().onceValueFactory().withStore(store);
     }
 
     /**
@@ -49,7 +49,7 @@ public interface NOnceValueFactory {
     /**
      * Returns the backing store used by this factory.
      *
-     * @return the stable value store
+     * @return the once value store
      */
     NOnceValueStore getStore();
 
@@ -58,7 +58,7 @@ public interface NOnceValueFactory {
      *
      * @param supplier the supplier to compute the value
      * @param <T> the type of the value
-     * @return a stable value instance
+     * @return a once value instance
      */
     <T> NOnceValue<T> of(Supplier<T> supplier);
 
@@ -67,10 +67,10 @@ public interface NOnceValueFactory {
      * <p>
      * The identifier can be used to persist or retrieve the value from the backing store.
      *
-     * @param id the unique identifier for the stable value
+     * @param id the unique identifier for the once value
      * @param supplier the supplier to compute the value
      * @param <T> the type of the value
-     * @return a stable value instance
+     * @return a once value instance
      */
     <T> NOnceValue<T> of(String id, Supplier<T> supplier);
 }

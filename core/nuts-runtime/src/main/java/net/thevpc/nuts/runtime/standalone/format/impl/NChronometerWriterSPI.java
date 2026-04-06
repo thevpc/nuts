@@ -24,15 +24,15 @@ public class NChronometerWriterSPI implements NObjectWriterSPI {
 
     @Override
     public void print(NPrintStream out) {
-        if (value.getName() != null) {
-            out.print(value.getName());
+        if (value.name() != null) {
+            out.print(value.name());
             out.print("=", NTextStyle.separator());
         }
-        out.print(NObjectWriter.of(value.getDuration())
+        out.print(NObjectWriter.of(value.duration())
                 .configure(true,
                         "--mode",
                         (formatMode == null ? NDurationFormatMode.DEFAULT : formatMode).id())
-                .format(value.getDuration()));
+                .format(value.duration()));
     }
 
     @Override

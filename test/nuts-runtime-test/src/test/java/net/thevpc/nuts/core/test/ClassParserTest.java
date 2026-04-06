@@ -60,7 +60,7 @@ public class ClassParserTest {
         if (file.getFileName().toString().endsWith(".jar")) {
             parseJarFile(file.toAbsolutePath().normalize());
         }
-        NDuration to = from.getDuration();
+        NDuration to = from.duration();
         if (max < to.toNanos()) {
             max = to.toNanos();
         }

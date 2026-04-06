@@ -127,7 +127,7 @@ public class NChronometer implements Serializable {
         return this;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -209,23 +209,23 @@ public class NChronometer implements Serializable {
         return this;
     }
 
-    public NClock getStartClock() {
+    public NClock startClock() {
         return startClock;
     }
 
-    public NClock getEndClock() {
+    public NClock endClock() {
         return endClock;
     }
 
-    public NDuration getDuration() {
-        return NDuration.ofNanos(getDurationNanos(), getSmallestUnit(), getLargestUnit());
+    public NDuration duration() {
+        return NDuration.ofNanos(durationNanos(), getSmallestUnit(), getLargestUnit());
     }
 
-    public long getDurationMs() {
-        return getDurationNanos() / 1000000L;
+    public long durationMs() {
+        return durationNanos() / 1000000L;
     }
 
-    public long getDurationNanos() {
+    public long durationNanos() {
         if (startClock == null) {
             return 0;
         }
@@ -242,7 +242,7 @@ public class NChronometer implements Serializable {
 
     public String toString(NDurationFormatMode mode) {
         String s = name == null ? "" : name + "=";
-        return s + getDuration().toString(mode);
+        return s + duration().toString(mode);
     }
 
     public ChronoUnit getSmallestUnit() {

@@ -348,7 +348,7 @@ public class NCoreIOUtils {
                         inputStream = new FileInputStream(cacheFile);
                         props.load(inputStream);
                         chrono.stop();
-                        NDuration time = chrono.getDuration();
+                        NDuration time = chrono.duration();
                         bLog.log(NMsg.ofC("load cached file from  %s" + ((!time.isZero()) ? " (time %s)" : ""), cacheFile.getPath(), chrono).withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS));
                         return props;
                     } catch (IOException ex) {
@@ -393,7 +393,7 @@ public class NCoreIOUtils {
                                 } else {
                                     copy(url, cacheFile, bLog);
                                 }
-                                NDuration time = chrono.getDuration();
+                                NDuration time = chrono.duration();
                                 if (cachedRecovered) {
                                     bLog.log(NMsg.ofC("recover cached prp file %s (from %s)" + ((!time.isZero()) ? " (time %s)" : ""), cacheFile.getPath(), urlString, time).withLevel(Level.CONFIG).withIntent(NMsgIntent.CACHE));
                                 } else {
@@ -402,10 +402,10 @@ public class NCoreIOUtils {
                                 return props;
                             }
                         }
-                        NDuration time = chrono.getDuration();
+                        NDuration time = chrono.duration();
                         bLog.log(NMsg.ofC("load props file from  %s" + ((!time.isZero()) ? " (time %s)" : ""), urlString, time).withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS));
                     } else {
-                        NDuration time = chrono.getDuration();
+                        NDuration time = chrono.duration();
                         bLog.log(NMsg.ofC("load props file from  %s" + ((!time.isZero()) ? " (time %s)" : ""), urlString, time).withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL));
                     }
                 }
@@ -415,7 +415,7 @@ public class NCoreIOUtils {
                 }
             }
         } catch (Exception e) {
-            NDuration time = chrono.getDuration();
+            NDuration time = chrono.duration();
             bLog.log(NMsg.ofC("load props file from  %s" + ((!time.isZero()) ? " (time %s)" : ""), String.valueOf(url),
                     time).withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL));
         }

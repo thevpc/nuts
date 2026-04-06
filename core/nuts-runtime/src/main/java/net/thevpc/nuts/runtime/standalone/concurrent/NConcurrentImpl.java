@@ -27,8 +27,8 @@ public class NConcurrentImpl implements NConcurrent {
 
     private final NCachedValueFactory memoryCachedValueFactory = new NCachedValueFactoryImpl(new NCachedValueStoreMemory());
     private NCachedValueFactory cachedValueFactory;
-    private final NOnceValueFactory memoryStableValueFactory = new NOnceValueFactoryImpl(new NOnceValueStoreMemory());
-    private NOnceValueFactory stableValueFactory;
+    private final NOnceValueFactory memoryOnceValueFactory = new NOnceValueFactoryImpl(new NOnceValueStoreMemory());
+    private NOnceValueFactory onceValueFactory;
 
     private final NRetryCallFactory memoryRetryValueFactory = new NRetryCallFactoryImpl(new NRetryCallStoreMemory());
     private NRetryCallFactory retryValueFactory;
@@ -87,24 +87,24 @@ public class NConcurrentImpl implements NConcurrent {
 
 
     @Override
-    public NConcurrent setStableValueFactory(NOnceValueFactory stableValueFactory) {
-        this.stableValueFactory = stableValueFactory;
+    public NConcurrent setOnceValueFactory(NOnceValueFactory onceValueFactory) {
+        this.onceValueFactory = onceValueFactory;
         return this;
     }
 
     @Override
-    public NOnceValueFactory memoryStableValueFactory() {
-        return memoryStableValueFactory;
+    public NOnceValueFactory memoryOnceValueFactory() {
+        return memoryOnceValueFactory;
     }
 
     @Override
-    public NOnceValueFactory defaultStableValueFactory() {
-        return memoryStableValueFactory();
+    public NOnceValueFactory defaultOnceValueFactory() {
+        return memoryOnceValueFactory();
     }
 
     @Override
-    public NOnceValueFactory stableValueFactory() {
-        return stableValueFactory == null ? defaultStableValueFactory() : stableValueFactory;
+    public NOnceValueFactory onceValueFactory() {
+        return onceValueFactory == null ? defaultOnceValueFactory() : onceValueFactory;
     }
 
 
@@ -152,8 +152,8 @@ public class NConcurrentImpl implements NConcurrent {
     }
 
     @Override
-    public <T> NOnceValue<T> stableValue(Supplier<T> supplier) {
-        return stableValueFactory().of(supplier);
+    public <T> NOnceValue<T> onceValue(Supplier<T> supplier) {
+        return onceValueFactory().of(supplier);
     }
 
     @Override
@@ -162,8 +162,8 @@ public class NConcurrentImpl implements NConcurrent {
     }
 
     @Override
-    public <T> NOnceValue<T> stableValue(String id, Supplier<T> supplier) {
-        return stableValueFactory().of(id, supplier);
+    public <T> NOnceValue<T> onceValue(String id, Supplier<T> supplier) {
+        return onceValueFactory().of(id, supplier);
     }
 
     @Override

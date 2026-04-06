@@ -248,7 +248,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                 NLog.of(DotfilefsPath.class)
 
                         .log(NMsg.ofC("unable to navigate : %s", dotFilesUrl).asFineFail()
-                                .withDurationMillis(c.stop().getDurationMs())
+                                .withDurationMillis(c.stop().durationMs())
                         );
             }
         }
@@ -264,7 +264,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                             .stream().map(x -> x.trim()).filter(x -> !x.isEmpty()).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NIOException ex) {
                     NLog.of(DotfilefsPath.class)
-                            .log(NMsg.ofC("unable to navigate : file not found %s", dotFolderUrl).asFineFail().withDurationMillis(c.stop().getDurationMs()));
+                            .log(NMsg.ofC("unable to navigate : file not found %s", dotFolderUrl).asFineFail().withDurationMillis(c.stop().durationMs()));
                 }
                 if (dotFoldersContent != null) {
                     for (String folder : dotFoldersContent) {

@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 public interface NOnceValue<T> extends Supplier<T>, NDescribable {
 
     /**
-     * Creates a stable value from a supplier.
+     * Creates a once value from a supplier.
      * <p>
      * The supplied value will be computed lazily and cached internally.
      *
@@ -25,11 +25,11 @@ public interface NOnceValue<T> extends Supplier<T>, NDescribable {
      * @return a new {@code NOnceValue} wrapping the given supplier
      */
     static <T> NOnceValue<T> ofSupplier(Supplier<T> supplier) {
-        return NConcurrent.of().stableValue(supplier);
+        return NConcurrent.of().onceValue(supplier);
     }
 
     /**
-     * Returns the current value of this stable value.
+     * Returns the current value of this once value.
      * <p>
      * If the value has not been computed yet, it will be evaluated at this time.
      *

@@ -360,11 +360,11 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     }
 
     public NDuration getDuration() {
-        return model.getChronometer().getDuration();
+        return model.getChronometer().duration();
     }
 
     public NClock getStartClock() {
-        return model.getChronometer().getStartClock();
+        return model.getChronometer().startClock();
     }
 
 

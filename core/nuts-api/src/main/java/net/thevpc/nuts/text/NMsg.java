@@ -3,26 +3,24 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  *
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
- * you may  not use this file except in compliance with the License. You may obtain
- * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the GNU LESSER GENERAL PUBLIC
+ * LICENSE Version 3 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * https://www.gnu.org/licenses/lgpl-3.0.en.html Unless required by applicable
+ * law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.text;
 
@@ -36,6 +34,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
+import net.thevpc.nuts.time.NDuration;
 
 public class NMsg implements NBlankable, NElementAutoUndestructable {
 
@@ -49,7 +48,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
     private final Function<String, ?> placeholderBindings;
     private final NTextStyles styles;
     private final Throwable throwable;
-    private final long durationNano;
+    private final NDuration duration;
 
     public static Placeholder placeholder(String name) {
         NAssert.requireNamedNonBlank(name, "name");
@@ -112,11 +111,11 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
         return ofC("invalid %s : %s", valueName, NExceptions.getErrorMessage(throwable));
     }
 
-    private static NMsg of(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, long time, Function<String, ?> placeholderBindings) {
-        return new NMsg(format, message, params, styles, codeLang, level, throwable, intent, time, placeholderBindings);
+    private static NMsg of(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, NDuration duration, Function<String, ?> placeholderBindings) {
+        return new NMsg(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings);
     }
 
-    private NMsg(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, long durationNano, Function<String, ?> placeholderBindings) {
+    private NMsg(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, NDuration duration, Function<String, ?> placeholderBindings) {
         NAssert.requireNamedNonNull(message, "message");
         NAssert.requireNamedNonNull(format, "format");
         NAssert.requireNamedNonNull(params, "params");
@@ -127,8 +126,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
         if (format == NTextFormatType.PLAIN
                 || format == NTextFormatType.NTF
                 || format == NTextFormatType.STYLED
-                || format == NTextFormatType.CODE
-        ) {
+                || format == NTextFormatType.CODE) {
             if (params.length > 0) {
                 throw new IllegalArgumentException("arguments are not supported for " + format);
             }
@@ -142,20 +140,20 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
         this.message = message;
         this.params = params;
         this.intent = intent;
-        this.durationNano = durationNano < 0 ? -1 : durationNano;
+        this.duration = duration;
         this.placeholderBindings = placeholderBindings;
     }
 
     public static NMsg ofNtf(String message) {
-        return of(NTextFormatType.NTF, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1, null);
+        return of(NTextFormatType.NTF, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null, null);
     }
 
     public static NMsg ofCode(String lang, String text) {
-        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, lang, null, null, null, -1, null);
+        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, lang, null, null, null, null, null);
     }
 
     public static NMsg ofCode(String text) {
-        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, null, null, null, null, -1, null);
+        return of(NTextFormatType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, null, null, null, null, null, null);
     }
 
     public static NMsg ofStringLiteral(String literal) {
@@ -166,47 +164,47 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
     }
 
     public static NMsg ofStyled(String message, NTextStyle style) {
-        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, -1, null);
+        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, null, null);
     }
 
     public static NMsg ofStyled(String message, NTextStyles styles) {
-        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, styles, null, null, null, null, -1, null);
+        return of(NTextFormatType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, styles, null, null, null, null, null, null);
     }
 
     public static NMsg ofStyled(NMsg message, NTextStyle style) {
-        return of(NTextFormatType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, -1, null);
+        return of(NTextFormatType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, null, null);
     }
 
     public static NMsg ofStyled(NMsg message, NTextStyles styles) {
-        return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null, null, null, -1, null);
+        return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null, null, null, null, null);
     }
 
     public static NMsg ofStyled(NText message, NTextStyle style) {
-        return of(NTextFormatType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, -1, null);
+        return of(NTextFormatType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, null, null);
     }
 
     public static NMsg ofStyled(NText message, NTextStyles styles) {
-        return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null, null, null, -1, null);
+        return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null, null, null, null, null);
     }
 
     public static NMsg ofNtf(NText message) {
-        return of(NTextFormatType.NTF, message, NO_PARAMS, null, null, null, null, null, -1, null);
+        return of(NTextFormatType.NTF, message, NO_PARAMS, null, null, null, null, null, null, null);
     }
 
     public static NMsg ofBlank() {
-        return of(NTextFormatType.PLAIN, "", NO_PARAMS, null, null, null, null, null, -1, null);
+        return of(NTextFormatType.PLAIN, "", NO_PARAMS, null, null, null, null, null, null, null);
     }
 
     public static NMsg ofPlain(String message) {
-        return of(NTextFormatType.PLAIN, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1, null);
+        return of(NTextFormatType.PLAIN, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null, null);
     }
 
     public static NMsg ofC(String message) {
-        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1, null);
+        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null, null);
     }
 
     public static NMsg ofC(String message, Object... params) {
-        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, -1, null);
+        return of(NTextFormatType.CFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, null, null);
     }
 
     public static NMsg ofV(String message, NMsgParam... params) {
@@ -217,11 +215,11 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
     }
 
     public static NMsg ofV(String message, Map<String, ?> vars) {
-        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, -1, null);
+        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, null, null);
     }
 
     public static NMsg ofV(String message, Function<String, ?> vars) {
-        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, -1, null);
+        return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, null, null);
     }
 
     public static NMsg ofJ(String message, NMsgParam... params) {
@@ -242,11 +240,11 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
 
     @Deprecated
     public static NMsg ofJ(String message) {
-        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, -1, null);
+        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null, null);
     }
 
     public static NMsg ofJ(String message, Object... params) {
-        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, -1, null);
+        return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, null, null);
     }
 
     public NTextFormatType getFormat() {
@@ -459,10 +457,10 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
                 case VFORMAT: {
                     return formatAsV();
                 }
-                case NTF:{
-                    if(plain){
-                        if(message instanceof NText){
-                            return ((NText)message).filteredText();
+                case NTF: {
+                    if (plain) {
+                        if (message instanceof NText) {
+                            return ((NText) message).filteredText();
                         }
                     }
                     return String.valueOf(message);
@@ -546,9 +544,8 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
         if (level == this.level && throwable == this.throwable) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano, placeholderBindings);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings);
     }
-
 
     public NMsg asInfo() {
         return withLevelAndDefaultIntent(Level.INFO, NMsgIntent.NOTICE);
@@ -598,7 +595,6 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
         return withLevelAndIntent(Level.FINER, NMsgIntent.FAIL);
     }
 
-
     public NMsg asWarningFail(Throwable throwable) {
         return withLevelAndIntent(Level.WARNING, NMsgIntent.FAIL, throwable);
     }
@@ -606,7 +602,6 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
     public NMsg asWarningFail() {
         return withLevelAndIntent(Level.WARNING, NMsgIntent.FAIL);
     }
-
 
     public NMsg asFinestAlert() {
         return withLevelAndDefaultIntent(Level.FINEST, NMsgIntent.ALERT);
@@ -640,7 +635,6 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
         return withLevelAndIntent(Level.FINER, NMsgIntent.ALERT);
     }
 
-
     public NMsg asWarningAlert(Throwable throwable) {
         return withLevelAndIntent(Level.WARNING, NMsgIntent.ALERT, throwable);
     }
@@ -648,7 +642,6 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
     public NMsg asWarningAlert() {
         return withLevelAndIntent(Level.WARNING, NMsgIntent.ALERT);
     }
-
 
     public NMsg asFine() {
         return withLevelAndDefaultIntent(Level.FINE, NMsgIntent.DEBUG);
@@ -663,7 +656,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
     }
 
     public NMsg withoutPlaceholders() {
-        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, null);
+        return of(format, message, params, styles, codeLang, level, null, intent, duration, null);
     }
 
     public NMsg withPlaceholders(Function<String, ?> placeholderSupplier) {
@@ -671,7 +664,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
             return this;
         }
         Function<String, ?> oldPlaceholderBindings = placeholderBindings;
-        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, s -> {
+        return of(format, message, params, styles, codeLang, level, null, intent, duration, s -> {
             Object r = placeholderSupplier.apply(s);
             if (r != null) {
                 return r;
@@ -688,7 +681,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
             return this;
         }
         if (placeholderBindings == null) {
-            return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier2(params));
+            return of(format, message, params, styles, codeLang, level, null, intent, duration, new MapAsSupplier2(params));
         }
         if (placeholderBindings instanceof MapAsSupplier2) {
             Map<String, Supplier<?>> newMap = new LinkedHashMap<>(((MapAsSupplier2) placeholderBindings).content);
@@ -697,7 +690,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
                 NAssert.requireNamedNonNull(param.getName(), "param.name");
                 newMap.put(param.getName(), new ConstSupplier<>(param.getValue()));
             }
-            return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier2(newMap));
+            return of(format, message, params, styles, codeLang, level, null, intent, duration, new MapAsSupplier2(newMap));
         }
         if (placeholderBindings instanceof MapAsSupplier) {
             Map<String, Supplier<?>> newMap = new LinkedHashMap<>();
@@ -709,11 +702,11 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
                 NAssert.requireNamedNonNull(param.getName(), "param.name");
                 newMap.put(param.getName(), new ConstSupplier<>(param.getValue()));
             }
-            return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier2(newMap));
+            return of(format, message, params, styles, codeLang, level, null, intent, duration, new MapAsSupplier2(newMap));
         }
         MapAsSupplier2 p2 = new MapAsSupplier2(params);
         Function<String, ?> oldPlaceholderBindings = placeholderBindings;
-        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, s -> {
+        return of(format, message, params, styles, codeLang, level, null, intent, duration, s -> {
             if (p2.content.containsKey(s)) {
                 return p2.apply(s);
             }
@@ -733,7 +726,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
             return this;
         }
         if (placeholderBindings == null) {
-            return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier(new LinkedHashMap<>(placeholderMap)));
+            return of(format, message, params, styles, codeLang, level, null, intent, duration, new MapAsSupplier(new LinkedHashMap<>(placeholderMap)));
         }
         if (placeholderBindings instanceof MapAsSupplier2) {
             Map<String, Supplier<?>> newMap = new LinkedHashMap<>(((MapAsSupplier2) placeholderBindings).content);
@@ -741,7 +734,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
                 NAssert.requireNamedNonNull(e.getKey(), "param.name");
                 newMap.put(e.getKey(), new ConstSupplier<>(e.getValue()));
             }
-            return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier2(newMap));
+            return of(format, message, params, styles, codeLang, level, null, intent, duration, new MapAsSupplier2(newMap));
         }
         if (placeholderBindings instanceof MapAsSupplier) {
             Map<String, Object> newMap = new LinkedHashMap<>(((MapAsSupplier) placeholderBindings).content);
@@ -753,10 +746,10 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
                     newMap.put(e.getKey(), v);
                 }
             }
-            return of(format, message, params, styles, codeLang, level, null, intent, durationNano, new MapAsSupplier(newMap));
+            return of(format, message, params, styles, codeLang, level, null, intent, duration, new MapAsSupplier(newMap));
         }
         Function<String, ?> oldPlaceholderBindings = placeholderBindings;
-        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, s -> {
+        return of(format, message, params, styles, codeLang, level, null, intent, duration, s -> {
             if (placeholderMap.containsKey(s)) {
                 return placeholderMap.get(s);
             }
@@ -771,7 +764,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
         if (level == this.level) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, placeholderBindings);
+        return of(format, message, params, styles, codeLang, level, null, intent, duration, placeholderBindings);
     }
 
     private NMsg withLevelAndDefaultIntent(Level level, NMsgIntent intent) {
@@ -781,14 +774,14 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
         if (level == this.level && Objects.equals(intent, this.intent)) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, placeholderBindings);
+        return of(format, message, params, styles, codeLang, level, null, intent, duration, placeholderBindings);
     }
 
     private NMsg withLevelAndIntent(Level level, NMsgIntent intent) {
         if (level == this.level && Objects.equals(intent, this.intent)) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, placeholderBindings);
+        return of(format, message, params, styles, codeLang, level, null, intent, duration, placeholderBindings);
     }
 
     private NMsg withLevelAndDefaultIntent(Level level, NMsgIntent intent, Throwable throwable) {
@@ -798,21 +791,21 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
         if (level == this.level && Objects.equals(intent, this.intent) && this.throwable == throwable) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano, placeholderBindings);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings);
     }
 
     private NMsg withLevelAndIntent(Level level, NMsgIntent intent, Throwable throwable) {
         if (level == this.level && Objects.equals(intent, this.intent) && this.throwable == throwable) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano, placeholderBindings);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings);
     }
 
     public NMsg withIntent(NMsgIntent intent) {
         if (Objects.equals(intent, this.intent)) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, placeholderBindings);
+        return of(format, message, params, styles, codeLang, level, null, intent, duration, placeholderBindings);
     }
 
     public NMsg withDefaultIntent(NMsgIntent intent) {
@@ -822,31 +815,35 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
         if (Objects.equals(intent, this.intent)) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, durationNano, placeholderBindings);
+        return of(format, message, params, styles, codeLang, level, null, intent, duration, placeholderBindings);
     }
 
     public NMsg withThrowable(Throwable throwable) {
         if (throwable == this.throwable) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, durationNano, placeholderBindings);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings);
     }
 
     public NMsg withDurationMillis(long elapsedTimeMillis) {
         if (elapsedTimeMillis < 0) {
-            elapsedTimeMillis = -1;
+            return withDuration(null);
         }
-        return withDurationNanos(elapsedTimeMillis * 1000000L);
+        return withDuration(NDuration.ofMillis(elapsedTimeMillis));
     }
 
     public NMsg withDurationNanos(long elapsedTimeNanos) {
         if (elapsedTimeNanos < 0) {
-            elapsedTimeNanos = -1;
+            return withDuration(null);
         }
-        if (elapsedTimeNanos == this.durationNano) {
+        return withDuration(NDuration.ofNanos(elapsedTimeNanos));
+    }
+
+    public NMsg withDuration(NDuration duration) {
+        if (Objects.equals(duration, this.duration)) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, elapsedTimeNanos, placeholderBindings);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings);
     }
 
     public NMsg withPrefix(NMsg prefixMessage) {
@@ -857,7 +854,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
             return prefixMessage;
         }
         //this if fast way to inherit level,intent, duration and throwable
-        return of(NTextFormatType.CFORMAT, "%s %s", new Object[]{prefixMessage, cloneWithoutMeta()}, null, null, level, throwable, intent, durationNano, null);
+        return of(NTextFormatType.CFORMAT, "%s %s", new Object[]{prefixMessage, cloneWithoutMeta()}, null, null, level, throwable, intent, duration, null);
     }
 
     public NMsg withSuffix(NMsg suffixMessage) {
@@ -868,7 +865,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
             return suffixMessage;
         }
         //this if fast way to inherit level,intent, duration and throwable
-        return of(NTextFormatType.CFORMAT, "%s %s", new Object[]{cloneWithoutMeta(), suffixMessage}, null, null, level, throwable, intent, durationNano, null);
+        return of(NTextFormatType.CFORMAT, "%s %s", new Object[]{cloneWithoutMeta(), suffixMessage}, null, null, level, throwable, intent, duration, null);
     }
 
     public NMsg withPrefix(NMsgSupplier<NMsg> prefixMessage) {
@@ -877,7 +874,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
         }
         //this if fast way to inherit level,intent, duration and throwable
         Supplier<NMsg> prefixSupplier = () -> prefixMessage.apply(this /**/);
-        return of(NTextFormatType.CFORMAT, "%s %s", new Object[]{prefixSupplier, cloneWithoutMeta()}, null, null, level, throwable, intent, durationNano, null);
+        return of(NTextFormatType.CFORMAT, "%s %s", new Object[]{prefixSupplier, cloneWithoutMeta()}, null, null, level, throwable, intent, duration, null);
     }
 
     public NMsg withSuffix(NMsgSupplier<NMsg> suffixMessage) {
@@ -886,29 +883,19 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
         }
         //this if fast way to inherit level,intent, duration and throwable
         Supplier<NMsg> suffixSupplier = () -> suffixMessage.apply(this /**/);
-        return of(NTextFormatType.CFORMAT, "%s %s", new Object[]{cloneWithoutMeta(), suffixSupplier}, null, null, level, throwable, intent, durationNano, null);
+        return of(NTextFormatType.CFORMAT, "%s %s", new Object[]{cloneWithoutMeta(), suffixSupplier}, null, null, level, throwable, intent, duration, null);
     }
 
     private NMsg cloneWithoutMeta() {
-        return of(format, message, params, styles, codeLang, null, null, null, -1, placeholderBindings);
+        return of(format, message, params, styles, codeLang, null, null, null, null, placeholderBindings);
     }
 
     // ---------------------------------------------------------------
     // STYLING
     // ---------------------------------------------------------------
 
-    /**
-     * @return -1 if not specified
-     */
-    public long getDurationNanos() {
-        return durationNano;
-    }
-
-    /**
-     * @return -1 if not specified
-     */
-    public long getDurationMillis() {
-        return durationNano < 0 ? -1 : durationNano / 1000000L;
+    public NDuration getDuration() {
+        return duration;
     }
 
     public Throwable getThrowable() {
@@ -921,8 +908,12 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         NMsg that = (NMsg) o;
         return Objects.equals(codeLang, that.codeLang)
                 && Objects.equals(message, that.message)
@@ -930,8 +921,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
                 && Arrays.deepEquals(params, that.params)
                 && Objects.equals(styles, that.styles)
                 && Objects.equals(level, that.level)
-                && Objects.equals(throwable, that.throwable)
-                ;
+                && Objects.equals(throwable, that.throwable);
     }
 
     @Override
@@ -941,11 +931,9 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
         return result;
     }
 
-
     // ---------------------------------------------------------------
     // STYLING
     // ---------------------------------------------------------------
-
     public static NMsg ofStyledKeyword(String message) {
         return ofStyled(message, NTextStyle.keyword());
     }
@@ -1421,8 +1409,8 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
     // ---------------------------------------------------------------
     // PRIVATE CLASSES
     // ---------------------------------------------------------------
-
     public static final class Placeholder {
+
         private String name;
 
         private Placeholder(String name) {
@@ -1435,7 +1423,9 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
 
         @Override
         public boolean equals(Object o) {
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Placeholder that = (Placeholder) o;
             return Objects.equals(name, that.name);
         }
@@ -1452,6 +1442,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
     }
 
     private static class MapAsSupplier implements Function<String, Object> {
+
         Map<String, ?> content;
 
         public MapAsSupplier(Map<String, ?> other) {
@@ -1465,7 +1456,9 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
 
         @Override
         public boolean equals(Object o) {
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             MapAsSupplier that = (MapAsSupplier) o;
             return Objects.equals(content, that.content);
         }
@@ -1477,9 +1470,9 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
 
         @Override
         public String toString() {
-            return "MapAsSupplier{" +
-                    "content=" + content +
-                    '}';
+            return "MapAsSupplier{"
+                    + "content=" + content
+                    + '}';
         }
     }
 
@@ -1515,6 +1508,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
     }
 
     private static class ConstSupplier<T> implements Supplier<T> {
+
         private T value;
 
         public ConstSupplier(T value) {
@@ -1528,6 +1522,7 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
     }
 
     private static class MapAsSupplier2 implements Function<String, Object> {
+
         Map<String, Supplier<?>> content;
 
         public MapAsSupplier2(Map<String, Supplier<?>> other) {
@@ -1560,7 +1555,9 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
 
         @Override
         public boolean equals(Object o) {
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             MapAsSupplier2 that = (MapAsSupplier2) o;
             return Objects.equals(content, that.content);
         }
@@ -1572,9 +1569,9 @@ public class NMsg implements NBlankable, NElementAutoUndestructable {
 
         @Override
         public String toString() {
-            return "MapAsSupplier2{" +
-                    "content=" + content +
-                    '}';
+            return "MapAsSupplier2{"
+                    + "content=" + content
+                    + '}';
         }
     }
 }

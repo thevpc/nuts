@@ -156,7 +156,7 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
     @Override
     public NElement describe() {
         Boolean errorState = model.getErrorState();
-        NUpletElementBuilder u = NElement.ofUpletBuilder("StableValue")
+        NUpletElementBuilder u = NElement.ofUpletBuilder("OnceValue")
                 .add("evaluated", errorState != null);
         if (errorState != null) {
             u.add("success", !errorState);

@@ -83,9 +83,10 @@ public class Slf4JNLogSPI implements NLogSPI {
             return;
         }
 
+        NDuration duration = message==null?null:message.getDuration();
         NMsg msg2=NMsg.ofC("[%-7s] %s%s", message==null?null:message.getIntent(), message,
-                (message==null || message.getDurationNanos() <= 0) ? ""
-                        : NMsg.ofC(" (duration: %s)", NDuration.ofNanos(message.getDurationNanos()))
+                (duration==null || duration.isZero()) ? ""
+                        : NMsg.ofC(" (duration: %s)", duration)
         );
 
         log0(slf4jLevel, msg2.toString(), message == null ? null : message.getThrowable());

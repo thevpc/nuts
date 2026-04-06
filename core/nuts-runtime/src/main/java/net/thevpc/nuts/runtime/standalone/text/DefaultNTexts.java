@@ -235,8 +235,6 @@ public class DefaultNTexts implements NTexts {
         });
 
         registerTextFormatProvider(new NTextFormatProvider() {
-            private final Set<String> types = Collections.unmodifiableSet(new HashSet<>(Collections.emptyList()));
-
             @Override
             public String[] types() {
                 return new String[]{"m", "meter", "meters", "metric","distance"};
@@ -1439,18 +1437,18 @@ public class DefaultNTexts implements NTexts {
                 d = null;
                 suffix = "";
                 percent = false;
-            } else if (pattern.endsWith("%")) {
-                d = new DecimalFormat(pattern.substring(0, pattern.length() - 1));
-                suffix = "%";
-                percent = true;
-            } else if (pattern.endsWith("'°'")) {
-                d = new DecimalFormat(pattern.substring(0, pattern.length() - 3));
-                suffix = "°";
-                percent = false;
-            } else if (pattern.endsWith("°")) {
-                d = new DecimalFormat(pattern.substring(0, pattern.length() - 1));
-                suffix = "°";
-                percent = false;
+//            } else if (pattern.endsWith("%")) {
+//                d = new DecimalFormat(pattern.substring(0, pattern.length() - 1));
+//                suffix = "%";
+//                percent = true;
+//            } else if (pattern.endsWith("'°'")) {
+//                d = new DecimalFormat(pattern.substring(0, pattern.length() - 3));
+//                suffix = "°";
+//                percent = false;
+//            } else if (pattern.endsWith("°")) {
+//                d = new DecimalFormat(pattern.substring(0, pattern.length() - 1));
+//                suffix = "°";
+//                percent = false;
             } else {
                 d = new DecimalFormat(pattern);
                 suffix = "";

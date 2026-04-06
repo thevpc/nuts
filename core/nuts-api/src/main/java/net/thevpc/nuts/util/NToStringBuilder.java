@@ -6,10 +6,19 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class NToStringBuilder {
+
     private String name;
     private List<Map.Entry<String, Object>> str = new ArrayList<>();
     private int rowSize = 60;
     private String indentString = "    ";
+
+    public static final NToStringBuilder of() {
+        return new NToStringBuilder();
+    }
+
+    public static final NToStringBuilder of(String name) {
+        return new NToStringBuilder(name);
+    }
 
     public NToStringBuilder() {
     }

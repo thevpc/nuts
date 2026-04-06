@@ -8,9 +8,10 @@ import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.Instant;
 
-public class NLogRichFormatter2  {
+public class NLogRichFormatter2 {
     private long lastMillis = -1;
-    public String format(NMsg msg,long timestamp,String sourceClassName,boolean filtered) {
+
+    public String format(NMsg msg, long timestamp, String sourceClassName, boolean filtered) {
         NTexts tf = NTexts.of();
 
         NTextBuilder sb = tf.ofBuilder();
@@ -23,7 +24,7 @@ public class NLogRichFormatter2  {
             int len = date.length() + 5;
             StringBuilder sb2 = new StringBuilder(5);
             if (lastMillis > 0) {
-                sb2.append(String.valueOf(timestamp - lastMillis));
+                sb2.append(timestamp - lastMillis);
             }
             while (sb2.length() < 5) {
                 sb2.append(' ');
@@ -126,9 +127,10 @@ public class NLogRichFormatter2  {
                 + NLogUtils.formatClassName(sourceClassName)
                 + ": ");
 
-        if (msg.getDurationNanos() > 0) {
+        NDuration duration = msg.getDuration();
+        if (duration != null && !duration.isZero()) {
             sb.append("(");
-            sb.append(NDuration.ofNanos(msg.getDurationNanos()), NTextStyle.config());
+            sb.append(duration);
             sb.append(") ");
         }
         NText msgStr =

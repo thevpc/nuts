@@ -16,8 +16,9 @@ public class NLogSPIJUL implements NLogSPI {
     public NLogSPIJUL(String name) {
         this.log = Logger.getLogger(name);
     }
+
     public NLogSPIJUL(Logger logger) {
-        this.log = NAssert.requireNamedNonNull(logger,"logger");
+        this.log = NAssert.requireNamedNonNull(logger, "logger");
     }
 
     @Override
@@ -29,11 +30,12 @@ public class NLogSPIJUL implements NLogSPI {
     public void log(NMsg message) {
         String[] caller = findCaller();
         Instant now = Instant.now();
-        NMsg msg2=NMsg.ofC("%s [%-6s] [%-7s] %s%s", now, message.getLevel(), message.getIntent(), message.toString(true),
-                message.getDurationNanos() <= 0 ? ""
-                        : NMsg.ofC(" (duration: %s)", NDuration.ofNanos(message.getDurationNanos()))
+        NDuration duration = message.getDuration();
+        NMsg msg2 = NMsg.ofC("%s [%-6s] [%-7s] %s%s", now, message.getLevel(), message.getIntent(), message.toString(true),
+                (duration == null || duration.isZero()) ? ""
+                        : NMsg.ofC(" (duration: %s)", duration)
         );
-        LogRecord rec = new LogRecord(message.getLevel(),"{0}");
+        LogRecord rec = new LogRecord(message.getLevel(), "{0}");
         rec.setMillis(now.toEpochMilli());
         rec.setThrown(message.getThrowable());
         rec.setParameters(new Object[]{msg2.toString()});

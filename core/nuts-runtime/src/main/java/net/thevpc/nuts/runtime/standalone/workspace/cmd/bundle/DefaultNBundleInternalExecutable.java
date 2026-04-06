@@ -106,7 +106,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
 
         cmdLine.throwUnexpectedArgument(NMsg.ofC("%s", boptions.ids));
         chrono.stop();
-        NTrace.println(NMsg.ofC(NI18n.of("found %s deps and %s apps in %s..."), resultingIds.classPath.size(), resultingIds.executableAppIds.size(), chrono.getDuration()));
+        NTrace.println(NMsg.ofC(NI18n.of("found %s deps and %s apps in %s..."), resultingIds.classPath.size(), resultingIds.executableAppIds.size(), chrono.duration()));
         String defaultName = "nuts-bundle";
         String defaultVersion = "1.0";
         if (resultingIds.executableAppIds.size() == 1) {
@@ -290,7 +290,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 }
                 if (nSession.isTrace()) {
                     if (NOut.isPlain()) {
-                        NTrace.out().println(NMsg.ofC("bundle created %s in %s", target, allChrono.stop().getDuration()));
+                        NTrace.out().println(NMsg.ofC("bundle created %s in %s", target, allChrono.stop().duration()));
                     } else {
                         NTrace.out().println(NMapBuilder.of().put("bundlePath", target).build());
                     }
@@ -313,7 +313,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 }
                 if (nSession.isTrace()) {
                     if (NOut.isPlain()) {
-                        NTrace.out().println(NMsg.ofC("bundle created %s in %s", target, allChrono.stop().getDuration()));
+                        NTrace.out().println(NMsg.ofC("bundle created %s in %s", target, allChrono.stop().duration()));
                     } else {
                         NTrace.out().println(NMapBuilder.of().put("bundlePath", target).build());
                     }
@@ -325,7 +325,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 NPath target = rootFolder.toAbsolute();
                 if (nSession.isTrace()) {
                     if (NOut.isPlain()) {
-                        NTrace.out().println(NMsg.ofC("bundle created %s in %s", target, allChrono.stop().getDuration()));
+                        NTrace.out().println(NMsg.ofC("bundle created %s in %s", target, allChrono.stop().duration()));
                     } else {
                         NTrace.out().println(NMapBuilder.of().put("bundlePath", target).build());
                     }

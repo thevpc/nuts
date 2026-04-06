@@ -656,7 +656,7 @@ public class URLPath implements NPathSPI {
             NLog.of(URLPath.class)
                     .log(NMsg.ofC("load url info %s", url).withLevel(Level.FINEST)
                             .withIntent(success ? NMsgIntent.SUCCESS : NMsgIntent.FAIL)
-                            .withDurationMillis(chrono.stop().getDurationMs())
+                            .withDurationMillis(chrono.stop().durationMs())
                     );
         }
         return null;

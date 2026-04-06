@@ -98,16 +98,16 @@ public class NCompressZip implements NCompressPackaging {
                 throw new NIllegalArgumentException(NMsg.ofC("unsupported target %s", target));
             }
             _LOG()
-                    .log(NMsg.ofC("compressed %s to %s", sources, target).asFinest().withIntent(NMsgIntent.SUCCESS).withDurationMillis(chronometer.getDurationMs()));
+                    .log(NMsg.ofC("compressed %s to %s", sources, target).asFinest().withIntent(NMsgIntent.SUCCESS).withDurationMillis(chronometer.durationMs()));
         } catch (IOException ex) {
             _LOG()
                     .log(NMsg.ofC("error compressing %s to %s : %s",
-                            sources, target, ex).asConfig().withIntent(NMsgIntent.FAIL).withDurationMillis(chronometer.getDurationMs()));
+                            sources, target, ex).asConfig().withIntent(NMsgIntent.FAIL).withDurationMillis(chronometer.durationMs()));
             throw new NIOException(ex);
         } catch (RuntimeException ex) {
             _LOG()
                     .log(NMsg.ofC("error compressing %s to %s : %s",
-                            sources, target, ex).asConfig().withIntent(NMsgIntent.FAIL).withDurationMillis(chronometer.getDurationMs()));
+                            sources, target, ex).asConfig().withIntent(NMsgIntent.FAIL).withDurationMillis(chronometer.durationMs()));
             throw ex;
         }
     }

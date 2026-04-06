@@ -83,9 +83,10 @@ public class NLogFileHandler implements NLogSPI {
             return;
         }
         Instant now = Instant.now();
+        NDuration duration = message.getDuration();
         NMsg msg2=NMsg.ofC("%s [%-6s] [%-7s] %s%s", now, message.getLevel(), message.getIntent(), message,
-                message.getDurationNanos() <= 0 ? ""
-                        : NMsg.ofC(" (duration: %s)", NDuration.ofNanos(message.getDurationNanos()))
+                (duration==null|| duration.isZero()) ? ""
+                        : NMsg.ofC(" (duration: %s)", message.getDuration())
         );
         LogRecord r = new LogRecord(message.getLevel(),"{0}");
         r.setMillis(now.toEpochMilli());

@@ -314,7 +314,7 @@ public class DefaultNExec extends AbstractNExec {
             }
         } finally {
             chrono.stop();
-            executionTime = chrono.getDuration();
+            executionTime = chrono.duration();
         }
     }
 

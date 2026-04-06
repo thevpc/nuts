@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NReflectImpl implements NReflect {
-    private static NTypeNamePlatformDomain PLATFORM = new JavaNTypeNameDomain();
+    public static NTypeNamePlatformDomain PLATFORM_DOMAIN = new JavaNTypeNameDomain();
 
     @Override
     public NScopedStack<NBeanContainer> scopedBeanContainerStack() {
@@ -190,6 +190,6 @@ public class NReflectImpl implements NReflect {
 
     @Override
     public NTypeNamePlatformDomain platformDomain() {
-        return PLATFORM;
+        return PLATFORM_DOMAIN;
     }
 }

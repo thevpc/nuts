@@ -864,14 +864,14 @@ public class DefaultNCp implements NCp {
 
                     .log(NMsg.ofC(NI18n.of("%s %s to %s"), m,_source2.source, loggedTarget)
                             .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
-                            .withDurationMillis(chrono.getDurationMs())
+                            .withDurationMillis(chrono.durationMs())
                     );
         } catch (IOException ex) {
             _LOG()
 
                     .log(NMsg.ofC("error % %s to %s : %s", m,_source2.source, loggedTarget, ex)
                             .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL)
-                            .withDurationMillis(chrono.getDurationMs())
+                            .withDurationMillis(chrono.durationMs())
                     );
             throw new NIOException(ex);
         }

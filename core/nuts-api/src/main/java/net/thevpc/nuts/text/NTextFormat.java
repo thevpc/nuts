@@ -29,7 +29,7 @@ public interface NTextFormat<T> extends NStringFormat<T> {
     }
 
     static NTextFormat<Number> ofPercent() {
-        return of("percent", Number.class, "00.00%");
+        return of("number", Number.class, "00.00%");
     }
 
     static <T> NTextFormat<T> of(String type, Class<T> expectedType) {

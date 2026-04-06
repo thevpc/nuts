@@ -1,9 +1,9 @@
 ---
-title: Stable Value
+title: Once Value
 ---
 
 
-`NStableValue` stores a value that is computed lazily — the supplier is not
+`NOnceValue` stores a value that is computed lazily — the supplier is not
 invoked until the first call to `get()`. Once evaluated, the value remains stable
 and is reused for all subsequent accesses. This is perfect for expensive computations,
 constants, or resources that should only be initialized once.
@@ -11,7 +11,7 @@ constants, or resources that should only be initialized once.
 
 ```java
 // Example 1: Lazy initialization
-NStableValue&lt;Double> stableRandom = NStableValue.of(Math::random);
+NOnceValue&lt;Double> onceRandom = NOnceValue.of(Math::random);
 
 // Value is computed on first access
 NOut.println("First value = " + stableRandom.get());

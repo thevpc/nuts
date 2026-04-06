@@ -130,7 +130,7 @@ public class DefaultFileNLock extends AbstractNLock {
             } while (true);
         }finally {
             chrono.stop();
-            if(chrono.getDurationMs()>10) {
+            if(chrono.durationMs()>10) {
                 _log.warn(NMsg.ofC("Lock file duration for %s (%s)", chrono.stop(), path));
             }
         }

@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.util.collections;
 import net.thevpc.nuts.reflect.NClassMap;
 import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.reflect.NTypeNamePlatformDomain;
+import net.thevpc.nuts.runtime.standalone.reflect.NReflectImpl;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -107,7 +108,7 @@ import java.util.*;
         public List<Class<? extends K>> getSearchPath(Class<? extends K> classKey) {
             Class[] keis = cachedHierarchy.get(classKey);
             if (keis == null) {
-                keis = NReflectUtils.findClassHierarchy(classKey, keyType, NTypeNamePlatformDomain.of());
+                keis = NReflectUtils.findClassHierarchy(classKey, keyType, NReflectImpl.PLATFORM_DOMAIN);
                 cachedHierarchy.put(classKey, keis);
             }
             return Arrays.asList(keis);

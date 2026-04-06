@@ -5,7 +5,7 @@ import net.thevpc.nuts.util.NCopiable;
 import java.util.function.Supplier;
 
 /**
- * Represents a stable value that can be cached or computed on demand.
+ * Represents a once value that can be cached or computed on demand.
  * <p>
  * This model holds the actual value, an optional error state, and a supplier
  * to lazily recompute the value if needed. It supports cloning and copying.
@@ -15,11 +15,11 @@ import java.util.function.Supplier;
 public class NOnceValueModel implements Cloneable, NCopiable {
 
     /**
-     * Unique identifier for this stable value.
+     * Unique identifier for this once value.
      */
     private String id;
     /**
-     * Current value held by this stable value.
+     * Current value held by this once value.
      */
     private Object value;
     /**
@@ -41,7 +41,7 @@ public class NOnceValueModel implements Cloneable, NCopiable {
     }
 
     /**
-     * Creates a new stable value model with the given id and supplier.
+     * Creates a new once value model with the given id and supplier.
      *
      * @param id       unique identifier
      * @param supplier supplier to compute the value

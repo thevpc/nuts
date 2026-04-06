@@ -21,7 +21,7 @@
  *         the system and recover gracefully when possible.</li>
  *     <li><b>Saga Orchestration:</b> Define distributed transactions with
  *         compensation and rollback strategies for complex workflows.</li>
- *     <li><b>Cached and Stable Values:</b> Memoize values, cache results,
+ *     <li><b>Cached and once values:</b> Memoize values, cache results,
  *         and stabilize state in concurrent environments.</li>
  *     <li><b>Retry Mechanisms:</b> Execute operations with configurable
  *         retry policies and failure handling strategies.</li>
