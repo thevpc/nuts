@@ -58,7 +58,7 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      * @param version string value
      * @return parsed value
      */
-    static NOptional<NVersion> getPartAt(String version) {
+    static NOptional<NVersion> get(String version) {
         if (NBlankable.isBlank(version)) {
             return NOptional.of(BLANK);
         }
@@ -70,7 +70,7 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
     }
 
     static NVersion of(String version) {
-        return getPartAt(version).get();
+        return get(version).get();
     }
 
     /**

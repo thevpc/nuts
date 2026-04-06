@@ -52,7 +52,7 @@ public class DefaultSourceControlHelper {
         String oldVersion = NStringUtils.trim(d.getId().getVersion().getValue());
         if (oldVersion.endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - CoreNConstants.Versions.CHECKED_OUT_EXTENSION.length());
-            String newVersion = NVersion.getPartAt(oldVersion).get().inc().getValue();
+            String newVersion = NVersion.get(oldVersion).get().inc().getValue();
             NDefinition newVersionFound = null;
             try {
                 newVersionFound = NFetch.of(d.getId().builder().setVersion(newVersion).build())

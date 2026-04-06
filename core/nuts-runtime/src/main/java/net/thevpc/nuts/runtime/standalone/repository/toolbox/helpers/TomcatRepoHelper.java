@@ -166,7 +166,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                                             //will ignore all alpha versions
                                                             return NStream.ofEmpty();
                                                         }
-                                                        NVersion version = NVersion.getPartAt(s2n.substring(1, s2n.length() - 1)).get();
+                                                        NVersion version = NVersion.get(s2n.substring(1, s2n.length() - 1)).get();
                                                         if (version.compareTo("4.1.32") < 0) {
                                                             prefix = "jakarta-tomcat-";
                                                         }
@@ -187,7 +187,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                                                             (NPath x5) -> {
                                                                                 String s3 = x5.getName();
                                                                                 String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
-                                                                                NVersion v = NVersion.getPartAt(v0).get();
+                                                                                NVersion v = NVersion.get(v0).get();
                                                                                 NId id2 = idBuilder.setVersion(v).build();
                                                                                 if (safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id2, repository, "TomcatRepoHelper 1"))) {
                                                                                     return id2;

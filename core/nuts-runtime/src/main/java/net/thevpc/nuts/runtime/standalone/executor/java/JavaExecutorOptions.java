@@ -743,11 +743,11 @@ public final class JavaExecutorOptions {
                 extraExecutorOptions.add(varg.toString());
             }
         }
-        java9 = NVersion.getPartAt(javaVersion).get().compareTo("9") >= 0;
+        java9 = NVersion.get(javaVersion).get().compareTo("9") >= 0;
         for (NArg extraMayBeJvmOption : extraMayBeJvmOptions) {
             if (extraMayBeJvmOption.toString().startsWith("--jvm-")) {
                 getJvmArgs().add(extraMayBeJvmOption.toString().substring("--jvm".length()));
-            } else if (isJvmOption(extraMayBeJvmOption, NVersion.getPartAt(javaVersion).get())) {
+            } else if (isJvmOption(extraMayBeJvmOption, NVersion.get(javaVersion).get())) {
                 getJvmArgs().add(extraMayBeJvmOption.toString());
             }
         }

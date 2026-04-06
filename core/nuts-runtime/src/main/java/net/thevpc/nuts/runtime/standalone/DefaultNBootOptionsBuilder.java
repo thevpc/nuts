@@ -2525,7 +2525,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     }
 
     public NBootOptionsBuilder copyFrom(NBootOptionsInfo other) {
-        this.setApiVersion(other.getApiVersion() == null ? null : NVersion.getPartAt(other.getApiVersion()).orNull());
+        this.setApiVersion(other.getApiVersion() == null ? null : NVersion.get(other.getApiVersion()).orNull());
         this.setRuntimeId(other.getRuntimeId() == null ? null :
                 other.getRuntimeId().contains("#") ? NId.get(other.getRuntimeId()).orNull() :
                         NId.getRuntime(other.getRuntimeId()).orNull()

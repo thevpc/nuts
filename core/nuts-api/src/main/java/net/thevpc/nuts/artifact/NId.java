@@ -70,7 +70,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     static NOptional<NId> get(String groupId, String artifactId, String version) {
-        return NVersion.getPartAt(version).map(x -> new DefaultNId(groupId, artifactId, x));
+        return NVersion.get(version).map(x -> new DefaultNId(groupId, artifactId, x));
     }
 
     static NOptional<NId> getApi(NVersion version) {

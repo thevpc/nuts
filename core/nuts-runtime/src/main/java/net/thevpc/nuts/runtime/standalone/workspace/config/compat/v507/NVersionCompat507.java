@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class NVersionCompat507 extends AbstractNVersionCompat {
 
-    public static final NVersion CONFIG_VERSION_507 = NVersion.getPartAt("5.0.7").get();
+    public static final NVersion CONFIG_VERSION_507 = NVersion.get("5.0.7").get();
 
     public NVersionCompat507(NVersion apiVersion) {
         super(apiVersion, 507);

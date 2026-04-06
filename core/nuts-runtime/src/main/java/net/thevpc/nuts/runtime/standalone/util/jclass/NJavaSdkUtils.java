@@ -62,7 +62,7 @@ public class NJavaSdkUtils {
 
     public static NOptional<Integer> validateJavaMajorVersion(String version) {
         if (!NBlankable.isBlank(version)) {
-            NVersion v = NVersion.getPartAt(version).orNull();
+            NVersion v = NVersion.get(version).orNull();
             if (v != null) {
                 if (v.isSingleValue()) {
                     Integer e = v.getIntAt(0).orElse(null);
@@ -206,7 +206,7 @@ public class NJavaSdkUtils {
         return new Predicate<String>() {
             @Override
             public boolean test(String sVersion) {
-                NVersion version = NVersion.getPartAt(sVersion).get();
+                NVersion version = NVersion.get(sVersion).get();
                 if (versionFilter.acceptVersion(version)) {
                     return true;
                 }
@@ -216,7 +216,7 @@ public class NJavaSdkUtils {
                     NLiteral p = NLiteral.of(sVersion.substring(0, a));
                     if (p.asInt().isPresent() && p.asInt().get() == 1) {
                         String sVersion2 = sVersion.substring(a + 1);
-                        NVersion version2 = NVersion.getPartAt(sVersion2).get();
+                        NVersion version2 = NVersion.get(sVersion2).get();
                         if (versionFilter.acceptVersion(version2)) {
                             return true;
                         }
@@ -229,7 +229,7 @@ public class NJavaSdkUtils {
 
     public NVersionFilter createVersionFilterExact(String requestedJavaVersion) {
         requestedJavaVersion = NStringUtils.trim(requestedJavaVersion);
-        NVersion vv = NVersion.getPartAt(requestedJavaVersion).get();
+        NVersion vv = NVersion.get(requestedJavaVersion).get();
         String singleVersion = vv.asSingleValue().orNull();
         if (singleVersion != null) {
             requestedJavaVersion = singleVersion;
@@ -239,7 +239,7 @@ public class NJavaSdkUtils {
 
     public NVersionFilter createVersionFilter(String requestedJavaVersion) {
         requestedJavaVersion = NStringUtils.trim(requestedJavaVersion);
-        NVersion vv = NVersion.getPartAt(requestedJavaVersion).get();
+        NVersion vv = NVersion.get(requestedJavaVersion).get();
         String singleVersion = vv.asSingleValue().orNull();
         if (singleVersion != null) {
             requestedJavaVersion = "[" + singleVersion + ",[";
@@ -295,7 +295,7 @@ public class NJavaSdkUtils {
             // [2] look if host JVM 1.8
             NExecutionEngineLocation[] found = Arrays.stream(allRegisteredInstallations).filter(x ->
                     (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.getProduct())) &&
-                            requestedVersionFilterExact.test(NVersion.getPartAt(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                            requestedVersionFilterExact.test(NVersion.get(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
             if (found.length > 0) {
                 NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(highestVersionFirst).toArray(NExecutionEngineLocation[]::new);
                 return NOptional.of(sorted[0]);
@@ -311,7 +311,7 @@ public class NJavaSdkUtils {
             NExecutionEngineLocation[] found = Stream.of(searchedJdkLocations).filter(
                     x ->
                             (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.getProduct())) &&
-                                    requestedVersionFilterExact.test(NVersion.getPartAt(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                                    requestedVersionFilterExact.test(NVersion.get(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
             if (found.length > 0) {
                 NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(highestVersionFirst).toArray(NExecutionEngineLocation[]::new);
                 for (NExecutionEngineLocation selected : sorted) {
@@ -336,7 +336,7 @@ public class NJavaSdkUtils {
             NExecutionEngineLocation[] found = Stream.of(searchRemoteLocationsAndInstall(jdk ? NExecutionEngineLocation.JAVA_PRODUCT_JDK : NExecutionEngineLocation.JAVA_PRODUCT_JRE, NBlankable.isBlank(javaVersion) ? NVersion.BLANK : NVersion.of(javaVersion))).filter(
                     x ->
                             (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.getProduct())) &&
-                                    requestedVersionFilterExact.test(NVersion.getPartAt(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                                    requestedVersionFilterExact.test(NVersion.get(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
             if (found.length > 0) {
                 NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(highestVersionFirst).toArray(NExecutionEngineLocation[]::new);
                 for (NExecutionEngineLocation selected : sorted) {
@@ -359,7 +359,7 @@ public class NJavaSdkUtils {
             // [6] look if host JVM >1.8
             NExecutionEngineLocation[] found = Arrays.stream(allRegisteredInstallations).filter(x ->
                     (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.getProduct())) &&
-                            requestedVersionFilterBigger.test(NVersion.getPartAt(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                            requestedVersionFilterBigger.test(NVersion.get(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
             if (found.length > 0) {
                 NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(lowerVersionFirst).toArray(NExecutionEngineLocation[]::new);
                 for (NExecutionEngineLocation selected : sorted) {
@@ -379,7 +379,7 @@ public class NJavaSdkUtils {
             NExecutionEngineLocation[] found = Stream.of(searchedJdkLocations).filter(
                     x ->
                             (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.getProduct())) &&
-                                    requestedVersionFilterBigger.test(NVersion.getPartAt(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                                    requestedVersionFilterBigger.test(NVersion.get(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
             if (found.length > 0) {
                 NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(lowerVersionFirst).toArray(NExecutionEngineLocation[]::new);
                 for (NExecutionEngineLocation selected : sorted) {
@@ -401,7 +401,7 @@ public class NJavaSdkUtils {
                     , NBlankable.isBlank(javaVersion) ? NVersion.BLANK : NVersion.of(javaVersion))).filter(
                     x ->
                             (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.getProduct())) &&
-                                    requestedVersionFilterBigger.test(NVersion.getPartAt(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                                    requestedVersionFilterBigger.test(NVersion.get(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
             if (found.length > 0) {
                 NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(lowerVersionFirst).toArray(NExecutionEngineLocation[]::new);
                 for (NExecutionEngineLocation selected : sorted) {
@@ -707,7 +707,7 @@ public class NJavaSdkUtils {
 
     public NId createJdkId(String version) {
         NAssert.requireNamedNonBlank(version, "version");
-        NVersion jv = NVersion.getPartAt(version).get();
+        NVersion jv = NVersion.get(version).get();
         long n1 = jv.getLongAt(0).orElse(0L);
         long n2 = jv.getLongAt(1).orElse(0L);
         long classFileId = 0;
@@ -816,7 +816,7 @@ public class NJavaSdkUtils {
     private static class ByVersionSorter implements Function<NExecutionEngineLocation, NVersion> {
         @Override
         public NVersion apply(NExecutionEngineLocation x) {
-            return NVersion.getPartAt(x.getVersion()).orNull();
+            return NVersion.get(x.getVersion()).orNull();
         }
     }
 
@@ -843,7 +843,7 @@ public class NJavaSdkUtils {
             List<NVersionInterval> intervalls = versionFilter.intervals().orElse(new ArrayList<>());
             for (NVersionInterval nVersionInterval : intervalls) {
                 if (nVersionInterval.isFixedValue()) {
-                    NVersion expected = NVersion.getPartAt(nVersionInterval.getLowerBound()).orNull();
+                    NVersion expected = NVersion.get(nVersionInterval.getLowerBound()).orNull();
                     int expected_0 = expected.getIntAt(0).orElse(0);
                     int expected_1 = expected.getIntAt(1).orElse(0);
                     int expected_2 = expected.getIntAt(2).orElse(0);
@@ -891,8 +891,8 @@ public class NJavaSdkUtils {
             if (c != 0) {
                 return c;
             }
-            NVersion v1 = NVersion.getPartAt(a.getVersion()).orElse(NVersion.BLANK);
-            NVersion v2 = NVersion.getPartAt(b.getVersion()).orElse(NVersion.BLANK);
+            NVersion v1 = NVersion.get(a.getVersion()).orElse(NVersion.BLANK);
+            NVersion v2 = NVersion.get(b.getVersion()).orElse(NVersion.BLANK);
             if (lowestVersionFirst) {
                 c = v1.compareTo(v2);
             } else {

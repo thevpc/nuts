@@ -148,9 +148,9 @@ public class DefaultNPs implements NPs {
             return v;
         }
         NWorkspace workspace = NWorkspace.of();
-        NVersionFilter nvf = NBlankable.isBlank(version) ? null : NVersion.getPartAt(version).get().toFilter();
+        NVersionFilter nvf = NBlankable.isBlank(version) ? null : NVersion.get(version).get().toFilter();
         NExecutionEngineLocation[] availableJava = NExecutionEngines.of().findExecutionEngines(NExecutionEngineFamily.JAVA,
-                java -> NExecutionEngineLocation.JAVA_PRODUCT_JDK.equals(java.getProduct()) && (nvf == null || nvf.acceptVersion(NVersion.getPartAt(java.getVersion()).get()))
+                java -> NExecutionEngineLocation.JAVA_PRODUCT_JDK.equals(java.getProduct()) && (nvf == null || nvf.acceptVersion(NVersion.get(java.getVersion()).get()))
         ).toArray(NExecutionEngineLocation[]::new);
         for (NExecutionEngineLocation java : availableJava) {
             detectedJavaHomes.add(java.getPath());

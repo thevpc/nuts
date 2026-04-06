@@ -460,7 +460,7 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
             case "-v":
             case "--api-version":
             case "--to-version": {
-                return cmdLine.matcher().matchEntry((v) -> this.setApiVersion(NVersion.getPartAt(v.stringValue()).get())).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> this.setApiVersion(NVersion.get(v.stringValue()).get())).anyMatch();
             }
             case "-g":
             case "--args": {

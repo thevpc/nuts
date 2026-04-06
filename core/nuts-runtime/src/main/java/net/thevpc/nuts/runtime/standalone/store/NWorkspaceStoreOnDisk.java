@@ -141,9 +141,9 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         }
         try {
             Map<String, Object> a_config0 = NElementReader.ofJson().read(bytes, Map.class);
-            NVersion version = NVersion.getPartAt((String) a_config0.get("configVersion")).onBlankEmpty().orNull();
+            NVersion version = NVersion.get((String) a_config0.get("configVersion")).onBlankEmpty().orNull();
             if (version == null) {
-                version = NVersion.getPartAt((String) a_config0.get("createApiVersion")).onBlankEmpty().orNull();
+                version = NVersion.get((String) a_config0.get("createApiVersion")).onBlankEmpty().orNull();
                 if (version == null) {
                     version = Nuts.getVersion();
                 }
@@ -230,7 +230,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             byte[] bytes = file.readBytes();
             try {
                 Map<String, Object> a_config0 = NElementReader.ofJson().read(bytes, Map.class);
-                NVersion version = NVersion.getPartAt((String) a_config0.get("configVersion")).orNull();
+                NVersion version = NVersion.get((String) a_config0.get("configVersion")).orNull();
                 if (version == null || version.isBlank()) {
                     version = workspace.getApiVersion();
                 }
@@ -310,7 +310,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                                 public NVersion apply(NPath folder) {
                                     if (folder.isDirectory()
                                             && folder.resolve(DefaultNInstalledRepository.NUTS_INSTALL_FILE).isRegularFile()) {
-                                        NVersion vv = NVersion.getPartAt(folder.getName()).get();
+                                        NVersion vv = NVersion.get(folder.getName()).get();
                                         if (filter0.acceptVersion(vv)) {
                                             return vv;
                                         }
@@ -385,7 +385,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                 NVersion v = c.getConfigVersion();
                 if (NBlankable.isBlank(v)) {
                     c.setInstalled(true);
-                    c.setConfigVersion(NVersion.getPartAt("0.5.8").get()); //last version before 0.6
+                    c.setConfigVersion(NVersion.get("0.5.8").get()); //last version before 0.6
                     changeStatus = true;
                 }
                 NId idOk = c.getId();

@@ -701,7 +701,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
                 }
                 NVersion v = bootApiVersion;
                 if (v == null || v.isBlank()) {
-                    v = NVersion.getPartAt(NConstants.Versions.LATEST).get();
+                    v = NVersion.get(NConstants.Versions.LATEST).get();
                 }
                 try {
                     NId finalOldId = oldId;

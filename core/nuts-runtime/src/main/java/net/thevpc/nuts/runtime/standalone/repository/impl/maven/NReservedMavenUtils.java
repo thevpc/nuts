@@ -98,7 +98,7 @@ public final class NReservedMavenUtils {
                         String version = map.get("version");
                         if (groupId != null && artifactId != null && version != null) {
                             return new NId[]{NId.get(
-                                    groupId, artifactId, NVersion.getPartAt(version).get()
+                                    groupId, artifactId, NVersion.get(version).get()
                             ).get()};
                         }
                     }
@@ -125,7 +125,7 @@ public final class NReservedMavenUtils {
                                     Map<String, String> map = resolvePomTagValues(new String[]{"groupId", "artifactId", "version"}, is);
                                     if (map.containsKey("version")) {
                                         String version = map.get("version");
-                                        all.add(NId.get(groupId, artifactId, NVersion.getPartAt(version).get()).get());
+                                        all.add(NId.get(groupId, artifactId, NVersion.get(version).get()).get());
                                     }
                                 }
                             }
@@ -141,7 +141,7 @@ public final class NReservedMavenUtils {
                                             Map<?, ?> map = ((Map<?, ?>) p);
                                             Object v = map.get("version");
                                             if (v instanceof String) {
-                                                all.add(NId.get(groupId, artifactId, NVersion.getPartAt((String) v).get()).get());
+                                                all.add(NId.get(groupId, artifactId, NVersion.get((String) v).get()).get());
                                             }
                                         }
                                     }
@@ -475,7 +475,7 @@ public final class NReservedMavenUtils {
                                 for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
                                     if (c3.getChildNodes().item(k) instanceof Element && c3.getChildNodes().item(k).getNodeName().equals("version")) {
                                         Element c4 = (Element) c3.getChildNodes().item(k);
-                                        NVersion p = NVersion.getPartAt(c4.getTextContent()).get();
+                                        NVersion p = NVersion.get(c4.getTextContent()).get();
                                         if (!p.isBlank()) {
                                             all.add(p);
                                         }
@@ -521,7 +521,7 @@ public final class NReservedMavenUtils {
                             if (file.isDirectory()) {
                                 String[] goodChildren = file.list(filenameFilter);
                                 if (goodChildren != null && goodChildren.length > 0) {
-                                    NVersion p = NVersion.getPartAt(file.getName()).get();//folder name is version name
+                                    NVersion p = NVersion.get(file.getName()).get();//folder name is version name
                                     if (filter == null || filter.test(p)) {
                                         found = true;
                                         if (bestVersion == null || bestVersion.compareTo(p) < 0) {
@@ -664,7 +664,7 @@ public final class NReservedMavenUtils {
                         int a = s.lastIndexOf('/');
                         if (a >= 0) {
                             String n = s.substring(a + 1);
-                            NVersion v = NVersion.getPartAt(n).get();
+                            NVersion v = NVersion.get(n).get();
                             if (!v.isBlank()) {
                                 all.add(v);
                             }

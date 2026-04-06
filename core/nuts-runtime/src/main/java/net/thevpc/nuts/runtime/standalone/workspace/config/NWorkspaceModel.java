@@ -132,7 +132,7 @@ public class NWorkspaceModel {
         this.runtimeId = NId.get(
                 askedRuntimeId.getGroupId(),
                 askedRuntimeId.getArtifactId(),
-                NVersion.getPartAt(askedRuntimeId.getVersion().toString()).get()).get();
+                NVersion.get(askedRuntimeId.getVersion().toString()).get()).get();
         this.logModel.init(this.bootModel.getBootEffectiveOptions(), initialBootOptions);
         this.bootModel.init();
     }

@@ -413,7 +413,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         );
         props.put("sys-terminal-flags", () -> NWorkspace.of().getBootTerminal().getFlags());
         props.put("sys-terminal-mode", () -> NWorkspace.of().getBootOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT));
-        props.put("java-version", () -> NVersion.getPartAt(System.getProperty("java.version")).get());
+        props.put("java-version", () -> NVersion.get(System.getProperty("java.version")).get());
         props.put("platform", () -> NEnv.of().getJava());
         props.put("java-home", () -> NPath.of(System.getProperty("java.home")));
         props.put("java-executable", () -> NPath.of(NJavaSdkUtils.of(NWorkspace.of()).resolveJavaCommandByHome(null)));
@@ -610,7 +610,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("sys-terminal-flags", b.getFlags());
         NTerminalMode terminalMode = workspace.getBootOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT);
         props.put("sys-terminal-mode", terminalMode);
-        props.put("java-version", NVersion.getPartAt(System.getProperty("java.version")).get());
+        props.put("java-version", NVersion.get(System.getProperty("java.version")).get());
         props.put("platform", environment.getJava());
         props.put("java-home", NPath.of(System.getProperty("java.home")));
         props.put("java-executable", NPath.of(NJavaSdkUtils.of(NWorkspace.of()).resolveJavaCommandByHome(null)));

@@ -17,7 +17,6 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.text.NMsg;
 
 import java.io.IOException;
@@ -236,12 +235,12 @@ public class NdiScriptOptions implements Cloneable {
                                             .getParent())
                             .filter(
                                     f
-                                            -> NVersion.getPartAt(f.getFileName().toString())
+                                            -> NVersion.get(f.getFileName().toString())
                                             .flatMap(v->v.getLongAt(0))
                                             .isPresent()
                                             && Files.exists(f.resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME))
                             ).map(
-                                    f -> NVersion.getPartAt(f.getFileName().toString()).get()
+                                    f -> NVersion.get(f.getFileName().toString()).get()
                             ).max(Comparator.naturalOrder()).orElse(null);
                 } catch (IOException e) {
                     throw new NIOException(e);

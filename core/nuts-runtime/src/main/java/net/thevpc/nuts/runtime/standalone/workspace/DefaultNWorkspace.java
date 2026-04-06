@@ -110,12 +110,12 @@ import java.util.stream.Collectors;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceExt {
 
-    public static final NVersion VERSION_INSTALL_INFO_CONFIG = NVersion.getPartAt("0.8.0").get();
-    public static final NVersion VERSION_SDK_LOCATION = NVersion.getPartAt("0.8.0").get();
-    public static final NVersion VERSION_REPOSITORY_CONFIG = NVersion.getPartAt("0.8.0").get();
+    public static final NVersion VERSION_INSTALL_INFO_CONFIG = NVersion.get("0.8.0").get();
+    public static final NVersion VERSION_SDK_LOCATION = NVersion.get("0.8.0").get();
+    public static final NVersion VERSION_REPOSITORY_CONFIG = NVersion.get("0.8.0").get();
     public static final String VERSION_REPOSITORY_REF = "0.8.0";
     public static final String VERSION_WS_CONFIG_API = "0.8.0";
-    public static final NVersion VERSION_WS_CONFIG_BOOT = NVersion.getPartAt("0.8.7").get();
+    public static final NVersion VERSION_WS_CONFIG_BOOT = NVersion.get("0.8.7").get();
     public static final String VERSION_WS_CONFIG_MAIN = "0.8.0";
     public static final String VERSION_WS_CONFIG_RUNTIME = "0.8.0";
     public static final String VERSION_WS_CONFIG_SECURITY = "0.8.0";

@@ -193,7 +193,7 @@ public class JavaClassUtils {
     }
 
     public static String sourceVersionToClassVersion(String sourceVersion) {
-        NVersion v = NVersion.getPartAt(sourceVersion).get();
+        NVersion v = NVersion.get(sourceVersion).get();
         int major = v.getIntAt(0).orElse(0);
         int minor = v.getIntAt(1).orElse(-1);
         if (major < 1) {

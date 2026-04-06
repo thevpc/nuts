@@ -228,7 +228,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                             Matcher mm = pp.matcher(s);
                             if (mm.find()) {
                                 String v = mm.group("v");
-                                nutsDependencyVersion = NVersion.getPartAt(v).get();
+                                nutsDependencyVersion = NVersion.get(v).get();
                                 break;
                             }
                         }

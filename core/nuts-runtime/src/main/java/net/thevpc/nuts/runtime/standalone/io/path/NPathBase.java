@@ -305,7 +305,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         if (li < 0) {
             return new NPathNameParts(n, "", "", NPathExtensionType.SMART);
         }
-        List<NVersionPart> vals = NVersion.getPartAt(n).get().parts();
+        List<NVersionPart> vals = NVersion.get(n).get().parts();
         int lastDot = -1;
         for (int i = vals.size() - 1; i >= 0; i--) {
             NVersionPart v = vals.get(i);

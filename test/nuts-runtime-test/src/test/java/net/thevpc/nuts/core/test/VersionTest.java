@@ -93,16 +93,16 @@ public class VersionTest {
 
     @Test
     public void test10() {
-        NVersion v1 = NVersion.getPartAt("1.2-preview").get();
-        NVersion v2 = NVersion.getPartAt("1.2").get();
+        NVersion v1 = NVersion.get("1.2-preview").get();
+        NVersion v2 = NVersion.get("1.2").get();
         // preview is unsupported qualifier so it is after final
         Assertions.assertTrue(v1.compareTo(v2)>0);
     }
 
     @Test
     public void test11() {
-        NVersion v1 = NVersion.getPartAt("1.2-preview").get();
-        NVersion v2 = NVersion.getPartAt("1.2.1").get();
+        NVersion v1 = NVersion.get("1.2-preview").get();
+        NVersion v2 = NVersion.get("1.2.1").get();
         Assertions.assertTrue(v1.compareTo(v2)<0);
     }
 
@@ -132,18 +132,18 @@ public class VersionTest {
     @Test
     public void test14() {
         String version = "";
-        Assertions.assertEquals(true, NVersion.getPartAt(version).get().isBlank());
-        Assertions.assertEquals(false, NVersion.getPartAt(version).get().isFilter());
-        Assertions.assertEquals(false, NVersion.getPartAt(version).get().isNull());
-        Assertions.assertEquals(false, NVersion.getPartAt(version).get().isSingleValue());
+        Assertions.assertEquals(true, NVersion.get(version).get().isBlank());
+        Assertions.assertEquals(false, NVersion.get(version).get().isFilter());
+        Assertions.assertEquals(false, NVersion.get(version).get().isNull());
+        Assertions.assertEquals(false, NVersion.get(version).get().isSingleValue());
     }
     @Test
     public void test15() {
         String version = "a";
-        Assertions.assertEquals(false, NVersion.getPartAt(version).get().isBlank());
-        Assertions.assertEquals(false, NVersion.getPartAt(version).get().isFilter());
-        Assertions.assertEquals(false, NVersion.getPartAt(version).get().isNull());
-        Assertions.assertEquals(true, NVersion.getPartAt(version).get().isSingleValue());
+        Assertions.assertEquals(false, NVersion.get(version).get().isBlank());
+        Assertions.assertEquals(false, NVersion.get(version).get().isFilter());
+        Assertions.assertEquals(false, NVersion.get(version).get().isNull());
+        Assertions.assertEquals(true, NVersion.get(version).get().isSingleValue());
     }
 
     @Test
@@ -152,7 +152,7 @@ public class VersionTest {
                 "[a]","[a,a]","a,a",
                 "a,",
                 ",a"}) {
-            NVersion nutsVersion = NVersion.getPartAt(version).get();
+            NVersion nutsVersion = NVersion.get(version).get();
             Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
             Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
             Assertions.assertEquals(true, nutsVersion.isFilter(),version+".isFilter");
@@ -173,7 +173,7 @@ public class VersionTest {
                 ,"[,a]"
                 ,"[,]"
         }) {
-            NVersion nutsVersion = NVersion.getPartAt(version).get();
+            NVersion nutsVersion = NVersion.get(version).get();
             Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
             Assertions.assertEquals(true, nutsVersion.isFilter(),version+".isFilter");
             Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
@@ -189,7 +189,7 @@ public class VersionTest {
                 ,"[a,a[a"
                 ,"],a"
         }) {
-            NVersion nutsVersion = NVersion.getPartAt(version).get();
+            NVersion nutsVersion = NVersion.get(version).get();
             Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
             Assertions.assertEquals(true, nutsVersion.isFilter(),version+".isFilter");
             Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
@@ -203,7 +203,7 @@ public class VersionTest {
         for (String version : new String[]{
                 " a a "
         }) {
-            NVersion nutsVersion = NVersion.getPartAt(version).get();
+            NVersion nutsVersion = NVersion.get(version).get();
             Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
             Assertions.assertEquals(false, nutsVersion.isFilter(),version+".isFilter");
             Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
@@ -219,7 +219,7 @@ public class VersionTest {
 
     @Test
     public void test21() {
-        NVersion r = NVersion.getPartAt("0.8.5.0").get().inc(-1, 10);
+        NVersion r = NVersion.get("0.8.5.0").get().inc(-1, 10);
         Assertions.assertEquals(r.toString(),"0.8.5.10");
     }
 

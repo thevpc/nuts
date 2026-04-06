@@ -239,7 +239,7 @@ public class CoreNUtils {
         }
         String s2 = applyStringProperties(s, properties);
         if (!NStringUtils.trim(s2).equals(s)) {
-            return NVersion.getPartAt(s2).orElse(NVersion.BLANK);
+            return NVersion.get(s2).orElse(NVersion.BLANK);
         }
         return child;
     }

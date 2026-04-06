@@ -80,7 +80,7 @@ public class DefaultNFetchDescriptorRepositoryCmd extends AbstractNFetchDescript
         try {
             String versionString = id.getVersion().getValue();
             NDescriptor d = null;
-            NVersion nutsVersion = NVersion.getPartAt(versionString).orElse(NVersion.BLANK);
+            NVersion nutsVersion = NVersion.get(versionString).orElse(NVersion.BLANK);
             if (nutsVersion.isBlank() || nutsVersion.isRelease() || nutsVersion.isLatest()) {
                 NId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), null, getFetchMode());
                 if (a == null) {

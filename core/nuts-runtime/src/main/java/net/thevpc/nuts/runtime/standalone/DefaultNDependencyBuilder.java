@@ -309,7 +309,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     @Override
     public NDependencyBuilder setVersion(String version) {
-        this.version = NVersion.getPartAt(version).get();
+        this.version = NVersion.get(version).get();
         return this;
     }
 
