@@ -187,24 +187,6 @@ public enum NArchFamily implements NEnum {
             case ARM_64:
             case ARM_32:
                 return true;
-            case AARCH_64:
-            case ITANIUM_64:
-            case MIPSEL_64:
-            case MIPS_64:
-            case PPCLE_64:
-            case S390_64:
-            case SPARC_64:
-            case X86_64:
-            case PPC_64:
-            case ITANIUM_32:
-            case MIPSEL_32:
-            case MIPS_32:
-            case PPCLE_32:
-            case S390_32:
-            case SPARC_32:
-            case X86_32:
-            case PPC_32:
-                return false;
         }
         return false;
     }
@@ -214,24 +196,6 @@ public enum NArchFamily implements NEnum {
             case X86_64:
             case X86_32:
                 return true;
-            case ARM_64:
-            case ARM_32:
-            case AARCH_64:
-            case ITANIUM_64:
-            case MIPSEL_64:
-            case MIPS_64:
-            case PPCLE_64:
-            case S390_64:
-            case SPARC_64:
-            case PPC_64:
-            case ITANIUM_32:
-            case MIPSEL_32:
-            case MIPS_32:
-            case PPCLE_32:
-            case S390_32:
-            case SPARC_32:
-            case PPC_32:
-                return false;
         }
         return false;
     }

@@ -13,11 +13,23 @@ import java.util.stream.IntStream;
 public class NCharQueue implements CharSequence {
 
     private char[] content;
-    private int increment;
+    private final int increment;
     private int from;
     private int to;
     private boolean eof;
-    private Map<String, Pattern> cachedPatterns = new HashMap<>();
+    private final Map<String, Pattern> cachedPatterns = new HashMap<>();
+
+    public static NCharQueue of() {
+        return new NCharQueue(256);
+    }
+
+    public static NCharQueue of(int size) {
+        return new NCharQueue(size <= 0 ? 256 : size);
+    }
+
+    public static NCharQueue of(char[] content) {
+        return new NCharQueue(Math.min(content.length, 256));
+    }
 
     public NCharQueue() {
         this(256);
@@ -107,6 +119,14 @@ public class NCharQueue implements CharSequence {
     public char peek() {
         if (to > from) {
             return content[from];
+        }
+        throw new UncheckedIOException(new EOFException());
+    }
+
+
+    public char peekAt(int index) {
+        if (index >= 0 && index < length()) {
+            return content[from + index];
         }
         throw new UncheckedIOException(new EOFException());
     }

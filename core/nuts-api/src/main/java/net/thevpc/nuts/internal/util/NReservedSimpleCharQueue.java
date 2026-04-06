@@ -63,7 +63,7 @@ public final class NReservedSimpleCharQueue {
         throw new UncheckedIOException(new EOFException());
     }
 
-    public char readAt(int index) {
+    public char peekAt(int index) {
         if (index >= 0 && index < length()) {
             return content[this.index + index];
         }
