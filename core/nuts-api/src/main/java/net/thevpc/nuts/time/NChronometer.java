@@ -218,7 +218,7 @@ public class NChronometer implements Serializable {
     }
 
     public NDuration duration() {
-        return NDuration.ofNanos(durationNanos(), getSmallestUnit(), getLargestUnit());
+        return NDuration.ofNanos(durationNanos(), smallestUnit(), largestUnit());
     }
 
     public long durationMs() {
@@ -245,7 +245,7 @@ public class NChronometer implements Serializable {
         return s + duration().toString(mode);
     }
 
-    public ChronoUnit getSmallestUnit() {
+    public ChronoUnit smallestUnit() {
         return smallestUnit;
     }
 
@@ -254,13 +254,17 @@ public class NChronometer implements Serializable {
         return this;
     }
 
-    public ChronoUnit getLargestUnit() {
+    public ChronoUnit largestUnit() {
         return largestUnit;
     }
 
     public NChronometer setLargestUnit(ChronoUnit largestUnit) {
         this.largestUnit = largestUnit;
         return this;
+    }
+
+    public NChronometerView asReadOnly() {
+        return new NReadOnlyChronometer(this);
     }
 
 }

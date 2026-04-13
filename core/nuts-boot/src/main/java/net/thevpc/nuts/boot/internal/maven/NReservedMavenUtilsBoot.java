@@ -161,7 +161,7 @@ public class NReservedMavenUtilsBoot {
                 try {
                     NBootUtils.copy(path, cachedPomFile);
                 } catch (Exception ex) {
-                    errors.add(new NReservedErrorInfo(nutsId, r.toString(), path, "unable to load descriptor", ex));
+                    errors.add(new NReservedErrorInfo(nutsId, r.toString(), path, NBootMsg.ofPlain("unable to load descriptor"), ex));
                     log.with().level(Level.SEVERE).verbFail().log(NBootMsg.ofC("unable to load descriptor %s from %s.", nutsId, r));
                     continue;
                 }
@@ -173,7 +173,7 @@ public class NReservedMavenUtilsBoot {
                 errors.removeErrorsFor(nutsId);
                 return cachedJarFile;
             } catch (Exception ex) {
-                errors.add(new NReservedErrorInfo(nutsId, r.toString(), path, "unable to load binaries", ex));
+                errors.add(new NReservedErrorInfo(nutsId, r.toString(), path, NBootMsg.ofPlain("unable to load binaries"), ex));
                 log.with().level(Level.SEVERE).verbFail().log(NBootMsg.ofC("unable to load binaries %s from %s.", nutsId, r));
             }
         }
@@ -774,7 +774,7 @@ public class NReservedMavenUtilsBoot {
                     errorList.removeErrorsFor(nutsId);
                     ok = to;
                 } catch (UncheckedIOException ex) {
-                    errorList.add(new NReservedErrorInfo(nutsId, repository, urlPath, "unable to load", ex));
+                    errorList.add(new NReservedErrorInfo(nutsId, repository, urlPath, NBootMsg.ofPlain("unable to load"), ex));
                     //not found
                 }
                 return ok;
@@ -821,7 +821,7 @@ public class NReservedMavenUtilsBoot {
                         }
                         return to;
                     } catch (UncheckedIOException ex) {
-                        errorList.add(new NReservedErrorInfo(nutsId, repository, ff.getPath(), "unable to cache", ex));
+                        errorList.add(new NReservedErrorInfo(nutsId, repository, ff.getPath(), NBootMsg.ofPlain("unable to cache"), ex));
                         log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error caching file %s to %s : %s", ff, to, ex.toString()));
                         //not found
                     }

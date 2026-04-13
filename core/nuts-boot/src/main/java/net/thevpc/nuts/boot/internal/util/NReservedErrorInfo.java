@@ -32,10 +32,17 @@ public class NReservedErrorInfo {
     private final NBootId nutsId;
     private final String repository;
     private final String url;
-    private final String message;
+    private final NBootMsg message;
     private final Throwable throwable;
 
-    public NReservedErrorInfo(NBootId nutsId, String repository, String url, String message, Throwable throwable) {
+    public static NReservedErrorInfo of(NBootMsg message, Throwable throwable) {
+        return new NReservedErrorInfo(null,null,null,message,throwable);
+    }
+    public static NReservedErrorInfo of(NBootMsg message) {
+        return new NReservedErrorInfo(null,null,null,message,null);
+    }
+
+    public NReservedErrorInfo(NBootId nutsId, String repository, String url, NBootMsg message, Throwable throwable) {
         this.nutsId = nutsId;
         this.repository = repository;
         this.url = url;
@@ -55,7 +62,7 @@ public class NReservedErrorInfo {
         return url;
     }
 
-    public String getMessage() {
+    public NBootMsg getMessage() {
         return message;
     }
 
@@ -66,7 +73,7 @@ public class NReservedErrorInfo {
     @Override
     public String toString() {
         StringBuilder sb=new StringBuilder();
-        if(!NBootUtils.isBlank(getMessage())){
+        if(getMessage()!=null){
             sb.append(getMessage());
         }else{
             sb.append("unexpected error");

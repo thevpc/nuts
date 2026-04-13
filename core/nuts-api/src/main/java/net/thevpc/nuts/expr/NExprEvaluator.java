@@ -13,7 +13,7 @@ public interface NExprEvaluator {
     }
 
     default NOptional<NExprOp> getOperator(String opName, NExprOpType type, NExprNodeValue[] args, NExprDeclarations context) {
-        return NOptional.ofEmpty(() -> NMsg.ofC("operator not found %s", opName));
+        return NOptional.ofEmpty(() -> NMsg.ofC("operator not found %s of type %s", opName,type));
     }
 
     default NOptional<NExprVar> getVar(String varName, NExprDeclarations context) {

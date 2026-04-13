@@ -32,6 +32,7 @@ import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -73,17 +74,14 @@ public interface NLock extends Lock, NDescribable {
     }
 
     static NLock ofIdPath(NId id, NStoreScope storeScope) {
-        return NLockBuilder.of().setSource(id.getLongId()).setResource(NPath.of(NStoreKey.ofRun(id).scope(storeScope))
-                .resolve("nuts-" + NStringUtils.firstNonBlankTrimmed(id.getFace(), "content"))
-                .toPath().get()
-        ).build();
+        return ofIdPath(id, storeScope, null);
     }
 
     static NLock ofIdPath(NId id, NStoreScope storeScope, String path) {
-        return NLockBuilder.of().setSource(id.getLongId()).setResource(NPath.of(NStoreKey.ofRun(id).scope(storeScope))
-                .resolve(path)
-                .toPath().get()
-        ).build();
+        if(NBlankable.isBlank(path)){
+            path="nuts-" + NStringUtils.firstNonBlankTrimmed(id.getFace(), "content") + ".lock";
+        }
+        return NLockBuilder.of().setSource(id.getLongId()).setResource(NPath.of(NStoreKey.ofRun(id).scope(storeScope)).resolve(path).toPath().get()).build();
     }
 
     boolean isLocked();

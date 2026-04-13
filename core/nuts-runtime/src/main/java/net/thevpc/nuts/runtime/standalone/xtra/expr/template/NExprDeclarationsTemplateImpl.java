@@ -113,7 +113,7 @@ public class NExprDeclarationsTemplateImpl implements NExprTemplate {
     @Override
     public NExprCompiledTemplate compile(NInputSource source) {
         try (BufferedReader r = source.getBufferedReader()) {
-            return compile(source.getBufferedReader());
+            return compile(r);
         } catch (IOException e) {
             throw new NIOException(e);
         }

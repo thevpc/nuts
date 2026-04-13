@@ -10,6 +10,7 @@ import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.format.NDescriptorInputSourceWriterSPI;
 import net.thevpc.nuts.runtime.standalone.format.NDurationWriterSPI;
 import net.thevpc.nuts.runtime.standalone.format.NObjectWriterAdapter;
+import net.thevpc.nuts.runtime.standalone.format.impl.NChronometerViewWriterSPI;
 import net.thevpc.nuts.runtime.standalone.format.impl.NChronometerWriterSPI;
 import net.thevpc.nuts.runtime.standalone.io.path.*;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NByteArrayPrintStream;
@@ -26,6 +27,7 @@ import net.thevpc.nuts.runtime.standalone.util.collections.NClassMapImpl;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.time.NChronometerView;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.util.NRef;
@@ -305,6 +307,7 @@ public class DefaultNTexts implements NTexts {
 
         registerObjectWriter(NObjectWriterSPI.class, (o, f) -> NObjectWriter.of(o));
         registerObjectWriterFromSPI(NChronometer.class, o -> new NChronometerWriterSPI((NChronometer) o));
+        registerObjectWriterFromSPI(NChronometerView.class, o -> new NChronometerViewWriterSPI((NChronometerView) o));
         registerObjectWriterFromSPI(NDuration.class, o -> new NDurationWriterSPI((NDuration) o));
         registerObjectWriterFromConverter(NByteArrayPrintStream.MyAbstractMultiReadNInputSource.class, o -> ((NByteArrayPrintStream.MyAbstractMultiReadNInputSource) o).getValue());
         registerObjectWriterFromSPI(InputStreamExt.class, o -> new NContentMetadataProviderWriterSPI((InputStreamExt) o, ((InputStreamExt) o).getSourceName(), "input-stream"));

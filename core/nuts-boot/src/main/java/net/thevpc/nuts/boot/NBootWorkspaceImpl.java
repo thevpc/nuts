@@ -70,7 +70,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
     private final Instant creationTime = Instant.now();
     private NBootOptionsInfo options;
     private boolean newWorkspace = true;
-    private List<String> previousRepositories=new ArrayList<>();
+    private List<String> previousRepositories = new ArrayList<>();
     private final NBootContext bContext = new NBootContext();
     private final NBootRepositoryDB repositoryDB = new NBootRepositoryDB();
     private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
@@ -171,7 +171,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 this.postInit();
             } catch (Exception e) {
                 NBootErrorInfoList li = new NBootErrorInfoList();
-                li.add(new NReservedErrorInfo(null, null, null, NBootUtils.getErrorMessage(e), e));
+                li.add(new NReservedErrorInfo(null, null, null, NBootMsg.ofC("unexpected error :%s", NBootUtils.getErrorMessage(e)), e));
                 NBootOptionsInfo currOptions = options == null ? userOptions : options;
                 logError(new URL[0], li, currOptions);
                 throw new NBootException(NBootMsg.ofC(NBootI18n.of("unable to initialize boot %s#%s : %s"), NBootConstants.Ids.NUTS_API, currOptions.getApiVersion(), e));
@@ -421,7 +421,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             File file = NReservedMavenUtilsBoot.resolveOrDownloadJar(NBootId.ofApi(options.getApiVersion()), repos.toArray(new NBootRepositoryLocation[0]),
                     NBootRepositoryLocation.of("nuts@" + options.getStoreType("LIB") + File.separator + NBootConstants.Folders.ID), false, options.getExpireTime(), errorList);
             if (file == null) {
-                errorList.insert(0, new NReservedErrorInfo(null, null, null, NBootMsg.ofC(NBootI18n.of("unable to load nuts %s"), options.getApiVersion()).toString(), null));
+                errorList.addFirst(NBootMsg.ofC(NBootI18n.of("unable to load nuts %s"), options.getApiVersion()));
                 logError(null, errorList, options);
                 throw new NBootException(NBootMsg.ofC(NBootI18n.of("unable to load %s#%s"), NBootConstants.Ids.NUTS_API, options.getApiVersion()));
             }
@@ -583,6 +583,11 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
         return runtimeLoaded;
     }
 
+    private void rollbackInvalidWorkspace() {
+        preparedWorkspace = false;
+        newWorkspace = false;
+    }
+
     @SuppressWarnings("unchecked")
     private boolean prepareWorkspace() {
         return bContext.callWith(() -> {
@@ -618,10 +623,10 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     log.log(Level.CONFIG, NBootLog.INTENT_START, NBootMsg.ofC(NBootI18n.of("bootstrap Nuts version %s %s digest %s..."), NBootWorkspaceImpl.NUTS_BOOT_VERSION,
                             NBootUtils.sameEnum(isolationLevel, "SYSTEM") ? "" :
                                     NBootUtils.sameEnum(isolationLevel, "USER") ? " (user mode)" :
-                                            NBootUtils.sameEnum(isolationLevel, "CONFINED") ? " (confined mode)" :
-                                                    NBootUtils.sameEnum(isolationLevel, "SANDBOX") ? " (sandbox mode)" :
-                                                            NBootUtils.sameEnum(isolationLevel, "MEMORY") ? " (in-memory mode)"
-                                                                    : " (unsupported mode " + isolationLevel + ")",
+                                    NBootUtils.sameEnum(isolationLevel, "CONFINED") ? " (confined mode)" :
+                                    NBootUtils.sameEnum(isolationLevel, "SANDBOX") ? " (sandbox mode)" :
+                                    NBootUtils.sameEnum(isolationLevel, "MEMORY") ? " (in-memory mode)"
+                                    : " (unsupported mode " + isolationLevel + ")",
                             getApiDigestOrInternal()));
                     log.log(Level.CONFIG, NBootLog.INTENT_START, NBootMsg.ofPlain("boot-class-path:"));
                     for (String s : NBootUtils.split(System.getProperty("java.class.path"), File.pathSeparator, true, true)) {
@@ -690,7 +695,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                             throw new NBootException(NBootMsg.ofC(NBootI18n.of("invalid option 'global' in %s mode"), isolationLevel));
                         }
                     }
-                    if (_ws != null && NBootUtils.isRemoteWorkspaceLocation(_ws)) {
+                    if (NBootUtils.isRemoteWorkspaceLocation(_ws)) {
                         //this is a protocol based workspace
                         //String protocol=ws.substring(0,ws.indexOf("://"));
                         workspaceName = "remote-bootstrap";
@@ -724,7 +729,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 options.setWorkspace(lastNutsWorkspaceJsonConfigPath);
                 if (lastConfigLoaded != null) {
                     newWorkspace = false;
-                    previousRepositories=lastConfigLoaded.getBootRepositories();
+                    previousRepositories = lastConfigLoaded.getBootRepositories();
                     options.setWorkspace(lastNutsWorkspaceJsonConfigPath);
                     options.setName(lastConfigLoaded.getName());
                     options.setUuid(lastConfigLoaded.getUuid());
@@ -747,9 +752,9 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     curr.setStoreLayout(lastConfigLoaded.getStoreLayout());
                     curr.setStoreLocations(NBootUtils.nonNullMap(lastConfigLoaded.getStoreLocations()));
                     curr.setHomeLocations(NBootUtils.nonNullMap(lastConfigLoaded.getHomeLocations()));
-                }else{
+                } else {
                     newWorkspace = false;
-                    previousRepositories=new ArrayList<>();
+                    previousRepositories = new ArrayList<>();
                 }
                 revalidateLocations(options, workspaceName, immediateLocation, isolationLevel);
                 long countDeleted = 0;
@@ -767,10 +772,10 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                         NBootUtils.ndiUndo(null, false);
                     }
                     newWorkspace = true;
-                    previousRepositories=new ArrayList<>();
+                    previousRepositories = new ArrayList<>();
                 } else if (resetFlag) {
                     boolean sandboxOrInMemory = NBootUtils.sameEnum(isolationLevel, "SANDBOX") || NBootUtils.sameEnum(isolationLevel, "MEMORY");
-                    if(!sandboxOrInMemory) {
+                    if (!sandboxOrInMemory) {
                         //force loading version early, it will be used later-on
                         log.log(isAskConfirm(getOptions()) ? Level.OFF : Level.FINE, NBootLog.INTENT_ALERT, NBootMsg.ofPlain(NBootI18n.of("reset workspace")));
                         if (dryFlag) {
@@ -789,7 +794,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     }
                     newWorkspace = true;
                     // retain all existing repositories
-                    previousRepositories=lastConfigLoaded==null?null:lastConfigLoaded.getRepositories();
+                    previousRepositories = lastConfigLoaded == null ? null : lastConfigLoaded.getRepositories();
                 } else if (NBootUtils.firstNonNull(options.getRecover(), false)) {
                     log.log(isAskConfirm(getOptions()) ? Level.OFF : Level.FINE, NBootLog.INTENT_ALERT, NBootMsg.ofPlain(NBootI18n.of("recover workspace.")));
                     if (dryFlag) {
@@ -807,7 +812,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                         countDeleted = NBootUtils.deleteStoreLocations(options, getOptions(), false, folders.toArray(), () -> scanner.nextLine());
                     }
                     // retain all existing repositories
-                    previousRepositories=lastConfigLoaded==null?null:lastConfigLoaded.getRepositories();
+                    previousRepositories = lastConfigLoaded == null ? null : lastConfigLoaded.getRepositories();
                 }
                 if (options.getExtensionsSet() == null) {
                     if (lastWorkspaceOptions != null && !resetFlag && !resetHardFlag) {
@@ -892,7 +897,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                             if (options.getRuntimeId() == null) {
                                 String runtimeId = (String) obj.get("runtimeId");
                                 if (NBootUtils.isBlank(runtimeId)) {
-                                    log.log(Level.CONFIG,  NBootLog.INTENT_FAIL, NBootMsg.ofC(NBootI18n.of("%s does not contain %s"), nutsApiConfigBootPath, "runtime-id"));
+                                    log.log(Level.CONFIG, NBootLog.INTENT_FAIL, NBootMsg.ofC(NBootI18n.of("%s does not contain %s"), nutsApiConfigBootPath, "runtime-id"));
                                 }
                                 options.setRuntimeId(runtimeId);
                             }
@@ -930,7 +935,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                             runtimeId = getFallbackCache(NBootId.RUNTIME_ID, false, false).id;
                         }
                         if (runtimeId == null) {
-                            log.log(Level.FINEST,  NBootLog.INTENT_FAIL, NBootMsg.ofPlain(NBootI18n.of("unable to resolve latest runtime-id version (is connection ok?)")));
+                            log.log(Level.FINEST, NBootLog.INTENT_FAIL, NBootMsg.ofPlain(NBootI18n.of("unable to resolve latest runtime-id version (is connection ok?)")));
                         }
                         options.setRuntimeId(runtimeId == null ? null : runtimeId.toString());
                         options.setRuntimeBootDescriptor(null);
@@ -1083,178 +1088,252 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 exceptionRunnable.run();
                 return loadedWorkspace;
             }
-            prepareWorkspace();
-            if (hasUnsatisfiedRequirements()) {
-                throw new NBootUnsatisfiedRequirementsException(NBootMsg.ofC(NBootI18n.of("unable to open a distinct version : %s from nuts#%s"), getRequirementsHelpString(true), NBootWorkspaceImpl.NUTS_BOOT_VERSION));
-            }
-            //if recover or reset mode with -K option (SkipWelcome)
-            //as long as there are no applications to run, will exit before creating workspace
-            NBootLog log = NBootContext.log();
-            if (NBootUtils.isEmptyList(options.getApplicationArguments())
-                    && NBootUtils.firstNonNull(options.getSkipBoot(), false) && (NBootUtils.firstNonNull(options.getRecover(), false) || NBootUtils.firstNonNull(options.getReset(), false))) {
-                if (isPlainTrace()) {
-                    log.warn(NBootMsg.ofC(NBootI18n.of("workspace erased : %s"), options.getWorkspace()));
-                }
-                throw new NBootException(null, 0);
-            }
-            URL[] bootClassWorldURLs = null;
-            ClassLoader workspaceClassLoader;
-            NWorkspaceBase wsInstance = null;
-            NBootErrorInfoList errorList = new NBootErrorInfoList();
-            String isolationLevel = NBootUtils.firstNonNull(options.getIsolationLevel(), "");
-            try {
-                boolean sandboxOrInMemory = NBootUtils.sameEnum(isolationLevel, "SANDBOX") || NBootUtils.sameEnum(isolationLevel, "MEMORY");
-                if (!sandboxOrInMemory) {
-                    Path configFile = Paths.get(options.getWorkspace()).resolve(NBootConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
-                    if (NBootUtils.sameEnum(options.getOpenMode(), "OPEN_OR_ERROR")) {
-                        //add fail fast test!!
-                        if (!Files.isRegularFile(configFile)) {
-                            throw new NBootWorkspaceNotFoundException(options.getWorkspace());
-                        }
-                    } else if (NBootUtils.sameEnum(options.getOpenMode(), "CREATE_OR_ERROR")) {
-                        if (Files.exists(configFile)) {
-                            throw new NBootWorkspaceAlreadyExistsException(options.getWorkspace());
-                        }
-                    }
-                }
-                if (NBootUtils.isBlank(options.getApiVersion())
-                        || NBootUtils.isBlank(options.getRuntimeId())
-                        || (!isRuntimeLoaded() && options.getRuntimeBootDescriptor() == null)
-                        || options.getExtensionBootDescriptors() == null
-//                    || (!runtimeLoaded && (computedOptions.getBootRepositories().isBlank()))
-                ) {
-                    throw new NBootException(NBootMsg.ofPlain(NBootI18n.of("invalid workspace state")));
-                }
-                boolean recover = NBootUtils.firstNonNull(options.getRecover(), false) || NBootUtils.firstNonNull(options.getReset(), false);
-
-                List<NBootClassLoaderNode> deps = new ArrayList<>();
-
-                String workspaceBootLibFolder = options.getStoreType("LIB") + File.separator + NBootConstants.Folders.ID;
-
-                NBootRepositoryLocation[] repositories = options.getBootRepositories()==null?new NBootRepositoryLocation[0]:options.getBootRepositories().stream().flatMap(x -> NBootUtils.split(x, "\n;", true, true).stream().map(NBootRepositoryLocation::of)).toArray(NBootRepositoryLocation[]::new);
-
-                NBootRepositoryLocation workspaceBootLibFolderRepo = NBootRepositoryLocation.of("nuts@" + workspaceBootLibFolder);
-                options.setRuntimeBootDependencyNode(
-                        isRuntimeLoaded() ? null :
-                                createClassLoaderNode(options.getRuntimeBootDescriptor(), repositories, workspaceBootLibFolderRepo, recover, errorList, true)
-                );
-
-                if (options.getExtensionBootDescriptors() != null) {
-                    for (NBootDescriptor nutsBootDescriptor : options.getExtensionBootDescriptors()) {
-                        deps.add(createClassLoaderNode(nutsBootDescriptor, repositories, workspaceBootLibFolderRepo, recover, errorList, false));
-                    }
-                }
-                options.setExtensionBootDependencyNodes(deps);
-                deps.add(0, options.getRuntimeBootDependencyNode());
-
-                bootClassWorldURLs = NBootUtils.resolveClassWorldURLs(deps.toArray(new NBootClassLoaderNode[0]), getContextClassLoader());
-                workspaceClassLoader = /*bootClassWorldURLs.length == 0 ? getContextClassLoader() : */ new NBootClassLoader(deps.toArray(new NBootClassLoaderNode[0]), getContextClassLoader());
-                options.setClassWorldLoader(workspaceClassLoader);
-                if (log.isLoggable(Level.CONFIG)) {
-                    if (bootClassWorldURLs.length == 0) {
-                        log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofPlain(NBootI18n.of("empty nuts class world. All dependencies are already loaded in classpath, most likely")));
-                    } else if (bootClassWorldURLs.length == 1) {
-                        log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofC(NBootI18n.of("resolve nuts class world to : %s %s"), NBootUtils.getURLDigest(bootClassWorldURLs[0]), bootClassWorldURLs[0]));
+            NWorkspaceBaseAndError e = _doNormalBootstrap();
+            if (e.workspace == null) {
+                boolean restAsked = bnn(options.getReset(), false) || bnn(options.getRecover(), false) || bnn(options.getResetHard(), false) || options.getExpireTime() != null;
+                boolean shouldDoMyBest = (e.hasErrorMessages() || e.error != null) && e.incompatibleClassChange && !restAsked;
+                if (e.error != null) {
+                    if (!shouldDoMyBest) {
+                        this.exceptionRunnable = () -> {
+                            logError(e.classworld, e.errorList, options);
+                            throw e.error;
+                        };
+                        this.exceptionRunnable.run();
                     } else {
-                        log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofPlain(NBootI18n.of("resolve nuts class world to : ")));
-                        for (URL u : bootClassWorldURLs) {
-                            log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofC("    %s : %s", NBootUtils.getURLDigest(u), u));
-                        }
+                        logError(e.classworld, e.errorList, options);
                     }
                 }
-                options.setClassWorldURLs(Arrays.asList(bootClassWorldURLs));
-                log.log(Level.CONFIG, NBootLog.INTENT_NOTICE, NBootMsg.ofPlain(NBootI18n.of("search for NutsBootWorkspaceFactory service implementations")));
-                ServiceLoader<NBootWorkspaceFactory> serviceLoader = ServiceLoader.load(NBootWorkspaceFactory.class, workspaceClassLoader);
-                List<NBootWorkspaceFactory> factories = new ArrayList<>(5);
-                for (NBootWorkspaceFactory a : serviceLoader) {
-                    factories.add(a);
-                }
-                factories.sort(new NBootWorkspaceFactoryComparator(options));
-                if (log.isLoggable(Level.CONFIG)) {
-                    switch (factories.size()) {
-                        case 0: {
-                            log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofPlain(NBootI18n.of("unable to detect NutsBootWorkspaceFactory service implementations")));
-                            break;
-                        }
-                        case 1: {
-                            log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofC(NBootI18n.of("detect NutsBootWorkspaceFactory service implementation : %s"), factories.get(0).getClass().getName()));
-                            break;
-                        }
-                        default: {
-                            log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofPlain(NBootI18n.of("detect NutsBootWorkspaceFactory service implementations are :")));
-                            for (NBootWorkspaceFactory u : factories) {
-                                log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofC("    %s", u.getClass().getName()));
-                            }
-                        }
+                if (shouldDoMyBest) {
+                    NBootLog log = NBootContext.log();
+                    log.error(NBootMsg.ofPlain(NBootI18n.of("incompatible classes detected, force reload binaries...")));
+                    preparedWorkspace = false;
+                    newWorkspace = false;
+                    options.setExpireTime(Instant.now()); // force expire all cache
+                    NWorkspaceBaseAndError e2 = _doNormalBootstrap();
+                    if (e2.error != null) {
+                        this.exceptionRunnable = () -> {
+                            logError(e2.classworld, e2.errorList, options);
+                            throw e.error;
+                        };
+                        this.exceptionRunnable.run();
                     }
                 }
-                NBootWorkspaceFactory factoryInstance;
-                List<Throwable> exceptions = new ArrayList<>();
-                for (NBootWorkspaceFactory a : factories) {
-                    factoryInstance = a;
-                    try {
-                        if (log.isLoggable(Level.CONFIG)) {
-                            log.log(Level.CONFIG, NBootLog.INTENT_NOTICE, NBootMsg.ofC(NBootI18n.of("create workspace using %s"), factoryInstance.getClass().getName()));
-                        }
-                        options.setBootWorkspaceFactory(factoryInstance);
-                        wsInstance = a.createWorkspace(options);
-                    } catch (UnsatisfiedLinkError | Exception ex) {
-                        exceptions.add(ex.fillInStackTrace());
-                        log.error(NBootMsg.ofC(NBootI18n.of("unable to create workspace using factory %s"), a), ex);
-                        // if the creation generates an error
-                        // just stop
-                        break;
-                    }
-                    if (wsInstance != null) {
-                        break;
-                    }
-                }
-                if (wsInstance == null) {
-                    //should never happen
-                    log.error(NBootMsg.ofC(NBootI18n.of("unable to load Workspace \"%s\" from ClassPath :"), options.getName()));
-                    for (URL url : bootClassWorldURLs) {
-                        log.error(NBootMsg.ofC("\t %s", NBootUtils.formatURL(url)));
-                    }
-                    if (exceptions.isEmpty()) {
-                        log.error(NBootMsg.ofC(NBootI18n.of("current classpath does not any Nuts Workspace implementation at %s"), options.getWorkspace()));
-                    }
-                    for (Throwable exception : exceptions) {
-                        log.error(NBootMsg.ofC("%s", exception), exception);
-                    }
-                    log.error(NBootMsg.ofC(NBootI18n.of("unable to load Workspace Component from ClassPath : %s"), Arrays.asList(bootClassWorldURLs)));
-                    throw new NBootInvalidWorkspaceException(this.options.getWorkspace(), NBootMsg.ofC(NBootI18n.of("unable to load Workspace Component from ClassPath : %s%n  caused by:%n\t%s"), Arrays.asList(bootClassWorldURLs), exceptions.stream().map(Throwable::toString).collect(Collectors.joining("\n\t"))));
-                }
-//        } catch (NReadOnlyException | NCancelException | NNoSessionCancelException ex) {
-//            throw ex;
-            } catch (UnsatisfiedLinkError | AbstractMethodError ex) {
-                URL[] finalBootClassWorldURLs = bootClassWorldURLs;
-                NBootMsg errorMessage = NBootMsg.ofC(NBootI18n.of("unable to boot nuts workspace because the installed binaries are incompatible with the current nuts bootstrap version %s\nusing '-N' command line flag should fix the problem"), NBootWorkspaceImpl.NUTS_BOOT_VERSION);
-                errorList.insert(0, new NReservedErrorInfo(null, null, null, errorMessage + ": " + ex, ex));
-                exceptionRunnable = () -> {
-                    logError(finalBootClassWorldURLs, errorList, options);
-                    throw new NBootException(errorMessage, ex);
-                };
-                exceptionRunnable.run();
-            } catch (Throwable ex) {
-                NBootMsg message = NBootMsg.ofPlain(NBootI18n.of("unable to bootstrap nuts workspace"));
-                if (ex instanceof NBootException) {
-                    errorList.insert(0, new NReservedErrorInfo(null, null, null, ex.getMessage(), ex));
-                } else {
-                    errorList.insert(0, new NReservedErrorInfo(null, null, null, message + " : " + ex, ex));
-                }
-                URL[] finalBootClassWorldURLs1 = bootClassWorldURLs;
-                exceptionRunnable = () -> {
-                    logError(finalBootClassWorldURLs1, errorList, options);
-                    if (ex instanceof NBootException) {
-                        throw (NBootException) ex;
-                    }
-                    throw new NBootException(message, ex);
-                };
-                exceptionRunnable.run();
             }
-            return loadedWorkspace = wsInstance;
+            return loadedWorkspace = e.workspace;
         });
     }
+
+    private boolean bnn(Boolean b, boolean d) {
+        if (b == null) {
+            return d;
+        }
+        return b;
+    }
+
+    private static class NWorkspaceBaseAndError {
+        public NBootWorkspaceFactory factory;
+        public URL[] classworld;
+        NWorkspaceBase workspace;
+        NBootException error;
+        NBootErrorInfoList errorList;
+        boolean incompatibleClassChange;
+
+        public NWorkspaceBaseAndError withError(NBootException error) {
+            this.error = error;
+            return this;
+        }
+
+        public boolean hasErrorMessages() {
+            return (errorList != null && !errorList.list().isEmpty());
+        }
+//        public NWorkspaceBaseAndError(NWorkspaceBase workspace, Runnable exceptionRunnable,NBootErrorInfoList errorList,Throwable... errors) {
+//            this.workspace = workspace;
+//            this.errorList = errorList;
+//            this.exceptionRunnable = exceptionRunnable;
+//            this.errors = new ArrayList<>(Arrays.asList(errors));
+//        }
+    }
+
+    private NWorkspaceBaseAndError _doNormalBootstrap() {
+        NWorkspaceBaseAndError result = new NWorkspaceBaseAndError();
+        NBootErrorInfoList errorList = new NBootErrorInfoList();
+        result.errorList = errorList;
+        prepareWorkspace();
+        if (hasUnsatisfiedRequirements()) {
+            result.withError(new NBootUnsatisfiedRequirementsException(NBootMsg.ofC(NBootI18n.of("unable to open a distinct version : %s from nuts#%s"), getRequirementsHelpString(true), NBootWorkspaceImpl.NUTS_BOOT_VERSION)));
+            return result;
+        }
+        //if recover or reset mode with -K option (SkipWelcome)
+        //as long as there are no applications to run, will exit before creating workspace
+        NBootLog log = NBootContext.log();
+        if (NBootUtils.isEmptyList(options.getApplicationArguments())
+                && NBootUtils.firstNonNull(options.getSkipBoot(), false) && (NBootUtils.firstNonNull(options.getRecover(), false) || NBootUtils.firstNonNull(options.getReset(), false))) {
+            if (isPlainTrace()) {
+                log.warn(NBootMsg.ofC(NBootI18n.of("workspace erased : %s"), options.getWorkspace()));
+            }
+            return result.withError(new NBootException(null, 0));
+        }
+        URL[] bootClassWorldURLs = null;
+        ClassLoader workspaceClassLoader;
+        NWorkspaceBase wsInstance = null;
+        String isolationLevel = NBootUtils.firstNonNull(options.getIsolationLevel(), "");
+        try {
+            boolean sandboxOrInMemory = NBootUtils.sameEnum(isolationLevel, "SANDBOX") || NBootUtils.sameEnum(isolationLevel, "MEMORY");
+            if (!sandboxOrInMemory) {
+                Path configFile = Paths.get(options.getWorkspace()).resolve(NBootConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
+                if (NBootUtils.sameEnum(options.getOpenMode(), "OPEN_OR_ERROR")) {
+                    //add fail fast test!!
+                    if (!Files.isRegularFile(configFile)) {
+                        return result.withError(new NBootWorkspaceNotFoundException(options.getWorkspace()));
+                    }
+                } else if (NBootUtils.sameEnum(options.getOpenMode(), "CREATE_OR_ERROR")) {
+                    if (Files.exists(configFile)) {
+                        return result.withError(new NBootWorkspaceAlreadyExistsException(options.getWorkspace()));
+                    }
+                }
+            }
+            if (NBootUtils.isBlank(options.getApiVersion())
+                    || NBootUtils.isBlank(options.getRuntimeId())
+                    || (!isRuntimeLoaded() && options.getRuntimeBootDescriptor() == null)
+                    || options.getExtensionBootDescriptors() == null
+//                    || (!runtimeLoaded && (computedOptions.getBootRepositories().isBlank()))
+            ) {
+                return result.withError(new NBootException(NBootMsg.ofPlain(NBootI18n.of("invalid workspace state"))));
+            }
+            boolean recover = NBootUtils.firstNonNull(options.getRecover(), false) || NBootUtils.firstNonNull(options.getReset(), false);
+
+            List<NBootClassLoaderNode> deps = new ArrayList<>();
+
+            String workspaceBootLibFolder = options.getStoreType("LIB") + File.separator + NBootConstants.Folders.ID;
+
+            NBootRepositoryLocation[] repositories = options.getBootRepositories() == null ? new NBootRepositoryLocation[0] : options.getBootRepositories().stream().flatMap(x -> NBootUtils.split(x, "\n;", true, true).stream().map(NBootRepositoryLocation::of)).toArray(NBootRepositoryLocation[]::new);
+
+            NBootRepositoryLocation workspaceBootLibFolderRepo = NBootRepositoryLocation.of("nuts@" + workspaceBootLibFolder);
+            options.setRuntimeBootDependencyNode(
+                    isRuntimeLoaded() ? null :
+                            createClassLoaderNode(options.getRuntimeBootDescriptor(), repositories, workspaceBootLibFolderRepo, recover, errorList, true)
+            );
+
+            if (options.getExtensionBootDescriptors() != null) {
+                for (NBootDescriptor nutsBootDescriptor : options.getExtensionBootDescriptors()) {
+                    deps.add(createClassLoaderNode(nutsBootDescriptor, repositories, workspaceBootLibFolderRepo, recover, errorList, false));
+                }
+            }
+            options.setExtensionBootDependencyNodes(deps);
+            deps.add(0, options.getRuntimeBootDependencyNode());
+
+            bootClassWorldURLs = NBootUtils.resolveClassWorldURLs(deps.toArray(new NBootClassLoaderNode[0]), getContextClassLoader());
+            result.classworld = bootClassWorldURLs;
+            workspaceClassLoader = /*bootClassWorldURLs.length == 0 ? getContextClassLoader() : */ new NBootClassLoader(deps.toArray(new NBootClassLoaderNode[0]), getContextClassLoader());
+            options.setClassWorldLoader(workspaceClassLoader);
+            if (log.isLoggable(Level.CONFIG)) {
+                if (bootClassWorldURLs.length == 0) {
+                    log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofPlain(NBootI18n.of("empty nuts class world. All dependencies are already loaded in classpath, most likely")));
+                } else if (bootClassWorldURLs.length == 1) {
+                    log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofC(NBootI18n.of("resolve nuts class world to : %s %s"), NBootUtils.getURLDigest(bootClassWorldURLs[0]), bootClassWorldURLs[0]));
+                } else {
+                    log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofPlain(NBootI18n.of("resolve nuts class world to : ")));
+                    for (URL u : bootClassWorldURLs) {
+                        log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofC("    %s : %s", NBootUtils.getURLDigest(u), u));
+                    }
+                }
+            }
+            options.setClassWorldURLs(Arrays.asList(bootClassWorldURLs));
+            log.log(Level.CONFIG, NBootLog.INTENT_NOTICE, NBootMsg.ofPlain(NBootI18n.of("search for NutsBootWorkspaceFactory service implementations")));
+            ServiceLoader<NBootWorkspaceFactory> serviceLoader = ServiceLoader.load(NBootWorkspaceFactory.class, workspaceClassLoader);
+            List<NBootWorkspaceFactory> factories = new ArrayList<>(5);
+            for (NBootWorkspaceFactory a : serviceLoader) {
+                factories.add(a);
+            }
+            factories.sort(new NBootWorkspaceFactoryComparator(options));
+            if (log.isLoggable(Level.CONFIG)) {
+                switch (factories.size()) {
+                    case 0: {
+                        log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofPlain(NBootI18n.of("unable to detect NutsBootWorkspaceFactory service implementations")));
+                        break;
+                    }
+                    case 1: {
+                        log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofC(NBootI18n.of("detect NutsBootWorkspaceFactory service implementation : %s"), factories.get(0).getClass().getName()));
+                        break;
+                    }
+                    default: {
+                        log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofPlain(NBootI18n.of("detect NutsBootWorkspaceFactory service implementations are :")));
+                        for (NBootWorkspaceFactory u : factories) {
+                            log.log(Level.CONFIG, NBootLog.INTENT_SUCCESS, NBootMsg.ofC("    %s", u.getClass().getName()));
+                        }
+                    }
+                }
+            }
+            NBootWorkspaceFactory factoryInstance;
+            List<Throwable> exceptions = new ArrayList<>();
+            for (NBootWorkspaceFactory a : factories) {
+                factoryInstance = a;
+                try {
+                    if (log.isLoggable(Level.CONFIG)) {
+                        log.log(Level.CONFIG, NBootLog.INTENT_NOTICE, NBootMsg.ofC(NBootI18n.of("create workspace using %s"), factoryInstance.getClass().getName()));
+                    }
+                    options.setBootWorkspaceFactory(factoryInstance);
+                    result.factory = factoryInstance;
+                    wsInstance = a.createWorkspace(options);
+                } catch (UnsatisfiedLinkError | Exception ex) {
+                    exceptions.add(ex.fillInStackTrace());
+                    log.error(NBootMsg.ofC(NBootI18n.of("unable to create workspace using factory %s"), a), ex);
+                    // if the creation generates an error
+                    // just stop
+                    break;
+                }
+                if (wsInstance != null) {
+                    break;
+                }
+            }
+            if (wsInstance == null) {
+                //should never happen
+                log.error(NBootMsg.ofC(NBootI18n.of("unable to load Workspace \"%s\" from ClassPath :"), options.getName()));
+                for (URL url : bootClassWorldURLs) {
+                    log.error(NBootMsg.ofC("\t %s", NBootUtils.formatURL(url)));
+                }
+                if (exceptions.isEmpty()) {
+                    log.error(NBootMsg.ofC(NBootI18n.of("current classpath does not any Nuts Workspace implementation at %s"), options.getWorkspace()));
+                }
+                for (Throwable exception : exceptions) {
+                    log.error(NBootMsg.ofC("%s", exception), exception);
+                }
+                log.error(NBootMsg.ofC(NBootI18n.of("unable to load Workspace Component from ClassPath : %s"), Arrays.asList(bootClassWorldURLs)));
+                result.withError(new NBootInvalidWorkspaceException(this.options.getWorkspace(), NBootMsg.ofC(NBootI18n.of("unable to load Workspace Component from ClassPath : %s%n  caused by:%n\t%s"), Arrays.asList(bootClassWorldURLs), exceptions.stream().map(Throwable::toString).collect(Collectors.joining("\n\t")))));
+            } else {
+                result.workspace = wsInstance;
+            }
+        } catch (Throwable ex) {
+            NBootMsg message;
+            if (ex instanceof IncompatibleClassChangeError) {
+                result.incompatibleClassChange = true;
+                message = NBootMsg.ofC(NBootI18n.of("unable to boot nuts workspace because the installed binaries are incompatible with the current nuts bootstrap version %s\nusing '-N' command line flag should fix the problem"), NBootWorkspaceImpl.NUTS_BOOT_VERSION);
+                errorList.addFirst(
+                        new NBootMsg[]{
+                                NBootMsg.ofC(NBootI18n.of("unable to boot nuts workspace because the installed binaries are incompatible with the current nuts bootstrap version %s"), NBootWorkspaceImpl.NUTS_BOOT_VERSION),
+                                NBootMsg.ofC(NBootI18n.of("using '-N' command line flag should fix the problem"), NBootWorkspaceImpl.NUTS_BOOT_VERSION)
+                        },
+                        ex
+                );
+            } else if (ex instanceof UnsatisfiedLinkError) {
+                message = NBootMsg.ofC(NBootI18n.of("unable to boot nuts workspace because the installed binaries are incompatible with the current nuts bootstrap version %s\nusing '-N' command line flag should fix the problem"), NBootWorkspaceImpl.NUTS_BOOT_VERSION);
+                errorList.addFirst(message, ex);
+            } else if (ex instanceof NBootException) {
+                message = NBootMsg.ofPlain(NBootI18n.of("unable to bootstrap nuts workspace"));
+                errorList.addFirst(message, ex);
+            } else {
+                message = NBootMsg.ofC(NBootI18n.of("unable to bootstrap nuts workspace : %s"), ex.getMessage());
+                errorList.addFirst(message, ex);
+            }
+            if (ex instanceof NBootException) {
+                result.withError((NBootException) ex);
+            } else {
+                result.withError(new NBootException(message, ex));
+            }
+        }
+        return result;
+    }
+
 
     private ClassLoader getContextClassLoader() {
         Supplier<ClassLoader> classLoaderSupplier = options.getClassLoaderSupplier();
@@ -1318,6 +1397,9 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
     }
 
     private void logError(URL[] bootClassWorldURLs, NBootErrorInfoList ths, NBootOptionsInfo options0) {
+        if (ths.list().isEmpty()) {
+            return;
+        }
         bContext.runWith(() -> {
             NBootOptionsInfo options = options0;
             if (options == null) {
