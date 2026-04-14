@@ -27,14 +27,12 @@ package net.thevpc.nuts.runtime.standalone.elem.builder;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
-import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPairElement;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNUpletElement;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 
 /**
@@ -453,8 +451,8 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder addAffix(int index, NBoundAffix affix) {
-        super.addAffix(index, affix);
+    public NUpletElementBuilder addAffixAt(int index, NBoundAffix affix) {
+        super.addAffixAt(index, affix);
         return this;
     }
 
@@ -484,8 +482,8 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder setAffix(int index, NBoundAffix affix) {
-        super.setAffix(index, affix);
+    public NUpletElementBuilder setAffixAt(int index, NBoundAffix affix) {
+        super.setAffixAt(index, affix);
         return this;
     }
 
@@ -496,14 +494,14 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
 
     @Override
-    public NUpletElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
-        super.addAffix(index, affix, anchor);
+    public NUpletElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
+        super.addAffixAt(index, affix, anchor);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
-        super.setAffix(index, affix, anchor);
+    public NUpletElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
+        super.setAffixAt(index, affix, anchor);
         return this;
     }
 

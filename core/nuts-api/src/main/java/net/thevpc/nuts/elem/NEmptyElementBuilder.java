@@ -18,15 +18,15 @@ public interface NEmptyElementBuilder extends NElementBuilder {
 
     NEmptyElementBuilder addAnnotation(String name, NElement... args);
 
-    NEmptyElementBuilder addAffix(int index, NBoundAffix affix);
+    NEmptyElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NEmptyElementBuilder setAffix(int index, NBoundAffix affix);
+    NEmptyElementBuilder setAffixAt(int index, NBoundAffix affix);
 
     NEmptyElementBuilder addAffix(NBoundAffix affix);
 
-    NEmptyElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NEmptyElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NEmptyElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NEmptyElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NEmptyElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 

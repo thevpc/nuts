@@ -58,7 +58,7 @@ import java.util.function.Predicate;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NElement extends NDescribable, NBlankable,NElementAutoUndestructable {
+public interface NElement extends NDescribable, NBlankable, NElementAutoUndestructable {
 
     /// ///////////////////////////////////////////////////////////////////////////////////
 
@@ -1214,7 +1214,9 @@ public interface NElement extends NDescribable, NBlankable,NElementAutoUndestruc
     }
 
     /**
+     * returns the reshaped element;
      * Semantic sugar for applying a formatter.
+     * for direct string output use toFormattedString
      */
     NElement format(NContentType contentType, NElementFormatter formatter);
 
@@ -1258,7 +1260,15 @@ public interface NElement extends NDescribable, NBlankable,NElementAutoUndestruc
 
     String toPrettyString();
 
+    String toStableString();
+
+    String toVerbatimString();
+
     String toCompactString();
+
+    String toFormattedString(NElementFormatter formatter);
+
+    String toFormattedString(NContentType contentType, NElementFormatter formatter);
 
     NOptional<NBinaryStreamElement> asBinaryStream();
 

@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder implements NPrimitiveElementBuilder {
@@ -704,8 +703,8 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NPrimitiveElementBuilder addAffix(int index, NBoundAffix affix) {
-        super.addAffix(index, affix);
+    public NPrimitiveElementBuilder addAffixAt(int index, NBoundAffix affix) {
+        super.addAffixAt(index, affix);
         return this;
     }
 
@@ -734,8 +733,8 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NPrimitiveElementBuilder setAffix(int index, NBoundAffix affix) {
-        super.setAffix(index, affix);
+    public NPrimitiveElementBuilder setAffixAt(int index, NBoundAffix affix) {
+        super.setAffixAt(index, affix);
         return this;
     }
 
@@ -745,14 +744,14 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     }
 
     @Override
-    public NPrimitiveElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
-        super.addAffix(index, affix, anchor);
+    public NPrimitiveElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
+        super.addAffixAt(index, affix, anchor);
         return this;
     }
 
     @Override
-    public NPrimitiveElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
-        super.setAffix(index, affix, anchor);
+    public NPrimitiveElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
+        super.setAffixAt(index, affix, anchor);
         return this;
     }
 

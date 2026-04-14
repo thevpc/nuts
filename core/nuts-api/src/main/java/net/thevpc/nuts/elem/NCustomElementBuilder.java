@@ -48,15 +48,15 @@ public interface NCustomElementBuilder extends NElementBuilder {
 
     NCustomElementBuilder addAnnotation(String name, NElement... args);
 
-    NCustomElementBuilder addAffix(int index, NBoundAffix affix);
+    NCustomElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NCustomElementBuilder setAffix(int index, NBoundAffix affix);
+    NCustomElementBuilder setAffixAt(int index, NBoundAffix affix);
 
     NCustomElementBuilder addAffix(NBoundAffix affix);
 
-    NCustomElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NCustomElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NCustomElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NCustomElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NCustomElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 

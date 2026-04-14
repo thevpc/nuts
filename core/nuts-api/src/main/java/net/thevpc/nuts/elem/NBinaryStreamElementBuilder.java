@@ -54,14 +54,14 @@ public interface NBinaryStreamElementBuilder extends NElementBuilder {
 
     NBinaryStreamElementBuilder addAnnotation(String name, NElement... args);
 
-    NBinaryStreamElementBuilder addAffix(int index, NBoundAffix affix);
+    NBinaryStreamElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NBinaryStreamElementBuilder setAffix(int index, NBoundAffix affix);
+    NBinaryStreamElementBuilder setAffixAt(int index, NBoundAffix affix);
     NBinaryStreamElementBuilder addAffix(NBoundAffix affix);
 
-    NBinaryStreamElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NBinaryStreamElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NBinaryStreamElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NBinaryStreamElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NBinaryStreamElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 

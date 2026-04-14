@@ -30,15 +30,15 @@ public interface NListElementBuilder extends NElementBuilder {
 
     NListElementBuilder addAnnotation(String name, NElement... args);
 
-    NListElementBuilder addAffix(int index, NBoundAffix affix);
+    NListElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NListElementBuilder setAffix(int index, NBoundAffix affix);
+    NListElementBuilder setAffixAt(int index, NBoundAffix affix);
 
     NListElementBuilder addAffix(NBoundAffix affix);
 
-    NListElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NListElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NListElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NListElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NListElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 

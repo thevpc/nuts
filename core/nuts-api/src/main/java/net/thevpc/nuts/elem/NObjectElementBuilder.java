@@ -305,15 +305,15 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder addAnnotation(String name, NElement... args);
 
-    NObjectElementBuilder addAffix(int index, NBoundAffix affix);
+    NObjectElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NObjectElementBuilder setAffix(int index, NBoundAffix affix);
+    NObjectElementBuilder setAffixAt(int index, NBoundAffix affix);
 
     NObjectElementBuilder addAffix(NBoundAffix affix);
 
-    NObjectElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NObjectElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NObjectElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NObjectElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NObjectElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 

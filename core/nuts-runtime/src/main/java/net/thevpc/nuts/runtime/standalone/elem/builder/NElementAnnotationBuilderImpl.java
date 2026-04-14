@@ -13,7 +13,7 @@ import java.util.Objects;
 public class NElementAnnotationBuilderImpl implements NElementAnnotationBuilder {
     private String name;
     private List<NElement> params;
-    private NBoundAffixList affixes = new NBoundAffixList();
+    private final NBoundAffixList affixes = new NBoundAffixList();
 
     public NElementAnnotationBuilderImpl() {
 
@@ -27,19 +27,25 @@ public class NElementAnnotationBuilderImpl implements NElementAnnotationBuilder 
 
     @Override
     public NElementAnnotationBuilder add(NElement element) {
-        params=CoreNElementUtils.add(element,this.params);
+        params = CoreNElementUtils.add(element, this.params);
         return this;
     }
 
     @Override
     public NElementAnnotationBuilder addAll(List<NElement> all) {
-        params=CoreNElementUtils.addAll(all,this.params);
+        params = CoreNElementUtils.addAll(all, this.params);
+        return this;
+    }
+
+    @Override
+    public NElementAnnotationBuilder setParamAt(int index, NElement nElement) {
+        params = CoreNElementUtils.setAt(index, nElement, this.params);
         return this;
     }
 
     @Override
     public NElementAnnotationBuilder removeAt(int index) {
-        CoreNElementUtils.removeAt(index,this.params);
+        CoreNElementUtils.removeAt(index, this.params);
         return this;
     }
 

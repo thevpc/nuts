@@ -381,17 +381,35 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public String toString() {
-        return DefaultTsonWriter.formatTson(this.format(NContentType.TSON, NElementFormatter.ofToString()));
+        return toFormattedString(NElementFormatter.ofSimple());
     }
 
     @Override
     public String toCompactString() {
-        return DefaultTsonWriter.formatTson(this.format(NContentType.TSON, NElementFormatter.ofCompact()));
+        return toFormattedString(NElementFormatter.ofCompact());
     }
 
     @Override
     public String toPrettyString() {
-        return DefaultTsonWriter.formatTson(this.format(NContentType.TSON, NElementFormatter.ofPretty()));
+        return toFormattedString(NElementFormatter.ofPretty());
+    }
+
+    @Override
+    public String toStableString() {
+        return toFormattedString(NElementFormatter.ofStable());
+    }
+
+    @Override
+    public String toVerbatimString() {
+        return toFormattedString(NElementFormatter.ofVerbatim());
+    }
+
+    public String toFormattedString(NElementFormatter formatter) {
+        return DefaultTsonWriter.formatTson(this.format(NContentType.TSON, formatter));
+    }
+
+    public String toFormattedString(NContentType contentType, NElementFormatter formatter) {
+        return NElementWriter.of().setContentType(contentType).setFormatter(formatter).formatPlain(this);
     }
 
     @Override
@@ -1578,7 +1596,7 @@ public abstract class AbstractNElement implements NElement {
      */
     public NElement format(NContentType contentType, NElementFormatter formatter) {
         return NOptional.ofSingleton(
-                transform(new DefaultNElementFormatContext(this, contentType == null ? NContentType.TSON : contentType), formatter != null ? formatter : NElementFormatter.ofSafe())
+                transform(new DefaultNElementFormatContext(this, contentType == null ? NContentType.TSON : contentType), formatter != null ? formatter : NElementFormatter.ofStable())
         ).get();
     }
 

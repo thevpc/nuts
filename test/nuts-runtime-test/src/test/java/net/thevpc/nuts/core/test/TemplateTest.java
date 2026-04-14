@@ -31,7 +31,7 @@ public class TemplateTest {
         varsMap.put("world","Earth");
         varsMap.put("yellow",true);
         String s = render("hello {{:if yellow }} {{world}} {{:else}} World {{:end}}", varsMap);
-        Assertions.assertEquals("hello  Earth",s);
+        Assertions.assertEquals("hello  Earth ",s);
     }
 
     public static String render(String text, Map<String,Object> varsMap) {

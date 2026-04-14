@@ -55,14 +55,14 @@ public interface NCharStreamElementBuilder extends NElementBuilder {
 
     NCharStreamElementBuilder addAnnotation(String name, NElement... args);
 
-    NCharStreamElementBuilder addAffix(int index, NBoundAffix affix);
+    NCharStreamElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NCharStreamElementBuilder setAffix(int index, NBoundAffix affix);
+    NCharStreamElementBuilder setAffixAt(int index, NBoundAffix affix);
     NCharStreamElementBuilder addAffix(NBoundAffix affix);
 
-    NCharStreamElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NCharStreamElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NCharStreamElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NCharStreamElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NCharStreamElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 

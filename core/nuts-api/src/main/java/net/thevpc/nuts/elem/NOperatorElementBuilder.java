@@ -96,15 +96,15 @@ public interface NOperatorElementBuilder extends NElementBuilder {
 
     NOperatorElementBuilder addAnnotation(String name, NElement... args);
 
-    NOperatorElementBuilder addAffix(int index, NBoundAffix affix);
+    NOperatorElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NOperatorElementBuilder setAffix(int index, NBoundAffix affix);
+    NOperatorElementBuilder setAffixAt(int index, NBoundAffix affix);
 
     NOperatorElementBuilder addAffix(NBoundAffix affix);
 
-    NOperatorElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NOperatorElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NOperatorElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NOperatorElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NOperatorElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 

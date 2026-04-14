@@ -103,8 +103,8 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
     }
 
     @Override
-    public NBinaryStreamElementBuilder addAffix(int index, NBoundAffix affix) {
-        super.addAffix(index, affix);
+    public NBinaryStreamElementBuilder addAffixAt(int index, NBoundAffix affix) {
+        super.addAffixAt(index, affix);
         return this;
     }
 
@@ -138,20 +138,20 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
     }
 
     @Override
-    public NBinaryStreamElementBuilder setAffix(int index, NBoundAffix affix) {
-        super.setAffix(index, affix);
+    public NBinaryStreamElementBuilder setAffixAt(int index, NBoundAffix affix) {
+        super.setAffixAt(index, affix);
         return this;
     }
 
     @Override
-    public NBinaryStreamElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
-        super.addAffix(index, affix, anchor);
+    public NBinaryStreamElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
+        super.addAffixAt(index, affix, anchor);
         return this;
     }
 
     @Override
-    public NBinaryStreamElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
-        super.setAffix(index, affix, anchor);
+    public NBinaryStreamElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
+        super.setAffixAt(index, affix, anchor);
         return this;
     }
 

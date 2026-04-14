@@ -316,15 +316,15 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     NUpletElementBuilder addAnnotation(String name, NElement... args);
 
-    NUpletElementBuilder addAffix(int index, NBoundAffix affix);
+    NUpletElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NUpletElementBuilder setAffix(int index, NBoundAffix affix);
+    NUpletElementBuilder setAffixAt(int index, NBoundAffix affix);
 
     NUpletElementBuilder addAffix(NBoundAffix affix);
 
-    NUpletElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NUpletElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NUpletElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NUpletElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NUpletElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 

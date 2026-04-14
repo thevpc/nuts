@@ -31,14 +31,14 @@ public interface NPairElementBuilder extends NElementBuilder {
 
     NPairElementBuilder addAnnotation(String name, NElement... args);
 
-    NPairElementBuilder addAffix(int index, NBoundAffix affix);
+    NPairElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NPairElementBuilder setAffix(int index, NBoundAffix affix);
+    NPairElementBuilder setAffixAt(int index, NBoundAffix affix);
     NPairElementBuilder addAffix(NBoundAffix affix);
 
-    NPairElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NPairElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NPairElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NPairElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NPairElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 

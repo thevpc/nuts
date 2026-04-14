@@ -812,7 +812,7 @@ public class TsonParseTest {
                 "        \"github://thevpc/ntexup-templates/${themeName}/v1.0/theme\"\n" +
                 "    )\n";
         NElement e = NElementReader.ofTson().read(expected);
-        String s2 = e.toString();
+        String s2 = e.toVerbatimString();
         TestUtils.println(s2);
         Assertions.assertEquals(expected, s2);
     }
@@ -837,7 +837,7 @@ public class TsonParseTest {
                 "    }\n" +
                 "}\n";
         NElement e = NElementReader.ofTson().read(expected);
-        String s2 = e.toString();
+        String s2 = e.toVerbatimString();
         TestUtils.println(s2);
         Assertions.assertEquals(expected, s2);
     }
@@ -1143,6 +1143,29 @@ public class TsonParseTest {
         NElement parsed = NElementReader.ofTson().read(tson);
         TestUtils.println(parsed.toString());
         Assertions.assertEquals(1, parsed.asNumberValue().get());
+    }
 
+    @Test
+    public void test35() {
+        NElement parsed = NElement.ofUplet(NElement.ofName("a"),NElement.ofNumber(2),NElement.ofNumber(3));
+        String s1 = parsed.toString();
+        String s2 = parsed.toPrettyString();
+        TestUtils.println(s1);
+        TestUtils.println(s2);
+        Assertions.assertEquals("(a 2 3)", s1);
+        Assertions.assertEquals("(a , 2 , 3)", s2);
+    }
+
+    @Test
+    public void test36() {
+        NElement parsed = NElement.ofUpletBuilder().add(NElement.ofName("a")).add(NElement.ofNumber(2))
+                .addAnnotation("test",NElement.ofNumber(2),NElement.ofNumber(3))
+                .build();
+        String s1 = parsed.toString();
+        String s2 = parsed.toPrettyString();
+        TestUtils.println(s1);
+        TestUtils.println(s2);
+        Assertions.assertEquals("@test(2 3)(a 2)", s1);
+        Assertions.assertEquals("@test(2 3)(a , 2)", s2);
     }
 }

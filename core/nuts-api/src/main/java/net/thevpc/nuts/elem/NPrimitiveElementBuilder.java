@@ -149,15 +149,15 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
 
     NPrimitiveElementBuilder addAnnotation(String name, NElement... args);
 
-    NPrimitiveElementBuilder addAffix(int index, NBoundAffix affix);
+    NPrimitiveElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NPrimitiveElementBuilder setAffix(int index, NBoundAffix affix);
+    NPrimitiveElementBuilder setAffixAt(int index, NBoundAffix affix);
 
     NPrimitiveElementBuilder addAffix(NBoundAffix affix);
 
-    NPrimitiveElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NPrimitiveElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NPrimitiveElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NPrimitiveElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NPrimitiveElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 

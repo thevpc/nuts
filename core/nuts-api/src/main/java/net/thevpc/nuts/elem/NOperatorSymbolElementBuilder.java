@@ -19,15 +19,15 @@ public interface NOperatorSymbolElementBuilder extends NElementBuilder {
 
     NOperatorSymbolElementBuilder addAnnotation(String name, NElement... args);
 
-    NOperatorSymbolElementBuilder addAffix(int index, NBoundAffix affix);
+    NOperatorSymbolElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NOperatorSymbolElementBuilder setAffix(int index, NBoundAffix affix);
+    NOperatorSymbolElementBuilder setAffixAt(int index, NBoundAffix affix);
 
     NOperatorSymbolElementBuilder addAffix(NBoundAffix affix);
 
-    NOperatorSymbolElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NOperatorSymbolElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NOperatorSymbolElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NOperatorSymbolElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NOperatorSymbolElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 

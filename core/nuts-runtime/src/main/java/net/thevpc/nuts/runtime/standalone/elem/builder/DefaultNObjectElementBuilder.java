@@ -694,8 +694,8 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NObjectElementBuilder addAffix(int index, NBoundAffix affix) {
-        super.addAffix(index, affix);
+    public NObjectElementBuilder addAffixAt(int index, NBoundAffix affix) {
+        super.addAffixAt(index, affix);
         return this;
     }
 
@@ -724,8 +724,8 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NObjectElementBuilder setAffix(int index, NBoundAffix affix) {
-        super.setAffix(index, affix);
+    public NObjectElementBuilder setAffixAt(int index, NBoundAffix affix) {
+        super.setAffixAt(index, affix);
         return this;
     }
 
@@ -735,14 +735,14 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NObjectElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
-        super.addAffix(index, affix, anchor);
+    public NObjectElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
+        super.addAffixAt(index, affix, anchor);
         return this;
     }
 
     @Override
-    public NObjectElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
-        super.setAffix(index, affix, anchor);
+    public NObjectElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
+        super.setAffixAt(index, affix, anchor);
         return this;
     }
 

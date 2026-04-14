@@ -247,7 +247,7 @@ public class ElementTest {
     private void testSelectorHelper(NElement p, String path, String expected) {
         TestUtils.println("CHECKING : '" + path + "'");
         List<NElement> filtered1 = p.filter(path);
-        String sresult = NElementWriter.ofTson().setFormatter(NElementFormatter.ofCompact()).formatPlain(filtered1);
+        String sresult = NElementWriter.ofTson().setFormatter(NElementFormatter.ofStable()).formatPlain(filtered1);
         TestUtils.println("EXPECTED  : " + expected);
         TestUtils.println("FOUND     : " + sresult);
         Assertions.assertEquals(expected, sresult);

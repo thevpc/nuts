@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TsonFormatSanitizerAction implements NElementFormatterAction {
-    private boolean strict;
+    private final boolean strict;
 
     public TsonFormatSanitizerAction(boolean strict) {
         this.strict = strict;
@@ -21,39 +21,64 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
     public void apply(NElementFormatContext context) {
         NElementBuilder b = context.builder();
         List<NBoundAffix> oldAffixes = new ArrayList<>(b.affixes());
-        boolean requireEndNewAsFirstEnd=(b.type()==NElementType.LINE_STRING ||b.type()==NElementType.BLOCK_STRING)
-                && b.build().asString().get().newLineSuffix()==null
+        boolean requireEndNewAsFirstEnd = (b.type() == NElementType.LINE_STRING || b.type() == NElementType.BLOCK_STRING)
+                && b.build().asString().get().newLineSuffix() == null
                 && (!context.isTail());
-        int visitedEnd=-1;
-        int foundNewline=-1;
+        for (int i = 0; i < oldAffixes.size(); i++) {
+            NBoundAffix oldAffix = oldAffixes.get(i);
+            if (oldAffix.affix().type() == NAffixType.ANNOTATION) {
+                NElementAnnotation a = (NElementAnnotation) oldAffix.affix();
+                boolean annotationChanged = false;
+                if (a.params().isPresent()) {
+                    List<NElement> annList = new ArrayList<>(a.params().get());
+                    List<Integer> changedParams = new ArrayList<>();
+                    for (int j = 1; j < annList.size(); j++) {
+                        if (isCollision(annList.get(j - 1), annList.get(j))) {
+                            annList.set(j, annList.get(j).builder().addSpaceAffix(" ", NAffixAnchor.START).build());
+                            annotationChanged = true;
+                            changedParams.add(j);
+                        }
+                    }
+                    if (annotationChanged) {
+                        NElementAnnotationBuilder bhb = a.builder();
+                        for (Integer changedParam : changedParams) {
+                            bhb.setParamAt(changedParam, annList.get(changedParam));
+                        }
+                        b.setAffixAt(i, bhb.build(), oldAffix.anchor());
+                    }
+                }
+            }
+        }
+        int visitedEnd = -1;
+        int foundNewline = -1;
         for (int i = 0; i < oldAffixes.size(); i++) {
             NBoundAffix a1 = oldAffixes.get(i);
-            if(a1.anchor()==NAffixAnchor.END){
-                if(visitedEnd<0) {
-                    visitedEnd=i;
+            if (a1.anchor() == NAffixAnchor.END) {
+                if (visitedEnd < 0) {
+                    visitedEnd = i;
                     if (a1.affix().type() == NAffixType.NEWLINE) {
-                        foundNewline=i;
+                        foundNewline = i;
                     }
                 }
             }
             if (a1.affix().type() == NAffixType.LINE_COMMENT) {
                 NElementComment e = (NElementComment) a1.affix();
                 if (e.newlineSuffix() == null) {
-                    if(a1.anchor()==NAffixAnchor.END  && i==oldAffixes.size()-1) {
-                        if(context.isTail()) {
-                            b.setAffix(i, e.withNewlineSuffix(NNewLineMode.LF), a1.anchor());
+                    if (a1.anchor() == NAffixAnchor.END && i == oldAffixes.size() - 1) {
+                        if (context.isTail()) {
+                            b.setAffixAt(i, e.withNewlineSuffix(NNewLineMode.LF), a1.anchor());
                         }
-                    }else {
-                        b.setAffix(i, e.withNewlineSuffix(NNewLineMode.LF), a1.anchor());
+                    } else {
+                        b.setAffixAt(i, e.withNewlineSuffix(NNewLineMode.LF), a1.anchor());
                     }
                 }
             }
         }
-        if(requireEndNewAsFirstEnd && foundNewline<0){
-            if(visitedEnd<0){
+        if (requireEndNewAsFirstEnd && foundNewline < 0) {
+            if (visitedEnd < 0) {
                 b.addAffix(NBoundAffix.of(NAffix.ofNewline(), NAffixAnchor.END));
-            }else {
-                b.addAffix(visitedEnd, NBoundAffix.of(NAffix.ofNewline(), NAffixAnchor.END));
+            } else {
+                b.addAffixAt(visitedEnd, NBoundAffix.of(NAffix.ofNewline(), NAffixAnchor.END));
             }
         }
         String startAffixes = lastStringOfBoundAffixes(oldAffixes, NAffixAnchor.START);
@@ -162,7 +187,6 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
             }
             default: {
                 // do nothing
-                return;
             }
         }
     }
@@ -202,10 +226,7 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
             case ':':
                 return true;
         }
-        if (Character.isWhitespace(c)) {
-            return true;
-        }
-        return false;
+        return Character.isWhitespace(c);
     }
 
     public static boolean isDigit(char c) {
@@ -297,10 +318,7 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
 
     private boolean collisionTypeToBoolean(CollisionType c) {
         boolean b = strict ? (c == CollisionType.FATAL) : (c != CollisionType.NO_COLLISION);
-        if (b) {
-            return true;
-        }
-        return false;
+        return b;
     }
 
     public boolean isCollision(String before, String after) {

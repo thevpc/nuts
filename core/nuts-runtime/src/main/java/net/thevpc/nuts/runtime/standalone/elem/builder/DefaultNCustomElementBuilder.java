@@ -94,8 +94,8 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NCustomElementBuilder addAffix(int index, NBoundAffix affix) {
-        super.addAffix(index, affix);
+    public NCustomElementBuilder addAffixAt(int index, NBoundAffix affix) {
+        super.addAffixAt(index, affix);
         return this;
     }
 
@@ -124,8 +124,8 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NCustomElementBuilder setAffix(int index, NBoundAffix affix) {
-        super.setAffix(index, affix);
+    public NCustomElementBuilder setAffixAt(int index, NBoundAffix affix) {
+        super.setAffixAt(index, affix);
         return this;
     }
 
@@ -135,14 +135,14 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NCustomElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
-        super.addAffix(index, affix, anchor);
+    public NCustomElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
+        super.addAffixAt(index, affix, anchor);
         return this;
     }
 
     @Override
-    public NCustomElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
-        super.setAffix(index, affix, anchor);
+    public NCustomElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
+        super.setAffixAt(index, affix, anchor);
         return this;
     }
 

@@ -196,7 +196,7 @@ public class DefaultNElementFormatterBuilder implements NElementFormatterBuilder
                     if (set) {
                         builder.removeAffix(i);
                     } else if (!NBlankable.isBlank(space)) {
-                        builder.setAffix(i, NBoundAffix.of(DefaultNElementSpace.of(space), anchor));
+                        builder.setAffixAt(i, NBoundAffix.of(DefaultNElementSpace.of(space), anchor));
                         set = true;
                     } else {
                         builder.removeAffix(i);
@@ -260,7 +260,7 @@ public class DefaultNElementFormatterBuilder implements NElementFormatterBuilder
                     if (set) {
                         builder.removeAffix(i);
                     } else if (space != null && !NBlankable.isBlank(space)) {
-                        builder.setAffix(i, NBoundAffix.of(DefaultNElementNewLine.of(space), anchor));
+                        builder.setAffixAt(i, NBoundAffix.of(DefaultNElementNewLine.of(space), anchor));
                         set = true;
                     } else {
                         builder.removeAffix(i);

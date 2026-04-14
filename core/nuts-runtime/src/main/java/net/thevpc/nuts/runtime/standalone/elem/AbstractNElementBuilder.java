@@ -116,7 +116,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
     }
 
     @Override
-    public NElementBuilder addAffix(int index, NBoundAffix affix) {
+    public NElementBuilder addAffixAt(int index, NBoundAffix affix) {
         this.affixes.addAffix(index, affix);
         return this;
     }
@@ -198,13 +198,13 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
 
 
     @Override
-    public NElementBuilder setAffix(int index, NBoundAffix affix) {
+    public NElementBuilder setAffixAt(int index, NBoundAffix affix) {
         this.affixes.setAffix(index, affix);
         return this;
     }
 
     @Override
-    public NElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
+    public NElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
         this.affixes.addAffix(index, affix, anchor);
         return this;
     }
@@ -216,7 +216,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
     }
 
     @Override
-    public NElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
+    public NElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
         this.affixes.setAffix(index, affix, anchor);
         return this;
     }

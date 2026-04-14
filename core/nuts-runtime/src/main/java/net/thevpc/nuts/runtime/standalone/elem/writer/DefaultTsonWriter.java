@@ -573,11 +573,11 @@ public class DefaultTsonWriter {
 
     private void writePair(NPairElement a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
-        write(a.key().toString());
+        write(a.key());
         write(a.affixes(), NAffixAnchor.PRE_1, acceptableWrapSep);
         write(":");
         write(a.affixes(), NAffixAnchor.POST_1, acceptableWrapSep);
-        write(a.value().toString());
+        write(a.value());
         write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 

@@ -175,8 +175,8 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
-    public NFlatExprElementBuilder addAffix(int index, NBoundAffix affix) {
-        super.addAffix(index, affix);
+    public NFlatExprElementBuilder addAffixAt(int index, NBoundAffix affix) {
+        super.addAffixAt(index, affix);
         return this;
     }
 
@@ -205,8 +205,8 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
-    public NFlatExprElementBuilder setAffix(int index, NBoundAffix affix) {
-        super.setAffix(index, affix);
+    public NFlatExprElementBuilder setAffixAt(int index, NBoundAffix affix) {
+        super.setAffixAt(index, affix);
         return this;
     }
 
@@ -216,14 +216,14 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
-    public NFlatExprElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor) {
-        super.addAffix(index, affix, anchor);
+    public NFlatExprElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
+        super.addAffixAt(index, affix, anchor);
         return this;
     }
 
     @Override
-    public NFlatExprElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor) {
-        super.setAffix(index, affix, anchor);
+    public NFlatExprElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
+        super.setAffixAt(index, affix, anchor);
         return this;
     }
 

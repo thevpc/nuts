@@ -313,14 +313,14 @@ public interface NArrayElementBuilder extends NElementBuilder {
 
     NArrayElementBuilder addAnnotation(String name, NElement... args);
 
-    NArrayElementBuilder addAffix(int index, NBoundAffix affix);
+    NArrayElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NArrayElementBuilder setAffix(int index, NBoundAffix affix);
+    NArrayElementBuilder setAffixAt(int index, NBoundAffix affix);
     NArrayElementBuilder addAffix(NBoundAffix affix);
 
-    NArrayElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NArrayElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NArrayElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NArrayElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NArrayElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 

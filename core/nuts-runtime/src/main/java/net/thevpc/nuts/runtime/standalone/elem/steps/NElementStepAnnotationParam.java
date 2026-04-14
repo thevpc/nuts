@@ -9,16 +9,24 @@ import java.util.Objects;
 
 public class NElementStepAnnotationParam implements NElementStep {
     private int annotationIndex;
-    private NElement value;
+    private NElement paramIndex;
 
-    public NElementStepAnnotationParam(int annotationIndex, int index) {
+    public NElementStepAnnotationParam(int annotationIndex, int paramIndex) {
         this.annotationIndex = annotationIndex;
-        this.value = NElement.ofInt(index);
+        this.paramIndex = NElement.ofInt(paramIndex);
     }
 
     public NElementStepAnnotationParam(int annotationIndex, String name) {
         this.annotationIndex = annotationIndex;
-        this.value = NElement.ofString(name);
+        this.paramIndex = NElement.ofString(name);
+    }
+
+    public int annotationIndex() {
+        return annotationIndex;
+    }
+
+    public NElement paramIndex() {
+        return paramIndex;
     }
 
     @Override
@@ -27,31 +35,31 @@ public class NElementStepAnnotationParam implements NElementStep {
             List<NElementAnnotation> annotations = element.annotations();
             if (annotationIndex >= 0 && annotationIndex < annotations.size()) {
                 NElementAnnotation a = annotations.get(annotationIndex);
-                if (value.type() == NElementType.INT) {
-                    return a.param(value.asIntValue().get());
+                if (paramIndex.type() == NElementType.INT) {
+                    return a.param(paramIndex.asIntValue().get());
                 } else {
-                    return a.param(value.asStringValue().get());
+                    return a.param(paramIndex.asStringValue().get());
                 }
             }
         }
-        return NOptional.ofNamedEmpty(NMsg.ofC("Annotation at %s, param %s for %s", annotationIndex, value, element));
+        return NOptional.ofNamedEmpty(NMsg.ofC("Annotation at %s, param %s for %s", annotationIndex, paramIndex, element));
     }
 
     @Override
     public NElement toElement() {
-        return NElement.ofNamedUplet("Annotation", NElement.ofInt(annotationIndex), value);
+        return NElement.ofNamedUplet("Annotation", NElement.ofInt(annotationIndex), paramIndex);
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         NElementStepAnnotationParam that = (NElementStepAnnotationParam) o;
-        return annotationIndex == that.annotationIndex && Objects.equals(value, that.value);
+        return annotationIndex == that.annotationIndex && Objects.equals(paramIndex, that.paramIndex);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(annotationIndex, value);
+        return Objects.hash(annotationIndex, paramIndex);
     }
 
     @Override

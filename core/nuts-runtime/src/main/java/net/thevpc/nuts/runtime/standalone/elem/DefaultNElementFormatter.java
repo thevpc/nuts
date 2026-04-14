@@ -139,7 +139,7 @@ public class DefaultNElementFormatter implements NElementFormatter {
             )
 
     );
-    public static final NElementFormatter SAFE = new DefaultNElementFormatter(
+    public static final NElementFormatter STABLE = new DefaultNElementFormatter(
             Collections.emptyList(),
             NMaps.of(
                     "removeWhiteSpaces", false,
@@ -148,8 +148,9 @@ public class DefaultNElementFormatter implements NElementFormatter {
                     "strict", false
             )
     );
-    public static final NElementFormatter TO_STRING = new DefaultNElementFormatter(
+    public static final NElementFormatter SIMPLE = new DefaultNElementFormatter(
             Collections.emptyList(),
+//            Arrays.asList(new TsonFormatSimpleAction()),
             NMaps.of(
                     "removeRootSeparators", true,
                     "removeWhiteSpaces", false,

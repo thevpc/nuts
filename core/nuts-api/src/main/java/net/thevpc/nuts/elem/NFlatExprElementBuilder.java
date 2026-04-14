@@ -68,15 +68,15 @@ public interface NFlatExprElementBuilder extends NElementBuilder {
 
     NFlatExprElementBuilder addAnnotation(String name, NElement... args);
 
-    NFlatExprElementBuilder addAffix(int index, NBoundAffix affix);
+    NFlatExprElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NFlatExprElementBuilder setAffix(int index, NBoundAffix affix);
+    NFlatExprElementBuilder setAffixAt(int index, NBoundAffix affix);
 
     NFlatExprElementBuilder addAffix(NBoundAffix affix);
 
-    NFlatExprElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NFlatExprElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NFlatExprElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NFlatExprElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NFlatExprElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 

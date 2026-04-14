@@ -17,12 +17,16 @@ public interface NElementFormatter extends NElementTransform {
         return of(NElementFormatterStyle.COMPACT);
     }
 
-    static NElementFormatter ofSafe() {
-        return of(NElementFormatterStyle.SAFE);
+    static NElementFormatter ofStable() {
+        return of(NElementFormatterStyle.STABLE);
     }
 
-    static NElementFormatter ofToString() {
-        return of(NElementFormatterStyle.TO_STRING);
+    static NElementFormatter ofVerbatim() {
+        return of(NElementFormatterStyle.VERBATIM);
+    }
+
+    static NElementFormatter ofSimple() {
+        return of(NElementFormatterStyle.SIMPLE);
     }
 
     NElementFormatterBuilder builder();

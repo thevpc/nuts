@@ -298,15 +298,15 @@ public interface NFragmentElementBuilder extends NElementBuilder {
 
     NFragmentElementBuilder addAnnotation(String name, NElement... args);
 
-    NFragmentElementBuilder addAffix(int index, NBoundAffix affix);
+    NFragmentElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NFragmentElementBuilder setAffix(int index, NBoundAffix affix);
+    NFragmentElementBuilder setAffixAt(int index, NBoundAffix affix);
 
     NFragmentElementBuilder addAffix(NBoundAffix affix);
 
-    NFragmentElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NFragmentElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NFragmentElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NFragmentElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NFragmentElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 

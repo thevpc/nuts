@@ -60,15 +60,15 @@ public interface NElementBuilder {
 
     NElementBuilder addAffix(NBoundAffix affix);
 
-    NElementBuilder addAffix(int index, NBoundAffix affix);
+    NElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NElementBuilder setAffix(int index, NBoundAffix affix);
+    NElementBuilder setAffixAt(int index, NBoundAffix affix);
 
     NElementBuilder addAffix(NAffix affix, NAffixAnchor anchor);
 
-    NElementBuilder addAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NElementBuilder setAffix(int index, NAffix affix, NAffixAnchor anchor);
+    NElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
     NElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
