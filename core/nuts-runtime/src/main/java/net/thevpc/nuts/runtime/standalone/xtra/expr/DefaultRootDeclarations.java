@@ -58,6 +58,9 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
                         if (method.isPresent() && method.get().isAccessible()) {
                             return method.get().invoke(instance);
                         }
+                        if(instance instanceof Map ){
+                            return ((Map)instance).get(n);
+                        }
                         throw new NIllegalArgumentException(NMsg.ofC("property not found %s", instance + "." + b));
                     }
                     case FUNCTION: {
