@@ -275,7 +275,7 @@ public class DefaultNTextManagerModel {
 
     public NElementFactoryService getElementFactoryService() {
         if (elementFactoryService == null) {
-            elementFactoryService = new DefaultNElementFactoryService(workspace);
+            elementFactoryService = new DefaultNElementFactoryService();
         }
         return elementFactoryService;
     }

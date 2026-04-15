@@ -91,7 +91,7 @@ public class DefaultNBootModel implements NBootModel {
 
     public void init() {
         this.initializing = true;
-        NativeImageHelper.prepare(this.workspace);
+        NativeImageHelper.prepare();
         this.bootTerminal = detectAnsiTerminalSupport(effOptions, true, ((DefaultNWorkspace) workspace).getModel().LOG);
         workspaceModel.uuid = effOptions.getUuid().orNull();
         String wsp = effOptions.getWorkspace().orNull();

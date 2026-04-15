@@ -139,7 +139,7 @@ public class DefaultNWorkspaceConfigModel {
         NBootOptions bOptions = NWorkspaceExt.of().getModel().bootModel.getBootEffectiveOptions();
         this.bootClassLoader = bOptions.getClassWorldLoader().orElseGet(() -> Thread.currentThread().getContextClassLoader());
         this.bootClassWorldURLs = NCollections.nonNullList(bOptions.getClassWorldURLs().orNull());
-        this.workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(workspace);
+        this.workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter();
         this.bootModel = workspace.getModel().bootModel;
         addPathFactory(new FilePath.FilePathFactory());
         addPathFactory(new ClassLoaderPath.ClasspathFactory());
@@ -515,7 +515,7 @@ public class DefaultNWorkspaceConfigModel {
             if (_config == null) {
                 return false;
             }
-            DefaultNWorkspaceCurrentConfig cConfig = new DefaultNWorkspaceCurrentConfig(workspace).merge(_config);
+            DefaultNWorkspaceCurrentConfig cConfig = new DefaultNWorkspaceCurrentConfig().merge(_config);
             DefaultNBootModel bm = NWorkspaceExt.of().getModel().bootModel;
             NBootOptions effOptions = bm.getBootEffectiveOptions();
             NBootOptions userOptions = bm.getBootUserOptions();
@@ -1637,7 +1637,7 @@ public class DefaultNWorkspaceConfigModel {
 
     private static class WorkspaceSystemTerminalAdapter extends AbstractSystemTerminalAdapter {
 
-        public WorkspaceSystemTerminalAdapter(NWorkspace workspace) {
+        public WorkspaceSystemTerminalAdapter() {
             super();
         }
 

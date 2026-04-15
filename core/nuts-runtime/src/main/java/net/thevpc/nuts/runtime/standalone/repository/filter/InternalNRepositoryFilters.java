@@ -17,7 +17,7 @@ import net.thevpc.nuts.text.NMsg;
 public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositoryFilter>
         implements NRepositoryFilters {
 
-    public InternalNRepositoryFilters(NWorkspace workspace) {
+    public InternalNRepositoryFilters() {
         super(NRepositoryFilter.class);
     }
 

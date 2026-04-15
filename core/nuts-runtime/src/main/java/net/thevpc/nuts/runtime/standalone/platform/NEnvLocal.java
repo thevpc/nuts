@@ -34,7 +34,7 @@ public class NEnvLocal extends NEnvBase {
                 platformOsDist = NId.of("default");
             }
             this.osDist = platformOsDist;
-            this.java = NJavaSdkUtils.of(NWorkspace.of()).createJdkId(System.getProperty("java.version"));
+            this.java = NJavaSdkUtils.of().createJdkId(System.getProperty("java.version"));
             this.arch = NId.get(System.getProperty("os.arch")).get();
             this.archFamily = NArchFamily.getCurrent();
             this.initialized = true;

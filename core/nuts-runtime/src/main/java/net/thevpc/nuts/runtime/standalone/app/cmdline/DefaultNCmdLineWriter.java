@@ -18,7 +18,7 @@ public class DefaultNCmdLineWriter extends DefaultObjectWriterBase<NCmdLineWrite
     private NShellFamily formatFamily = NShellFamily.getCurrent();
     private NCmdLineFormatStrategy formatStrategy = NCmdLineFormatStrategy.DEFAULT;
 
-    public DefaultNCmdLineWriter(NWorkspace workspace) {
+    public DefaultNCmdLineWriter() {
         super("commandLine");
     }
 

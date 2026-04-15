@@ -52,7 +52,7 @@ public abstract class AbstractDefaultNPush extends NWorkspaceCmdBase<NPush> impl
     protected List<NId> lockedIds;
     protected String repository;
 
-    public AbstractDefaultNPush(NWorkspace workspace) {
+    public AbstractDefaultNPush() {
         super("push");
     }
 

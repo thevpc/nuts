@@ -170,6 +170,9 @@ public enum NPathStandardOption implements NPathOption, NEnum {
     NOSHARE_READ,
     NOSHARE_WRITE,
     NOSHARE_DELETE,
+
+    // when true, walkDFS will sort the files
+    SORTED,
     ;
 
     /**

@@ -134,13 +134,13 @@ public class DefaultNRepositoryModel {
     }
 
     public void removeRepository(String repositoryId) {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         NSecurityManager.of().checkAllowed(NConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
         final NRepository repository = repositoryRegistryHelper.removeRepository(repositoryId);
         if (repository != null) {
             NWorkspace.of().saveConfig();
             NWorkspaceExt.of(workspace).getConfigModel().fireConfigurationChanged("config-main", ConfigEventType.MAIN);
-            NWorkspaceUtils.of(workspace).events().fireOnRemoveRepository(new DefaultNWorkspaceEvent(session, repository, "repository", repository, null));
+            NWorkspaceUtils.of().events().fireOnRemoveRepository(new DefaultNWorkspaceEvent(session, repository, "repository", repository, null));
             updateBootRepositories();
         }
     }
@@ -164,13 +164,12 @@ public class DefaultNRepositoryModel {
     protected void addRepository(NRepository repo, boolean temp, boolean enabled) {
         repositoryRegistryHelper.addRepository(repo);
         repo.config().setEnabled(enabled);
-//        NWorkspace.of().save();
         if (!temp) {
-            NSession session = workspace.currentSession();
-            NWorkspaceExt.of(workspace).getConfigModel().fireConfigurationChanged("config-main", ConfigEventType.MAIN);
+            NSession session = NSession.of();
+            NWorkspaceExt.of().getConfigModel().fireConfigurationChanged("config-main", ConfigEventType.MAIN);
             // repo would be null if the repo is not accessible
             // like for system repo, if not already created
-            NWorkspaceUtils.of(workspace).events().fireOnAddRepository(
+            NWorkspaceUtils.of().events().fireOnAddRepository(
                     new DefaultNWorkspaceEvent(session, repo, "repository", null, repo)
             );
             updateBootRepositories();

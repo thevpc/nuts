@@ -122,6 +122,8 @@ public interface NDigest extends NComponent {
      */
     String computeString();
 
+    String computeManifestString();
+
     /**
      * compute hash digest and return it as byte array
      *

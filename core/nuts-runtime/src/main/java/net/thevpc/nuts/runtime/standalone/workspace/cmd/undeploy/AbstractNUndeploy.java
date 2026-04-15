@@ -24,7 +24,7 @@ public abstract class AbstractNUndeploy extends NWorkspaceCmdBase<NUndeploy> imp
     protected String repository;
     protected boolean offline = true;
 
-    public AbstractNUndeploy(NWorkspace workspace) {
+    public AbstractNUndeploy() {
         super("undeploy");
     }
 

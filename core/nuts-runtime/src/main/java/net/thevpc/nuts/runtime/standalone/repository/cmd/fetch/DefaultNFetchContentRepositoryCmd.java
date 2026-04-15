@@ -64,7 +64,7 @@ public class DefaultNFetchContentRepositoryCmd extends AbstractNFetchContentRepo
         NRepository repo = getRepo();
         NDescriptor descriptor0 = descriptor;
         if (descriptor0 == null) {
-            NRepositorySPI repoSPI = NWorkspaceUtils.of(getRepo().getWorkspace()).toRepositorySPI(repo);
+            NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(repo);
             descriptor0 = repoSPI.fetchDescriptor().setId(id)
                     .setFetchMode(getFetchMode())
                     .getResult();

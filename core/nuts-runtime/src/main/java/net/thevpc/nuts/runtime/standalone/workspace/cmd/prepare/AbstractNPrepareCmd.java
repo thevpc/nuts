@@ -30,7 +30,7 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
     protected String targetHome;
     protected List<NId> ids = new ArrayList<>();
 
-    public AbstractNPrepareCmd(NWorkspace workspace) {
+    public AbstractNPrepareCmd() {
         super("prepare");
     }
 

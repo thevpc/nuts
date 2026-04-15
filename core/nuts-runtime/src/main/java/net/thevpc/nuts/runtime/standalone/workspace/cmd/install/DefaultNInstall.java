@@ -48,8 +48,8 @@ import java.util.*;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNInstall extends AbstractNInstall {
 
-    public DefaultNInstall(NWorkspace workspace) {
-        super(workspace);
+    public DefaultNInstall() {
+        super();
     }
 
 //    private NDefinition _loadIdContent(NId id, NId forId, boolean includeDeps, InstallIdList loaded, NInstallStrategy installStrategy, boolean mandatory) {

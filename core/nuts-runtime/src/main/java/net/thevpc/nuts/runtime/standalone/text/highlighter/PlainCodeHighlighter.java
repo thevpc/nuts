@@ -10,10 +10,8 @@ import net.thevpc.nuts.text.NTexts;
 
 public class PlainCodeHighlighter implements NCodeHighlighter {
 
-    NWorkspace workspace;
 
-    public PlainCodeHighlighter(NWorkspace workspace) {
-        this.workspace = workspace;
+    public PlainCodeHighlighter() {
     }
 
     @Override

@@ -33,7 +33,7 @@ import java.nio.file.Path;
 @NUnused
 public class DefaultSourceControlHelper {
 
-    public DefaultSourceControlHelper(NWorkspace workspace) {
+    public DefaultSourceControlHelper() {
     }
 
     protected NLog _LOG() {

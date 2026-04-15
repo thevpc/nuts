@@ -77,7 +77,7 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
         }
     }
 
-    public AbstractNInstall(NWorkspace workspace) {
+    public AbstractNInstall() {
         super("install");
     }
 

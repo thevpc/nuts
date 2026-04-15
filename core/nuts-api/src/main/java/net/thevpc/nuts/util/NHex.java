@@ -4,8 +4,8 @@ import java.nio.charset.StandardCharsets;
 
 public class NHex {
 
-    private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
-    private static final char[] BASE16_CHARS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    private static final byte[] HEX_ARRAY = "0123456789abcdef".getBytes(StandardCharsets.US_ASCII);
+    private static final char[] BASE16_CHARS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     public static boolean isHexDigit(char c) {
         return c >= '0' && c <= '9'
@@ -19,9 +19,8 @@ public class NHex {
 
     public static short toShort(String v) {
         byte[] b = toBytes(v, 2);
-        int ch1 = b[0];
-        int ch2 = b[1];
-        return (short) ((ch1 << 8) + (ch2 << 0));
+        // Mask with 0xFF to treat as unsigned during promotion
+        return (short) (((b[0] & 0xFF) << 8) | (b[1] & 0xFF));
     }
 
     public static int toUShort(String v) {
@@ -33,11 +32,10 @@ public class NHex {
 
     public static int toInt(String v) {
         byte[] b = toBytes(v, 4);
-        int ch1 = b[0];
-        int ch2 = b[1];
-        int ch3 = b[2];
-        int ch4 = b[3];
-        return (ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0);
+        return ((b[0] & 0xFF) << 24) |
+                ((b[1] & 0xFF) << 16) |
+                ((b[2] & 0xFF) << 8)  |
+                ((b[3] & 0xFF));
     }
 
     public static long toLong(String v) {
@@ -92,12 +90,13 @@ public class NHex {
     }
 
     public static String fromBytes(byte[] bytes, int offset, int length) {
-        if(bytes==null){
+        if (bytes == null) {
             return null;
         }
         byte[] hexChars = new byte[length * 2];
-        for (int j = offset; j < offset + length; j++) {
-            int v = bytes[j] & 0xFF;
+        for (int j = 0; j < length; j++) {
+            // Read from source + offset, but write to hexChars starting at 0
+            int v = bytes[offset + j] & 0xFF;
             hexChars[j * 2] = HEX_ARRAY[v >>> 4];
             hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }

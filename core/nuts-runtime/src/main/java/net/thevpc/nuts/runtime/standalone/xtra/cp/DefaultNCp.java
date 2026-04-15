@@ -41,7 +41,6 @@ import java.util.logging.Level;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNCp implements NCp {
 
-    private final NWorkspace workspace;
     private NCpValidator checker;
     private boolean skipRoot = false;
     private int maxRepeatCount = 3;
@@ -58,8 +57,7 @@ public class DefaultNCp implements NCp {
     private NMsg actionMsg;
     private Set<NPathOption> options = new LinkedHashSet<>();
 
-    public DefaultNCp(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNCp() {
     }
 
     private static Path transformPath(Path f, Path sourceBase, Path targetBase) {
@@ -141,7 +139,7 @@ public class DefaultNCp implements NCp {
 
     @Override
     public NCp from(Reader source) {
-        this.source = source == null ? null : new ReaderInputSource(workspace, source);
+        this.source = source == null ? null : new ReaderInputSource(NWorkspace.of(), source);
         return this;
     }
 
@@ -494,7 +492,7 @@ public class DefaultNCp implements NCp {
         long start = System.nanoTime();
         Object origin = getSourceOrigin();
         NProgressListener m = NProgressUtils.createProgressMonitor(
-                NProgressUtils.MonitorType.DEFAULT, NPath.of(srcBase), origin, workspace,
+                NProgressUtils.MonitorType.DEFAULT, NPath.of(srcBase), origin, NWorkspace.of(),
                 options.contains(NPathOption.LOG),
                 options.contains(NPathOption.TRACE),
                 getProgressFactory());
@@ -735,7 +733,7 @@ public class DefaultNCp implements NCp {
     }
 
     private void copyStreamOnce(NInputSource source, NOutputTarget target) {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         NAssert.requireNamedNonNull(source, "source");
         NAssert.requireNamedNonNull(target, "target");
         NOutputTarget2 _target2 = new NOutputTarget2(target);

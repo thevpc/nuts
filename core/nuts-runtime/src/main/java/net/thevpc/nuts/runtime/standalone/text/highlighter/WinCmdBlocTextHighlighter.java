@@ -21,10 +21,8 @@ import java.util.List;
 
 public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
-    private final NWorkspace workspace;
 
-    public WinCmdBlocTextHighlighter(NWorkspace workspace) {
-        this.workspace = workspace;
+    public WinCmdBlocTextHighlighter() {
     }
 
     private static NText[] parseCmdLine_readAntiSlash(StringReaderExt ar) {

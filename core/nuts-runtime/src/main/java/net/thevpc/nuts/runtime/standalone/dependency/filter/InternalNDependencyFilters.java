@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class InternalNDependencyFilters extends InternalNTypedFilters<NDependencyFilter>
         implements NDependencyFilters {
 
-    public InternalNDependencyFilters(NWorkspace workspace) {
+    public InternalNDependencyFilters() {
         super(NDependencyFilter.class);
 //        localModel = model.getShared(LocalModel.class, () -> new LocalModel(ws));
     }

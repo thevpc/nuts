@@ -539,7 +539,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
         //workspace wasn't loaded. Create new configuration...
         data.justInstalled = true;
-        NWorkspaceUtils.of(this).checkReadOnly();
+        NWorkspaceUtils.of().checkReadOnly();
         wsModel.LOG
                 .log(NMsg.ofC("creating %s workspace at %s",
                                 data.text.ofStyled("new", NTextStyle.info()),
@@ -581,7 +581,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
         bconfig.setName(CoreNUtils.resolveValidWorkspaceName(effectiveBootOptions.getWorkspace().orNull()));
 
-        wsModel.configModel.setCurrentConfig(new DefaultNWorkspaceCurrentConfig(this)
+        wsModel.configModel.setCurrentConfig(new DefaultNWorkspaceCurrentConfig()
                 .merge(aconfig)
                 .merge(bconfig)
                 .build(this.getWorkspaceLocation()));

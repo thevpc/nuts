@@ -187,10 +187,8 @@ public class DefaultNFetch extends AbstractNFetch {
 
     public NDefinition fetchDefinition(NId id) {
         long startTime = System.currentTimeMillis();
-//        boolean idOptional = id.toDependency().isOptional();
-        NWorkspace workspace = NWorkspace.of();
-        NSession session = workspace.currentSession();
-        NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
+        NSession session = NSession.of();
+        NWorkspaceUtils wu = NWorkspaceUtils.of();
         CoreNIdUtils.checkLongId(id);
         if (NDependencyScope.parse(id.toDependency().getScope()).orNull() == NDependencyScope.SYSTEM) {
             // TODO, fix me
@@ -258,9 +256,8 @@ public class DefaultNFetch extends AbstractNFetch {
 
     protected DefaultNDefinitionBuilder2 fetchDescriptorAsDefinition(NId id, NFetchStrategy nutsFetchModes, NFetchMode mode, NRepository repo) {
         NWorkspaceExt dws = NWorkspaceExt.of();
-        NWorkspace workspace = NWorkspace.of();
-        NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
-        NWorkspaceStore wstore = ((NWorkspaceExt) workspace).store();
+        NWorkspaceUtils wu = NWorkspaceUtils.of();
+//        NWorkspaceStore wstore = ((NWorkspaceExt) workspace).store();
 //        if (withCache) {
 //            try {
 //                NDefinition d = wstore.loadLocationKey(

@@ -169,7 +169,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     @Override
     public void install(NId id, NId forId) {
         boolean succeeded = false;
-        NWorkspaceUtils.of(workspace).checkReadOnly();
+        NWorkspaceUtils.of().checkReadOnly();
         InstallInfoConfig ii = _wstore().loadInstallInfoConfig(id);
         try {
             invalidateInstallationDigest();
@@ -220,7 +220,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     @Override
     public void uninstall(NDefinition def) {
         boolean succeeded = false;
-        NWorkspaceUtils.of(workspace).checkReadOnly();
+        NWorkspaceUtils.of().checkReadOnly();
         NId id = def.getId();
         NInstallStatus installStatus = getInstallStatus(id);
         if (!installStatus.isInstalled()) {
@@ -441,7 +441,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 //                }
 //            }
             NId id = id1;
-            NWorkspaceUtils.of(workspace).checkReadOnly();
+            NWorkspaceUtils.of().checkReadOnly();
             try {
                 boolean _deploy;
                 boolean _install;

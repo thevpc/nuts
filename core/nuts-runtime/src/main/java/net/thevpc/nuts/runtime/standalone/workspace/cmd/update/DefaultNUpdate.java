@@ -82,8 +82,8 @@ public class DefaultNUpdate extends AbstractNUpdate {
     private boolean checkFixes = false;
     private List<FixAction> resultFixes = null;
 
-    public DefaultNUpdate(NWorkspace workspace) {
-        super(workspace);
+    public DefaultNUpdate() {
+        super();
     }
 
     @Override

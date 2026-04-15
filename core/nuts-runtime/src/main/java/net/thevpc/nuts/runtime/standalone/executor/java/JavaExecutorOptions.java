@@ -656,7 +656,7 @@ public final class JavaExecutorOptions {
         if (!NBlankable.isBlank(explicitJavaVersion) && (NBlankable.isBlank(javaVersion) || explicitJavaVersion.compareTo(javaVersion) > 0)) {
             javaVersion = explicitJavaVersion.toString();
         }
-        NJavaSdkUtils nJavaSdkUtils = NJavaSdkUtils.of(NWorkspace.of());
+        NJavaSdkUtils nJavaSdkUtils = NJavaSdkUtils.of();
         NOptional<NExecutionEngineLocation> nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion(), false, true, true);
         if (!nutsPlatformLocation.isPresent()) {
             throw new NExecutionException(NMsg.ofC("no java version %s was found", NStringUtils.trim(getJavaVersion())), NExecutionException.ERROR_1);

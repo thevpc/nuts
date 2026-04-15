@@ -728,39 +728,7 @@ public class NPathFromSPI extends NPathBase {
         } else {
             boolean r = base.walkDfs(this, visitor, maxDepth, options);
             if (!r) {
-                Stack<NPath> stack = new Stack<>();
-                Stack<Boolean> visitedStack = new Stack<>();
-
-                stack.push(this);
-                visitedStack.push(false);
-
-                while (!stack.isEmpty()) {
-                    NPath currentPath = stack.pop();
-                    boolean visited = visitedStack.pop();
-
-                    if (visited) {
-                        visitor.postVisitDirectory(currentPath, null);
-                        continue;
-                    }
-
-                    if (currentPath.isDirectory()) {
-                        visitor.preVisitDirectory(currentPath);
-                        stack.push(currentPath);
-                        visitedStack.push(true);
-                        try {
-                            if (maxDepth > 0) {
-                                for (NPath nPath : currentPath.list()) {
-                                    stack.push(nPath);
-                                    visitedStack.push(false); // Mark children for pre-visit first
-                                }
-                            }
-                        } catch (RuntimeException e) {
-                            visitor.postVisitDirectory(currentPath, e);
-                        }
-                    } else {
-                        visitor.visitFile(currentPath);
-                    }
-                }
+                NPathSPIHelper.walkDfs(this, visitor, maxDepth, options);
             }
         }
         return this;

@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.security;
 
 
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.security.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -46,127 +45,129 @@ import java.util.stream.Collectors;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNSecurityManager implements NSecurityManager {
 
-    public final DefaultNWorkspaceSecurityModel model;
-    public NWorkspace workspace;
 
-    public DefaultNSecurityManager(NWorkspace workspace) {
-        this.workspace = workspace;
-        NWorkspaceExt e = (NWorkspaceExt) workspace;
-        this.model = e.getModel().securityModel;
+    public DefaultNSecurityManager() {
+    }
+
+    private DefaultNWorkspaceSecurityModel securityModel() {
+        return NWorkspaceExt.of().getModel().securityModel;
+    }
+    private DefaultNWorkspaceConfigModel configModel() {
+        return NWorkspaceExt.of().getModel().configModel;
     }
 
     @Override
     public NSecurityManager login(final String username, final NSecureString password) {
-        model.login(username, password);
+        securityModel().login(username, password);
         return this;
     }
 
     @Override
     public boolean setSecureMode(boolean secure, NSecureString adminPassword) {
-        return model.setSecureMode(secure, adminPassword);
+        return securityModel().setSecureMode(secure, adminPassword);
     }
 
     public boolean switchUnsecureMode(NSecureString adminPassword) {
-        return model.switchUnsecureMode(adminPassword);
+        return securityModel().switchUnsecureMode(adminPassword);
     }
 
     public boolean switchSecureMode(NSecureString adminPassword) {
-        return model.switchSecureMode(adminPassword);
+        return securityModel().switchSecureMode(adminPassword);
     }
 
     @Override
     public boolean isAdmin() {
-        return model.isAdmin();
+        return securityModel().isAdmin();
     }
 
     @Override
     public boolean isAnonymous() {
-        return model.isAnonymous();
+        return securityModel().isAnonymous();
     }
 
     @Override
     public NSecurityManager logout() {
-        model.logout();
+        securityModel().logout();
         return this;
     }
 
     @Override
     public NOptional<NUser> findUser(String username) {
-        return model.findUser(username);
+        return securityModel().findUser(username);
     }
 
     @Override
     public List<NUser> findUsers() {
-        return model.findUsers();
+        return securityModel().findUsers();
     }
 
     @Override
     public NSecurityManager checkAllowed(String permission, String operationName) {
-        model.checkAllowed(permission, operationName);
+        securityModel().checkAllowed(permission, operationName);
         return this;
     }
 
     @Override
     public NSecurityManager checkRepositoryAllowed(String repository, String permission, String operationName) {
-        model.checkRepositoryAllowed(repository, permission, operationName);
+        securityModel().checkRepositoryAllowed(repository, permission, operationName);
         return this;
     }
 
     @Override
     public boolean isAllowed(String permission) {
-        return model.isAllowed(permission);
+        return securityModel().isAllowed(permission);
     }
 
     public boolean isRepositoryAllowed(String permission, String repository) {
-        return model.isRepositoryAllowed(permission, repository);
+        return securityModel().isRepositoryAllowed(permission, repository);
     }
 
     @Override
     public String[] getCurrentLoginStack() {
-        return model.getCurrentLoginStack();
+        return securityModel().getCurrentLoginStack();
     }
 
     @Override
     public String getCurrentUsername() {
-        return model.getCurrentUsername();
+        return securityModel().getCurrentUsername();
     }
 
 
     @Override
     public NAuthenticationAgent getAuthenticationAgent(String authenticationAgentId) {
-        return model.getAuthenticationAgent(authenticationAgentId);
+        return securityModel().getAuthenticationAgent(authenticationAgentId);
     }
 
     @Override
     public NSecurityManager setAuthenticationAgent(String authenticationAgentId) {
-        model.setAuthenticationAgent(authenticationAgentId);
+        securityModel().setAuthenticationAgent(authenticationAgentId);
         return this;
     }
 
     @Override
     public boolean isSecureMode() {
-        return model.isSecure();
+        return securityModel().isSecure();
     }
 
     /// //////////
 
     @Override
     public void runWithSecret(NSecureToken id, NSecretRunner runner) {
-        model.agentMapper().runWithSecret(id, runner);
+        securityModel().agentMapper().runWithSecret(id, runner);
     }
 
     @Override
     public <T> T callWithSecret(NSecureToken id, NSecretCaller<T> caller) {
-        return model.agentMapper().callWithSecret(id, caller);
+        return securityModel().agentMapper().callWithSecret(id, caller);
     }
 
     @Override
     public boolean verify(NSecureToken credentialsId, NSecureString candidate) {
-        return model.agentMapper().verify(credentialsId, candidate);
+        return securityModel().agentMapper().verify(credentialsId, candidate);
     }
 
     public boolean removeCredentials(NSecureToken credentialsId) {
-        return model.agentMapper().removeCredentials(credentialsId);
+        return securityModel().agentMapper().removeCredentials(credentialsId);
     }
 
     @Override
@@ -176,12 +177,12 @@ public class DefaultNSecurityManager implements NSecurityManager {
 
     @Override
     public NSecureToken addSecret(NSecureString credentials, String agent) {
-        return model.agentMapper().storeSecret(credentials, agent);
+        return securityModel().agentMapper().storeSecret(credentials, agent);
     }
 
     @Override
     public NSecureToken updateSecret(NSecureToken old, NSecureString credentials, String agent) {
-        return model.agentMapper().updateSecret(old, credentials, agent);
+        return securityModel().agentMapper().updateSecret(old, credentials, agent);
     }
 
     @Override
@@ -191,12 +192,12 @@ public class DefaultNSecurityManager implements NSecurityManager {
 
     @Override
     public NSecureToken addOneWayCredential(NSecureString password, String agent) {
-        return model.agentMapper().storeOneWay(password, agent);
+        return securityModel().agentMapper().storeOneWay(password, agent);
     }
 
     @Override
     public NSecureToken updateOneWayCredential(NSecureToken old, NSecureString credentials, String agent) {
-        return model.agentMapper().updateOneWay(old, credentials, agent);
+        return securityModel().agentMapper().updateOneWay(old, credentials, agent);
     }
 
     @Override
@@ -206,13 +207,13 @@ public class DefaultNSecurityManager implements NSecurityManager {
 
     @Override
     public NSecurityManager addNamedCredential(NNamedCredential credential) {
-        ((NWorkspaceExt) workspace).getConfigModel().addNamedCredentials(credential);
+        configModel().addNamedCredentials(credential);
         return this;
     }
 
     @Override
     public NSecurityManager removeNamedCredential(String name, String user) {
-        ((NWorkspaceExt) workspace).getConfigModel().removeNamedCredentials(name, user);
+        configModel().removeNamedCredentials(name, user);
         return this;
     }
 
@@ -223,7 +224,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
 
     @Override
     public NOptional<NNamedCredential> findNamedCredential(String name, String user) {
-        return ((NWorkspaceExt) workspace).getConfigModel().findNamedCredential(name, user);
+        return configModel().findNamedCredential(name, user);
     }
 
     @Override
@@ -238,7 +239,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
 
     @Override
     public List<NNamedCredential> findNamedCredentials(String user) {
-        return ((NWorkspaceExt) workspace).getConfigModel().findNamedCredentials(user);
+        return configModel().findNamedCredentials(user);
     }
 
     @Override
@@ -289,7 +290,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
 
     @Override
     public List<NRepositoryAccess> findRepositoryAccess() {
-        NWorkspaceExt wse = (NWorkspaceExt) workspace;
+        NWorkspaceExt wse = NWorkspaceExt.of();
         List<NRepositoryAccess> all = new ArrayList<>();
         for (NRepository repository : wse.getRepositoryModel().getRepositories()) {
             all.addAll(findRepositoryAccessByRepository(repository.getUuid()));
@@ -299,15 +300,15 @@ public class DefaultNSecurityManager implements NSecurityManager {
 
     @Override
     public List<NRepositoryAccess> findRepositoryAccessByRepository(String repository) {
-        NWorkspaceExt wse = (NWorkspaceExt) workspace;
+        NWorkspaceExt wse = NWorkspaceExt.of();
         NRepository repository1 = wse.getRepositoryModel().findRepository(repository).get();
         return findUsers().stream().flatMap(x -> findRepositoryAccess(x.getUsername(), repository1.getName()).stream().stream()).collect(Collectors.toList());
     }
 
     @Override
     public List<NRepositoryAccess> findRepositoryAccessByUser(String user) {
-        NWorkspaceExt wse = (NWorkspaceExt) workspace;
-        NUser user1 = model.findUser(user).get();
+        NWorkspaceExt wse = NWorkspaceExt.of();
+        NUser user1 = securityModel().findUser(user).get();
         return Arrays.asList(wse.getRepositoryModel().getRepositories()).stream()
                 .flatMap(x -> findRepositoryAccess(user1.getUsername(), x.getUuid()).stream().stream()).collect(Collectors.toList());
     }
@@ -330,8 +331,8 @@ public class DefaultNSecurityManager implements NSecurityManager {
     }
 
     private NSecurityManager withUser(String user, Consumer<NUserConfig> consumer) {
-        NWorkspaceExt wse = (NWorkspaceExt) workspace;
-        NUser user1 = model.findUser(user).get();
+        NWorkspaceExt wse = NWorkspaceExt.of();
+        NUser user1 = securityModel().findUser(user).get();
         NUserConfig r = wse.getConfigModel().getUser(user1.getUsername());
         if (r == null) {
             NUserConfig ru = new NUserConfig();
@@ -346,7 +347,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
     }
 
     public NOptional<NRepositoryAccess> findRepositoryAccess(String user, String repository) {
-        NWorkspaceExt wse = (NWorkspaceExt) workspace;
+        NWorkspaceExt wse = NWorkspaceExt.of();
         NOptional<NUserConfig> userConfigNOptional = wse.getConfigModel().resolveAsValidUserConfig(user);
         if (userConfigNOptional.isPresent()) {
             String finalUser = userConfigNOptional.get().getUserName();
@@ -376,8 +377,8 @@ public class DefaultNSecurityManager implements NSecurityManager {
     }
 
     private NSecurityManager withRepositoryUser(String user, String repository, Consumer<NRepositoryAccessConfig> consumer) {
-        NWorkspaceExt wse = (NWorkspaceExt) workspace;
-        NUser user1 = model.findUser(user).get();
+        NWorkspaceExt wse = NWorkspaceExt.of();
+        NUser user1 = securityModel().findUser(user).get();
         NRepository repository1 = wse.getRepositoryModel().findRepository(repository).get();
         NOptional<NRepositoryAccessConfig> r = wse.getConfigModel().getRepositoryUser(repository1.getUuid(), user1.getUsername());
         if (!r.isPresent()) {
@@ -400,7 +401,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
         if (!query.getUserName().matches("[a-zA-Z]+[a-zA-Z0-9_-]*")) {
             throw new NIllegalArgumentException(NMsg.ofC("invalid username %s", query.getUserName()));
         }
-        DefaultNWorkspaceConfigModel c = NWorkspaceExt.of(workspace).getConfigModel();
+        DefaultNWorkspaceConfigModel c = NWorkspaceExt.of().getConfigModel();
         NUserConfig u = c.getUser(query.getUserName());
         if (u != null) {
             throw new NSecurityException(NMsg.ofC("user already exists : %s", query.getUserName()));
@@ -422,7 +423,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
         if (!query.getUserName().matches("[a-zA-Z]+[a-zA-Z0-9_-]*")) {
             throw new NIllegalArgumentException(NMsg.ofC("invalid username %s", query.getUserName()));
         }
-        DefaultNWorkspaceConfigModel c = NWorkspaceExt.of(workspace).getConfigModel();
+        DefaultNWorkspaceConfigModel c = NWorkspaceExt.of().getConfigModel();
         NUserConfig u = c.getUser(query.getUserName());
         if (u == null) {
             throw new NSecurityException(NMsg.ofC("user not found : %s", query.getUserName()));

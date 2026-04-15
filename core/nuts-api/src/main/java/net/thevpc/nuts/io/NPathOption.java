@@ -152,6 +152,7 @@ public interface NPathOption {
     NPathOption NOSHARE_READ = NPathStandardOption.NOSHARE_READ;
     NPathOption NOSHARE_WRITE = NPathStandardOption.NOSHARE_WRITE;
     NPathOption NOSHARE_DELETE = NPathStandardOption.NOSHARE_DELETE;
+    NPathOption SORTED = NPathStandardOption.NOSHARE_DELETE;
 
     static NPathCredentialsOption ofCredentials(String userName, String secret) {
         return NPathCredentialsOption.of(userName, secret);

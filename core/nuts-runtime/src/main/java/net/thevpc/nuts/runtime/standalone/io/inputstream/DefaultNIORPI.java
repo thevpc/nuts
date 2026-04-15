@@ -9,8 +9,6 @@ import net.thevpc.nuts.command.NExecutionEntry;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.platform.NStoreScope;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
 import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
@@ -726,7 +724,7 @@ public class DefaultNIORPI implements NIORPI {
     @Override
     public List<NId> resolveIds(NPath path) {
         LinkedHashSet<NId> all = new LinkedHashSet<>();
-        NPomId[] u = MavenUtils.createPomIdResolver(NWorkspace.of()).resolvePomIds(path);
+        NPomId[] u = MavenUtils.createPomIdResolver().resolvePomIds(path);
         all.addAll(
                 Arrays.asList(new NMetaInfIdResolver().resolvePomIds(path))
         );
@@ -746,7 +744,7 @@ public class DefaultNIORPI implements NIORPI {
                 all.add(NId.get(annotation.id()).get());
             }
         }
-        NPomId[] u = MavenUtils.createPomIdResolver(NWorkspace.of()).resolvePomIds(clazz);
+        NPomId[] u = MavenUtils.createPomIdResolver().resolvePomIds(clazz);
         all.addAll(
                 Arrays.asList(new NMetaInfIdResolver().resolvePomIds(clazz))
         );

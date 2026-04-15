@@ -58,7 +58,7 @@ public class DefaultTableObjectWriter extends DefaultObjectWriterBase<NTableWrit
 
     private DefaultNTextArtTableRenderer helper = new DefaultNTextArtTableRenderer();
 
-    public DefaultTableObjectWriter(NWorkspace workspace) {
+    public DefaultTableObjectWriter() {
         super("table-format");
     }
 

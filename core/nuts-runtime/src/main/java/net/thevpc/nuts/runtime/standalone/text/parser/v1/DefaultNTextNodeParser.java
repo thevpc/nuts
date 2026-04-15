@@ -21,7 +21,7 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
 
     private State state = new State();
 
-    public DefaultNTextNodeParser(NWorkspace workspace) {
+    public DefaultNTextNodeParser() {
         super();
     }
 

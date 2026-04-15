@@ -116,13 +116,14 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .getResultId();
             if (api != null) {
+                NWorkspaceUtils nWorkspaceUtils = NWorkspaceUtils.of();
                 if (initializeScripts || initializeLaunchers) {
                     //api would be null if running in fatjar and no internet/maven is available
-                    NWorkspaceUtils.of(workspace).installScriptsAndLaunchers(initializeLaunchers);
+                    nWorkspaceUtils.installScriptsAndLaunchers(initializeLaunchers);
                 }
                 if (installCompanions) {
                     if (api != null) {
-                        NWorkspaceUtils.of(workspace).installCompanions();
+                        nWorkspaceUtils.installCompanions();
                     }
                 }
             }

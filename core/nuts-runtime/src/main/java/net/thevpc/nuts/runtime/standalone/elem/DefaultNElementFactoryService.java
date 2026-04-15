@@ -47,15 +47,7 @@ import net.thevpc.nuts.util.NUnsupportedEnumException;
 public class DefaultNElementFactoryService implements NElementFactoryService {
 
 
-//    public static final NutsElementFactory F_JSONELEMENT = new NutsElementFactoryJsonElement();
-
-    private NReflectRepository typesRepository;
-    private final NWorkspace workspace;
-
-    public DefaultNElementFactoryService(NWorkspace workspace) {
-        typesRepository = NWorkspaceUtils.of(workspace).getReflectRepository();
-        this.workspace = workspace;
-
+    public DefaultNElementFactoryService() {
     }
 
 
@@ -129,10 +121,6 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
     @Override
     public NElement defaultCreateElement(Object o, Type expectedType, NElementFactoryContext context) {
         return createElement(o, expectedType, context, true);
-    }
-
-    public NReflectRepository getTypesRepository() {
-        return typesRepository;
     }
 
     public static List<Object> _destructArray1(Object array, NElementFactoryContext context) {

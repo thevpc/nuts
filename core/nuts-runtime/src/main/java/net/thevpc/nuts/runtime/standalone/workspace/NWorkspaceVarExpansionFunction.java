@@ -17,15 +17,12 @@ import net.thevpc.nuts.text.NText;
 import java.util.function.Function;
 
 public class NWorkspaceVarExpansionFunction implements Function<String, String> {
-    private final NWorkspace workspace;
-
+    private static NWorkspaceVarExpansionFunction INSTANCE=new NWorkspaceVarExpansionFunction();
     public static NWorkspaceVarExpansionFunction of() {
-        NWorkspace ws = NWorkspace.of();
-        return NSession.of().getOrComputeProperty(NWorkspaceVarExpansionFunction.class, ()->new NWorkspaceVarExpansionFunction(ws));
+        return INSTANCE;
     }
 
-    public NWorkspaceVarExpansionFunction(NWorkspace workspace) {
-        this.workspace = workspace;
+    public NWorkspaceVarExpansionFunction() {
     }
 
     private String str(Object p) {
@@ -52,9 +49,9 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
             case "home.run":
                 return str(NPath.of(NStoreKey.ofBase(NStoreType.RUN)));
             case "workspace.hash-name":
-                return workspace.getDigestName();
+                return NWorkspace.of().getDigestName();
             case "workspace.name":
-                return workspace.getName();
+                return NWorkspace.of().getName();
             case "workspace.location":
             case "workspace":
                 return str(NWorkspace.of().getWorkspaceLocation());
@@ -77,32 +74,32 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
             case "workspace.var":
                 return str(NPath.of(NStoreKey.ofVar()));
             case "nuts.boot.version":
-                return str(workspace.getApiVersion());
+                return str(NWorkspace.of().getApiVersion());
             case "nuts.boot.id":
             case "nuts.api.id":
-                return str(workspace.getApiId());
+                return str(NWorkspace.of().getApiId());
             case "nuts.api.version":
-                return workspace.getApiId().getVersion().toString();
+                return NWorkspace.of().getApiId().getVersion().toString();
             case "nuts.runtime.id":
-                return str(workspace.getRuntimeId());
+                return str(NWorkspace.of().getRuntimeId());
             case "nuts.runtime.artifact":
             case "nuts.runtime.artifactId":
-                return str(workspace.getRuntimeId());
+                return str(NWorkspace.of().getRuntimeId());
             case "nuts.runtime.version":
-                return str(workspace.getRuntimeId().getVersion());
+                return str(NWorkspace.of().getRuntimeId().getVersion());
             case "nuts.workspace-boot.version":
                 return str(Nuts.getVersion());
             case "nuts.workspace-boot.id":
                 return str(NId.getApi(Nuts.getVersion()).orNull());
             case "nuts.workspace-runtime.version": {
                 String rt = NWorkspace.of().getBootOptions().getRuntimeId().map(this::str).orNull();
-                return rt == null ? str(workspace.getRuntimeId().getVersion()) : rt.contains("#")
+                return rt == null ? str(NWorkspace.of().getRuntimeId().getVersion()) : rt.contains("#")
                         ? rt.substring(rt.indexOf("#") + 1)
                         : rt;
             }
             case "nuts.workspace-runtime.id": {
                 String rt = NWorkspace.of().getBootOptions().getRuntimeId().map(this::str).orNull();
-                return rt == null ? str(workspace.getRuntimeId().getVersion()) : rt.contains("#")
+                return rt == null ? str(NWorkspace.of().getRuntimeId().getVersion()) : rt.contains("#")
                         ? rt
                         : (NConstants.Ids.NUTS_RUNTIME + "#" + rt);
             }

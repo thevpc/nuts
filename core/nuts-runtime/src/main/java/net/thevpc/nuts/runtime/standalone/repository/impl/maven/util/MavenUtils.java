@@ -85,7 +85,7 @@ public class MavenUtils {
         return wp;
     }
 
-    public static NPomIdResolver createPomIdResolver(NWorkspace workspace) {
+    public static NPomIdResolver createPomIdResolver() {
         NPomIdResolver wp = (NPomIdResolver) NWorkspace.of().getProperties().get(NPomIdResolver.class.getName());
         if (wp == null) {
             wp = new NPomIdResolver();

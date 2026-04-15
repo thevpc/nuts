@@ -43,7 +43,7 @@ public class DefaultNReflectRepository implements NReflectRepository {
     private final Map<Type, NReflectType> beans = new HashMap<>();
     private NReflectConfiguration configuration;
 
-    public DefaultNReflectRepository(NWorkspace workspace) {
+    public DefaultNReflectRepository() {
         this(NReflectConfigurationBuilder.of().build());
     }
 

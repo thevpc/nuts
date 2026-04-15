@@ -30,7 +30,7 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
     private boolean highlightImportedGroup;
     private Set<String> queryPropertiesOmitted = new HashSet<>();
 
-    public DefaultNDependencyWriter(NWorkspace workspace) {
+    public DefaultNDependencyWriter() {
         super("dependency-format");
     }
 

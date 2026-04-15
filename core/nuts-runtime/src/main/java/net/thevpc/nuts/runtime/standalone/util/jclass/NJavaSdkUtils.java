@@ -34,22 +34,17 @@ import java.util.stream.Stream;
 
 public class NJavaSdkUtils {
 
-    private final NWorkspace workspace;
     private List<JavaProvider> javaProviders = new ArrayList<>();
     private NExecutionEngineLocation hostVm;
 
-    private NJavaSdkUtils(NWorkspace workspace) {
-        this.workspace = workspace;
+    private NJavaSdkUtils() {
         javaProviders.add(new TemurinProvider());
     }
 
     public static NJavaSdkUtils of() {
-        return of(NWorkspace.of());
+        return NWorkspace.of().getOrComputeProperty(NJavaSdkUtils.class.getName(), () -> new NJavaSdkUtils());
     }
 
-    public static NJavaSdkUtils of(NWorkspace ws) {
-        return ws.getOrComputeProperty(NJavaSdkUtils.class.getName(), () -> new NJavaSdkUtils(ws));
-    }
 
     public static Integer defaultJavaMajorVersion() {
         // ?? why 25?
@@ -539,6 +534,7 @@ public class NJavaSdkUtils {
                             try {
                                 r = resolveJdkLocation(d, null);
                                 if (r != null) {
+                                    NWorkspace workspace = NWorkspace.of();
                                     synchronized (workspace) {
                                         NTexts factory = NTexts.of();
                                         workspace.currentSession().getTerminal().printProgress(
@@ -565,7 +561,7 @@ public class NJavaSdkUtils {
                 }
             }
             //just reset the line!
-            workspace.currentSession().getTerminal().printProgress(NMsg.ofPlain(""));
+            NSession.of().getTerminal().printProgress(NMsg.ofPlain(""));
             return locs.toArray(new NExecutionEngineLocation[0]);
         });
     }
@@ -691,7 +687,7 @@ public class NJavaSdkUtils {
             preferredName = NStringUtils.trim(preferredName);
         }
         NExecutionEngineLocation r = new NExecutionEngineLocation(
-                NWorkspaceUtils.of(workspace).createSdkId("java", jdkVersion),
+                NWorkspaceUtils.of().createSdkId("java", jdkVersion),
                 vendor,
                 product,
                 variant,

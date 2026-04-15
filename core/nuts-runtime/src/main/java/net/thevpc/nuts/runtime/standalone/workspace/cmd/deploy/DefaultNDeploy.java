@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNDeploy extends AbstractNDeploy {
 
-    public DefaultNDeploy(NWorkspace workspace) {
+    public DefaultNDeploy() {
         super();
     }
 

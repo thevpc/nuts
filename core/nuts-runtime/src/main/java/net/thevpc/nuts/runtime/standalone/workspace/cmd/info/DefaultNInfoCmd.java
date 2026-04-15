@@ -416,7 +416,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("java-version", () -> NVersion.get(System.getProperty("java.version")).get());
         props.put("platform", () -> NEnv.of().getJava());
         props.put("java-home", () -> NPath.of(System.getProperty("java.home")));
-        props.put("java-executable", () -> NPath.of(NJavaSdkUtils.of(NWorkspace.of()).resolveJavaCommandByHome(null)));
+        props.put("java-executable", () -> NPath.of(NJavaSdkUtils.of().resolveJavaCommandByHome(null)));
         props.put("java-classpath",
                 () -> NTextBuilder.of().appendJoined(";",
                         Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
@@ -613,7 +613,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("java-version", NVersion.get(System.getProperty("java.version")).get());
         props.put("platform", environment.getJava());
         props.put("java-home", NPath.of(System.getProperty("java.home")));
-        props.put("java-executable", NPath.of(NJavaSdkUtils.of(NWorkspace.of()).resolveJavaCommandByHome(null)));
+        props.put("java-executable", NPath.of(NJavaSdkUtils.of().resolveJavaCommandByHome(null)));
         props.put("java-classpath",
                 txt.ofBuilder().appendJoined(";",
                         Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))

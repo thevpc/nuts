@@ -50,7 +50,7 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
     protected NWorkspaceUpdateResult result;
     protected NRepositoryFilter repositoryFilter;
 
-    public AbstractNUpdate(NWorkspace workspace) {
+    public AbstractNUpdate() {
         super("update");
     }
 

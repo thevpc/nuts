@@ -27,7 +27,6 @@ import java.nio.file.Path;
 public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
 
     //    private final NutsLogger LOG;
-    private final NWorkspace workspace;
     private String sourceTypeName;
     private NInputSource source;
     private Object sourceOrigin;
@@ -37,8 +36,7 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
     private boolean traceProgress;
     private NProgressFactory progressFactory;
 
-    public DefaultNInputStreamMonitor(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNInputStreamMonitor() {
     }
     
     @Override
@@ -114,7 +112,7 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
         if (sourceName == null) {
             sourceName = NMsg.ofNtf(NText.of(source.getMetaData().getName()));
         }
-        NProgressListener monitor = NProgressUtils.createProgressMonitor(NProgressUtils.MonitorType.STREAM, source, sourceOrigin, workspace
+        NProgressListener monitor = NProgressUtils.createProgressMonitor(NProgressUtils.MonitorType.STREAM, source, sourceOrigin, NWorkspace.of()
                 , isLogProgress()
                 , isTraceProgress()
                 , getProgressFactory());

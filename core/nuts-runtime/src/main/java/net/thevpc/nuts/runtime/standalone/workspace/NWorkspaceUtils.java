@@ -49,18 +49,14 @@ import java.util.stream.Collectors;
  */
 public class NWorkspaceUtils {
 
-    private final NWorkspace workspace;
 
-    private NWorkspaceUtils(NWorkspace workspace) {
-        this.workspace = workspace;
+    public static final NWorkspaceUtils INSTANCE = new NWorkspaceUtils();
+
+    private NWorkspaceUtils() {
     }
 
     public static NWorkspaceUtils of() {
-        return of(NWorkspace.of());
-    }
-
-    public static NWorkspaceUtils of(NWorkspace workspace) {
-        return new NWorkspaceUtils(workspace);
+        return INSTANCE;
     }
 
     public static NSession bindSession(NWorkspace ws, NSession session) {
@@ -86,6 +82,7 @@ public class NWorkspaceUtils {
 
     public NReflectRepository getReflectRepository() {
         //do not call env.getProperty(...). It will end up with a stack overflow
+        NWorkspace workspace = NWorkspace.of();
         NReflectRepository o = (NReflectRepository) (workspace.getProperties().get(NReflectRepository.class.getName()));
         if (o == null) {
             o = new DefaultNReflectRepository(NReflectConfigurationBuilder.of()
@@ -101,7 +98,7 @@ public class NWorkspaceUtils {
         NAssert.requireNamedNonBlank(type, "sdk type");
         NAssert.requireNamedNonBlank(version, "version");
         if ("java".equalsIgnoreCase(type)) {
-            return NJavaSdkUtils.of(workspace).createJdkId(version);
+            return NJavaSdkUtils.of().createJdkId(version);
         } else {
             return NIdBuilder.of().setArtifactId(type)
                     .setVersion(version)
@@ -167,8 +164,8 @@ public class NWorkspaceUtils {
         List<RepoAndLevel> repos2 = new ArrayList<>();
         //        List<Integer> reposLevels = new ArrayList<>();
 
-        NSession session = workspace.currentSession();
-        for (NRepository repository : workspace.getRepositories()) {
+        NSession session = NSession.of();
+        for (NRepository repository : NWorkspace.of().getRepositories()) {
             /*repository.isAvailable()*/
             if (repository.isEnabled()
                     && (fmode == NRepositorySupportedAction.SEARCH || repository.isSupportedDeploy())
@@ -220,7 +217,7 @@ public class NWorkspaceUtils {
     }
 
     public <T> NIterator<T> decoratePrint(NIterator<T> it, NFetchDisplayOptions displayOptions) {
-        return new NPrintIterator<>(it, workspace, NOut.out(), displayOptions);
+        return new NPrintIterator<>(it, NWorkspace.of(), NOut.out(), displayOptions);
     }
 
     public Events events() {
@@ -228,7 +225,7 @@ public class NWorkspaceUtils {
     }
 
     public void installAllJVM() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         try {
             if (session.isPlainTrace()) {
                 NOut.println("looking for java installations in default locations...");
@@ -251,8 +248,8 @@ public class NWorkspaceUtils {
                 }
                 NOut.println("you can always add another installation manually using 'nuts settings add java' command.");
             }
-            if (!workspace.isReadOnly()) {
-                workspace.saveConfig();
+            if (!NWorkspace.of().isReadOnly()) {
+                NWorkspace.of().saveConfig();
             }
         } catch (Exception ex) {
             _LOG()
@@ -267,7 +264,7 @@ public class NWorkspaceUtils {
     }
 
     public void installCurrentJVM() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         try {
             if (session.isPlainTrace()) {
                 NOut.println("configuring current JVM...");
@@ -286,8 +283,8 @@ public class NWorkspaceUtils {
                     NOut.println(NMsg.ofC("%s java installation locations found...", NMsg.ofStyledError("no new")));
                 }
             }
-            if (!workspace.isReadOnly()) {
-                workspace.saveConfig();
+            if (!NWorkspace.of().isReadOnly()) {
+                NWorkspace.of().saveConfig();
             }
         } catch (Exception ex) {
             _LOG()
@@ -300,9 +297,9 @@ public class NWorkspaceUtils {
     }
 
     public void installScriptsAndLaunchers(boolean includeGraphicalLaunchers) {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         try {
-            workspace.addLauncher(
+            NWorkspace.of().addLauncher(
                     new NLauncherOptions()
                             .setId(session.getWorkspace().getApiId())
                             .setCreateScript(true)
@@ -325,7 +322,7 @@ public class NWorkspaceUtils {
     }
 
     public void installCompanions() {
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         NTexts text = NTexts.of();
         Set<NId> companionIds = NExtensions.of().getCompanionIds();
         if (companionIds.isEmpty()) {
@@ -352,7 +349,7 @@ public class NWorkspaceUtils {
                         NMsg.ofStyledError("unable to install companion tools"),
                         ex,
                         text.ofBuilder().appendJoined(text.ofPlain(", "),
-                                workspace.getRepositories().stream().map(x
+                                NWorkspace.of().getRepositories().stream().map(x
                                         -> text.ofBuilder().append(x.getName(), NTextStyle.primary3())
                                 ).collect(Collectors.toList())
                         )

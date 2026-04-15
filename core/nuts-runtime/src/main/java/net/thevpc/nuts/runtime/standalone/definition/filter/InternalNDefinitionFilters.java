@@ -16,7 +16,7 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
         implements NDefinitionFilters {
 
 
-    public InternalNDefinitionFilters(NWorkspace workspace) {
+    public InternalNDefinitionFilters() {
         super(NDefinitionFilter.class);
     }
 

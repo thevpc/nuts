@@ -57,8 +57,8 @@ import net.thevpc.nuts.util.*;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNPush extends AbstractDefaultNPush {
 
-    public DefaultNPush(NWorkspace workspace) {
-        super(workspace);
+    public DefaultNPush() {
+        super();
     }
 
     @Override

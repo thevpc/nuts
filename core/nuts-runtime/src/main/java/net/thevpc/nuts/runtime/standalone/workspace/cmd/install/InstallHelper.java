@@ -361,7 +361,7 @@ public class InstallHelper {
         try {
             boolean reinstall = false;
             NInstalledRepository installedRepository = ws.getInstalledRepository();
-            NWorkspaceUtils wu = NWorkspaceUtils.of(ws.getModel().workspace);
+            NWorkspaceUtils wu = NWorkspaceUtils.of();
 
             if (session.isPlainTrace()) {
                 NTexts text = NTexts.of();
@@ -841,6 +841,6 @@ public class InstallHelper {
                     "successfully", NTextStyle.success()
             )));
         }
-        NWorkspaceUtils.of(ws.getModel().workspace).events().fireOnUninstall(new DefaultNInstallEvent(definition, NSession.of(), new NId[0], eraseFiles));
+        NWorkspaceUtils.of().events().fireOnUninstall(new DefaultNInstallEvent(definition, NSession.of(), new NId[0], eraseFiles));
     }
 }

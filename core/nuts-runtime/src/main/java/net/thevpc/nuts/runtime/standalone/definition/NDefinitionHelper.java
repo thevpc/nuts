@@ -22,7 +22,7 @@ public class NDefinitionHelper {
     }
 
     public static NDefinition ofIdOnlyFromRepo(NId id, NRepository repo, String callerName) {
-        NRepositorySPI repoSPI = NWorkspaceUtils.of(repo.getWorkspace()).toRepositorySPI(repo);
+        NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(repo);
         return ofIdAndLazyDescriptor(id,()->repoSPI.fetchDescriptor().setId(id).getResult(),callerName);
     }
 

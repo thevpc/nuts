@@ -20,15 +20,16 @@ import net.thevpc.nuts.util.NScorable;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNUndeploy extends AbstractNUndeploy {
 
-    public DefaultNUndeploy(NWorkspace workspace) {
-        super(workspace);
+    public DefaultNUndeploy() {
+        super();
     }
 
     @Override
     public NUndeploy run() {
         NSession session= NSession.of();
         NWorkspace workspace = NWorkspace.of();
-        NWorkspaceUtils.of(workspace).checkReadOnly();
+        NWorkspaceUtils nWorkspaceUtils = NWorkspaceUtils.of();
+        nWorkspaceUtils.checkReadOnly();
         if (ids.isEmpty()) {
             throw new NExecutionException(NMsg.ofPlain("no package to undeploy"), NExecutionException.ERROR_1);
         }
@@ -46,7 +47,7 @@ public class DefaultNUndeploy extends AbstractNUndeploy {
                     .getResultDefinitions().findFirst().get();
             NRepository repository1 = workspace
                     .findRepository(p.getRepositoryUuid()).get();
-            NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).toRepositorySPI(repository1);
+            NRepositorySPI repoSPI = nWorkspaceUtils.toRepositorySPI(repository1);
             repoSPI.undeploy()
                     .setId(p.getId())
                     //                    .setFetchMode(NutsFetchMode.LOCAL)

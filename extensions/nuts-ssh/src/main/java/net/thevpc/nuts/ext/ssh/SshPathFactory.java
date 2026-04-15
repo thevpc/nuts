@@ -1,7 +1,6 @@
 package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.concurrent.NScoredCallable;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.spi.NDefaultScorableContext;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
@@ -11,13 +10,9 @@ import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.util.Objects;
-
 public class SshPathFactory implements NPathFactorySPI {
-    NWorkspace workspace;
 
-    public SshPathFactory(NWorkspace workspace) {
-        this.workspace = workspace;
+    public SshPathFactory() {
     }
 
     @Override

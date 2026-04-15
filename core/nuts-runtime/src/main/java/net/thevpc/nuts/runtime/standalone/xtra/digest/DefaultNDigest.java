@@ -38,12 +38,12 @@ import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -73,7 +73,7 @@ public class DefaultNDigest implements NDigest {
     }
 
     private NDigest setSource0(NInputSource source) {
-        this.sources = source == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(source));
+        this.sources = source == null ? new ArrayList<>() : new ArrayList<>(Collections.singletonList(source));
         return this;
     }
 
@@ -177,29 +177,52 @@ public class DefaultNDigest implements NDigest {
     }
 
     @Override
-    public byte[] computeBytes() {
+    public String computeManifestString() {
+        BytesAndName u = computeBytesAndName();
+        byte[] a = computeBytes();
+        return NHex.fromBytes(a) + " " + (u.binary ? "*" : " ") + u.names.stream().sorted().collect(Collectors.joining(","));
+    }
+
+    private static class BytesAndName {
+        byte[] bytes;
+        List<String> names = new ArrayList<>();
+        boolean binary;
+    }
+
+    private BytesAndName computeBytesAndName() {
         NAssert.requireNamedTrue(!(sources == null || sources.isEmpty()), "source");
         String algo = getValidAlgo();
         MessageDigest md;
+        BytesAndName a = new BytesAndName();
         try {
             md = MessageDigest.getInstance(algo);
             for (NInputSource source : sources) {
-                incrementalUpdateFileDigestInputSource(source, md);
+                BytesAndName a0 = incrementalUpdateFileDigestInputSource(source, md);
+                if (a0 != null) {
+                    a.names.addAll(a0.names);
+                    a.binary |= a0.binary;
+                }
             }
         } catch (NoSuchAlgorithmException e) {
             throw new NIOException(new IOException(e));
         }
-        return md.digest();
+        a.bytes = md.digest();
+        return a;
     }
 
-    private void incrementalUpdateFileDigestPath(NPath file, MessageDigest md) {
+    @Override
+    public byte[] computeBytes() {
+        return computeBytesAndName().bytes;
+    }
+
+    private BytesAndName incrementalUpdateFileDigestPath(NPath file, MessageDigest md) {
         if (file.isDirectory()) {
             file.walkDfs(new NTreeVisitor<NPath>() {
                 @Override
                 public NTreeVisitResult visitFile(NPath file) {
-                    incrementalUpdateFileDigestInputStream(new ByteArrayInputStream(file.toString().getBytes()), md);
+                    incrementalUpdateFileDigestInputStream(new ByteArrayInputStream(file.getName().getBytes(StandardCharsets.UTF_8)), md, file.getName());
                     try (InputStream is = file.getInputStream()) {
-                        incrementalUpdateFileDigestInputStream(is, md);
+                        incrementalUpdateFileDigestInputStream(is, md, file.getName());
                     } catch (IOException ex) {
                         throw new NIOException(ex);
                     }
@@ -208,33 +231,37 @@ public class DefaultNDigest implements NDigest {
 
                 @Override
                 public NTreeVisitResult preVisitDirectory(NPath dir) {
-                    incrementalUpdateFileDigestInputStream(new ByteArrayInputStream(dir.toString().getBytes()), md);
+                    incrementalUpdateFileDigestInputStream(new ByteArrayInputStream(dir.getName().getBytes(StandardCharsets.UTF_8)), md, dir.getName() + "/");
                     return NTreeVisitResult.CONTINUE;
                 }
-            });
+            }, NPathOption.SORTED);
+            BytesAndName i = new BytesAndName();
+            i.names.add(file.getName() + "/");
+            i.binary = true;
+            return i;
         } else if (file.isFile()) {
             try (InputStream is = file.getInputStream()) {
-                incrementalUpdateFileDigestInputStream(is, md);
+                return incrementalUpdateFileDigestInputStream(is, md, file.getName());
             } catch (IOException ex) {
                 throw new NIOException(ex);
             }
         }
+        return null;
     }
 
-    private void incrementalUpdateFileDigestInputSource(NInputSource source, MessageDigest md) {
+    private BytesAndName incrementalUpdateFileDigestInputSource(NInputSource source, MessageDigest md) {
         if (source instanceof NPath) {
             NPath file = (NPath) source;
-            incrementalUpdateFileDigestPath(file, md);
-            return;
+            return incrementalUpdateFileDigestPath(file, md);
         }
         try (InputStream is = source.getInputStream()) {
-            incrementalUpdateFileDigestInputStream(is, md);
+            return incrementalUpdateFileDigestInputStream(is, md, "binary");
         } catch (IOException ex) {
             throw new NIOException(ex);
         }
     }
 
-    private void incrementalUpdateFileDigestInputStream(InputStream inputStream, MessageDigest md) {
+    private BytesAndName incrementalUpdateFileDigestInputStream(InputStream inputStream, MessageDigest md, String name) {
         try (InputStream is = new BufferedInputStream(inputStream)) {
             byte[] buffer = new byte[8192];
             int len = 0;
@@ -250,6 +277,10 @@ public class DefaultNDigest implements NDigest {
         } catch (IOException ex) {
             throw new NIOException(ex);
         }
+        BytesAndName u = new BytesAndName();
+        u.names.add(name);
+        u.binary = true;
+        return u;
     }
 
     @Override

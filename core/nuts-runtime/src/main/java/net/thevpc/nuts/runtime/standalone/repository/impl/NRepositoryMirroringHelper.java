@@ -88,12 +88,11 @@ public class NRepositoryMirroringHelper {
     protected NPath fetchContent(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
         NPath cacheContent = cache.getLongIdLocalFile(id);
         NRepositoryConfigManager rconfig = repo.config();
-        NWorkspace workspace = repo.getWorkspace();
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         if (session.isTransitive() && rconfig.isSupportedMirroring()) {
             for (NRepository mirror : rconfig.getMirrors()) {
                 try {
-                    NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).toRepositorySPI(mirror);
+                    NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(mirror);
                     NPath c = repoSPI.fetchContent().setId(id).setDescriptor(descriptor)
                             .setFetchMode(fetchMode)
                             .getResult();
@@ -118,15 +117,14 @@ public class NRepositoryMirroringHelper {
 
     protected NDescriptor fetchDescriptorImplInMirrors(NId id, NFetchMode fetchMode) {
         String idFilename = getIdFilename(id);
-        NWorkspace workspace = repo.getWorkspace();
-        NSession session = workspace.currentSession();
+        NSession session = NSession.of();
         NPath versionFolder = cache.getLongIdLocalFolder(id);
         NRepositoryConfigManager rconf = repo.config();
         if (session.isTransitive() && rconf.isSupportedMirroring()) {
             for (NRepository remote : rconf.getMirrors()) {
                 NDescriptor nutsDescriptor = null;
                 try {
-                    NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).toRepositorySPI(remote);
+                    NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(remote);
                     nutsDescriptor = repoSPI.fetchDescriptor().setId(id).setFetchMode(fetchMode).getResult();
                 } catch (Exception ex) {
                     //ignore

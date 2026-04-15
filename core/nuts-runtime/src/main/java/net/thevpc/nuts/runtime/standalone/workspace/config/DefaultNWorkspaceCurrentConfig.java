@@ -30,7 +30,6 @@ public final class DefaultNWorkspaceCurrentConfig {
     private final Map<NStoreType, String> effStoreLocationsMap = new HashMap<>();
     private final Path[] effStoreLocationPath = new Path[NStoreType.values().length];
     private final Map<NHomeLocation, String> homeLocations = new HashMap<>();
-    private final NWorkspace workspace;
     private String name;
     private NId apiId;
     private NId bootRuntime;
@@ -49,8 +48,7 @@ public final class DefaultNWorkspaceCurrentConfig {
 //    private NutsId arch;
 //    private NutsId osdist;
 
-    public DefaultNWorkspaceCurrentConfig(NWorkspace workspace) {
-        this.workspace = workspace;
+    public DefaultNWorkspaceCurrentConfig() {
     }
 
     public DefaultNWorkspaceCurrentConfig merge(NWorkspaceOptions c) {

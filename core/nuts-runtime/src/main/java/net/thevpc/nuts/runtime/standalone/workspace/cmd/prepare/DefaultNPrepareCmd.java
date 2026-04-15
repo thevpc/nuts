@@ -20,8 +20,8 @@ import java.util.Set;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
-    public DefaultNPrepareCmd(NWorkspace workspace) {
-        super(workspace);
+    public DefaultNPrepareCmd() {
+        super();
     }
 
     private boolean isLocalhost() {
