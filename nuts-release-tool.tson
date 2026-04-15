@@ -11,22 +11,22 @@ trace:true
 verbose:true
 
 // enable native executable generation
-build-native:false
+build-native:true
 
 // build documentation website and github readme.md
 build-site:true
 
 // build nuts-public repo index
-build-repo-nuts-public:false
+build-repo-nuts-public:true
 
 // build nuts-preview repo index
-build-repo-nuts-preview:false
+build-repo-nuts-preview:true
 
 // build nuts-app-full binaries and native executables
-build-bin:false
+build-bin:true
 
 // build nuts-installer binaries and native executables
-build-installer:false
+build-installer:true
 
 // generate version compatibility html file, requires 'japi-compliance-checker' to be installed
 build-compat:true
@@ -39,5 +39,23 @@ keep-stamp:false
 production-mode:false
 
 vars:{
-
+    JAVA8_HOME  : "$HOME/.jdks/corretto-1.8.0_442"
+    JAVA17_HOME : "/home/groups/ctsgroup/programs/dev/jdk/jdk-17.0.17+10/"
+    IDEA_HOME   : "/home/groups/ctsgroup/programs/dev/idea"
+    NUTS_GRAALVM_DIR: "/home/groups/ctsgroup/programs/dev/graalvm/graalvm-jdk-22+36.1/"
+    INSTALLER_JRE8_LINUX64: "/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-linux-x64.tar.gz"
+    INSTALLER_JRE8_LINUX32: "/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-linux-x32.tar.gz"
+    INSTALLER_JRE8_WINDOWS64: "/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-windows-x64.zip"
+    INSTALLER_JRE8_WINDOWS32: "/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-windows-x32.zip"
+    INSTALLER_JRE8_MAC64: "/home/groups/ctsgroup/programs/dev/jre/openlogic-openjdk-jre-8u402-b06-mac-x64.zip"
+    MVN_HOME                       : "${IDEA_HOME}/plugins/maven/lib/maven3"
+    JAVA_HOME                      : "${JAVA17_HOME}"
+    NUTS_JAVA_HOME                 : "${JAVA8_HOME}"
+    NUTS_INSTALLER_BUILD_JAVA_HOME : "${JAVA17_HOME}"
+    NUTS_INSTALLER_TARGET          : "linux-x64"
+    SVC_NOPS_WEB                   : "http://192.168.1.77:3001/nops"
+    REMOTE_NUTS_THEVPC_DEPLOY_USER             : ""
+    REMOTE_NUTS_THEVPC_DEPLOY_SERVER           : "thevpc.net"
+    REMOTE_NUTS_THEVPC_DEPLOY_PATH             : ""
+    REMOTE_MAVEN_THEVPC_DEPLOY_PATH            : ""
 }

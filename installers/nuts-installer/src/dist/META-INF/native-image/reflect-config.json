@@ -31,10 +31,6 @@
   "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
 },
 {
-  "name":"com.formdev.flatlaf.ui.FlatBorder",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"com.formdev.flatlaf.ui.FlatButtonBorder",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -85,6 +81,10 @@
 {
   "name":"com.formdev.flatlaf.ui.FlatScrollBarUI$FlatScrollBarButton",
   "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
+},
+{
+  "name":"com.formdev.flatlaf.ui.FlatScrollPaneBorder",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"com.formdev.flatlaf.ui.FlatScrollPaneUI",
@@ -231,6 +231,10 @@
 },
 {
   "name":"java.util.concurrent.atomic.AtomicBoolean",
+  "fields":[{"name":"value"}]
+},
+{
+  "name":"java.util.concurrent.atomic.AtomicReference",
   "fields":[{"name":"value"}]
 },
 {

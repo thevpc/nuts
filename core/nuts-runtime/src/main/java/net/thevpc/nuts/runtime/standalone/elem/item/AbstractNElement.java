@@ -1463,8 +1463,9 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NOptional<String> asStringValue() {
-        if (!isAnyString()) {
-            return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to string: %s", type().id(), this));
+        if (!isAnyStringOrName()) {
+            return asLiteral().asString();
+//            return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to string: %s", type().id(), this));
         }
         return asString().map(NStringElement::stringValue);
     }

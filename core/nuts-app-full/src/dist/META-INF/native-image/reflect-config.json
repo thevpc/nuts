@@ -3,16 +3,13 @@
   "name":"[B"
 },
 {
-  "name":"[Ljava.lang.Object;"
-},
-{
   "name":"[Ljava.lang.String;"
 },
 {
   "name":"[Lnet.thevpc.nuts.elem.NElementMapper;"
 },
 {
-  "name":"[Lnet.thevpc.nuts.runtime.standalone.format.NFormatsImpl$NFormatMapper;"
+  "name":"[Lnet.thevpc.nuts.runtime.standalone.text.DefaultNTexts$NObjectWriterMapper;"
 },
 {
   "name":"[Lnet.thevpc.nuts.runtime.standalone.text.DefaultNTexts$NTextMapper;"
@@ -54,6 +51,10 @@
 },
 {
   "name":"com.sun.crypto.provider.HmacCore$HmacSHA384",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.crypto.provider.PBKDF2Core$HmacSHA256",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -144,6 +145,12 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"net.thevpc.nuts.platform.NExecutionEngineLocation",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder"
 },
 {
@@ -160,22 +167,30 @@
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.DefaultNIdBuilder",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.DefaultNWorkspaceOptionsBuilder",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.app.NAppImpl"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLineFormat",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "name":"net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLineWriter",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLines",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.boot.DefaultNBootWorkspaceFactory"
@@ -184,8 +199,7 @@
   "name":"net.thevpc.nuts.runtime.standalone.concurrent.DefaultNLockBuilder"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "name":"net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.definition.NDefinitionFactoryImpl"
@@ -197,7 +211,7 @@
   "name":"net.thevpc.nuts.runtime.standalone.dependency.filter.InternalNDependencyFilters"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.dependency.format.DefaultNDependencyFormat"
+  "name":"net.thevpc.nuts.runtime.standalone.dependency.format.DefaultNDependencyWriter"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.dependency.solver.DefaultNDependencySolvers"
@@ -218,7 +232,7 @@
   "name":"net.thevpc.nuts.runtime.standalone.dependency.solver.MavenNDependencySolverFactory"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.descriptor.format.DefaultNDescriptorFormat"
+  "name":"net.thevpc.nuts.runtime.standalone.descriptor.format.DefaultNDescriptorWriter"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.descriptor.parser.DefaultNDescriptorParser"
@@ -234,22 +248,27 @@
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFormat"
+  "name":"net.thevpc.nuts.runtime.standalone.elem.DefaultNElementWriter",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.elem.DefaultNElements",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.elem.parser.DefaultNElementParser",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
-},
-{
-  "name":"net.thevpc.nuts.runtime.standalone.elem.writer.DefaultNElementWriter",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "name":"net.thevpc.nuts.runtime.standalone.elem.parser.DefaultNElementReader",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent"
@@ -273,31 +292,31 @@
   "name":"net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.format.DefaultNObjectFormat"
+  "name":"net.thevpc.nuts.runtime.standalone.format.DefaultNObjectObjectWriter"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.format.NFormatsImpl",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
-},
-{
-  "name":"net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat"
+  "name":"net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesObjectWriter"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.format.table.DefaultNMutableTableModel",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.format.table.DefaultTableFormat"
+  "name":"net.thevpc.nuts.runtime.standalone.format.table.DefaultTableObjectWriter"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.format.tree.DefaultNTreeFormat"
+  "name":"net.thevpc.nuts.runtime.standalone.format.tree.DefaultNTreeObjectWriter"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.id.filter.InternalNIdFilters"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdFormat",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "name":"net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdWriter",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.installer.ZipInstallerComponent"
@@ -307,11 +326,15 @@
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.io.path.spi.ClassLoaderPath"
@@ -326,161 +349,258 @@
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSystemTerminalBase",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.io.terminal.history.NCmdLineHistoryImpl"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.log.DefaultNLogs",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "name":"net.thevpc.nuts.runtime.standalone.log.DefaultNLogs"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.log.NLogFactorySPIJUL",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.net.DefaultNConnectionStringBuilderFactory"
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.platform.NEnvAsCmd",
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.platform.NEnvLocal",
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.platform.NExecutionEnginesImpl",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.platform.rnsh.NEnvRnsh",
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.platform.rnsh.RnshPathFactorySPI",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.reflect.DefaultNReflectConfigurationBuilder",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.reflect.DefaultNReflectRepository",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.reflect.NReflectImpl",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
-},
-{
-  "name":"net.thevpc.nuts.runtime.standalone.reflect.NReflectMapperImpl"
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.repository.DefaultNRepoFactoryComponent",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.repository.DefaultNRepositoryDB",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.repository.filter.InternalNRepositoryFilters"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenRepositoryFactoryComponent",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepositoryFactoryComponent",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.security.DefaultNAuthenticationAgent",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "name":"net.thevpc.nuts.runtime.standalone.security.DefaultNAuthenticationAgentV1"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityManager",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "name":"net.thevpc.nuts.runtime.standalone.security.DefaultNAuthenticationAgentV2",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.text.DefaultNTexts",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "name":"net.thevpc.nuts.runtime.standalone.security.DefaultNSecurityManager",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.text.DefaultNTexts"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.art.NTextArtImpl",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.art.figlet.FigletNTextArtRendererFactory",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.art.img.PixelNTextArtRendererFactory",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.art.table.TableNTextArtRendererFactory",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.art.tree.TreeNTextArtRendererFactory",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
-},
-{
-  "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.BashCodeHighlighter",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.CSharpCodeHighlighter",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.CppCodeHighlighter",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.FishCodeHighlighter",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.HadraCodeHighlighter",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.JavaCodeHighlighter",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.JsonCodeHighlighter",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.NTexupCodeHighlighter",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.NtfCodeHighlighter",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.PlainCodeHighlighter",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.ShCodeHighlighter",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.ShoptCodeHighlighter",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.SqlCodeHighlighter",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.TsonCodeHighlighter",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.WinCmdBlocTextHighlighter",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.XmlCodeHighlighter",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
-},
-{
-  "name":"net.thevpc.nuts.runtime.standalone.util.DefaultNConnectionStringBuilderFactory"
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.util.NUtilSPIImpl",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.util.collections.DefaultNCollectionsRPI",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilters"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.util.stream.DefaultNCollectionsRPI",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
-},
-{
   "name":"net.thevpc.nuts.runtime.standalone.version.filter.InternalNVersionFilters"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "name":"net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace",
@@ -488,37 +608,48 @@
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.archetype.DefaultNWorkspaceArchetypeComponent",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.archetype.MinimalNWorkspaceArchetypeComponent",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.archetype.ServerNWorkspaceArchetypeComponent",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy.DefaultNDeployCmd"
+  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy.DefaultNDeploy"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.editorsyntax.NSysEditorSupportCmdImpl"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format.DefaultNExecCmdFormat"
+  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch.DefaultNFetchCmd"
+  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format.DefaultNExecWriter"
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch.DefaultNFetch"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.info.DefaultNInfoCmd"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.install.DefaultNInstallCmd"
+  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.install.DefaultNInstall"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.push.DefaultNPushCmd"
+  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.push.DefaultNPush"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestAgent",
@@ -533,7 +664,7 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.search.DefaultNSearchCmd"
+  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.search.DefaultNSearch"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias.NSettingsAliasSubCommand"
@@ -560,6 +691,9 @@
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.index.NSettingsIndexSubCommand"
 },
 {
+  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.installeditorsyntax.NSettingsInstallEditorSyntaxSubCommand"
+},
+{
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.java.NSettingsJavaSubCommand"
 },
 {
@@ -572,31 +706,22 @@
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.repo.NSettingsRepositorySubCommand"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.updatestats.DefaultNUpdateStatsCmd"
-},
-{
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNAddUserCmd",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
-},
-{
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNRemoveUserCmd"
-},
-{
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNUpdateUserCmd",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.updatestats.DefaultNUpdateStats"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.NSettingsUserSubCommand"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall.DefaultNUninstallCmd"
+  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall.DefaultNUninstall"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.update.DefaultNUpdateCmd"
+  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.update.DefaultNUpdate"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNIndexStoreFactory",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigApi",
@@ -651,13 +776,12 @@
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.xtra.cp.DefaultNCp",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest"
-},
-{
-  "name":"net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNLibPaths"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.xtra.expr.DefaultNExprs"
@@ -667,16 +791,15 @@
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.xtra.hashname.DefaultNDigestName",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.xtra.mon.DefaultNProgressMonitors"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.xtra.ps.DefaultNPs"
-},
-{
-  "name":"net.thevpc.nuts.runtime.standalone.xtra.rnsh.RnshExecCmdExtension"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.xtra.throwables.DefaultNExceptionWorkspaceHandler"
@@ -686,7 +809,9 @@
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli",
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.core.NWorkspace"] }]
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.security.NUserConfig",
@@ -776,10 +901,6 @@
 },
 {
   "name":"sun.security.rsa.RSASignature$SHA256withRSA",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"sun.security.rsa.RSASignature$SHA384withRSA",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
