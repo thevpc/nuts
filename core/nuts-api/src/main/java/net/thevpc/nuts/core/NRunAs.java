@@ -32,13 +32,13 @@ import net.thevpc.nuts.util.*;
 import java.util.Objects;
 
 public class NRunAs {
-    public static final NRunAs CURRENT_USER = new NRunAs(Mode.CURRENT_USER, null);
-    public static final NRunAs ROOT = new NRunAs(Mode.ROOT, null);
-    public static final NRunAs SUDO = new NRunAs(Mode.SUDO, null);
-    private final Mode mode;
+    public static final NRunAs CURRENT_USER = new NRunAs(NRunAsMode.CURRENT_USER, null);
+    public static final NRunAs ROOT = new NRunAs(NRunAsMode.ROOT, null);
+    public static final NRunAs SUDO = new NRunAs(NRunAsMode.SUDO, null);
+    private final NRunAsMode mode;
     private final String user;
 
-    private NRunAs(Mode mode, String user) {
+    private NRunAs(NRunAsMode mode, String user) {
         this.mode = mode;
         this.user = user;
     }
@@ -59,7 +59,7 @@ public class NRunAs {
         if (NBlankable.isBlank(name)) {
             throw new IllegalArgumentException("invalid user name");
         }
-        return new NRunAs(Mode.SUDO, name);
+        return new NRunAs(NRunAsMode.SUDO, name);
     }
 
     public static NOptional<NRunAs> parse(String runAs) {
@@ -88,7 +88,7 @@ public class NRunAs {
         return NOptional.ofNamedEmpty("NRunAs "+runAs);
     }
 
-    public Mode getMode() {
+    public NRunAsMode getMode() {
         return mode;
     }
 
@@ -124,25 +124,4 @@ public class NRunAs {
         return "run-as:" + mode + " , user='" + user + '\'';
     }
 
-    public enum Mode implements NEnum {
-        CURRENT_USER,
-        USER,
-        ROOT,
-        SUDO;
-        private final String id;
-
-        Mode() {
-            this.id = NNameFormat.ID_NAME.format(name());
-        }
-
-        public static NOptional<Mode> parse(String value) {
-            return NEnumUtils.parseEnum(value, Mode.class);
-        }
-
-        @Override
-        public String id() {
-            return id;
-        }
-
-    }
 }

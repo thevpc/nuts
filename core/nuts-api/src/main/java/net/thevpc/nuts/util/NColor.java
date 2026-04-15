@@ -464,53 +464,6 @@ public interface NColor {
         return AbstractNColor.ansiToColor(index);
     }
 
-    public enum Bits implements NEnum {
-        BITS_4(4),
-        BITS_8(8),
-        BITS_16(16),
-        BITS_24(24),
-        BITS_32(32),
-        BITS_64(64);
-        private final int bits;
-        private final String id;
-
-        Bits(int bits) {
-            this.bits = bits;
-            this.id = NNameFormat.ID_NAME.format(name());
-        }
-
-        public int bits() {
-            return bits;
-        }
-
-        @Override
-        public String id() {
-            return id;
-        }
-
-        public static NOptional<Bits> parse(String value) {
-            return NEnumUtils.parseEnum(value, Bits.class, enumValue -> {
-                switch (enumValue.normalizedValue()) {
-                    case "STANDARD":
-                        return NOptional.of(Bits.BITS_32);
-                    case "BITS4":
-                        return NOptional.of(Bits.BITS_4);
-                    case "BITS8":
-                        return NOptional.of(Bits.BITS_8);
-                    case "BITS16":
-                        return NOptional.of(Bits.BITS_16);
-                    case "BITS24":
-                        return NOptional.of(Bits.BITS_24);
-                    case "BITS32":
-                        return NOptional.of(Bits.BITS_32);
-                    case "BITS64":
-                        return NOptional.of(Bits.BITS_64);
-                }
-                return NOptional.ofNamedEmpty(value);
-            });
-        }
-    }
-
     static NColor of4(int color) {
         return AbstractNColor.of4(color);
     }
@@ -576,7 +529,7 @@ public interface NColor {
 
     String getName();
 
-    Bits getBits();
+    NColorBits getBits();
 
     NColor withName(String name);
 

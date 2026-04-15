@@ -1662,25 +1662,25 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         return wsModel.sessionScopes;
     }
 
-    public enum InstallStrategy0 implements NEnum {
-        INSTALL,
-        UPDATE,
-        REQUIRE;
-        private final String id;
-
-        InstallStrategy0() {
-            this.id = NNameFormat.ID_NAME.format(name());
-        }
-
-        public static NOptional<InstallStrategy0> parse(String value) {
-            return NEnumUtils.parseEnum(value, InstallStrategy0.class);
-        }
-
-        @Override
-        public String id() {
-            return id;
-        }
-    }
+//    public enum InstallStrategy0 implements NEnum {
+//        INSTALL,
+//        UPDATE,
+//        REQUIRE;
+//        private final String id;
+//
+//        InstallStrategy0() {
+//            this.id = NNameFormat.ID_NAME.format(name());
+//        }
+//
+//        public static NOptional<InstallStrategy0> parse(String value) {
+//            return NEnumUtils.parseEnum(value, InstallStrategy0.class);
+//        }
+//
+//        @Override
+//        public String id() {
+//            return id;
+//        }
+//    }
 
     public DefaultNRepositoryModel getRepositoryModel() {
         return wsModel.repositoryModel;
