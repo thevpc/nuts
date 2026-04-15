@@ -474,27 +474,28 @@ public class FilePath implements NPathSPI {
 
     @Override
     public Boolean isName(NPath basePath) {
-        if (value.getNameCount() > 1) {
-            return false;
-        }
-        String v = value.toString();
-        switch (v) {
-            case "/":
-            case "\\":
-            case ".":
-            case "..": {
-                return false;
-            }
-        }
-        for (char c : v.toCharArray()) {
-            switch (c) {
-                case '/':
-                case '\\': {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return value.getNameCount() == 1 && value.getParent() == null;
+//        if (value.getNameCount() > 1) {
+//            return false;
+//        }
+//        String v = value.toString();
+//        switch (v) {
+//            case "/":
+//            case "\\":
+//            case ".":
+//            case "..": {
+//                return false;
+//            }
+//        }
+//        for (char c : v.toCharArray()) {
+//            switch (c) {
+//                case '/':
+//                case '\\': {
+//                    return false;
+//                }
+//            }
+//        }
+//        return true;
     }
 
     @Override
@@ -521,7 +522,12 @@ public class FilePath implements NPathSPI {
 
     @Override
     public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
-        FileVisitOption[] fileOptions = Arrays.stream(options)
+        boolean sorted = options != null && Arrays.asList(options).contains(NPathOption.SORTED);
+        if (sorted) {
+            // will fallback to default impl
+            return null;
+        }
+        FileVisitOption[] fileOptions = Arrays.stream(options==null?new NPathOption[0]:options)
                 .map(x -> {
                     if (x == null) {
                         return null;
@@ -536,8 +542,7 @@ public class FilePath implements NPathSPI {
                 }).filter(Objects::nonNull).toArray(FileVisitOption[]::new);
         if (Files.isDirectory(value)) {
             try {
-                return NStream.ofStream(Files.walk(value, maxDepth, fileOptions).map(x -> fastPath(x))
-                );
+                return NStream.ofStream(Files.walk(value, maxDepth, fileOptions).map(x -> fastPath(x)));
             } catch (IOException e) {
                 //
             }
@@ -652,6 +657,10 @@ public class FilePath implements NPathSPI {
 
     @Override
     public boolean walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
+        boolean sorted = options != null && Arrays.asList(options).contains(NPathOption.SORTED);
+        if (sorted) {
+            return false;
+        }
         Set<FileVisitOption> foptions = new HashSet<>();
         for (NPathOption option : options) {
             if (option instanceof NPathStandardOption) {
