@@ -271,8 +271,8 @@ abstract class AbstractNColor implements NColor {
             return ANSI_COLORS_16.get(0);
         }
 
-        public Bits getBits() {
-            return Bits.BITS_4;
+        public NColorBits getBits() {
+            return NColorBits.BITS_4;
         }
 
         @Override
@@ -322,8 +322,8 @@ abstract class AbstractNColor implements NColor {
             return ANSI_COLORS_16.get(0).withName(name);
         }
 
-        public Bits getBits() {
-            return Bits.BITS_4;
+        public NColorBits getBits() {
+            return NColorBits.BITS_4;
         }
 
         @Override
@@ -374,8 +374,8 @@ abstract class AbstractNColor implements NColor {
             return ANSI_COLORS_256.get(0);
         }
 
-        public Bits getBits() {
-            return Bits.BITS_8;
+        public NColorBits getBits() {
+            return NColorBits.BITS_8;
         }
 
         @Override
@@ -425,8 +425,8 @@ abstract class AbstractNColor implements NColor {
             return ANSI_COLORS_256.get(0).withName(name);
         }
 
-        public Bits getBits() {
-            return Bits.BITS_8;
+        public NColorBits getBits() {
+            return NColorBits.BITS_8;
         }
 
         @Override
@@ -474,8 +474,8 @@ abstract class AbstractNColor implements NColor {
         }
 
 
-        public Bits getBits() {
-            return Bits.BITS_16;
+        public NColorBits getBits() {
+            return NColorBits.BITS_16;
         }
 
         @Override
@@ -527,8 +527,8 @@ abstract class AbstractNColor implements NColor {
             this.name = name;
         }
 
-        public Bits getBits() {
-            return Bits.BITS_16;
+        public NColorBits getBits() {
+            return NColorBits.BITS_16;
         }
 
         @Override
@@ -598,8 +598,8 @@ abstract class AbstractNColor implements NColor {
             return (255 << 24) | (color & 0xFFFFFF);
         }
 
-        public Bits getBits() {
-            return Bits.BITS_24;
+        public NColorBits getBits() {
+            return NColorBits.BITS_24;
         }
 
         @Override
@@ -648,8 +648,8 @@ abstract class AbstractNColor implements NColor {
             return (255 << 24) | (color & 0xFFFFFF);
         }
 
-        public Bits getBits() {
-            return Bits.BITS_24;
+        public NColorBits getBits() {
+            return NColorBits.BITS_24;
         }
 
         @Override
@@ -694,8 +694,8 @@ abstract class AbstractNColor implements NColor {
             this.color = (a & 255) << 24 | (r & 255) << 16 | (g & 255) << 8 | (b & 255);
         }
 
-        public Bits getBits() {
-            return Bits.BITS_32;
+        public NColorBits getBits() {
+            return NColorBits.BITS_32;
         }
 
         @Override
@@ -751,8 +751,8 @@ abstract class AbstractNColor implements NColor {
             this.name = name;
         }
 
-        public Bits getBits() {
-            return Bits.BITS_32;
+        public NColorBits getBits() {
+            return NColorBits.BITS_32;
         }
 
         @Override
@@ -799,8 +799,8 @@ abstract class AbstractNColor implements NColor {
             this.color = color;
         }
 
-        public Bits getBits() {
-            return Bits.BITS_64;
+        public NColorBits getBits() {
+            return NColorBits.BITS_64;
         }
 
         @Override
@@ -850,8 +850,8 @@ abstract class AbstractNColor implements NColor {
             this.name = name;
         }
 
-        public Bits getBits() {
-            return Bits.BITS_64;
+        public NColorBits getBits() {
+            return NColorBits.BITS_64;
         }
 
         @Override
