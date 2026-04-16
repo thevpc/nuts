@@ -1,0 +1,22 @@
+{
+  "resources": {
+    "includes": [
+      {"pattern": "net/thevpc/nuts/runtime/highlighter/.*\\.kw1"},
+      {"pattern": "net/thevpc/nuts/runtime/highlighter/.*\\.kw2"},
+      {"pattern": "net/thevpc/nuts/runtime/command/.*\\.ntf"},
+      {"pattern": "net/thevpc/nuts/runtime/includes/.*\\.ntf"},
+      {"pattern": "net/thevpc/nuts/runtime/settings/.*\\.ntf"},
+      {"pattern": "net/thevpc/nuts/runtime/settings/.*\\.sh"},
+      {"pattern": "net/thevpc/nuts/runtime/settings/.*\\.fish"},
+      {"pattern": "net/thevpc/nuts/runtime/settings/.*\\.cmd"},
+      {"pattern": "net/thevpc/nuts/runtime/settings/.*\\.ps1"},
+      {"pattern": "net/thevpc/nuts/runtime/svc/service-initd"},
+      {"pattern": "net/thevpc/nuts/runtime/svc/service-systemd"},
+      {"pattern": "net/thevpc/nuts/runtime/.*\\.properties"},
+      {"pattern": "net/thevpc/nuts/runtime/.*\\.types"},
+      {"pattern": "net/thevpc/nuts/runtime/.*\\.ini"},
+      {"pattern": "net/thevpc/nuts/runtime/.*\\.ntf"},
+      {"pattern": "META-INF/nuts/.*"}
+    ]
+  }
+}
