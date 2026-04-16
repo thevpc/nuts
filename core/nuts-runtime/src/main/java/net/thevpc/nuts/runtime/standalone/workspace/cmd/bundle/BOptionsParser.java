@@ -29,7 +29,7 @@ public class BOptionsParser {
                         boptions.format = BundleType.ZIP;
                     })
                     .with("--embedded").matchFlag((v) -> boptions.embedded = v.booleanValue())
-                    .with("--verbose").matchFlag((v) -> boptions.verbose = v.booleanValue())
+                    .with("-l","--verbose").matchFlag((v) -> boptions.verbose = v.booleanValue())
                     .with("-y", "--yes").matchFlag((v) -> boptions.yes = v.booleanValue())
                     .with("-z", "--reset").matchFlag((v) -> boptions.reset = v.booleanValue())
                     .with("--clean").matchFlag((v) -> boptions.clean = v.booleanValue())
