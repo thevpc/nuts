@@ -22,15 +22,15 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 
 public class NExtensionTypeInfo<T> {
-    private Class<? extends T> implType;
-    private Class<T> apiType;
+    private final Class<? extends T> implType;
+    private final Class<T> apiType;
     private final Map<TypeAndArgTypes, NBeanConstructor> cachedConstructors = new HashMap<>();
     private final PrintStream log;
-    private NExtensionTypeInfoPool pool;
-    private NScopeType scope;
+    private final NExtensionTypeInfoPool pool;
+    private final NScopeType scope;
     private NScorable scorer;
-    private NBeanCache beanCache;
-    private MyNBeanConstructorContext0 myNBeanConstructorContext0;
+    private final NBeanCache beanCache;
+    private final MyNBeanConstructorContext0 myNBeanConstructorContext0;
 
     public NExtensionTypeInfo(Class<? extends T> implType, Class<T> apiType, NExtensionTypeInfoPool pool, NBeanCache beanCache) {
         this.pool = pool;
@@ -70,19 +70,19 @@ public class NExtensionTypeInfo<T> {
             case PROTOTYPE:
                 return supplier.get();
             case SESSION: {
-                ConcurrentHashMap<String, Object> m = NSession.of().getOrComputeSessionProperty(beansKey, ConcurrentHashMap<String, Object>::new);
+                ConcurrentHashMap<String, Object> m = NSession.of().getOrComputeSessionProperty(beansKey, ConcurrentHashMap::new);
                 return (T) m.computeIfAbsent(implType.getName(), s -> supplier.get());
             }
             case SHARED_SESSION: {
-                ConcurrentHashMap<String, Object> m = NSession.of().getOrComputeSharedProperty(beansKey, ConcurrentHashMap<String, Object>::new);
+                ConcurrentHashMap<String, Object> m = NSession.of().getOrComputeSharedProperty(beansKey, ConcurrentHashMap::new);
                 return (T) m.computeIfAbsent(implType.getName(), s -> supplier.get());
             }
             case TRANSITIVE_SESSION: {
-                ConcurrentHashMap<String, Object> m = NSession.of().getOrComputeTransitiveProperty(beansKey, ConcurrentHashMap<String, Object>::new);
+                ConcurrentHashMap<String, Object> m = NSession.of().getOrComputeTransitiveProperty(beansKey, ConcurrentHashMap::new);
                 return (T) m.computeIfAbsent(implType.getName(), s -> supplier.get());
             }
             case WORKSPACE: {
-                ConcurrentHashMap<String, Object> m = NWorkspace.of().getOrComputeProperty(beansKey, ConcurrentHashMap<String, Object>::new);
+                ConcurrentHashMap<String, Object> m = NWorkspace.of().getOrComputeProperty(beansKey, ConcurrentHashMap::new);
                 return (T) m.computeIfAbsent(implType.getName(), s -> supplier.get());
             }
         }
@@ -154,9 +154,8 @@ public class NExtensionTypeInfo<T> {
             if (NExtensionUtils.isBootstrapLogType(apiType)) {
                 //
             } else if (LOG().isLoggable(Level.CONFIG)) {
-                String old = pool._alreadyLogger.get(apiType.getName());
-                if (old == null || !old.equals(implType.getName())) {
-                    pool._alreadyLogger.put(apiType.getName(), implType.getName());
+                String logKey = apiType.getName() + ":" + scope + ":" + implType.getName();
+                if (pool.alreadyLoggedKeys.add(logKey)) {
                     LOG()
                             .log(NMsg.ofC("resolve %s to  %s %s",
                                                     NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST),

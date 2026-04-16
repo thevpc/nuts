@@ -19,6 +19,7 @@ import net.thevpc.nuts.elem.NObjectElement;
 
 
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
 import net.thevpc.nuts.text.NDescriptorWriter;
@@ -130,7 +131,7 @@ public class NRepositoryFolderHelper {
 
     protected String getIdFilename(NId id) {
         //if (repo == null) {
-            return NWorkspace.of().getDefaultIdFilename(id);
+        return NWorkspace.of().getDefaultIdFilename(id);
         //}
         //return NRepositoryExt0.of(repo).getIdFilename(id);
     }
@@ -251,7 +252,7 @@ public class NRepositoryFolderHelper {
                     () -> {
                         if (NConstants.Versions.LATEST.equals(singleVersion) || NConstants.Versions.RELEASE.equals(singleVersion)) {
                             NId found = searchLatestVersion(id, filter);
-                            return (found != null ? Arrays.asList(found).iterator() : Collections.emptyIterator());
+                            return (found != null ? Collections.singletonList(found).iterator() : Collections.emptyIterator());
                         }
                         NId id1 = id.builder().setVersion(singleVersion).setFaceDescriptor().build();
                         NPath localFile = getLongIdLocalFile(id1);
@@ -294,6 +295,7 @@ public class NRepositoryFolderHelper {
             public NWorkspace getWorkspace() {
                 return repo.getWorkspace();
             }
+
             @Override
             public void undeploy(NId id) throws NExecutionException {
                 if (repo == null) {
@@ -314,7 +316,7 @@ public class NRepositoryFolderHelper {
             }
 
             @Override
-            public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL)  {
+            public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL) {
                 if (cacheFolder && CoreIOUtils.isObsoletePath(pathname)) {
                     //this is invalid cache!
                     return null;
@@ -335,7 +337,7 @@ public class NRepositoryFolderHelper {
             return null;
         }
         NId bestId = null;
-        SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("repo %s",repo.getName()));
+        SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("repo %s", repo.getName()));
         NPath file = getLocalGroupAndArtifactFile(id);
         if (file.exists()) {
             NPath[] versionFolders = file.stream().filter(NPath::isDirectory)
@@ -346,7 +348,7 @@ public class NRepositoryFolderHelper {
                     if (pathExists(versionFolder)) {
                         NId id2 = id.builder().setVersion(versionFolder.getName()).build();
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
-                            if (safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id2,repo, "NRepositoryFolderHelper"))) {
+                            if (safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id2, repo, "NRepositoryFolderHelper"))) {
                                 bestId = id2;
                             }
                         }
@@ -412,7 +414,7 @@ public class NRepositoryFolderHelper {
         NPath pckFile = inputSource == null ? null : deployContent(id, inputSource, descriptor, writeType);
         if (repo != null) {
             NRepositoryHelper.of(repo).events().fireOnDeploy(new DefaultNContentEvent(
-                    pckFile, deployment,  repo.getWorkspace().currentSession(), repo));
+                    pckFile, deployment, repo.getWorkspace().currentSession(), repo));
         }
         return descriptor.builder().setId(id.getLongId()).build();
     }
@@ -438,7 +440,6 @@ public class NRepositoryFolderHelper {
             }
         }
         return NLock.ofId(id).callWith(() -> {
-
             NDescriptorWriter.ofPlain().print(desc, descFile);
             byte[] bytes = NDigest.of().sha1().setSource(desc).computeString().getBytes();
             NCp.of()
@@ -452,6 +453,7 @@ public class NRepositoryFolderHelper {
                                     )
                             )
                     ).to(descFile.resolveSibling(descFile.getName() + ".sha1")).addOptions(NPathOption.SAFE).run();
+            _LOG().log(NMsg.ofC("[%s] cached descriptor %s to %s", repo.getName(), id,descFile).asFinest().withIntent(NMsgIntent.CACHE));
             return descFile;
         });
     }
@@ -473,7 +475,7 @@ public class NRepositoryFolderHelper {
         NPath pckFile = getLongIdLocalFile(id.builder().setFaceContent().setPackaging(descriptor.getPackaging()).build());
         if (pckFile.exists()) {
             if (content instanceof NPath) {
-                if (((NPath) content).equals(pckFile)) {
+                if (content.equals(pckFile)) {
                     //do nothing
                     return pckFile;
                 }
@@ -550,7 +552,7 @@ public class NRepositoryFolderHelper {
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    if (dir.toString().startsWith(start.resolve(".git").toString() + "/")
+                    if (dir.toString().startsWith(start.resolve(".git") + "/")
                             || dir.toString().equals(start.resolve(".git").toString())
                     ) {
                         return FileVisitResult.CONTINUE;

@@ -215,16 +215,6 @@ public final class CoreStringUtils {
             } else {
                 msg = NMsg.ofPlain(ex.getMessage());
             }
-        } else if (ex instanceof NArtifactNotFoundException) {
-            if (ex.getCause() != null) {
-                Throwable ex2 = ex.getCause();
-                if (ex2 instanceof UncheckedIOException) {
-                    ex2 = ex.getCause();
-                }
-                msg = exceptionToMessage(ex2, true);
-            } else {
-                msg = ((NArtifactNotFoundException) ex).getFormattedMessage();
-            }
         } else if (ex instanceof NAnyFormattedExceptionBase) {
             msg = ((NAnyFormattedExceptionBase) ex).getFormattedMessage();
         } else {

@@ -571,6 +571,7 @@ public final class NWorkspaceCmdLineParser {
                         }
                     }
 
+                    case "-l":
                     case "--verbose":
 
                     case "--log-verbose":
@@ -1496,7 +1497,6 @@ public final class NWorkspaceCmdLineParser {
                     case "-i":
                     case "-q":
                     case "-s":
-                    case "-l":
                     case "-m":
                     default: {
                         if (k.startsWith("---") && k.length() > 3 && k.charAt(3) != '-') {
@@ -1699,7 +1699,9 @@ public final class NWorkspaceCmdLineParser {
                 return NOptional.of(a);
             }
 
-            case "--verbose": {
+            case "-l":
+            case "--verbose":
+            {
                 cmdLine.skip();
                 if (enabled && a.getBooleanValue().orElse(true)) {
                     logConfig.setLogTermLevel(Level.FINEST);

@@ -182,6 +182,15 @@ public class NFolderRepository extends NFolderRepositoryBase {
                         ex);
             }
         }
+        Throwable cause=null;
+        if(nutsPathEx!=null){
+            NId i = nutsPathEx.getId();
+            if(i!=null && i.equalsLongId(id)){
+                cause=nutsPathEx.getCause();
+            }else{
+                cause=nutsPathEx;
+            }
+        }
         throw new NArtifactNotFoundException(id,
                 new NArtifactNotFoundException.NIdInvalidDependency[0],
                 new NArtifactNotFoundException.NIdInvalidLocation[]{
@@ -189,6 +198,6 @@ public class NFolderRepository extends NFolderRepositoryBase {
                                 getName(), nutsPath.toString(), nutsPathEx.getMessage()
                         )
                 },
-                nutsPathEx);
+                cause);
     }
 }

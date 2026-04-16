@@ -157,6 +157,9 @@ public class NExceptions {
     }
 
     private static String getErrorMessage(Throwable ex, int maxDepth) {
+        if(ex==null){
+            return null;
+        }
         if (ex instanceof InvocationTargetException) {
             if (maxDepth > 0) {
                 String e = getErrorMessage(((InvocationTargetException) ex).getTargetException(), maxDepth - 1);

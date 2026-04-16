@@ -2,14 +2,12 @@ package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.log.NLog;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NExtensionTypeInfoPool {
     private Map<ApiAndImpl, NExtensionTypeInfo> map=new ConcurrentHashMap<>();
-    public final HashMap<String, String> _alreadyLogger = new HashMap<>();
+    public Set<String> alreadyLoggedKeys = new HashSet<>();
     public final NLog logger;
     public final NBeanCache beanCache;
 

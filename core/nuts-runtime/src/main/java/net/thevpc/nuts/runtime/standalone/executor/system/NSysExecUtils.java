@@ -1,11 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.core.NRunAs;
+import net.thevpc.nuts.core.NRunAsMode;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NEnv;
-import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -202,7 +201,7 @@ public class NSysExecUtils {
         NRunAs finalRunAsMode = runAsMode;
         Function<String,String[]> cm= s -> {
             switch (s){
-                case "user":return new String[]{finalRunAsMode.getMode() == NRunAs.Mode.USER ? finalRunAsMode.getUser() : rootUserName};
+                case "user":return new String[]{finalRunAsMode.getMode() == NRunAsMode.USER ? finalRunAsMode.getUser() : rootUserName};
                 case "command":return command.toArray(new String[0]);
                 case "rootUser":return new String[]{rootUserName};
             }
@@ -233,7 +232,7 @@ public class NSysExecUtils {
                         break;
                     }
                     default: {
-                        throw new NIllegalArgumentException(NMsg.ofC("cannot run as %s on unknown system OS family", finalRunAsMode.getMode() == NRunAs.Mode.USER ? finalRunAsMode.getUser() : rootUserName));
+                        throw new NIllegalArgumentException(NMsg.ofC("cannot run as %s on unknown system OS family", finalRunAsMode.getMode() == NRunAsMode.USER ? finalRunAsMode.getUser() : rootUserName));
                     }
                 }
                 return cc;

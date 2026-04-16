@@ -11,7 +11,6 @@ import java.util.Arrays;
  * This is super type token implementation as described in
  * http://gafter.blogspot.com/2006/12/super-type-tokens.html
  * References a generic type.
- *
  * @author crazybob@google.com (Bob Lee)
  */
 public abstract class NTypeReference<T> implements Serializable {
