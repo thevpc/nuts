@@ -3,6 +3,7 @@ package net.thevpc.nuts.installer;
 import com.formdev.flatlaf.FlatLightLaf;
 import net.thevpc.nuts.installer.model.InstallData;
 import net.thevpc.nuts.installer.panels.*;
+import net.thevpc.nuts.installer.util.NutsInstallerProfiler;
 import net.thevpc.nuts.installer.util.swing.*;
 
 import javax.swing.*;
@@ -25,10 +26,13 @@ public class NutsInstaller extends WizardBase {
         FlatLightLaf.setup();
 //        FlatDarkLaf.setup();
         NutsInstaller mi = new NutsInstaller();
-
-        InstallData.of(mi).setCmdline(args);
-        doParseCommandLine(args, InstallData.of(mi));
+        InstallData id = InstallData.of(mi);
+        id.setCmdline(args);
+        doParseCommandLine(args, id);
         mi.showFrame();
+        if(id.isBuildNativeProfiling()){
+            new NutsInstallerProfiler(mi).run();
+        }
 //        frame.setResizable(false);
     }
 
@@ -118,6 +122,10 @@ public class NutsInstaller extends WizardBase {
             }
             case "--java-home": {
                 installData.setDefaultJavaHome(optionValue);
+                break;
+            }
+            case "--build-native-profiling": {
+                installData.setBuildNativeProfiling(!"false".equals(optionValue));
                 break;
             }
         }

@@ -31,6 +31,7 @@ import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.DefaultElement
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -104,10 +105,62 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             expectedType = o.getClass();
         }
         if (context.isIndestructibleObject(o)) {
-            return NElement.ofCustom(o);
+            return createUndestructableElement(o, expectedType, context);
         }
         NElementMapper mapper = context.getMapper(expectedType, defaultOnly);
         return mapper.createElement(o, expectedType, context);
+    }
+
+    protected NElement createUndestructableElement(Object o, Type expectedType, NElementFactoryContext context) {
+        if (o == null) {
+            return NElement.ofNull();
+        }
+        if (expectedType == null) {
+            expectedType = o.getClass();
+        }
+        if (o instanceof NElement) {
+            return (NElement) o;
+        }
+        if (o instanceof NToElement) {
+            return ((NToElement) o).toElement();
+        }
+        if (expectedType instanceof Class<?>) {
+            Class cls = (Class) expectedType;
+            switch (cls.getName()) {
+                case "boolean":
+                case "byte":
+                case "char":
+                case "short":
+                case "int":
+                case "long":
+                case "float":
+                case "double":
+                case "java.lang.Character":
+                case "java.lang.String":
+                case "java.lang.StringBuilder":
+                case "java.lang.Boolean":
+                case "java.lang.Byte":
+                case "java.lang.Short":
+                case "java.lang.Integer":
+                case "java.lang.Long":
+                case "java.lang.Float":
+                case "java.lang.Double":
+                case "java.math.BigDecimal":
+                case "java.math.BigInteger":
+                case "java.util.Date":
+                case "java.sql.Time":
+                case "java.time.Duration":
+                    return context.getMapper(expectedType, true).createElement(o, expectedType, context);
+            }
+            if (Temporal.class.isAssignableFrom(cls)) {
+                return context.getMapper(expectedType, true).createElement(o, expectedType, context);
+            }
+            if (java.util.Date.class.isAssignableFrom(cls)) {
+                return context.getMapper(expectedType, true).createElement(o, expectedType, context);
+            }
+        }
+        return NElement.ofCustom(o);
+
     }
 
     @Override

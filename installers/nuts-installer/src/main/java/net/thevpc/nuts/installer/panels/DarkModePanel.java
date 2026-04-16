@@ -64,6 +64,26 @@ public class DarkModePanel extends WizardPageBase {
         return a;
     }
 
+    @Override
+    public void sendAction(String[] action) {
+        switch (action[0]) {
+            case "light": {
+                SwingUtilities.invokeLater(() -> {
+                    lightModeButton.setSelected(true);
+                });
+
+                break;
+            }
+            case "dark": {
+                SwingUtilities.invokeLater(() -> {
+                    darkModeButton.setSelected(true);
+                });
+                break;
+            }
+        }
+        super.sendAction(action);
+    }
+
     private void applyPlaf() {
         InstallData id = InstallData.of(getInstallerContext());
         id.darkMode = darkModeButton.isSelected();

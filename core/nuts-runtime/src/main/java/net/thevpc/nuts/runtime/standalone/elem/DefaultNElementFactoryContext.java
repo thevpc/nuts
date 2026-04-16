@@ -49,7 +49,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     private boolean ntf;
     private UserElementMapperStore userElementMapperStore;
     private final DefaultNTextManagerModel model;
-    private globalIndustructibleTypesFilter globalIndustructibleTypesFilter = new globalIndustructibleTypesFilter();
+    private globalIndestructibleTypesFilter globalIndestructibleTypesFilter = new globalIndestructibleTypesFilter();
 
     public DefaultNElementFactoryContext(boolean ntf, NReflectRepository repository, UserElementMapperStore userElementMapperStore) {
         this.repository = repository;
@@ -74,7 +74,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
 
     @Override
     public Predicate<Type> getIndestructibleTypesFilter() {
-        return globalIndustructibleTypesFilter;
+        return globalIndestructibleTypesFilter;
     }
 
     @Override
@@ -270,10 +270,11 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
         return repository;
     }
 
-    private class globalIndustructibleTypesFilter implements Predicate<Type> {
+    private class globalIndestructibleTypesFilter implements Predicate<Type> {
         @Override
         public boolean test(Type type) {
-            for (Predicate<Type> f : userElementMapperStore.getIndestructibleTypesFilters()) {
+            List<Predicate<Type>> ff = userElementMapperStore.getIndestructibleTypesFilters();
+            for (Predicate<Type> f : ff) {
                 if (f.test(type)) {
                     return true;
                 }

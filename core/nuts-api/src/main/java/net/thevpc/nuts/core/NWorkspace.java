@@ -200,7 +200,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      * @param repositoryIdOrName repository id or name
      * @return null if not found
      */
-    NOptional<NRepository> findRepository(String repositoryIdOrName);
+    NOptional<NRepository> getRepository(String repositoryIdOrName);
 
     NWorkspace removeRepository(String locationOrRepositoryId);
 

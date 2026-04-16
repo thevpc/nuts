@@ -127,7 +127,7 @@ public class DefaultNWorkspaceLocationModel {
         if (repositoryIdOrName == null) {
             return getStoreLocation(storeScope, folderType);
         }
-        NRepository repositoryById = workspace.findRepository(repositoryIdOrName).get();
+        NRepository repositoryById = workspace.getRepository(repositoryIdOrName).get();
         NRepositorySPI nRepositorySPI = NWorkspaceUtils.of().toRepositorySPI(repositoryById);
         return nRepositorySPI.config().getStoreLocation(folderType);
     }
@@ -140,7 +140,7 @@ public class DefaultNWorkspaceLocationModel {
 
         NPath base;
         if (key.repo() != null) {
-            NRepository repo = workspace.findRepository(key.repo()).get();
+            NRepository repo = workspace.getRepository(key.repo()).get();
             NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(repo);
             base = repoSPI.config().getStoreLocation(key.type());
             if (key.id() != null) {

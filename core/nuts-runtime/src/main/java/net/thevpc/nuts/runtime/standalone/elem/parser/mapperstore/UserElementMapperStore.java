@@ -24,10 +24,14 @@ public class UserElementMapperStore implements NElementMapperStore {
     public static final NElementTypeAndNameNElementKeyResolver CASE_SENSITIVE_NAME_RESOLVER = new NElementTypeAndNameNElementKeyResolver();
     public static final NElementTypeAndNameNoCaseNElementKeyResolver CASE_INSENSITIVE_NAME_RESOLVER = new NElementTypeAndNameNoCaseNElementKeyResolver();
     public static final NElementTypeAndNameNoFormatNElementKeyResolver FORMAT_INSENSITIVE_NAME_RESOLVER = new NElementTypeAndNameNoFormatNElementKeyResolver();
-    private DefaultElementMapperStore defaultElementMapperStore;
-    private final NClassMap<Object,NElementMapper> lvl1_customMappersByType = new NClassMapImpl<>(null, NElementMapper.class);
+    private final DefaultElementMapperStore defaultElementMapperStore;
+    private final NClassMap<Object, NElementMapper> lvl1_customMappersByType = new NClassMapImpl<>(null, NElementMapper.class);
     private final List<NElementKeyResolverEntry> lvl2_customMappersByKey = new ArrayList<>();
-    private List<Predicate<Type>> indestructibleTypesFilters = new ArrayList<>();//CoreNElementUtils.DEFAULT_INDESTRUCTIBLE;
+    private List<Predicate<Type>> indestructibleTypesFilters = new ArrayList<>(
+            Collections.singletonList(
+                    CoreNElementUtils.DEFAULT_INDESTRUCTIBLE
+            )
+    );//CoreNElementUtils.DEFAULT_INDESTRUCTIBLE;
     private NReflectRepository reflectRepository;
 
     static class NElementKeyResolverEntry<T> {
@@ -120,7 +124,7 @@ public class UserElementMapperStore implements NElementMapperStore {
                     break;
                 }
                 case PRIMITIVES: {
-                    addIndestructibleTypesFilter(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE);
+                    addIndestructibleTypesFilter(CoreNElementUtils.DEFAULT_INDESTRUCTIBLE_PRIMITIVE);
                     break;
                 }
             }
@@ -360,8 +364,8 @@ public class UserElementMapperStore implements NElementMapperStore {
     }
 
     private static class NElementTypeAndName {
-        private NElementType type;
-        private String name;
+        private final NElementType type;
+        private final String name;
 
         public NElementTypeAndName(NElementType type, String name) {
             this.type = type;

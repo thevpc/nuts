@@ -179,7 +179,9 @@ public class CoreNElementUtils {
 //                    }
 //            )
 //    );
-    public static Predicate<Type> DEFAULT_INDESTRUCTIBLE = new Predicate<Type>() {
+
+
+    public static Predicate<Type> DEFAULT_INDESTRUCTIBLE_PRIMITIVE = new Predicate<Type>() {
         @Override
         public boolean test(Type type) {
             if (type == null) {
@@ -219,6 +221,45 @@ public class CoreNElementUtils {
                 if (java.util.Date.class.isAssignableFrom(cls)) {
                     return true;
                 }
+                return false;
+            } else if (type instanceof ParameterizedType) {
+                // e.g. List<String> -> get raw type List
+                Type rawType = ((ParameterizedType) type).getRawType();
+                if (rawType instanceof Class<?>) {
+                    return test((Class<?>) rawType);
+                } else {
+                    throw new IllegalArgumentException("Unexpected raw type: " + rawType);
+                }
+            } else if (type instanceof GenericArrayType) {
+                return false;
+            } else if (type instanceof TypeVariable) {
+                return false;
+            } else if (type instanceof WildcardType) {
+                // e.g. ? extends Number or ? super Integer
+                WildcardType wildcardType = (WildcardType) type;
+                Type[] upperBounds = wildcardType.getUpperBounds();
+                // Usually use upper bounds, fallback to Object
+                if (upperBounds.length == 0) {
+                    return test(Object.class);
+                }
+                return test(upperBounds[0]);
+            } else {
+                throw new IllegalArgumentException("Unknown Type: " + type);
+            }
+        }
+    };
+
+    public static Predicate<Type> DEFAULT_INDESTRUCTIBLE = new Predicate<Type>() {
+        @Override
+        public boolean test(Type type) {
+            if (type == null) {
+                return true;
+            }
+            if(DEFAULT_INDESTRUCTIBLE_PRIMITIVE.test(type)) {
+                return true;
+            }
+            if (type instanceof Class<?>) {
+                Class cls = (Class) type;
                 return net.thevpc.nuts.elem.NElementAutoUndestructable.class.isAssignableFrom(cls);
             } else if (type instanceof ParameterizedType) {
                 // e.g. List<String> -> get raw type List

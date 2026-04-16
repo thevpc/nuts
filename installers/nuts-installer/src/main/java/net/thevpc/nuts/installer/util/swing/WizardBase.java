@@ -25,6 +25,7 @@ public abstract class WizardBase implements Wizard {
     private String frameTitle;
     private Image frameIconImage;
     private boolean exitOnCloseFrame;
+    private boolean loading;
 
     public boolean isExitOnCloseFrame() {
         return exitOnCloseFrame;
@@ -44,14 +45,14 @@ public abstract class WizardBase implements Wizard {
 
     public void setFrameIconImage(Image frameIconImage) {
         this.frameIconImage = frameIconImage;
-        if (frameTitle != null && frame!=null) {
+        if (frameTitle != null && frame != null) {
             frame.setIconImage(frameIconImage);
         }
     }
 
     public void setFrameTitle(String frameTitle) {
         this.frameTitle = frameTitle;
-        if (frameTitle != null && frame!=null) {
+        if (frameTitle != null && frame != null) {
             frame.setTitle(frameTitle);
         }
     }
@@ -249,14 +250,30 @@ public abstract class WizardBase implements Wizard {
 
     protected abstract void createCenterImpl();
 
+    public boolean isLoading() {
+        return loading;
+    }
+
+    public void waitLoading() {
+        while (isLoading()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                //
+            }
+        }
+    }
+
     public void startLoading() {
         cardLayout.show(centerPanel, "loading");
         loadingPage().onShow();
+        this.loading = true;
     }
 
     public void stopLoading(int index) {
         loadingPage().onHide();
         cardLayout.show(centerPanel, String.valueOf(index));
+        this.loading = false;
     }
 
     private JPanel createCenter() {
@@ -284,6 +301,33 @@ public abstract class WizardBase implements Wizard {
         p.onAdd(this, index);
     }
 
+    public WizardPageBase currentPage() {
+        return panels.get(currentIndex - 1);
+    }
+
+    public void sendAction(String... action) {
+        switch (action[0]) {
+            case "next": {
+                SwingUtilities.invokeLater(() -> nextButton.doClick());
+                return;
+            }
+            case "previous": {
+                SwingUtilities.invokeLater(() -> previousButton.doClick());
+                return;
+            }
+            case "cancel": {
+                SwingUtilities.invokeLater(() -> cancelButton.doClick());
+                return;
+            }
+            case "finish":
+            case "exit": {
+                SwingUtilities.invokeLater(() -> exitButton.doClick());
+                return;
+            }
+        }
+        currentPage().sendAction(action);
+    }
+
     private void showPage(int panelIndex) {
         WizardPageBase p = panels.get(panelIndex - 1);
         currentIndex = panelIndex;
@@ -293,6 +337,7 @@ public abstract class WizardBase implements Wizard {
         setProgressByPageIndex();
         p.onShow();
     }
+
 
     protected JComponent createLeftImpl() {
         return null;

@@ -8,7 +8,6 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNInstallEvent;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNUpdateEvent;
@@ -33,10 +32,12 @@ public class InstallHelper {
     private InstallCache cache;
     protected NDefinition[] result;
     protected NId[] failed;
+    protected RuntimeException[] failedReasons;
     protected List<String> args;
     protected List<AbstractNInstall.ConditionalArguments> conditionalArguments;
     List<NDefinition> resultList = new ArrayList<>();
-    List<NId> failedList = new ArrayList<>();
+    List<NId> failedIdList = new ArrayList<>();
+    List<RuntimeException> failedErrorList = new ArrayList<>();
     protected final InstallIdList list;
     boolean updateMode;
 
@@ -227,7 +228,8 @@ public class InstallHelper {
                             .log(NMsg.ofC("failed to install %s", info.id).asFine(ex)
                                     .withIntent(NMsgIntent.ALERT)
                             );
-                    failedList.add(info.id);
+                    failedIdList.add(info.id);
+                    failedErrorList.add(NExceptions.ofUncheckedException(ex));
                     if (session.isPlainTrace()) {
                         if (!NIO.of().getDefaultTerminal().ask()
                                 .forBoolean(NMsg.ofC("%s %s and its dependencies... Continue installation?",
@@ -248,7 +250,8 @@ public class InstallHelper {
             }
         } finally {
             result = resultList.toArray(new NDefinition[0]);
-            failed = failedList.toArray(new NId[0]);
+            failed = failedIdList.toArray(new NId[0]);
+            failedReasons = failedErrorList.toArray(new RuntimeException[0]);
         }
         if (list.emptyCommand) {
             throw new NExecutionException(NMsg.ofPlain("missing packages to install"), NExecutionException.ERROR_1);
@@ -273,7 +276,7 @@ public class InstallHelper {
                     .log(NMsg.ofC("failed to install %s", info.id).asFine(ex)
                             .withIntent(NMsgIntent.ALERT)
                     );
-            failedList.add(info.id);
+            failedIdList.add(info.id);
             if (NSession.of().isPlainTrace()) {
                 if (!NIO.of().getDefaultTerminal().ask()
                         .forBoolean(NMsg.ofC("%s %s and its dependencies... Continue installation?",
@@ -470,7 +473,7 @@ public class InstallHelper {
                 NDefinition defOnInstallRepo = fetch2.getResultDefinition();
                 cc.setDefinition(defOnInstallRepo);
                 executionContext = cc.build();
-                NRepository rep = ws.findRepository(def.getRepositoryUuid()).orNull();
+                NRepository rep = ws.getRepository(def.getRepositoryUuid()).orNull();
                 remoteRepo = rep == null || rep.isRemote();
                 if (updateMode) {
                     NInstallerComponent installerComponent = null;

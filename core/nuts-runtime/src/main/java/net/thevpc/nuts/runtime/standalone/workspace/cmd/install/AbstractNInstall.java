@@ -56,7 +56,9 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
     protected List<ConditionalArguments> conditionalArguments = new ArrayList<>();
     protected final Map<NId, InstallFlags> ids = new LinkedHashMap<>();
     protected NDefinition[] result;
+    protected boolean failFast = true;
     protected NId[] failed;
+    protected RuntimeException[] failedReasons;
 
     public static class ConditionalArguments {
 
@@ -87,6 +89,15 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
 
     public NInstall setForce(boolean force) {
         currentInstallFlags.force = force;
+        return this;
+    }
+
+    public boolean isFailFast() {
+        return failFast;
+    }
+
+    public NInstall setFailFast(boolean failFast) {
+        this.failFast = failFast;
         return this;
     }
 

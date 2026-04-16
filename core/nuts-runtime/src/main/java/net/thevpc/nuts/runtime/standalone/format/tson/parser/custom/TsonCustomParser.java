@@ -293,16 +293,15 @@ public class TsonCustomParser {
                 case TRIPLE_SINGLE_QUOTED_STRING:
                 case TRIPLE_BACKTICK_STRING: {
                     nextToken();
-                    String lines = (String) t.token.value();
+                    String value = (String) t.token.value();
                     List<NBoundAffix> boundAffixes = new ArrayList<>();
                     affixes.addAll(tokensToAffixes(t.prefixes));
                     boundAffixes.addAll(bindAffixes(affixes, NAffixAnchor.START));
                     boundAffixes.addAll(readPostComments());
-                    base = new DefaultNStringElement(
+                    base = DefaultNStringElement.ofNoLines(
                             t.token.type().elementType(),
-                            lines,
+                            value,
                             t.token.image(),
-                            null,
                             boundAffixes,
                             diagnostics,
                             null
@@ -318,7 +317,7 @@ public class TsonCustomParser {
                     affixes.addAll(tokensToAffixes(t.prefixes));
                     boundAffixes.addAll(bindAffixes(affixes, NAffixAnchor.START));
                     boundAffixes.addAll(readPostComments());
-                    base = new DefaultNStringElement(
+                    base = DefaultNStringElement.ofLines(
                             t.token.type().elementType(),
                             lines.content,
                             t.token.image(),
@@ -694,10 +693,8 @@ public class TsonCustomParser {
         pendingAffixTokens.addAll(tokensToAffixes(nameToken.prefixes));
         NElementTokenInfo t = peekToken();
         if (t == null) {
-            return new DefaultNStringElement(
-                    NElementType.NAME,
+            return DefaultNStringElement.ofName(
                     name,
-                    name, null,
                     bindAffixes(pendingAffixTokens, NAffixAnchor.START),
                     diagnostics, null
             );
@@ -708,10 +705,8 @@ public class TsonCustomParser {
 
             boundAffixes.addAll(tokensToBoundAffixes(t.prefixes, NAffixAnchor.END));
             nextToken();
-            return new DefaultNStringElement(
-                    NElementType.NAME,
+            return DefaultNStringElement.ofName(
                     name,
-                    name, null,
                     boundAffixes,
                     diagnostics, null
             );
@@ -731,10 +726,8 @@ public class TsonCustomParser {
 
         List<NBoundAffix> boundAffixes = new ArrayList<>(bindAffixes(pendingAffixTokens, NAffixAnchor.START));
         boundAffixes.addAll(readPostComments());
-        return new DefaultNStringElement(
-                NElementType.NAME,
+        return DefaultNStringElement.ofName(
                 name,
-                name, null,
                 boundAffixes,
                 diagnostics, null
         );

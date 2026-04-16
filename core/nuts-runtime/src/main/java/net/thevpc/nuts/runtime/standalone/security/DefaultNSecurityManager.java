@@ -301,7 +301,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
     @Override
     public List<NRepositoryAccess> findRepositoryAccessByRepository(String repository) {
         NWorkspaceExt wse = NWorkspaceExt.of();
-        NRepository repository1 = wse.getRepositoryModel().findRepository(repository).get();
+        NRepository repository1 = wse.getRepositoryModel().getRepository(repository).get();
         return findUsers().stream().flatMap(x -> findRepositoryAccess(x.getUsername(), repository1.getName()).stream().stream()).collect(Collectors.toList());
     }
 
@@ -352,7 +352,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
         if (userConfigNOptional.isPresent()) {
             String finalUser = userConfigNOptional.get().getUserName();
             if (wse.getModel().securityModel.isAdminOrUser(finalUser)) {
-                NOptional<NRepository> repository1 = wse.getRepositoryModel().findRepository(repository);
+                NOptional<NRepository> repository1 = wse.getRepositoryModel().getRepository(repository);
                 if (repository1.isPresent()) {
                     NRepositoryAccessConfig r = getRepositoryUserConfig(user, repository);
                     return NOptional.of(new DefaultNRepositoryAccess(
@@ -379,7 +379,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
     private NSecurityManager withRepositoryUser(String user, String repository, Consumer<NRepositoryAccessConfig> consumer) {
         NWorkspaceExt wse = NWorkspaceExt.of();
         NUser user1 = securityModel().findUser(user).get();
-        NRepository repository1 = wse.getRepositoryModel().findRepository(repository).get();
+        NRepository repository1 = wse.getRepositoryModel().getRepository(repository).get();
         NOptional<NRepositoryAccessConfig> r = wse.getConfigModel().getRepositoryUser(repository1.getUuid(), user1.getUsername());
         if (!r.isPresent()) {
             NRepositoryAccessConfig ru = new NRepositoryAccessConfig();

@@ -347,7 +347,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             {
                 List<NElementAnnotation> a = e.annotations();
                 if (a.isEmpty()) {
-                    return NElement.ofString(e.toString());
+                    return NElement.ofString(e.asStringValue().get());
                 } else {
                     return NElement.ofObjectBuilder()
                             .add("value", e.builder().clearAnnotations().build())

@@ -13,6 +13,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.*;
+import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPath;
@@ -105,8 +106,10 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
         NInstallStatus installStatus = def.getInstallInformation().get().getInstallStatus();
         if (!installStatus.isInstalled()) {
             if (autoInstall) {
-                NInstall.of(def.getId()).run();
+                NInstall ii = NInstall.of(def.getId());
+                ii.getResultList();
                 NInstallStatus st = NFetch.of(def.getId())
+                        .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDefinition().getInstallInformation().get().getInstallStatus();
                 if (!st.isInstalled()) {

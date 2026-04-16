@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.config;
 
 import net.thevpc.nuts.core.*;
-import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryWithChildren;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
@@ -38,15 +38,15 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     private final NPath storeLocation;
     private NRepositoryConfig config;
     private boolean configurationChanged = false;
-    private int deployWeight;
+    private final int deployWeight;
     private boolean temporary;
     private String globalName;
-    private boolean supportedMirroring;
+    private final boolean supportedMirroring;
     private final NRepositoryRegistryHelper repositoryRegistryHelper;
-    private String repositoryName;
-    private String repositoryType;
-    private NWorkspace workspace;
-    private NRepositoryRef repositoryRef;
+    private final String repositoryName;
+    private final String repositoryType;
+    private final NWorkspace workspace;
+    private final NRepositoryRef repositoryRef;
 
     public DefaultNRepositoryConfigModel(NRepository repository, NAddRepositoryOptions options, NWorkspace workspace,
                                          NSpeedQualifier speed,
@@ -273,7 +273,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
             fireChange = true;
             this.config.setStoreStrategy(NWorkspace.of().getRepositoryStoreStrategy());
         }
-        if(config.getLocation()!=null && !NBlankable.isBlank(config.getLocation().getLocationType())) {
+        if (config.getLocation() != null && !NBlankable.isBlank(config.getLocation().getLocationType())) {
             // do not waste time on constructor to connect to internet and check repo type....
             //if (!Objects.equals(NRepositoryUtils.getRepoType(config), repositoryType)) {
             if (!Objects.equals(config.getLocation().getLocationType(), repositoryType)) {
@@ -342,7 +342,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         }
     }
 
-    ////
+    /// /
 //    public NutsRepositoryRef[] getMirrorRefs() {
 //        return configMirrorRefs.values().toArray(new NutsRepositoryRef[0]);
 //    }
@@ -359,7 +359,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
             }
             config.setTags(tags.toArray(new String[0]));
             config.setMirrors(Arrays.asList(repositoryRegistryHelper.getRepositoryRefs()));
-            boolean created=((NWorkspaceExt)workspace).store().saveRepoConfig(repository,config);
+            boolean created = ((NWorkspaceExt) workspace).store().saveRepoConfig(repository, config);
 
             configurationChanged = false;
             if (_LOG().isLoggable(Level.CONFIG)) {
@@ -486,7 +486,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         if (r != null) {
             NRepositoryHelper.of(repository).events().fireOnRemoveRepository(new DefaultNRepositoryEvent(session, repository, r, "mirror", r, null));
         } else {
-            throw new NRepositoryNotFoundException(repositoryId);
+            throw new NNoSuchElementException(NMsg.ofC("repository %s not found", repositoryId));
         }
 //        return this;
     }
@@ -495,24 +495,16 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
 //    public NutsRepository getMirror(String repositoryIdOrName) {
 //        return getMirror(repositoryIdOrName, false);
 //    }
-    public NRepository getMirror(String repositoryIdPath) {
-        NRepository r = findMirror(repositoryIdPath);
-        if (r != null) {
-            return r;
-        }
-        throw new NRepositoryNotFoundException(repositoryIdPath);
-    }
-
-    public NRepository findMirror(String repositoryNameOrId) {
+    public NOptional<NRepository> getMirror(String repositoryNameOrId) {
         NSession session = repository.getWorkspace().currentSession();
         NRepository y = repositoryRegistryHelper.findRepository(repositoryNameOrId);
         if (y != null) {
-            return y;
+            return NOptional.of(y);
         }
         if (session.isTransitive() && isSupportedMirroring()) {
             for (NRepository mirror : getMirrors()) {
                 NRepository m = session.copy().setTransitive(true).callWith(() -> mirror.config()
-                        .findMirror(repositoryNameOrId));
+                        .getMirror(repositoryNameOrId)).orNull();
                 if (m != null) {
                     if (y == null) {
                         y = m;
@@ -526,8 +518,14 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
                 }
 
             }
+            if (repository instanceof NRepositoryWithChildren) {
+                NOptional<NRepository> child = ((NRepositoryWithChildren) repository).getChild(repositoryNameOrId);
+                if (child.isPresent()) {
+                    return child;
+                }
+            }
         }
-        return y;
+        return NOptional.ofNamedEmpty(NMsg.ofC("repository %s", repositoryNameOrId));
     }
 
     public NRepository findMirrorById(String repositoryNameOrId) {
@@ -659,7 +657,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     }
 
 
-    ////////////////////////////////////////////
+    /// /////////////////////////////////////////
 
 
     public NOptional<NLiteral> config_getEnv(String key, boolean inherit) {

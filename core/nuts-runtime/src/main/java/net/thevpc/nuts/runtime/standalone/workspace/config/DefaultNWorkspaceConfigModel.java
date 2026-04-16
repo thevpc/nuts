@@ -812,7 +812,7 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public NOptional<NRepositoryAccessConfig> getRepositoryUser(String repository, String user) {
-        NRepository crepository = workspace.getRepositoryModel().getRepository(repository);
+        NRepository crepository = workspace.getRepositoryModel().getRepository(repository).orNull();
         if (crepository == null) {
             return NOptional.ofNamedEmpty(String.valueOf(repository) + "/" + user);
         }
@@ -825,7 +825,7 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public boolean removeRepositoryUser(String repository, String user) {
-        NRepository crepository = workspace.getRepositoryModel().getRepository(repository);
+        NRepository crepository = workspace.getRepositoryModel().getRepository(repository).orNull();
         if (crepository == null) {
             return false;
         }
@@ -908,8 +908,7 @@ public class DefaultNWorkspaceConfigModel {
     public void addRepositoryUser(NRepositoryAccessConfig config) {
         if (config != null) {
             NAssert.requireNamedNonNull(getUser(config.getUserName()), "user " + config.getUserName());
-            NRepository repository = workspace.getRepositoryModel().getRepository(config.getRepository());
-            NAssert.requireNamedNonNull(repository, "repo " + config.getUserName());
+            NRepository repository = workspace.getRepositoryModel().getRepository(config.getRepository()).get();
             NRepositoryAccessConfig cconfig = config.copy();
             cconfig.setRepository(repository.getUuid());
             if (configRepoUsers.stream().anyMatch(

@@ -273,10 +273,18 @@ public class NCollections {
 
 
     public static <V> List<V> unmodifiableList(List<V> list) {
+        return list == null ? Collections.emptyList() : Collections.unmodifiableList(list);
+    }
+
+    public static <V> List<V> unmodifiableListOrNull(List<V> list) {
         return list == null ? null : Collections.unmodifiableList(list);
     }
 
     public static <V> Collection<V> unmodifiableCollection(Collection<V> list) {
+        return list == null ? Collections.emptyList() : Collections.unmodifiableCollection(list);
+    }
+
+    public static <V> Collection<V> unmodifiableCollectionOrNull(Collection<V> list) {
         return list == null ? null : Collections.unmodifiableCollection(list);
     }
 

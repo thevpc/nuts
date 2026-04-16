@@ -29,7 +29,6 @@ public class DefaultNInfoInternalExecutable extends DefaultInternalNExecutableCo
     public int execute() {
         NSession session = NSession.of();
         session = NSessionUtils.configureCopyOfSession(session, getExecCommand().getIn(), getExecCommand().getOut(),getExecCommand().getErr());
-        NSession finalSession = session;
         return session.callWith(()->{
             boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
             if(dry){

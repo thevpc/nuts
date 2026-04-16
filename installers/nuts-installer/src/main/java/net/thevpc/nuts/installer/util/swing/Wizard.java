@@ -34,6 +34,9 @@ public interface Wizard {
     Map<String, Object> getVars();
 
 
+    boolean isLoading() ;
+
+    void waitLoading() ;
     void startLoading();
 
     void stopLoading(int index);

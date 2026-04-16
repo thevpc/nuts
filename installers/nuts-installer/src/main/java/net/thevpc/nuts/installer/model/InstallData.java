@@ -26,6 +26,7 @@ public class InstallData {
     public String defaultWorkspace;
     public String defaultNutsOptions;
     public String defaultJavaHome;
+    public boolean buildNativeProfiling;
     public boolean defaultAcceptTerms;
     public boolean defaultVerbose;
     public boolean defaultVerboseFile;
@@ -41,6 +42,15 @@ public class InstallData {
             context.getVars().put(InstallData.class.getName(),c);
         }
         return c;
+    }
+
+    public boolean isBuildNativeProfiling() {
+        return buildNativeProfiling;
+    }
+
+    public InstallData setBuildNativeProfiling(boolean buildNativeProfiling) {
+        this.buildNativeProfiling = buildNativeProfiling;
+        return this;
     }
 
     public boolean isInstallFailed() {

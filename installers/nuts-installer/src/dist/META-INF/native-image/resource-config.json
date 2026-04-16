@@ -11,6 +11,8 @@
   }, {
     "pattern":"\\QMETA-INF/services/java.net.spi.URLStreamHandlerProvider\\E"
   }, {
+    "pattern":"\\Qcom/formdev/flatlaf/FlatDarkLaf.properties\\E"
+  }, {
     "pattern":"\\Qcom/formdev/flatlaf/FlatLaf.properties\\E"
   }, {
     "pattern":"\\Qcom/formdev/flatlaf/FlatLightLaf.properties\\E"

@@ -567,7 +567,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
                                 lines.add(new NElementLineImpl(e.prefix(), startMarker, e.startPadding(), e.content(), e.endPadding(), e.endMarker(), newline));
                             }
                         }
-                        return new DefaultNStringElement(type, vv.toString(), image, lines, affixes(), diagnostics(), metadata());
+                        return DefaultNStringElement.ofLines(type, vv.toString(), image, lines, affixes(), diagnostics(), metadata());
                     }
                     break;
                 }
@@ -595,12 +595,12 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
                         } else {
                             lines.add(new NElementLineImpl(e.prefix(), startMarker, e.startPadding(), e.content(), e.endPadding(), e.endMarker(), e.newline()));
                         }
-                        return new DefaultNStringElement(type, vv.toString(), image, lines, affixes(), diagnostics(), metadata());
+                        return DefaultNStringElement.ofLines(type, vv.toString(), image, lines, affixes(), diagnostics(), metadata());
                     }
                     break;
                 }
             }
-            return new DefaultNStringElement(type, (String) value, image, null, affixes(), diagnostics(), metadata());
+            return DefaultNStringElement.ofNoLines(type, (String) value, image, affixes(), diagnostics(), metadata());
         }
         return new DefaultNPrimitiveElement(type, value, affixes(), diagnostics(), metadata());
     }

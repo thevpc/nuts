@@ -42,6 +42,8 @@ public class DefaultNInfoCmd implements NInfoCmd {
     private final Map<String, String> extraProperties = new LinkedHashMap<>();
     private boolean showRepositories = false;
     private boolean fancy = false;
+    private boolean includeSysEnv = false;
+    private boolean includeSysProps = false;
     private List<String> requests = new ArrayList<>();
     private List<Supplier<Map<String, Object>>> extraSuppliers = new ArrayList<>();
     private Predicate<String> filter = NPredicates.always();
@@ -76,7 +78,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
             if (v != null) {
                 return v;
             }
-            NRepository repo = NWorkspace.of().findRepository(s).orNull();
+            NRepository repo = NWorkspace.of().getRepository(s).orNull();
             if (repo != null) {
                 return buildRepoRepoMap(repo, true, null);
             }
@@ -266,6 +268,20 @@ public class DefaultNInfoCmd implements NInfoCmd {
                 }
                 return true;
             }
+            case "--sys-env": {
+                cmdLine.skip();
+                if (enabled) {
+                    this.includeSysEnv=true;
+                }
+                return true;
+            }
+            case "--sys-props": {
+                cmdLine.skip();
+                if (enabled) {
+                    this.includeSysProps=true;
+                }
+                return true;
+            }
             case "-c":
             case "--cmd": {
                 cmdLine.skip();
@@ -315,7 +331,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
     }
 
     private Map<String, Supplier<Object>> buildMapSupplier() {
-        Map<String, Supplier<Object>> props = new HashMap<>();
+        Map<String, Supplier<Object>> props = new LinkedHashMap<>();
         props.put("name", () -> stringValue(NWorkspace.of().getName()));
         props.put("nuts-api-version", () -> NWorkspace.of().getApiVersion());
         props.put("nuts-api-id", () -> NWorkspace.of().getApiId());
@@ -461,6 +477,20 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("creation-finished", () -> NWorkspace.of().getCreationFinishTime());
         props.put("creation-within", () -> NWorkspace.of().getCreationDuration().normalize());
         props.put("repositories-count", () -> (NWorkspace.of().getRepositories().size()));
+        if(includeSysProps){
+            System.getProperties().forEach((k,v)->{
+                if(!props.containsKey(k)){
+                    props.put((String) k,()-> v);
+                }
+            });
+        }
+        if(includeSysEnv){
+            System.getenv().forEach((k,v)->{
+                if(!props.containsKey(k)){
+                    props.put((String) k,()-> v);
+                }
+            });
+        }
         return props;
     }
 
@@ -664,6 +694,21 @@ public class DefaultNInfoCmd implements NInfoCmd {
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));
         }
+        if(includeSysProps){
+            System.getProperties().forEach((k,v)->{
+                String sk = (String) k;
+                if(!props.containsKey(sk)){
+                    props.put(sk,()-> v);
+                }
+            });
+        }
+        if(includeSysEnv){
+            System.getenv().forEach((k,v)->{
+                if(!props.containsKey(k)){
+                    props.put((String) k,()-> v);
+                }
+            });
+        }
         if (deep) {
             Map<String, Object> repositories = new LinkedHashMap<>();
             props.put("repos", repositories);
@@ -742,6 +787,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
 
     @Override
     public NInfoCmd configure(boolean skipUnsupported, String... args) {
+        configure(skipUnsupported, NCmdLine.of(args).setCommandName("info"));
         return this;
     }
 
@@ -776,6 +822,10 @@ public class DefaultNInfoCmd implements NInfoCmd {
 
         public Map<String, Object> build() {
             return data;
+        }
+
+        public boolean containsKey(String k) {
+            return data.containsKey(k);
         }
     }
 }

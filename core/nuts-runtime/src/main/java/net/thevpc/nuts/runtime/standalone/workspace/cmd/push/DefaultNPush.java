@@ -120,7 +120,7 @@ public class DefaultNPush extends AbstractDefaultNPush {
                             ));
                 }
             } else {
-                NRepository repo = NWorkspace.of().findRepository(this.getRepository()).get();
+                NRepository repo = NWorkspace.of().getRepository(this.getRepository()).get();
                 if (!repo.config().isEnabled()) {
                     throw new NIllegalArgumentException(NMsg.ofC("repository %s is disabled", repo.getName()));
                 }

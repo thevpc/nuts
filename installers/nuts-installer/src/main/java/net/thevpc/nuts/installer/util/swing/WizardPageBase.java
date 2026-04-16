@@ -6,6 +6,7 @@ import java.awt.*;
 public class WizardPageBase extends JPanel {
     private Wizard installerContext;
     private int pageIndex;
+
     public WizardPageBase(LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
     }
@@ -21,9 +22,9 @@ public class WizardPageBase extends JPanel {
     public WizardPageBase() {
     }
 
-    public void onAdd(Wizard installerContext, int pageIndex){
-        this.installerContext=installerContext;
-        this.pageIndex=pageIndex;
+    public void onAdd(Wizard installerContext, int pageIndex) {
+        this.installerContext = installerContext;
+        this.pageIndex = pageIndex;
     }
 
     public int getPageIndex() {
@@ -34,21 +35,27 @@ public class WizardPageBase extends JPanel {
         return installerContext;
     }
 
-    public void onPrevious(){
-
-    }
-    public void onNext(){
-
-    }
-    public void onShow(){
+    public void onPrevious() {
 
     }
 
-    public void onHide(){
+    public void onNext() {
+
+    }
+
+    public void onShow() {
+
+    }
+
+    public void onHide() {
 
     }
 
     public void onCancel() {
+
+    }
+
+    public void sendAction(String[] action) {
 
     }
 }

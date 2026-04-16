@@ -6,6 +6,7 @@ import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
+import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryWithChildren;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.spi.*;
@@ -100,8 +101,13 @@ public class DefaultNRepositoryModel {
         return NOptional.ofNamed(y, "repository with name : " + repositoryName);
     }
 
-    public NOptional<NRepository> findRepository(String repositoryNameOrId) {
-        NRepository y = repositoryRegistryHelper.findRepository(repositoryNameOrId);
+
+
+    public NOptional<NRepository> getRepository(String repositoryIdOrName)  {
+        if (DefaultNInstalledRepository.INSTALLED_REPO_UUID.equals(repositoryIdOrName)) {
+            return NOptional.of(NWorkspaceExt.of().getInstalledRepository());
+        }
+        NRepository y = repositoryRegistryHelper.findRepository(repositoryIdOrName);
         if (y != null) {
             return NOptional.of(y);
         }
@@ -109,7 +115,7 @@ public class DefaultNRepositoryModel {
         if (session.isTransitive()) {
             for (NRepository child : repositoryRegistryHelper.getRepositories()) {
                 final NRepository m = session.copy().setTransitive(true).callWith(() -> child.config()
-                        .findMirror(repositoryNameOrId)
+                        .getMirror(repositoryIdOrName).orNull()
                 );
                 if (m != null) {
                     if (y == null) {
@@ -117,20 +123,21 @@ public class DefaultNRepositoryModel {
                     } else {
                         NRepository finalY = y;
                         return NOptional.ofError(() -> NMsg.ofC("ambiguous repository name %s found two Ids %s and %s",
-                                repositoryNameOrId, finalY.getUuid(), m.getUuid()
+                                repositoryIdOrName, finalY.getUuid(), m.getUuid()
                         ));
                     }
                 }
             }
+            for (NRepository child : repositoryRegistryHelper.getRepositories()) {
+                if(child instanceof NRepositoryWithChildren){
+                    NRepository c = ((NRepositoryWithChildren) child).getChild(repositoryIdOrName).orNull();
+                    if(c!=null){
+                        return NOptional.of(c);
+                    }
+                }
+            }
         }
-        return NOptional.ofNamed(y, "repository with name or id : " + repositoryNameOrId);
-    }
-
-    public NRepository getRepository(String repositoryIdOrName) throws NRepositoryNotFoundException {
-        if (DefaultNInstalledRepository.INSTALLED_REPO_UUID.equals(repositoryIdOrName)) {
-            return NWorkspaceExt.of().getInstalledRepository();
-        }
-        return findRepository(repositoryIdOrName).get();
+        return NOptional.ofNamed(y, "repository with name or id : " + repositoryIdOrName);
     }
 
     public void removeRepository(String repositoryId) {

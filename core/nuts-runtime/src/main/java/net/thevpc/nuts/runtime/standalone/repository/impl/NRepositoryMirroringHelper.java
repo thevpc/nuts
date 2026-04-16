@@ -17,7 +17,6 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfigManager;
-import net.thevpc.nuts.core.NRepositoryNotFoundException;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.NPath;
@@ -36,6 +35,7 @@ import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NNoSuchElementException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -200,9 +200,7 @@ public class NRepositoryMirroringHelper {
             }
             repo = all.get(0);
         } else {
-            repo = nonTransitiveSession.callWith(() -> {
-                return this.repo.config().getMirror(repository);
-            });
+            repo = nonTransitiveSession.callWith(() -> this.repo.config().getMirror(repository).orNull());
         }
         if (repo != null) {
             NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), desc)
@@ -217,7 +215,7 @@ public class NRepositoryMirroringHelper {
                     .run();
             NRepositoryHelper.of(repo).events().fireOnPush(new DefaultNContentEvent(local, dep, session, repo));
         } else {
-            throw new NRepositoryNotFoundException(repository);
+            throw new NNoSuchElementException(NMsg.ofC("repository %s",repository));
         }
     }
 

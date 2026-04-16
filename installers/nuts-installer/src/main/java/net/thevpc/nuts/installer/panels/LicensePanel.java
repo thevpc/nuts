@@ -43,6 +43,25 @@ public class LicensePanel extends WizardPageBase {
         a.setText(Utils.loadString("license.txt", null));
     }
 
+    @Override
+    public void sendAction(String[] action) {
+        switch (action[0]) {
+            case "accept": {
+                SwingUtilities.invokeLater(() -> {
+                    accept.setSelected(true);
+                });
+
+                break;
+            }
+            case "reject": {
+                SwingUtilities.invokeLater(() -> {
+                    doNotAccept.setSelected(true);
+                });
+                break;
+            }
+        }
+    }
+
     private void updateStatus() {
         if(getInstallerContext().getNextButton()==null){
             return;

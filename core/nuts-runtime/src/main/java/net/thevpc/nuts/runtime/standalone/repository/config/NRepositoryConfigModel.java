@@ -58,8 +58,6 @@ public interface NRepositoryConfigModel {
 
     NRepository addMirror(NAddRepositoryOptions options);
 
-    NRepository findMirror(String repositoryIdOrName);
-
     NRepository findMirrorById(String repositoryNameOrId);
 
     NRepository findMirrorByName(String repositoryNameOrId);
@@ -74,7 +72,7 @@ public interface NRepositoryConfigModel {
 
     NRepositoryLocation getLocation();
 
-    NRepository getMirror(String repositoryIdOrName);
+    NOptional<NRepository> getMirror(String repositoryIdOrName);
 
     List<NRepository> getMirrors();
 

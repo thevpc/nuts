@@ -58,11 +58,6 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
     }
 
     @Override
-    public NRepository findMirror(String repositoryIdOrName) {
-        return null;
-    }
-
-    @Override
     public NRepository findMirrorById(String repositoryNameOrId) {
         return null;
     }
@@ -93,8 +88,8 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
     }
 
     @Override
-    public NRepository getMirror(String repositoryIdOrName) {
-        return null;
+    public NOptional<NRepository> getMirror(String repositoryIdOrName) {
+        return NOptional.ofNamedEmpty(NMsg.ofC("repository %s",repositoryIdOrName));
     }
 
     @Override

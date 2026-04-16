@@ -162,13 +162,8 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     }
 
     @Override
-    public NRepository getMirror(String repositoryIdOrName) {
+    public NOptional<NRepository> getMirror(String repositoryIdOrName) {
         return getModel().getMirror(repositoryIdOrName);
-    }
-
-    @Override
-    public NRepository findMirror(String repositoryIdOrName) {
-        return getModel().findMirror(repositoryIdOrName);
     }
 
     @Override

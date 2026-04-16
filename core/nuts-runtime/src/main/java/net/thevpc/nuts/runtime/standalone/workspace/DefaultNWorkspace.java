@@ -498,7 +498,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             );
             wsModel.configModel.setBootRepositories(cfg.getBootRepositories());
             try {
-                NInstall.of().setInstalled(true).getResult();
+                NInstall.of().setInstalled(true).getResultStream();
             } catch (Exception ex) {
                 wsModel.LOG
                         .log(NMsg.ofJ("reinstall artifacts failed : {0}", ex).asError(ex));
@@ -1704,8 +1704,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     @Override
-    public NOptional<NRepository> findRepository(String repositoryNameOrId) {
-        return getRepositoryModel().findRepository(repositoryNameOrId);
+    public NOptional<NRepository> getRepository(String repositoryNameOrId) {
+        return getRepositoryModel().getRepository(repositoryNameOrId);
     }
 
     @Override

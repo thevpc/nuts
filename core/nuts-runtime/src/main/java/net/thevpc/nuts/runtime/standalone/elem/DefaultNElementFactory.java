@@ -438,13 +438,13 @@ public class DefaultNElementFactory implements NElementFactory {
             stringLayout = NElementType.DOUBLE_QUOTED_STRING;
         }
         if (stringLayout.isAnyStringOrName()) {
-            return new DefaultNStringElement(stringLayout, str);
+            return DefaultNStringElement.ofValue(stringLayout, str);
         }
         throw new NUnsupportedEnumException(stringLayout);
     }
 
     public NPrimitiveElement ofName(String str) {
-        return str == null ? ofNull() : new DefaultNStringElement(NElementType.NAME, str);
+        return str == null ? ofNull() : DefaultNStringElement.ofValue(NElementType.NAME, str);
     }
 
     @Override
@@ -452,8 +452,8 @@ public class DefaultNElementFactory implements NElementFactory {
         if (value == null) {
             return ofNull();
         }
-        return NElementUtils.isValidElementName(value) ? new DefaultNStringElement(NElementType.NAME, value)
-                : new DefaultNStringElement(NElementType.DOUBLE_QUOTED_STRING, value)
+        return NElementUtils.isValidElementName(value) ? DefaultNStringElement.ofValue(NElementType.NAME, value)
+                : DefaultNStringElement.ofValue(NElementType.DOUBLE_QUOTED_STRING, value)
                 ;
     }
 

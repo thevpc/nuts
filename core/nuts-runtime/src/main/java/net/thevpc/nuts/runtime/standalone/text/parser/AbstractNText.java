@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NToElement;
 import net.thevpc.nuts.runtime.standalone.text.NTextNodeWriterStringer;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
@@ -109,7 +111,7 @@ public abstract class AbstractNText implements NText {
         }
         NTextBuilder b = NTextBuilder.of();
         for (int i = 0; i < times; i++) {
-            if(i>0){
+            if (i > 0) {
                 b.append(NText.ofNewLine());
             }
             b.append(this);

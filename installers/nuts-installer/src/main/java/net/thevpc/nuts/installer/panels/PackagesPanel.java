@@ -30,7 +30,7 @@ public class PackagesPanel extends WizardPageBase {
     JEditorPane jep;
     int w = 160;
     java.util.List<ButtonComponent> buttons = new ArrayList<>();
-
+    volatile boolean buttonsLoaded = false;
     private static class ButtonComponent {
         JToggleButton button;
         PackageButtonInfo bi;
@@ -141,6 +141,96 @@ public class PackagesPanel extends WizardPageBase {
         }
         all.addAll(Arrays.asList(getDefaultButtons()));
         return all.toArray(new PackageButtonInfo[0]);
+    }
+
+    @Override
+    public void sendAction(String[] action) {
+        switch (action[0]) {
+            case "companions": {
+                SwingUtilities.invokeLater(() -> {
+                    for (ButtonComponent a : buttons) {
+                        PackageButtonInfo button = a.bi;
+                        if (button.app.getId().equals("<companions>")) {
+                            a.button.setSelected(true);
+                        }
+                    }
+                });
+                break;
+            }
+            case "select": {
+                SwingUtilities.invokeLater(() -> {
+                    if(buttons.isEmpty()){
+                        return;
+                    }
+                    String a="";
+                    if(action.length>1){
+                        a=action[1];
+                    }
+                    if(a.equals("rand") || a.equals("random")) {
+                        a = ""+new Random().nextInt(buttons.size());
+                    }
+                    if(a.matches("[0-9]+")){
+                        int x=Integer.parseInt(a);
+                        buttons.get(x%buttons.size()).button.setSelected(true);
+                    }
+                });
+                break;
+            }
+            case "unselect":
+            case "deselect":
+            {
+                SwingUtilities.invokeLater(() -> {
+                    if(buttons.isEmpty()){
+                        return;
+                    }
+                    String a="";
+                    if(action.length>1){
+                        a=action[1];
+                    }
+                    if(a.equals("rand") || a.equals("random")) {
+                        a = ""+new Random().nextInt(buttons.size());
+                    }
+                    if(a.matches("[0-9]+")){
+                        int x=Integer.parseInt(a);
+                        buttons.get(x%buttons.size()).button.setSelected(false);
+                    }
+                });
+                break;
+            }
+            case "change":
+            {
+                SwingUtilities.invokeLater(() -> {
+                    if(buttons.isEmpty()){
+                        return;
+                    }
+                    String a="";
+                    if(action.length>1){
+                        a=action[1];
+                    }
+                    if(a.equals("rand") || a.equals("random")) {
+                        a = ""+new Random().nextInt(buttons.size());
+                    }
+                    if(a.matches("[0-9]+")){
+                        int x=Integer.parseInt(a);
+                        ButtonComponent b = buttons.get(x % buttons.size());
+                        b.button.setSelected(b.button.isSelected());
+                    }
+                });
+
+                break;
+            }
+            case "wait-loading":{
+                getInstallerContext().waitLoading();
+                while(!buttonsLoaded){
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        //
+                    }
+                }
+                break;
+            }
+        }
     }
 
     protected PackageButtonInfo[] getOnlineButtons2() {
@@ -312,6 +402,7 @@ public class PackagesPanel extends WizardPageBase {
             updateJep();
             panel.invalidate();
             panel.revalidate();
+            this.buttonsLoaded=true;
         });
     }
 

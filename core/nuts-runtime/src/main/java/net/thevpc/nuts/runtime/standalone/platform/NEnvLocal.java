@@ -56,7 +56,7 @@ public class NEnvLocal extends NEnvBase {
 
     @Override
     public boolean isNativeImage() {
-        return false;
+        return "runtime".equals(System.getProperty("org.graalvm.nativeimage.imagecode"));
     }
 
     @Override

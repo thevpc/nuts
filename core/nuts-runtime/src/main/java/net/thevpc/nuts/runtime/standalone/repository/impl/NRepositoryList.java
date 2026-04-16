@@ -9,21 +9,45 @@ import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class NRepositoryList extends NCachedRepository {
+public class NRepositoryList extends NCachedRepository implements NRepositoryWithChildren {
     protected NRepository[] repoItems;
 
     public NRepositoryList(NAddRepositoryOptions options, NRepository[] repoItems, NRepository parentRepository,
                            NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
         super(options, parentRepository, speed, supportedMirroring, repositoryType, supportsDeploy);
         this.repoItems = repoItems;
+    }
+
+    @Override
+    public NOptional<NRepository> getChild(String repositoryNameOrId) {
+        for (NRepository repoItem : repoItems) {
+            if (
+                    Objects.equals(repoItem.getName(), repositoryNameOrId)
+                            || Objects.equals(repoItem.getUuid(), repositoryNameOrId)
+            ) {
+                return NOptional.of(repoItem);
+            }
+        }
+        for (NRepository repoItem : repoItems) {
+            if (repoItem instanceof NRepositoryWithChildren) {
+                NRepository a = ((NRepositoryWithChildren) repoItem).getChild(repositoryNameOrId).orNull();
+                if (a != null) {
+                    return NOptional.of(a);
+                }
+            }
+        }
+        return NOptional.ofNamedEmpty(NMsg.ofC("repository with name or id : %s", repositoryNameOrId));
     }
 
     @Override

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class ProcessPanel extends WizardPageBase {
     AnsiTermPane ansiTermPane;
     boolean processed;
+    volatile boolean processing;
     JLabel logLabel = new JLabel();
     private boolean nl = true;
     private Path nutsJar;
@@ -39,6 +40,24 @@ public class ProcessPanel extends WizardPageBase {
     }
 
     @Override
+    public void sendAction(String[] action) {
+        switch (action[0]) {
+            case "wait-loading": {
+                getInstallerContext().waitLoading();
+                while (processing) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        //
+                    }
+                }
+                break;
+            }
+        }
+        super.sendAction(action);
+    }
+
+    @Override
     public void onShow() {
         ansiTermPane.setDarkMode(InstallData.of(getInstallerContext()).darkMode);
         getInstallerContext().getExitButton().setEnabled(false);
@@ -51,6 +70,7 @@ public class ProcessPanel extends WizardPageBase {
                 @Override
                 public void run() {
                     try {
+                        processing=true;
                         processImpl();
                         processed = true;
                         if (InstallData.of(getInstallerContext()).isInstallFailed()) {
@@ -66,6 +86,7 @@ public class ProcessPanel extends WizardPageBase {
                     } finally {
                         getInstallerContext().getPreviousButton().setEnabled(true);
                         getInstallerContext().getNextButton().setEnabled(getInstallerContext().hasNext(getPageIndex()));
+                        processing=false;
                     }
                 }
             }).start();

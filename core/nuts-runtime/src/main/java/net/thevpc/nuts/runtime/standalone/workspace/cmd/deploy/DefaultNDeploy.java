@@ -12,7 +12,6 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryDisabledException;
 import net.thevpc.nuts.core.NRepositoryFilters;
-import net.thevpc.nuts.core.NRepositoryNotFoundException;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
@@ -251,7 +250,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                         return this;
                     }
                 } else {
-                    NRepository repo = NWorkspace.of().findRepository(repository).get();
+                    NRepository repo = NWorkspace.of().getRepository(repository).get();
                     if (!repo.isEnabled()) {
                         throw new NRepositoryDisabledException(repository);
                     }
@@ -265,7 +264,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                     addResult(effId, repo.getName(), NText.of(content));
                     return this;
                 }
-                throw new NRepositoryNotFoundException(repository);
+                throw new NNoSuchElementException(NMsg.ofC("repository %s",repository));
             } finally {
                 if (tempFile2 != null) {
                     try {

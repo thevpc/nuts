@@ -110,18 +110,8 @@ public interface NRepositoryConfigManager{
      *
      * @param repositoryIdOrName repository name or id
      * @return found repository or throw an exception
-     * @throws NRepositoryNotFoundException if not found
      */
-    NRepository getMirror(String repositoryIdOrName);
-
-    /**
-     * search for (or return null) a repository with the given repository name
-     * or id.
-     *
-     * @param repositoryIdOrName repository name or id
-     * @return found repository or return null
-     */
-    NRepository findMirror(String repositoryIdOrName);
+    NOptional<NRepository> getMirror(String repositoryIdOrName);
 
     /**
      * add new repository

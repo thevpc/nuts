@@ -19,33 +19,91 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class DefaultNStringElement extends DefaultNPrimitiveElement implements NStringElement {
-    private String rawValue;
+    private String image;
     private List<NElementLine> lines;
-    private String rawValue0;
     private List<NElementLine> lines0;
     private volatile boolean initialized;
+
+    public static DefaultNStringElement ofValue(NElementType type, String value) {
+        String image = valueToImage(value, type);
+        return new DefaultNStringElement(type, value, image, null, null, null, null);
+    }
+
+    public static DefaultNStringElement ofName(String value) {
+        List<NElementLine> lines = Collections.singletonList(new NElementLineImpl("", "", "", value, "", "", null));
+        return new DefaultNStringElement(NElementType.NAME, value, value, lines, null, null, null);
+    }
+    public static DefaultNStringElement ofName(String value,List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
+        List<NElementLine> lines = Collections.singletonList(new NElementLineImpl("", "", "", value, "", "", null));
+        return new DefaultNStringElement(NElementType.NAME, value, value, lines, affixes, diagnostics, metadata);
+    }
+
+//    public static DefaultNStringElement ofImage(NElementType type, String image) {
+//
+//        return new DefaultNStringElement(type, image);
+//    }
+
+    public static DefaultNStringElement ofLines(NElementType type, String value,
+                                                String rawValue, List<NElementLine> lines,
+                                                List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
+        return new DefaultNStringElement(type, value, rawValue, lines, affixes, diagnostics, metadata);
+    }
+
+    public static DefaultNStringElement ofNoLines(NElementType type, String value,
+                                                  String rawValue,
+                                                  List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
+        return new DefaultNStringElement(type, value, rawValue, null, affixes, diagnostics, metadata);
+    }
 
     public DefaultNStringElement(NElementType type, String value) {
         this(type, value, null, null, null, null, null);
     }
 
     public DefaultNStringElement(NElementType type, String value,
-                                 String rawValue, List<NElementLine> lines,
+                                 String image, List<NElementLine> lines,
                                  List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
         super(type, NAssert.requireNamedNonNull(value, "string value"), affixes, diagnostics, metadata);
-        this.rawValue0 = rawValue;
+        NAssert.requireNamedNonNull(value, "image value");
+        this.image = image;
         this.lines0 = lines;
-        if (Objects.requireNonNull(type) == NElementType.NAME) {
-            NAssert.requireNamedTrue(NElementUtils.isValidElementName((String) value), "valid name : " + value);
-            this.lines = Arrays.asList(new NElementLineImpl("", "", "", value, "", "", null));
+        if (NAssert.requireNamedNonNull(type,"type") == NElementType.NAME) {
+            NAssert.requireNamedTrue(NElementUtils.isValidElementName(value), "valid name : " + value);
+            if(this.lines==null) {
+                this.lines = Collections.singletonList(new NElementLineImpl("", "", "", value, "", "", null));
+            }
+            if(this.image==null) {
+                this.image = value;
+            }
             this.initialized = true;
-            this.rawValue = value;
         }
-        this.lines = Collections.emptyList();
-        _init();
     }
 
-    private String _escape3(String any, char c) {
+
+    private static String valueToImage(String any, NElementType type) {
+        switch (type) {
+            case SINGLE_QUOTED_STRING: {
+                return _escape1(any, '\'');
+            }
+            case TRIPLE_SINGLE_QUOTED_STRING: {
+                return _escape3(any, '\'');
+            }
+            case DOUBLE_QUOTED_STRING: {
+                return _escape1(any, '"');
+            }
+            case TRIPLE_DOUBLE_QUOTED_STRING: {
+                return _escape3(any, '"');
+            }
+            case BACKTICK_STRING: {
+                return _escape1(any, '`');
+            }
+            case TRIPLE_BACKTICK_STRING: {
+                return _escape3(any, '`');
+            }
+        }
+        return any;
+    }
+
+    private static String _escape3(String any, char c) {
         StringBuilder sb = new StringBuilder();
         sb.append(c);
         sb.append(c);
@@ -69,7 +127,7 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
         return sb.toString();
     }
 
-    private String _escape1(String any, char c) {
+    private static String _escape1(String any, char c) {
         StringBuilder sb = new StringBuilder();
         sb.append(c);
         int len = any.length();
@@ -88,35 +146,32 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
         if (!initialized) {
             synchronized (this) {
                 if (!initialized) {
-                    boolean checkLines = false;
-                    String rawValue = rawValue0;
-                    List<NElementLine> lines = lines0;
-                    NElementType type = type();
-                    if (rawValue != null) {
-                        if (lines == null) {
-                            lines = parseLinesFromRaw(rawValue, type);
+                    if(lines==null){
+                        boolean checkLines = false;
+                        String imageValue = image;
+                        List<NElementLine> lines = lines0;
+                        NElementType type = type();
+                        if (imageValue != null) {
+                            if (lines == null) {
+                                lines = parseLinesFromImage(imageValue, type).lines;
+                            } else {
+                                checkLines = true;
+                            }
                         } else {
-                            checkLines = true;
+                            if (lines == null) {
+                                lines = parseLinesFromUser((String) value(), type);
+                            }
                         }
-                    } else {
-                        if (lines == null) {
-                            lines = parseLinesFromUser((String) value(), type);
+                        if (checkLines) {
+                            StringBuilder sb = new StringBuilder(imageValue.length());
+                            for (NElementLine x : lines) {
+                                sb.append(x.toString());
+                            }
+                            NAssert.requireNamedEquals(imageValue, sb.toString(), "string raw value");
                         }
-                        StringBuilder sb = new StringBuilder();
-                        for (NElementLine line : lines) {
-                            sb.append(line.toString());
-                        }
-                        rawValue = sb.toString();
+                        this.lines = Collections.unmodifiableList(new ArrayList<>(lines));
                     }
-                    if (checkLines) {
-                        StringBuilder sb = new StringBuilder(rawValue.length());
-                        for (NElementLine x : lines) {
-                            sb.append(x.toString());
-                        }
-                        NAssert.requireNamedEquals(rawValue, sb.toString(), "string raw value");
-                    }
-                    this.lines = Collections.unmodifiableList(new ArrayList<>(lines));
-                    this.rawValue = rawValue;
+                    initialized=true;
                 }
             }
         }
@@ -139,11 +194,11 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
         if (newlineSuffix() == nNewLineMode) {
             return this;
         }
-        List<NElementLine> lines2 = new ArrayList<>(lines);
+        List<NElementLine> lines2 = new ArrayList<>(lines());
         NElementLine l = lines2.get(lines2.size() - 1);
         l = l.withNewline(nNewLineMode);
         lines2.set(lines2.size() - 1, l);
-        return new DefaultNStringElement(type, NElementLineImpl.concatContent(lines2), NElementLineImpl.concatString(lines2), lines2, affixes(), diagnostics(), metadata());
+        return DefaultNStringElement.ofLines(type, NElementLineImpl.concatContent(lines2), NElementLineImpl.concatString(lines2), lines2, affixes(), diagnostics(), metadata());
     }
 
 
@@ -197,47 +252,48 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
         ));
     }
 
-    private List<NElementLine> parseLinesFromRaw(String rawValue, NElementType type) {
+
+    private TsonCustomLexer.LinesAndContent parseLinesFromImage(String image, NElementType type) {
         switch (type) {
             case BLOCK_STRING: {
-                TsonCustomLexer le = new TsonCustomLexer(new StringReader(rawValue));
+                TsonCustomLexer le = new TsonCustomLexer(new StringReader(image));
                 NElementTokenImpl t = le.readBlockString();
                 expectNothing(le);
-                return ((TsonCustomLexer.LinesAndContent) t.value()).lines;
+                return ((TsonCustomLexer.LinesAndContent) t.value());
             }
             case LINE_STRING: {
-                TsonCustomLexer le = new TsonCustomLexer(new StringReader(rawValue));
+                TsonCustomLexer le = new TsonCustomLexer(new StringReader(image));
                 NElementTokenImpl t = le.readLineString();
                 TsonCustomLexer.LinesAndContent u = (TsonCustomLexer.LinesAndContent) t.value();
                 expectNothing(le);
-                return u.lines;
+                return u;
             }
             case SINGLE_QUOTED_STRING: {
-                return parseLinesFromRawQuoted(rawValue, type, "'", NElementTokenType.SINGLE_QUOTED_STRING);
+                return parseLinesFromImage(image, type, "'", NElementTokenType.SINGLE_QUOTED_STRING);
             }
             case DOUBLE_QUOTED_STRING: {
-                return parseLinesFromRawQuoted(rawValue, type, "\"", NElementTokenType.DOUBLE_QUOTED_STRING);
+                return parseLinesFromImage(image, type, "\"", NElementTokenType.DOUBLE_QUOTED_STRING);
             }
             case BACKTICK_STRING: {
-                return parseLinesFromRawQuoted(rawValue, type, "`", NElementTokenType.BACKTICK_STRING);
+                return parseLinesFromImage(image, type, "`", NElementTokenType.BACKTICK_STRING);
             }
             case TRIPLE_SINGLE_QUOTED_STRING: {
-                return parseLinesFromRawQuoted(rawValue, type, "'''", NElementTokenType.TRIPLE_SINGLE_QUOTED_STRING);
+                return parseLinesFromImage(image, type, "'''", NElementTokenType.TRIPLE_SINGLE_QUOTED_STRING);
             }
             case TRIPLE_DOUBLE_QUOTED_STRING: {
-                return parseLinesFromRawQuoted(rawValue, type, "\"\"\"", NElementTokenType.TRIPLE_DOUBLE_QUOTED_STRING);
+                return parseLinesFromImage(image, type, "\"\"\"", NElementTokenType.TRIPLE_DOUBLE_QUOTED_STRING);
             }
             case TRIPLE_BACKTICK_STRING: {
-                return parseLinesFromRawQuoted(rawValue, type, "```", NElementTokenType.TRIPLE_BACKTICK_STRING);
+                return parseLinesFromImage(image, type, "```", NElementTokenType.TRIPLE_BACKTICK_STRING);
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("invalid string : %s",
-                NStringUtils.formatStringLiteral(rawValue)
+                NStringUtils.formatStringLiteral(image)
         ));
     }
 
-    private List<NElementLine> parseLinesFromRawQuoted(String rawValue, NElementType type, String quotes, NElementTokenType tokenType) {
-        TsonCustomLexer le = new TsonCustomLexer(new StringReader(rawValue));
+    private TsonCustomLexer.LinesAndContent parseLinesFromImage(String image, NElementType type, String quotes, NElementTokenType tokenType) {
+        TsonCustomLexer le = new TsonCustomLexer(new StringReader(image));
         NElementTokenImpl t;
         if (quotes.length() == 3) {
             t = le.readTripleQuoted(quotes.charAt(0), tokenType, type);
@@ -247,6 +303,7 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
         expectNothing(le);
         List<NLine> nLines = NLine.parseList((String) t.value());
         List<NElementLine> result = new ArrayList<>();
+        StringBuilder content = new StringBuilder();
         for (int i = 0; i < nLines.size(); i++) {
             NLine nLine = nLines.get(i);
             result.add(new NElementLineImpl(
@@ -257,8 +314,12 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
                     (i == nLines.size() - 1) ? quotes : "",
                     nLine.newLine()
             ));
+            content.append(nLine.content());
+            if (nLine.newLine() != null) {
+                content.append(nLine.newLine().value());
+            }
         }
-        return result;
+        return new TsonCustomLexer.LinesAndContent(result, content.toString());
     }
 
     private List<NElementLine> parseLinesFromUserQuoted(String userValue, String quotes) {
@@ -334,7 +395,7 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
     }
 
     public NNewLineMode newLineSuffix() {
-        return lines.get(lines.size() - 1).newline();
+        return lines().get(lines().size() - 1).newline();
     }
 
     @Override
@@ -345,10 +406,29 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
 
     @Override
     public String rawValue() {
-        if (rawValue0 == null) {
-            _init();
+        switch (type()){
+            case NAME:
+                return image;
+            case SINGLE_QUOTED_STRING:
+            case DOUBLE_QUOTED_STRING:
+            case BACKTICK_STRING:
+                return image.substring(1, image.length() - 1);
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_BACKTICK_STRING:
+                return image.substring(3, image.length() - 3);
+            case LINE_STRING:{
+                return image.substring(1);
+            }
+            case BLOCK_STRING:{
+                return lines().stream().map(x -> x.toString()).collect(Collectors.joining());
+            }
         }
-        return rawValue == null ? "" : rawValue;
+        return image;
+    }
+
+    public String image() {
+        return image;
     }
 
     @Override
@@ -366,11 +446,14 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         DefaultNStringElement that = (DefaultNStringElement) o;
-        return Objects.equals(rawValue(), that.rawValue()) && Objects.equals(lines(), that.lines());
+        return
+                Objects.equals(value(), that.value())
+                && Objects.equals(type(), that.type())
+                ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), rawValue(), lines());
+        return Objects.hash(super.hashCode(), value(), type());
     }
 }

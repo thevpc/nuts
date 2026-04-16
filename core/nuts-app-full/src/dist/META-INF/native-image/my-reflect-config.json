@@ -14803,7 +14803,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryContext$globalIndustructibleTypesFilter",
+    "name": "net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryContext$globalIndestructibleTypesFilter",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,

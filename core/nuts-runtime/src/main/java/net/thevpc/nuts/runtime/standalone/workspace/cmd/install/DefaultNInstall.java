@@ -117,9 +117,14 @@ public class DefaultNInstall extends AbstractNInstall {
 //    }
 
     @Override
-    public NStream<NDefinition> getResult() {
+    public NStream<NDefinition> getResultStream() {
         if (result == null) {
             run();
+        }
+        if (isFailFast()) {
+            if (failed.length > 0) {
+                throw this.failedReasons[0];
+            }
         }
         return NStreamBase.ofCollection(
                 ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
@@ -128,7 +133,37 @@ public class DefaultNInstall extends AbstractNInstall {
     }
 
     @Override
+    public List<NDefinition> getResultList() {
+        if (result == null) {
+            runIgnoreFail();
+        }
+        ensureFailFast();
+        return Arrays.asList(result);
+    }
+
+    private void ensureFailFast() {
+        if (isFailFast()) {
+            if (failed.length > 0) {
+                throw this.failedReasons[0];
+            }
+        }
+    }
+
+    @Override
     public NInstall run() {
+        runIgnoreFail(); // always run
+        ensureFailFast();
+        return this;
+    }
+
+    public NInstall tryRunIgnoreFail() {
+        if(result==null){
+            runIgnoreFail();
+        }
+        return this;
+    }
+
+    public NInstall runIgnoreFail() {
         NWorkspace ws = NWorkspace.of();
         NWorkspaceExt dws = NWorkspaceExt.of();
         NSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "install");
@@ -182,7 +217,38 @@ public class DefaultNInstall extends AbstractNInstall {
         h.installAll();
         this.result = h.result;
         this.failed = h.failed;
+        this.failedReasons = h.failedReasons;
         return this;
+    }
+
+    public RuntimeException getFailedIdReason(NId id) {
+        tryRunIgnoreFail();
+        for (int i = 0; i < failed.length; i++) {
+            NId nId = failed[i];
+            if (nId.equalsLongId(id)) {
+                return failedReasons[i];
+            }
+        }
+        throw new IllegalArgumentException("id not found");
+    }
+
+    @Override
+    public NStream<NDefinition> getSuccessfulResultStream() {
+        return NStreamBase.ofCollection(
+                ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
+                getSuccessfulResultList()
+        ).withDescription(NDescribables.ofDesc("InstallResult"));
+    }
+
+    @Override
+    public List<NDefinition> getSuccessfulResultList() {
+        tryRunIgnoreFail();
+        return Arrays.asList(result);
+    }
+
+    public List<NId> getFailedResultList() {
+        tryRunIgnoreFail();
+        return Arrays.asList(failed);
     }
 
 

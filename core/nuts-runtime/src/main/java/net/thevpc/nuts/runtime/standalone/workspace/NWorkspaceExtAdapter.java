@@ -293,8 +293,8 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public NOptional<NRepository> findRepository(String repositoryIdOrName) {
-        return base.findRepository(repositoryIdOrName);
+    public NOptional<NRepository> getRepository(String repositoryIdOrName) {
+        return base.getRepository(repositoryIdOrName);
     }
 
     @Override

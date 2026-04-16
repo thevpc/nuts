@@ -13,13 +13,13 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
@@ -275,7 +275,9 @@ public interface NInstall extends NWorkspaceCmd {
      *
      * @return installation result
      */
-    NStream<NDefinition> getResult();
+    NStream<NDefinition> getResultStream();
+
+    List<NDefinition> getResultList();
 
     /**
      * configure the current command with the given arguments. This is an
@@ -296,4 +298,16 @@ public interface NInstall extends NWorkspaceCmd {
      */
     @Override
     NInstall run();
+
+    RuntimeException getFailedIdReason(NId id);
+
+    NStream<NDefinition> getSuccessfulResultStream();
+
+    List<NDefinition> getSuccessfulResultList();
+
+    List<NId> getFailedResultList();
+
+    boolean isFailFast();
+
+    NInstall setFailFast(boolean failFast);
 }

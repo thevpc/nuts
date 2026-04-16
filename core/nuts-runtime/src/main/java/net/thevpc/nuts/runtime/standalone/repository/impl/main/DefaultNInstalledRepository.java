@@ -174,7 +174,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         try {
             invalidateInstallationDigest();
             String repository = id.getRepository();
-            NRepository r = workspace.findRepository(repository).orNull();
+            NRepository r = workspace.getRepository(repository).orNull();
             if (ii == null) {
                 ii = new InstallInfoConfig();
                 ii.setId(id);

@@ -3,11 +3,13 @@ package net.thevpc.nuts.text;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NToElement;
 import net.thevpc.nuts.util.*;
 
 public class NTextBuilderPlain implements NTextBuilder {
 
-    private StringBuilder sb = new StringBuilder();
+    private final StringBuilder sb = new StringBuilder();
 
     public NTextBuilderPlain() {
     }
@@ -315,7 +317,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public List<NText> getChildren() {
-        return Arrays.asList(build());
+        return Collections.singletonList(build());
     }
 
     @Override
@@ -325,7 +327,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public boolean isString(String anyString) {
-        return anyString != null && anyString.equals(sb.toString());
+        return anyString != null && anyString.contentEquals(sb);
     }
 
     @Override
@@ -545,10 +547,9 @@ public class NTextBuilderPlain implements NTextBuilder {
             return this;
         }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(this.sb);
-        sb.append(other);
-        return new ImmutableNTextPlain(sb.toString());
+        String sb = String.valueOf(this.sb) +
+                other;
+        return new ImmutableNTextPlain(sb);
     }
 
     @Override
@@ -573,17 +574,17 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public NTextBuilder indent(NText prefix, boolean skipFirstLine) {
-        if(NBlankable.isBlank(prefix)) {
+        if (NBlankable.isBlank(prefix)) {
             return this;
         }
         NStringBuilder old = new NStringBuilder(sb.toString());
         sb.delete(0, sb.length());
-        sb.append(old.indent(prefix.filteredText(),skipFirstLine).toString());
+        sb.append(old.indent(prefix.filteredText(), skipFirstLine).toString());
         return null;
     }
 
     @NImmutable
-    private static class ImmutableNTextPlain implements NTextPlain {
+    private static class ImmutableNTextPlain implements NTextPlain, NToElement {
 
         private final String str;
 
@@ -591,9 +592,15 @@ public class NTextBuilderPlain implements NTextBuilder {
             this.str = str == null ? "" : str;
         }
 
+
+        @Override
+        public NElement toElement() {
+            return NElement.ofString(str);
+        }
+
         @Override
         public String getValue() {
-            return str.toString();
+            return str;
         }
 
         @Override
@@ -753,10 +760,9 @@ public class NTextBuilderPlain implements NTextBuilder {
                 return this;
             }
 
-            StringBuilder sb = new StringBuilder();
-            sb.append(str);
-            sb.append(other);
-            return new ImmutableNTextPlain(sb.toString());
+            String sb = str +
+                    other;
+            return new ImmutableNTextPlain(sb);
         }
 
         @Override

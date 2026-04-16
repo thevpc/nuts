@@ -43,7 +43,7 @@ public class DefaultNUpdateStats extends AbstractNUpdateStats {
         NSession session=NSession.of();
         for (String repository : getRepositories()) {
             processed = true;
-            NRepository repo = NWorkspace.of().findRepository(repository).get();
+            NRepository repo = NWorkspace.of().getRepository(repository).get();
             NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(repo);
             repoSPI.updateStatistics()
                     //                    .setFetchMode(NutsFetchMode.LOCAL)

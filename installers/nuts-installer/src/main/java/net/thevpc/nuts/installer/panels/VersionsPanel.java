@@ -70,6 +70,28 @@ public class VersionsPanel extends WizardPageBase {
         updateObservations(null);
     }
 
+    @Override
+    public void sendAction(String[] action) {
+        switch (action[0]) {
+            case "lts": {
+                SwingUtilities.invokeLater(() -> {
+                    ltsButton.setSelected(true);
+                });
+                break;
+            }
+            case "standard": {
+                SwingUtilities.invokeLater(() -> {
+                    standardButton.setSelected(true);
+                });
+                break;
+            }
+            case "wait-loading":{
+                getInstallerContext().waitLoading();
+                break;
+            }
+        }
+    }
+
     private JToggleButton add2(ButtonInfo s) {
 
         InstallData id = InstallData.of(getInstallerContext());
