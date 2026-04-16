@@ -47,19 +47,19 @@ public class DefaultNReflectConfiguration implements NReflectConfiguration {
     @Override
     public NReflectPropertyAccessStrategy getAccessStrategy(Class clz) {
         if (clz == null || propertyAccessStrategy == null) {
-            return NReflectPropertyAccessStrategy.FIELD;
+            return NReflectPropertyAccessStrategy.ALL;
         }
         NReflectPropertyAccessStrategy v = propertyAccessStrategy.apply(clz);
-        return v != null ? v : NReflectPropertyAccessStrategy.FIELD;
+        return v != null ? v : NReflectPropertyAccessStrategy.ALL;
     }
 
     @Override
     public NReflectPropertyDefaultValueStrategy getDefaultValueStrategy(Class clz) {
         if (clz == null || propertyAccessStrategy == null) {
-            return NReflectPropertyDefaultValueStrategy.TYPE_DEFAULT;
+            return NReflectPropertyDefaultValueStrategy.BASE;
         }
         NReflectPropertyDefaultValueStrategy v = propertyDefaultValueStrategy.apply(clz);
-        return v != null ? v : NReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT;
+        return v != null ? v : NReflectPropertyDefaultValueStrategy.PROTOTYPE;
     }
 
 }

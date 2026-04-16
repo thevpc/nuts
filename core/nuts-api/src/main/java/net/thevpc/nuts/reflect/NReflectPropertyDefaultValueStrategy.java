@@ -30,13 +30,45 @@ import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NOptional;
 
 /**
- *
- * @author thevpc
+ * Defines the strategy for determining if a property value is considered a "default"
+ * and should be omitted during serialization to reduce output verbosity.
+ * <p>
+ * This strategy is used by {@link net.thevpc.nuts.elem.NElementFactory} and {@link NReflectProperty}
+ * to decide whether a specific field or method value contributes to the
+ * generated {@link net.thevpc.nuts.elem.NElement}.
+ * * @author Taha Ben Salah
+ * @since 0.8.9
  */
 public enum NReflectPropertyDefaultValueStrategy implements NEnum {
-    TYPE_DEFAULT,
-    PROPERTY_DEFAULT,
-    NO_DEFAULT;
+    /**
+     * Compares the value against the standard Java Language defaults.
+     * <ul>
+     * <li>Object: {@code null}</li>
+     * <li>Numeric: {@code 0}</li>
+     * <li>Boolean: {@code false}</li>
+     * </ul>
+     * Use this for strict, minimal serialization that ignores uninitialized fields.
+     */
+    BASE,
+
+    /**
+     * Compares the value against a "Clean Instance" (template) of the containing class.
+     * <p>
+     * If the current value matches the value found in a freshly instantiated
+     * object of the same type, it is considered a default. This is particularly
+     * useful for {@code Builder} classes where fields may have non-null initial values
+     * (e.g., empty lists or default version strings).
+     */
+    PROTOTYPE,
+
+    /**
+     * No value is ever considered a default.
+     * <p>
+     * Every discovered property will be serialized regardless of its value.
+     * This ensures the highest level of data fidelity but results in more
+     * verbose output.
+     */
+    NONE;
     private final String id;
 
     NReflectPropertyDefaultValueStrategy() {

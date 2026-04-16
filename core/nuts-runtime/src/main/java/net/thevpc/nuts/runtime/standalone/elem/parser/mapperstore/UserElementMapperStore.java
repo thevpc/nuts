@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore;
 
+import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.runtime.standalone.util.collections.NClassMapImpl;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.core.NSession;
@@ -272,24 +273,24 @@ public class UserElementMapperStore implements NElementMapperStore {
         if (!defaultOnly) {
             NElementMapper f = lvl1_customMappersByType.get(cls);
             if (f != null) {
-//                if(type!=null && type instanceof Class && NDescriptor.class.isAssignableFrom((Class<?>) type)) {
-//                    System.out.println(NMsg.ofC("HH %s %s", 1, f.getClass().getName()));
-//                }
+                if(type!=null && type instanceof Class && NDescriptor.class.isAssignableFrom((Class<?>) type)) {
+                    System.out.println(NMsg.ofC("HH %s %s", 1, f.getClass().getName()));
+                }
                 return f;
             }
             final NElementMapper r = defaultElementMapperStore.getCoreMappers().get(cls);
             if (r != null) {
-//                if(type!=null && type instanceof Class && NDescriptor.class.isAssignableFrom((Class<?>) type)) {
-//                    System.out.println(NMsg.ofC("HH %s %s", 2, r.getClass().getName()));
-//                }
+                if(type!=null && type instanceof Class && NDescriptor.class.isAssignableFrom((Class<?>) type)) {
+                    System.out.println(NMsg.ofC("HH %s %s", 2, r.getClass().getName()));
+                }
                 return r;
             }
         }
         final NElementMapper r = defaultElementMapperStore.getDefaultMappers().get(cls);
         if (r != null) {
-//            if(type!=null && type instanceof Class && NDescriptor.class.isAssignableFrom((Class<?>) type)) {
-//                System.out.println(NMsg.ofC("HH %s %s", 2, r.getClass().getName()));
-//            }
+            if(type!=null && type instanceof Class && NDescriptor.class.isAssignableFrom((Class<?>) type)) {
+                System.out.println(NMsg.ofC("HH %s %s", 2, r.getClass().getName()));
+            }
             return r;
         }
         throw new NIllegalArgumentException(NMsg.ofC(

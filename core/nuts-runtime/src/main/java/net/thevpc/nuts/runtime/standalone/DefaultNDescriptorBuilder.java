@@ -30,6 +30,7 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.boot.NBootDescriptor;
 import net.thevpc.nuts.artifact.NIdLocation;
 import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.util.*;
@@ -63,12 +64,12 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
      */
     private String description;
     private String solver;
-    private NEnvConditionBuilder condition;
+    private final NEnvConditionBuilder condition;
     private List<NIdLocation> locations = new ArrayList<>(); //defaults to empty;
     private List<NDependency> dependencies = new ArrayList<>(); //defaults to empty;
     private List<NDependency> standardDependencies = new ArrayList<>(); //defaults to empty;
     private Set<NDescriptorFlag> flags = new LinkedHashSet<>();
-    private List<NDescriptorProperty> properties = new ArrayList<>(); //defaults to empty;
+    private final List<NDescriptorProperty> properties = new ArrayList<>(); //defaults to empty;
     private transient DefaultNProperties _propertiesBuilder = new DefaultNProperties(); //defaults to empty;
     private List<NDescriptorContributor> contributors = new ArrayList<>(); //defaults to empty;
     private List<NDescriptorContributor> developers = new ArrayList<>(); //defaults to empty;
@@ -656,11 +657,15 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
             }
         }
 
-        if (Objects.equals(getId().getShortName(), NConstants.Ids.NUTS_API)) {
+        NId id1 = getId();
+        if (NBlankable.isBlank(id1)) {
+            throw new NIllegalArgumentException(NMsg.ofC("missing id in descriptor"));
+        }
+        if (Objects.equals(id1.getShortName(), NConstants.Ids.NUTS_API)) {
             idType = NIdType.API;
         }
 
-        if (Objects.equals(getId().getShortName(), NConstants.Ids.NUTS_RUNTIME)) {
+        if (Objects.equals(id1.getShortName(), NConstants.Ids.NUTS_RUNTIME)) {
             idType = NIdType.RUNTIME;
         }
 
@@ -676,7 +681,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
             }
         }
         return new DefaultNDescriptor(
-                getId(), idType, getParents(), getPackaging(),
+                id1, idType, getParents(), getPackaging(),
                 getExecutor(), getInstaller(),
                 getName(), getDescription(), getCondition().build(),
                 getDependencies(), getStandardDependencies(),

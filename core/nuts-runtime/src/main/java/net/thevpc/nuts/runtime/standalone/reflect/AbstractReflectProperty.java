@@ -81,10 +81,10 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
             strategy = getDefaultValueStrategy();
         }
         switch (strategy) {
-            case NO_DEFAULT: {
+            case NONE: {
                 return false;
             }
-            case PROPERTY_DEFAULT: {
+            case PROTOTYPE: {
                 if (value == null) {
                     return true; //null is always default!!
                 }
@@ -127,7 +127,7 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
                     return Objects.deepEquals(cleanInstanceValue, value);
                 }
             }
-            case TYPE_DEFAULT: {
+            case BASE: {
                 return getPropertyType().isDefaultValue(value);
             }
         }

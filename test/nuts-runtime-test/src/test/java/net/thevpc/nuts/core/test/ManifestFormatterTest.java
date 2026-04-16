@@ -3,6 +3,7 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.runtime.standalone.descriptor.parser.DefaultNDescriptorParser;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder;

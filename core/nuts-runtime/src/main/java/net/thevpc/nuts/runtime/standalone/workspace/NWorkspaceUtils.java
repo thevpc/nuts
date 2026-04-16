@@ -86,8 +86,8 @@ public class NWorkspaceUtils {
         NReflectRepository o = (NReflectRepository) (workspace.getProperties().get(NReflectRepository.class.getName()));
         if (o == null) {
             o = new DefaultNReflectRepository(NReflectConfigurationBuilder.of()
-                    .setPropertyAccessStrategy(NReflectPropertyAccessStrategy.FIELD)
-                    .setPropertyDefaultValueStrategy(NReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT)
+                    .setPropertyAccessStrategy(NReflectPropertyAccessStrategy.ALL)
+                    .setPropertyDefaultValueStrategy(NReflectPropertyDefaultValueStrategy.PROTOTYPE)
                     .build());
             workspace.setProperty(NReflectRepository.class.getName(), o);
         }

@@ -30,23 +30,61 @@ import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NOptional;
 
 /**
- *
- * @author thevpc
- * @since 0.8.4
+ * Strategy controlling how properties are discovered and accessed during reflection.
+ * When multiple strategies apply, they are applied in the following priority order:
+ * BEAN first, then FLUENT, then FIELD — meaning a property discovered by an earlier
+ * strategy will not be overridden by a later one.
  */
 public enum NReflectPropertyAccessStrategy implements NEnum {
+    /**
+     * access using fields
+     */
     FIELD,
-    METHOD,
-    BOTH;
+
+    /**
+     * Discovers properties via JavaBean conventions: {@code getX()}/{@code isX()} as getters
+     * and {@code setX(value)} as setters. A getter alone yields a read-only property.
+     * When combined with {@link #FIELD} (i.e. {@link #ALL}), a bean getter with no matching
+     * setter may fall back to a field of the same name and type for write access.
+     */
+    BEAN,
+
+    /**
+     * Discovers properties via fluent accessor conventions: {@code x()} as getter
+     * and {@code x(value)} as setter. A getter alone yields a read-only property.
+     * A setter without a matching getter is always rejected.
+     * Methods matching the JavaBean prefix pattern ({@code get}, {@code set}, {@code is})
+     * are excluded from fluent discovery to avoid double-registration.
+     */
+    FLUENT,
+
+    /**
+     * Applies all strategies: {@link #BEAN}, {@link #FLUENT}, and {@link #FIELD}.
+     * A property discovered by an earlier strategy is never overridden by a later one.
+     */
+    ALL;
     private final String id;
 
     NReflectPropertyAccessStrategy() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parses a string value into a {@link NReflectPropertyAccessStrategy}.
+     *
+     * @param value the string to parse
+     * @return an {@link NOptional} containing the matched strategy, or empty if not found
+     */
     public static NOptional<NReflectPropertyAccessStrategy> parse(String value) {
         return NEnumUtils.parseEnum(value, NReflectPropertyAccessStrategy.class);
     }
+
+    /**
+     * Returns the normalized identifier for this strategy, formatted according to
+     * {@link NNameFormat#ID_NAME}.
+     *
+     * @return the string id of this strategy
+     */
     @Override
     public String id() {
         return id;
