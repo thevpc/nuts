@@ -525,6 +525,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     }
                     return true;
                 }
+                case "-l":
                 case "--verbose":
 
                 case "--log-verbose":
@@ -1677,7 +1678,9 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 break;
             }
 
-            case "--verbose": {
+            case "-l":
+            case "--verbose":
+            {
                 cmdLine.skip();
                 if (enabled && a.getValue().asBoolean().orElse(true)) {
                     this.setLogTermLevel(Level.FINEST);
