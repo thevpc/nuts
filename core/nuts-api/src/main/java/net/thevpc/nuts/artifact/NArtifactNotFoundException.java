@@ -27,6 +27,7 @@ package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NExceptions;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -76,9 +77,7 @@ public class NArtifactNotFoundException extends NException {
      * @param cause        cause
      */
     public NArtifactNotFoundException(NId id, NIdInvalidDependency[] dependencies, NIdInvalidLocation[] locations, Throwable cause) {
-        super(
-                NMsg.ofC("artifact not found: %s%s", (id == null ? "<null>" : id), dependenciesToString(dependencies))
-                , cause);
+        super(prepareMessage(id, dependencies, locations, cause), cause);
         this.id = id;
         if (locations != null) {
             this.locations = Collections.unmodifiableSet(Arrays.stream(locations).filter(Objects::nonNull).collect(Collectors.toSet()));
@@ -96,10 +95,26 @@ public class NArtifactNotFoundException extends NException {
      * @param cause   cause
      */
     public NArtifactNotFoundException(NId id, NMsg message, Throwable cause) {
-        super(
-                message == null ? NMsg.ofC("no such nuts : %s", (id == null ? "<null>" : id)) : message,
-                cause);
+        super(prepareMessage(id, message, cause),cause);
         this.id = id;
+    }
+
+    private static NMsg prepareMessage(NId id, NIdInvalidDependency[] dependencies, NIdInvalidLocation[] locations, Throwable cause) {
+        String dependenciesToString = dependenciesToString(dependencies);
+        if(cause==null){
+            return NMsg.ofC("artifact not found %s%s", (id == null ? "<null>" : id.getLongId()), dependenciesToString);
+        }
+        return NMsg.ofC("artifact not found %s : %s%s", (id == null ? "<null>" : id.getLongId()), NExceptions.getErrorMessage(cause), dependenciesToString);
+    }
+
+    private static NMsg prepareMessage(NId id, NMsg message, Throwable cause) {
+        if(message!=null){
+            return message;
+        }
+        if(cause==null){
+            return NMsg.ofC("artifact not found %s", (id == null ? "<null>" : id.getLongId()));
+        }
+        return NMsg.ofC("artifact not found %s : %s", (id == null ? "<null>" : id.getLongId()), NExceptions.getErrorMessage(cause));
     }
 
     /**
