@@ -9,6 +9,7 @@ import net.thevpc.nuts.boot.internal.util.NBootUtils;
 
 import java.io.File;
 import java.util.*;
+import java.util.logging.Level;
 
 public class NBootWorkspaceCmdLineFormatter {
     private static final String V080 = "0.8.0";
@@ -16,8 +17,11 @@ public class NBootWorkspaceCmdLineFormatter {
     private static final String V083 = "0.8.3";
     private static final String V084 = "0.8.4";
     private static final String V085 = "0.8.5";
-    private NBootWorkspaceOptionsConfig config;
-    private NBootOptionsInfo options;
+    private static final String V086 = "0.8.6";
+    private static final String V087 = "0.8.7";
+    private static final String V089 = "0.8.9";
+    private final NBootWorkspaceOptionsConfig config;
+    private final NBootOptionsInfo options;
 
     public NBootWorkspaceCmdLineFormatter(NBootWorkspaceOptionsConfig config, NBootOptionsInfo options) {
         this.config = config;
@@ -152,7 +156,7 @@ public class NBootWorkspaceCmdLineFormatter {
                     }
                 }
             }
-            fillOption0(selectOptionName(longName, shortName), value.toString().toLowerCase(), arguments, forceSingle);
+            fillOption0(selectOptionName(longName, shortName), value.toLowerCase(), arguments, forceSingle);
         }
     }
 
@@ -372,7 +376,15 @@ public class NBootWorkspaceCmdLineFormatter {
         NBootLogConfig logConfig = options.getLogConfig();
         if (logConfig != null) {
             if (logConfig.getLogTermLevel() != null && logConfig.getLogTermLevel() == logConfig.getLogFileLevel()) {
-                fillOption("--log-" + logConfig.getLogFileLevel().toString().toLowerCase(), null, true, false, arguments, false);
+                if (logConfig.getLogTermLevel() == Level.FINEST) {
+                    if (isApiVersionOrAfter(V089)) {
+                        fillOption("--verbose", "-l", true, true, arguments, false);
+                    }else{
+                        fillOption("--verbose", null, true, true, arguments, false);
+                    }
+                } else {
+                    fillOption("--log-" + logConfig.getLogFileLevel().toString().toLowerCase(), null, true, false, arguments, false);
+                }
             } else {
                 if (logConfig.getLogTermLevel() != null) {
                     fillOption("--log-term-" + logConfig.getLogTermLevel().toString().toLowerCase(), null, true, false, arguments, false);
@@ -389,8 +401,11 @@ public class NBootWorkspaceCmdLineFormatter {
             fillOption("--log-file-name", null, logConfig.getLogFileName(), arguments, false);
         }
         fillOption("--exclude-extension", "-X", options.getExcludedExtensions(), ";", arguments, false);
-
-        fillOption("--repositories", "-r", options.getRepositories(), ";", arguments, false);
+        if (isApiVersionOrAfter(V081)) {
+            fillOption("--repositories", "-r", options.getRepositories(), ";", arguments, false);
+        } else {
+            fillOption("--repository", "-r", options.getRepositories(), ";", arguments, false);
+        }
         if (isApiVersionOrAfter(V085)) {
             fillOption("--boot-repositories", null, options.getBootRepositories(), ";", arguments, false);
         }

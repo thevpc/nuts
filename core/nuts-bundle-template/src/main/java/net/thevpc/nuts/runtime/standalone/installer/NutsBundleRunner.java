@@ -65,7 +65,9 @@ public class NutsBundleRunner {
                     }
                     break;
                 }
-                case "--verbose": {
+                case "-l":
+                case "--verbose":
+                {
                     if (v != null && v.trim().length() > 0) {
                         verbose = Boolean.parseBoolean(v);
                     } else {

@@ -81,7 +81,9 @@ public class NutsInstaller extends WizardBase {
                 installData.setDefaultWorkspace(optionValue);
                 break;
             }
-            case "--verbose": {
+            case "-l":
+            case "--verbose":
+            {
                 installData.setDefaultVerbose(!"false".equals(optionValue));
                 break;
             }

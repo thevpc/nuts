@@ -153,6 +153,7 @@ public final class NBootWorkspaceCmdLineParser {
             "--stacktrace",
             "-d",
             "--debug",
+            "-l",
             "--verbose",
             "--log-verbose",
             "--log-finest",
@@ -798,6 +799,7 @@ public final class NBootWorkspaceCmdLineParser {
                         }
                     }
 
+                    case "-l":
                     case "--verbose":
 
                     case "--log-verbose":
@@ -1714,7 +1716,6 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-i":
                     case "-q":
                     case "-s":
-                    case "-l":
                     case "-m":
                     default: {
                         if (k.startsWith("---") && k.length() > 3 && k.charAt(3) != '-') {
@@ -1912,7 +1913,9 @@ public final class NBootWorkspaceCmdLineParser {
                 return (a);
             }
 
-            case "--verbose": {
+            case "-l":
+            case "--verbose":
+            {
                 cmdLine.skip();
                 if (enabled && NBootUtils.firstNonNull(a.getBooleanValue(), true)) {
                     logConfig.setLogTermLevel(Level.FINEST);

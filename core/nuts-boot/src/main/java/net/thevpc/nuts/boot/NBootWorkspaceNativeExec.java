@@ -250,6 +250,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     }
 
                     case "--verbose":
+                    case "-l":
 
                     case "--log-verbose":
                     case "--log-finest":
