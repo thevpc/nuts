@@ -20,6 +20,7 @@ public class NEnvLocal extends NEnvBase {
 
 
     protected boolean initialized;
+    protected boolean nativeImage;
 
     @Override
     public NEnv refresh() {
@@ -40,6 +41,7 @@ public class NEnvLocal extends NEnvBase {
             this.initialized = true;
             userHome = System.getProperty("user.home");
             userName = System.getProperty("user.name");
+            nativeImage = "runtime".equals(System.getProperty("org.graalvm.nativeimage.imagecode"));
             switch (getOsFamily()) {
                 case WINDOWS: {
                     rootUserName = resolveWindowAdminName(userName, rootUserName);
@@ -50,6 +52,11 @@ public class NEnvLocal extends NEnvBase {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isNativeImage() {
+        return false;
     }
 
     @Override
@@ -161,6 +168,6 @@ public class NEnvLocal extends NEnvBase {
                         .failFast()
                         .getGrabbedOutOnlyString();
             }
-        },null);
+        }, null);
     }
 }

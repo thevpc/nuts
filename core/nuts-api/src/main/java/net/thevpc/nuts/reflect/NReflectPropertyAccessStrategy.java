@@ -55,12 +55,33 @@ public enum NReflectPropertyAccessStrategy implements NEnum {
      * A setter without a matching getter is always rejected.
      * Methods matching the JavaBean prefix pattern ({@code get}, {@code set}, {@code is})
      * are excluded from fluent discovery to avoid double-registration.
+     *
+     * Default heuristic filters for property discovery.
+     * * <p>The selection policy applies the following default constraints to minimize
+     * metadata noise and prevent accidental execution of functional/operational methods:</p>
+     * * <ul>
+     * <li><b>Explicit Rejections:</b> Denies standard Java/Object methods ({@code hashCode},
+     * {@code toString}, {@code wait}, {@code clone}, etc.) and common factory/lifecycle
+     * verbs ({@code build}, {@code create}, {@code reset}, {@code newInstance}).</li>
+     * * <li><b>Functional Contract Guard:</b> Automatically denies methods that implement
+     * standard functional interfaces ({@code Supplier}, {@code Predicate}, {@code Consumer},
+     * {@code Callable}, {@code Runnable}, {@code UnaryOperator}).</li>
+     * * <li><b>Data Stream Safety:</b> Explicitly denies {@code stream()} and {@code iterator()}
+     * methods if they return {@link java.util.stream.Stream}, {@code NStream},
+     * {@link java.lang.Iterable}, or {@code NIterator}. This prevents accidental
+     * consumption of data sequences during serialization.</li>
+     * * <li><b>Fluent Builder Guard:</b> Denies methods where the return type is the same
+     * as (or a super-type of) the declaring class, assuming they are fluent setters or
+     * builder-style actions.</li>
+     * * <li><b>Semantic Prefixes:</b> Denies methods starting with {@code to}, {@code as},
+     * {@code from}, or {@code is} (unless identified as a standard JavaBean boolean getter).</li>
+     * </ul>
      */
     FLUENT,
 
     /**
      * Applies all strategies: {@link #BEAN}, {@link #FLUENT}, and {@link #FIELD}.
-     * A property discovered by an earlier strategy is never overridden by a later one.
+     * A later one never overrides a property discovered by an earlier strategy.
      */
     ALL;
     private final String id;

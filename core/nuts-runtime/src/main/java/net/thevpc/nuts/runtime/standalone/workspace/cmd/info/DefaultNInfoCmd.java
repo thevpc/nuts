@@ -613,6 +613,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("java-version", NVersion.get(System.getProperty("java.version")).get());
         props.put("platform", environment.getJava());
         props.put("java-home", NPath.of(System.getProperty("java.home")));
+        props.put("java-native", environment.isNativeImage());
         props.put("java-executable", NPath.of(NJavaSdkUtils.of().resolveJavaCommandByHome(null)));
         props.put("java-classpath",
                 txt.ofBuilder().appendJoined(";",

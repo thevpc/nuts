@@ -39,7 +39,10 @@ public class NEnvSshImpl implements NEnv {
         }
         return NScorable.UNSUPPORTED_SCORE;
     }
-
+    @Override
+    public boolean isNativeImage() {
+        return false;
+    }
     private void init(NConnectionString connectionString){
         this.connectionString = connectionString;
         NEnvCmdSPI commander=new NEnvCmdSPI() {

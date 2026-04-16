@@ -658,17 +658,15 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
         }
 
         NId id1 = getId();
-        if (NBlankable.isBlank(id1)) {
-            throw new NIllegalArgumentException(NMsg.ofC("missing id in descriptor"));
-        }
-        if (Objects.equals(id1.getShortName(), NConstants.Ids.NUTS_API)) {
-            idType = NIdType.API;
-        }
+        if (!NBlankable.isBlank(id1)) {
+            if (Objects.equals(id1.getShortName(), NConstants.Ids.NUTS_API)) {
+                idType = NIdType.API;
+            }
 
-        if (Objects.equals(id1.getShortName(), NConstants.Ids.NUTS_RUNTIME)) {
-            idType = NIdType.RUNTIME;
+            if (Objects.equals(id1.getShortName(), NConstants.Ids.NUTS_RUNTIME)) {
+                idType = NIdType.RUNTIME;
+            }
         }
-
         for (NDescriptorFlag flag : this.flags) {
             flags.add(flag);
             switch (flag) {

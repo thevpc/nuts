@@ -21,8 +21,8 @@ public interface NEnv extends NComponent {
     }
 
     static NEnv of(NConnectionString connectionString) {
-        if(NBlankable.isBlank(connectionString) || NBlankable.isBlank(connectionString.getHost())) {
-            return  of();
+        if (NBlankable.isBlank(connectionString) || NBlankable.isBlank(connectionString.getHost())) {
+            return of();
         }
 
         NConnectionStringBuilder connectionStringBuilder = connectionString.builder()
@@ -78,6 +78,8 @@ public interface NEnv extends NComponent {
 
     Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies();
 
+    boolean isNativeImage();
+
     NId getJava();
 
     NId getOs();
@@ -100,12 +102,14 @@ public interface NEnv extends NComponent {
 
     /**
      * Network/DNS hostname (what other machines resolve)
+     *
      * @return
      */
     String getHostName();
 
     /**
      * OS-level friendly/computer name (what user sees in System Settings)
+     *
      * @return
      */
     String getMachineName();

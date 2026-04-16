@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.reflect;
 
+import net.thevpc.nuts.runtime.standalone.platform.CorePlatformUtils;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.text.NMsg;
@@ -41,9 +42,11 @@ import java.util.regex.Pattern;
 public class DefaultNReflectType implements NReflectType {
 
     private static final Pattern GETTER_SETTER = Pattern.compile("(?<prefix>(get|set|is))(?<suffix>([A-Z].*))");
-    private static final Set<String> IGNORED_FLUENT_NAMES = new HashSet<>(Arrays.asList(
-            "hashCode", "toString", "clone", "getClass", "notify", "notifyAll", "wait", "finalize"
-    ));
+
+    private static final GetterNameHeuristicFilterManager getterNameHeuristicFilters = new GetterNameHeuristicFilterManager()
+            .addDefaults();
+
+
     private final Type javaType;
 
     private Map<String, NReflectProperty> propertiesDeclaredMap;
@@ -301,14 +304,8 @@ public class DefaultNReflectType implements NReflectType {
         return new NReflectType[0];
     }
 
-    private void __logDebug(String m) {
-        String prefix = "###NReflectType[" + getName() + "] build ";
-        System.out.println(prefix + m);
-    }
-
     private void build() {
         if (propertiesDeclaredMap == null) {
-            __logDebug("start");
             Object cleanInstance = null;
             try {
                 cleanInstance = newInstance();
@@ -449,8 +446,6 @@ public class DefaultNReflectType implements NReflectType {
                                 NReflectPropertyAccessStrategy propertyAccessStrategy,
                                 NReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy
     ) {
-        __logDebug("propertyAccessStrategy " + propertyAccessStrategy);
-
         boolean useBean = propertyAccessStrategy == NReflectPropertyAccessStrategy.BEAN
                 || propertyAccessStrategy == NReflectPropertyAccessStrategy.ALL;
         boolean useFluent = propertyAccessStrategy == NReflectPropertyAccessStrategy.FLUENT
@@ -460,8 +455,6 @@ public class DefaultNReflectType implements NReflectType {
 
         if (useBean || useFluent) {
             Method[] declaredMethods = _getMethods(clazz);
-            __logDebug("declaredMethods " + declaredMethods.length);
-
             // --- BEAN: getX() / setX() / isX() ---
             LinkedHashMap<String, Method> methodGetters = new LinkedHashMap<>();
             LinkedHashMap<String, List<Method>> methodSetters = new LinkedHashMap<>();
@@ -480,7 +473,6 @@ public class DefaultNReflectType implements NReflectType {
                                     if (m.getParameterCount() == 0 && !m.getReturnType().equals(Void.TYPE)) {
                                         if (!name.equals("getClass")) {
                                             methodGetters.put(n2, m);
-                                            __logDebug("methodGetters add " + m);
                                         }
                                     }
                                     break;
@@ -490,7 +482,6 @@ public class DefaultNReflectType implements NReflectType {
                                             && (m.getReturnType().equals(Boolean.TYPE)
                                             || m.getReturnType().equals(Boolean.class))) {
                                         methodGetters.put(n2, m);
-                                        __logDebug("methodGetters add " + m);
                                     }
                                     break;
                                 }
@@ -502,7 +493,6 @@ public class DefaultNReflectType implements NReflectType {
                                             methodSetters.put(n2, li);
                                         }
                                         li.add(m);
-                                        __logDebug("methodSetters add " + m);
                                     }
                                     break;
                                 }
@@ -547,19 +537,35 @@ public class DefaultNReflectType implements NReflectType {
                                     new MethodReflectProperty1(propName, readMethod, writeMethod, cleanInstance, this, propertyDefaultValueStrategy)
                             );
                             declaredProperties.put(propName, v);
-                            __logDebug("declaredProperties add " + v);
                         } else if (writeField != null) {
                             IndexedItem<NReflectProperty> v = new IndexedItem<>(hierarchyIndex,
                                     new MethodReflectProperty2(propName, readMethod, writeField, cleanInstance, this, propertyDefaultValueStrategy)
                             );
                             declaredProperties.put(propName, v);
-                            __logDebug("declaredProperties add " + v);
                         } else {
-                            IndexedItem<NReflectProperty> v = new IndexedItem<>(hierarchyIndex,
-                                    new MethodReflectProperty1(propName, readMethod, null, cleanInstance, this, propertyDefaultValueStrategy)
-                            );
-                            declaredProperties.put(propName, v);
-                            __logDebug("declaredProperties add " + v);
+
+                            boolean accept=true;
+
+                            if(clazz instanceof Class) {
+                                Class<?> decClazz = (Class<?>) clazz;
+                                if(getterNameHeuristicFilters.isAcceptGetterMethod(readMethod.getName(), decClazz)){
+
+                                }
+                                Class[] ignoredInterfaces = {NBlankable.class};
+                                List<Class> ret = CorePlatformUtils.resolveInterfacesDeclaringNoArgMethod(readMethod.getName(), decClazz);
+                                for (Class a : ignoredInterfaces) {
+                                    if(ret.contains(a)){
+                                        accept = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            if(accept) {
+                                IndexedItem<NReflectProperty> v = new IndexedItem<>(hierarchyIndex,
+                                        new MethodReflectProperty1(propName, readMethod, null, cleanInstance, this, propertyDefaultValueStrategy)
+                                );
+                                declaredProperties.put(propName, v);
+                            }
                         }
                     }
                 }
@@ -581,12 +587,10 @@ public class DefaultNReflectType implements NReflectType {
                                         new MethodReflectProperty3(propName, readField, writeMethod, cleanInstance, this, propertyDefaultValueStrategy)
                                 );
                                 declaredProperties.put(propName, v);
-                                __logDebug("declaredProperties add " + v);
                             }
                         }
                     } else if (entry2.getValue().size() > 0) {
                         ambiguousWrites.add(propName);
-                        __logDebug("ambiguousWrites add " + propName);
                     }
                 }
             }
@@ -605,22 +609,37 @@ public class DefaultNReflectType implements NReflectType {
                         if (GETTER_SETTER.matcher(name).find()) continue; // already covered by bean
                         if (declaredProperties.containsKey(name)) continue;
                         boolean noargs = m.getParameterCount() == 0;
+                        boolean forceInclude = m.getAnnotation(NInclude.class) != null;
+                        boolean forceExclude = m.getAnnotation(NExclude.class) != null;
+                        if (forceExclude) {
+                            forceInclude = false;
+                        }
                         if (noargs) {
-                            if (!m.getReturnType().equals(Void.TYPE)) {
-                                if (IGNORED_FLUENT_NAMES.contains(name)) continue;
-                                String[] aa = NNameFormat.parse(name);
-                                if(aa.length>1) {
-                                    String a = aa[0];
-                                    if (a.equals("is")) continue;
-                                    if (a.equals("to")) continue;
-                                    if (a.equals("as")) continue;
+                            if (
+                                    !m.getReturnType().equals(Void.TYPE)
+                                //returning this type is equivalent to
+                                //but what about tree nodes that return parent or child???
+
+                            ) {
+                                if (forceExclude) {
+                                    continue;
+                                }
+                                if (!forceInclude) {
+                                    String[] aa = NNameFormat.parse(name);
+                                    if(!getterNameHeuristicFilters.accept(name,aa,m.getReturnType(),m.getDeclaringClass())){
+                                        continue;
+                                    }
+                                    if (aa.length == 2) {
+                                        String a1 = aa[0];
+                                        String a2 = aa[1];
+                                        // ignore intValue, longValue, ...
+                                        if (a2.equalsIgnoreCase("Value")) continue;
+                                    }
                                 }
                                 fluentGetters.put(name, m);
-                                __logDebug("fluentGetters candidate: " + m);
                             }
                         } else if (m.getParameterCount() == 1) {
                             fluentSetters.put(name, m);
-                            __logDebug("fluentSetters candidate: " + m);
                         }
                     }
                     // Setter alone is rejected — a getter must exist for the same name
@@ -640,7 +659,6 @@ public class DefaultNReflectType implements NReflectType {
                                 new MethodReflectProperty1(propName, readMethod, writeMethod, cleanInstance, this, propertyDefaultValueStrategy)
                         );
                         declaredProperties.put(propName, v);
-                        __logDebug("declaredProperties add (fluent) " + v);
                     }
                 }
             }
@@ -715,6 +733,13 @@ public class DefaultNReflectType implements NReflectType {
         public IndexedItem(int index, T item) {
             this.index = index;
             this.item = item;
+        }
+
+        @Override
+        public String toString() {
+            return "IndexedItem[" + index + "]{" +
+                    item +
+                    '}';
         }
     }
 

@@ -224,7 +224,7 @@ public class DefaultNFetch extends AbstractNFetch {
                     descTracker.addFailure(location);
                 } catch (Exception ex) {
                     //ignore
-                    _LOG().log(NMsg.ofC("unexpected error while fetching descriptor for %s", id.getLongId()).asError(ex));
+                    _LOG().log(NMsg.ofC("unexpected error while fetching descriptor for %s : %s", id.getLongId(),ex).asError(ex));
                     if (_LOG().isLoggable(Level.FINEST)) {
                         NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NMsgIntent.FAIL, "fetch def", startTime);
                     }

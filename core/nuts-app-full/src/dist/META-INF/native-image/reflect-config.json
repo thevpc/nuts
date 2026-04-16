@@ -66,8 +66,16 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"java.io.Serializable",
+  "methods":[{"name":"getExecutionEngineFamily","parameterTypes":[] }, {"name":"getId","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getPackaging","parameterTypes":[] }, {"name":"getPath","parameterTypes":[] }, {"name":"getProduct","parameterTypes":[] }, {"name":"getVariant","parameterTypes":[] }, {"name":"getVendor","parameterTypes":[] }, {"name":"getVersion","parameterTypes":[] }]
+},
+{
   "name":"java.lang.ClassLoader",
   "fields":[{"name":"classLoaderValueMap"}]
+},
+{
+  "name":"java.lang.Cloneable",
+  "methods":[{"name":"getExecutionEngineFamily","parameterTypes":[] }, {"name":"getId","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getPackaging","parameterTypes":[] }, {"name":"getPath","parameterTypes":[] }, {"name":"getProduct","parameterTypes":[] }, {"name":"getVariant","parameterTypes":[] }, {"name":"getVendor","parameterTypes":[] }, {"name":"getVersion","parameterTypes":[] }]
 },
 {
   "name":"java.lang.Object",
@@ -130,25 +138,25 @@
   "name":"net.thevpc.nuts.core.NConfigItem",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getConfigVersion","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.core.NRepositoryConfig",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getAuthenticationAgent","parameterTypes":[] }, {"name":"getEnv","parameterTypes":[] }, {"name":"getGroups","parameterTypes":[] }, {"name":"getLocation","parameterTypes":[] }, {"name":"getMirrors","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getStoreLocations","parameterTypes":[] }, {"name":"getStoreStrategy","parameterTypes":[] }, {"name":"getTags","parameterTypes":[] }, {"name":"getUuid","parameterTypes":[] }, {"name":"isIndexEnabled","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.core.NRepositoryRef",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getDeployWeight","parameterTypes":[] }, {"name":"getLocation","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"isEnabled","parameterTypes":[] }, {"name":"isFailSafe","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.platform.NExecutionEngineLocation",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getExecutionEngineFamily","parameterTypes":[] }, {"name":"getId","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getPackaging","parameterTypes":[] }, {"name":"getPath","parameterTypes":[] }, {"name":"getPriority","parameterTypes":[] }, {"name":"getProduct","parameterTypes":[] }, {"name":"getVariant","parameterTypes":[] }, {"name":"getVendor","parameterTypes":[] }, {"name":"getVersion","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder"
@@ -655,13 +663,13 @@
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestAgent",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getApiVersion","parameterTypes":[] }, {"name":"getArch","parameterTypes":[] }, {"name":"getDesktop","parameterTypes":[] }, {"name":"getOs","parameterTypes":[] }, {"name":"getOsDist","parameterTypes":[] }, {"name":"getPlatform","parameterTypes":[] }, {"name":"getRegisteredUser","parameterTypes":[] }, {"name":"getRegisteredUserToken","parameterTypes":[] }, {"name":"getRuntimeId","parameterTypes":[] }, {"name":"getShell","parameterTypes":[] }, {"name":"getUserDigest","parameterTypes":[] }, {"name":"getUserLocale","parameterTypes":[] }, {"name":"getUserTimeZone","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQuery",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getAgent","parameterTypes":[] }, {"name":"getId","parameterTypes":[] }, {"name":"getReason","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.search.DefaultNSearch"
@@ -727,31 +735,31 @@
   "name":"net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigApi",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getApiVersion","parameterTypes":[] }, {"name":"getJavaCommand","parameterTypes":[] }, {"name":"getJavaOptions","parameterTypes":[] }, {"name":"getRuntimeId","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigBoot",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getBootRepositories","parameterTypes":[] }, {"name":"getExtensions","parameterTypes":[] }, {"name":"getHomeLocations","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getRepositoryStoreStrategy","parameterTypes":[] }, {"name":"getStoreLayout","parameterTypes":[] }, {"name":"getStoreLocations","parameterTypes":[] }, {"name":"getStoreStrategy","parameterTypes":[] }, {"name":"getUuid","parameterTypes":[] }, {"name":"getWorkspace","parameterTypes":[] }, {"name":"isSystem","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigMain",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getCommandFactories","parameterTypes":[] }, {"name":"getEnv","parameterTypes":[] }, {"name":"getImports","parameterTypes":[] }, {"name":"getPlatforms","parameterTypes":[] }, {"name":"getRepositories","parameterTypes":[] }, {"name":"isEnablePreviewRepositories","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigRuntime",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getDependencies","parameterTypes":[] }, {"name":"getId","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigSecurity",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getAuthenticationAgent","parameterTypes":[] }, {"name":"getRepositories","parameterTypes":[] }, {"name":"getUsers","parameterTypes":[] }, {"name":"isSecure","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.list.DefaultNWorkspaceList"
@@ -817,7 +825,7 @@
   "name":"net.thevpc.nuts.security.NUserConfig",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getCredential","parameterTypes":[] }, {"name":"getGroups","parameterTypes":[] }, {"name":"getPermissions","parameterTypes":[] }, {"name":"getUserName","parameterTypes":[] }]
 },
 {
   "name":"sun.java2d.marlin.DMarlinRenderingEngine",

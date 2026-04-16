@@ -46,7 +46,10 @@ public class NEnvAsCmd extends NEnvBase {
         }
         return false;
     }
-
+    @Override
+    public boolean isNativeImage() {
+        return false;
+    }
     @NScore
     public static int getScore(NScorableContext context) {
         Object criteria = context.getCriteria();

@@ -41,8 +41,9 @@ import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.platform.NOsFamily;
 
 import java.io.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -486,5 +487,41 @@ public class CorePlatformUtils {
             return cn.substring(i + 1);
         }
         return cn;
+    }
+
+
+    public static List<Class> resolveInterfacesDeclaringNoArgMethod(String methodName, Class declaringClass){
+        List<Class> acceptableInterfaces=new ArrayList<>();
+        resolveInterfacesDeclaringNoArgMethod(methodName,declaringClass,acceptableInterfaces,new HashSet<>());
+        return acceptableInterfaces;
+    }
+
+    public static void resolveInterfacesDeclaringNoArgMethod(String methodName, Class declaringClass, List<Class> acceptableInterfaces, Set<Class> visitedClasses){
+        if(declaringClass==null){
+            return;
+        }
+        if(visitedClasses.contains(declaringClass)){
+            return;
+        }
+        if(declaringClass.isInterface()){
+            Method mm=null;
+            try {
+                mm = declaringClass.getDeclaredMethod(methodName);
+                int mod = mm.getModifiers();
+                if(Modifier.isStatic(mod) || Modifier.isPrivate(mod)){
+                    mm=null;
+                }
+            }catch (Exception e){
+                //
+            }
+            if(mm!=null){
+                acceptableInterfaces.add(declaringClass);
+            }
+            visitedClasses.add(declaringClass);
+        }
+        resolveInterfacesDeclaringNoArgMethod(methodName,declaringClass.getSuperclass(),acceptableInterfaces,visitedClasses);
+        for (Class d : declaringClass.getInterfaces()) {
+            resolveInterfacesDeclaringNoArgMethod(methodName,d,acceptableInterfaces,visitedClasses);
+        }
     }
 }
