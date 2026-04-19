@@ -21,6 +21,7 @@ import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
+import net.thevpc.nuts.spi.NAppResolver;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
@@ -35,10 +36,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Modifier;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -160,20 +158,18 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                 source = application;
                 appClass = application.getClass();
             } else {
-                StackTraceElement[] stackTrace = new Throwable().getStackTrace();
-                for (int i = 0; i < stackTrace.length; i++) {
-                    Class c = resolveClassWithMain(stackTrace[i]);
-                    if (c != null) {
-                        source = createInstance(c);
-                        appClass = c;
-                        break;
+                application=resolveApplicationCustomResolver();
+                if(application!=null) {
+                    appClass=NApplications.unproxyType(application.getClass());
+                    source=application;
+                }else{
+                    appClass=resolveApplicationFromStackTrace();
+                    if (appClass == null) {
+                        throw new NIllegalArgumentException(NMsg.ofC("unable to resolve application class from the current stacktrace"));
                     }
+                    NAssert.requireNamedNonNull(appClass, "applicationType");
+                    application = NApplications.createApplicationInstanceFromAnnotatedInstance(source);
                 }
-                if (appClass == null) {
-                    throw new NIllegalArgumentException(NMsg.ofC("unable to resolve application class from the current stacktrace"));
-                }
-                NAssert.requireNamedNonNull(appClass, "applicationType");
-                application = NApplications.createApplicationInstanceFromAnnotatedInstance(source);
             }
         } else {
             if (appClass != null) {
@@ -187,7 +183,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             }
             if (source != null) {
                 if (appClass == null) {
-                    appClass = JavaClassUtils.unwrapCGLib(source.getClass());
+                    appClass = NApplications.unproxyType(source.getClass());
                 } else {
                     if (!appClass.isInstance(source)) {
                         throw new NIllegalArgumentException(NMsg.ofC("invalid application instance (%s). Expected %s", source.getClass(), appClass));
@@ -270,7 +266,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             this.id = _appId;
         }
         this.args = new ArrayList<>(args);
-        this.sourceType = appClass == null ? null : JavaClassUtils.unwrapCGLib(appClass);
+        this.sourceType = appClass == null ? null : NApplications.unproxyType(appClass);
         this.application = application;
         this.source = source;
         for (NStoreType folder : NStoreType.values()) {
@@ -293,12 +289,43 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         }
     }
 
+    private NApplication resolveApplicationCustomResolver() {
+        ServiceLoader<NAppResolver> nAppResolverClassLoader=ServiceLoader.load(NAppResolver.class);
+        for (NAppResolver r : nAppResolverClassLoader) {
+            Object o = r.resolveCurrentApplication();
+            if(o!=null) {
+                return NApplications.createApplicationInstanceFromAnnotatedInstance(o);
+            }
+        }
+        return null;
+    }
+
+    private Class<?> resolveApplicationFromStackTrace() {
+        StackTraceElement[] stackTrace = new Throwable().getStackTrace();
+        NLog nLog = NLog.of(NAppImpl.class);
+        nLog.log(NMsg.ofC("looking for application in stacktrace"));
+        for (int i = 0; i < stackTrace.length; i++) {
+            nLog.log(NMsg.ofC("\t%s", stackTrace[i]));
+        }
+        for (int i = 0; i < stackTrace.length; i++) {
+            Class c = resolveClassWithMain(stackTrace[i]);
+            if (c != null) {
+                source = createInstance(c);
+                return c;
+            }
+        }
+        return null;
+    }
+
     private Class<?> resolveClassWithMain(StackTraceElement stackTraceElement) {
         String m = stackTraceElement.getMethodName();
         if (m != null && stackTraceElement.getClassName() != null && !stackTraceElement.getClassName().isEmpty()) {
             NTypeLoader type = NTypeLoader.of(stackTraceElement.getClassName());
             Class<?> c = type.getType().orNull();
             if (c != null) {
+                if (Modifier.isAbstract(c.getModifiers())) {
+                    return null;
+                }
                 if ("main".equals(m)) {
                     return type.getDeclaredMethod("main", String[].class).filter(
                             main->Modifier.isStatic(main.getModifiers()) && Modifier.isPublic(main.getModifiers()))
@@ -326,9 +353,11 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
      * Errors are wrapped in RuntimeExceptions for simplicity.
      */
     private Object createInstance(Class applicationType) {
+        NLog nLog = NLog.of(NAppImpl.class);
         try {
             return applicationType == null ? null : applicationType.getConstructor().newInstance();
         } catch (Exception e) {
+            nLog.debug(NMsg.ofC("createInstance %s failed : %s", applicationType,e));
             throw NExceptions.ofUncheckedException(e);
         }
     }

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.app.NAppDefinition;
+import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.*;
 
@@ -685,7 +686,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NOptional<NId> resolveId(Class<?> clazz) {
-        clazz=JavaClassUtils.unwrapCGLib(clazz);
+        clazz= NApplications.unproxyType(clazz);
         List<NId> pomIds = resolveIds(clazz);
         NId defaultValue = null;
         if (pomIds.isEmpty()) {
@@ -736,7 +737,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public List<NId> resolveIds(Class<?> clazz) {
-        clazz=JavaClassUtils.unwrapCGLib(clazz);
+        clazz=NApplications.unproxyType(clazz);
         LinkedHashSet<NId> all = new LinkedHashSet<>();
         NAppDefinition annotation = (NAppDefinition) clazz.getAnnotation(NAppDefinition.class);
         if (annotation != null) {

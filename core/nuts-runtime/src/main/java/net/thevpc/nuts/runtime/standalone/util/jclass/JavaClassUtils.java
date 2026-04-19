@@ -22,12 +22,12 @@ import java.net.URL;
 import java.util.*;
 
 public class JavaClassUtils {
-    public static Class unwrapCGLib(Class clazz) {
-        if(isCGLib(clazz)){
-            return clazz.getSuperclass();
-        }
-        return clazz;
-    }
+//    public static Class unwrapCGLib(Class clazz) {
+//        if(isCGLib(clazz)){
+//            return clazz.getSuperclass();
+//        }
+//        return clazz;
+//    }
 
     public static List<URL> resolveURLs(Class clazz) {
         List<URL> all=new ArrayList<>();
@@ -55,16 +55,16 @@ public class JavaClassUtils {
         return all;
     }
 
-    public static boolean isCGLib(Class clazz) {
-        String simpleName = clazz.getSimpleName();
-        if(simpleName.contains("$$EnhancerBySpringCGLIB$$")
-                || simpleName.contains("$$CGLIB$$")
-                || simpleName.contains("$$SpringCGLIB$$")
-        ){
-            return true;
-        }
-        return false;
-    }
+//    public static boolean isCGLib(Class clazz) {
+//        String simpleName = clazz.getSimpleName();
+//        if(simpleName.contains("$$EnhancerBySpringCGLIB$$")
+//                || simpleName.contains("$$CGLIB$$")
+//                || simpleName.contains("$$SpringCGLIB$$")
+//        ){
+//            return true;
+//        }
+//        return false;
+//    }
 
     /**
      * @param stream stream

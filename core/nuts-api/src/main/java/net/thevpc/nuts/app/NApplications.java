@@ -167,12 +167,18 @@ public final class NApplications {
         return false;
     }
 
-    private static boolean isProxyType(Class<?> aClass) {
+    public static boolean isProxyType(Class<?> aClass) {
         if (aClass == null) {
             return false;
         }
+        if (java.lang.reflect.Proxy.isProxyClass(aClass)) {
+            return true;
+        }
         String simpleName = aClass.getSimpleName();
-        if (simpleName.contains("$$EnhancerBySpringCGLIB$$")
+        if (
+                simpleName.contains("$$")
+                || simpleName.contains("$HibernateProxy$")
+                || simpleName.contains("$$EnhancerBySpringCGLIB$$")
                 || simpleName.contains("$$CGLIB$$")
                 || simpleName.contains("$$SpringCGLIB$$")
         ) {
@@ -184,6 +190,14 @@ public final class NApplications {
     public static Class<?> unproxyType(Class<?> aClass) {
         if (aClass == null) {
             return null;
+        }
+        // 1. Handle JDK Dynamic Proxies
+        // These don't extend your class, they implement your interfaces.
+        if (java.lang.reflect.Proxy.isProxyClass(aClass)) {
+            // For JDK proxies, we usually take the first interface
+            // as the "target" type, though this is a heuristic.
+            Class<?>[] interfaces = aClass.getInterfaces();
+            return (interfaces.length > 0) ? interfaces[0] : aClass;
         }
         if (isProxyType(aClass)) {
             Class<?> u = unproxyType(aClass.getSuperclass());

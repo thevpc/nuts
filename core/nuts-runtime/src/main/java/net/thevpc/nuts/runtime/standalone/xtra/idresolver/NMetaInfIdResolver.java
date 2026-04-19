@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.idresolver;
 
+import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NDescriptorParser;
 import net.thevpc.nuts.artifact.NId;
@@ -124,8 +125,8 @@ public class NMetaInfIdResolver {
                             .asFinestAlert()
                     );
         }
-        if (all.isEmpty() && JavaClassUtils.isCGLib(clazz)) {
-            Class s = JavaClassUtils.unwrapCGLib(clazz);
+        if (all.isEmpty() && NApplications.isProxyType(clazz)) {
+            Class s = NApplications.unproxyType(clazz);
             if (s != null) {
                 return resolvePomIds(s);
             }
