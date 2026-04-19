@@ -1,0 +1,336 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NAF — Nuts Application Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0b0d;--bg2:#111114;--bg3:#18181c;
+  --border:#252528;--border2:#38383f;
+  --amber:#d97706;--amber-lt:#f59e0b;--amber-dim:rgba(217,119,6,.1);
+  --text:#e4e4ec;--muted:#7a7a92;--muted2:#484858;--code-bg:#0e0e12;
+  --green:#4ade80;--blue:#60a5fa;
+  --head:'Bricolage Grotesque',sans-serif;
+  --body:'Plus Jakarta Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.glow-bar{height:2px;background:linear-gradient(90deg,transparent,var(--amber) 40%,var(--amber-lt) 60%,transparent);opacity:.45}
+nav{position:sticky;top:0;z-index:100;background:rgba(11,11,13,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem}
+.nav-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;height:56px;gap:1.5rem}
+.nav-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;font-family:var(--head);font-weight:800;font-size:1.05rem;color:var(--text)}
+.nav-logo img{width:26px;height:26px;border-radius:5px}
+.dot{color:var(--amber)}
+.nav-links{display:flex;gap:1.25rem;margin-left:auto;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.82rem;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--amber-lt)}
+/* PAGE HEADER */
+.page-header{max-width:1120px;margin:0 auto;padding:4.5rem 2rem 2.5rem;text-align:center}
+.s-label{font-family:var(--mono);font-size:.66rem;color:var(--amber);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.6rem}
+.page-header h1{font-family:var(--head);font-size:2.8rem;font-weight:800;color:#fff;letter-spacing:-.04em;margin-bottom:.75rem}
+.page-header p{color:var(--muted);font-size:.95rem;max-width:500px;margin:0 auto;font-weight:300}
+/* QUICK INSTALL */
+.quick-install{max-width:680px;margin:2rem auto;background:var(--code-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.qi-bar{background:var(--bg3);padding:.55rem 1.1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.qi-os-tabs{display:flex;gap:.25rem}
+.qi-tab{border:none;background:transparent;color:var(--muted2);font-size:.75rem;font-family:var(--body);padding:.3rem .7rem;border-radius:5px;cursor:pointer;transition:all .2s}
+.qi-tab.active{background:var(--bg);color:var(--text)}
+.qi-copy{border:none;background:transparent;color:var(--muted2);font-size:.68rem;cursor:pointer;font-family:var(--body);padding:.25rem .5rem;border-radius:4px;transition:color .2s}
+.qi-copy:hover{color:var(--text)}
+.qi-body{padding:1.1rem 1.3rem}
+.qi-prompt{color:var(--amber);font-family:var(--mono);font-size:.82rem}
+.qi-cmd{font-family:var(--mono);font-size:.82rem;color:var(--text);display:block;margin-top:.25rem}
+/* SECTIONS */
+.dl-sections{max-width:1120px;margin:0 auto;padding:1rem 2rem 5rem}
+.dl-section{margin-bottom:3.5rem}
+.dl-section-head{display:flex;align-items:baseline;gap:1rem;margin-bottom:1.25rem}
+.dl-section-head h2{font-family:var(--head);font-size:1.25rem;font-weight:800;color:#fff;letter-spacing:-.03em}
+.version-badge{font-family:var(--mono);font-size:.68rem;color:var(--amber-lt);background:var(--amber-dim);border:1px solid rgba(217,119,6,.25);border-radius:5px;padding:.2rem .55rem}
+.stable-badge{font-family:var(--mono);font-size:.68rem;color:var(--green);background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:5px;padding:.2rem .55rem}
+.desc-text{font-size:.875rem;color:var(--muted);margin-bottom:1.25rem;font-weight:300;max-width:640px}
+.desc-text strong{color:var(--text);font-weight:500}
+/* OS tabs */
+.os-tabs{display:flex;gap:.5rem;margin-bottom:1.25rem}
+.os-tab{border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-size:.8rem;font-family:var(--body);padding:.4rem 1rem;border-radius:7px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.os-tab:hover{border-color:var(--border2);color:var(--text)}
+.os-tab.active{border-color:var(--amber);color:var(--amber-lt);background:var(--amber-dim)}
+.os-panel{display:none}
+.os-panel.active{display:block}
+.os-note{font-size:.82rem;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem;margin-bottom:1rem}
+.code-block{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1rem}
+.code-bar{background:var(--bg3);padding:.4rem 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.code-label{font-family:var(--mono);font-size:.63rem;color:var(--muted2)}
+.code-copy{border:none;background:transparent;color:var(--muted2);font-size:.65rem;cursor:pointer;font-family:var(--body);padding:.2rem .4rem;border-radius:4px;transition:color .2s}
+.code-copy:hover{color:var(--text)}
+.code-block pre{padding:.9rem 1.1rem;margin:0;font-family:var(--mono);font-size:.75rem;line-height:1.85;color:var(--muted)}
+.cm{color:var(--muted2)}.kw{color:var(--amber-lt)}.str{color:#86efac}
+/* INSTALLER TABLE */
+.dl-table{width:100%;border-collapse:collapse;font-size:.83rem}
+.dl-table thead tr{border-bottom:1px solid var(--border)}
+.dl-table th{font-size:.7rem;font-family:var(--mono);color:var(--muted2);letter-spacing:.06em;text-transform:uppercase;padding:.6rem 1rem;text-align:left;font-weight:400}
+.dl-table td{padding:.75rem 1rem;border-bottom:1px solid var(--border);vertical-align:middle}
+.dl-table tr:last-child td{border-bottom:none}
+.dl-table tr:hover td{background:var(--bg2)}
+.plat{font-weight:600;color:var(--text)}
+.pkg-type{color:var(--muted);font-size:.8rem}
+.dl-link{display:inline-flex;align-items:center;gap:.4rem;color:var(--amber-lt);text-decoration:none;font-family:var(--mono);font-size:.78rem;transition:color .2s}
+.dl-link:hover{color:var(--amber)}
+.dl-link.na{color:var(--muted2);pointer-events:none}
+.size-tag{font-size:.72rem;color:var(--muted2)}
+/* ARCHIVE TABLE */
+.arch-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.arch-table th{font-size:.68rem;font-family:var(--mono);color:var(--muted2);letter-spacing:.06em;text-transform:uppercase;padding:.5rem .85rem;text-align:left;font-weight:400;border-bottom:1px solid var(--border)}
+.arch-table td{padding:.65rem .85rem;border-bottom:1px solid var(--border)}
+.arch-table tr:last-child td{border-bottom:none}
+.arch-ver{font-family:var(--mono);color:var(--amber-lt);font-weight:500}
+.arch-cmd{font-family:var(--mono);font-size:.72rem;color:var(--muted);word-break:break-all}
+/* requirement note */
+.req-note{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:.9rem 1.1rem;font-size:.83rem;color:var(--muted);margin-bottom:1.5rem;display:flex;gap:.65rem;align-items:flex-start}
+.req-icon{color:var(--blue);flex-shrink:0;font-size:.95rem}
+footer{border-top:1px solid var(--border);padding:2.25rem 2rem;text-align:center}
+footer p{font-size:.76rem;color:var(--muted2);line-height:1.9}
+footer a{color:var(--muted);text-decoration:none;transition:color .2s}footer a:hover{color:var(--amber)}
+.foot-links{display:flex;justify-content:center;gap:1.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.foot-links a{font-size:.76rem;color:var(--muted2);text-decoration:none;transition:color .2s}.foot-links a:hover{color:var(--text)}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.a1{animation:up .55s ease both}.a2{animation:up .55s .1s ease both}.a3{animation:up .55s .2s ease both}
+@media(max-width:760px){.nav-links{display:none}.os-tabs{flex-wrap:wrap}}
+
+/* NAF-specific */
+.hero-wrap{max-width:1120px;margin:0 auto;padding:6rem 2rem 4rem;text-align:center}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--amber-dim);border:1px solid rgba(217,119,6,.3);border-radius:999px;padding:.3rem 1rem;font-family:var(--mono);font-size:.68rem;color:var(--amber-lt);margin-bottom:1.5rem}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+h1{font-family:var(--head);font-size:clamp(2.6rem,5vw,3.8rem);font-weight:800;line-height:1.07;letter-spacing:-.04em;color:#fff;margin-bottom:1.1rem}
+h1 em{font-style:normal;color:var(--amber)}
+.hero-sub{font-size:1.05rem;color:var(--muted);line-height:1.8;max-width:600px;margin:0 auto 2rem;font-weight:300}
+.hero-meta{display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:2.5rem}
+.tag{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:.25rem .7rem;font-size:.75rem;color:var(--muted);font-family:var(--mono)}
+.hero-actions{display:flex;justify-content:center;gap:.75rem;flex-wrap:wrap}
+.btn-p{background:var(--amber);color:#000;padding:.62rem 1.35rem;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem;transition:background .18s,transform .15s;display:inline-block}
+.btn-p:hover{background:var(--amber-lt);transform:translateY(-1px)}
+.btn-g{background:transparent;color:var(--muted);padding:.62rem 1.35rem;border-radius:8px;text-decoration:none;font-size:.875rem;border:1px solid var(--border2);transition:all .2s;display:inline-block}
+.btn-g:hover{color:var(--text);transform:translateY(-1px)}
+/* Maven box */
+.maven-band{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:2.5rem 2rem;margin-top:1rem}
+.maven-inner{max-width:760px;margin:0 auto}
+.maven-inner .s-label{text-align:center}
+.maven-inner p{text-align:center;font-size:.875rem;color:var(--muted);margin-bottom:1.25rem}
+/* Feature sections */
+.feats{max-width:1120px;margin:0 auto;padding:3rem 2rem 5rem}
+.feat-group{margin-bottom:3.5rem}
+.feat-group h2{font-family:var(--head);font-size:clamp(1.2rem,2.5vw,1.55rem);font-weight:800;color:#fff;letter-spacing:-.03em;margin-bottom:.5rem}
+.feat-group .desc{font-size:.9rem;color:var(--muted);line-height:1.8;max-width:760px;margin-bottom:1rem;font-weight:300}
+.feat-group .desc strong{color:var(--text);font-weight:500}
+/* Two-col layout for some sections */
+.feat-cols{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:1.25rem}
+.feat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:border-color .3s,transform .3s}
+.feat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.feat-card h3{font-family:var(--head);font-size:.92rem;font-weight:700;color:#fff;margin-bottom:.5rem;letter-spacing:-.015em}
+.feat-card p{font-size:.83rem;color:var(--muted);line-height:1.7}
+.feat-card .code-block{margin-top:.85rem}
+/* API pills */
+.api-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}
+.api-pill{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:.3rem .75rem;font-family:var(--mono);font-size:.72rem;color:var(--amber-lt)}
+@media(max-width:820px){.feat-cols{grid-template-columns:1fr}}
+</style>
+</head><body>
+<div class="glow-bar"></div>
+<nav><div class="nav-inner">
+  <a href="index.html" class="nav-logo"><img src="assets/images/nuts-icon.png" alt="Nuts">Nuts<span class="dot">.</span>pm</a>
+  <div class="nav-sep"></div><span class="nav-sub">Application Framework</span>
+  <div class="nav-links">
+    <a href="index.html">Nuts PM</a>
+    <a href="doc-naf.html">Docs</a>
+    <a href="blog.html">Blog</a>
+    <a href="apps.html">Apps</a>
+    <a href="download.html">Download</a>
+    <a href="https://github.com/thevpc/nuts" target="_blank">GitHub</a>
+  </div>
+</div></nav>
+
+<section><div class="hero-wrap">
+  <div class="hero-badge a1"><div class="badge-dot"></div>NAF v0.8.9.0 — Java 8 compatible</div>
+  <h1 class="a2">The Modular Foundation<br>for <em>Modern Java Apps</em></h1>
+  <p class="hero-sub a3">NAF is a lightweight, non-invasive framework built on the Nuts runtime. Configuration, logging, dependency injection, structured I/O — all in one coherent API.</p>
+  <div class="hero-meta a4">
+    <span class="tag">Java 8+</span>
+    <span class="tag">Spring-compatible</span>
+    <span class="tag">SLF4J-compatible</span>
+    <span class="tag">Zero-setup</span>
+    <span class="tag">Maven-ready</span>
+  </div>
+  <div class="hero-actions a5">
+    <a href="doc-naf.html" class="btn-p">Read the Docs</a>
+    <a href="https://github.com/thevpc/nuts" class="btn-g" target="_blank">View on GitHub →</a>
+  </div>
+</div></section>
+
+<div class="maven-band">
+  <div class="maven-inner reveal">
+    <div class="s-label">Maven Integration</div>
+    <p>One dependency. Full runtime. Just add this to your <code style="font-family:var(--mono);color:var(--amber-lt);font-size:.85rem">pom.xml</code> and NAF takes care of the rest.</p>
+    <div class="code-block"><pre><span class="ty">&lt;dependency&gt;</span>
+  <span class="ty">&lt;groupId&gt;</span><span class="str">net.thevpc.nuts</span><span class="ty">&lt;/groupId&gt;</span>
+  <span class="ty">&lt;artifactId&gt;</span><span class="str">nuts</span><span class="ty">&lt;/artifactId&gt;</span>
+  <span class="ty">&lt;version&gt;</span><span class="str">0.8.9</span><span class="ty">&lt;/version&gt;</span>
+<span class="ty">&lt;/dependency&gt;</span>
+
+<span class="cm">&lt;!-- Add thevpc repo --&gt;</span>
+<span class="ty">&lt;repository&gt;</span>
+  <span class="ty">&lt;id&gt;</span><span class="str">thevpc</span><span class="ty">&lt;/id&gt;</span>
+  <span class="ty">&lt;url&gt;</span><span class="str">https://maven.thevpc.net</span><span class="ty">&lt;/url&gt;</span>
+<span class="ty">&lt;/repository&gt;</span></pre></div>
+    <div class="code-block" style="margin-top:.75rem"><pre><span class="cm">// One line to start</span>
+<span class="kw">Nuts</span>.require();
+<span class="kw">NOut</span>.println(<span class="str">"Hello Nuts!"</span>);</pre></div>
+  </div>
+</div>
+
+<section class="feats">
+
+  <div class="feat-group reveal">
+    <div class="s-label">Rich Messaging</div>
+    <h2>NMsg — Structured, Styled Output</h2>
+    <p class="desc"><strong>NMsg</strong> creates structured messages with dynamic placeholders, automatic type coloring (booleans, numbers, paths, dates), custom styles, and nested composition. Supports C-style, Java-style, and variable-substitution placeholder formats.</p>
+    <div class="feat-cols">
+      <div class="feat-card">
+        <h3>Multiple Placeholder Formats</h3>
+        <p>C-style, SLF4J-style, or named variable substitution — choose what fits your style.</p>
+        <div class="code-block"><pre><span class="kw">NMsg</span>.ofC(<span class="str">"Hello %s, you have %d notifications"</span>, <span class="str">"Alice"</span>, 5);
+<span class="kw">NMsg</span>.ofJ(<span class="str">"Downloading {} from {}"</span>, <span class="str">"report.pdf"</span>, <span class="str">"server-01"</span>);
+<span class="kw">NMsg</span>.ofV(<span class="str">"User $user on ${app}"</span>, Map.of(<span class="str">"user"</span>, <span class="str">"Alice"</span>));</pre></div>
+      </div>
+      <div class="feat-card">
+        <h3>Text Rendering Formats</h3>
+        <p>Plain, styled, code blocks, or full NTF markup with bold, italic, and colors.</p>
+        <div class="code-block"><pre><span class="kw">NMsg</span>.ofPlain(<span class="str">"Plain output"</span>);
+<span class="kw">NMsg</span>.ofStyled(<span class="str">"Error: file not found"</span>, <span class="ty">NTextStyle</span>.error());
+<span class="kw">NMsg</span>.ofCode(<span class="str">"java"</span>, <span class="str">"System.out.println(\"Hello\")"</span>);
+<span class="kw">NMsg</span>.ofNtf(<span class="str">"##bold## ##:/:italic## ```code```"</span>);</pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feat-group reveal">
+    <div class="s-label">Filesystem</div>
+    <h2>NPath — Unified Local & Remote Paths</h2>
+    <p class="desc">Work with local files, HTTP, and SSH using the same API. Access standard system directories cross-platform without writing OS-specific code.</p>
+    <div class="code-block"><pre><span class="cm">// Local and remote paths — same API</span>
+<span class="ty">String</span> content = <span class="kw">NPath</span>.of(<span class="str">"http://myserver/myfile.txt"</span>).readString();
+<span class="ty">String</span>[] lines = <span class="kw">NPath</span>.of(<span class="str">"ssh://myserver/myfile.txt"</span>).lines().toArray(<span class="ty">String</span>[]::new);
+
+<span class="cm">// Standard directories</span>
+<span class="kw">NPath</span>.ofUserHome();                              <span class="cm">// ~/</span>
+<span class="kw">NPath</span>.ofUserStore(<span class="ty">NStoreType</span>.CONFIG);           <span class="cm">// ~/.config/nuts on Linux</span>
+<span class="kw">NPath</span>.ofSystemStore(<span class="ty">NStoreType</span>.BIN);            <span class="cm">// /opt/nuts on Linux</span></pre></div>
+  </div>
+
+  <div class="feat-group reveal">
+    <div class="s-label">CLI</div>
+    <h2>NCmdLine — Clean Argument Parsing</h2>
+    <p class="desc">Parse flags, options, and non-option arguments with full type handling. Build sophisticated CLI tools without the parsing boilerplate.</p>
+    <div class="code-block"><pre><span class="ty">NCmdLine</span> cmdLine = <span class="kw">NApp</span>.of().getCmdLine();
+<span class="ty">NRef</span>&lt;<span class="ty">Boolean</span>&gt; boolOpt = <span class="ty">NRef</span>.of(false);
+<span class="ty">NRef</span>&lt;<span class="ty">String</span>&gt; strOpt  = <span class="ty">NRef</span>.ofNull();
+<span class="kw">while</span> (cmdLine.hasNext()) {
+    cmdLine.matcher()
+        .with(<span class="str">"-o"</span>, <span class="str">"--option"</span>).matchFlag(v  -> boolOpt.set(v.booleanValue()))
+        .with(<span class="str">"-n"</span>, <span class="str">"--name"</span>).matchEntry(v   -> strOpt.set(v.stringValue()))
+        .withNonOption().matchAny(v          -> strOpt.set(v.image()))
+        .requireDefaults();
+}</pre></div>
+  </div>
+
+  <div class="feat-group reveal">
+    <div class="s-label">Logging</div>
+    <h2>NLog — Scoped, Context-Aware Logging</h2>
+    <p class="desc">Beyond MDC: nested logging scopes, dynamic placeholders, message prefixes, and custom log handlers — all without touching global configuration. Integrates with JUL and SLF4J.</p>
+    <div class="feat-cols">
+      <div class="feat-card">
+        <h3>Structured Log Entries</h3>
+        <p>Attach intent, exceptions, and duration to every log message.</p>
+        <div class="code-block"><pre><span class="kw">NLog</span>.of(<span class="str">"myapp"</span>).info(
+  <span class="kw">NMsg</span>.ofV(<span class="str">"Task %s completed"</span>, <span class="str">"Upload"</span>)
+    .withIntent(<span class="ty">NMsgIntent</span>.CONFIG)
+    .withThrowable(exception)
+    .withDurationMs(123)
+);</pre></div>
+      </div>
+      <div class="feat-card">
+        <h3>Scoped Logging</h3>
+        <p>Logs automatically inherit the correct context without explicit parameter passing.</p>
+        <div class="code-block"><pre><span class="kw">NLog</span>.runInScope(
+  <span class="ty">NLogScope</span>.of()
+    .withMessagePrefix(<span class="kw">NMsg</span>.ofC(<span class="str">"[App]"</span>))
+    .withPlaceholder(<span class="str">"user"</span>, <span class="str">"Adam"</span>),
+  () -> <span class="ty">OtherClass</span>.doThis()
+);</pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feat-group reveal">
+    <div class="s-label">Resiliency</div>
+    <h2>Resilience Patterns Out of the Box</h2>
+    <p class="desc">NAF ships production-grade resilience primitives: rate limiting, circuit breakers, retry logic, saga orchestration, caching, and locking — all cohesive and composable.</p>
+    <div class="api-grid">
+      <span class="api-pill">NRateLimitedValue</span><span class="api-pill">NCircuitBreakerCall</span>
+      <span class="api-pill">NRetryCall</span><span class="api-pill">NSagaCall</span>
+      <span class="api-pill">NCachedValue</span><span class="api-pill">NStableValue</span>
+      <span class="api-pill">NLock</span><span class="api-pill">NBulkheadCall</span>
+    </div>
+    <div class="code-block"><pre><span class="cm">// Rate limiting: 10 calls per 2 minutes, sliding window</span>
+<span class="ty">NRateLimitedValue</span> limiter = <span class="ty">NRateLimitedValue</span>.ofBuilder(<span class="str">"api"</span>)
+    .withLimit(<span class="str">"calls"</span>, 10).per(<span class="ty">Duration</span>.ofMinutes(2))
+    .withStrategy(<span class="ty">NRateLimitDefaultStrategy</span>.SLIDING_WINDOW)
+    .build();
+limiter.claimAndRun(() -> <span class="kw">NOut</span>.println(<span class="str">"Action executed"</span>));
+
+<span class="cm">// Process-safe file lock</span>
+<span class="ty">NLock</span>.ofPath(<span class="kw">NPath</span>.of(<span class="str">"/path/to/resource.txt"</span>))
+    .runWith(() -> <span class="kw">NOut</span>.println(<span class="str">"Critical section"</span>));</pre></div>
+  </div>
+
+  <div class="feat-group reveal">
+    <div class="s-label">Data & I/O</div>
+    <h2>NElement, NCp, NDigest, NExec</h2>
+    <p class="desc">A complete I/O toolkit: structured data in JSON/XML/TSON, validated copy with progress monitoring, fluent hashing, and unified process execution — local or remote.</p>
+    <div class="feat-cols">
+      <div class="feat-card">
+        <h3>NElement — Any Format</h3>
+        <div class="code-block"><pre><span class="ty">Person</span> p = <span class="kw">NElementParser</span>.ofJson()
+    .parse(<span class="kw">NPath</span>.of(<span class="str">"person.json"</span>), <span class="ty">Person</span>.class);
+<span class="kw">NElementFormat</span>.ofPlainXml(doc)
+    .println(<span class="kw">NPath</span>.of(<span class="str">"out.xml"</span>));</pre></div>
+      </div>
+      <div class="feat-card">
+        <h3>NExec — Unified Process Execution</h3>
+        <div class="code-block"><pre><span class="ty">String</span> out = <span class="kw">NExec</span>.of(<span class="str">"ls"</span>).system()
+    .grabAll().run().getGrabbedOutString();
+<span class="cm">// Run Maven artifact (auto-resolve)</span>
+<span class="kw">NExec</span>.of(<span class="str">"netbeans-launcher"</span>).run();</pre></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  <div class="foot-links">
+    <a href="index.html">Nuts PM</a><a href="doc-naf.html">Documentation</a>
+    <a href="blog.html">Blog</a><a href="apps.html">Apps</a>
+    <a href="download.html">Download</a><a href="https://github.com/thevpc/nuts" target="_blank">GitHub</a>
+  </div>
+  <p>Copyright © 2018–2026 Nuts Package Manager Team.<br>
+  Generated with <a href="apps.html#app-nsite">nsite</a> · Based on <a href="https://github.com/harnishdesign/iDocs" target="_blank">HarnishDesign</a></p>
+</footer>
+<script>
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('v');obs.unobserve(x.target)}}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body></html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Download — Nuts Package Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== YOUR EXISTING THEME VARIABLES (unchanged) ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0b0d;--bg2:#111114;--bg3:#18181c;
+  --border:#252528;--border2:#38383f;
+  --amber:#d97706;--amber-lt:#f59e0b;--amber-dim:rgba(217,119,6,.1);
+  --text:#e4e4ec;--muted:#7a7a92;--muted2:#484858;--code-bg:#0e0e12;
+  --green:#4ade80;--blue:#60a5fa;
+  --head:'Bricolage Grotesque',sans-serif;
+  --body:'Plus Jakarta Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.glow-bar{height:2px;background:linear-gradient(90deg,transparent,var(--amber) 40%,var(--amber-lt) 60%,transparent);opacity:.45}
+
+/* ===== NAV (unchanged) ===== */
+nav{position:sticky;top:0;z-index:100;background:rgba(11,11,13,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem}
+.nav-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;height:56px;gap:1.5rem}
+.nav-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;font-family:var(--head);font-weight:800;font-size:1.05rem;color:var(--text)}
+.nav-logo img{width:26px;height:26px;border-radius:5px}
+.dot{color:var(--amber)}
+.nav-links{display:flex;gap:1.25rem;margin-left:auto;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.82rem;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--amber-lt)}
+
+/* ===== PAGE HEADER ===== */
+.page-header{max-width:1120px;margin:0 auto;padding:3.5rem 2rem 2rem;text-align:center}
+.s-label{font-family:var(--mono);font-size:.66rem;color:var(--amber);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.6rem}
+.page-header h1{font-family:var(--head);font-size:2.4rem;font-weight:800;color:#fff;letter-spacing:-.04em;margin-bottom:.5rem}
+.page-header p{color:var(--muted);font-size:.95rem;max-width:550px;margin:0 auto;font-weight:300}
+
+/* ===== VERSION BAR (NEW: orthogonal version selector) ===== */
+.version-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:.75rem 0;margin-bottom:1.5rem}
+.version-toggle{max-width:1120px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.v-tab{display:flex;align-items:center;gap:.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.4rem .9rem;cursor:pointer;transition:all .2s;font-family:var(--body);color:var(--muted)}
+.v-tab.active{border-color:var(--amber);background:var(--amber-dim);color:var(--text)}
+.v-label{font-weight:600;font-size:.85rem}
+.v-ver{font-family:var(--mono);font-size:.7rem;color:var(--muted2)}
+.v-badge{font-family:var(--mono);font-size:.62rem;padding:.1rem .4rem;border-radius:4px}
+.v-badge.dev{background:var(--amber-dim);color:var(--amber-lt)}
+.v-badge.stable{background:rgba(74,222,128,.15);color:var(--green)}
+.v-arch{margin-left:auto;font-size:.75rem;color:var(--muted);text-decoration:none}
+.v-arch:hover{color:var(--amber-lt)}
+.version-note{max-width:1120px;margin:.5rem auto 0;padding:0 2rem;font-size:.75rem;color:var(--muted2);display:flex;gap:1rem;flex-wrap:wrap}
+.version-note .req{font-weight:500;color:var(--muted)}
+.version-note .compat{color:var(--green)}
+
+/* ===== PLATFORM TABS (NEW) ===== */
+.platform-tabs{max-width:1120px;margin:0 auto 1.5rem;padding:0 2rem;display:flex;gap:.5rem;flex-wrap:wrap}
+.ptab{background:var(--bg2);border:1px solid var(--border);color:var(--muted);font-size:.8rem;padding:.45rem 1rem;border-radius:7px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.ptab:hover{border-color:var(--border2);color:var(--text)}
+.ptab.active{border-color:var(--amber);color:var(--amber-lt);background:var(--amber-dim)}
+
+/* ===== PACKAGE FORMAT GRID (NEW: visible all formats) ===== */
+.pkg-grid{max-width:1120px;margin:0 auto;padding:0 2rem 2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1rem}
+.pkg-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1rem;display:flex;flex-direction:column;gap:.6rem;transition:border-color .2s,transform .2s}
+.pkg-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.pkg-card[data-status="avail"]{border-left:3px solid var(--green)}
+.pkg-card[data-status="preview"]{border-left:3px solid var(--amber)}
+.pkg-card[data-status="soon"]{border-left:3px solid var(--blue);opacity:.9}
+.pkg-card[data-status="request"]{border-left:3px solid var(--muted2)}
+
+.pkg-head{display:flex;align-items:center;gap:.5rem}
+.pkg-icon{font-size:1.2rem}
+.pkg-title{font-weight:600;color:var(--text);font-size:.9rem}
+.pkg-status{margin-left:auto;font-size:.65rem;font-family:var(--mono);padding:.15rem .45rem;border-radius:4px;font-weight:500}
+.pkg-status.avail{background:rgba(74,222,128,.15);color:var(--green)}
+.pkg-status.preview{background:var(--amber-dim);color:var(--amber-lt)}
+.pkg-status.soon{background:rgba(96,165,250,.12);color:var(--blue)}
+.pkg-status.request{background:var(--bg3);color:var(--muted2)}
+
+.pkg-desc{font-size:.8rem;color:var(--muted);line-height:1.6}
+.pkg-meta{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.2rem}
+.meta-tag{font-size:.68rem;color:var(--muted2);background:var(--bg3);padding:.12rem .4rem;border-radius:3px;font-family:var(--mono)}
+
+.pkg-actions{display:flex;gap:.5rem;margin-top:auto;flex-wrap:wrap}
+.pkg-btn{flex:1;min-width:100px;padding:.45rem .7rem;font-size:.75rem;border:1px solid var(--border);background:var(--bg3);color:var(--text);border-radius:6px;cursor:pointer;transition:all .2s;text-align:center;text-decoration:none}
+.pkg-btn:hover:not(:disabled){border-color:var(--amber);color:var(--amber-lt);background:var(--amber-dim)}
+.pkg-btn.disabled{opacity:.6;cursor:not-allowed}
+.pkg-link{font-size:.73rem;color:var(--muted);text-decoration:none;white-space:nowrap;padding:.45rem .7rem}
+.pkg-link:hover{color:var(--amber-lt)}
+
+/* ===== LEGEND ===== */
+.pkg-legend{max-width:1120px;margin:0 auto 2rem;padding:0 2rem;display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;font-size:.73rem;color:var(--muted)}
+.legend-item{display:flex;align-items:center;gap:.4rem}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.dot.avail{background:var(--green)}
+.dot.preview{background:var(--amber-lt)}
+.dot.soon{background:var(--blue)}
+.dot.request{background:var(--muted2)}
+
+/* ===== DOCKER PANEL (SPECIAL) ===== */
+.docker-panel{max-width:800px;margin:0 auto 3rem;padding:0 2rem;display:none}
+.docker-panel.active{display:block;animation:up .4s ease}
+.docker-intro{text-align:center;margin-bottom:1.5rem}
+.docker-intro h3{font-family:var(--head);font-size:1.3rem;color:#fff;margin-bottom:.4rem}
+.docker-intro p{color:var(--muted);font-size:.9rem}
+.docker-modes{display:flex;gap:.4rem;justify-content:center;margin-bottom:1.2rem;flex-wrap:wrap}
+.dmode{background:var(--bg2);border:1px solid var(--border);color:var(--muted);font-size:.78rem;padding:.35rem .85rem;border-radius:6px;cursor:pointer;transition:all .2s}
+.dmode:hover{border-color:var(--border2);color:var(--text)}
+.dmode.active{border-color:var(--amber);color:var(--amber-lt);background:var(--amber-dim)}
+.dcontent{display:none}
+.dcontent.active{display:block}
+
+/* ===== CODE BLOCKS (your existing styles + minor tweaks) ===== */
+.code-block{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1rem}
+.code-bar{background:var(--bg3);padding:.4rem 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.code-label{font-family:var(--mono);font-size:.63rem;color:var(--muted2)}
+.code-copy{border:none;background:transparent;color:var(--muted2);font-size:.65rem;cursor:pointer;font-family:var(--body);padding:.2rem .4rem;border-radius:4px;transition:color .2s}
+.code-copy:hover{color:var(--text)}
+.code-block pre{padding:.9rem 1.1rem;margin:0;font-family:var(--mono);font-size:.75rem;line-height:1.85;color:var(--muted);overflow-x:auto}
+.cm{color:var(--muted2)}.kw{color:var(--amber-lt)}.str{color:#86efac}
+
+/* ===== HELP BOX ===== */
+.help-box{max-width:700px;margin:1.5rem auto;padding:1rem 1.2rem;background:var(--bg2);border:1px solid var(--border);border-radius:9px;font-size:.82rem;color:var(--muted)}
+.help-box strong{color:var(--text)}
+.help-box code{font-family:var(--mono);font-size:.78rem;color:var(--amber-lt);background:var(--bg3);padding:.1rem .35rem;border-radius:3px}
+
+/* ===== FOOTER (unchanged) ===== */
+footer{border-top:1px solid var(--border);padding:2.25rem 2rem;text-align:center}
+footer p{font-size:.76rem;color:var(--muted2);line-height:1.9}
+footer a{color:var(--muted);text-decoration:none;transition:color .2s}
+footer a:hover{color:var(--amber)}
+.foot-links{display:flex;justify-content:center;gap:1.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.foot-links a{font-size:.76rem;color:var(--muted2);text-decoration:none;transition:color .2s}
+.foot-links a:hover{color:var(--text)}
+
+/* ===== ANIMATIONS & UTILS ===== */
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.a1{animation:up .55s ease both}.a2{animation:up .55s .1s ease both}.a3{animation:up .55s .2s ease both}
+.hidden{display:none!important}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:760px){
+  .nav-links{display:none}
+  .version-toggle{flex-direction:column;align-items:flex-start;gap:.5rem}
+  .v-arch{margin-left:0}
+  .platform-tabs{justify-content:center}
+  .pkg-grid{grid-template-columns:1fr;padding:0 1rem 2rem}
+  .pkg-legend{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+<div class="glow-bar"></div>
+
+<!-- NAV -->
+<nav><div class="nav-inner">
+  <a href="index.html" class="nav-logo"><img src="assets/images/nuts-icon.png" alt="Nuts">Nuts<span class="dot">.</span>pm</a>
+  <div class="nav-links">
+    <a href="naf.html">NAF</a><a href="doc-naf.html">Docs</a>
+    <a href="blog.html">Blog</a><a href="apps.html">Apps</a>
+    <a href="download.html" class="active">Download</a>
+    <a href="https://github.com/thevpc/nuts" target="_blank">GitHub</a>
+  </div>
+</div></nav>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="s-label a1">Get Started</div>
+  <h1 class="a2">Install Nuts</h1>
+  <p class="a3">Java-based package manager. Works everywhere Java runs — including Docker containers.</p>
+</div>
+
+<!-- VERSION SELECTOR (global, orthogonal) -->
+<div class="version-bar">
+  <div class="version-toggle">
+    <button class="v-tab active" data-version="latest">
+      <span class="v-label">Latest</span>
+      <span class="v-ver">0.8.9.0</span>
+      <span class="v-badge dev">DEV</span>
+    </button>
+    <button class="v-tab" data-version="lts">
+      <span class="v-label">LTS</span>
+      <span class="v-ver">0.8.8.0</span>
+      <span class="v-badge stable">STABLE</span>
+    </button>
+    <a href="#archive" class="v-arch" onclick="document.getElementById('archive-section').scrollIntoView({behavior:'smooth'});return false">All versions →</a>
+  </div>
+  <div class="version-note">
+    <span class="req">☕ Requires Java Runtime 8+</span>
+    <span class="compat">✓ Fully compatible with Java 24</span>
+  </div>
+</div>
+
+<!-- PLATFORM TABS -->
+<div class="platform-tabs">
+  <button class="ptab active" data-platform="linux">🐧 Linux</button>
+  <button class="ptab" data-platform="macos">🍎 macOS</button>
+  <button class="ptab" data-platform="windows">🪟 Windows</button>
+  <button class="ptab" data-platform="docker">🐳 Docker / Container</button>
+</div>
+
+<!-- PACKAGE FORMAT GRID (dynamic content) -->
+<div class="pkg-grid" id="pkg-grid"></div>
+
+<!-- LEGEND -->
+<div class="pkg-legend">
+  <span class="legend-item"><span class="dot avail"></span> Available now</span>
+  <span class="legend-item"><span class="dot preview"></span> Preview / experimental</span>
+  <span class="legend-item"><span class="dot soon"></span> Coming soon</span>
+  <span class="legend-item"><span class="dot request"></span> Request / vote</span>
+</div>
+
+<!-- HELP BOX -->
+<div class="help-box">
+  <strong>Not sure which to pick?</strong><br>
+  • Just testing or CI/CD? → Use <code>Docker</code> tab<br>
+  • Daily development? → Pick your OS + <code>JAR Bootstrap</code><br>
+  • Production servers? → Use <code>LTS</code> version + <code>Offline Bundle</code><br>
+  • Building container images? → See <code>Dockerfile</code> examples below
+</div>
+
+<!-- DOCKER PANEL (special content) -->
+<div class="docker-panel" id="docker-panel">
+  <div class="docker-intro">
+    <h3>Run Nuts in a container</h3>
+    <p>Perfect for ephemeral testing, CI/CD pipelines, or isolated builds. No local install required.</p>
+  </div>
+
+  <div class="docker-modes">
+    <button class="dmode active" data-mode="quick">⚡ Quick Run</button>
+    <button class="dmode" data-mode="dockerfile">🔧 Dockerfile</button>
+  </div>
+
+  <div class="dcontent active" id="dmode-quick">
+    <div class="code-block">
+      <div class="code-bar"><span class="code-label">One-liner: ephemeral shell with Nuts</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="kw">$ docker run -it --rm</span> openjdk:8 bash -c <span class="str">"$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"</span></pre>
+    </div>
+    <div class="help-box">
+      <strong>Then inside the container:</strong><br>
+      <code>nuts -y &lt;your-app&gt; [args]</code><br><br>
+      <em>Example (OpenAPI → PDF):</em><br>
+      <code>nuts -P=%s -ZyS net.thevpc.nuts.toolbox:noapi#https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar myrest-apis.json</code>
+    </div>
+  </div>
+
+  <div class="dcontent" id="dmode-dockerfile">
+    <div class="code-block">
+      <div class="code-bar"><span class="code-label">Minimal Dockerfile (bootstrap script)</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="kw">FROM</span> openjdk:8
+<span class="kw">RUN</span> curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh | bash
+<span class="kw">RUN</span> nuts -Zy install &lt;your-app&gt;
+<span class="kw">CMD</span> ["nuts", "-y", "&lt;your-app&gt;"]</pre>
+    </div>
+    <div class="code-block">
+      <div class="code-bar"><span class="code-label">Alternative: bundle JAR directly</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="kw">FROM</span> openjdk:8
+<span class="kw">RUN</span> wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar -qO nuts.jar
+<span class="kw">RUN</span> java -jar nuts.jar -Zy install net.thevpc.nuts.toolbox:noapi
+<span class="kw">CMD</span> ["java", "-jar", "nuts.jar", "-y", "net.thevpc.nuts.toolbox:noapi"]</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ARCHIVE SECTION (collapsible, at bottom) -->
+<div class="dl-sections" id="archive-section" style="max-width:1120px;margin:0 auto;padding:2rem 2rem 4rem">
+  <details style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1rem">
+    <summary style="cursor:pointer;font-weight:600;color:var(--text);padding:.3rem 0;display:flex;align-items:center;gap:.5rem">
+      🗄️ Version Archive (advanced)
+    </summary>
+    <table class="arch-table" style="width:100%;border-collapse:collapse;font-size:.82rem;margin-top:1rem">
+      <thead><tr><th style="font-size:.68rem;font-family:var(--mono);color:var(--muted2);letter-spacing:.06em;text-transform:uppercase;padding:.5rem .85rem;text-align:left;font-weight:400;border-bottom:1px solid var(--border)">Version</th><th style="same">Install Command</th></tr></thead>
+      <tbody>
+        <tr><td style="padding:.65rem .85rem;border-bottom:1px solid var(--border);font-family:var(--mono);color:var(--amber-lt);font-weight:500">0.8.9</td><td style="same;font-family:var(--mono);font-size:.72rem;color:var(--muted);word-break:break-all">curl -sL https://maven.thevpc.net/.../nuts-app-0.8.9.jar -o nuts.jar && java -jar nuts.jar -Zy</td></tr>
+        <tr><td style="same">0.8.8</td><td style="same">curl -sL https://maven.thevpc.net/.../nuts-app-0.8.8.jar -o nuts.jar && java -jar nuts.jar -Zy</td></tr>
+        <tr><td style="same">0.8.7</td><td style="same">curl -sL https://maven.thevpc.net/.../nuts-app-0.8.7.jar -o nuts.jar && java -jar nuts.jar -Zy</td></tr>
+      </tbody>
+    </table>
+  </details>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-links">
+    <a href="index.html">Nuts PM</a><a href="naf.html">NAF</a>
+    <a href="blog.html">Blog</a><a href="apps.html">Apps</a>
+    <a href="download.html">Download</a><a href="https://github.com/thevpc/nuts" target="_blank">GitHub</a>
+  </div>
+  <p>Copyright © 2018–2026 Nuts Package Manager Team. Generated with <a href="apps.html#app-ndoc">ndoc</a></p>
+</footer>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+// ===== DATA: orthogonal dimensions (version × platform × formats) =====
+const PKG_DATA = {
+  latest: {
+    linux: [
+      {format:'jar', icon:'☕', label:'JAR Bootstrap', status:'avail', url:'https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar', desc:'Lightweight bootstrap JAR. Requires Java 8+.', meta:['173 KB','Java 8+','All distros'], cmd:'curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar -o nuts.jar && java -jar nuts.jar -Zy'},
+      {format:'offline', icon:'🧰', label:'Offline Bundle', status:'avail', url:'https://thevpc.net/nuts/0.8.9/nuts-app-full-0.8.9.0.jar', desc:'Bootstrapper + runtime bundled. No network needed after download.', meta:['876 KB','Air-gapped OK'], cmd:'java -jar nuts-app-full-0.8.9.0.jar -Zy'},
+      {format:'rpm', icon:'📦', label:'RPM Package', status:'soon', desc:'For Red Hat, Fedora, OpenSUSE. Installs to /usr/bin, integrates with dnf/yum.', meta:['x64 only','System integration']},
+      {format:'aur', icon:'🎯', label:'AUR Package', status:'request', desc:'Arch Linux community package. Vote to prioritize.', meta:['git-based','Community maintained']},
+      {format:'native', icon:'⚡', label:'Native Image (GraalVM)', status:'preview', desc:'Standalone binary, no JVM needed. Experimental.', meta:['~15 MB','Preview','Linux x64']}
+    ],
+    macos: [
+      {format:'jar', icon:'☕', label:'JAR Bootstrap', status:'avail', url:'https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar', desc:'Lightweight bootstrap. Works in Terminal, iTerm, etc.', meta:['173 KB','Java 8+'], cmd:'curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar -o nuts.jar && java -jar nuts.jar -Zy'},
+      {format:'dmg', icon:'🍎', label:'macOS Installer', status:'avail', url:'https://thevpc.net/nuts/nuts-installer-mac64-0.8.9.0.app.zip', desc:'Native .app bundle with optional JRE.', meta:['179 KB','x64']},
+      {format:'offline', icon:'🧰', label:'Offline Bundle', status:'avail', url:'https://thevpc.net/nuts/0.8.9/nuts-app-full-mac64-0.8.9.0.app.zip', desc:'Self-contained for air-gapped Macs.', meta:['1 MB','No network needed']},
+      {format:'native', icon:'⚡', label:'Native Image', status:'preview', desc:'Standalone macOS binary (experimental).', meta:['~18 MB','Preview']}
+    ],
+    windows: [
+      {format:'jar', icon:'☕', label:'JAR Bootstrap', status:'avail', url:'https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar', desc:'Run with java -jar. Works in CMD, PowerShell, Git Bash.', meta:['173 KB','Java 8+'], cmd:'java -jar nuts.jar -Zy'},
+      {format:'exe', icon:'🪟', label:'Windows Installer', status:'soon', desc:'Native .exe installer with Start Menu integration.', meta:['x64','JRE optional']},
+      {format:'offline', icon:'🧰', label:'Offline Bundle + JRE', status:'avail', url:'https://thevpc.net/nuts/0.8.9/nuts-app-full-windows64-with-java-0.8.9.0.zip', desc:'Everything bundled: Nuts + JRE. No pre-install needed.', meta:['7 MB','Zero dependencies']},
+      {format:'msi', icon:'📦', label:'MSI Package', status:'request', desc:'Enterprise deployment via Group Policy.', meta:['Silent install','Request feature']}
+    ],
+    docker: [] // Docker uses special panel, not grid
+  },
+  lts: {
+    linux: [
+      {format:'jar', icon:'☕', label:'JAR Bootstrap (LTS)', status:'avail', url:'https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar', desc:'Stable LTS version. Critical fixes only.', meta:['171 KB','Java 8+'], cmd:'curl -sL https://maven.thevpc.net/.../nuts-app-0.8.8.jar -o nuts.jar && java -jar nuts.jar -Zy'},
+      {format:'offline', icon:'🧰', label:'Offline Bundle (LTS)', status:'avail', url:'https://thevpc.net/nuts/0.8.8/nuts-app-full-0.8.8.0.jar', desc:'Production-ready offline bundle.', meta:['860 KB','LTS']},
+      {format:'rpm', icon:'📦', label:'RPM (LTS)', status:'soon', desc:'Coming to LTS track after stabilization.', meta:['x64','Future']}
+    ],
+    macos: [
+      {format:'jar', icon:'☕', label:'JAR Bootstrap (LTS)', status:'avail', url:'https://maven.thevpc.net/.../nuts-app-0.8.8.jar', desc:'Stable LTS for macOS.', meta:['171 KB'], cmd:'curl -sL ... && java -jar nuts.jar -Zy'}
+    ],
+    windows: [
+      {format:'jar', icon:'☕', label:'JAR Bootstrap (LTS)', status:'avail', url:'https://maven.thevpc.net/.../nuts-app-0.8.8.jar', desc:'Stable LTS for Windows.', meta:['171 KB'], cmd:'java -jar nuts.jar -Zy'}
+    ],
+    docker: []
+  }
+};
+
+// ===== STATE =====
+let currentVersion = 'latest';
+let currentPlatform = 'linux';
+
+// ===== RENDER FUNCTIONS =====
+function getIcon(format) {
+  const icons = {jar:'☕', offline:'🧰', rpm:'📦', aur:'🎯', native:'⚡', dmg:'🍎', exe:'🪟', msi:'📦'};
+  return icons[format] || '📦';
+}
+function formatStatus(s) {
+  return {avail:'Available', preview:'Preview', soon:'Coming Soon', request:'Request'}[s] || s;
+}
+function getAction(pkg) {
+  if (pkg.status === 'avail') return `<a class="pkg-btn" href="${pkg.url}" download>↓ Download</a>`;
+  if (pkg.status === 'preview') return `<a class="pkg-btn" href="${pkg.url}" download>↓ Try Preview</a>`;
+  if (pkg.status === 'soon') return `<button class="pkg-btn" onclick="notifyMe('${pkg.format}')">🔔 Notify me</button>`;
+  return `<a class="pkg-link" href="https://github.com/thevpc/nuts/issues/new?title=Request:${encodeURIComponent(pkg.label)}&body=I'd+like+${encodeURIComponent(pkg.label)}+for+${currentPlatform}" target="_blank">Request →</a>`;
+}
+function renderGrid() {
+  const items = PKG_DATA[currentVersion]?.[currentPlatform] || [];
+  const grid = document.getElementById('pkg-grid');
+
+  if (currentPlatform === 'docker') {
+    grid.innerHTML = '';
+    document.getElementById('docker-panel').classList.add('active');
+    return;
+  } else {
+    document.getElementById('docker-panel').classList.remove('active');
+  }
+
+  if (items.length === 0) {
+    grid.innerHTML = `<div class="help-box" style="grid-column:1/-1;text-align:center">No packages available for this combination yet. <a href="https://github.com/thevpc/nuts/issues" target="_blank" style="color:var(--amber-lt)">Request support</a>.</div>`;
+    return;
+  }
+
+  grid.innerHTML = items.map(pkg => `
+    <div class="pkg-card" data-format="${pkg.format}" data-status="${pkg.status}">
+      <div class="pkg-head">
+        <span class="pkg-icon">${pkg.icon}</span>
+        <span class="pkg-title">${pkg.label}</span>
+        <span class="pkg-status ${pkg.status}">${formatStatus(pkg.status)}</span>
+      </div>
+      <p class="pkg-desc">${pkg.desc}</p>
+      ${pkg.meta ? `<div class="pkg-meta">${pkg.meta.map(m=>`<span class="meta-tag">${m}</span>`).join('')}</div>` : ''}
+      <div class="pkg-actions">
+        ${pkg.cmd ? `<button class="pkg-btn" onclick="copyCmd('${pkg.cmd.replace(/'/g,"\\'")}')">📋 Copy Command</button>` : ''}
+        ${getAction(pkg)}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== EVENT LISTENERS =====
+document.querySelectorAll('.v-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.v-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentVersion = btn.dataset.version;
+    renderGrid();
+  });
+});
+
+document.querySelectorAll('.ptab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentPlatform = btn.dataset.platform;
+    renderGrid();
+  });
+});
+
+document.querySelectorAll('.dmode').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.dmode').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.dcontent').forEach(c => c.classList.remove('active'));
+    document.getElementById('dmode-' + btn.dataset.mode).classList.add('active');
+  });
+});
+
+// ===== COPY UTILS =====
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.textContent.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const original = btn.textContent;
+    btn.textContent = '✓ copied!';
+    btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = original; btn.style.color = ''; }, 1800);
+  });
+}
+function copyCmd(cmd) {
+  navigator.clipboard.writeText(cmd).then(() => {
+    alert('✓ Command copied to clipboard!\n\n' + cmd);
+  });
+}
+function notifyMe(format) {
+  alert(`🔔 You'll be notified when ${format.toUpperCase()} becomes available!\n\n(Implementation: link to GitHub issue or email signup)`);
+  // TODO: Replace with real implementation (GitHub API, Mailchimp, etc.)
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  renderGrid();
+
+  // Optional: auto-detect OS to pre-select platform tab
+  const ua = navigator.userAgent.toLowerCase();
+  if (ua.includes('mac')) { currentPlatform = 'macos'; document.querySelector('[data-platform="macos"]').classList.add('active'); document.querySelector('[data-platform="linux"]').classList.remove('active'); }
+  else if (ua.includes('win')) { currentPlatform = 'windows'; document.querySelector('[data-platform="windows"]').classList.add('active'); document.querySelector('[data-platform="linux"]').classList.remove('active'); }
+  renderGrid();
+});
+</script>
+</body>
+</html>

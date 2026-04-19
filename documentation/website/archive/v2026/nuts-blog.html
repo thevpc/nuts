@@ -1,0 +1,302 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blog — Nuts Package Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0b0d;--bg2:#111114;--bg3:#18181c;
+  --border:#252528;--border2:#38383f;
+  --amber:#d97706;--amber-lt:#f59e0b;--amber-dim:rgba(217,119,6,.1);
+  --text:#e4e4ec;--muted:#7a7a92;--muted2:#484858;--code-bg:#0e0e12;
+  --head:'Bricolage Grotesque',sans-serif;
+  --body:'Plus Jakarta Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --green:#4ade80;--blue:#60a5fa;--red:#f87171;--yellow:#fbbf24;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.glow-bar{height:2px;background:linear-gradient(90deg,transparent,var(--amber) 40%,var(--amber-lt) 60%,transparent);opacity:.45}
+nav{position:sticky;top:0;z-index:100;background:rgba(11,11,13,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem}
+.nav-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;height:56px;gap:1.5rem}
+.nav-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;font-family:var(--head);font-weight:800;font-size:1.05rem;color:var(--text)}
+.nav-logo img{width:26px;height:26px;border-radius:5px}
+.dot{color:var(--amber)}
+.nav-links{display:flex;gap:1.25rem;margin-left:auto;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.82rem;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--amber-lt)}
+.nav-cta{background:var(--amber);color:#000!important;padding:.28rem .8rem;border-radius:5px;font-weight:500!important}
+/* PAGE HEADER */
+.page-header{max-width:1120px;margin:0 auto;padding:4rem 2rem 2rem}
+.s-label{font-family:var(--mono);font-size:.66rem;color:var(--amber);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.6rem}
+.page-header h1{font-family:var(--head);font-size:2.4rem;font-weight:800;color:#fff;letter-spacing:-.04em;line-height:1.08}
+.page-header p{color:var(--muted);font-size:.95rem;margin-top:.75rem;font-weight:300}
+/* LAYOUT */
+.blog-layout{max-width:1120px;margin:0 auto;padding:2.5rem 2rem 5rem;display:grid;grid-template-columns:1fr 240px;gap:3.5rem;align-items:start}
+/* TIMELINE */
+.timeline{position:relative}
+.year-anchor{margin-bottom:2.5rem}
+.year-label{font-family:var(--head);font-size:1.5rem;font-weight:800;color:var(--amber);letter-spacing:-.03em;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem}
+.year-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.post{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.75rem;margin-bottom:1.25rem;transition:border-color .3s}
+.post:hover{border-color:var(--border2)}
+.post-meta{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}
+.post-date{font-family:var(--mono);font-size:.7rem;color:var(--muted2)}
+.post-read{font-family:var(--mono);font-size:.68rem;color:var(--muted2);background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.15rem .45rem}
+.post-title{font-family:var(--head);font-size:1.1rem;font-weight:700;color:#fff;letter-spacing:-.02em;margin-bottom:.6rem;line-height:1.3}
+.post-excerpt{font-size:.87rem;color:var(--muted);line-height:1.75;font-weight:300;margin-bottom:1rem}
+.changelog{margin-top:.75rem}
+.cl-section{margin-bottom:.9rem}
+.cl-section h4{font-family:var(--head);font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:.5rem}
+.cl-items{list-style:none;display:flex;flex-direction:column;gap:.3rem}
+.cl-item{font-size:.8rem;display:flex;gap:.6rem;align-items:baseline}
+.cl-item::before{content:'·';color:var(--muted2);flex-shrink:0}
+.cl-item span{color:var(--muted)}
+.badge{font-size:.65rem;font-family:var(--mono);padding:.15rem .45rem;border-radius:4px;flex-shrink:0;font-weight:500}
+.badge.add{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
+.badge.fix{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.25)}
+.badge.chg{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25)}
+.badge.rem{background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.25)}
+.badge.warn{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.3)}
+.stable-tag{display:inline-block;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:#4ade80;font-family:var(--mono);font-size:.65rem;padding:.2rem .55rem;border-radius:5px;margin-left:.5rem}
+.dev-tag{display:inline-block;background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.3);color:#60a5fa;font-family:var(--mono);font-size:.65rem;padding:.2rem .55rem;border-radius:5px;margin-left:.5rem}
+.read-more{font-size:.78rem;color:var(--amber);text-decoration:none;display:inline-flex;align-items:center;gap:.3rem;transition:gap .2s}
+.read-more:hover{gap:.5rem}
+/* SIDEBAR */
+.blog-sidebar{position:sticky;top:72px}
+.sidebar-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.25rem}
+.sidebar-card h3{font-family:var(--head);font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:.9rem}
+.toc-link{display:block;font-size:.78rem;color:var(--muted);text-decoration:none;padding:.3rem 0;border-bottom:1px solid var(--border);transition:color .2s}
+.toc-link:last-child{border-bottom:none}
+.toc-link:hover{color:var(--text)}
+.toc-link .tl{color:var(--amber-lt);font-family:var(--mono);font-size:.7rem;margin-right:.4rem}
+.ver-chip{display:flex;align-items:center;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.78rem}
+.ver-chip:last-child{border-bottom:none}
+.ver-chip .v{font-family:var(--mono);color:var(--text);font-weight:500}
+.ver-chip .d{color:var(--muted2);font-size:.72rem}
+footer{border-top:1px solid var(--border);padding:2.25rem 2rem;text-align:center}
+footer p{font-size:.76rem;color:var(--muted2);line-height:1.9}
+footer a{color:var(--muted);text-decoration:none;transition:color .2s}footer a:hover{color:var(--amber)}
+.foot-links{display:flex;justify-content:center;gap:1.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.foot-links a{font-size:.76rem;color:var(--muted2);text-decoration:none;transition:color .2s}
+.foot-links a:hover{color:var(--text)}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.a1{animation:up .55s ease both}.a2{animation:up .55s .1s ease both}.a3{animation:up .55s .2s ease both}
+@media(max-width:820px){.blog-layout{grid-template-columns:1fr}.blog-sidebar{display:none}.nav-links{display:none}}
+</style>
+</head><body>
+<div class="glow-bar"></div>
+<nav><div class="nav-inner">
+  <a href="index.html" class="nav-logo"><img src="assets/images/nuts-icon.png" alt="Nuts">Nuts<span class="dot">.</span>pm</a>
+  <div class="nav-links">
+    <a href="naf.html">NAF</a>
+    <a href="doc-naf.html">Docs</a>
+    <a href="blog.html" class="active">Blog</a>
+    <a href="apps.html">Apps</a>
+    <a href="download.html">Download</a>
+    <a href="https://github.com/thevpc/nuts" target="_blank">GitHub</a>
+  </div>
+</div></nav>
+
+<div class="page-header">
+  <div class="s-label a1">Development Journal</div>
+  <h1 class="a2">Blog & Release Notes</h1>
+  <p class="a3">Changelogs, announcements, and development updates from the Nuts team.</p>
+</div>
+
+<div class="blog-layout">
+  <div class="timeline">
+
+    <!-- 2026 -->
+    <div class="year-anchor" id="y2026">
+      <div class="year-label">2026</div>
+
+      <article class="post">
+        <div class="post-meta">
+          <span class="post-date">2026-02-11</span>
+          <span class="post-read">1 min read</span>
+          <span class="stable-tag">STABLE</span>
+        </div>
+        <div class="post-title">Version 0.8.9 shaping up</div>
+        <p class="post-excerpt">Version 0.8.9 is a major milestone. As part of our commitment to quality, odd-numbered releases (5, 7, 9) are our most stable and polished versions. This release brings better security, TSON v2.0, parallel dependency resolution, and an expanded ecosystem.</p>
+        <div class="changelog">
+          <div class="cl-section">
+            <h4>Security</h4>
+            <ul class="cl-items">
+              <li class="cl-item"><span class="badge add">ADD</span><span>New AES/GCM cipher implementation replacing broken DES/CBC</span></li>
+              <li class="cl-item"><span class="badge add">ADD</span><span>NSecureToken: better support for external vaults</span></li>
+              <li class="cl-item"><span class="badge add">ADD</span><span>NSecureString: destroyable secrets support</span></li>
+            </ul>
+          </div>
+          <div class="cl-section">
+            <h4>TSON v2.0</h4>
+            <ul class="cl-items">
+              <li class="cl-item"><span class="badge add">ADD</span><span>Nuts becomes the reference implementation of TSON</span></li>
+              <li class="cl-item"><span class="badge add">ADD</span><span>Round-trip parser preserving comments and spaces (CST)</span></li>
+              <li class="cl-item"><span class="badge add">ADD</span><span>NElementPath, NElementNavigator for better navigation</span></li>
+              <li class="cl-item"><span class="badge rem">REM</span><span>Removed regex support (conflicts with expressions)</span></li>
+            </ul>
+          </div>
+          <div class="cl-section">
+            <h4>Performance</h4>
+            <ul class="cl-items">
+              <li class="cl-item"><span class="badge add">ADD</span><span>Parallel dependency resolution</span></li>
+              <li class="cl-item"><span class="badge add">ADD</span><span>Faster SSH connections with pooling</span></li>
+              <li class="cl-item"><span class="badge add">ADD</span><span>Exec classpath caching — no rebuild on each run</span></li>
+            </ul>
+          </div>
+          <div class="cl-section">
+            <h4>Ecosystem</h4>
+            <ul class="cl-items">
+              <li class="cl-item"><span class="badge add">ADD</span><span>JDK/JRE download support: <code style="font-family:var(--mono);font-size:.75rem;color:var(--amber-lt)">nuts settings add java --download --version=25</code></span></li>
+              <li class="cl-item"><span class="badge add">ADD</span><span>Native syntax highlighting for TSON and NTF in IntelliJ, VS Code, Vim, Kate, GEdit, jEdit, Notepad++</span></li>
+              <li class="cl-item"><span class="badge add">ADD</span><span>New Gradle Dependency Solver</span></li>
+              <li class="cl-item"><span class="badge add">ADD</span><span>Support for Tomcat, PostgreSQL, Netbeans, Docker/Kubernetes</span></li>
+            </ul>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- 2025 -->
+    <div class="year-anchor" id="y2025">
+      <div class="year-label">2025</div>
+
+      <article class="post">
+        <div class="post-meta">
+          <span class="post-date">2025-11-07</span>
+          <span class="post-read">1 min read</span>
+          <span class="stable-tag">STABLE</span>
+        </div>
+        <div class="post-title">Version 0.8.8.0 released</div>
+        <p class="post-excerpt">nuts v0.8.8 is out. A stable, polished release with better NBulkheadCall concurrency support, NDuration parsing improvements, and various fixes.</p>
+        <div class="changelog">
+          <ul class="cl-items">
+            <li class="cl-item"><span class="badge add">ADD</span><span>NBulkheadCall to handle calls limited by concurrent count</span></li>
+            <li class="cl-item"><span class="badge add">ADD</span><span>NDuration.parse(String) to parse user durations</span></li>
+            <li class="cl-item"><span class="badge fix">FIX</span><span>NMemorySize issue (throws exception on creation)</span></li>
+            <li class="cl-item"><span class="badge chg">CHG</span><span>Added --sandbox --yes by default to spring apps</span></li>
+          </ul>
+        </div>
+        <a href="https://github.com/thevpc/nuts/releases" class="read-more" target="_blank">Official release notes →</a>
+      </article>
+
+      <article class="post">
+        <div class="post-meta">
+          <span class="post-date">2025-11-07</span>
+          <span class="post-read">1 min read</span>
+          <span class="stable-tag">STABLE</span>
+        </div>
+        <div class="post-title">Version 0.8.7.0 released — Enterprise Resiliency</div>
+        <p class="post-excerpt">nuts v0.8.7 focuses on enterprise usability with a full suite of resiliency tools and a revamped documentation.</p>
+        <div class="changelog">
+          <ul class="cl-items">
+            <li class="cl-item"><span class="badge add">ADD</span><span>NSagaCall — Saga design pattern with loops and conditions</span></li>
+            <li class="cl-item"><span class="badge add">ADD</span><span>NCircuitBreakerCall — Circuit breaker pattern</span></li>
+            <li class="cl-item"><span class="badge add">ADD</span><span>NRetryCall — Retry pattern</span></li>
+            <li class="cl-item"><span class="badge add">ADD</span><span>NScoredCallable — Score-based call strategy</span></li>
+            <li class="cl-item"><span class="badge chg">CHG</span><span>Prefer NDuration over Duration throughout the API</span></li>
+            <li class="cl-item"><span class="badge chg">CHG</span><span>Removed dependency on AWT, replaced with NColor</span></li>
+            <li class="cl-item"><span class="badge warn">WARN</span><span>License changed: APACHE2 → LGPL3</span></li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="post">
+        <div class="post-meta">
+          <span class="post-date">2025-01-03</span>
+          <span class="post-read">2 min read</span>
+          <span class="stable-tag">STABLE</span>
+        </div>
+        <div class="post-title">Version 0.8.5.0 released</div>
+        <p class="post-excerpt">A major refactoring: nuts is now split into nuts-boot, nuts (api), nuts-lib, and nuts-app. Documentation generation is now handled by the new ndoc/nsite tools.</p>
+        <div class="changelog">
+          <ul class="cl-items">
+            <li class="cl-item"><span class="badge add">ADD</span><span>NTemplate: simple text templating with NExpr expressions</span></li>
+            <li class="cl-item"><span class="badge add">ADD</span><span>ndoc and nsite-lib for static HTML website generation</span></li>
+            <li class="cl-item"><span class="badge add">ADD</span><span>Levenshtein-based typo detection for CLI arguments</span></li>
+            <li class="cl-item"><span class="badge add">ADD</span><span>NPath::writeObject, writeMsg, writeText</span></li>
+            <li class="cl-item"><span class="badge chg">CHG</span><span>nuts split into nuts-boot / nuts / nuts-lib / nuts-runtime</span></li>
+            <li class="cl-item"><span class="badge warn">WARN</span><span>License changed: APACHE2 → LGPL3</span></li>
+          </ul>
+        </div>
+      </article>
+    </div>
+
+    <!-- 2024 -->
+    <div class="year-anchor" id="y2024">
+      <div class="year-label">2024</div>
+      <article class="post">
+        <div class="post-meta">
+          <span class="post-date">2024-04-25</span>
+          <span class="post-read">2 min read</span>
+          <span class="stable-tag">STABLE</span>
+        </div>
+        <div class="post-title">Version 0.8.4.0 — Native Images & Cleaner API</div>
+        <p class="post-excerpt">It's been a while. What's new? Cleaner API, native image support, faster startup, better isolation, desktop environment improvements, and much more.</p>
+        <div class="changelog">
+          <ul class="cl-items">
+            <li class="cl-item"><span class="badge add">ADD</span><span>Native installers for Windows, Linux and macOS</span></li>
+            <li class="cl-item"><span class="badge add">ADD</span><span>NOptional — feature-rich replacement for java.util.Optional</span></li>
+            <li class="cl-item"><span class="badge add">ADD</span><span>NChronometer, NDuration</span></li>
+            <li class="cl-item"><span class="badge add">ADD</span><span>NProgressMonitor and monitoring API</span></li>
+            <li class="cl-item"><span class="badge add">ADD</span><span>NMemorySize API</span></li>
+            <li class="cl-item"><span class="badge chg">CHG</span><span>Prefix changed: NutsX → NX (e.g. NutsPath → NPath)</span></li>
+            <li class="cl-item"><span class="badge warn">WARN</span><span>API incompatibilities with previous versions</span></li>
+          </ul>
+        </div>
+      </article>
+    </div>
+
+    <!-- 2022 -->
+    <div class="year-anchor" id="y2022">
+      <div class="year-label">2022</div>
+      <article class="post">
+        <div class="post-meta"><span class="post-date">2022-02-01</span><span class="post-read">1 min read</span></div>
+        <div class="post-title">Version 0.8.3.1 released</div>
+        <p class="post-excerpt">We're thrilled to announce v0.8.3, the open source Java package manager intended to be DevOps friendly. Updated to new repositories nuts-public and nuts-preview, with multiple fixes.</p>
+      </article>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="blog-sidebar">
+    <div class="sidebar-card">
+      <h3>Jump to Year</h3>
+      <a href="#y2026" class="toc-link"><span class="tl">▸</span>2026</a>
+      <a href="#y2025" class="toc-link"><span class="tl">▸</span>2025</a>
+      <a href="#y2024" class="toc-link"><span class="tl">▸</span>2024</a>
+      <a href="#y2022" class="toc-link"><span class="tl">▸</span>2022</a>
+    </div>
+    <div class="sidebar-card">
+      <h3>Release History</h3>
+      <div class="ver-chip"><span class="v">0.8.9.0</span><span class="d">2026 · STABLE</span></div>
+      <div class="ver-chip"><span class="v">0.8.8.0</span><span class="d">2025-11</span></div>
+      <div class="ver-chip"><span class="v">0.8.7.0</span><span class="d">2025-11</span></div>
+      <div class="ver-chip"><span class="v">0.8.6.0</span><span class="d">2025-06</span></div>
+      <div class="ver-chip"><span class="v">0.8.5.0</span><span class="d">2025-01</span></div>
+      <div class="ver-chip"><span class="v">0.8.4.0</span><span class="d">2024-04</span></div>
+      <div class="ver-chip"><span class="v">0.8.3.1</span><span class="d">2022-02</span></div>
+    </div>
+    <div class="sidebar-card">
+      <h3>Links</h3>
+      <a href="https://github.com/thevpc/nuts/releases" class="toc-link" target="_blank"><span class="tl">↗</span>GitHub Releases</a>
+      <a href="download.html" class="toc-link"><span class="tl">▸</span>Download Page</a>
+      <a href="doc-naf.html" class="toc-link"><span class="tl">▸</span>Documentation</a>
+    </div>
+  </aside>
+</div>
+
+<footer>
+  <div class="foot-links">
+    <a href="index.html">Nuts PM</a><a href="naf.html">NAF</a>
+    <a href="blog.html">Blog</a><a href="apps.html">Apps</a>
+    <a href="download.html">Download</a><a href="https://github.com/thevpc/nuts" target="_blank">GitHub</a>
+  </div>
+  <p>Copyright © 2018–2026 Nuts Package Manager Team. Generated with <a href="apps.html#app-ndoc">ndoc</a></p>
+</footer>
+</body></html>

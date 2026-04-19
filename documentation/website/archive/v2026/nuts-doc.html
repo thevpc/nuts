@@ -1,0 +1,306 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NAF Documentation — Nuts Application Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0b0d;--bg2:#111114;--bg3:#18181c;--bg4:#1e1e24;
+  --border:#252528;--border2:#38383f;
+  --amber:#d97706;--amber-lt:#f59e0b;--amber-dim:rgba(217,119,6,.1);
+  --text:#e4e4ec;--muted:#7a7a92;--muted2:#484858;--code-bg:#0e0e12;
+  --head:'Bricolage Grotesque',sans-serif;
+  --body:'Plus Jakarta Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --sidebar:260px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.glow-bar{height:2px;background:linear-gradient(90deg,transparent,var(--amber) 40%,var(--amber-lt) 60%,transparent);opacity:.45}
+nav{position:sticky;top:0;z-index:100;background:rgba(11,11,13,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 1.5rem}
+.nav-inner{display:flex;align-items:center;height:52px;gap:1.25rem}
+.nav-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;font-family:var(--head);font-weight:800;font-size:1rem;color:var(--text)}
+.nav-logo img{width:24px;height:24px;border-radius:5px}
+.dot{color:var(--amber)}
+.nav-sep{width:1px;height:18px;background:var(--border2)}
+.nav-sub{font-family:var(--head);font-weight:700;font-size:.88rem;color:var(--muted)}
+.nav-right{margin-left:auto;display:flex;gap:1.1rem;align-items:center}
+.nav-right a{color:var(--muted);text-decoration:none;font-size:.8rem;transition:color .2s}
+.nav-right a:hover{color:var(--text)}
+.nav-cta{background:var(--amber);color:#000!important;padding:.25rem .75rem;border-radius:5px;font-weight:500!important}
+/* DOC LAYOUT */
+.doc-layout{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:calc(100vh - 52px);align-items:start}
+/* SIDEBAR */
+.sidebar{position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;border-right:1px solid var(--border);padding:1.5rem 0;background:var(--bg2)}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.sb-section{margin-bottom:1.5rem}
+.sb-title{font-family:var(--mono);font-size:.62rem;color:var(--muted2);letter-spacing:.12em;text-transform:uppercase;padding:.25rem 1.25rem .5rem;display:block}
+.sb-link{display:block;padding:.35rem 1.25rem;font-size:.8rem;color:var(--muted);text-decoration:none;border-left:2px solid transparent;transition:all .2s;line-height:1.4}
+.sb-link:hover{color:var(--text);background:var(--bg3);border-left-color:var(--border2)}
+.sb-link.active{color:var(--amber-lt);border-left-color:var(--amber);background:var(--amber-dim)}
+.sb-sub{padding-left:2rem;font-size:.77rem}
+/* CONTENT */
+.doc-content{padding:3rem 3.5rem 5rem;max-width:820px}
+.doc-content h1{font-family:var(--head);font-size:2.2rem;font-weight:800;color:#fff;letter-spacing:-.04em;margin-bottom:.75rem;line-height:1.1}
+.doc-content h2{font-family:var(--head);font-size:1.35rem;font-weight:700;color:#fff;letter-spacing:-.025em;margin:2.75rem 0 .75rem;padding-top:.5rem;border-top:1px solid var(--border)}
+.doc-content h3{font-family:var(--head);font-size:1.05rem;font-weight:700;color:var(--text);letter-spacing:-.015em;margin:1.75rem 0 .5rem}
+.doc-content p{font-size:.92rem;color:var(--muted);line-height:1.85;margin-bottom:1rem;font-weight:300}
+.doc-content p strong{color:var(--text);font-weight:500}
+.doc-content code{font-family:var(--mono);font-size:.8rem;background:var(--bg3);border:1px solid var(--border);padding:.1em .4em;border-radius:4px;color:var(--amber-lt)}
+.code-block{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:1rem 0 1.5rem}
+.code-bar{background:var(--bg3);padding:.4rem 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.code-lang{font-family:var(--mono);font-size:.63rem;color:var(--muted2);letter-spacing:.04em}
+.code-copy{border:none;background:transparent;color:var(--muted2);font-size:.65rem;cursor:pointer;font-family:var(--body);padding:.2rem .4rem;border-radius:4px;transition:color .2s}
+.code-copy:hover{color:var(--text)}
+.code-block pre{padding:1rem 1.1rem;margin:0;font-family:var(--mono);font-size:.73rem;line-height:1.85;color:var(--muted);overflow-x:auto}
+.kw{color:var(--amber-lt)}.cm{color:var(--muted2)}.str{color:#86efac}.ty{color:#93c5fd}.pn{color:#f0abfc}
+/* NOTE / WARNING boxes */
+.note,.warn,.tip{border-radius:8px;padding:.9rem 1.1rem;margin:1.25rem 0;font-size:.85rem;line-height:1.7;border-left:3px solid}
+.note{background:rgba(96,165,250,.07);border-color:#60a5fa;color:#93c5fd}
+.warn{background:rgba(251,191,36,.07);border-color:#fbbf24;color:#fcd34d}
+.tip{background:rgba(74,222,128,.07);border-color:#4ade80;color:#86efac}
+.note strong,.warn strong,.tip strong{display:block;margin-bottom:.25rem;font-weight:600}
+/* Breadcrumb */
+.breadcrumb{display:flex;gap:.5rem;align-items:center;font-size:.75rem;color:var(--muted2);margin-bottom:1.5rem}
+.breadcrumb a{color:var(--muted);text-decoration:none;transition:color .2s}
+.breadcrumb a:hover{color:var(--text)}
+.breadcrumb span{color:var(--muted2)}
+/* On-this-page */
+.otp{position:sticky;top:calc(52px + 1.5rem);padding:0 1.5rem;float:right;width:200px;margin-top:3rem;font-size:.75rem;display:none}
+/* TOC nav */
+.toc-title{font-family:var(--mono);font-size:.63rem;color:var(--muted2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem}
+.toc-link{display:block;color:var(--muted);text-decoration:none;padding:.3rem 0;transition:color .2s;border-left:2px solid transparent;padding-left:.75rem;font-size:.78rem}
+.toc-link:hover{color:var(--text)}
+/* Pagination */
+.doc-pagination{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.pag-btn{display:flex;flex-direction:column;text-decoration:none;border:1px solid var(--border);border-radius:8px;padding:.75rem 1.1rem;max-width:240px;transition:border-color .25s}
+.pag-btn:hover{border-color:var(--border2)}
+.pag-dir{font-size:.7rem;color:var(--muted2);font-family:var(--mono);letter-spacing:.04em;margin-bottom:.2rem}
+.pag-title{font-size:.85rem;color:var(--text);font-weight:500}
+/* Tags */
+.tag-row{display:flex;gap:.5rem;flex-wrap:wrap;margin:.75rem 0 1.5rem}
+.tag{background:var(--bg3);border:1px solid var(--border2);border-radius:5px;padding:.2rem .65rem;font-size:.7rem;color:var(--muted);font-family:var(--mono)}
+footer{border-top:1px solid var(--border);padding:2rem 3.5rem;font-size:.76rem;color:var(--muted2);line-height:1.9}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--amber)}
+@media(max-width:860px){
+  .doc-layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .doc-content{padding:2rem 1.5rem 4rem}
+  .nav-right{display:none}
+}
+</style>
+</head><body>
+<div class="glow-bar"></div>
+<nav><div class="nav-inner">
+  <a href="index.html" class="nav-logo"><img src="assets/images/nuts-icon.png" alt="Nuts">Nuts<span class="dot">.</span>pm</a>
+  <div class="nav-sep"></div><span class="nav-sub">Docs / NAF</span>
+  <div class="nav-right">
+    <a href="index.html">Nuts PM</a>
+    <a href="naf.html">NAF</a>
+    <a href="blog.html">Blog</a>
+    <a href="apps.html">Apps</a>
+    <a href="download.html" class="nav-cta">Download</a>
+  </div>
+</div></nav>
+
+<div class="doc-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-section">
+      <span class="sb-title">Getting Started</span>
+      <a href="#overview" class="sb-link active">Overview</a>
+      <a href="#installation" class="sb-link">Installation</a>
+      <a href="#quickstart" class="sb-link">Quick Start</a>
+    </div>
+    <div class="sb-section">
+      <span class="sb-title">Core Concepts</span>
+      <a href="#workspace" class="sb-link">Workspace & Session</a>
+      <a href="#nmsg" class="sb-link">NMsg — Messages</a>
+      <a href="#npath" class="sb-link">NPath — Paths</a>
+      <a href="#ncmdline" class="sb-link">NCmdLine — CLI</a>
+      <a href="#nlog" class="sb-link">NLog — Logging</a>
+    </div>
+    <div class="sb-section">
+      <span class="sb-title">Data & I/O</span>
+      <a href="#nelement" class="sb-link">NElement</a>
+      <a href="#ncp" class="sb-link">NCp — Copy</a>
+      <a href="#ndigest" class="sb-link">NDigest — Hashing</a>
+      <a href="#nexec" class="sb-link">NExec — Processes</a>
+      <a href="#ncompress" class="sb-link">NCompress</a>
+    </div>
+    <div class="sb-section">
+      <span class="sb-title">Resiliency</span>
+      <a href="#ratelimit" class="sb-link">Rate Limiting</a>
+      <a href="#caching" class="sb-link">Caching</a>
+      <a href="#locking" class="sb-link">Locking</a>
+      <a href="#patterns" class="sb-link">Patterns (Retry, CB…)</a>
+    </div>
+    <div class="sb-section">
+      <span class="sb-title">Advanced</span>
+      <a href="#ntextart" class="sb-link">NTextArt — ASCII</a>
+      <a href="#nexpr" class="sb-link">NExpr — Expressions</a>
+      <a href="#progress" class="sb-link">Progress Monitoring</a>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="doc-content">
+    <div class="breadcrumb">
+      <a href="index.html">Nuts</a><span>/</span>
+      <a href="naf.html">NAF</a><span>/</span>
+      <span>Documentation</span>
+    </div>
+
+    <h1 id="overview">Nuts Application Framework</h1>
+    <div class="tag-row">
+      <span class="tag">v0.8.9.0</span><span class="tag">Java 8+</span>
+      <span class="tag">Spring-compatible</span><span class="tag">SLF4J-compatible</span>
+    </div>
+    <p><strong>NAF (Nuts Application Framework)</strong> is a lightweight, modular framework built on top of the Nuts runtime. It provides a unified foundation for configuration, logging, dependency injection, modularity, and extensibility — all while remaining Java 8 compatible.</p>
+    <p>NAF is <strong>non-invasive by design</strong>: it integrates with Spring, Spring Boot, SLF4J, and other frameworks without requiring you to rewrite or restructure your application.</p>
+    <div class="note"><strong>Note</strong>This is a generated documentation example. Actual content is produced from markdown files in the repository using <code>nsite</code>.</div>
+
+    <h2 id="installation">Installation</h2>
+    <p>Add NAF to your project with a single Maven dependency:</p>
+    <div class="code-block">
+      <div class="code-bar"><span class="code-lang">XML — pom.xml</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="ty">&lt;dependency&gt;</span>
+  <span class="ty">&lt;groupId&gt;</span><span class="str">net.thevpc.nuts</span><span class="ty">&lt;/groupId&gt;</span>
+  <span class="ty">&lt;artifactId&gt;</span><span class="str">nuts</span><span class="ty">&lt;/artifactId&gt;</span>
+  <span class="ty">&lt;version&gt;</span><span class="str">0.8.9</span><span class="ty">&lt;/version&gt;</span>
+<span class="ty">&lt;/dependency&gt;</span>
+
+<span class="ty">&lt;repositories&gt;</span>
+  <span class="ty">&lt;repository&gt;</span>
+    <span class="ty">&lt;id&gt;</span><span class="str">thevpc</span><span class="ty">&lt;/id&gt;</span>
+    <span class="ty">&lt;url&gt;</span><span class="str">https://maven.thevpc.net</span><span class="ty">&lt;/url&gt;</span>
+  <span class="ty">&lt;/repository&gt;</span>
+<span class="ty">&lt;/repositories&gt;</span></pre>
+    </div>
+
+    <h2 id="quickstart">Quick Start</h2>
+    <p>One line initializes the full NAF runtime with workspace, dependency management, and I/O tools ready:</p>
+    <div class="code-block">
+      <div class="code-bar"><span class="code-lang">Java</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="kw">Nuts</span>.require();                         <span class="cm">// Initialize NAF runtime</span>
+<span class="kw">NOut</span>.println(<span class="str">"Hello Nuts!"</span>);              <span class="cm">// Styled console output</span>
+
+<span class="cm">// Or open a custom workspace</span>
+<span class="ty">NWorkspace</span> ws = <span class="kw">Nuts</span>.openWorkspace(<span class="str">"--workspace=/path/to/ws"</span>);
+ws.runWith(() -> {
+    <span class="ty">NSession</span>.of().copy()
+        .setOutputFormat(<span class="ty">NContentType</span>.JSON)
+        .runWith(() -> <span class="kw">NOut</span>.println(Map.of(<span class="str">"status"</span>, <span class="str">"ok"</span>)));
+});</pre>
+    </div>
+    <div class="tip"><strong>Tip</strong>Use <code>Nuts.require()</code> when you need a fast in-memory workspace without any filesystem setup — perfect for embedded usage and testing.</div>
+
+    <h2 id="nmsg">NMsg — Structured Messages</h2>
+    <p><code>NMsg</code> is NAF's message abstraction. It supports multiple placeholder formats, automatic type-aware coloring, and message composition.</p>
+
+    <h3>Placeholder Formats</h3>
+    <div class="code-block">
+      <div class="code-bar"><span class="code-lang">Java</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// C-style printf format</span>
+<span class="kw">NMsg</span>.ofC(<span class="str">"Hello %s, you have %d notifications"</span>, <span class="str">"Alice"</span>, 5);
+
+<span class="cm">// SLF4J-style {}</span>
+<span class="kw">NMsg</span>.ofJ(<span class="str">"Downloading {} from {}"</span>, <span class="str">"report.pdf"</span>, <span class="str">"server-01"</span>);
+
+<span class="cm">// Named variable substitution</span>
+<span class="kw">NMsg</span>.ofV(<span class="str">"User $user on ${app}"</span>, Map.of(<span class="str">"user"</span>, <span class="str">"Alice"</span>, <span class="str">"app"</span>, <span class="str">"NAF"</span>));
+
+<span class="cm">// Dynamic supplier</span>
+<span class="kw">NMsg</span>.ofV(<span class="str">"Threshold=$th, Date=$date"</span>, name -> <span class="kw">switch</span> (name) {
+    <span class="kw">case</span> <span class="str">"th"</span>   -> 0.85;
+    <span class="kw">case</span> <span class="str">"date"</span> -> LocalDate.now();
+    <span class="kw">default</span>    -> null;
+});</pre>
+    </div>
+
+    <h2 id="npath">NPath — Unified Paths</h2>
+    <p><code>NPath</code> provides a unified API for local files, HTTP, and SSH paths. Access standard system directories without OS-specific code.</p>
+    <div class="code-block">
+      <div class="code-bar"><span class="code-lang">Java</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Remote paths work just like local paths</span>
+<span class="ty">String</span> content = <span class="kw">NPath</span>.of(<span class="str">"http://server/file.txt"</span>).readString();
+<span class="ty">String</span>[] lines = <span class="kw">NPath</span>.of(<span class="str">"ssh://server/file.txt"</span>).lines().toArray(<span class="ty">String</span>[]::new);
+
+<span class="cm">// Standard directories — cross-platform</span>
+<span class="kw">NPath</span>.ofUserHome();
+<span class="kw">NPath</span>.ofUserStore(<span class="ty">NStoreType</span>.CONFIG);   <span class="cm">// ~/.config/nuts on Linux</span>
+<span class="kw">NPath</span>.ofSystemStore(<span class="ty">NStoreType</span>.BIN);    <span class="cm">// /opt/nuts on Linux</span></pre>
+    </div>
+
+    <div class="warn"><strong>SSH Note</strong>SSH paths require the <code>nlib-ssh</code> extension. For remote Windows hosts, use <code>ssh://host?use=bin</code> or <code>?use=portable</code> to select the execution mode.</div>
+
+    <h2 id="nlog">NLog — Scoped Logging</h2>
+    <p>NAF extends standard MDC with nested logging scopes, dynamic placeholders, and custom log handlers. Logs automatically inherit the correct context.</p>
+    <div class="code-block">
+      <div class="code-bar"><span class="code-lang">Java</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Standard structured log entry</span>
+<span class="kw">NLog</span>.of(<span class="str">"myapp"</span>).info(
+    <span class="kw">NMsg</span>.ofC(<span class="str">"Task %s done with status %s"</span>, <span class="str">"Upload"</span>,
+        <span class="kw">NText</span>.ofStyled(<span class="str">"OK"</span>, <span class="ty">NTextStyle</span>.primary1()))
+    .withIntent(<span class="ty">NMsgIntent</span>.CONFIG)
+    .withDurationMs(123)
+);
+
+<span class="cm">// Scoped logging — context inherited automatically</span>
+<span class="kw">NLog</span>.runInScope(
+    <span class="ty">NLogScope</span>.of()
+        .withMessagePrefix(<span class="kw">NMsg</span>.ofC(<span class="str">"[MyApp]"</span>))
+        .withPlaceholder(<span class="str">"user"</span>, <span class="str">"Adam"</span>)
+        .withLog(msg -> <span class="kw">NOut</span>.println(<span class="kw">NMsg</span>.ofC(<span class="str">"[SCOPED] %s"</span>, msg))),
+    () -> <span class="ty">OtherClass</span>.doThis()
+);</pre>
+    </div>
+
+    <div class="doc-pagination">
+      <a href="naf.html" class="pag-btn">
+        <span class="pag-dir">← Previous</span>
+        <span class="pag-title">NAF Overview</span>
+      </a>
+      <a href="#npath" class="pag-btn" style="text-align:right">
+        <span class="pag-dir">Next →</span>
+        <span class="pag-title">NPath — Unified Paths</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  <div style="display:flex;justify-content:center;gap:1.5rem;margin-bottom:.75rem;flex-wrap:wrap">
+    <a href="index.html">Nuts PM</a><a href="naf.html">NAF</a>
+    <a href="blog.html">Blog</a><a href="apps.html">Apps</a>
+    <a href="download.html">Download</a><a href="https://github.com/thevpc/nuts" target="_blank">GitHub</a>
+  </div>
+  <p>Copyright © 2018–2026 Nuts Package Manager Team. Generated with <a href="apps.html#app-nsite">nsite</a></p>
+</footer>
+<script>
+function copyCode(btn){
+  const pre=btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent).then(()=>{
+    btn.textContent='copied!';btn.style.color='#4ade80';
+    setTimeout(()=>{btn.textContent='copy';btn.style.color=''},2000);
+  });
+}
+// Active sidebar on scroll
+const sections=[...document.querySelectorAll('h2[id],h3[id]')];
+const links=[...document.querySelectorAll('.sb-link')];
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY+80;
+  let cur='';
+  sections.forEach(s=>{if(s.offsetTop<=y)cur=s.id});
+  links.forEach(l=>{
+    const h=l.getAttribute('href').replace('#','');
+    l.classList.toggle('active',h===cur);
+  });
+},{passive:true});
+</script>
+</body></html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apps — Nuts Package Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0b0d;--bg2:#111114;--bg3:#18181c;
+  --border:#252528;--border2:#38383f;
+  --amber:#d97706;--amber-lt:#f59e0b;--amber-dim:rgba(217,119,6,.1);
+  --text:#e4e4ec;--muted:#7a7a92;--muted2:#484858;--code-bg:#0e0e12;
+  --green:#4ade80;--blue:#60a5fa;
+  --head:'Bricolage Grotesque',sans-serif;
+  --body:'Plus Jakarta Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.glow-bar{height:2px;background:linear-gradient(90deg,transparent,var(--amber) 40%,var(--amber-lt) 60%,transparent);opacity:.45}
+nav{position:sticky;top:0;z-index:100;background:rgba(11,11,13,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem}
+.nav-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;height:56px;gap:1.5rem}
+.nav-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;font-family:var(--head);font-weight:800;font-size:1.05rem;color:var(--text)}
+.nav-logo img{width:26px;height:26px;border-radius:5px}
+.dot{color:var(--amber)}
+.nav-links{display:flex;gap:1.25rem;margin-left:auto;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.82rem;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--amber-lt)}
+.nav-cta{background:var(--amber);color:#000!important;padding:.28rem .8rem;border-radius:5px;font-weight:500!important}
+/* PAGE HEADER */
+.page-header{max-width:1120px;margin:0 auto;padding:4.5rem 2rem 2rem}
+.s-label{font-family:var(--mono);font-size:.66rem;color:var(--amber);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.6rem}
+.page-header h1{font-family:var(--head);font-size:2.4rem;font-weight:800;color:#fff;letter-spacing:-.04em;margin-bottom:.65rem}
+.page-header p{color:var(--muted);font-size:.95rem;max-width:540px;font-weight:300}
+/* CONTROLS */
+.controls{max-width:1120px;margin:0 auto;padding:.5rem 2rem 1.5rem;display:flex;gap:.75rem;align-items:center;flex-wrap:wrap}
+.search-box{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.5rem 1rem;display:flex;align-items:center;gap:.6rem;min-width:240px;transition:border-color .25s}
+.search-box:focus-within{border-color:var(--border2)}
+.search-box input{background:transparent;border:none;outline:none;color:var(--text);font-family:var(--body);font-size:.85rem;width:100%}
+.search-box input::placeholder{color:var(--muted2)}
+.cat-tabs{display:flex;gap:.4rem;flex-wrap:wrap}
+.cat-tab{border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-size:.78rem;font-family:var(--body);padding:.35rem .85rem;border-radius:6px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.35rem}
+.cat-tab:hover{border-color:var(--border2);color:var(--text)}
+.cat-tab.active{border-color:var(--amber);color:var(--amber-lt);background:var(--amber-dim)}
+.count{font-family:var(--mono);font-size:.65rem;background:var(--bg3);border-radius:4px;padding:.1rem .35rem;color:var(--muted2)}
+/* APP SECTIONS */
+.app-sections{max-width:1120px;margin:0 auto;padding:0 2rem 5rem}
+.app-section{margin-bottom:3.5rem}
+.app-section-head{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem}
+.app-section-head h2{font-family:var(--head);font-size:1.15rem;font-weight:800;color:#fff;letter-spacing:-.03em}
+.app-section-head::after{content:'';flex:1;height:1px;background:var(--border)}
+/* APP CARD GRID */
+.app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.1rem}
+.app-card{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:1.4rem;transition:border-color .3s,transform .3s;display:flex;flex-direction:column}
+.app-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.app-card.hidden{display:none}
+.app-card-top{display:flex;align-items:flex-start;gap:.85rem;margin-bottom:.75rem}
+.app-icon{width:42px;height:42px;border-radius:10px;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.app-name{font-family:var(--head);font-size:.95rem;font-weight:700;color:#fff;letter-spacing:-.015em;margin-bottom:.2rem}
+.app-cats{display:flex;gap:.35rem;flex-wrap:wrap}
+.app-cat{font-family:var(--mono);font-size:.62rem;color:var(--muted2);background:var(--bg3);border-radius:4px;padding:.1rem .4rem}
+.app-desc{font-size:.83rem;color:var(--muted);line-height:1.7;margin-bottom:1rem;flex:1;font-weight:300}
+.app-card-bottom{margin-top:auto}
+.install-snippet{background:var(--code-bg);border:1px solid var(--border);border-radius:7px;padding:.6rem .85rem;display:flex;align-items:center;gap:.6rem;cursor:pointer;transition:border-color .2s}
+.install-snippet:hover{border-color:var(--border2)}
+.install-prompt{color:var(--amber);font-family:var(--mono);font-size:.72rem;flex-shrink:0}
+.install-cmd{font-family:var(--mono);font-size:.72rem;color:var(--muted);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.copy-ic{border:none;background:transparent;color:var(--muted2);font-size:.65rem;cursor:pointer;padding:.15rem .35rem;border-radius:4px;transition:color .2s;font-family:var(--body)}
+.copy-ic:hover{color:var(--text)}
+.app-links{display:flex;gap:.5rem;margin-top:.65rem}
+.app-link{font-size:.72rem;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:.25rem;transition:color .2s}
+.app-link:hover{color:var(--amber-lt)}
+.iface-tag{font-size:.66rem;font-family:var(--mono);padding:.15rem .45rem;border-radius:4px;background:var(--bg3);border:1px solid var(--border);color:var(--muted2)}
+footer{border-top:1px solid var(--border);padding:2.25rem 2rem;text-align:center}
+footer p{font-size:.76rem;color:var(--muted2);line-height:1.9}
+footer a{color:var(--muted);text-decoration:none;transition:color .2s}footer a:hover{color:var(--amber)}
+.foot-links{display:flex;justify-content:center;gap:1.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.foot-links a{font-size:.76rem;color:var(--muted2);text-decoration:none;transition:color .2s}.foot-links a:hover{color:var(--text)}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.a1{animation:up .55s ease both}.a2{animation:up .55s .1s ease both}.a3{animation:up .55s .2s ease both}
+@media(max-width:760px){.nav-links{display:none}.app-grid{grid-template-columns:1fr}}
+</style>
+</head><body>
+<div class="glow-bar"></div>
+<nav><div class="nav-inner">
+  <a href="index.html" class="nav-logo"><img src="assets/images/nuts-icon.png" alt="Nuts">Nuts<span class="dot">.</span>pm</a>
+  <div class="nav-links">
+    <a href="naf.html">NAF</a><a href="doc-naf.html">Docs</a>
+    <a href="blog.html">Blog</a>
+    <a href="apps.html" class="active">Apps</a>
+    <a href="download.html" class="nav-cta">Download</a>
+    <a href="https://github.com/thevpc/nuts" target="_blank">GitHub</a>
+  </div>
+</div></nav>
+
+<div class="page-header">
+  <div class="s-label a1">Ecosystem</div>
+  <h1 class="a2">Apps &amp; Tools</h1>
+  <p class="a3">Java applications you can install and run with a single <code style="font-family:var(--mono);font-size:.9rem;color:var(--amber-lt)">nuts install</code> command.</p>
+</div>
+
+<div class="controls">
+  <div class="search-box">
+    <span style="color:var(--muted2);font-size:.9rem">⌕</span>
+    <input type="text" id="search" placeholder="Search apps…" oninput="filterApps()">
+  </div>
+  <div class="cat-tabs">
+    <button class="cat-tab active" onclick="filterCat('all',this)">All <span class="count" id="cnt-all">30</span></button>
+    <button class="cat-tab" onclick="filterCat('cli',this)">CLI Tools <span class="count">13</span></button>
+    <button class="cat-tab" onclick="filterCat('desktop',this)">Desktop <span class="count">13</span></button>
+    <button class="cat-tab" onclick="filterCat('server',this)">Servers <span class="count">2</span></button>
+    <button class="cat-tab" onclick="filterCat('game',this)">Games <span class="count">2</span></button>
+  </div>
+</div>
+
+<div class="app-sections">
+
+  <!-- CLI TOOLS -->
+  <div class="app-section" data-cat="cli">
+    <div class="app-section-head"><h2>🖥 Commandline Tools</h2></div>
+    <div class="app-grid" id="grid-cli">
+
+      <div class="app-card" data-cat="cli" data-name="nuts" id="app-nuts">
+        <div class="app-card-top">
+          <div class="app-icon">🌰</div>
+          <div><div class="app-name">nuts</div><div class="app-cats"><span class="app-cat">Package Manager</span><span class="iface-tag">CLI</span></div></div>
+        </div>
+        <p class="app-desc">The Nuts Package Manager itself. Discover, install, update, and run Java applications from any Maven repository. Multi-version, offline-capable.</p>
+        <div class="app-card-bottom">
+          <div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">curl -sL https://thevpc.net/nuts/nuts-stable.jar -o nuts.jar && java -jar nuts.jar -Zy</span><button class="copy-ic">copy</button></div>
+          <div class="app-links"><a href="index.html" class="app-link">🌐 Website</a><a href="https://github.com/thevpc/nuts" class="app-link" target="_blank">GitHub ↗</a></div>
+        </div>
+      </div>
+
+      <div class="app-card" data-cat="cli" data-name="nsh" id="app-nsh">
+        <div class="app-card-top"><div class="app-icon">🐚</div><div><div class="app-name">nsh</div><div class="app-cats"><span class="app-cat">Shell</span><span class="iface-tag">CLI</span></div></div></div>
+        <p class="app-desc">A bash-compatible shell rewritten in Java. Runs on any platform without a POSIX environment. Outputs JSON/XML natively for scripting.</p>
+        <div class="app-card-bottom">
+          <div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install nsh</span><button class="copy-ic">copy</button></div>
+        </div>
+      </div>
+
+      <div class="app-card" data-cat="cli" data-name="nsite" id="app-nsite">
+        <div class="app-card-top"><div class="app-icon">🌐</div><div><div class="app-name">nsite</div><div class="app-cats"><span class="app-cat">Static Site Generator</span><span class="iface-tag">CLI</span></div></div></div>
+        <p class="app-desc">Template-driven static site generator used to build the Nuts website. Processes markdown files with a variable-substitution engine.</p>
+        <div class="app-card-bottom">
+          <div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install nsite</span><button class="copy-ic">copy</button></div>
+        </div>
+      </div>
+
+      <div class="app-card" data-cat="cli" data-name="ndoc" id="app-ndoc">
+        <div class="app-card-top"><div class="app-icon">📄</div><div><div class="app-name">ndoc</div><div class="app-cats"><span class="app-cat">Documentation</span><span class="iface-tag">CLI</span></div></div></div>
+        <p class="app-desc">LaTeX-like documentation tool and folder templater. Replaces variables in source files and generates formatted output.</p>
+        <div class="app-card-bottom">
+          <div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install ntexup</span><button class="copy-ic">copy</button></div>
+        </div>
+      </div>
+
+      <div class="app-card" data-cat="cli" data-name="njob" id="app-njob">
+        <div class="app-card-top"><div class="app-icon">📋</div><div><div class="app-name">njob</div><div class="app-cats"><span class="app-cat">Task Manager</span><span class="iface-tag">CLI</span></div></div></div>
+        <p class="app-desc">A productivity CLI for tracking tasks, jobs, and projects. Aggregate jobs into projects, tasks into jobs, with status and priority tracking.</p>
+        <div class="app-card-bottom">
+          <div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install njob</span><button class="copy-ic">copy</button></div>
+        </div>
+      </div>
+
+      <div class="app-card" data-cat="cli" data-name="ndiff" id="app-ndiff">
+        <div class="app-card-top"><div class="app-icon">🔍</div><div><div class="app-name">ndiff</div><div class="app-cats"><span class="app-cat">Utility</span><span class="iface-tag">CLI</span></div></div></div>
+        <p class="app-desc">Diff tool for folders, files, and JAR archives. Detect changes between versions of packaged Java artifacts.</p>
+        <div class="app-card-bottom">
+          <div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install ndiff</span><button class="copy-ic">copy</button></div>
+        </div>
+      </div>
+
+      <div class="app-card" data-cat="cli" data-name="ncode" id="app-ncode">
+        <div class="app-card-top"><div class="app-icon">🔎</div><div><div class="app-name">ncode</div><div class="app-cats"><span class="app-cat">Code Search</span><span class="iface-tag">CLI</span></div></div></div>
+        <p class="app-desc">Java class and file finder across folders and ZIP/JAR archives. Case-sensitive or insensitive, supports regex patterns.</p>
+        <div class="app-card-bottom">
+          <div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install ncode</span><button class="copy-ic">copy</button></div>
+        </div>
+      </div>
+
+      <div class="app-card" data-cat="cli" data-name="ndb">
+        <div class="app-card-top"><div class="app-icon">🗄️</div><div><div class="app-name">ndb</div><div class="app-cats"><span class="app-cat">Database</span><span class="iface-tag">CLI</span></div></div></div>
+        <p class="app-desc">Database CLI for Derby, MySQL, and PostgreSQL. Start, stop, and query databases directly from the terminal.</p>
+        <div class="app-card-bottom">
+          <div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install ndb</span><button class="copy-ic">copy</button></div>
+        </div>
+      </div>
+
+      <div class="app-card" data-cat="cli" data-name="noapi">
+        <div class="app-card-top"><div class="app-icon">📡</div><div><div class="app-name">noapi</div><div class="app-cats"><span class="app-cat">API Docs</span><span class="iface-tag">CLI</span></div></div></div>
+        <p class="app-desc">OpenAPI documentation generator. Turn your YAML spec into formatted PDF or HTML documentation.</p>
+        <div class="app-card-bottom">
+          <div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install noapi</span><button class="copy-ic">copy</button></div>
+        </div>
+      </div>
+
+      <div class="app-card" data-cat="cli" data-name="nversion">
+        <div class="app-card-top"><div class="app-icon">🔢</div><div><div class="app-name">nversion</div><div class="app-cats"><span class="app-cat">Utility</span><span class="iface-tag">CLI</span></div></div></div>
+        <p class="app-desc">File, folder, and project version detector. Extracts version information from Maven projects, DLLs, and more.</p>
+        <div class="app-card-bottom">
+          <div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install nversion</span><button class="copy-ic">copy</button></div>
+        </div>
+      </div>
+
+      <div class="app-card" data-cat="cli" data-name="nmvn">
+        <div class="app-card-top"><div class="app-icon">🏗️</div><div><div class="app-name">nmvn</div><div class="app-cats"><span class="app-cat">Build Tool</span><span class="iface-tag">CLI</span></div></div></div>
+        <p class="app-desc">Maven build tool wrapper managed by Nuts. Run Maven without a local install, with Nuts handling the runtime.</p>
+        <div class="app-card-bottom">
+          <div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install nmvn</span><button class="copy-ic">copy</button></div>
+        </div>
+      </div>
+
+      <div class="app-card" data-cat="cli" data-name="spring-cli" id="app-xspring-cli">
+        <div class="app-card-top"><div class="app-icon">🌿</div><div><div class="app-name">spring-cli</div><div class="app-cats"><span class="app-cat">Framework Tool</span><span class="iface-tag">CLI</span></div></div></div>
+        <p class="app-desc">Spring Boot CLI via Nuts. Scaffold projects, run Groovy scripts, and work with the Spring ecosystem from the command line.</p>
+        <div class="app-card-bottom">
+          <div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install org.springframework.boot:spring-boot-cli</span><button class="copy-ic">copy</button></div>
+        </div>
+      </div>
+
+      <div class="app-card" data-cat="cli" data-name="tsunami" id="app-xtsunami">
+        <div class="app-card-top"><div class="app-icon">🌊</div><div><div class="app-name">tsunami</div><div class="app-cats"><span class="app-cat">Security Scanner</span><span class="iface-tag">CLI</span></div></div></div>
+        <p class="app-desc">Google Tsunami: a general-purpose network security scanner with an extensible plugin system for detecting high-severity vulnerabilities.</p>
+        <div class="app-card-bottom">
+          <div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts com.google.tsunami:tsunami-main</span><button class="copy-ic">copy</button></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DESKTOP APPS -->
+  <div class="app-section" data-cat="desktop">
+    <div class="app-section-head"><h2>🖥 Desktop Applications</h2></div>
+    <div class="app-grid" id="grid-desktop">
+
+      <div class="app-card" data-cat="desktop" data-name="netbeans-launcher" id="app-netbeans-launcher">
+        <div class="app-card-top"><div class="app-icon">☕</div><div><div class="app-name">netbeans-launcher</div><div class="app-cats"><span class="app-cat">IDE</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">Multi-workspace NetBeans launcher. Manage multiple NetBeans installations side-by-side and switch between them effortlessly.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install netbeans-launcher</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+      <div class="app-card" data-cat="desktop" data-name="pnote" id="app-pnote">
+        <div class="app-card-top"><div class="app-icon">📓</div><div><div class="app-name">Pangaea Note</div><div class="app-cats"><span class="app-cat">Productivity</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">Note-taking application with rich text support. Organize and search your notes from a clean, fast desktop interface.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install pnote</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+      <div class="app-card" data-cat="desktop" data-name="dbclient" id="app-dbclient">
+        <div class="app-card-top"><div class="app-icon">🗄️</div><div><div class="app-name">DBClient</div><div class="app-cats"><span class="app-cat">Database</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">JDBC desktop client. Connect to any database with a JDBC driver, browse tables, and run queries from a GUI.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install dbclient</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+      <div class="app-card" data-cat="desktop" data-name="kifkif" id="app-kifkif">
+        <div class="app-card-top"><div class="app-icon">🔁</div><div><div class="app-name">KifKif</div><div class="app-cats"><span class="app-cat">Utility</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">File and folder duplicate finder. Scan your disk for duplicate files and reclaim storage space.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install kifkif</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+      <div class="app-card" data-cat="desktop" data-name="binjr" id="app-xbinjr">
+        <div class="app-card-top"><div class="app-icon">📈</div><div><div class="app-name">binjr</div><div class="app-cats"><span class="app-cat">Data Viz</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">Time series browser. Visualize and explore time-series data from multiple sources in an interactive dashboard.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install eu.binjr:binjr-core</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+      <div class="app-card" data-cat="desktop" data-name="jd-gui" id="app-xjd-gui">
+        <div class="app-card-top"><div class="app-icon">🔬</div><div><div class="app-name">JD-GUI</div><div class="app-cats"><span class="app-cat">Dev Tools</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">Java decompiler GUI. Inspect compiled JAR files and view reconstructed Java source code.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install org.jd:jd-gui</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+      <div class="app-card" data-cat="desktop" data-name="jdiskreport" id="app-xjdiskreport">
+        <div class="app-card-top"><div class="app-icon">💾</div><div><div class="app-name">JDiskReport</div><div class="app-cats"><span class="app-cat">Utility</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">Disk usage analyzer with visual charts. Understand where your disk space is being consumed.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install com.jgoodies:jdiskreport</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+      <div class="app-card" data-cat="desktop" data-name="jedit" id="app-xjedit">
+        <div class="app-card-top"><div class="app-icon">✏️</div><div><div class="app-name">JEdit</div><div class="app-cats"><span class="app-cat">Text Editor</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">A mature, programmer's text editor written in Java. Supports plugins, macros, and syntax highlighting for many languages.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install org.jedit:jedit</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+      <div class="app-card" data-cat="desktop" data-name="jmeld" id="app-xjmeld">
+        <div class="app-card-top"><div class="app-icon">⚖️</div><div><div class="app-name">JMeld</div><div class="app-cats"><span class="app-cat">Diff / Merge</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">Visual diff and merge tool. Compare files and directories side-by-side and resolve conflicts interactively.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install org.jmeld:jmeld</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+      <div class="app-card" data-cat="desktop" data-name="jpass" id="app-jpass">
+        <div class="app-card-top"><div class="app-icon">🔐</div><div><div class="app-name">JPass</div><div class="app-cats"><span class="app-cat">Security</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">Password manager with AES encryption. Store and organize credentials securely in a local encrypted database.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install jpass:jpass</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+      <div class="app-card" data-cat="desktop" data-name="mucommander" id="app-xmucommander">
+        <div class="app-card-top"><div class="app-icon">📁</div><div><div class="app-name">muCommander</div><div class="app-cats"><span class="app-cat">File Manager</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">Cross-platform dual-pane file manager. Supports FTP, SFTP, SMB, NFS, and many archive formats.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install com.mucommander:mucommander</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+      <div class="app-card" data-cat="desktop" data-name="omegat" id="app-xomegat">
+        <div class="app-card-top"><div class="app-icon">🌍</div><div><div class="app-name">OmegaT</div><div class="app-cats"><span class="app-cat">Translation</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">Computer-aided translation tool with translation memory support. For translators working with large document sets.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install org.omegat:omegat</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+      <div class="app-card" data-cat="desktop" data-name="omnigraph" id="app-xomnigraph">
+        <div class="app-card-top"><div class="app-icon">🕸️</div><div><div class="app-name">OmniGraph</div><div class="app-cats"><span class="app-cat">Graph Editor</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">Graph visualization and editing tool. Create, layout, and analyze node-edge graphs interactively.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install com.github.todense:omnigraph</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SERVERS -->
+  <div class="app-section" data-cat="server">
+    <div class="app-section-head"><h2>🖥 Server Applications</h2></div>
+    <div class="app-grid">
+
+      <div class="app-card" data-cat="server" data-name="nserver" id="app-nserver">
+        <div class="app-card-top"><div class="app-icon">🗂️</div><div><div class="app-name">nserver</div><div class="app-cats"><span class="app-cat">Repository Server</span><span class="iface-tag">Server</span></div></div></div>
+        <p class="app-desc">Nuts repository server. Host your own nuts artifact repository with HTTP access for team deployments.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install nserver</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+      <div class="app-card" data-cat="server" data-name="ntomcat" id="app-ntomcat">
+        <div class="app-card-top"><div class="app-icon">🐱</div><div><div class="app-name">ntomcat</div><div class="app-cats"><span class="app-cat">Web Server</span><span class="iface-tag">Server</span></div></div></div>
+        <p class="app-desc">Tomcat web server wrapper managed by Nuts. Deploy WAR files with full lifecycle management (start, stop, deploy, undeploy).</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install ntomcat</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GAMES -->
+  <div class="app-section" data-cat="game">
+    <div class="app-section-head"><h2>🎮 Games</h2></div>
+    <div class="app-grid">
+
+      <div class="app-card" data-cat="game" data-name="flappy-bird" id="app-xflappy-bird">
+        <div class="app-card-top"><div class="app-icon">🐦</div><div><div class="app-name">Flappy Bird</div><div class="app-cats"><span class="app-cat">Arcade</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">The classic flappy bird arcade game, running natively as a Java desktop application via Nuts.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install io.github.jiashunx:masker-flappybird</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+      <div class="app-card" data-cat="game" data-name="mindustry" id="app-xmindustry">
+        <div class="app-card-top"><div class="app-icon">⚙️</div><div><div class="app-name">Mindustry</div><div class="app-cats"><span class="app-cat">Strategy</span><span class="iface-tag">Desktop</span></div></div></div>
+        <p class="app-desc">Tower-defense RTS game. Build factories, automate resource production, and defend against waves of enemies. Server version also available.</p>
+        <div class="app-card-bottom"><div class="install-snippet" onclick="copySnippet(this)"><span class="install-prompt">$</span><span class="install-cmd">nuts install com.github.anuken:mindustry-desktop</span><button class="copy-ic">copy</button></div></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="foot-links">
+    <a href="index.html">Nuts PM</a><a href="naf.html">NAF</a>
+    <a href="blog.html">Blog</a><a href="apps.html">Apps</a>
+    <a href="download.html">Download</a><a href="https://github.com/thevpc/nuts" target="_blank">GitHub</a>
+  </div>
+  <p>Copyright © 2018–2026 Nuts Package Manager Team. Generated with <a href="#app-ndoc">ndoc</a></p>
+</footer>
+
+<script>
+function copySnippet(el){
+  const cmd=el.querySelector('.install-cmd').textContent;
+  const btn=el.querySelector('.copy-ic');
+  navigator.clipboard.writeText(cmd).then(()=>{
+    btn.textContent='copied!';btn.style.color='#4ade80';
+    setTimeout(()=>{btn.textContent='copy';btn.style.color=''},2000);
+  });
+}
+let activeCat='all';
+function filterCat(cat,btn){
+  activeCat=cat;
+  document.querySelectorAll('.cat-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  filterApps();
+}
+function filterApps(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const cards=document.querySelectorAll('.app-card');
+  cards.forEach(c=>{
+    const catMatch=activeCat==='all'||c.dataset.cat===activeCat;
+    const nameMatch=!q||c.dataset.name.includes(q)||c.querySelector('.app-desc').textContent.toLowerCase().includes(q)||c.querySelector('.app-name').textContent.toLowerCase().includes(q);
+    c.classList.toggle('hidden',!(catMatch&&nameMatch));
+  });
+}
+</script>
+</body></html>
