@@ -5955,20 +5955,6 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.core.NRepositoryNotFoundException",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
     "name": "net.thevpc.nuts.core.NRepositoryRef",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -23960,6 +23946,20 @@
   },
   {
     "name": "net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryMirroringHelper",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryWithChildren",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,

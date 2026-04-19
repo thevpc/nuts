@@ -6,6 +6,9 @@
   "name":"[Ljava.awt.event.MouseMotionListener;"
 },
 {
+  "name":"[Ljava.awt.event.WindowFocusListener;"
+},
+{
   "name":"[Ljava.lang.String;"
 },
 {
@@ -109,6 +112,10 @@
 },
 {
   "name":"com.formdev.flatlaf.ui.FlatToggleButtonUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.formdev.flatlaf.ui.FlatToolTipUI",
   "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
 },
 {
@@ -224,6 +231,10 @@
   "name":"javax.security.auth.x500.X500Principal",
   "fields":[{"name":"thisX500Name"}],
   "methods":[{"name":"<init>","parameterTypes":["sun.security.x509.X500Name"] }]
+},
+{
+  "name":"javax.swing.PopupFactory",
+  "methods":[{"name":"getPopup","parameterTypes":["java.awt.Component","java.awt.Component","int","int","boolean"] }]
 },
 {
   "name":"javax.swing.plaf.basic.BasicButtonListener",
