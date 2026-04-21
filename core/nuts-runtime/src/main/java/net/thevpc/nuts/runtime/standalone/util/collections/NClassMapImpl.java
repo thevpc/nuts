@@ -108,7 +108,7 @@ import java.util.*;
         public List<Class<? extends K>> getSearchPath(Class<? extends K> classKey) {
             Class[] keis = cachedHierarchy.get(classKey);
             if (keis == null) {
-                keis = NReflectUtils.findClassHierarchy(classKey, keyType, NReflectImpl.PLATFORM_DOMAIN);
+                keis = NReflectUtils.findClassHierarchy(classKey, keyType, NReflectImpl.PLATFORM_DOMAIN).toArray(new Class[0]);
                 cachedHierarchy.put(classKey, keis);
             }
             return Arrays.asList(keis);

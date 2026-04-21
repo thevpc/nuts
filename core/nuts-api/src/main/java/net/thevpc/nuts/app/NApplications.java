@@ -25,6 +25,7 @@
 package net.thevpc.nuts.app;
 
 
+import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.boot.NBootException;
 import net.thevpc.nuts.boot.internal.util.NBootMsg;
@@ -86,7 +87,7 @@ public final class NApplications {
     }
 
     public static NAppDefinition resolveApplicationAnnotation(Class appClass) {
-        Class<?> validAppClass = unproxyType(appClass);
+        Class<?> validAppClass = NReflectUtils.unproxyType(appClass);
         return validAppClass.getAnnotation(NAppDefinition.class);
     }
 
@@ -99,7 +100,7 @@ public final class NApplications {
         if (appInstance instanceof NApplication) {
             return (NApplication) appInstance;
         }
-        Class<?> appClass = unproxyType(appInstance.getClass());
+        Class<?> appClass = NReflectUtils.unproxyType(appInstance.getClass());
         NAppDefinition appAnnotation = appClass.getAnnotation(NAppDefinition.class);
         if (appAnnotation == null) {
             throw new NBootException(NBootMsg.ofC("class %s is missing annotation @"+NAppDefinition.class.getSimpleName(), appClass.getName()));
@@ -165,47 +166,6 @@ public final class NApplications {
             return true;
         }
         return false;
-    }
-
-    public static boolean isProxyType(Class<?> aClass) {
-        if (aClass == null) {
-            return false;
-        }
-        if (java.lang.reflect.Proxy.isProxyClass(aClass)) {
-            return true;
-        }
-        String simpleName = aClass.getSimpleName();
-        if (
-                simpleName.contains("$$")
-                || simpleName.contains("$HibernateProxy$")
-                || simpleName.contains("$$EnhancerBySpringCGLIB$$")
-                || simpleName.contains("$$CGLIB$$")
-                || simpleName.contains("$$SpringCGLIB$$")
-        ) {
-            return true;
-        }
-        return false;
-    }
-
-    public static Class<?> unproxyType(Class<?> aClass) {
-        if (aClass == null) {
-            return null;
-        }
-        // 1. Handle JDK Dynamic Proxies
-        // These don't extend your class, they implement your interfaces.
-        if (java.lang.reflect.Proxy.isProxyClass(aClass)) {
-            // For JDK proxies, we usually take the first interface
-            // as the "target" type, though this is a heuristic.
-            Class<?>[] interfaces = aClass.getInterfaces();
-            return (interfaces.length > 0) ? interfaces[0] : aClass;
-        }
-        if (isProxyType(aClass)) {
-            Class<?> u = unproxyType(aClass.getSuperclass());
-            if (u != null) {
-                return u;
-            }
-        }
-        return aClass;
     }
 
     /**

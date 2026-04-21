@@ -13,12 +13,12 @@ import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.reflect.NTypeLoader;
 import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
-import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NAppResolver;
@@ -160,7 +160,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             } else {
                 application=resolveApplicationCustomResolver();
                 if(application!=null) {
-                    appClass=NApplications.unproxyType(application.getClass());
+                    appClass= NReflectUtils.unproxyType(application.getClass());
                     source=application;
                 }else{
                     appClass=resolveApplicationFromStackTrace();
@@ -184,7 +184,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             }
             if (source != null) {
                 if (appClass == null) {
-                    appClass = NApplications.unproxyType(source.getClass());
+                    appClass = NReflectUtils.unproxyType(source.getClass());
                 } else {
                     if (!appClass.isInstance(source)) {
                         throw new NIllegalArgumentException(NMsg.ofC("invalid application instance (%s). Expected %s", source.getClass(), appClass));
@@ -267,7 +267,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             this.id = _appId;
         }
         this.args = new ArrayList<>(args);
-        this.sourceType = appClass == null ? null : NApplications.unproxyType(appClass);
+        this.sourceType = appClass == null ? null : NReflectUtils.unproxyType(appClass);
         this.application = application;
         this.source = source;
         for (NStoreType folder : NStoreType.values()) {

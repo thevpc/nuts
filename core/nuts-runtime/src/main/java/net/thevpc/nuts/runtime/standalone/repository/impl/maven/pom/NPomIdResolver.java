@@ -1,11 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
-import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.runtime.standalone.io.urlpart.URLPart;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
-import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
@@ -149,8 +148,8 @@ public class NPomIdResolver {
                             .withIntent(NMsgIntent.ALERT)
                             .withLevel(Level.FINEST));
         }
-        if (all.isEmpty() && NApplications.isProxyType(clazz)) {
-            Class s = NApplications.unproxyType(clazz);
+        if (all.isEmpty() && NReflectUtils.isProxyType(clazz)) {
+            Class s = NReflectUtils.unproxyType(clazz);
             if (s != null) {
                 return resolvePomIds(s);
             }

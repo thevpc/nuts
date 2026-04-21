@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.app.NAppDefinition;
-import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.*;
 
@@ -10,6 +9,7 @@ import net.thevpc.nuts.command.NExecutionEntry;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
 import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
@@ -686,7 +686,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NOptional<NId> resolveId(Class<?> clazz) {
-        clazz= NApplications.unproxyType(clazz);
+        clazz= NReflectUtils.unproxyType(clazz);
         List<NId> pomIds = resolveIds(clazz);
         NId defaultValue = null;
         if (pomIds.isEmpty()) {
@@ -737,7 +737,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public List<NId> resolveIds(Class<?> clazz) {
-        clazz=NApplications.unproxyType(clazz);
+        clazz= NReflectUtils.unproxyType(clazz);
         LinkedHashSet<NId> all = new LinkedHashSet<>();
         NAppDefinition annotation = (NAppDefinition) clazz.getAnnotation(NAppDefinition.class);
         if (annotation != null) {

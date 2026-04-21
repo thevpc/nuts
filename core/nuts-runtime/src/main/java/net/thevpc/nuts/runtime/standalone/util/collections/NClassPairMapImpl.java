@@ -113,8 +113,8 @@ public class NClassPairMapImpl<A, B, V> implements NClassPairMap<A, B, V> {
 
 
     public NUplet<Class>[] evalHierarchy(NUplet<Class> clazz) {
-        Class[] first = NReflectUtils.findClassHierarchy(clazz.get(0), baseKey1Type, NReflectImpl.PLATFORM_DOMAIN);
-        Class[] second = NReflectUtils.findClassHierarchy(clazz.get(1), baseKey2Type, NReflectImpl.PLATFORM_DOMAIN);
+        Class[] first = NReflectUtils.findClassHierarchy(clazz.get(0), baseKey1Type, NReflectImpl.PLATFORM_DOMAIN).toArray(new Class[0]);
+        Class[] second = NReflectUtils.findClassHierarchy(clazz.get(1), baseKey2Type, NReflectImpl.PLATFORM_DOMAIN).toArray(new Class[0]);
         HashSet<NUplet<Class>> seen = new HashSet<NUplet<Class>>();
         List<IndexComparable<NUplet<Class>>> result = new LinkedList<IndexComparable<NUplet<Class>>>();
         for (int i1 = 0; i1 < first.length; i1++) {

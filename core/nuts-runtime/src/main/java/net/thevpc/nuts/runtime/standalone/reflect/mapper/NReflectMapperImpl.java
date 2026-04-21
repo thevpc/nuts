@@ -1,10 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.reflect.mapper;
 
-import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.runtime.standalone.reflect.SPath;
 import net.thevpc.nuts.runtime.standalone.reflect.TypeConverterKey;
-import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.reflect.DefaultConvertersByType;
 import net.thevpc.nuts.util.*;
 
@@ -242,7 +240,7 @@ public class NReflectMapperImpl implements NReflectMapper {
     }
 
     public void tryRegisterBean(Object bean) {
-        Class baseClass = NApplications.unproxyType(bean.getClass());
+        Class baseClass = NReflectUtils.unproxyType(bean.getClass());
         Type genericSuperclass = baseClass.getGenericSuperclass();
         if (genericSuperclass instanceof ParameterizedType) {
             Type[] actualTypeArguments = ((ParameterizedType) genericSuperclass).getActualTypeArguments();
