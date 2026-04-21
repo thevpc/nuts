@@ -1,10 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.reflect.NClassPairMap;
-import net.thevpc.nuts.reflect.NReflect;
 import net.thevpc.nuts.reflect.NReflectUtils;
-import net.thevpc.nuts.reflect.NTypeNamePlatformDomain;
-import net.thevpc.nuts.runtime.standalone.reflect.NReflectImpl;
 import net.thevpc.nuts.util.NUplet;
 
 import java.lang.reflect.Array;
@@ -113,8 +110,8 @@ public class NClassPairMapImpl<A, B, V> implements NClassPairMap<A, B, V> {
 
 
     public NUplet<Class>[] evalHierarchy(NUplet<Class> clazz) {
-        Class[] first = NReflectUtils.findClassHierarchy(clazz.get(0), baseKey1Type, NReflectImpl.PLATFORM_DOMAIN).toArray(new Class[0]);
-        Class[] second = NReflectUtils.findClassHierarchy(clazz.get(1), baseKey2Type, NReflectImpl.PLATFORM_DOMAIN).toArray(new Class[0]);
+        Class[] first = NReflectUtils.findClassHierarchy(clazz.get(0), baseKey1Type).toArray(new Class[0]);
+        Class[] second = NReflectUtils.findClassHierarchy(clazz.get(1), baseKey2Type).toArray(new Class[0]);
         HashSet<NUplet<Class>> seen = new HashSet<NUplet<Class>>();
         List<IndexComparable<NUplet<Class>>> result = new LinkedList<IndexComparable<NUplet<Class>>>();
         for (int i1 = 0; i1 < first.length; i1++) {

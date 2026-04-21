@@ -4,8 +4,6 @@ import net.thevpc.nuts.log.NLogUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -472,7 +470,7 @@ public class NReflectUtils {
      * @param clazz the class to analyze; may be null
      * @return a set of all superclasses and interfaces in the hierarchy,
      *         excluding {@code Object.class}; empty set if input is null
-     * @see #findClassHierarchy(Class, Class, NTypeNameDomain)
+     * @see #findClassHierarchy(Class, Class)
      */
     public static Set<Class<?>> findAllSuperClassesAndInterfaces(Class<?> clazz) {
         if(clazz==null){
@@ -701,15 +699,14 @@ public class NReflectUtils {
      *   // Returns: [ArrayList, AbstractList, List, AbstractCollection, Collection, Iterable, ...]
      * </pre>
      *
-     * @param clazz the class to analyze; may be null
+     * @param clazz    the class to analyze; may be null
      * @param baseType optional filter—only ancestors assignable from this type are included, or null
-     * @param domain unused in this overload (kept for API compatibility)
      * @return an array of classes in the hierarchy, sorted by hierarchy comparator;
-     *         empty array if input is null
-     * @see #findClassHierarchy(NTypeName, NTypeName, NTypeNameDomain)
+     * empty array if input is null
+     * @see #findTypeNameHierarchy(NTypeName, NTypeName, NTypeNameDomain)
      */
-    public static List<Class> findClassHierarchy(Class clazz, Class baseType, NTypeNameDomain domain) {
-        if(clazz==null || baseType==null){
+    public static List<Class> findClassHierarchy(Class clazz, Class baseType) {
+        if(clazz==null){
             return  Collections.emptyList();
         }
         HashSet<Class> seen = new HashSet<Class>();
@@ -736,7 +733,7 @@ public class NReflectUtils {
     /**
      * Finds the type hierarchy (type ancestor chain) for a {@link NTypeName}, optionally filtered by base type.
      * <p>
-     * This is the {@link NTypeName}-based equivalent of {@link #findClassHierarchy(Class, Class, NTypeNameDomain)}.
+     * This is the {@link NTypeName}-based equivalent of {@link #findClassHierarchy(Class, Class)}.
      * Performs a breadth-first search of the type hierarchy (supertypes and interfaces),
      * collecting all types that are assignable from a given base type (if specified).
      * Results are sorted by a hierarchy comparator for consistent, predictable ordering.
@@ -762,9 +759,9 @@ public class NReflectUtils {
      * @param domain the type name domain defining assignability and hierarchy rules; may not be null
      * @return an array of type names in the hierarchy, sorted by hierarchy comparator;
      *         empty array if input is null
-     * @see #findClassHierarchy(Class, Class, NTypeNameDomain)
+     * @see #findClassHierarchy(Class, Class)
      */
-    public static List<NTypeName> findClassHierarchy(NTypeName clazz, NTypeName baseType, NTypeNameDomain domain) {
+    public static List<NTypeName> findTypeNameHierarchy(NTypeName clazz, NTypeName baseType, NTypeNameDomain domain) {
         HashSet<NTypeName> seen = new HashSet<NTypeName>();
         Queue<NTypeName> queue = new LinkedList<NTypeName>();
         List<NTypeName> result = new LinkedList<NTypeName>();
@@ -824,7 +821,7 @@ public class NReflectUtils {
      * @param domain the type name domain defining assignability and hierarchy rules; may not be null
      * @return the most specific type name that both inputs inherit from or implement,
      *         or Object if no better common ancestor exists
-     * @see #findClassHierarchy(NTypeName, NTypeName, NTypeNameDomain)
+     * @see #findTypeNameHierarchy(NTypeName, NTypeName, NTypeNameDomain)
      */
     public static <A, B> NTypeName<?> lowestCommonAncestor(NTypeName<A> a, NTypeName<B> b, NTypeNameDomain domain) {
         if (a.equals(b)) {
@@ -836,8 +833,8 @@ public class NReflectUtils {
         if (domain.isAssignableFrom(b, a)) {
             return b;
         }
-        List<NTypeName> aHierarchy = findClassHierarchy(a, null, domain);
-        List<NTypeName> bHierarchy = findClassHierarchy(b, null, domain);
+        List<NTypeName> aHierarchy = findTypeNameHierarchy(a, null, domain);
+        List<NTypeName> bHierarchy = findTypeNameHierarchy(b, null, domain);
         int i1 = -1;
         int i2 = -1;
         for (int ii = 0; ii < aHierarchy.size(); ii++) {
