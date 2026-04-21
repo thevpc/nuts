@@ -168,6 +168,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                         throw new NIllegalArgumentException(NMsg.ofC("unable to resolve application class from the current stacktrace"));
                     }
                     NAssert.requireNamedNonNull(appClass, "applicationType");
+                    source = createInstance(appClass);
                     application = NApplications.createApplicationInstanceFromAnnotatedInstance(source);
                 }
             }
@@ -302,11 +303,11 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
 
     private Class<?> resolveApplicationFromStackTrace() {
         StackTraceElement[] stackTrace = new Throwable().getStackTrace();
-        NLog nLog = NLog.of(NAppImpl.class);
-        nLog.log(NMsg.ofC("looking for application in stacktrace"));
-        for (int i = 0; i < stackTrace.length; i++) {
-            nLog.log(NMsg.ofC("\t%s", stackTrace[i]));
-        }
+//        NLog nLog = NLog.of(NAppImpl.class);
+//        nLog.log(NMsg.ofC("looking for application in stacktrace"));
+//        for (int i = 0; i < stackTrace.length; i++) {
+//            nLog.log(NMsg.ofC("\t%s", stackTrace[i]));
+//        }
         for (int i = 0; i < stackTrace.length; i++) {
             Class c = resolveClassWithMain(stackTrace[i]);
             if (c != null) {
