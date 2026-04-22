@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.reflect;
 
 import net.thevpc.nuts.runtime.standalone.reflect.mapper.TypeHelper;
 import net.thevpc.nuts.util.NImmutable;
+import net.thevpc.nuts.util.NOptional;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -115,7 +116,7 @@ public class ReflectUtils {
         return null;
     }
 
-    public static Class getRawClass(java.lang.reflect.Type type) {
+    public static NOptional<Class> getRawClass(java.lang.reflect.Type type) {
         Type tclazz = type;
         while (true) {
             if (tclazz instanceof ParameterizedType) {
@@ -132,9 +133,9 @@ public class ReflectUtils {
             }
         }
         if (tclazz instanceof Class) {
-            return (Class) tclazz;
+            return NOptional.of((Class) tclazz);
         }
 
-        return (Class) tclazz;
+        return NOptional.ofNamedEmpty("class from "+type);
     }
 }

@@ -46,7 +46,7 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
             case CHAR:
             case NAME:
             {
-                Class cc = ReflectUtils.getRawClass(to);
+                Class cc = ReflectUtils.getRawClass(to).get();
                 String name = o.asStringValue().get();
                 if (NEnum.class.isAssignableFrom(cc)) {
                     return (Enum) NEnum.parse(cc, name).get();

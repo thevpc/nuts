@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,6 +76,10 @@ class ForTagNode extends TagNode {
             while (it.hasNext()) {
                 Object v = it.next();
                 ctx.setVar(varLoopInfo.varName, v);
+                Object v2 = ctx.eval(varLoopInfo.varName);
+                if(!Objects.equals(v,v2)){
+                    ctx.setVar(varLoopInfo.varName, v);
+                }
                 if (!NBlankable.isBlank(varLoopInfo.indexName)) {
                     ctx.setVar(varLoopInfo.indexName, index);
                 }

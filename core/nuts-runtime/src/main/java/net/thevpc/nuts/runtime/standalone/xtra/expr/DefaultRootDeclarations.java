@@ -42,64 +42,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
                 NExprNodeValue a = args.get(0);
                 NExprNodeValue b = args.get(1);
                 Object instance = a.eval(context).orNull();
-                if (instance == null) {
-                    return null;
-                }
-                switch (b.getType()) {
-                    case WORD: {
-                        NExprWordNode w = (NExprWordNode) b.getNode();
-                        String n = w.getName();
-                        NReflectType t = reflectRepository.getType(instance.getClass());
-                        NOptional<NReflectProperty> property = t.getProperty(n);
-                        if (property.isPresent() && property.get().isRead()) {
-                            return property.get().read(instance);
-                        }
-                        NOptional<NReflectMethod> method = t.getMethod(n, NReflectSignatureImpl.of());
-                        if (method.isPresent() && method.get().isAccessible()) {
-                            return method.get().invoke(instance);
-                        }
-                        if(instance instanceof Map ){
-                            return ((Map)instance).get(n);
-                        }
-                        throw new NIllegalArgumentException(NMsg.ofC("property not found %s", instance + "." + b));
-                    }
-                    case FUNCTION: {
-                        NExprFunctionNode w = (NExprFunctionNode) b.getNode();
-                        String n = w.getName();
-                        NReflectType t = reflectRepository.getType(instance.getClass());
-                        if (w.getArguments().size() == 0) {
-                            NOptional<NReflectMethod> method = t.getMethod(n, NReflectSignatureImpl.of());
-                            if (method.isPresent() && method.get().isAccessible()) {
-                                return method.get().invoke(instance);
-                            }
-                            NOptional<NReflectProperty> property = t.getProperty(n);
-                            if (property.isPresent() && property.get().isRead()) {
-                                return property.get().read(instance);
-                            }
-                            throw new NIllegalArgumentException(NMsg.ofC("property not found %s", instance + "." + b));
-                        } else {
-                            List<NReflectMethod> methodsByName = t.getMethods().stream().filter(x -> x.getName().equals(n)).collect(Collectors.toList());
-                            List<NReflectMethod> found1 = methodsByName.stream().filter(x ->
-                                    x.getSignature().size() == w.getArguments().size()
-                                            || (x.getSignature().isVarArgs() && x.getSignature().size() > w.getArguments().size())
-                            ).collect(Collectors.toList());
-                            NReflectMethod goodMethod = null;
-                            if (found1.size() == 1) {
-                                goodMethod = found1.get(0);
-                            } else if (found1.size() > 1) {
-                                throw new NIllegalArgumentException(NMsg.ofC("too many methods to match %s", w));
-                            }
-                            if (goodMethod == null) {
-                                throw new NIllegalArgumentException(NMsg.ofC("method not found to match  %s", w));
-                            }
-                            List<Object> values=w.getArguments().stream().map(x->x.eval(context)).collect(Collectors.toList());
-                            NOptional<NReflectMethod> matchingMethod = t.getMatchingMethod(n, NReflectSignatureImpl.of(values.stream().map(x -> x == null ? null : reflectRepository.getType(x.getClass())).toArray(NReflectType[]::new)));
-                            goodMethod=matchingMethod.get();
-                            return goodMethod.invoke(instance,values.toArray());
-                        }
-                    }
-                }
-                throw new IllegalArgumentException("unsupported " + instance + "." + b);
+                return runDot(instance,b,context);
             }
         });
 
@@ -289,6 +232,78 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
                 return v.asBoolean().isPresent();
             }
         }, "abs");
+    }
+
+    private Object runDot(Object instance,NExprNodeValue b,NExprDeclarations context) {
+        if (instance == null) {
+            return null;
+        }
+        switch (b.getType()) {
+            case WORD: {
+                NExprWordNode w = (NExprWordNode) b.getNode();
+                String n = w.getName();
+                NReflectType t = reflectRepository.getType(instance.getClass());
+                NOptional<NReflectProperty> property = t.getProperty(n);
+                if (property.isPresent() && property.get().isRead()) {
+                    return property.get().read(instance);
+                }
+                NOptional<NReflectMethod> method = t.getMethod(n, NReflectSignatureImpl.of());
+                if (method.isPresent() && method.get().isAccessible()) {
+                    return method.get().invoke(instance);
+                }
+                if(instance instanceof Map ){
+                    return ((Map)instance).get(n);
+                }
+                throw new NIllegalArgumentException(NMsg.ofC("property not found %s", instance + "." + b));
+            }
+            case FUNCTION: {
+                NExprFunctionNode w = (NExprFunctionNode) b.getNode();
+                String n = w.getName();
+                NReflectType t = reflectRepository.getType(instance.getClass());
+                if (w.getArguments().size() == 0) {
+                    NOptional<NReflectMethod> method = t.getMethod(n, NReflectSignatureImpl.of());
+                    if (method.isPresent() && method.get().isAccessible()) {
+                        return method.get().invoke(instance);
+                    }
+                    NOptional<NReflectProperty> property = t.getProperty(n);
+                    if (property.isPresent() && property.get().isRead()) {
+                        return property.get().read(instance);
+                    }
+                    throw new NIllegalArgumentException(NMsg.ofC("property not found %s", instance + "." + b));
+                } else {
+                    List<NReflectMethod> methodsByName = t.getMethods().stream().filter(x -> x.getName().equals(n)).collect(Collectors.toList());
+                    List<NReflectMethod> found1 = methodsByName.stream().filter(x ->
+                            x.getSignature().size() == w.getArguments().size()
+                                    || (x.getSignature().isVarArgs() && x.getSignature().size() > w.getArguments().size())
+                    ).collect(Collectors.toList());
+                    NReflectMethod goodMethod = null;
+                    if (found1.size() == 1) {
+                        goodMethod = found1.get(0);
+                    } else if (found1.size() > 1) {
+                        throw new NIllegalArgumentException(NMsg.ofC("too many methods to match %s", w));
+                    }
+                    if (goodMethod == null) {
+                        throw new NIllegalArgumentException(NMsg.ofC("method not found to match  %s", w));
+                    }
+                    List<Object> values=w.getArguments().stream().map(x->x.eval(context)).collect(Collectors.toList());
+                    NOptional<NReflectMethod> matchingMethod = t.getMatchingMethod(n, NReflectSignatureImpl.of(values.stream().map(x -> x == null ? null : reflectRepository.getType(x.getClass())).toArray(NReflectType[]::new)));
+                    goodMethod=matchingMethod.get();
+                    return goodMethod.invoke(instance,values.toArray());
+                }
+            }
+            case OPERATOR:{
+                NExprOpNode w = (NExprOpNode) b.getNode();
+                String n = w.getName();
+                if(".".equals(n)){
+                    NExprNode b1 = w.getOperand(0);
+                    NExprNode b2 = w.getOperand(1);
+                    Object newInstance = runDot(instance, new DefaultNExprNodeValue(b1, context), context);
+                    return runDot(newInstance, new DefaultNExprNodeValue(b2, context), context);
+                }
+                break;
+            }
+        }
+        throw new IllegalArgumentException("unsupported " + instance + "." + b);
     }
 
     private void addDefaultFct(NExprFct fct, String... names) {

@@ -51,7 +51,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
     @Override
     public Object createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
 //        NSession session = context.getSession();
-        Class c = ReflectUtils.getRawClass(typeOfResult);
+        Class c = ReflectUtils.getRawClass(typeOfResult).get();
         switch (o.type()) {
             case NULL: {
                 return null;

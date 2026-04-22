@@ -261,7 +261,7 @@ public class UserElementMapperStore implements NElementMapperStore {
         if (type == null) {
             return DefaultElementMapperStore.F_NULL;
         }
-        Class cls = ReflectUtils.getRawClass(type);
+        Class cls = ReflectUtils.getRawClass(type).get();
         if (NSession.class.isAssignableFrom(cls)) {
             throw new NIllegalArgumentException(NMsg.ofC(
                     "%s is not serializable", type

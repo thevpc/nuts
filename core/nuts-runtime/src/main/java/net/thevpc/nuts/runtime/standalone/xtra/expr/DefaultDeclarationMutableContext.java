@@ -7,6 +7,7 @@ import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.expr.*;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class DefaultDeclarationMutableContext extends NExprDeclarationsBase implements NExprMutableDeclarations {
     private static DecInfo REMOVED = new DecInfo(null);
@@ -38,13 +39,15 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
     }
 
     @Override
-    public NExprVar getOrDeclareVar(String name, Object value) {
+    public NExprVar getOrDeclareVar(String name, Supplier<Object> value) {
         NExprVarDeclaration o = getVar(name).orNull();
         if(o!=null){
             return o.asVar();
         }
         NExprVarDeclaration e = declareVar(name);
-        e.set(value,this);
+        if(value!=null){
+            e.set(value.get(),this);
+        }
         return e.asVar();
     }
 

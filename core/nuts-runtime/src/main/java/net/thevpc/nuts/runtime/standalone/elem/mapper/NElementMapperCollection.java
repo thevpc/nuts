@@ -46,7 +46,7 @@ public class NElementMapperCollection implements NElementMapper {
         if(to==null){
             to=ArrayList.class;
         }
-        Class cls = ReflectUtils.getRawClass(to);
+        Class cls = ReflectUtils.getRawClass(to).get();
         Type elemType = Object.class;
         if (to instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) to;

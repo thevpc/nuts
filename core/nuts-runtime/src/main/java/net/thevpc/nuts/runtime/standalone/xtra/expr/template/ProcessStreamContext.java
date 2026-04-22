@@ -59,7 +59,7 @@ public class ProcessStreamContext implements Cloneable{
     }
 
     public void setVar(String varName, Object v) {
-        context.getVar(varName).get().set(v, context);
+        context.getOrDeclareVar(varName,null).set(varName,v,context);
     }
 
     public Object eval(String expr) {

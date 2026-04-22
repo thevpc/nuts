@@ -168,11 +168,10 @@ public class DefaultNReflectType implements NReflectType {
     public NOptional<Class<?>> asJavaClass() {
         Class c2;
         if (javaType instanceof Class<?>) {
-            c2 = (Class) javaType;
+            return NOptional.of((Class) javaType);
         } else {
-            c2 = ReflectUtils.getRawClass(javaType);
+            return (NOptional) ReflectUtils.getRawClass(javaType);
         }
-        return NOptional.of(c2);
     }
 
     private Supplier<Object> resolveSpecialConstr() {
@@ -182,7 +181,7 @@ public class DefaultNReflectType implements NReflectType {
             if (javaType instanceof Class<?>) {
                 c2 = (Class) javaType;
             } else {
-                c2 = ReflectUtils.getRawClass(javaType);
+                c2 = ReflectUtils.getRawClass(javaType).orNull();
             }
             if (c2 != null) {
                 if (c2.isInterface()) {
@@ -683,7 +682,7 @@ public class DefaultNReflectType implements NReflectType {
         if (clazz instanceof Class) {
             declaredFields = ((Class) clazz).getDeclaredFields();
         } else if (clazz instanceof ParameterizedType) {
-            Class c2 = ReflectUtils.getRawClass(clazz);
+            Class c2 = ReflectUtils.getRawClass(clazz).orNull();
             if (c2 != null) {
                 return c2.getDeclaredFields();
             }
@@ -699,7 +698,7 @@ public class DefaultNReflectType implements NReflectType {
         if (clazz instanceof Class) {
             declaredMethods = ((Class) clazz).getDeclaredMethods();
         } else if (clazz instanceof ParameterizedType) {
-            Class c2 = ReflectUtils.getRawClass(clazz);
+            Class c2 = ReflectUtils.getRawClass(clazz).orNull();
             if (c2 != null) {
                 return c2.getDeclaredMethods();
             }
@@ -979,7 +978,7 @@ public class DefaultNReflectType implements NReflectType {
             }
             if (someUpdates) {
                 DefaultNReflectType ownerType = (DefaultNReflectType) getOwnerType();
-                Type c2 = ReflectUtils.getRawClass(javaType);
+                Type c2 = ReflectUtils.getRawClass(javaType).orNull();
                 if (c2 == null) {
                     c2 = javaType;
                 }

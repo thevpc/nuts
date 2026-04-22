@@ -119,6 +119,13 @@ public class SyntaxParser {
         if (t == null) {
             return false;
         }
+        if(opType==NExprOpType.POSTFIX){
+            switch (t.ttype) {
+                case '(':
+                case '[':
+                    return true;
+            }
+        }
         switch (t.ttype) {
             case '(':
             case '[':
@@ -381,7 +388,93 @@ public class SyntaxParser {
             return first;
         }
 
-        return _nextPostfixOp(first, precedence);
+        return _nextInfixAndPostfixOp(first, precedence);
+    }
+
+    private NOptional<NExprNode> _nextInfixAndPostfixOp(NOptional<NExprNode> first, int precedence) {
+        while (true) {
+            NToken t = peekSkipSpace();
+            if (t == null) break;
+
+            // try postfix open-bracket: [], (), {}
+            if (isOpenPar(t, NExprOpType.POSTFIX)) {
+                tokens.next(); // consume opening bracket
+                NToken p2 = peekSkipSpace();
+                List<NExprNode> args = new ArrayList<>();
+                args.add(first.get());
+                if (p2 != null && !isCloseParStart(p2, t.ttype)) {
+                    NOptional<NExprNode> idx = nextExpr();
+                    if (idx.isError()) return idx;
+                    if (idx.isEmpty()) return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+                    args.add(idx.get());
+                    while (true) {
+                        p2 = peekSkipSpace();
+                        if (p2 == null) break;
+                        if (isCloseParStart(p2, t.ttype)) break;
+                        if (p2.ttype == ',') {
+                            tokens.next();
+                            idx = nextExpr();
+                            if (idx.isError()) return idx;
+                            if (idx.isEmpty()) return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+                            args.add(idx.get());
+                        } else {
+                            return NOptional.ofError(() -> NMsg.ofPlain("expected ',' or closing bracket"));
+                        }
+                    }
+                }
+                p2 = peekSkipSpace();
+                if (p2 == null || !isCloseParStart(p2, t.ttype)) {
+                    return NOptional.ofError(() -> NMsg.ofPlain("expected closing bracket"));
+                }
+                tokens.next(); // consume closing bracket
+                NToken finalT = t;
+                String opName = t.ttype == '[' ? "[]" : t.ttype == '(' ? "()" : "{}";
+                first = NOptional.of(new DefaultOpNode(finalT.sval, opName, NExprOpType.POSTFIX, -1, args));
+                continue;
+            }
+
+            // try regular postfix
+            NExprOpDeclaration postfixOp = withCache.getOp(t, NExprOpType.POSTFIX);
+            if (postfixOp != null && !(postfixOp.getPrecedence() < precedence)) {
+                tokens.next();
+                first = NOptional.of(new DefaultOpNode(t.sval, opName(t), NExprOpType.POSTFIX, postfixOp.getPrecedence(), Arrays.asList(first.get())));
+                continue;
+            }
+
+            // try infix
+            NExprOpDeclaration infixOp = withCache.getOp(t, NExprOpType.INFIX);
+            if (infixOp != null && !(infixOp.getPrecedence() < precedence)) {
+                tokens.next();
+                int nextPrecedence = infixOp.getPrecedence();
+                if (infixOp.getAssociativity() == NOperatorAssociativity.LEFT) {
+                    nextPrecedence--;
+                }
+                NOptional<NExprNode> q = nextNonTerminal(nextPrecedence);
+                if (q.isEmpty()) {
+                    if (isOpIgnoresMissingSecondOperand(t, NExprOpType.INFIX)) {
+                        // do nothing
+                    } else if (isOpAcceptsMissingSecondOperand(t, NExprOpType.INFIX)) {
+                        first = NOptional.of(createInfixOpNodeOrCombine(t.sval, opName(t), infixOp.getPrecedence(), first.get(), null));
+                    } else {
+                        return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+                    }
+                } else if (q.isError()) {
+                    if (isOpIgnoresMissingSecondOperand(t, NExprOpType.INFIX)) {
+                        // do nothing
+                    } else if (isOpAcceptsMissingSecondOperand(t, NExprOpType.INFIX)) {
+                        first = NOptional.of(createInfixOpNodeOrCombine(t.sval, opName(t), infixOp.getPrecedence(), first.get(), null));
+                    } else {
+                        return q;
+                    }
+                } else {
+                    first = NOptional.of(createInfixOpNodeOrCombine(t.sval, opName(t), infixOp.getPrecedence(), first.get(), q.get()));
+                }
+                continue;
+            }
+
+            break;
+        }
+        return first;
     }
 
     private NOptional<NExprNode> _nextInfixOp(NOptional<NExprNode> first, int precedence) {

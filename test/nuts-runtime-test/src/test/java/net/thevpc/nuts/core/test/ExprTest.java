@@ -254,4 +254,14 @@ public class ExprTest {
         Assertions.assertTrue(n.getChildren().get(0).getName().equals("("));
         Assertions.assertTrue(n.getChildren().get(1) instanceof NExprLiteralNode);
     }
+
+    @Test
+    public void test15() throws Exception {
+        NExprMutableDeclarations expr = NExprs.of().newMutableDeclarations();
+        NExprNode n = expr.parse("plots[plotId].title").get();
+        Assertions.assertTrue(n.getName().equals("."));
+        Assertions.assertTrue(n.getChildren().size() == 2);
+        Assertions.assertTrue(n.getChildren().get(0).getName().equals("("));
+        Assertions.assertTrue(n.getChildren().get(1) instanceof NExprLiteralNode);
+    }
 }

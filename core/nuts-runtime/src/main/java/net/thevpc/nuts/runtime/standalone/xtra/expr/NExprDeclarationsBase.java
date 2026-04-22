@@ -7,6 +7,7 @@ import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.expr.*;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public abstract class NExprDeclarationsBase implements NExprDeclarations {
     protected NExprs exprs;
@@ -120,7 +121,7 @@ public abstract class NExprDeclarationsBase implements NExprDeclarations {
     }
 
     @Override
-    public NExprVar getOrDeclareVar(String name, Object a) {
+    public NExprVar getOrDeclareVar(String name, Supplier<Object> initialValue) {
         return null;
     }
 

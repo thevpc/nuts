@@ -5,6 +5,7 @@ import net.thevpc.nuts.util.NFunction2;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public interface NExprDeclarations {
 
@@ -69,7 +70,7 @@ public interface NExprDeclarations {
 
     NExprVar ofVar(String name, Object a);
 
-    NExprVar getOrDeclareVar(String name, Object a);
+    NExprVar getOrDeclareVar(String name, Supplier<Object> initialValue);
 
     NExprInterpolatedStrNode ofInterpolatedStr(String a);
 
