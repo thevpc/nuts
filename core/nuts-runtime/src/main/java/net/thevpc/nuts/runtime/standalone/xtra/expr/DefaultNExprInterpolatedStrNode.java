@@ -37,7 +37,7 @@ public class DefaultNExprInterpolatedStrNode implements NExprInterpolatedStrNode
     }
 
     @Override
-    public NOptional<Object> eval(NExprDeclarations context) {
+    public NOptional<Object> eval(NExprContext context) {
         return NOptional.of(NMsg.ofV(expression == null ? "" : expression, new NFunction<String, Object>() {
             @Override
             public Object apply(String s) {

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr.template;
 
 
-import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprContext;
 import net.thevpc.nuts.expr.NExprNode;
 import net.thevpc.nuts.util.NBlankable;
 
@@ -10,9 +10,9 @@ import java.util.List;
 
 public class TagNodeReader {
     private TagTokenReader tr;
-    private NExprDeclarations context;
+    private NExprContext context;
 
-    public TagNodeReader(TagTokenReader tr, NExprDeclarations context) {
+    public TagNodeReader(TagTokenReader tr, NExprContext context) {
         this.tr = tr;
         this.context = context;
     }

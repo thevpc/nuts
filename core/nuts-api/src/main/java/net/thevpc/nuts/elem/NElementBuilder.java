@@ -127,4 +127,6 @@ public interface NElementBuilder {
     NElementBuilder removeDiagnostic(NElementDiagnostic error);
 
     NElementBuilder metadata(NElementMetadata metadata);
+
+    NElementBuilder setAffixes(List<NBoundAffix> affixes);
 }

@@ -320,6 +320,8 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     NUpletElementBuilder setAffixAt(int index, NBoundAffix affix);
 
+    NUpletElementBuilder setAffixes(List<NBoundAffix> affixes);
+
     NUpletElementBuilder addAffix(NBoundAffix affix);
 
     NUpletElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);

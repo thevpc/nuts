@@ -58,6 +58,9 @@ public interface NCharStreamElementBuilder extends NElementBuilder {
     NCharStreamElementBuilder addAffixAt(int index, NBoundAffix affix);
 
     NCharStreamElementBuilder setAffixAt(int index, NBoundAffix affix);
+
+    NCharStreamElementBuilder setAffixes(List<NBoundAffix> affixes);
+
     NCharStreamElementBuilder addAffix(NBoundAffix affix);
 
     NCharStreamElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);

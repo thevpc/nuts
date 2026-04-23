@@ -204,6 +204,12 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
     }
 
     @Override
+    public NElementBuilder setAffixes(List<NBoundAffix> affixes) {
+        this.affixes.setAffixes(affixes);
+        return this;
+    }
+
+    @Override
     public NElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
         this.affixes.addAffix(index, affix, anchor);
         return this;

@@ -302,6 +302,8 @@ public interface NFragmentElementBuilder extends NElementBuilder {
 
     NFragmentElementBuilder setAffixAt(int index, NBoundAffix affix);
 
+    NFragmentElementBuilder setAffixes(List<NBoundAffix> affixes);
+
     NFragmentElementBuilder addAffix(NBoundAffix affix);
 
     NFragmentElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);

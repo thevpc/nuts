@@ -115,6 +115,13 @@ public class DefaultNOperatorSymbolElementBuilder extends AbstractNElementBuilde
         return this;
     }
 
+    @Override
+    public NOperatorSymbolElementBuilder setAffixes(List<NBoundAffix> affixes) {
+        super.setAffixes(affixes);
+        return this;
+    }
+
+
     public DefaultNOperatorSymbolElementBuilder addAffix(NBoundAffix affix) {
         super.addAffix(affix);
         return this;

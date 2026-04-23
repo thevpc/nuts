@@ -13,5 +13,5 @@ public interface NExprOpDeclaration {
 
     int getPrecedence();
 
-    Object eval(List<NExprNodeValue> args, NExprDeclarations context);
+    Object eval(List<NExprNodeValue> args, NExprContext context);
 }

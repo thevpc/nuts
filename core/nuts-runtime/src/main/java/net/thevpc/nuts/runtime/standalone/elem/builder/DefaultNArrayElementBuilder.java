@@ -713,6 +713,12 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
+    @Override
+    public NArrayElementBuilder setAffixes(List<NBoundAffix> affixes) {
+        super.setAffixes(affixes);
+        return this;
+    }
+
     public NArrayElementBuilder addAffix(NBoundAffix affix) {
         super.addAffix(affix);
         return this;

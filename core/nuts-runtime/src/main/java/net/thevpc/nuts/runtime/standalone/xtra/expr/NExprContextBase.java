@@ -1,18 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.runtime.standalone.xtra.expr.template.NExprDeclarationsTemplateImpl;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.template.NExprTemplateImpl;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NFunction2;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.expr.*;
 
 import java.util.*;
-import java.util.function.Supplier;
 
-public abstract class NExprDeclarationsBase implements NExprDeclarations {
+public abstract class NExprContextBase implements NExprContext {
     protected NExprs exprs;
 
-    public NExprDeclarationsBase(NExprs exprs) {
+    public NExprContextBase(NExprs exprs) {
         this.exprs = exprs;
     }
 
@@ -56,13 +55,8 @@ public abstract class NExprDeclarationsBase implements NExprDeclarations {
     }
 
     @Override
-    public NExprDeclarations newDeclarations(NExprEvaluator evaluator) {
-        return new NExprEvaluatorAsContext(exprs, evaluator, this);
-    }
-
-    @Override
-    public NExprMutableDeclarations newMutableDeclarations() {
-        return new DefaultDeclarationMutableContext(exprs, this);
+    public NExprContextBuilder childContext() {
+        return new NExprContextBuilderImpl(exprs,this);
     }
 
     @Override
@@ -71,17 +65,12 @@ public abstract class NExprDeclarationsBase implements NExprDeclarations {
     }
 
     @Override
-    public NExprNodeValue literalAsValue(Object any) {
-        return nodeAsValue(literalAsNode(any));
+    public NExprNodeValue bindLiteral(Object any) {
+        return bindNode(NExprNode.ofLiteral(any));
     }
 
     @Override
-    public NExprNode literalAsNode(Object any) {
-        return new DefaultLiteralNode(any);
-    }
-
-    @Override
-    public NExprNodeValue nodeAsValue(NExprNode any) {
+    public NExprNodeValue bindNode(NExprNode any) {
         return new DefaultNExprNodeValue(any, this);
     }
 
@@ -98,31 +87,6 @@ public abstract class NExprDeclarationsBase implements NExprDeclarations {
     @Override
     public <A> NOptional<NFunction<A, ?>> findCommonPostfixOp(NExprCommonOp op, Class<? extends A> argType) {
         return exprs.findCommonPostfixOp(op, argType);
-    }
-
-    @Override
-    public NExprWordNode ofWord(String a) {
-        return new DefaultWordNode(a);
-    }
-
-    @Override
-    public NExprLiteralNode ofLiteral(Object a) {
-        return new DefaultLiteralNode(a);
-    }
-
-    @Override
-    public NExprVar ofConst(String name, Object a) {
-        return exprs.newConst(name, a);
-    }
-
-    @Override
-    public NExprVar ofVar(String name, Object a) {
-        return exprs.newVar(name, a);
-    }
-
-    @Override
-    public NExprVar getOrDeclareVar(String name, Supplier<Object> initialValue) {
-        return null;
     }
 
     @Override
@@ -158,6 +122,6 @@ public abstract class NExprDeclarationsBase implements NExprDeclarations {
 
     @Override
     public NExprTemplate ofTemplate() {
-        return new NExprDeclarationsTemplateImpl(this);
+        return new NExprTemplateImpl(this);
     }
 }

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprContext;
 import net.thevpc.nuts.expr.NExprLiteralNode;
 import net.thevpc.nuts.expr.NExprNode;
 import net.thevpc.nuts.expr.NExprNodeType;
@@ -37,7 +37,7 @@ public class DefaultLiteralNode implements NExprLiteralNode {
     }
 
     @Override
-    public NOptional<Object> eval(NExprDeclarations context) {
+    public NOptional<Object> eval(NExprContext context) {
         return NOptional.ofNullable(lit);
     }
 

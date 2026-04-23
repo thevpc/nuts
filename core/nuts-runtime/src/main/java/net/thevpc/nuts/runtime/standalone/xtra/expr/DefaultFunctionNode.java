@@ -52,10 +52,10 @@ public class DefaultFunctionNode implements NExprFunctionNode {
     }
 
     @Override
-    public NOptional<Object> eval(NExprDeclarations context) {
+    public NOptional<Object> eval(NExprContext context) {
         try {
             return context.evalFunction(getName(),
-                    Arrays.stream(args).map(context::nodeAsValue).toArray(NExprNodeValue[]::new)
+                    Arrays.stream(args).map(context::bindNode).toArray(NExprNodeValue[]::new)
             );
         }catch (Exception ex){
             return NOptional.ofError(() -> NMsg.ofC("error %s ", ex).asError(ex));

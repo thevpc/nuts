@@ -9,57 +9,45 @@ public class DefaultNExprs implements NExprs {
 
     private final DefaultNExprsCommonOps defaultNExprsCommonOps = new DefaultNExprsCommonOps();
 
+    DefaultRootContext defaultContext;
+    EmptyRootContext emptyContext;
     public DefaultNExprs() {
-    }
-
-
-    public NExprDeclarations newDeclarations(boolean includeDefaults) {
-        return includeDefaults ? new DefaultRootDeclarations(this) : new EmptyRootDeclarations(this);
+        defaultContext=new DefaultRootContext(this);
+        emptyContext= new EmptyRootContext(this);
     }
 
     @Override
-    public NExprDeclarations newDeclarations() {
-        return newDeclarations(true);
+    public NExprContext emptyContext() {
+        return emptyContext;
     }
 
+    @Override
+    public NExprContext defaultContext() {
+        return defaultContext;
+    }
+
+    @Override
+    public NExprWordNode newWord(String a) {
+        return new DefaultWordNode(a);
+    }
+
+    @Override
+    public NExprLiteralNode newLiteral(Object a) {
+        return new DefaultLiteralNode(a);
+    }
+
+
     public NExprVar newVar(String var) {
-        return new ReservedNExprVar(var,null);
+        return new ReservedNExprVar(var, null);
     }
 
     @Override
     public NExprVar newVar(String var, Object value) {
-        return new ReservedNExprVar(var,value);
+        return new ReservedNExprVar(var, value);
     }
 
     public NExprVar newConst(String name, Object value) {
         return new ReservedNExprConst(name, value);
-    }
-
-    public NExprDeclarations newDeclarations(boolean includeDefaults, NExprEvaluator evaluator) {
-        NExprDeclarations r = newDeclarations(includeDefaults);
-        if (evaluator != null) {
-            r = r.newDeclarations(evaluator);
-        }
-        return r;
-    }
-
-    @Override
-    public NExprMutableDeclarations newMutableDeclarations(boolean includeDefaults) {
-        return newDeclarations(includeDefaults).newMutableDeclarations();
-    }
-
-    @Override
-    public NExprMutableDeclarations newMutableDeclarations(NExprEvaluator evaluator) {
-        return newDeclarations(true, evaluator).newMutableDeclarations();
-    }
-
-    @Override
-    public NExprMutableDeclarations newMutableDeclarations() {
-        return newDeclarations(true).newMutableDeclarations();
-    }
-
-    public NExprMutableDeclarations newMutableDeclarations(boolean includeDefaults, NExprEvaluator evaluator) {
-        return newDeclarations(includeDefaults, evaluator).newMutableDeclarations();
     }
 
     @Override

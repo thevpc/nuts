@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface NExprFctDeclaration {
     String getName();
-    Object eval(List<NExprNodeValue> args, NExprDeclarations context);
+    Object eval(List<NExprNodeValue> args, NExprContext context);
 }

@@ -1,8 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprContext;
 import net.thevpc.nuts.expr.NExprVar;
 import net.thevpc.nuts.expr.NExprVarDeclaration;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 
 public class DefaultNExprVarDeclaration implements NExprVarDeclaration {
     private String name;
@@ -20,12 +22,15 @@ public class DefaultNExprVarDeclaration implements NExprVarDeclaration {
     }
 
     @Override
-    public Object get(NExprDeclarations context) {
+    public Object get(NExprContext context) {
         return impl.get(name, context);
     }
 
     @Override
-    public Object set(Object value, NExprDeclarations context) {
+    public Object set(Object value, NExprContext context) {
+        if(!(context instanceof NExprMutableContextImpl)){
+            throw new NIllegalArgumentException(NMsg.ofC("cannot set variable %s in a readonly context",name));
+        }
         return impl.set(name, value, context);
     }
 
@@ -34,12 +39,12 @@ public class DefaultNExprVarDeclaration implements NExprVarDeclaration {
         if (v == null) {
             v = new NExprVar() {
                 @Override
-                public Object get(String name, NExprDeclarations context) {
+                public Object get(String name, NExprContext context) {
                     return DefaultNExprVarDeclaration.this.get(context);
                 }
 
                 @Override
-                public Object set(String name, Object value, NExprDeclarations context) {
+                public Object set(String name, Object value, NExprContext context) {
                     return DefaultNExprVarDeclaration.this.set(value, context);
                 }
             };

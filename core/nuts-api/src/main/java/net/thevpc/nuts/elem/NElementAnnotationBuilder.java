@@ -42,4 +42,6 @@ public interface NElementAnnotationBuilder extends NBlankable {
     NElementAnnotationBuilder addAll(List<NElement> all);
 
     NElementAnnotationBuilder setParamAt(int index, NElement nElement);
+
+    NElementAnnotationBuilder setParams(List<NElement> elements);
 }

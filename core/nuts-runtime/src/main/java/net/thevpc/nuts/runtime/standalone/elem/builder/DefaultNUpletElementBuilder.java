@@ -487,6 +487,12 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
+    @Override
+    public NUpletElementBuilder setAffixes(List<NBoundAffix> affixes) {
+        super.setAffixes(affixes);
+        return this;
+    }
+
     public NUpletElementBuilder addAffix(NBoundAffix affix) {
         super.addAffix(affix);
         return this;

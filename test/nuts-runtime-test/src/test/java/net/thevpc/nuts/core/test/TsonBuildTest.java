@@ -50,8 +50,9 @@ public class TsonBuildTest {
         String s = NElementWriter.ofTson().setFormatterCompact().formatPlain(elem);
         NElement e = NElementReader.ofTson().read(s);
         TestUtils.println(e.toString());
-        Assertions.assertEquals(elem.toString(), e.toString()); // the latter should have a more newline
-        Assertions.assertNotEquals(elem, e); // the latter should have a more newline
+        Assertions.assertEquals(elem.toString(), e.toString());
+        boolean b=elem.equals(e);
+        Assertions.assertEquals(elem, e);
     }
 
     @Test

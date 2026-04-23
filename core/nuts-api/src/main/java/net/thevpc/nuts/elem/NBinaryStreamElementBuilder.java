@@ -57,6 +57,9 @@ public interface NBinaryStreamElementBuilder extends NElementBuilder {
     NBinaryStreamElementBuilder addAffixAt(int index, NBoundAffix affix);
 
     NBinaryStreamElementBuilder setAffixAt(int index, NBoundAffix affix);
+
+    NBinaryStreamElementBuilder setAffixes(List<NBoundAffix> affixes);
+
     NBinaryStreamElementBuilder addAffix(NBoundAffix affix);
 
     NBinaryStreamElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);

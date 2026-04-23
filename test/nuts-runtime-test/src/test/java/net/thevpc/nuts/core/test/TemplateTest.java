@@ -2,8 +2,6 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.expr.*;
-import net.thevpc.nuts.util.NMaps;
-import net.thevpc.nuts.util.NOptional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,21 +33,10 @@ public class TemplateTest {
     }
 
     public static String render(String text, Map<String,Object> varsMap) {
-        NExprTemplate nExprTemplate = NExprs.of().newMutableDeclarations(new NExprEvaluator() {
-            @Override
-            public NOptional<NExprVar> getVar(String varName, NExprDeclarations context) {
-                NExprVar v = NExprVar.ofMap(varsMap);;
-                if (context instanceof NExprMutableDeclarations) {
-                    ((NExprMutableDeclarations) context).declareVar(varName, v);
-                }
-                return NOptional.of(v);
-            }
-
-            @Override
-            public NOptional<NExprFct> getFunction(String fctName, NExprNodeValue[] args, NExprDeclarations context) {
-                return NExprEvaluator.super.getFunction(fctName, args, context);
-            }
-        }).ofTemplate().withMoustacheStyle();
+        NExprTemplate nExprTemplate = NExprContextBuilder.of()
+                .declareVars(varsMap)
+                .build()
+                .ofTemplate().withMoustacheStyle();
         return  nExprTemplate.processString(text);
     }
 }

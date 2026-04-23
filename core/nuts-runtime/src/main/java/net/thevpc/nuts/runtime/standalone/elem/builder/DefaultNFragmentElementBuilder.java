@@ -416,6 +416,12 @@ public class DefaultNFragmentElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
+    public NFragmentElementBuilder setAffixes(List<NBoundAffix> affixes) {
+        super.setAffixes(affixes);
+        return this;
+    }
+
+    @Override
     public NFragmentElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
         super.addAffixAt(index, affix, anchor);
         return this;

@@ -171,6 +171,13 @@ public class DefaultNListElementBuilder extends AbstractNElementBuilder implemen
         return this;
     }
 
+    @Override
+    public NListElementBuilder setAffixes(List<NBoundAffix> affixes) {
+        super.setAffixes(affixes);
+        return this;
+    }
+
+
     public NListElementBuilder addAffix(NBoundAffix affix) {
         super.addAffix(affix);
         return this;

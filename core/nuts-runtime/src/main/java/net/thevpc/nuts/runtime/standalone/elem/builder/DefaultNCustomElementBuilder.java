@@ -129,6 +129,13 @@ public class DefaultNCustomElementBuilder extends AbstractNElementBuilder implem
         return this;
     }
 
+    @Override
+    public NCustomElementBuilder setAffixes(List<NBoundAffix> affixes) {
+        super.setAffixes(affixes);
+        return this;
+    }
+
+
     public NCustomElementBuilder addAffix(NBoundAffix affix){
         super.addAffix(affix);
         return this;

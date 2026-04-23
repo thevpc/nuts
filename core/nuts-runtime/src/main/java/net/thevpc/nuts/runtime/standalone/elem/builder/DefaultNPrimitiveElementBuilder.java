@@ -576,7 +576,17 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
                         List<NElementLine> lines = new ArrayList<>();
                         StringBuilder vv = new StringBuilder();
                         NElementLine e = (NElementLine) value;
-                        vv.append(e.startPadding());
+                        // in the case of line string when content starts with spaces, these spaces are moved to start padding
+                        if(e.content().startsWith(" ") || e.content().startsWith("\t")){
+                            StringBuilder sc=new StringBuilder(e.content());
+                            StringBuilder sp=new StringBuilder(e.startPadding());
+                            while(sc.length()>0 && (sc.charAt(0)==' ' ||sc.charAt(0)=='\t')){
+                                sp.append(sc.charAt(0));
+                                sc.deleteCharAt(0);
+                            }
+                            e=new NElementLineImpl(e.prefix(),e.startMarker(),sp.toString(),sc.toString(),e.endPadding(),e.endMarker(),e.newline());
+                        }
+                        //vv.append(e.startPadding());
                         vv.append(e.content());
                         if (e.newline() != null) {
                             vv.append(e.newline().value());
@@ -595,7 +605,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
                         } else {
                             lines.add(new NElementLineImpl(e.prefix(), startMarker, e.startPadding(), e.content(), e.endPadding(), e.endMarker(), e.newline()));
                         }
-                        return DefaultNStringElement.ofLines(type, vv.toString(), image, lines, affixes(), diagnostics(), metadata());
+                        return DefaultNStringElement.ofLines(type, e.content(), image, lines, affixes(), diagnostics(), metadata());
                     }
                     break;
                 }
@@ -735,6 +745,12 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
     @Override
     public NPrimitiveElementBuilder setAffixAt(int index, NBoundAffix affix) {
         super.setAffixAt(index, affix);
+        return this;
+    }
+
+    @Override
+    public NPrimitiveElementBuilder setAffixes(List<NBoundAffix> affixes) {
+        super.setAffixes(affixes);
         return this;
     }
 

@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprContext;
 import net.thevpc.nuts.expr.NExprOpDeclaration;
 import net.thevpc.nuts.expr.NExprOpType;
 import net.thevpc.nuts.expr.NToken;
 
 public class NExprWithCache {
-    NExprDeclarations evaluator;
+    NExprContext evaluator;
 
-    public NExprWithCache(NExprDeclarations evaluator) {
+    public NExprWithCache(NExprContext evaluator) {
         this.evaluator = evaluator;
     }
 

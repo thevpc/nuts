@@ -22,6 +22,8 @@ public interface NEmptyElementBuilder extends NElementBuilder {
 
     NEmptyElementBuilder setAffixAt(int index, NBoundAffix affix);
 
+    NEmptyElementBuilder setAffixes(List<NBoundAffix> affixes);
+
     NEmptyElementBuilder addAffix(NBoundAffix affix);
 
     NEmptyElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);

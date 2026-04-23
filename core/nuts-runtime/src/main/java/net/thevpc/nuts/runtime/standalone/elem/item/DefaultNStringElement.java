@@ -44,15 +44,25 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
 //    }
 
     public static DefaultNStringElement ofLines(NElementType type, String value,
-                                                String rawValue, List<NElementLine> lines,
+                                                String image, List<NElementLine> lines,
                                                 List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
-        return new DefaultNStringElement(type, value, rawValue, lines, affixes, diagnostics, metadata);
+        if(image==null){
+            StringBuilder sb=new StringBuilder();
+            for(NElementLine l:lines){
+                sb.append(l.toString());
+            }
+            image=sb.toString();
+        }
+        return new DefaultNStringElement(type, value, image, lines, affixes, diagnostics, metadata);
     }
 
     public static DefaultNStringElement ofNoLines(NElementType type, String value,
-                                                  String rawValue,
+                                                  String image,
                                                   List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
-        return new DefaultNStringElement(type, value, rawValue, null, affixes, diagnostics, metadata);
+        if(image==null){
+            image=valueToImage(value,type);
+        }
+        return new DefaultNStringElement(type, value, image, null, affixes, diagnostics, metadata);
     }
 
     public DefaultNStringElement(NElementType type, String value) {
@@ -64,6 +74,50 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
                                  List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
         super(type, NAssert.requireNamedNonNull(value, "string value"), affixes, diagnostics, metadata);
         NAssert.requireNamedNonNull(value, "image value");
+        switch (type) {
+            case BLOCK_STRING: {
+                NAssert.requireNamedTrue(image.startsWith("¶¶"), "block string");
+//                char c = image.charAt(image.length() - 1);
+//                NAssert.requireNamedTrue(c=='\n'||c=='\r', "block string");
+                break;
+            }
+            case LINE_STRING: {
+                NAssert.requireNamedTrue(image.startsWith("¶"), "block string");
+//                char c = image.charAt(image.length() - 1);
+//                NAssert.requireNamedTrue(c=='\n'||c=='\r', "block string");
+                break;
+            }
+            case DOUBLE_QUOTED_STRING: {
+                NAssert.requireNamedTrue(image.startsWith("\""), "double quoted string");
+                NAssert.requireNamedTrue(image.endsWith("\""), "double quoted string");
+                break;
+            }
+            case SINGLE_QUOTED_STRING: {
+                NAssert.requireNamedTrue(image.startsWith("'"), "simple quoted string");
+                NAssert.requireNamedTrue(image.endsWith("'"), "simple quoted string");
+                break;
+            }
+            case BACKTICK_STRING: {
+                NAssert.requireNamedTrue(image.startsWith("`"), "back quoted string");
+                NAssert.requireNamedTrue(image.endsWith("`"), "back quoted string");
+                break;
+            }
+            case TRIPLE_DOUBLE_QUOTED_STRING: {
+                NAssert.requireNamedTrue(image.startsWith("\"\"\""), "triple double quoted string");
+                NAssert.requireNamedTrue(image.endsWith("\"\"\""), "triple double quoted string");
+                break;
+            }
+            case TRIPLE_SINGLE_QUOTED_STRING: {
+                NAssert.requireNamedTrue(image.startsWith("'''"), "triple simple quoted string");
+                NAssert.requireNamedTrue(image.endsWith("'''"), "triple simple quoted string");
+                break;
+            }
+            case TRIPLE_BACKTICK_STRING: {
+                NAssert.requireNamedTrue(image.startsWith("```"), "triple back quoted string");
+                NAssert.requireNamedTrue(image.endsWith("```"), "triple back quoted string");
+                break;
+            }
+        }
         this.image = image;
         this.lines0 = lines;
         if (NAssert.requireNamedNonNull(type,"type") == NElementType.NAME) {
@@ -81,6 +135,9 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
 
     private static String valueToImage(String any, NElementType type) {
         switch (type) {
+            case NAME: {
+                return any;
+            }
             case SINGLE_QUOTED_STRING: {
                 return _escape1(any, '\'');
             }
@@ -98,6 +155,21 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
             }
             case TRIPLE_BACKTICK_STRING: {
                 return _escape3(any, '`');
+            }
+            case LINE_STRING: {
+                String[] all = any.split("\n");
+                if(all.length==1 || (all.length==2 && all[all.length-1].isEmpty())){
+                    return "¶ "+all[0]+'\n';
+                }
+                throw new NIllegalArgumentException(NMsg.ofC("line string could not include newlines"));
+            }
+            case BLOCK_STRING: {
+                String[] all = any.split("\n");
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < all.length; i++) {
+                    sb.append("¶ ").append(all[i]).append("\n");
+                }
+                return sb.toString();
             }
         }
         return any;
@@ -303,7 +375,6 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
         expectNothing(le);
         List<NLine> nLines = NLine.parseList((String) t.value());
         List<NElementLine> result = new ArrayList<>();
-        StringBuilder content = new StringBuilder();
         for (int i = 0; i < nLines.size(); i++) {
             NLine nLine = nLines.get(i);
             result.add(new NElementLineImpl(
@@ -314,12 +385,8 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
                     (i == nLines.size() - 1) ? quotes : "",
                     nLine.newLine()
             ));
-            content.append(nLine.content());
-            if (nLine.newLine() != null) {
-                content.append(nLine.newLine().value());
-            }
         }
-        return new TsonCustomLexer.LinesAndContent(result, content.toString());
+        return new TsonCustomLexer.LinesAndContent(result);
     }
 
     private List<NElementLine> parseLinesFromUserQuoted(String userValue, String quotes) {

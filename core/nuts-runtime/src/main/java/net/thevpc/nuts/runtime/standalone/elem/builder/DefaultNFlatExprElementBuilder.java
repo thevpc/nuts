@@ -210,6 +210,12 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
         return this;
     }
 
+    @Override
+    public NFlatExprElementBuilder setAffixes(List<NBoundAffix> affixes) {
+        super.setAffixes(affixes);
+        return this;
+    }
+
     public NFlatExprElementBuilder addAffix(NBoundAffix affix) {
         super.addAffix(affix);
         return this;

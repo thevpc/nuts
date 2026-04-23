@@ -22,7 +22,7 @@ public class DefaultNElementSeparator implements NElementSeparator {
             case ";":
                 return SEMI_COLON;
         }
-        throw new NIllegalArgumentException(NMsg.ofC("invalid separator %s", separator));
+        throw new NIllegalArgumentException(NMsg.ofC("invalid separator '%s'", separator));
     }
 
     public static DefaultNElementSeparator of(char separator) {

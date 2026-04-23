@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprContext;
 import net.thevpc.nuts.expr.NExprNode;
 import net.thevpc.nuts.expr.NExprNodeType;
 import net.thevpc.nuts.expr.NExprNodeValue;
@@ -10,10 +10,10 @@ import java.util.List;
 
 public class DefaultNExprNodeValue implements NExprNodeValue {
     private NExprNode node;
-    private NExprDeclarations boundContext;
+    private NExprContext boundContext;
     private NOptional<Object> value;
 
-    public DefaultNExprNodeValue(NExprNode node, NExprDeclarations boundContext) {
+    public DefaultNExprNodeValue(NExprNode node, NExprContext boundContext) {
         this.node = node;
         this.boundContext = boundContext;
     }
@@ -31,12 +31,12 @@ public class DefaultNExprNodeValue implements NExprNodeValue {
         return node;
     }
 
-    public NExprDeclarations getBoundContext() {
+    public NExprContext getBoundContext() {
         return boundContext;
     }
 
     @Override
-    public NOptional<Object> eval(NExprDeclarations context) {
+    public NOptional<Object> eval(NExprContext context) {
         //ignore context and use bound context!!
         return getValue();
     }

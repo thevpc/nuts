@@ -13,6 +13,7 @@ public class DefaultNElementFormatter implements NElementFormatter {
     private boolean removeSeparators;
     private boolean sanitize;
     private boolean strict;
+    private boolean commaFirst;
     private DefaultNElementFormatOptions options;
     public static final RemovedAffixesElementFormatterAction REMOVED_WHITESPACES_ELEMENT_FORMATTER_ACTION = new RemovedAffixesElementFormatterAction(null,
             a -> {
@@ -114,8 +115,10 @@ public class DefaultNElementFormatter implements NElementFormatter {
                 }
                 return false;
             });
-    public static final TsonFormatSanitizerAction TSON_FORMAT_SANITIZER_ACTION_COMPACT = new TsonFormatSanitizerAction(true);
-    public static final TsonFormatSanitizerAction TSON_FORMAT_SANITIZER_ACTION_SAFE = new TsonFormatSanitizerAction(false);
+    public static final TsonFormatSanitizerAction TSON_FORMAT_SANITIZER_ACTION_COMPACT = new TsonFormatSanitizerAction(true,false);
+    public static final TsonFormatSanitizerAction TSON_FORMAT_SANITIZER_ACTION_SAFE = new TsonFormatSanitizerAction(false,false);
+    public static final TsonFormatSanitizerAction TSON_FORMAT_SANITIZER_ACTION_COMPACT_COMMA_FIRST = new TsonFormatSanitizerAction(true,true);
+    public static final TsonFormatSanitizerAction TSON_FORMAT_SANITIZER_ACTION_SAFE_COMMA_FIRST = new TsonFormatSanitizerAction(false,true);
 
     public static final NElementFormatter COMPACT = new DefaultNElementFormatter(
             Collections.emptyList(),
@@ -123,7 +126,8 @@ public class DefaultNElementFormatter implements NElementFormatter {
                     "removeWhiteSpaces", true,
                     "removeSeparators", true,
                     "sanitize", true,
-                    "strict", true
+                    "strict", true,
+                    "commaFirst", true
             )
 
     );
@@ -135,7 +139,8 @@ public class DefaultNElementFormatter implements NElementFormatter {
                     "sanitize", true,
                     "strict", false,
                     "columns", 80,
-                    "complexity", 30
+                    "complexity", 30,
+                    "commaFirst", true
             )
 
     );
@@ -145,7 +150,8 @@ public class DefaultNElementFormatter implements NElementFormatter {
                     "removeWhiteSpaces", false,
                     "removeSeparators", false,
                     "sanitize", true,
-                    "strict", false
+                    "strict", false,
+                    "commaFirst", true
             )
     );
     public static final NElementFormatter SIMPLE = new DefaultNElementFormatter(
@@ -156,7 +162,8 @@ public class DefaultNElementFormatter implements NElementFormatter {
                     "removeWhiteSpaces", false,
                     "removeSeparators", false,
                     "sanitize", true,
-                    "strict", false
+                    "strict", false,
+                    "commaFirst", true
             )
     );
     public static final NElementFormatter VERBATIM = new DefaultNElementFormatter(
@@ -178,6 +185,7 @@ public class DefaultNElementFormatter implements NElementFormatter {
         this.removeSeparators = this.options.getBoolean("removeSeparators", () -> false);
         this.sanitize = this.options.getBoolean("sanitize", () -> false);
         this.strict = this.options.getBoolean("strict", () -> false);
+        this.commaFirst = this.options.getBoolean("commaFirst", () -> false);
     }
 
     @Override
@@ -219,9 +227,17 @@ public class DefaultNElementFormatter implements NElementFormatter {
         }
         if (sanitize) {
             if(strict) {
-                TSON_FORMAT_SANITIZER_ACTION_COMPACT.apply(fc);
+                if(commaFirst) {
+                    TSON_FORMAT_SANITIZER_ACTION_COMPACT_COMMA_FIRST.apply(fc);
+                }else{
+                    TSON_FORMAT_SANITIZER_ACTION_COMPACT.apply(fc);
+                }
             }else{
-                TSON_FORMAT_SANITIZER_ACTION_SAFE.apply(fc);
+                if(commaFirst) {
+                    TSON_FORMAT_SANITIZER_ACTION_SAFE_COMMA_FIRST.apply(fc);
+                }else{
+                    TSON_FORMAT_SANITIZER_ACTION_SAFE.apply(fc);
+                }
             }
         }
         return Collections.singletonList(builder.build());

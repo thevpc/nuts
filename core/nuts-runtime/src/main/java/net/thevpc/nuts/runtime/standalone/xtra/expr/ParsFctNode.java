@@ -11,7 +11,7 @@ public class ParsFctNode extends AbstractOp {
     }
 
     @Override
-    public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations e) {
+    public Object eval(String name, List<NExprNodeValue> args, NExprContext e) {
         throw new IllegalArgumentException("unable to evaluate");
     }
 }

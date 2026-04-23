@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr.template;
 
 import net.thevpc.nuts.expr.NExprCompiledTemplate;
-import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprContext;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NOutputTarget;
 
@@ -37,7 +37,7 @@ class MyNExprCompiledTemplate implements NExprCompiledTemplate {
     }
 
     @Override
-    public void run(Writer target, NExprDeclarations context) {
+    public void run(Writer target, NExprContext context) {
         ProcessStreamContext ctx = this.ctx.copy();
         ctx.out = new BufferedWriter(target);
         if (context != null) {
@@ -54,7 +54,7 @@ class MyNExprCompiledTemplate implements NExprCompiledTemplate {
     }
 
     @Override
-    public void run(OutputStream target, NExprDeclarations context) {
+    public void run(OutputStream target, NExprContext context) {
         ProcessStreamContext ctx = this.ctx.copy();
         ctx.out = new BufferedWriter(new OutputStreamWriter(target));
         if (context != null) {
@@ -71,7 +71,7 @@ class MyNExprCompiledTemplate implements NExprCompiledTemplate {
     }
 
     @Override
-    public void run(NOutputTarget target, NExprDeclarations context) {
+    public void run(NOutputTarget target, NExprContext context) {
         try (OutputStream w = target.getOutputStream()) {
             run(w, context);
         } catch (IOException e) {
@@ -80,7 +80,7 @@ class MyNExprCompiledTemplate implements NExprCompiledTemplate {
     }
 
     @Override
-    public String runString(NExprDeclarations context) {
+    public String runString(NExprContext context) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
         run(writer, context);

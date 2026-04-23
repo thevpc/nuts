@@ -23,6 +23,8 @@ public interface NOperatorSymbolElementBuilder extends NElementBuilder {
 
     NOperatorSymbolElementBuilder setAffixAt(int index, NBoundAffix affix);
 
+    NOperatorSymbolElementBuilder setAffixes(List<NBoundAffix> affixes);
+
     NOperatorSymbolElementBuilder addAffix(NBoundAffix affix);
 
     NOperatorSymbolElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);

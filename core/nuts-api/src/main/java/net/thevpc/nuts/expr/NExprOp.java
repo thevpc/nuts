@@ -11,5 +11,5 @@ public interface NExprOp {
 
     int getPrecedence();
 
-    Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context);
+    Object eval(String name, List<NExprNodeValue> args, NExprContext context);
 }

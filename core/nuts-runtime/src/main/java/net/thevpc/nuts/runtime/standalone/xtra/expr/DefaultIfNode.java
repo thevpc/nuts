@@ -47,7 +47,7 @@ public class DefaultIfNode implements NExprIfNode {
     }
 
     @Override
-    public NOptional<Object> eval(NExprDeclarations context) {
+    public NOptional<Object> eval(NExprContext context) {
         try {
             NOptional<Object> c = conditionNode.eval(context);
             boolean bc = false;

@@ -1,10 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr.template;
 
-import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprContext;
+import net.thevpc.nuts.expr.NExprMutableContext;
 import net.thevpc.nuts.expr.NExprNode;
+import net.thevpc.nuts.expr.NExprVarDeclaration;
 import net.thevpc.nuts.io.NCharReader;
 import net.thevpc.nuts.io.NullInputStream;
 import net.thevpc.nuts.io.NullReader;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NIllegalArgumentException;
+import net.thevpc.nuts.util.NOptional;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -14,7 +19,7 @@ public class ProcessStreamContext implements Cloneable{
     TagStreamProcessor tagStreamProcessor;
     TagTokenReader tr;
     TagNodeReader nr;
-    NExprDeclarations context;
+    NExprContext context;
     Writer out;
 
     public ProcessStreamContext copy(){
@@ -25,7 +30,7 @@ public class ProcessStreamContext implements Cloneable{
         }
     }
 
-    public ProcessStreamContext(TagStreamProcessor tagStreamProcessor, InputStream source, NExprDeclarations context) {
+    public ProcessStreamContext(TagStreamProcessor tagStreamProcessor, InputStream source, NExprContext context) {
         this.context = context;
         this.tagStreamProcessor = tagStreamProcessor;
         tr = new TagTokenReader(tagStreamProcessor.startTag, tagStreamProcessor.endTag, tagStreamProcessor.escape,
@@ -33,7 +38,7 @@ public class ProcessStreamContext implements Cloneable{
         nr = new TagNodeReader(tr, context);
     }
 
-    public ProcessStreamContext(TagStreamProcessor tagStreamProcessor, Reader source, NExprDeclarations context) {
+    public ProcessStreamContext(TagStreamProcessor tagStreamProcessor, Reader source, NExprContext context) {
         this.context = context;
         this.tagStreamProcessor = tagStreamProcessor;
         tr = new TagTokenReader(tagStreamProcessor.startTag, tagStreamProcessor.endTag, tagStreamProcessor.escape,
@@ -59,7 +64,17 @@ public class ProcessStreamContext implements Cloneable{
     }
 
     public void setVar(String varName, Object v) {
-        context.getOrDeclareVar(varName,null).set(varName,v,context);
+        NOptional<NExprVarDeclaration> vv = context.getVar(varName);
+        if(!vv.isPresent()){
+            if(context instanceof NExprMutableContext){
+                NExprVarDeclaration z = ((NExprMutableContext) context).declareVar(varName);
+                z.set(v,context);
+            }else{
+                throw new NIllegalArgumentException(NMsg.ofC("cannot declare variable %s in immutable context",varName));
+            }
+        }else {
+            vv.get().set(v, context);
+        }
     }
 
     public Object eval(String expr) {

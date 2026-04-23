@@ -1146,26 +1146,37 @@ public class TsonParseTest {
     }
 
     @Test
-    public void test35() {
+    public void test35Simple() {
         NElement parsed = NElement.ofUplet(NElement.ofName("a"),NElement.ofNumber(2),NElement.ofNumber(3));
         String s1 = parsed.toString();
-        String s2 = parsed.toPrettyString();
         TestUtils.println(s1);
-        TestUtils.println(s2);
-        Assertions.assertEquals("(a 2 3)", s1);
-        Assertions.assertEquals("(a , 2 , 3)", s2);
+        Assertions.assertEquals("(a,2,3)", s1);
     }
 
     @Test
-    public void test36() {
+    public void test35Pretty() {
+        NElement parsed = NElement.ofUplet(NElement.ofName("a"),NElement.ofNumber(2),NElement.ofNumber(3));
+        String s2 = parsed.toPrettyString();
+        TestUtils.println(s2);
+        Assertions.assertEquals("(a, 2, 3)", s2);
+    }
+
+    @Test
+    public void test36Simple() {
         NElement parsed = NElement.ofUpletBuilder().add(NElement.ofName("a")).add(NElement.ofNumber(2))
                 .addAnnotation("test",NElement.ofNumber(2),NElement.ofNumber(3))
                 .build();
         String s1 = parsed.toString();
-        String s2 = parsed.toPrettyString();
         TestUtils.println(s1);
+        Assertions.assertEquals("@test(2,3)(a,2)", s1);
+    }
+    @Test
+    public void test36Pretty() {
+        NElement parsed = NElement.ofUpletBuilder().add(NElement.ofName("a")).add(NElement.ofNumber(2))
+                .addAnnotation("test",NElement.ofNumber(2),NElement.ofNumber(3))
+                .build();
+        String s2 = parsed.toPrettyString();
         TestUtils.println(s2);
-        Assertions.assertEquals("@test(2 3)(a 2)", s1);
-        Assertions.assertEquals("@test(2 3)(a , 2)", s2);
+        Assertions.assertEquals("@test(2, 3)(a, 2)", s2);
     }
 }

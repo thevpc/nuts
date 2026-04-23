@@ -46,19 +46,13 @@ public interface NExprs extends NComponent {
 
     NExprVar newConst(String name, Object value);
 
-    NExprDeclarations newDeclarations();
 
-    NExprDeclarations newDeclarations(boolean includeDefaults);
+    NExprWordNode newWord(String a);
 
-    NExprDeclarations newDeclarations(boolean includeDefaults, NExprEvaluator evaluator);
+    NExprLiteralNode newLiteral(Object a);
 
-    NExprMutableDeclarations newMutableDeclarations(NExprEvaluator evaluator);
-
-    NExprMutableDeclarations newMutableDeclarations(boolean includeDefaults, NExprEvaluator evaluator);
-
-    NExprMutableDeclarations newMutableDeclarations(boolean includeDefaults);
-
-    NExprMutableDeclarations newMutableDeclarations();
+    NExprContext emptyContext();
+    NExprContext defaultContext();
 
     <A, B> NOptional<NFunction2<A, B, ?>> findCommonInfixOp(NExprCommonOp op, Class<? extends A> firstArgType, Class<? extends B> secondArgType);
 

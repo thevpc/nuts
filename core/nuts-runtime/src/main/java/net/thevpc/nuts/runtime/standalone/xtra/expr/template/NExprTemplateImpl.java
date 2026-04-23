@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr.template;
 
 import net.thevpc.nuts.expr.NExprCompiledTemplate;
-import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprContext;
 import net.thevpc.nuts.expr.NExprTemplate;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
@@ -11,14 +11,14 @@ import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 
-public class NExprDeclarationsTemplateImpl implements NExprTemplate {
+public class NExprTemplateImpl implements NExprTemplate {
     private String start;
     private String stop;
     private String escape;
     protected TagStreamProcessor processor;
-    protected NExprDeclarations declarations;
+    protected NExprContext declarations;
 
-    public NExprDeclarationsTemplateImpl(NExprDeclarations declarations) {
+    public NExprTemplateImpl(NExprContext declarations) {
         this.declarations = declarations;
         this.withMoustacheStyle();
     }

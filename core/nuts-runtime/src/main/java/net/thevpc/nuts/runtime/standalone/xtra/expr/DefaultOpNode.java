@@ -126,7 +126,7 @@ public class DefaultOpNode implements NExprOpNode {
     }
 
     @Override
-    public NOptional<Object> eval(NExprDeclarations context) {
+    public NOptional<Object> eval(NExprContext context) {
         switch (name) {
             case "()":
             case "(":
@@ -139,7 +139,7 @@ public class DefaultOpNode implements NExprOpNode {
         }
         try {
             return context.evalOperator(getName(), opType,
-                    args.stream().map(context::nodeAsValue).toArray(NExprNodeValue[]::new)
+                    args.stream().map(context::bindNode).toArray(NExprNodeValue[]::new)
                     );
         } catch (Exception ex) {
             return NOptional.ofError(() -> NMsg.ofC("error : %s", ex));

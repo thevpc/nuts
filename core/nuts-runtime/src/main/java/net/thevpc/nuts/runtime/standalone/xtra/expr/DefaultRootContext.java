@@ -11,14 +11,14 @@ import net.thevpc.nuts.expr.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DefaultRootDeclarations extends NExprDeclarationsBase {
+public class DefaultRootContext extends NExprContextBase {
     final Map<String, NExprFctDeclaration> defaultFunctions = new HashMap<>();
     final Map<String, NExprConstructDeclaration> defaultConstructs = new HashMap<>();
     final Map<NExprOpNameAndType, NExprOpDeclaration> ops = new HashMap<>();
     final Map<String, NExprVarDeclaration> defaultVars = new HashMap<>();
     private NReflectRepository reflectRepository;
 
-    public DefaultRootDeclarations(NExprs exprs) {
+    public DefaultRootContext(NExprs exprs) {
         super(exprs);
         reflectRepository = NReflectRepository.of();
         addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.AND, NExprOpPrecedence.AND, NOperatorAssociativity.LEFT), "&");
@@ -38,7 +38,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
         addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.POW, NExprOpPrecedence.POW, NOperatorAssociativity.LEFT));
         addDefaultOp(new NExprCommonOpFctNodeBase(NExprCommonOp.DOT, NExprOpPrecedence.DOT, NOperatorAssociativity.LEFT, NExprOpType.INFIX) {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 NExprNodeValue a = args.get(0);
                 NExprNodeValue b = args.get(1);
                 Object instance = a.eval(context).orNull();
@@ -51,7 +51,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
 
         addDefaultOp(new NExprCommonOpFctNodeBase(NExprCommonOp.ASSIGN, NExprOpPrecedence.ASSIGN, NOperatorAssociativity.RIGHT, NExprOpType.INFIX) {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 NExprNode a = args.get(0);
                 if (a.getType() == NExprNodeType.WORD) {
                     String varName = a.getName();
@@ -67,14 +67,14 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
         for (String relOp : new String[]{"+", "-", "*", "/", "%", "^", "**"}) {
             addDefaultOp(new AbstractOp(relOp + "=", NExprOpPrecedence.ASSIGN, NOperatorAssociativity.RIGHT, NExprOpType.INFIX) {
                 @Override
-                public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+                public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                     NExprNode a = args.get(0);
                     if (a.getType() == NExprNodeType.WORD) {
                         String varName = a.getName();
                         NExprVarDeclaration v = context.getVar(varName).get();
                         Object oldValue = v.get(context);
                         Object partValue = args.get(1).eval(context).get();
-                        Object newValue = context.evalInfixOperator(relOp, context.literalAsValue(oldValue), context.literalAsValue(partValue)).get();
+                        Object newValue = context.evalInfixOperator(relOp, context.bindLiteral(oldValue), context.bindLiteral(partValue)).get();
                         v.set(newValue, context);
                         return newValue;
                     }
@@ -85,13 +85,13 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
 
         addDefaultOp(new AbstractOp("++", NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, NExprOpType.PREFIX) {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 NExprNode a = args.get(0);
                 if (a.getType() == NExprNodeType.WORD) {
                     String varName = a.getName();
                     NExprVarDeclaration v = context.getVar(varName).get();
                     Object oldValue = v.get(context);
-                    Object newValue = context.evalInfixOperator("+", context.literalAsValue(oldValue), context.literalAsValue((byte) 1)).get();
+                    Object newValue = context.evalInfixOperator("+", context.bindLiteral(oldValue), context.bindLiteral((byte) 1)).get();
                     v.set(newValue, context);
                     return newValue;
                 }
@@ -101,13 +101,13 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
 
         addDefaultOp(new AbstractOp("++", NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, NExprOpType.POSTFIX) {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 NExprNode a = args.get(0);
                 if (a.getType() == NExprNodeType.WORD) {
                     String varName = a.getName();
                     NExprVarDeclaration v = context.getVar(varName).get();
                     Object oldValue = v.get(context);
-                    Object newValue = context.evalInfixOperator("+", context.literalAsValue(oldValue), context.literalAsValue((byte) 1)).get();
+                    Object newValue = context.evalInfixOperator("+", context.bindLiteral(oldValue), context.bindLiteral((byte) 1)).get();
                     v.set(newValue, context);
                     return oldValue;
                 }
@@ -117,13 +117,13 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
 
         addDefaultOp(new AbstractOp("--", NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, NExprOpType.PREFIX) {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 NExprNode a = args.get(0);
                 if (a.getType() == NExprNodeType.WORD) {
                     String varName = a.getName();
                     NExprVarDeclaration v = context.getVar(varName).get();
                     Object oldValue = v.get(context);
-                    Object newValue = context.evalInfixOperator("-", context.literalAsValue(oldValue), context.literalAsValue((byte) 1)).get();
+                    Object newValue = context.evalInfixOperator("-", context.bindLiteral(oldValue), context.bindLiteral((byte) 1)).get();
                     v.set(newValue, context);
                     return newValue;
                 }
@@ -133,13 +133,13 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
 
         addDefaultOp(new AbstractOp("--", NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, NExprOpType.POSTFIX) {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 NExprNode a = args.get(0);
                 if (a.getType() == NExprNodeType.WORD) {
                     String varName = a.getName();
                     NExprVarDeclaration v = context.getVar(varName).get();
                     Object oldValue = v.get(context);
-                    Object newValue = context.evalInfixOperator("-", context.literalAsValue(oldValue), context.literalAsValue((byte) 1)).get();
+                    Object newValue = context.evalInfixOperator("-", context.bindLiteral(oldValue), context.bindLiteral((byte) 1)).get();
                     v.set(newValue, context);
                     return oldValue;
                 }
@@ -153,55 +153,55 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
         addDefaultOp(new BracesFctNode(), "{");
         addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asShort().orNull();
             }
         }, "string");
         addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asBoolean().orNull();
             }
         }, "boolean");
         addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asDouble().orNull();
             }
         }, "double");
         addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asLong().orNull();
             }
         }, "long");
         addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asInt().orNull();
             }
         }, "int");
         addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asFloat().orNull();
             }
         }, "float");
         addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asNumber().isPresent();
             }
         }, "isNumber");
         addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asBoolean().isPresent();
             }
         }, "isBoolean");
         addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations context) {
+            public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 NLiteral v = NLiteral.of(args.get(0).getValue().orNull());
                 if (v.asNumber().isPresent()) {
                     if (v.isBigDecimal()) {
@@ -234,7 +234,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
         }, "abs");
     }
 
-    private Object runDot(Object instance,NExprNodeValue b,NExprDeclarations context) {
+    private Object runDot(Object instance, NExprNodeValue b, NExprContext context) {
         if (instance == null) {
             return null;
         }
@@ -352,7 +352,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
         }
 
         @Override
-        public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations e) {
+        public Object eval(String name, List<NExprNodeValue> args, NExprContext e) {
             Object a = args.get(0).eval(e).get();
             Object b = args.get(1).eval(e).get();
             Class<?> aClass = a == null ? null : a.getClass();
@@ -372,7 +372,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
         }
 
         @Override
-        public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations e) {
+        public Object eval(String name, List<NExprNodeValue> args, NExprContext e) {
             Object a = args.get(0).eval(e).get();
             NFunction f = e.findCommonPrefixOp(NExprCommonOp.parse(getName()).get()
                     , a == null ? null : a.getClass()
@@ -390,7 +390,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
         }
 
         @Override
-        public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations e) {
+        public Object eval(String name, List<NExprNodeValue> args, NExprContext e) {
             Object a = args.get(0).eval(e).get();
             NFunction f = e.findCommonPrefixOp(NExprCommonOp.parse(getName()).get()
                     , a == null ? null : a.getClass()

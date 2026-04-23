@@ -19,12 +19,12 @@ public interface NExprVar {
     static NExprVar ofConsts(Function<String, Object> vars) {
         return new NExprVar() {
             @Override
-            public Object get(String s, NExprDeclarations ctx) {
+            public Object get(String s, NExprContext ctx) {
                 return vars == null ? null : vars.apply(s);
             }
 
             @Override
-            public Object set(String s, Object o, NExprDeclarations ctx) {
+            public Object set(String s, Object o, NExprContext ctx) {
                 return vars == null ? null : vars.apply(s);
             }
         };
@@ -33,12 +33,12 @@ public interface NExprVar {
     static NExprVar ofMap(Map<String, Object> vars) {
         return new NExprVar() {
             @Override
-            public Object get(String s, NExprDeclarations ctx) {
+            public Object get(String s, NExprContext ctx) {
                 return vars == null ? null : vars.get(s);
             }
 
             @Override
-            public Object set(String s, Object o, NExprDeclarations ctx) {
+            public Object set(String s, Object o, NExprContext ctx) {
                 if (vars != null) {
                     vars.put(s, o);
                 }
@@ -47,8 +47,8 @@ public interface NExprVar {
         };
     }
 
-    Object get(String name, NExprDeclarations context);
+    Object get(String name, NExprContext context);
 
-    Object set(String name, Object value, NExprDeclarations context);
+    Object set(String name, Object value, NExprContext context);
 
 }

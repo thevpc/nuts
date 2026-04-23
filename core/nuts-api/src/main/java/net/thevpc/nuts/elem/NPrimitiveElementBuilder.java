@@ -153,6 +153,8 @@ public interface NPrimitiveElementBuilder extends NElementBuilder {
 
     NPrimitiveElementBuilder setAffixAt(int index, NBoundAffix affix);
 
+    NPrimitiveElementBuilder setAffixes(List<NBoundAffix> affixes);
+
     NPrimitiveElementBuilder addAffix(NBoundAffix affix);
 
     NPrimitiveElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);

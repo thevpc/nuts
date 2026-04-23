@@ -378,4 +378,15 @@ public class NBoundAffixList {
         NAssert.requireNamedNonNull(predicate, "predicate");
         affixes.removeIf(predicate);
     }
+
+    public void setAffixes(List<NBoundAffix> affixes) {
+        this.affixes.clear();
+        if(affixes!=null){
+            for (NBoundAffix affix : affixes) {
+                if(affix!=null){
+                    this.affixes.add(affix);
+                }
+            }
+        }
+    }
 }

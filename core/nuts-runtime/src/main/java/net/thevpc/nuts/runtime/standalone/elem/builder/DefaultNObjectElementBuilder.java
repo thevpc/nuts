@@ -729,6 +729,13 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
         return this;
     }
 
+    @Override
+    public NObjectElementBuilder setAffixes(List<NBoundAffix> affixes) {
+        super.setAffixes(affixes);
+        return this;
+    }
+
+
     public NObjectElementBuilder addAffix(NBoundAffix affix) {
         super.addAffix(affix);
         return this;

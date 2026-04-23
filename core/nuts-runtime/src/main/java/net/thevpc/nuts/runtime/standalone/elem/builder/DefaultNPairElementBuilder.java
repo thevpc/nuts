@@ -228,6 +228,12 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
         return this;
     }
 
+    @Override
+    public NPairElementBuilder setAffixes(List<NBoundAffix> affixes) {
+        super.setAffixes(affixes);
+        return this;
+    }
+
     public NPairElementBuilder addAffix(NBoundAffix affix){
         super.addAffix(affix);
         return this;

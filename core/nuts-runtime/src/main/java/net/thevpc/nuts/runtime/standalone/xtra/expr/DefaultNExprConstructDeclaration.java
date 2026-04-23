@@ -14,7 +14,7 @@ public class DefaultNExprConstructDeclaration implements NExprConstructDeclarati
     }
 
     @Override
-    public Object eval(List<NExprNodeValue> args, NExprDeclarations context) {
+    public Object eval(List<NExprNodeValue> args, NExprContext context) {
         return impl.eval(name, args, context);
     }
 

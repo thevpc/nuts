@@ -52,6 +52,8 @@ public interface NCustomElementBuilder extends NElementBuilder {
 
     NCustomElementBuilder setAffixAt(int index, NBoundAffix affix);
 
+    NCustomElementBuilder setAffixes(List<NBoundAffix> affixes);
+
     NCustomElementBuilder addAffix(NBoundAffix affix);
 
     NCustomElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);

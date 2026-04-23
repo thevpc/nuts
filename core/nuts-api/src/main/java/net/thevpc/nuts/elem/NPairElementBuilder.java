@@ -34,6 +34,9 @@ public interface NPairElementBuilder extends NElementBuilder {
     NPairElementBuilder addAffixAt(int index, NBoundAffix affix);
 
     NPairElementBuilder setAffixAt(int index, NBoundAffix affix);
+
+    NPairElementBuilder setAffixes(List<NBoundAffix> affixes);
+
     NPairElementBuilder addAffix(NBoundAffix affix);
 
     NPairElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);

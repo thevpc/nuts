@@ -11,7 +11,7 @@ public class SemiCommaFctNode extends AbstractOp {
     }
 
     @Override
-    public Object eval(String name, List<NExprNodeValue> args, NExprDeclarations e) {
+    public Object eval(String name, List<NExprNodeValue> args, NExprContext e) {
         Object a=null;
         for (NExprNode arg : args) {
             a = arg.eval(e).get();

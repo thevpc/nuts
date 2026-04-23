@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr.template;
 
 
 import net.thevpc.nuts.expr.NExprCompiledTemplate;
-import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprContext;
 import net.thevpc.nuts.util.NBlankable;
 
 import java.io.*;
@@ -58,7 +58,7 @@ public class TagStreamProcessor implements NTemplateProcessor {
         return false;
     }
 
-    public NExprCompiledTemplate compile(InputStream inputStream, NExprDeclarations context) {
+    public NExprCompiledTemplate compile(InputStream inputStream, NExprContext context) {
         ProcessStreamContext ctx = new ProcessStreamContext(this, inputStream, context);
         TagNode n = null;
         try {
@@ -69,7 +69,7 @@ public class TagStreamProcessor implements NTemplateProcessor {
         return new MyNExprCompiledTemplate(ctx, n);
     }
 
-    public NExprCompiledTemplate compile(Reader reader, NExprDeclarations context) {
+    public NExprCompiledTemplate compile(Reader reader, NExprContext context) {
         ProcessStreamContext ctx = new ProcessStreamContext(this, reader, context);
         TagNode n = null;
         try {
@@ -81,12 +81,12 @@ public class TagStreamProcessor implements NTemplateProcessor {
     }
 
     @Override
-    public void processStream(InputStream source, OutputStream target, NExprDeclarations context) {
+    public void processStream(InputStream source, OutputStream target, NExprContext context) {
         compile(source, context).run(target);
     }
 
     @Override
-    public void processStream(Reader source, Writer target, NExprDeclarations context) {
+    public void processStream(Reader source, Writer target, NExprContext context) {
         compile(source, context).run(target);
     }
 

@@ -44,6 +44,12 @@ public class NElementAnnotationBuilderImpl implements NElementAnnotationBuilder 
     }
 
     @Override
+    public NElementAnnotationBuilder setParams(List<NElement> elements) {
+        this.params = CoreNElementUtils.setAll(elements, this.params);
+        return this;
+    }
+
+    @Override
     public NElementAnnotationBuilder removeAt(int index) {
         CoreNElementUtils.removeAt(index, this.params);
         return this;

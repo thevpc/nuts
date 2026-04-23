@@ -4,8 +4,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.text.NTreeVisitResult;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class TsonFormatPrettyAction implements NElementFormatterAction {
     @Override
@@ -67,6 +66,9 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
         applyDefault(builder, score, context);
     }
 
+    private static class StatsCalculator {
+
+    }
     private static class Stats {
         int score;
         int charSize;
@@ -98,6 +100,7 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
         String indent = context.indent();
         NElementFormatOptions options = context.options();
         String unit = getIndentUnit();
+        applyAnnotations(builder, score, context);
         if (score.isComplex(options)) {
             // Clear old affixes if necessary, or just set them cleanly:
 
@@ -135,6 +138,7 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
         String indent = context.indent();
         NElementFormatOptions options = context.options();
         String unit = getIndentUnit();
+        applyAnnotations(builder, score, context);
         if (score.isComplex(options)) {
             // Clear old affixes if necessary, or just set them cleanly:
 
@@ -156,13 +160,118 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
         }
     }
 
+    private void applyAnnotations(NElementBuilder builder, Stats score, NElementFormatContext context) {
+        List<NBoundAffix> affixes = builder.affixes();
+        //TO FIX
+        int newLines=0;
+        int spaces=0;
+        int otherIndex=0;
+        affixes=new ArrayList<>(affixes);
+        List<NBoundAffix> allAffixes = new ArrayList<>();
+        for (int i = 0; i < affixes.size(); i++) {
+            NBoundAffix a = affixes.get(i);
+            if(a.anchor()==NAffixAnchor.START){
+                switch (a.affix().type()) {
+                    case SPACE: {
+                        spaces++;
+                        allAffixes.add(a);
+                        break;
+                    }
+                    case NEWLINE: {
+                        newLines++;
+                        allAffixes.add(a);
+                        break;
+                    }
+                    case ANNOTATION: {
+                        NElementAnnotation ann = (NElementAnnotation) a.affix();
+                        if(newLines==0 && otherIndex>0){
+                            allAffixes.add(NBoundAffix.of(NAffix.ofNewline(),NAffixAnchor.START));
+                        }
+                        if(ann.params().isPresent()){
+                            ann=applyAnnotation(ann, score, context.withIndent(context.indent() + getIndentUnit()));
+                        }
+                        allAffixes.add(NBoundAffix.of(ann,NAffixAnchor.START));
+                        newLines=0;
+                        spaces=0;
+                        otherIndex++;
+                        break;
+                    }
+                    default:{
+                        otherIndex++;
+                        newLines=0;
+                        spaces=0;
+                        break;
+                    }
+                }
+            }else{
+                allAffixes.add(a);
+            }
+        }
+        builder.setAffixes(allAffixes);
+    }
+
+    private NElementAnnotation applyAnnotation(NElementAnnotation ann, Stats score, NElementFormatContext context) {
+        NElementAnnotationBuilder bb = ann.builder();
+        List<NElement> params = bb.params();
+        NElementFormatOptions options = context.options();
+        if(params!=null) {
+            String unit = getIndentUnit();
+            String indent = context.indent();
+            Stats s = calculateStats(params.toArray(new NElement[0]), context);
+            if (s.isComplex(options)) {
+                for (int i = 0; i < params.size(); i++) {
+                    NElement p = params.get(i);
+                    NElementBuilder pb = p.builder();
+                    if (i > 0) {
+                        pb.addAffix(NAffix.ofNewline(), NAffixAnchor.START);
+                        pb.addAffix(NAffix.ofSeparator(","), NAffixAnchor.START);
+                        pb.addAffix(NAffix.ofSpace(indent + unit), NAffixAnchor.START);
+                        if(i==params.size()-1){
+                            pb.addAffix(NAffix.ofNewline(), NAffixAnchor.END);
+                            pb.addAffix(NAffix.ofSpace(indent
+                            ), NAffixAnchor.END);
+                        }
+                        bb.setParamAt(i, pb.build());
+                    }else{
+                        pb.addAffix(NAffix.ofNewline(), NAffixAnchor.START);
+                        pb.addAffix(NAffix.ofSpace(indent + unit), NAffixAnchor.START);
+                        bb.setParamAt(i, pb.build());
+                    }
+                }
+                return bb.build();
+            }else{
+                for (int i = 0; i < params.size(); i++) {
+                    NElement p = params.get(i);
+                    if (i > 0) {
+                        NElementBuilder pb = p.builder();
+                        pb.addAffix(NAffix.ofSeparator(","), NAffixAnchor.START);
+                        pb.addAffix(NAffix.ofSpace(" "), NAffixAnchor.START);
+                        bb.setParamAt(i, pb.build());
+                    }
+                }
+                return bb.build();
+            }
+        }else{
+            return ann;
+        }
+    }
+
     private void applyDefault(NElementBuilder builder, Stats score, NElementFormatContext context) {
-        // Apply HORIZONTAL formatting (just a space)
-//        builder.addAffixSpace(" ", NAffixAnchor.START);
+        applyAnnotations(builder, score, context);
     }
 
     private String formatCompact(NElement element) {
         return DefaultTsonWriter.formatTsonCompact(element);
+    }
+
+    private Stats calculateStats(NElement[] element, NElementFormatContext context) {
+        Stats s=new Stats();
+        for (NElement e : element) {
+            Stats istats = calculateStats(e, context);
+            s.score+= istats.score;
+            s.charSize+= istats.charSize;
+        }
+        return s;
     }
 
     private Stats calculateStats(NElement element, NElementFormatContext context) {

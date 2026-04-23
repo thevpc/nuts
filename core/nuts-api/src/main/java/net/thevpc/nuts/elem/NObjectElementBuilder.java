@@ -309,6 +309,8 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder setAffixAt(int index, NBoundAffix affix);
 
+    NObjectElementBuilder setAffixes(List<NBoundAffix> affixes);
+
     NObjectElementBuilder addAffix(NBoundAffix affix);
 
     NObjectElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);

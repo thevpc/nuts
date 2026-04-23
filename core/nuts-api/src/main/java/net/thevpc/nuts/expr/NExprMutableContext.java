@@ -1,8 +1,11 @@
 package net.thevpc.nuts.expr;
 
 import net.thevpc.nuts.elem.NOperatorAssociativity;
+import net.thevpc.nuts.util.NOptional;
 
-public interface NExprMutableDeclarations extends NExprDeclarations {
+import java.util.function.Supplier;
+
+public interface NExprMutableContext extends NExprContext {
     NExprFctDeclaration declareFunction(String name, NExprFct fctImpl);
 
     NExprConstructDeclaration declareConstruct(String name, NExprConstruct constructImpl);
@@ -18,22 +21,24 @@ public interface NExprMutableDeclarations extends NExprDeclarations {
     NExprOpDeclaration declareOperator(String name, NExprConstruct impl);
 
     NExprOpDeclaration declareOperator(String name, NExprOpType type, NExprConstruct impl);
+    NOptional<Object> setVarValue(String varName, Object value);
+    NExprVar getOrDeclareVar(String name, Supplier<Object> initialValue);
 
-    void resetDeclaration(NExprVarDeclaration member);
+    void undeclare(NExprVarDeclaration member);
 
-    void resetDeclaration(NExprFctDeclaration member);
+    void undeclare(NExprFctDeclaration member);
 
-    void resetDeclaration(NExprConstructDeclaration member);
+    void undeclare(NExprConstructDeclaration member);
 
-    void resetDeclaration(NExprOpDeclaration member);
+    void undeclare(NExprOpDeclaration member);
 
-    void removeDeclaration(NExprVarDeclaration member);
+    void remove(NExprVarDeclaration member);
 
-    void removeDeclaration(NExprFctDeclaration member);
+    void remove(NExprFctDeclaration member);
 
-    void removeDeclaration(NExprConstructDeclaration member);
+    void remove(NExprConstructDeclaration member);
 
-    void removeDeclaration(NExprOpDeclaration member);
+    void remove(NExprOpDeclaration member);
 
 
 }

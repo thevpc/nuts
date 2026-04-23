@@ -437,6 +437,13 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
         return this;
     }
 
+    @Override
+    public NOperatorElementBuilder setAffixes(List<NBoundAffix> affixes) {
+        super.setAffixes(affixes);
+        return this;
+    }
+
+
     public NOperatorElementBuilder addAffix(NBoundAffix affix) {
         super.addAffix(affix);
         return this;

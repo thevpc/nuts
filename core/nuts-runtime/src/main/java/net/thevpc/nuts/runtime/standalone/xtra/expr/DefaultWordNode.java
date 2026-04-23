@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprContext;
 import net.thevpc.nuts.expr.NExprNode;
 import net.thevpc.nuts.expr.NExprNodeType;
 import net.thevpc.nuts.expr.NExprWordNode;
@@ -34,7 +34,7 @@ public class DefaultWordNode implements NExprWordNode {
     }
 
     @Override
-    public NOptional<Object> eval(NExprDeclarations context) {
+    public NOptional<Object> eval(NExprContext context) {
         try {
             return context.getVarValue(name);
         } catch (Exception ex) {

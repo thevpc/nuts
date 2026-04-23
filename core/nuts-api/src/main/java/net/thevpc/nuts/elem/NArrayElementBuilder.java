@@ -316,6 +316,9 @@ public interface NArrayElementBuilder extends NElementBuilder {
     NArrayElementBuilder addAffixAt(int index, NBoundAffix affix);
 
     NArrayElementBuilder setAffixAt(int index, NBoundAffix affix);
+
+    NArrayElementBuilder setAffixes(List<NBoundAffix> affixes);
+
     NArrayElementBuilder addAffix(NBoundAffix affix);
 
     NArrayElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);

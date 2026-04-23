@@ -35,7 +35,7 @@ public class DefaultNExprOpDeclaration implements NExprOpDeclaration {
     }
 
     @Override
-    public Object eval(List<NExprNodeValue> args, NExprDeclarations context) {
+    public Object eval(List<NExprNodeValue> args, NExprContext context) {
         return op.eval(name, args, context);
     }
 

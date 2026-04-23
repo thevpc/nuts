@@ -20,6 +20,7 @@ import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.runtime.standalone.elem.item.*;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementLineImpl;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementLineUtils;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenImpl;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenType;
 import net.thevpc.nuts.text.NMsg;
@@ -608,22 +609,12 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         return new NElementTokenImpl(
                 image.toString(), NElementTokenType.BLOCK_COMMENT, "/*", 0,
                 line0, column0, pos0,
-                new LinesAndContent(lines, extractPureContent(lines)),
+                new LinesAndContent(lines),
                 error
         );
     }
 
-    private String extractPureContent(List<NElementLine> lines) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < lines.size(); i++) {
-            NElementLine line = lines.get(i);
-            sb.append(line.content());
-            if (line.newline() != null) {
-                sb.append(line.newline().value());
-            }
-        }
-        return sb.toString();
-    }
+
 
     private String readSpaces() {
         StringBuilder sb = new StringBuilder();
@@ -836,8 +827,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 "",
                                 "",
                                 newLine
-                        )),
-                        content.toString()
+                        ))
                 )
                 , null
         );
@@ -915,7 +905,6 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         int column0 = reader.column();
         long pos0 = reader.pos();
         StringBuilder image = new StringBuilder();
-        StringBuilder content = new StringBuilder();
         image.append(marker);
         String s = reader.read(2);// consume /*
         NAssert.requireNamedEquals(s, marker, "prefix");
@@ -926,10 +915,8 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
             // Read rest of current line
             String line = reader.readLine();
             image.append(line);
-            content.append(line);
             NewLineThenSpaces cont = newLineThenSpaceThen(marker);
             if (cont != null) {
-                content.append(cont.newLine.value());
                 image.append(cont.newLine.value());
                 image.append(cont.spaces);
                 image.append(cont.suffix);
@@ -957,7 +944,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 line0,
                 column0,
                 pos0,
-                new LinesAndContent(elems, content.toString())
+                new LinesAndContent(elems)
                 // ← clean value
                 , null
         );
@@ -967,9 +954,9 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         public List<NElementLine> lines;
         public String content;
 
-        public LinesAndContent(List<NElementLine> lines, String content) {
-            this.lines = lines;
-            this.content = content;
+        public LinesAndContent(List<NElementLine> lines) {
+            this.lines = NElementLineUtils.normalizeElementLines(lines);
+            this.content = NElementLineUtils.extractPureContent(this.lines);
         }
     }
 

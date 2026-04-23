@@ -100,6 +100,8 @@ public interface NOperatorElementBuilder extends NElementBuilder {
 
     NOperatorElementBuilder setAffixAt(int index, NBoundAffix affix);
 
+    NOperatorElementBuilder setAffixes(List<NBoundAffix> affixes);
+
     NOperatorElementBuilder addAffix(NBoundAffix affix);
 
     NOperatorElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);

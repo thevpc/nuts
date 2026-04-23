@@ -34,6 +34,8 @@ public interface NListElementBuilder extends NElementBuilder {
 
     NListElementBuilder setAffixAt(int index, NBoundAffix affix);
 
+    NListElementBuilder setAffixes(List<NBoundAffix> affixes);
+
     NListElementBuilder addAffix(NBoundAffix affix);
 
     NListElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);

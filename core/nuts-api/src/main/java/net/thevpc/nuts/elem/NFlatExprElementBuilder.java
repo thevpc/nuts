@@ -72,6 +72,8 @@ public interface NFlatExprElementBuilder extends NElementBuilder {
 
     NFlatExprElementBuilder setAffixAt(int index, NBoundAffix affix);
 
+    NFlatExprElementBuilder setAffixes(List<NBoundAffix> affixes);
+
     NFlatExprElementBuilder addAffix(NBoundAffix affix);
 
     NFlatExprElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);

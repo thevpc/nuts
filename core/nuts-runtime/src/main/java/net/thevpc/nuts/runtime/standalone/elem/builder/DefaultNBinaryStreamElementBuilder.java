@@ -144,6 +144,13 @@ public class DefaultNBinaryStreamElementBuilder extends AbstractNElementBuilder 
     }
 
     @Override
+    public NBinaryStreamElementBuilder setAffixes(List<NBoundAffix> affixes) {
+        super.setAffixes(affixes);
+        return this;
+    }
+
+
+    @Override
     public NBinaryStreamElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
         super.addAffixAt(index, affix, anchor);
         return this;

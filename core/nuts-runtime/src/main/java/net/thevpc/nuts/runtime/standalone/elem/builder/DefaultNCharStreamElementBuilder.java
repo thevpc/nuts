@@ -142,6 +142,13 @@ public class DefaultNCharStreamElementBuilder extends AbstractNElementBuilder im
     }
 
     @Override
+    public NCharStreamElementBuilder setAffixes(List<NBoundAffix> affixes) {
+        super.setAffixes(affixes);
+        return this;
+    }
+
+
+    @Override
     public NCharStreamElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
         super.addAffixAt(index, affix, anchor);
         return this;
