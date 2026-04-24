@@ -514,147 +514,13 @@ public class DefaultNExec extends AbstractNExec {
                     }
                     return new DefaultInternalNExecutableCommand(ic, args, this);
                 }
-                switch (goodKw) {
-                    case "update": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNUpdateInternalExecutable(args, this);
+                NExecutableInformationExt builtinExec = createBuiltinKeywordExecutable(goodKw, args);
+                if (builtinExec != null) {
+                    RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
+                    if (remoteInfo0 != null) {
+                        return _runRemoteInternalCommand(goodKw, remoteInfo0);
                     }
-                    case "check-updates": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNCheckUpdatesInternalExecutable(args, this);
-                    }
-                    case "install": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNInstallInternalExecutable(args, this);
-                    }
-                    case "reinstall": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNReinstallInternalExecutable(args, this);
-                    }
-                    case "uninstall": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNUninstallInternalExecutable(args, this);
-                    }
-                    case "deploy": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNDeployInternalExecutable(args, this);
-                    }
-                    case "undeploy": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNUndeployInternalExecutable(args, this);
-                    }
-                    case "push": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNPushInternalExecutable(args, this);
-                    }
-                    case "fetch": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNFetchInternalExecutable(args, this);
-                    }
-                    case "search": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNSearchInternalExecutable(args, this);
-                    }
-                    case "version": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNVersionInternalExecutable(args, this);
-                    }
-                    case "prepare": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNPrepareInternalExecutable(args, this);
-                    }
-                    case "license": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNLicenseInternalExecutable(args, this);
-                    }
-                    case "bundle": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNBundleInternalExecutable(args, this);
-                    }
-                    case "help": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNHelpInternalExecutable(args, this);
-                    }
-                    case "welcome": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNWelcomeInternalExecutable(args, this);
-                    }
-                    case "info": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNInfoInternalExecutable(args, this);
-                    }
-                    case "which": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNWhichInternalExecutable(args, this);
-                    }
-                    case "exec": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNExecInternalExecutable(args, this);
-                    }
-                    case "settings": {
-                        RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0 != null) {
-                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
-                        }
-                        return new DefaultNSettingsInternalExecutable(args, this);
-                    }
+                    return builtinExec;
                 }
                 RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                 if (remoteInfo0 != null) {
@@ -671,29 +537,27 @@ public class DefaultNExec extends AbstractNExec {
                             remoteInfo0.err0
                     );
                 }
-                NCustomCmd command = null;
-                command = NWorkspace.of().findCommand(goodKw);
-                if (command != null) {
+                NCustomCmd customCmd = NWorkspace.of().findCommand(goodKw);
+                if (customCmd != null) {
                     NCmdExecOptions o = new NCmdExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                             .setExecutionType(executionType).setEnv(env);
-                    return new DefaultNAliasExecutable(command, o, args, this);
+                    return new DefaultNAliasExecutable(customCmd, o, args, this);
                 } else {
-                    IdOrSysPath isp=null;
+                    IdOrSysPath isp = null;
                     if (goodId != null) {
                         isp = findExecId(goodId, prepareSession, forceInstalled, true);
                     }
-                    if(isp==null){
+                    if (isp == null) {
                         Path sw = NSysExecUtils.sysWhich(cmdName);
-                        if(sw!=null){
-                            isp=new IdOrSysPath(sw.toAbsolutePath().toString());
+                        if (sw != null) {
+                            isp = new IdOrSysPath(sw.toAbsolutePath().toString());
                         }
-                        //throw new NArtifactNotFoundException(goodId, NMsg.ofC("unable to resolve id %s", cmdName));
                     }
-                    if(isp!=null){
-                        if(isp.id!=null){
+                    if (isp != null) {
+                        if (isp.id != null) {
                             return ws_execId(isp.id, cmdName, args, executorOptions, workspaceOptions, executionType, runAs);
                         }
-                        if(isp.sysPath!=null){
+                        if (isp.sysPath != null) {
                             List<String> cmdArr = new ArrayList<>();
                             cmdArr.add(isp.sysPath);
                             cmdArr.addAll(Arrays.asList(args));
@@ -708,6 +572,38 @@ public class DefaultNExec extends AbstractNExec {
             }
         }
         throw new NArtifactNotFoundException(goodId, NMsg.ofC("unable to resolve id %s", cmdName));
+    }
+
+    /**
+     * Returns the local executable for a well-known built-in keyword command,
+     * or {@code null} if {@code kw} is not a built-in keyword.
+     * This method has no side-effects and must not be called before resolving
+     * higher-priority matches (dynamic internal commands, remote execution).
+     */
+    private NExecutableInformationExt createBuiltinKeywordExecutable(String kw, String[] args) {
+        switch (kw) {
+            case "update":        return new DefaultNUpdateInternalExecutable(args, this);
+            case "check-updates": return new DefaultNCheckUpdatesInternalExecutable(args, this);
+            case "install":       return new DefaultNInstallInternalExecutable(args, this);
+            case "reinstall":     return new DefaultNReinstallInternalExecutable(args, this);
+            case "uninstall":     return new DefaultNUninstallInternalExecutable(args, this);
+            case "deploy":        return new DefaultNDeployInternalExecutable(args, this);
+            case "undeploy":      return new DefaultNUndeployInternalExecutable(args, this);
+            case "push":          return new DefaultNPushInternalExecutable(args, this);
+            case "fetch":         return new DefaultNFetchInternalExecutable(args, this);
+            case "search":        return new DefaultNSearchInternalExecutable(args, this);
+            case "version":       return new DefaultNVersionInternalExecutable(args, this);
+            case "prepare":       return new DefaultNPrepareInternalExecutable(args, this);
+            case "license":       return new DefaultNLicenseInternalExecutable(args, this);
+            case "bundle":        return new DefaultNBundleInternalExecutable(args, this);
+            case "help":          return new DefaultNHelpInternalExecutable(args, this);
+            case "welcome":       return new DefaultNWelcomeInternalExecutable(args, this);
+            case "info":          return new DefaultNInfoInternalExecutable(args, this);
+            case "which":         return new DefaultNWhichInternalExecutable(args, this);
+            case "exec":          return new DefaultNExecInternalExecutable(args, this);
+            case "settings":      return new DefaultNSettingsInternalExecutable(args, this);
+            default:              return null;
+        }
     }
 
     private NExecutableInformationExt _runRemoteInternalCommand(String goodKw, RemoteInfo0 remoteInfo0) {
