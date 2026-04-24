@@ -17,11 +17,9 @@ public class NExprRPIImpl implements NExprRPI {
     private final DefaultNExprsCommonOps defaultNExprsCommonOps = new DefaultNExprsCommonOps();
     DefaultRootContext defaultContext;
     EmptyRootContext emptyContext;
-    NExprRPI nExprRPI;
     public NExprRPIImpl() {
-        nExprRPI=NExprRPI.of();
-        defaultContext=new DefaultRootContext(nExprRPI);
-        emptyContext= new EmptyRootContext(nExprRPI);
+        defaultContext=new DefaultRootContext(this);
+        emptyContext= new EmptyRootContext(this);
     }
 
     @Override
