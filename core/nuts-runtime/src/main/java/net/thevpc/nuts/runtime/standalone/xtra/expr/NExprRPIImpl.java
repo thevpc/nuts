@@ -1,0 +1,129 @@
+package net.thevpc.nuts.runtime.standalone.xtra.expr;
+
+import net.thevpc.nuts.expr.*;
+import net.thevpc.nuts.internal.expr.NExprRPI;
+import net.thevpc.nuts.runtime.standalone.reflect.NPlatformSignatureImpl;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.*;
+
+import java.util.Map;
+import java.util.function.Function;
+
+@NScore(fixed = NScorable.DEFAULT_SCORE)
+@NComponentScope(NScopeType.WORKSPACE)
+public class NExprRPIImpl implements NExprRPI {
+    private final DefaultNExprsCommonOps defaultNExprsCommonOps = new DefaultNExprsCommonOps();
+    DefaultRootContext defaultContext;
+    EmptyRootContext emptyContext;
+    NExprRPI nExprRPI;
+    public NExprRPIImpl() {
+        nExprRPI=NExprRPI.of();
+        defaultContext=new DefaultRootContext(nExprRPI);
+        emptyContext= new EmptyRootContext(nExprRPI);
+    }
+
+    @Override
+    public NExprContext createEmptyContext() {
+        return emptyContext;
+    }
+
+    @Override
+    public NExprContext createDefaultContext() {
+        return defaultContext;
+    }
+
+    @Override
+    public NExprVar createVar(String name, Object value) {
+        return new ReservedNExprVar(name, value);
+    }
+
+    @Override
+    public NExprVar createConst(String name, Object value) {
+        return new ReservedNExprConst(name, value);
+    }
+
+    @Override
+    public NExprVarResolver createLazyConstResolver(Function<String, Object> vars) {
+        return new NExprVarResolver() {
+            @Override
+            public NOptional<NExprVar> getVar(String varName, NExprContext context) {
+                if (vars == null) {
+                    return NOptional.ofNamedEmpty(NMsg.ofC("variable %s", varName));
+                }
+                return NOptional.of(createConst(varName, vars));
+            }
+        };
+    }
+
+    @Override
+    public NExprVarResolver createMapVarResolver(Map<String, Object> variables) {
+        return new NExprVarResolver() {
+            @Override
+            public NOptional<NExprVar> getVar(String varName, NExprContext context) {
+                if (variables == null) {
+                    return NOptional.ofNamedEmpty(NMsg.ofC("variable %s", varName));
+                }
+                if (variables.containsKey(varName)) {
+                    return NOptional.of(createConst(varName, variables.get(varName)));
+                }
+                return NOptional.of(createConst(varName, variables));
+            }
+        };
+    }
+
+    @Override
+    public NExprVarResolver createReadOnlyVarResolver(Function<String, Object> vars) {
+        return new NExprVarResolver() {
+            @Override
+            public NOptional<NExprVar> getVar(String varName, NExprContext context) {
+                if (vars == null) {
+                    return NOptional.ofNamedEmpty(NMsg.ofC("variable %s", varName));
+                }
+                return NOptional.of(createReadOnlyVar(varName, z -> vars.apply(varName)));
+            }
+        };
+    }
+
+    @Override
+    public NExprVar createLazyConst(String name, NExprVarReader vars) {
+        return new NExprVarConstFromFunction(name, vars);
+    }
+
+    @Override
+    public NExprVar createReadOnlyVar(String name, NExprVarReader vars) {
+        return new NExprVarReadOnlyFromFunction(name, vars);
+    }
+
+    @Override
+    public NExprVar createVar(String name, NExprVarReader reader, NExprVarWriter writer) {
+        return new NExprVarFromFunction(name, reader, writer);
+    }
+
+    @Override
+    public <A, B> NOptional<NFunction2<A, B, ?>> findCommonInfixOp(NExprCommonOp op, Class<? extends A> firstArgType, Class<? extends B> secondArgType) {
+        return (NOptional) defaultNExprsCommonOps.findFunction2(op, NExprOpType.INFIX, NPlatformSignatureImpl.of(firstArgType, secondArgType));
+    }
+
+    @Override
+    public <A> NOptional<NFunction<A, ?>> findCommonPrefixOp(NExprCommonOp op, Class<? extends A> argType) {
+        return (NOptional) defaultNExprsCommonOps.findFunction1(op, NExprOpType.PREFIX, NPlatformSignatureImpl.of(argType));
+    }
+
+    @Override
+    public <A> NOptional<NFunction<A, ?>> findCommonPostfixOp(NExprCommonOp op, Class<? extends A> argType) {
+        return (NOptional) defaultNExprsCommonOps.findFunction1(op, NExprOpType.POSTFIX, NPlatformSignatureImpl.of(argType));
+    }
+
+    @Override
+    public NExprWordNode createExprWordNode(String a) {
+        return new DefaultWordNode(a);
+    }
+
+    @Override
+    public NExprLiteralNode createExprLiteralNode(Object a) {
+        return new DefaultLiteralNode(a);
+    }
+
+}

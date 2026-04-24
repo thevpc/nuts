@@ -15,13 +15,11 @@ import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.expr.NGlob;
 import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.expr.NExprs;
 import net.thevpc.nuts.io.*;
 
 import net.thevpc.nuts.io.NDigest;
@@ -194,11 +192,6 @@ public class WorkspaceTest {
         {
             NArg arg = NArg.of("arg");
             Assertions.assertNotNull(arg);
-        }
-
-        {
-            NExprs expr = NExprs.of();
-            Assertions.assertNotNull(expr);
         }
 
         {

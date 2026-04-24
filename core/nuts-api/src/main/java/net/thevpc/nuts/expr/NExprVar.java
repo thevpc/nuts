@@ -1,54 +1,37 @@
 package net.thevpc.nuts.expr;
 
-import java.util.Map;
-import java.util.function.Function;
+import net.thevpc.nuts.internal.expr.NExprRPI;
 
-public interface NExprVar {
+public interface NExprVar extends NExprVarReader, NExprVarWriter {
     static NExprVar ofVar(String name) {
-        return NExprs.of().newVar(name);
+        return NExprRPI.of().createVar(name, null);
     }
 
     static NExprVar ofVar(String name, Object value) {
-        return NExprs.of().newVar(name, value);
+        return NExprRPI.of().createVar(name, value);
+    }
+
+    static NExprVar ofVar(String name, NExprVarReader reader, NExprVarWriter writer) {
+        return NExprRPI.of().createVar(name, reader, writer);
+    }
+
+    static NExprVar ofLazyConst(String name, NExprVarReader reader) {
+        return NExprRPI.of().createLazyConst(name, reader);
     }
 
     static NExprVar ofConst(String name, Object value) {
-        return NExprs.of().newConst(name, value);
+        return NExprRPI.of().createConst(name, value);
     }
 
-    static NExprVar ofConsts(Function<String, Object> vars) {
-        return new NExprVar() {
-            @Override
-            public Object get(String s, NExprContext ctx) {
-                return vars == null ? null : vars.apply(s);
-            }
-
-            @Override
-            public Object set(String s, Object o, NExprContext ctx) {
-                return vars == null ? null : vars.apply(s);
-            }
-        };
+    static NExprVar ofReadOnly(String name, NExprVarReader reader) {
+        return NExprRPI.of().createReadOnlyVar(name, reader);
     }
 
-    static NExprVar ofMap(Map<String, Object> vars) {
-        return new NExprVar() {
-            @Override
-            public Object get(String s, NExprContext ctx) {
-                return vars == null ? null : vars.get(s);
-            }
 
-            @Override
-            public Object set(String s, Object o, NExprContext ctx) {
-                if (vars != null) {
-                    vars.put(s, o);
-                }
-                return o;
-            }
-        };
-    }
+    String getName();
 
-    Object get(String name, NExprContext context);
+    Object get(NExprContext context);
 
-    Object set(String name, Object value, NExprContext context);
+    void set(Object value, NExprContext context);
 
 }

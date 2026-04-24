@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.internal.expr.NExprRPI;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.expr.*;
@@ -8,8 +9,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class EmptyRootContext extends NExprContextBase {
-    public EmptyRootContext(NExprs exprs) {
-        super(exprs);
+    public EmptyRootContext(NExprRPI nExprRPI) {
+        super(nExprRPI);
     }
 
     @Override
@@ -28,7 +29,7 @@ public class EmptyRootContext extends NExprContextBase {
     }
 
     @Override
-    public NOptional<NExprVarDeclaration> getVar(String varName) {
+    public NOptional<NExprVar> getVar(String varName) {
         return NOptional.ofEmpty(() -> NMsg.ofC("var not found %s", varName));
     }
 

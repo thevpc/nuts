@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.elem.NOperatorAssociativity;
+import net.thevpc.nuts.internal.expr.NExprRPI;
 import net.thevpc.nuts.runtime.standalone.reflect.NReflectSignatureImpl;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NIllegalArgumentException;
@@ -15,11 +16,11 @@ public class DefaultRootContext extends NExprContextBase {
     final Map<String, NExprFctDeclaration> defaultFunctions = new HashMap<>();
     final Map<String, NExprConstructDeclaration> defaultConstructs = new HashMap<>();
     final Map<NExprOpNameAndType, NExprOpDeclaration> ops = new HashMap<>();
-    final Map<String, NExprVarDeclaration> defaultVars = new HashMap<>();
+    final Map<String, NExprVar> defaultVars = new HashMap<>();
     private NReflectRepository reflectRepository;
 
-    public DefaultRootContext(NExprs exprs) {
-        super(exprs);
+    public DefaultRootContext(NExprRPI nExprRPI) {
+        super(nExprRPI);
         reflectRepository = NReflectRepository.of();
         addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.AND, NExprOpPrecedence.AND, NOperatorAssociativity.LEFT), "&");
         addDefaultOp(new NExprCommonOpFctNodeInfix(NExprCommonOp.OR, NExprOpPrecedence.OR, NOperatorAssociativity.LEFT), "|");
@@ -55,7 +56,7 @@ public class DefaultRootContext extends NExprContextBase {
                 NExprNode a = args.get(0);
                 if (a.getType() == NExprNodeType.WORD) {
                     String varName = a.getName();
-                    NExprVarDeclaration v = context.getVar(varName).get();
+                    NExprVar v = context.getVar(varName).get();
                     Object newValue = args.get(1).eval(context).get();
                     v.set(newValue, context);
                     return newValue;
@@ -71,7 +72,7 @@ public class DefaultRootContext extends NExprContextBase {
                     NExprNode a = args.get(0);
                     if (a.getType() == NExprNodeType.WORD) {
                         String varName = a.getName();
-                        NExprVarDeclaration v = context.getVar(varName).get();
+                        NExprVar v = context.getVar(varName).get();
                         Object oldValue = v.get(context);
                         Object partValue = args.get(1).eval(context).get();
                         Object newValue = context.evalInfixOperator(relOp, context.bindLiteral(oldValue), context.bindLiteral(partValue)).get();
@@ -89,7 +90,7 @@ public class DefaultRootContext extends NExprContextBase {
                 NExprNode a = args.get(0);
                 if (a.getType() == NExprNodeType.WORD) {
                     String varName = a.getName();
-                    NExprVarDeclaration v = context.getVar(varName).get();
+                    NExprVar v = context.getVar(varName).get();
                     Object oldValue = v.get(context);
                     Object newValue = context.evalInfixOperator("+", context.bindLiteral(oldValue), context.bindLiteral((byte) 1)).get();
                     v.set(newValue, context);
@@ -105,7 +106,7 @@ public class DefaultRootContext extends NExprContextBase {
                 NExprNode a = args.get(0);
                 if (a.getType() == NExprNodeType.WORD) {
                     String varName = a.getName();
-                    NExprVarDeclaration v = context.getVar(varName).get();
+                    NExprVar v = context.getVar(varName).get();
                     Object oldValue = v.get(context);
                     Object newValue = context.evalInfixOperator("+", context.bindLiteral(oldValue), context.bindLiteral((byte) 1)).get();
                     v.set(newValue, context);
@@ -121,7 +122,7 @@ public class DefaultRootContext extends NExprContextBase {
                 NExprNode a = args.get(0);
                 if (a.getType() == NExprNodeType.WORD) {
                     String varName = a.getName();
-                    NExprVarDeclaration v = context.getVar(varName).get();
+                    NExprVar v = context.getVar(varName).get();
                     Object oldValue = v.get(context);
                     Object newValue = context.evalInfixOperator("-", context.bindLiteral(oldValue), context.bindLiteral((byte) 1)).get();
                     v.set(newValue, context);
@@ -137,7 +138,7 @@ public class DefaultRootContext extends NExprContextBase {
                 NExprNode a = args.get(0);
                 if (a.getType() == NExprNodeType.WORD) {
                     String varName = a.getName();
-                    NExprVarDeclaration v = context.getVar(varName).get();
+                    NExprVar v = context.getVar(varName).get();
                     Object oldValue = v.get(context);
                     Object newValue = context.evalInfixOperator("-", context.bindLiteral(oldValue), context.bindLiteral((byte) 1)).get();
                     v.set(newValue, context);
@@ -428,7 +429,7 @@ public class DefaultRootContext extends NExprContextBase {
     }
 
     @Override
-    public NOptional<NExprVarDeclaration> getVar(String varName) {
+    public NOptional<NExprVar> getVar(String varName) {
         return NOptional.of(
                 defaultVars.get(varName),
                 () -> NMsg.ofC("var not found %s", varName)

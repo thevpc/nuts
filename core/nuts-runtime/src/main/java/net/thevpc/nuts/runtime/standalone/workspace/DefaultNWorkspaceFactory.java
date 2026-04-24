@@ -47,6 +47,7 @@ import net.thevpc.nuts.runtime.standalone.util.NUtilSPIImpl;
 import net.thevpc.nuts.runtime.standalone.util.collections.NClassClassMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.NListMultiValueMapImpl;
 import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.NExprRPIImpl;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
@@ -60,7 +61,6 @@ import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.DefaultNExprs;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.util.collections.DefaultNCollectionsRPI;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
@@ -220,8 +220,8 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             case "net.thevpc.nuts.core.NWorkspaceOptionsBuilder": {
                 return NOptional.of((T) new DefaultNWorkspaceOptionsBuilder());
             }
-            case "net.thevpc.nuts.expr.NExprs": {
-                return NOptional.of((T) new DefaultNExprs());
+            case "net.thevpc.nuts.internal.expr.NExprRPI": {
+                return NOptional.of((T) new NExprRPIImpl());
             }
             case "net.thevpc.nuts.spi.NUtilSPI": {
                 return NOptional.of((T) new NUtilSPIImpl());

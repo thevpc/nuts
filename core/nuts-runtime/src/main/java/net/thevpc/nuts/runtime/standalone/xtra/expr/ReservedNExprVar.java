@@ -13,14 +13,17 @@ public class ReservedNExprVar implements NExprVar {
     }
 
     @Override
-    public Object get(String name, NExprContext context) {
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public Object get(NExprContext context) {
         return value;
     }
 
     @Override
-    public Object set(String name, Object value, NExprContext context) {
-        Object old = this.value;
+    public void set(Object value, NExprContext context) {
         this.value = value;
-        return old;
     }
 }

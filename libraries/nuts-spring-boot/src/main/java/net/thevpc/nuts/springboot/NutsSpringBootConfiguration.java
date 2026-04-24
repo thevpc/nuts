@@ -13,7 +13,6 @@ import net.thevpc.nuts.concurrent.NConcurrent;
 import net.thevpc.nuts.concurrent.NScopedStack;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.expr.NExprs;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NReflect;
@@ -26,12 +25,9 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.EventListener;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
 import java.util.*;
@@ -74,13 +70,6 @@ public class NutsSpringBootConfiguration {
     @Bean
     public NTerminal nutsTerminal(@Autowired ApplicationArguments applicationArguments) {
         return nutsSession(applicationArguments).getTerminal();
-    }
-
-    @Bean
-    public NExprs nutsNExprs(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(() -> {
-            return NExprs.of();
-        });
     }
 
     @Bean

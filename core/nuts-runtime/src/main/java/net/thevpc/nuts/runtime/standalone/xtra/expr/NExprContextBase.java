@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.internal.expr.NExprRPI;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.template.NExprTemplateImpl;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NFunction2;
@@ -9,10 +10,10 @@ import net.thevpc.nuts.expr.*;
 import java.util.*;
 
 public abstract class NExprContextBase implements NExprContext {
-    protected NExprs exprs;
+    protected NExprRPI rpi;
 
-    public NExprContextBase(NExprs exprs) {
-        this.exprs = exprs;
+    public NExprContextBase(NExprRPI rpi) {
+        this.rpi = rpi;
     }
 
     public NOptional<Object> evalFunction(String fctName, NExprNodeValue... args) {
@@ -42,12 +43,12 @@ public abstract class NExprContextBase implements NExprContext {
         return evalOperator(opName, NExprOpType.POSTFIX, arg);
     }
 
-    public NOptional<Object> setVarValue(String varName, Object value) {
-        return NOptional.of(getVar(varName).get().set(value, this));
+    public void setVarValue(String varName, Object value) {
+        getVar(varName).get().set(value, this);
     }
 
     public NOptional<Object> getVarValue(String varName) {
-        NOptional<NExprVarDeclaration> var = getVar(varName);
+        NOptional<NExprVar> var = getVar(varName);
         if (!var.isPresent()) {
             return var.map(x -> null);
         }
@@ -56,7 +57,7 @@ public abstract class NExprContextBase implements NExprContext {
 
     @Override
     public NExprContextBuilder childContext() {
-        return new NExprContextBuilderImpl(exprs,this);
+        return new NExprContextBuilderImpl(rpi, this);
     }
 
     @Override
@@ -76,17 +77,17 @@ public abstract class NExprContextBase implements NExprContext {
 
     @Override
     public <A, B> NOptional<NFunction2<A, B, ?>> findCommonInfixOp(NExprCommonOp op, Class<? extends A> firstArgType, Class<? extends B> secondArgType) {
-        return exprs.findCommonInfixOp(op, firstArgType, secondArgType);
+        return rpi.findCommonInfixOp(op, firstArgType, secondArgType);
     }
 
     @Override
     public <A> NOptional<NFunction<A, ?>> findCommonPrefixOp(NExprCommonOp op, Class<? extends A> argType) {
-        return exprs.findCommonPrefixOp(op, argType);
+        return rpi.findCommonPrefixOp(op, argType);
     }
 
     @Override
     public <A> NOptional<NFunction<A, ?>> findCommonPostfixOp(NExprCommonOp op, Class<? extends A> argType) {
-        return exprs.findCommonPostfixOp(op, argType);
+        return rpi.findCommonPostfixOp(op, argType);
     }
 
     @Override
@@ -110,7 +111,7 @@ public abstract class NExprContextBase implements NExprContext {
     }
 
     @Override
-    public NOptional<NExprVarDeclaration> getVar(String varName) {
+    public NOptional<NExprVar> getVar(String varName) {
         return null;
     }
 

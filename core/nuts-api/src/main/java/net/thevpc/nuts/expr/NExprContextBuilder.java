@@ -3,11 +3,13 @@ package net.thevpc.nuts.expr;
 import net.thevpc.nuts.elem.NOperatorAssociativity;
 
 import java.util.Map;
+import java.util.function.Function;
 
 public interface NExprContextBuilder {
     /**
      * creates a new context builder with default settings.
      * synonym for {@link #ofDefault()}
+     *
      * @return ofDefault()
      */
     static NExprContextBuilder of() {
@@ -15,11 +17,11 @@ public interface NExprContextBuilder {
     }
 
     static NExprContextBuilder ofDefault() {
-        return NExprs.of().defaultContext().childContext();
+        return NExprContext.ofDefault().childContext();
     }
 
     static NExprContextBuilder ofEmpty() {
-        return NExprs.of().emptyContext().childContext();
+        return NExprContext.ofEmpty().childContext();
     }
 
     NExprContextBuilder declareConstructs(NExprConstructResolver resolver);
@@ -48,11 +50,7 @@ public interface NExprContextBuilder {
 
     NExprContextBuilder declareConstruct(String name, NExprConstruct constructImpl);
 
-    NExprContextBuilder declareVar(String name);
-
-    NExprContextBuilder declareConstant(String name, Object value);
-
-    NExprContextBuilder declareVar(String name, NExprVar varImpl);
+    NExprContextBuilder declareVar(NExprVar variable);
 
     NExprContextBuilder declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprConstruct impl);
 
@@ -71,7 +69,5 @@ public interface NExprContextBuilder {
     NExprContextBuilder setAutoDeclareVariables(boolean autoDeclareVariables);
 
     NExprMutableContext buildMutable();
-
-    NExprContextBuilder declareVars(Map<String, Object> variables);
 
 }

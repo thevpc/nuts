@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.elem.NOperatorAssociativity;
+import net.thevpc.nuts.internal.expr.NExprRPI;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -15,19 +17,19 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
     private final Map<String, DecInfo<NExprFctDeclaration>> userFunctions = new LinkedHashMap<>();
     private final Map<String, DecInfo<NExprConstructDeclaration>> userConstructs = new LinkedHashMap<>();
     private final Map<NExprOpNameAndType, DecInfo<NExprOpDeclaration>> ops = new LinkedHashMap<>();
-    private final Map<String, DecInfo<NExprVarDeclaration>> userVars = new LinkedHashMap<>();
+    private final Map<String, DecInfo<NExprVar>> userVars = new LinkedHashMap<>();
 
 
     private NExprContext parent;
 
-    public NExprMutableContextImpl(NExprs exprs, NExprContext parent) {
-        super(exprs);
+    public NExprMutableContextImpl(NExprRPI nExprRPI, NExprContext parent) {
+        super(nExprRPI);
         this.parent = parent;
     }
 
     @Override
-    public NOptional<NExprVarDeclaration> getVar(String name) {
-        DecInfo<NExprVarDeclaration> f = userVars.get(name);
+    public NOptional<NExprVar> getVar(String name) {
+        DecInfo<NExprVar> f = userVars.get(name);
         if (f != null) {
             if (f.value != null) {
                 return NOptional.of(f.value);
@@ -40,15 +42,15 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
 
     @Override
     public NExprVar getOrDeclareVar(String name, Supplier<Object> value) {
-        NExprVarDeclaration o = getVar(name).orNull();
+        NExprVar o = getVar(name).orNull();
         if(o!=null){
-            return o.asVar();
+            return o;
         }
-        NExprVarDeclaration e = declareVar(name);
+        NExprVar e = declareVar(name);
         if(value!=null){
             e.set(value.get(),this);
         }
-        return e.asVar();
+        return e;
     }
 
     @Override
@@ -78,27 +80,21 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
     }
 
     @Override
-    public NExprVarDeclaration declareVar(String name, NExprVar varImpl) {
-        if (!NBlankable.isBlank(name)) {
-            if (varImpl == null) {
-                userFunctions.put(name, REMOVED);
-            } else {
-                DefaultNExprVarDeclaration r = new DefaultNExprVarDeclaration(name, varImpl);
-                userVars.put(name, new DecInfo<>(r));
-                return r;
-            }
-        }
-        return null;
+    public NExprVar declareVar(NExprVar varImpl) {
+        NAssert.requireNamedNonNull(varImpl,"variable");
+        String name = varImpl.getName();
+        userVars.put(name, new DecInfo<>(varImpl));
+        return varImpl;
     }
 
     @Override
-    public NExprVarDeclaration declareVar(String name) {
-        return declareVar(name, new DefaultNExprVarImpl());
+    public NExprVar declareVar(String name) {
+        return declareVar(NExprVar.ofVar(name));
     }
 
     @Override
-    public NExprVarDeclaration declareConstant(String name, Object value) {
-        return declareVar(name, NExprVar.ofConst(name,value));
+    public NExprVar declareConstant(String name, Object value) {
+        return declareVar(NExprVar.ofConst(name,value));
     }
 
     @Override
@@ -193,14 +189,14 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
     }
 
     @Override
-    public void undeclare(NExprVarDeclaration member) {
+    public void undeclare(NExprVar member) {
         if (member != null) {
             userVars.remove(member.getName());
         }
     }
 
     @Override
-    public void remove(NExprVarDeclaration member) {
+    public void remove(NExprVar member) {
         if (member != null) {
             userVars.put(member.getName(), REMOVED);
         }
@@ -282,19 +278,5 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
         return all;
     }
 
-    private static class DefaultNExprVarImpl implements NExprVar {
-        private Object value;
 
-        @Override
-        public Object get(String name, NExprContext context) {
-            return value;
-        }
-
-        @Override
-        public Object set(String name, Object value, NExprContext context) {
-            Object old = this.value;
-            this.value = value;
-            return old;
-        }
-    }
 }

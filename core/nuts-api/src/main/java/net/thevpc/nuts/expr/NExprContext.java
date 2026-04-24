@@ -1,5 +1,6 @@
 package net.thevpc.nuts.expr;
 
+import net.thevpc.nuts.internal.expr.NExprRPI;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NFunction2;
 import net.thevpc.nuts.util.NOptional;
@@ -7,6 +8,14 @@ import net.thevpc.nuts.util.NOptional;
 import java.util.List;
 
 public interface NExprContext {
+
+    static NExprContext ofEmpty(){
+        return NExprRPI.of().createEmptyContext();
+    }
+
+    static NExprContext ofDefault(){
+        return NExprRPI.of().createDefaultContext();
+    }
 
     NOptional<NExprFctDeclaration> getFunction(String fctName, NExprNodeValue... args);
 
@@ -17,7 +26,7 @@ public interface NExprContext {
     List<NExprOpDeclaration> getOperators();
 
 
-    NOptional<NExprVarDeclaration> getVar(String varName);
+    NOptional<NExprVar> getVar(String varName);
 
     NExprContextBuilder childContext();
 

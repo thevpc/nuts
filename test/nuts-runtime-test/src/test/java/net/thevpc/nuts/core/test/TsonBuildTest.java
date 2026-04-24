@@ -84,4 +84,13 @@ public class TsonBuildTest {
         e.equals(elem);
         Assertions.assertEquals(elem, e);
     }
+
+    @Test
+    public void test005() {
+        // Catalina(context:"/aaa"host:"localhost"type:"Loader")
+        NUpletElement u = NElement.ofUplet("Catalina", NElement.ofPair("context", "/aaa"), NElement.ofPair("host", "localhost"));
+        TestUtils.println(u.toCompactString());
+
+
+    }
 }

@@ -2,14 +2,13 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.elem.NOperatorAssociativity;
 import net.thevpc.nuts.expr.*;
-import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.internal.expr.NExprRPI;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
 
 public class NExprContextBuilderImpl implements NExprContextBuilder {
     public static final NExprResolverFromBuilderEmpty EMPTY_RESOLVER = new NExprResolverFromBuilderEmpty();
-    private final NExprs exprs;
     private boolean autoDeclareVariables;
     private List<NExprResolver> evaluators;
     private List<NExprOperatorResolver> opEvaluators;
@@ -21,9 +20,10 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     private Map<NExprOpNameAndType, NExprOp> ops;
     private Map<String, NExprVar> userVars;
     private NExprContext parent;
+    private NExprRPI rpi;
 
-    public NExprContextBuilderImpl(NExprs exprs,NExprContext parent) {
-        this.exprs = exprs;
+    public NExprContextBuilderImpl(NExprRPI rpi, NExprContext parent) {
+        this.rpi = rpi;
         this.parent = parent;
     }
 
@@ -65,24 +65,10 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
         return varEvaluators == null || varEvaluators.isEmpty();
     }
 
-
-
-    @Override
-    public NExprContextBuilder declareVars(Map<String, Object> variables) {
-        return declareVars(new NExprVarResolver() {
-            @Override
-            public NOptional<NExprVar> getVar(String varName, NExprContext context) {
-                if (variables.containsKey(varName)) {
-                    return NOptional.of(NExprVar.ofMap(variables));
-                }
-                return NOptional.ofNamedEmpty(NMsg.ofC("variable %s", varName));
-            }
-        });
-    }
-
     public NExprMutableContext buildMutable() {
         return (NExprMutableContext) build(true);
     }
+
     public NExprContext build() {
         return build(false);
     }
@@ -90,14 +76,14 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     public NExprContext build(boolean mutable) {
         if (hasNoCustomDeclarations()) {
             if(mutable){
-                return new NExprMutableContextImpl(exprs, parent);
+                return new NExprMutableContextImpl(rpi,parent);
             }
             // wrap in child to enforce immutability over a potentially mutable parent
-            return new NExprChildContextImpl(exprs, EMPTY_RESOLVER, parent);
+            return new NExprChildContextImpl(rpi, EMPTY_RESOLVER, parent);
         }
-        NExprChildContextImpl c = new NExprChildContextImpl(exprs, new NExprResolverFromBuilder(this), parent);
+        NExprChildContextImpl c = new NExprChildContextImpl(rpi, new NExprResolverFromBuilder(this), parent);
         if(mutable){
-            return new NExprMutableContextImpl(exprs, c);
+            return new NExprMutableContextImpl(rpi, c);
         }
         return c;
     }
@@ -219,16 +205,6 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     }
 
     @Override
-    public NExprContextBuilder declareConstant(String name, Object value) {
-        if (userVars == null) {
-            userVars = new HashMap<>();
-        }
-        userVars.put(name, new ReservedNExprConst(name, value));
-        return this;
-    }
-
-
-    @Override
     public NExprContextBuilder declareFunction(String name, NExprFct fctImpl) {
         if (fctImpl == null) {
             if (userFunctions != null) {
@@ -244,27 +220,12 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     }
 
     @Override
-    public NExprContextBuilder declareVar(String name) {
+    public NExprContextBuilder declareVar(NExprVar variable) {
         if (userVars == null) {
             userVars = new HashMap<>();
         }
-        if (!userVars.containsKey(name)) {
-            userVars.put(name, new ReservedNExprVar(name, null));
-        }
-        return this;
-    }
-
-    @Override
-    public NExprContextBuilder declareVar(String name, NExprVar varImpl) {
-        if (varImpl == null) {
-            if (userVars != null) {
-                userVars.remove(name);
-            }
-        } else {
-            if (userVars == null) {
-                userVars = new HashMap<>();
-            }
-            userVars.put(name, varImpl);
+        if (!userVars.containsKey(variable.getName())) {
+            userVars.put(variable.getName(), variable);
         }
         return this;
     }
@@ -485,7 +446,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                 NExprVar v = userVars.get(varName);
                 if (v != null) {
                     if (context instanceof NExprMutableContext) {
-                        ((NExprMutableContext) context).declareVar(varName, v);
+                        ((NExprMutableContext) context).declareVar(v);
                     }
                     return NOptional.of(v);
                 }
@@ -495,7 +456,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                     NOptional<NExprVar> r = fctEvaluator.getVar(varName, context);
                     if (r != null && r.isPresent()) {
                         if (context instanceof NExprMutableContext) {
-                            ((NExprMutableContext) context).declareVar(varName, r.get());
+                            ((NExprMutableContext) context).declareVar(r.get());
                         }
                         return r;
                     }
@@ -506,7 +467,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                     NOptional<NExprVar> r = fctEvaluator.getVar(varName, context);
                     if (r != null && r.isPresent()) {
                         if (context instanceof NExprMutableContext) {
-                            ((NExprMutableContext) context).declareVar(varName, r.get());
+                            ((NExprMutableContext) context).declareVar(r.get());
                         }
                         return r;
                     }

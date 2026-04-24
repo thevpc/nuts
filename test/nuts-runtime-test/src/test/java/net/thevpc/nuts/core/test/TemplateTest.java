@@ -34,7 +34,7 @@ public class TemplateTest {
 
     public static String render(String text, Map<String,Object> varsMap) {
         NExprTemplate nExprTemplate = NExprContextBuilder.of()
-                .declareVars(varsMap)
+                .declareVars(NExprVarResolver.ofMap(varsMap))
                 .build()
                 .ofTemplate().withMoustacheStyle();
         return  nExprTemplate.processString(text);

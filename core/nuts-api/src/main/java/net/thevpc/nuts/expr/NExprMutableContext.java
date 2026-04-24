@@ -10,21 +10,23 @@ public interface NExprMutableContext extends NExprContext {
 
     NExprConstructDeclaration declareConstruct(String name, NExprConstruct constructImpl);
 
-    NExprVarDeclaration declareVar(String name);
+    NExprVar declareVar(String name);
 
-    NExprVarDeclaration declareConstant(String name, Object value);
+    NExprVar declareConstant(String name, Object value);
 
-    NExprVarDeclaration declareVar(String name, NExprVar varImpl);
+    NExprVar declareVar(NExprVar varImpl);
 
     NExprOpDeclaration declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprConstruct impl);
 
     NExprOpDeclaration declareOperator(String name, NExprConstruct impl);
 
     NExprOpDeclaration declareOperator(String name, NExprOpType type, NExprConstruct impl);
-    NOptional<Object> setVarValue(String varName, Object value);
+
+    void setVarValue(String varName, Object value);
+
     NExprVar getOrDeclareVar(String name, Supplier<Object> initialValue);
 
-    void undeclare(NExprVarDeclaration member);
+    void undeclare(NExprVar member);
 
     void undeclare(NExprFctDeclaration member);
 
@@ -32,7 +34,7 @@ public interface NExprMutableContext extends NExprContext {
 
     void undeclare(NExprOpDeclaration member);
 
-    void remove(NExprVarDeclaration member);
+    void remove(NExprVar member);
 
     void remove(NExprFctDeclaration member);
 

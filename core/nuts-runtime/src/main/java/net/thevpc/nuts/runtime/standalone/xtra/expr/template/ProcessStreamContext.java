@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr.template;
 import net.thevpc.nuts.expr.NExprContext;
 import net.thevpc.nuts.expr.NExprMutableContext;
 import net.thevpc.nuts.expr.NExprNode;
-import net.thevpc.nuts.expr.NExprVarDeclaration;
+import net.thevpc.nuts.expr.NExprVar;
 import net.thevpc.nuts.io.NCharReader;
 import net.thevpc.nuts.io.NullInputStream;
 import net.thevpc.nuts.io.NullReader;
@@ -64,10 +64,10 @@ public class ProcessStreamContext implements Cloneable{
     }
 
     public void setVar(String varName, Object v) {
-        NOptional<NExprVarDeclaration> vv = context.getVar(varName);
+        NOptional<NExprVar> vv = context.getVar(varName);
         if(!vv.isPresent()){
             if(context instanceof NExprMutableContext){
-                NExprVarDeclaration z = ((NExprMutableContext) context).declareVar(varName);
+                NExprVar z = ((NExprMutableContext) context).declareVar(varName);
                 z.set(v,context);
             }else{
                 throw new NIllegalArgumentException(NMsg.ofC("cannot declare variable %s in immutable context",varName));
