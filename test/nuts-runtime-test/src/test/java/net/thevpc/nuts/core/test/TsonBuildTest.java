@@ -2,22 +2,11 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.io.NIOUtils;
-import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenImpl;
-import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenType;
-import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCustomLexer;
-import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCustomParser;
-import net.thevpc.nuts.time.NChronometer;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NOptional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.StringReader;
-import java.math.BigInteger;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class TsonBuildTest {
 
@@ -90,7 +79,17 @@ public class TsonBuildTest {
         // Catalina(context:"/aaa"host:"localhost"type:"Loader")
         NUpletElement u = NElement.ofUplet("Catalina", NElement.ofPair("context", "/aaa"), NElement.ofPair("host", "localhost"));
         TestUtils.println(u.toCompactString());
-
-
     }
+
+    @Test
+    public void test006() {
+        // Catalina(context:"/aaa"host:"localhost"type:"Loader")
+        Map<String,String> a=new java.util.HashMap<>();
+        a.put("a",
+                "a\r\nb"
+        );
+        String json = NElementWriter.ofJson().formatPlain(a);
+        TestUtils.println(json);
+    }
+
 }
