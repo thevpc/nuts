@@ -432,7 +432,7 @@ public class DefaultRootContext extends NExprContextBase {
     public NOptional<NExprVar> getVar(String varName) {
         return NOptional.of(
                 defaultVars.get(varName),
-                () -> NMsg.ofC("var not found %s", varName)
+                () -> NMsg.ofC("expr var not found %s", varName)
         );
     }
 

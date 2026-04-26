@@ -61,8 +61,11 @@ public class DefaultNTreeObjectWriter extends DefaultObjectWriterBase<NTreeObjec
     @Override
     public NTreeNode getModel(Object tree) {
         if (tree instanceof NTreeNode) {
-//        if(tree instanceof NutsTreeModel){
             return (NTreeNode) tree;
+        }
+        if (tree instanceof NText) {
+            NTextBuilder builder = ((NText) tree).builder();
+            tree = builder.lines().toArray(Object[]::new);
         }
         NElements ee = NElements.of();
         //ee.mapperStore().

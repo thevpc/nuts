@@ -12,15 +12,16 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
     public static final NTreeLinkFormat LINK_UNICODE_FORMATTER = new UnicodeTreeLinkFormat();
     private NTreeNodeFormat formatter;
     private NTreeLinkFormat linkFormatter;
+    private final NTreeLinkFormat defaultLinkFormatter;
     private boolean omitRoot = false;
     private boolean infinite = false;
-    private boolean omitEmptyRoot = true;
-    private String name;
-    private Map<String, String> multilineProperties = new HashMap<>();
+    private final boolean omitEmptyRoot = true;
+    private final String name;
+    private final Map<String, String> multilineProperties = new HashMap<>();
     public final NTreeNodeFormat TO_STRING_FORMATTER = new NTreeNodeFormat() {
         @Override
         public NText format(NTreeNode o, int depth) {
-            return o==null?NText.ofBlank():o.value();
+            return o == null ? NText.ofBlank() : o.value();
         }
     };
 
@@ -28,7 +29,8 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
     public DefaultNTextArtTreeRenderer(String name) {
         this.name = name;
         formatter = TO_STRING_FORMATTER;
-        linkFormatter = CorePlatformUtils.SUPPORTS_UTF_ENCODING ? LINK_UNICODE_FORMATTER : LINK_ASCII_FORMATTER;
+        defaultLinkFormatter = CorePlatformUtils.SUPPORTS_UTF_ENCODING ? LINK_UNICODE_FORMATTER : LINK_ASCII_FORMATTER;
+        linkFormatter = defaultLinkFormatter;
     }
 
     @Override
@@ -72,7 +74,7 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
     @Override
     public DefaultNTextArtTreeRenderer setLinkFormat(NTreeLinkFormat linkFormatter) {
         if (linkFormatter == null) {
-            linkFormatter = LINK_ASCII_FORMATTER;
+            linkFormatter = defaultLinkFormatter;
         }
         this.linkFormatter = linkFormatter;
         return this;
@@ -110,7 +112,9 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
     }
 
     private boolean print(NTreeNode node, NText prefix, NPositionType type, NTextBuilder out, boolean hideRoot, int depth, boolean prefixNewLine) {
-        if (!hideRoot) {
+        boolean skipNode = !hideRoot && NBlankable.isBlank(node.value());
+
+        if (!hideRoot && !skipNode) {
             List<NText> lines = node.value().split('\n', false);
 
             for (int i = 0; i < lines.size(); i++) {
@@ -118,14 +122,13 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
                     if (prefixNewLine) out.append("\n");
                     out.append(prefix).append(linkFormatter.formatMain(type)).append(lines.get(i));
                 } else {
-                    // continuation lines: preserve vertical links from ancestors
                     NText continuationPrefix = prefix.concat(
                             (type == NPositionType.LAST) ? NText.of("    ") : linkFormatter.formatChild(type)
                     );
                     out.append("\n").append(continuationPrefix).append(lines.get(i));
                 }
             }
-            prefixNewLine = true; // node printed
+            prefixNewLine = true;
         }
 
         List<NTreeNode> children = node.children();
@@ -135,8 +138,9 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
                 boolean isLast = (i == children.size() - 1);
                 NPositionType childType = isLast ? NPositionType.LAST : NPositionType.CENTER;
 
-                // compute new prefix for child:
-                NText childPrefix = prefix.concat(
+                NText childPrefix = skipNode
+                        ? prefix  // transparent: don't consume a prefix level
+                        : prefix.concat(
                         (type == NPositionType.LAST) ? NText.of("    ") : linkFormatter.formatChild(type)
                 );
 
@@ -145,44 +149,45 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
         }
 
         return prefixNewLine;
+
     }
 
-    private void print(NTreeNode tree, NText prefix, NPositionType type, NTextBuilder out, boolean hideRoot, int depth) {
-        boolean skipNewLine = true;
-        if (!hideRoot) {
-            out.append(prefix);
-            out.append(linkFormatter.formatMain(type));
-            out.append(formatter.format(tree, depth));
-            skipNewLine = false;
-        }
-        List<NTreeNode> children1 = tree.children();
-        if (children1 == null) {
-            children1 = Collections.emptyList();
-        }
-        Iterator<NTreeNode> children = children1.iterator();
-        NTreeNode last = null;
-        if (children.hasNext()) {
-            last = children.next();
-        }
-        while (children.hasNext()) {
-            NTreeNode c = last;
-            last = children.next();
-            if (skipNewLine) {
-                skipNewLine = false;
-            } else {
-                out.append("\n");
-            }
-            print(tree, prefix.concat(linkFormatter.formatChild(type)), NPositionType.CENTER, out, false, depth + 1);
-        }
-        if (last != null) {
-            if (skipNewLine) {
-                skipNewLine = false;
-            } else {
-                out.append("\n");
-            }
-        }
-        print(tree, prefix.concat(linkFormatter.formatChild(type)), (infinite && NBlankable.isBlank(prefix)) ? NPositionType.CENTER : NPositionType.LAST, out, false, depth + 1);
-    }
+//    private void print(NTreeNode tree, NText prefix, NPositionType type, NTextBuilder out, boolean hideRoot, int depth) {
+//        boolean skipNewLine = true;
+//        if (!hideRoot) {
+//            out.append(prefix);
+//            out.append(linkFormatter.formatMain(type));
+//            out.append(formatter.format(tree, depth));
+//            skipNewLine = false;
+//        }
+//        List<NTreeNode> children1 = tree.children();
+//        if (children1 == null) {
+//            children1 = Collections.emptyList();
+//        }
+//        Iterator<NTreeNode> children = children1.iterator();
+//        NTreeNode last = null;
+//        if (children.hasNext()) {
+//            last = children.next();
+//        }
+//        while (children.hasNext()) {
+//            NTreeNode c = last;
+//            last = children.next();
+//            if (skipNewLine) {
+//                skipNewLine = false;
+//            } else {
+//                out.append("\n");
+//            }
+//            print(tree, prefix.concat(linkFormatter.formatChild(type)), NPositionType.CENTER, out, false, depth + 1);
+//        }
+//        if (last != null) {
+//            if (skipNewLine) {
+//                skipNewLine = false;
+//            } else {
+//                out.append("\n");
+//            }
+//        }
+//        print(tree, prefix.concat(linkFormatter.formatChild(type)), (infinite && NBlankable.isBlank(prefix)) ? NPositionType.CENTER : NPositionType.LAST, out, false, depth + 1);
+//    }
 
     public DefaultNTextArtTreeRenderer addMultilineProperty(String property, String separator) {
         multilineProperties.put(property, separator);

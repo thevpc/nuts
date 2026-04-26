@@ -61,7 +61,7 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
     private Map<String, Object> formatParams = new HashMap<>();
     private boolean compact;
     private NContentType outputFormat;
-    private List<String[]> confCmds = new ArrayList<>();
+    private final List<String[]> confCmds = new ArrayList<>();
 
     public DefaultNObjectObjectWriter() {
         super("object-format");
@@ -180,7 +180,8 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
                 break;
             }
         }
-        switch (session.getOutputFormat().orDefault()) {
+        NContentType nContentType = NUtils.firstNonNull(getOutputFormat(), session.getOutputFormat().orDefault(), NContentType.PLAIN);
+        switch (nContentType) {
             //structured formats!
             case XML:
             case JSON:
@@ -188,7 +189,7 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
             case YAML: {
                 NElementWriter ee = NElementWriter.of().setNtf(isNtf())
                         .setCompact(isCompact())
-                        .setContentType(session.getOutputFormat().orDefault());
+                        .setContentType(nContentType);
                 Object aValue = null;
                 if (value instanceof NText) {
                     NTextBuilder builder = ((NText) value).builder();
@@ -228,19 +229,11 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
                 return new NFormatAndValue<>(aValue, ee);
             }
             case TREE: {
-                Object aValue = null;
                 NTreeObjectWriter ee = NTreeObjectWriter.of().setNtf(isNtf());
-                if (value instanceof NText) {
-                    NTextBuilder builder = ((NText) value).builder();
-                    Object[] r = builder.lines().toArray(Object[]::new);
-                    aValue = r;
-                } else {
-                    aValue = value;
-                }
                 for (String[] confCmd : confCmds) {
                     ee.configure(true, confCmd);
                 }
-                return new NFormatAndValue<>(aValue, ee);
+                return new NFormatAndValue<>(value, ee);
             }
             case TABLE: {
                 NTableWriter ee = NTableWriter.of().setNtf(isNtf());
@@ -265,7 +258,7 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
                 return new NFormatAndValue<>(value, ee);
             }
         }
-        throw new NUnsupportedEnumException(session.getOutputFormat().orDefault());
+        throw new NUnsupportedEnumException(nContentType);
     }
 
 //    @Override
