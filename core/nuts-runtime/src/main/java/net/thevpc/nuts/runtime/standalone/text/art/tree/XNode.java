@@ -45,6 +45,8 @@ public class XNode implements NTreeNode {
     Object value;
     NText title;
     XNodeFormatter format;
+    List<XNode> cachedChildren;
+    boolean cachedChildrenEvaluated;
 
     public static XNode root(Object destructedObject, NText title, XNodeFormatter format) {
         return new XNode(null,
@@ -87,7 +89,8 @@ public class XNode implements NTreeNode {
         }
         NText _title = resolveTitle();
         NText titleOrValueAsElement = null;
-        if (getChildren() == null || getChildren().isEmpty()) {
+        List<XNode> children = getChildren();
+        if (children == null || children.isEmpty()) {
             titleOrValueAsElement = format.stringValue(_title != null ? _title : value);
         } else {
             titleOrValueAsElement = format.stringValue(_title);
@@ -165,18 +168,29 @@ public class XNode implements NTreeNode {
     }
 
     public List<XNode> getChildren() {
+        if(cachedChildrenEvaluated){
+            return cachedChildren;
+        }
         if (value instanceof Map.Entry) {
             Object v = ((Map.Entry) value).getValue();
-            return getAsList(v);
+            cachedChildren=getAsList(v);
+            cachedChildrenEvaluated=true;
+            return cachedChildren;
         }
         if (value instanceof NPairElement) {
             Object v = ((NPairElement) value).value();
-            return getAsList(v);
+            cachedChildren=getAsList(v);
+            cachedChildrenEvaluated=true;
+            return cachedChildren;
         }
         if (isList(value) || isMap(value)) {
-            return getAsList(value);
+            cachedChildren=getAsList(value);
+            cachedChildrenEvaluated=true;
+            return cachedChildren;
         }
-        return null;
+        cachedChildren=null;
+        cachedChildrenEvaluated=true;
+        return cachedChildren;
     }
 
     private static boolean isList(Object value) {
@@ -211,10 +225,18 @@ public class XNode implements NTreeNode {
 
     private List<XNode> getAsList(Object value) {
         if (value instanceof List) {
-            return ((List<Object>) value).stream().map(me -> node(me, format)).collect(Collectors.toList());
+            return ((List<Object>) value).stream()
+                    .map(me -> (isList(me) || isMap(me))
+                            ? new XNode(NText.of("●"), me, null, format)
+                            : node(me, format))
+                    .collect(Collectors.toList());
         }
         if (value instanceof NArrayElement) {
-            return ((NArrayElement) value).stream().map(me -> node(me, format)).collect(Collectors.toList());
+            return ((NArrayElement) value).stream()
+                    .map(me -> (isList(me) || isMap(me))
+                            ? new XNode(NText.of("●"), me, null, format)
+                            : node(me, format))
+                    .collect(Collectors.toList());
         }
         if (value instanceof Map) {
             Map<Object, Object> m = (Map<Object, Object>) value;
