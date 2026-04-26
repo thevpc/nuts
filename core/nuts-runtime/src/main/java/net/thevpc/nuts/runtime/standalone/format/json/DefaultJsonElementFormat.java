@@ -267,13 +267,75 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
 
     private NElement ensureJson(NElement e) {
         switch (e.type()) {
+            case DOUBLE:{
+                NElement b=e;
+                Double dv = e.asDoubleValue().get();
+                if(Double.isNaN(dv)) {
+                    b = NElement.ofNull();
+                }else if(Double.isInfinite(dv)) {
+                    b = NElement.ofNull();
+                }
+                List<NElementAnnotation> a = e.annotations();
+                if (a.isEmpty()) {
+                    return b;
+                } else {
+                    return NElement.ofObjectBuilder()
+                            .add("value", b)
+                            .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
+                            .build();
+                }
+            }
+            case FLOAT:{
+                NElement b=e;
+                Float dv = e.asFloatValue().get();
+                if(Float.isNaN(dv)) {
+                    b = NElement.ofNull();
+                }else if(Double.isInfinite(dv)) {
+                    b = NElement.ofNull();
+                }
+                List<NElementAnnotation> a = e.annotations();
+                if (a.isEmpty()) {
+                    return b;
+                } else {
+                    return NElement.ofObjectBuilder()
+                            .add("value", b)
+                            .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
+                            .build();
+                }
+            }
+            case UBYTE:
+            case USHORT:
+            case UINT:
+            {
+                List<NElementAnnotation> a = e.annotations();
+                NElement b=NElement.ofLong(e.asLongValue().get());
+                if (a.isEmpty()) {
+                    return b;
+                } else {
+                    return NElement.ofObjectBuilder()
+                            .add("value", b)
+                            .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
+                            .build();
+                }
+            }
+            case ULONG:
+            {
+                List<NElementAnnotation> a = e.annotations();
+                NElement b=NElement.ofBigInt(e.asBigIntValue().get());
+                if (a.isEmpty()) {
+                    return b;
+                } else {
+                    return NElement.ofObjectBuilder()
+                            .add("value", b)
+                            .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
+                            .build();
+                }
+            }
             case NULL:
             case INT:
             case LONG:
             case SHORT:
             case BYTE:
-            case DOUBLE:
-            case FLOAT:
             case BOOLEAN:
             case BIG_DECIMAL:
             case BIG_INT: {
@@ -282,7 +344,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                     return e;
                 } else {
                     return NElement.ofObjectBuilder()
-                            .add("value", e.builder().clearAnnotations().build())
+                            .add("value", e)
                             .add(a.isEmpty() ? null : NElement.ofPair("@annotations", _jsonAnnotations(a)))
                             .build();
                 }
@@ -1013,12 +1075,14 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                     switch (current) {
                         case '\r': {
                             skipLF = true;
+                            break;
                         }
                         case '\n': {
                             // Fall through
                             lineNumber++;
                             lineOffset = 0;
                             current = '\n';
+                            break;
                         }
                     }
                 }
