@@ -830,7 +830,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequest setReadTimeout(NDuration duration) {
-        this.readTimeout = duration == null ? null : (int) duration.toSeconds();
+        this.readTimeout = duration == null ? null : (int) duration.toMillis();
         return this;
     }
 
@@ -847,7 +847,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequest setConnectTimeout(NDuration duration) {
-        this.connectTimeout = duration == null ? null : (int) duration.toSeconds();
+        this.connectTimeout = duration == null ? null : (int) duration.toMillis();
         return this;
     }
 
