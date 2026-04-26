@@ -31,6 +31,7 @@ import net.thevpc.nuts.text.NMsg;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.function.Supplier;
 
 /**
  *
@@ -43,7 +44,7 @@ public class MethodReflectProperty1 extends AbstractReflectProperty {
     private boolean readAccessible;
     private boolean writeAccessible;
 
-    public MethodReflectProperty1(String name, Method read, Method write, Object cleanInstance, NReflectType type, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
+    public MethodReflectProperty1(String name, Method read, Method write, Supplier<Object> cleanInstance, NReflectType type, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
         if (read != null) {
             this.read = read;
             try {

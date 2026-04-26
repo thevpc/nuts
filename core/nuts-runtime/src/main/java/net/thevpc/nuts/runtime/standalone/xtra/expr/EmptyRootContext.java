@@ -30,7 +30,7 @@ public class EmptyRootContext extends NExprContextBase {
 
     @Override
     public NOptional<NExprVar> getVar(String varName) {
-        return NOptional.ofEmpty(() -> NMsg.ofC("var not found %s", varName));
+        return NOptional.ofEmpty(() -> NMsg.ofC("expr var not found %s", varName));
     }
 
     @Override

@@ -31,6 +31,7 @@ import net.thevpc.nuts.text.NMsg;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.function.Supplier;
 
 /**
  * @author thevpc
@@ -40,7 +41,7 @@ public class FieldReflectProperty extends AbstractReflectProperty {
     private Field field;
     private boolean accessible;
 
-    public FieldReflectProperty(Field field, Object cleanInstance, NReflectType declaringType, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
+    public FieldReflectProperty(Field field, Supplier<Object> cleanInstance, NReflectType declaringType, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
         if (field != null) {
             this.field = field;
             try {
