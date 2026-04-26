@@ -66,6 +66,8 @@ public class DefaultNReflectType implements NReflectType {
     private ConstrHolder constrType;
     private ConstrHolder noArgConstr;
     private ConstrHolder specialConstr;
+    private boolean cleanInstanceCreated;
+    private Object cleanInstance;
 
     private class ConstrHolder {
         ConstrType type;
@@ -303,14 +305,25 @@ public class DefaultNReflectType implements NReflectType {
         return new NReflectType[0];
     }
 
+    private synchronized Object _cleanInstance() {
+        if (!cleanInstanceCreated) {
+            synchronized (this) {
+                if (!cleanInstanceCreated) {
+                    try {
+                        cleanInstance = newInstance();
+                    } catch (Exception ex) {
+                        //ignore any error...
+                    }
+                    cleanInstanceCreated=true;
+                }
+            }
+        }
+        return cleanInstance;
+    }
+
     private void build() {
         if (propertiesDeclaredMap == null) {
-            Object cleanInstance = null;
-            try {
-                cleanInstance = newInstance();
-            } catch (Exception ex) {
-                //ignore any error...
-            }
+            Supplier<Object> cleanInstance = ()->_cleanInstance();
             LinkedHashMap<String, IndexedItem<NReflectMethod>> declaredMethods = new LinkedHashMap<>();
             LinkedHashMap<String, IndexedItem<NReflectMethod>> allMethods = new LinkedHashMap<>();
 
@@ -323,7 +336,7 @@ public class DefaultNReflectType implements NReflectType {
             fillProperties(hierarchyIndex, javaType, declaredProperties, cleanInstance, ambiguousWrites, propertyAccessStrategy, propertyDefaultValueStrategy);
             allProperties.putAll(declaredProperties);
 
-            fillMethods(hierarchyIndex, javaType, declaredMethods, cleanInstance);
+            fillMethods(hierarchyIndex, javaType, declaredMethods);
             allMethods.putAll(declaredMethods);
 
             NReflectType parent = getSuperType();
@@ -413,7 +426,7 @@ public class DefaultNReflectType implements NReflectType {
         return Collections.unmodifiableList(methodsDeclaredList);
     }
 
-    private void fillMethods(int hierarchyIndex, Type javaType, LinkedHashMap<String, IndexedItem<NReflectMethod>> declaredMethods, Object cleanInstance) {
+    private void fillMethods(int hierarchyIndex, Type javaType, LinkedHashMap<String, IndexedItem<NReflectMethod>> declaredMethods) {
         Method[] declaredMethods2 = _getMethods(javaType);
         for (Method m : declaredMethods2) {
             DefaultNReflectMethod rm = new DefaultNReflectMethod(m, this);
@@ -441,7 +454,7 @@ public class DefaultNReflectType implements NReflectType {
         return r;
     }
 
-    private void fillProperties(int hierarchyIndex, Type clazz, LinkedHashMap<String, IndexedItem<NReflectProperty>> declaredProperties, Object cleanInstance, Set<String> ambiguousWrites,
+    private void fillProperties(int hierarchyIndex, Type clazz, LinkedHashMap<String, IndexedItem<NReflectProperty>> declaredProperties, Supplier<Object> cleanInstance, Set<String> ambiguousWrites,
                                 NReflectPropertyAccessStrategy propertyAccessStrategy,
                                 NReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy
     ) {
@@ -543,23 +556,23 @@ public class DefaultNReflectType implements NReflectType {
                             declaredProperties.put(propName, v);
                         } else {
 
-                            boolean accept=true;
+                            boolean accept = true;
 
-                            if(clazz instanceof Class) {
+                            if (clazz instanceof Class) {
                                 Class<?> decClazz = (Class<?>) clazz;
-                                if(getterNameHeuristicFilters.isAcceptGetterMethod(readMethod.getName(), decClazz)){
+                                if (getterNameHeuristicFilters.isAcceptGetterMethod(readMethod.getName(), decClazz)) {
 
                                 }
                                 Class[] ignoredInterfaces = {NBlankable.class};
                                 List<Class> ret = CorePlatformUtils.resolveInterfacesDeclaringNoArgMethod(readMethod.getName(), decClazz);
                                 for (Class a : ignoredInterfaces) {
-                                    if(ret.contains(a)){
+                                    if (ret.contains(a)) {
                                         accept = false;
                                         break;
                                     }
                                 }
                             }
-                            if(accept) {
+                            if (accept) {
                                 IndexedItem<NReflectProperty> v = new IndexedItem<>(hierarchyIndex,
                                         new MethodReflectProperty1(propName, readMethod, null, cleanInstance, this, propertyDefaultValueStrategy)
                                 );
@@ -625,7 +638,7 @@ public class DefaultNReflectType implements NReflectType {
                                 }
                                 if (!forceInclude) {
                                     String[] aa = NNameFormat.parse(name);
-                                    if(!getterNameHeuristicFilters.accept(name,aa,m.getReturnType(),m.getDeclaringClass())){
+                                    if (!getterNameHeuristicFilters.accept(name, aa, m.getReturnType(), m.getDeclaringClass())) {
                                         continue;
                                     }
                                     if (aa.length == 2) {

@@ -32,6 +32,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  *
@@ -40,19 +41,51 @@ import java.util.Objects;
 public abstract class AbstractReflectProperty implements NReflectProperty {
 
     private String name;
+    private boolean cleanInstanceValueLoaded;
     private Object cleanInstanceValue;
     private NReflectType propertyType;
     private NReflectType declaringType;
     private NReflectPropertyDefaultValueStrategy defaultValueStrategy;
+    private Supplier<Object> cleanInstance;
 
-    protected final void init(String name, NReflectType declaringType, Object cleanInstance, Type propertyType, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
+    protected final void init(String name, NReflectType declaringType, Supplier<Object> cleanInstance, Type propertyType, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
         this.name = name;
-        this.cleanInstanceValue = cleanInstance == null ? ReflectUtils.getDefaultValue(propertyType) : isRead()?read(cleanInstance):null;
+        this.cleanInstance = cleanInstance;
         this.declaringType = declaringType;
         NReflectType nReflectType = declaringType.getRepository().getType(propertyType)
                 .replaceVars(t -> declaringType.getActualTypeArgument(t).orElse(t));
         this.defaultValueStrategy = defaultValueStrategy;
         this.propertyType = nReflectType;
+    }
+
+    private synchronized Object _cleanInstanceValue(){
+        if(!cleanInstanceValueLoaded){
+            synchronized (this){
+                if(!cleanInstanceValueLoaded) {
+                    if (cleanInstance == null) {
+                        this.cleanInstanceValue = ReflectUtils.getDefaultValue(propertyType.getJavaType());
+                    } else {
+                        if (isRead()) {
+                            try {
+                                Object ii = cleanInstance.get();
+                                if(ii!=null){
+                                    this.cleanInstanceValue = read(ii);
+                                }else{
+                                    this.cleanInstanceValue = null;
+                                }
+                            }catch (Exception ex){
+                                //ay exception is equivalent to null
+                                this.cleanInstanceValue = null;
+                            }
+                        } else {
+                            this.cleanInstanceValue = null;
+                        }
+                    }
+                    cleanInstanceValueLoaded = true;
+                }
+            }
+        }
+        return cleanInstanceValue;
     }
 
     @Override
@@ -88,50 +121,51 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
                 if (value == null) {
                     return true; //null is always default!!
                 }
-                if (cleanInstanceValue != null && cleanInstanceValue.getClass().isArray()) {
-                    if (Array.getLength(cleanInstanceValue) == 0) {
+                Object cleanInstanceValue1 = _cleanInstanceValue();
+                if (cleanInstanceValue1 != null && cleanInstanceValue1.getClass().isArray()) {
+                    if (Array.getLength(cleanInstanceValue1) == 0) {
                         //this is a simple yet recurrent use case!
                         return value.getClass().isArray() && Array.getLength(value) == 0;
                     }
                     if (value.getClass().isArray()) {
-                        Class<?> e = cleanInstanceValue.getClass().getComponentType();
+                        Class<?> e = cleanInstanceValue1.getClass().getComponentType();
                         Class<?> f = value.getClass().getComponentType();
                         if (e.isPrimitive()) {
                             if (f.isPrimitive() && e.equals(f)) {
                                 switch (e.getName()) {
                                     case "boolean":
-                                        return Arrays.equals((boolean[]) cleanInstanceValue, (boolean[]) value);
+                                        return Arrays.equals((boolean[]) cleanInstanceValue1, (boolean[]) value);
                                     case "byte":
-                                        return Arrays.equals((byte[]) cleanInstanceValue, (byte[]) value);
+                                        return Arrays.equals((byte[]) cleanInstanceValue1, (byte[]) value);
                                     case "char":
-                                        return Arrays.equals((char[]) cleanInstanceValue, (char[]) value);
+                                        return Arrays.equals((char[]) cleanInstanceValue1, (char[]) value);
                                     case "short":
-                                        return Arrays.equals((short[]) cleanInstanceValue, (short[]) value);
+                                        return Arrays.equals((short[]) cleanInstanceValue1, (short[]) value);
                                     case "int":
-                                        return Arrays.equals((int[]) cleanInstanceValue, (int[]) value);
+                                        return Arrays.equals((int[]) cleanInstanceValue1, (int[]) value);
                                     case "long":
-                                        return Arrays.equals((long[]) cleanInstanceValue, (long[]) value);
+                                        return Arrays.equals((long[]) cleanInstanceValue1, (long[]) value);
                                     case "float":
-                                        return Arrays.equals((float[]) cleanInstanceValue, (float[]) value);
+                                        return Arrays.equals((float[]) cleanInstanceValue1, (float[]) value);
                                     case "double":
-                                        return Arrays.equals((double[]) cleanInstanceValue, (double[]) value);
+                                        return Arrays.equals((double[]) cleanInstanceValue1, (double[]) value);
                                 }
                             }
                             return false;
                         } else {
-                            return Arrays.deepEquals((Object[]) cleanInstanceValue, (Object[]) value);
+                            return Arrays.deepEquals((Object[]) cleanInstanceValue1, (Object[]) value);
                         }
                     }
-                    return Objects.deepEquals(cleanInstanceValue, value);
+                    return Objects.deepEquals(cleanInstanceValue1, value);
                 } else {
-                    return Objects.deepEquals(cleanInstanceValue, value);
+                    return Objects.deepEquals(cleanInstanceValue1, value);
                 }
             }
             case BASE: {
                 return getPropertyType().isDefaultValue(value);
             }
         }
-        return Objects.equals(cleanInstanceValue, value);
+        return Objects.equals(_cleanInstanceValue(), value);
     }
 
     @Override
