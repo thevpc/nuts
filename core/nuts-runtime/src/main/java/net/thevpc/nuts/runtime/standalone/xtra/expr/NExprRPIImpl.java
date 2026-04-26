@@ -17,9 +17,10 @@ public class NExprRPIImpl implements NExprRPI {
     private final DefaultNExprsCommonOps defaultNExprsCommonOps = new DefaultNExprsCommonOps();
     DefaultRootContext defaultContext;
     EmptyRootContext emptyContext;
+
     public NExprRPIImpl() {
-        defaultContext=new DefaultRootContext(this);
-        emptyContext= new EmptyRootContext(this);
+        defaultContext = new DefaultRootContext(this);
+        emptyContext = new EmptyRootContext(this);
     }
 
     @Override
@@ -50,7 +51,11 @@ public class NExprRPIImpl implements NExprRPI {
                 if (vars == null) {
                     return NOptional.ofNamedEmpty(NMsg.ofC("variable %s", varName));
                 }
-                return NOptional.of(createConst(varName, vars));
+                Object any=vars.apply(varName);
+                if(any!=null){
+                    return NOptional.of(createLazyConst(varName, c -> vars.apply(varName)));
+                }
+                return NOptional.ofNamedEmpty(NMsg.ofC("variable %s", varName));
             }
         };
     }
@@ -60,13 +65,27 @@ public class NExprRPIImpl implements NExprRPI {
         return new NExprVarResolver() {
             @Override
             public NOptional<NExprVar> getVar(String varName, NExprContext context) {
-                if (variables == null) {
-                    return NOptional.ofNamedEmpty(NMsg.ofC("variable %s", varName));
+                if (variables != null) {
+                    if (variables.containsKey(varName)) {
+                        return NOptional.of(createVar(varName, c -> variables.get(varName), (c, v) -> variables.put(varName, v)));
+                    }
                 }
-                if (variables.containsKey(varName)) {
-                    return NOptional.of(createConst(varName, variables.get(varName)));
+                return NOptional.ofNamedEmpty(NMsg.ofC("variable %s", varName));
+            }
+        };
+    }
+
+    @Override
+    public NExprVarResolver createReadOnlyMapVarResolver(Map<String, Object> variables) {
+        return new NExprVarResolver() {
+            @Override
+            public NOptional<NExprVar> getVar(String varName, NExprContext context) {
+                if (variables != null) {
+                    if (variables.containsKey(varName)) {
+                        return NOptional.of(createReadOnlyVar(varName, c -> variables.get(varName)));
+                    }
                 }
-                return NOptional.of(createConst(varName, variables));
+                return NOptional.ofNamedEmpty(NMsg.ofC("variable %s", varName));
             }
         };
     }
@@ -76,10 +95,10 @@ public class NExprRPIImpl implements NExprRPI {
         return new NExprVarResolver() {
             @Override
             public NOptional<NExprVar> getVar(String varName, NExprContext context) {
-                if (vars == null) {
-                    return NOptional.ofNamedEmpty(NMsg.ofC("variable %s", varName));
+                if (vars != null) {
+                    return NOptional.of(createReadOnlyVar(varName, z -> vars.apply(varName)));
                 }
-                return NOptional.of(createReadOnlyVar(varName, z -> vars.apply(varName)));
+                return NOptional.ofNamedEmpty(NMsg.ofC("variable %s", varName));
             }
         };
     }

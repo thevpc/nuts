@@ -52,7 +52,7 @@ public class NMsgVFormatHelper extends AbstractNMsgFormatHelper {
                         case NToken.TT_DOLLAR_BRACE: {
                             NText x = mapper.apply(t.sval);
                             if (x == null) {
-                                throw new IllegalArgumentException("var not found " + t.sval);
+                                throw new IllegalArgumentException("msg var not found " + t.sval);
                             }
                             return x;
                         }

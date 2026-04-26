@@ -34,6 +34,7 @@ public interface NExprRPI extends NComponent {
     NExprVar createVar(String name, NExprVarReader reader, NExprVarWriter writer);
 
     NExprVarResolver createMapVarResolver(Map<String, Object> variables);
+    NExprVarResolver createReadOnlyMapVarResolver(Map<String, Object> variables);
 
     NExprWordNode createExprWordNode(String a);
 

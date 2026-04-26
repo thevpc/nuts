@@ -37,7 +37,7 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
         } else if (parent != null) {
             return parent.getVar(name);
         }
-        return NOptional.ofEmpty(() -> NMsg.ofC("var not found %s", name));
+        return NOptional.ofEmpty(() -> NMsg.ofC("expr var not found %s", name));
     }
 
     @Override

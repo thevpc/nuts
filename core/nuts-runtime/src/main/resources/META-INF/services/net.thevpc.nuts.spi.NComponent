@@ -59,8 +59,6 @@ net.thevpc.nuts.runtime.standalone.DefaultNWorkspaceOptionsBuilder
 
 ##################### Utilities
 net.thevpc.nuts.runtime.standalone.app.NAppImpl
-net.thevpc.nuts.runtime.standalone.xtra.expr.DefaultNExprs
-net.thevpc.nuts.runtime.standalone.util.collections.DefaultNCollectionsRPI
 net.thevpc.nuts.runtime.standalone.xtra.glob.DefaultNGlob
 net.thevpc.nuts.runtime.standalone.io.terminal.history.NCmdLineHistoryImpl
 net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLines
@@ -103,7 +101,6 @@ net.thevpc.nuts.runtime.standalone.text.highlighter.PlainCodeHighlighter
 
 net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNContentTypeResolver
 net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO
-net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI
 net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest
 net.thevpc.nuts.runtime.standalone.xtra.time.DefaultNInputStreamMonitor
 net.thevpc.nuts.runtime.standalone.xtra.cp.DefaultNCp
@@ -176,3 +173,10 @@ net.thevpc.nuts.runtime.standalone.platform.NEnvLocal
 net.thevpc.nuts.runtime.standalone.platform.NEnvAsCmd
 net.thevpc.nuts.runtime.standalone.platform.rnsh.NEnvRnsh
 net.thevpc.nuts.runtime.standalone.platform.rnsh.RnshPathFactorySPI
+
+
+##################### Reserved Programming Interface
+
+net.thevpc.nuts.runtime.standalone.xtra.expr.NExprRPIImpl
+net.thevpc.nuts.runtime.standalone.util.collections.DefaultNCollectionsRPI
+net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI
