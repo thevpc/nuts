@@ -20,5 +20,9 @@ public interface NExprVarResolver {
         return NExprRPI.of().createMapVarResolver(variables);
     }
 
+    static NExprVarResolver ofReadOnlyMap(Map<String, Object> variables) {
+        return NExprRPI.of().createMapVarResolver(variables);
+    }
+
     NOptional<NExprVar> getVar(String varName, NExprContext context);
 }
