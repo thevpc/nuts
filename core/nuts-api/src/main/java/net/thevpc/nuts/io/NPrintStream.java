@@ -39,7 +39,7 @@ import java.util.Date;
 
 public interface NPrintStream extends NOutputTarget, AutoCloseable {
 
-    NPrintStream NULL = NullNPrintStream.NULL;
+    NPrintStream NULL = NullNPrintStream.INSTANCE;
 
     /**
      * return new in-memory NutsPrintStream implementation.
