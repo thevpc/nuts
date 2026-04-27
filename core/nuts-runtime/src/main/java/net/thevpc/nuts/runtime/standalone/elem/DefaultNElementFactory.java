@@ -452,7 +452,7 @@ public class DefaultNElementFactory implements NElementFactory {
         if (value == null) {
             return ofNull();
         }
-        return NElementUtils.isValidElementName(value) ? DefaultNStringElement.ofValue(NElementType.NAME, value)
+        return NElementUtils.isElementName(value) ? DefaultNStringElement.ofValue(NElementType.NAME, value)
                 : DefaultNStringElement.ofValue(NElementType.DOUBLE_QUOTED_STRING, value)
                 ;
     }

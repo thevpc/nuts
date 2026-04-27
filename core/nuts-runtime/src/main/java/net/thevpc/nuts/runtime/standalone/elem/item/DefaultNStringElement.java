@@ -121,7 +121,7 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
         this.image = image;
         this.lines0 = lines;
         if (NAssert.requireNamedNonNull(type,"type") == NElementType.NAME) {
-            NAssert.requireNamedTrue(NElementUtils.isValidElementName(value), "valid name : " + value);
+            NAssert.requireNamedTrue(NElementUtils.isElementName(value), "valid name : " + value);
             if(this.lines==null) {
                 this.lines = Collections.singletonList(new NElementLineImpl("", "", "", value, "", "", null));
             }

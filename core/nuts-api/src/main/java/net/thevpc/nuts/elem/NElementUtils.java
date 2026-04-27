@@ -74,7 +74,7 @@ public final class NElementUtils {
         }
     }
 
-    public static boolean isValidElementName(String name) {
+    public static boolean isElementName(String name) {
         if (name == null) {
             return false;
         }
@@ -106,9 +106,9 @@ public final class NElementUtils {
         return true;
     }
 
-    public static boolean isValidElementName(String name, NContentType contentType) {
+    public static boolean isElementName(String name, NContentType contentType) {
         if (contentType == null) {
-            return isValidElementName(name);
+            return isElementName(name);
         }
         if (name == null) {
             return false;

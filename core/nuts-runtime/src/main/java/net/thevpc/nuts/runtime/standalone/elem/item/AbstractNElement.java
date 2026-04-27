@@ -1663,7 +1663,7 @@ public abstract class AbstractNElement implements NElement {
             return NOptional.of((NStringElement) this);
         } else if (isAnyString()) {
             String s = asStringValue().get();
-            if (NElementUtils.isValidElementName(s)) {
+            if (NElementUtils.isElementName(s)) {
                 return NOptional.of((NStringElement) ((NPrimitiveElementBuilder) builder()).setString(s, NElementType.NAME).build());
             }
         }

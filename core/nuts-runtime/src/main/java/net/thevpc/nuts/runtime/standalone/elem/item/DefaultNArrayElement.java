@@ -58,7 +58,7 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
                         : NElementType.FULL_ARRAY,
                 affixes,diagnostics,metadata);
         if (name != null) {
-            NAssert.requireNamedTrue(NElementUtils.isValidElementName(name), "valid name : "+name);
+            NAssert.requireNamedTrue(NElementUtils.isElementName(name), "valid name : "+name);
         }
         this.values = CoreNUtils.copyAndUnmodifiableList(values);
         this.name = name;
