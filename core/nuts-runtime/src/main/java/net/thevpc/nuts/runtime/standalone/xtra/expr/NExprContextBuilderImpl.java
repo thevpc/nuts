@@ -13,11 +13,11 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     private List<NExprResolver> evaluators;
     private List<NExprOperatorResolver> opEvaluators;
     private List<NExprFunctionResolver> fctEvaluators;
-    private List<NExprConstructResolver> consEvaluators;
+    private List<NExprFunctionResolver> consEvaluators;
     private List<NExprVarResolver> varEvaluators;
-    private Map<String, NExprFct> userFunctions;
-    private Map<String, NExprConstruct> userConstructs;
-    private Map<NExprOpNameAndType, NExprOp> ops;
+    private Map<String, NExprFunction> userFunctions;
+    private Map<String, NExprFunction> userConstructs;
+    private Map<NExprOpNameAndType, NExprOperator> ops;
     private Map<String, NExprVar> userVars;
     private NExprContext parent;
     private NExprRPI rpi;
@@ -100,7 +100,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     }
 
     @Override
-    public NExprContextBuilder declareConstructs(NExprConstructResolver resolver) {
+    public NExprContextBuilder declareConstructs(NExprFunctionResolver resolver) {
         if (resolver != null) {
             if (consEvaluators == null) {
                 consEvaluators = new ArrayList<>();
@@ -154,7 +154,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     }
 
     @Override
-    public NExprContextBuilder removeConstructs(NExprConstructResolver resolver) {
+    public NExprContextBuilder removeConstructs(NExprFunctionResolver resolver) {
         if (resolver != null) {
             if (consEvaluators != null) {
                 consEvaluators.remove(resolver);
@@ -190,7 +190,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     }
 
     @Override
-    public NExprContextBuilder declareConstruct(String name, NExprConstruct constructImpl) {
+    public NExprContextBuilder declareConstruct(String name, NExprFunctionHandler constructImpl) {
         if (constructImpl == null) {
             if (userConstructs != null) {
                 userConstructs.remove(name);
@@ -199,13 +199,13 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             if (userConstructs == null) {
                 userConstructs = new HashMap<>();
             }
-            userConstructs.put(name, constructImpl);
+            userConstructs.put(name, new DefaultNExprFunction(name, constructImpl));
         }
         return this;
     }
 
     @Override
-    public NExprContextBuilder declareFunction(String name, NExprFct fctImpl) {
+    public NExprContextBuilder declareFunction(String name, NExprFunctionHandler fctImpl) {
         if (fctImpl == null) {
             if (userFunctions != null) {
                 userFunctions.remove(name);
@@ -214,7 +214,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             if (userFunctions == null) {
                 userFunctions = new HashMap<>();
             }
-            userFunctions.put(name, fctImpl);
+            userFunctions.put(name, new DefaultNExprFunction(name, fctImpl));
         }
         return this;
     }
@@ -231,12 +231,12 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     }
 
     @Override
-    public NExprContextBuilder declareOperator(String name, NExprConstruct impl) {
+    public NExprContextBuilder declareOperator(String name, NExprFunctionHandler impl) {
         return declareOperator(name, null, impl);
     }
 
     @Override
-    public NExprContextBuilder declareOperator(String name, NExprOpType type, NExprConstruct impl) {
+    public NExprContextBuilder declareOperator(String name, NExprOpType type, NExprFunctionHandler impl) {
         type = ExprOpHelper.resolveOpDefaultType(name, type);
         int prec = ExprOpHelper.resolveOpPrecedence(name, type, -1);
         NOperatorAssociativity ass = ExprOpHelper.resolveOpDefaultAssociativity(name, type, null);
@@ -244,7 +244,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     }
 
     @Override
-    public NExprContextBuilder declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprConstruct impl) {
+    public NExprContextBuilder declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprFunctionHandler impl) {
         NExprOpType typeOk = ExprOpHelper.resolveOpDefaultType(name, type);
         if (impl == null) {
             if (this.ops != null) {
@@ -256,7 +256,12 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             if (ops == null) {
                 ops = new HashMap<>();
             }
-            this.ops.put(new NExprOpNameAndType(name, type), new NExprOp() {
+            this.ops.put(new NExprOpNameAndType(name, type), new NExprOperator() {
+                @Override
+                public String getName() {
+                    return name;
+                }
+
                 @Override
                 public NOperatorAssociativity getAssociativity() {
                     return ass;
@@ -273,7 +278,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                 }
 
                 @Override
-                public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
+                public Object eval(List<NExprNodeValue> args, NExprContext context) {
                     return impl.eval(name, args, context);
                 }
             });
@@ -315,17 +320,17 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
 
     private static class NExprResolverFromBuilderEmpty implements NExprResolver {
         @Override
-        public NOptional<NExprFct> getFunction(String fctName, NExprNodeValue[] args, NExprContext context) {
+        public NOptional<NExprFunction> getFunction(String fctName, NExprNodeValue[] args, NExprContext context) {
             return NExprResolver.super.getFunction(fctName, args, context);
         }
 
         @Override
-        public NOptional<NExprConstruct> getConstruct(String constructName, NExprNodeValue[] args, NExprContext context) {
+        public NOptional<NExprFunction> getConstruct(String constructName, NExprNodeValue[] args, NExprContext context) {
             return NExprResolver.super.getConstruct(constructName, args, context);
         }
 
         @Override
-        public NOptional<NExprOp> getOperator(String opName, NExprOpType type, NExprNodeValue[] args, NExprContext context) {
+        public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue[] args, NExprContext context) {
             return NExprResolver.super.getOperator(opName, type, args, context);
         }
 
@@ -339,11 +344,11 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
         private final List<NExprResolver> evaluators;
         private final List<NExprOperatorResolver> opEvaluators;
         private final List<NExprFunctionResolver> fctEvaluators;
-        private final List<NExprConstructResolver> consEvaluators;
+        private final List<NExprFunctionResolver> consEvaluators;
         private final List<NExprVarResolver> varEvaluators;
-        private final Map<String, NExprFct> userFunctions;
-        private final Map<String, NExprConstruct> userConstructs;
-        private final Map<NExprOpNameAndType, NExprOp> ops;
+        private final Map<String, NExprFunction> userFunctions;
+        private final Map<String, NExprFunction> userConstructs;
+        private final Map<NExprOpNameAndType, NExprOperator> ops;
         private final Map<String, NExprVar> userVars;
 
         public NExprResolverFromBuilder(NExprContextBuilderImpl a) {
@@ -360,16 +365,16 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
         }
 
         @Override
-        public NOptional<NExprFct> getFunction(String fctName, NExprNodeValue[] args, NExprContext context) {
+        public NOptional<NExprFunction> getFunction(String fctName, NExprNodeValue[] args, NExprContext context) {
             if(userFunctions!=null) {
-                NExprFct v = userFunctions.get(fctName);
+                NExprFunction v = userFunctions.get(fctName);
                 if (v != null) {
                     return NOptional.of(v);
                 }
             }
             if (fctEvaluators != null) {
                 for (NExprFunctionResolver fctEvaluator : fctEvaluators) {
-                    NOptional<NExprFct> r = fctEvaluator.getFunction(fctName, args, context);
+                    NOptional<NExprFunction> r = fctEvaluator.getFunction(fctName, args, context);
                     if (r != null && r.isPresent()) {
                         return r;
                     }
@@ -377,7 +382,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             }
             if (evaluators != null) {
                 for (NExprResolver fctEvaluator : evaluators) {
-                    NOptional<NExprFct> r = fctEvaluator.getFunction(fctName, args, context);
+                    NOptional<NExprFunction> r = fctEvaluator.getFunction(fctName, args, context);
                     if (r != null && r.isPresent()) {
                         return r;
                     }
@@ -387,16 +392,16 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
         }
 
         @Override
-        public NOptional<NExprConstruct> getConstruct(String constructName, NExprNodeValue[] args, NExprContext context) {
+        public NOptional<NExprFunction> getConstruct(String constructName, NExprNodeValue[] args, NExprContext context) {
             if(userConstructs!=null) {
-                NExprConstruct v = userConstructs.get(constructName);
+                NExprFunction v = userConstructs.get(constructName);
                 if (v != null) {
                     return NOptional.of(v);
                 }
             }
             if (consEvaluators != null) {
-                for (NExprConstructResolver fctEvaluator : consEvaluators) {
-                    NOptional<NExprConstruct> r = fctEvaluator.getConstruct(constructName, args, context);
+                for (NExprFunctionResolver fctEvaluator : consEvaluators) {
+                    NOptional<NExprFunction> r = fctEvaluator.getFunction(constructName, args, context);
                     if (r != null && r.isPresent()) {
                         return r;
                     }
@@ -404,7 +409,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             }
             if (evaluators != null) {
                 for (NExprResolver fctEvaluator : evaluators) {
-                    NOptional<NExprConstruct> r = fctEvaluator.getConstruct(constructName, args, context);
+                    NOptional<NExprFunction> r = fctEvaluator.getConstruct(constructName, args, context);
                     if (r != null && r.isPresent()) {
                         return r;
                     }
@@ -414,16 +419,16 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
         }
 
         @Override
-        public NOptional<NExprOp> getOperator(String opName, NExprOpType type, NExprNodeValue[] args, NExprContext context) {
+        public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue[] args, NExprContext context) {
             if(ops!=null) {
-                NExprOp v = ops.get(new NExprOpNameAndType(opName, type));
+                NExprOperator v = ops.get(new NExprOpNameAndType(opName, type));
                 if (v != null) {
                     return NOptional.of(v);
                 }
             }
             if (opEvaluators != null) {
                 for (NExprOperatorResolver fctEvaluator : opEvaluators) {
-                    NOptional<NExprOp> r = fctEvaluator.getOperator(opName, type, args, context);
+                    NOptional<NExprOperator> r = fctEvaluator.getOperator(opName, type, args, context);
                     if (r != null && r.isPresent()) {
                         return r;
                     }
@@ -431,7 +436,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             }
             if (evaluators != null) {
                 for (NExprResolver fctEvaluator : evaluators) {
-                    NOptional<NExprOp> r = fctEvaluator.getOperator(opName, type, args, context);
+                    NOptional<NExprOperator> r = fctEvaluator.getOperator(opName, type, args, context);
                     if (r != null && r.isPresent()) {
                         return r;
                     }

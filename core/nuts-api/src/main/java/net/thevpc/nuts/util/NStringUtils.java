@@ -435,164 +435,39 @@ public class NStringUtils {
     }
 
     public static String formatStringLiteral(String text, NElementType quoteType, NSupportMode condition) {
-        return formatStringLiteral(text, quoteType, condition, "");
+        return formatStringLiteral(text, quoteType, condition, false, "");
     }
 
-    public static String formatStringLiteral(String text, NElementType quoteType, NSupportMode condition, String escapeChars) {
+    public static String formatStringLiteral(String text, NElementType quoteType, NSupportMode condition, boolean skipBoundaries,String extraEscapeChars) {
         if (text == null) {
             return "null";
         }
-        StringBuilder sb = new StringBuilder();
-        boolean requireQuotes = condition == NSupportMode.ALWAYS;
-        boolean allowQuotes = condition != NSupportMode.NEVER;
-        for (char c : text.toCharArray()) {
-            switch (c) {
-                case ' ': {
-                    if (allowQuotes) {
-                        sb.append(" ");
-                        requireQuotes = true;
-                    } else {
-                        sb.append("\\ ");
-                    }
-                    break;
-                }
-                case '\n': {
-                    sb.append("\\n");
-                    if (!requireQuotes && allowQuotes) {
-                        requireQuotes = true;
-                    }
-                    break;
-                }
-                case '\f': {
-                    sb.append("\\f");
-                    if (!requireQuotes && allowQuotes) {
-                        requireQuotes = true;
-                    }
-                    break;
-                }
-                case '\r': {
-                    sb.append("\\r");
-                    if (!requireQuotes && allowQuotes) {
-                        requireQuotes = true;
-                    }
-                    break;
-                }
-                case '\t': {
-                    sb.append("\\t");
-                    if (!requireQuotes && allowQuotes) {
-                        requireQuotes = true;
-                    }
-                    break;
-                }
-                case '\"': {
-                    if (quoteType == NElementType.DOUBLE_QUOTED_STRING) {
-                        sb.append("\\").append(c);
-                        if (!requireQuotes && allowQuotes) {
-                            requireQuotes = true;
-                        }
-                    } else {
-                        sb.append(c);
-                    }
-                    break;
-                }
-                case '\'': {
-                    if (quoteType == NElementType.SINGLE_QUOTED_STRING) {
-                        sb.append("\\").append(c);
-                        if (!requireQuotes && allowQuotes) {
-                            requireQuotes = true;
-                        }
-                    } else {
-                        sb.append(c);
-                    }
-                    break;
-                }
-                case '`': {
-                    if (quoteType == NElementType.BACKTICK_STRING) {
-                        sb.append("\\").append(c);
-                        if (!requireQuotes && allowQuotes) {
-                            requireQuotes = true;
-                        }
-                    } else {
-                        sb.append(c);
-                    }
-                    break;
-                }
-                default: {
-                    if (escapeChars != null && escapeChars.indexOf(c) >= 0) {
-                        if (allowQuotes) {
-                            sb.append(c);
-                            requireQuotes = true;
-                        } else {
-                            sb.append("\\").append(c);
-                        }
-                    } else {
-                        sb.append(c);
-                    }
-                    break;
-                }
-            }
+        NSupportMode effectiveCondition = skipBoundaries ? NSupportMode.NEVER : condition;
+
+        // Build the char-escape set: start from the standard set and append extras if any
+        NCharEscapeSet escapeSet = NCharEscapeSet.JAVA_WITH_SPACE;
+        if (extraEscapeChars != null && !extraEscapeChars.isEmpty()) {
+            escapeSet = NCharEscapeSet.combine(escapeSet,
+                    NCharEscapeSet.of(
+                            NCharEscapeSet.Entry.always(extraEscapeChars,
+                                    NCharEscape.BACKSLASH)));
         }
-        if (sb.length() == 0) {
-            requireQuotes = true;
+
+        AbstractNStringLiteralFormat fmt;
+        switch (quoteType) {
+            case LINE_STRING:
+                fmt = AbstractNStringLiteralFormat.ofPrefix("¶ ", "\n", effectiveCondition, escapeSet);
+                break;
+            case BLOCK_STRING:
+                fmt = AbstractNStringLiteralFormat.ofPrefix("¶¶ ", "\n", effectiveCondition, escapeSet);
+                break;
+            default:
+                fmt = AbstractNStringLiteralFormat.ofEscapeChar(
+                        quoteType, effectiveCondition, escapeSet, NCharEscape.BACKSLASH);
+                break;
         }
-        if (requireQuotes) {
-            switch (quoteType) {
-                case DOUBLE_QUOTED_STRING: {
-                    sb.insert(0, '\"');
-                    sb.append('\"');
-                    break;
-                }
-                case SINGLE_QUOTED_STRING: {
-                    sb.insert(0, '\'');
-                    sb.append('\'');
-                    break;
-                }
-                case BACKTICK_STRING: {
-                    sb.insert(0, '`');
-                    sb.append('`');
-                    break;
-                }
-                case TRIPLE_DOUBLE_QUOTED_STRING: {
-                    sb.insert(0, "\"\"\"");
-                    sb.append("\"\"\"");
-                    break;
-                }
-                case TRIPLE_SINGLE_QUOTED_STRING: {
-                    sb.insert(0, "'''");
-                    sb.append("'''");
-                    break;
-                }
-                case TRIPLE_BACKTICK_STRING: {
-                    sb.insert(0, "```");
-                    sb.append("```");
-                    break;
-                }
-                case LINE_STRING: {
-                    sb.insert(0, "¶ ");
-                    sb.append("\n");
-                    break;
-                }
-                case BLOCK_STRING:
-                {
-                    String s = sb.toString();
-                    sb.delete(0,sb.length());
-                    List<String> lines = NStringUtils.splitLines(s);
-                    for (String l : lines) {
-                        sb.append("¶¶ ");
-                        sb.append(l);
-                        sb.append("\n");
-                    }
-                    if(lines.isEmpty()){
-                        sb.append("¶¶\n");
-                    }
-                    break;
-                }
-                default: {
-                    throw new IllegalArgumentException("Unsupported quote type: " + quoteType);
-                }
-            }
-        }
-        return sb.toString();
+
+        return fmt.format(text);
     }
 
     public static NOptional<List<String>> parsePropertyIdList(String s) {
@@ -756,24 +631,6 @@ public class NStringUtils {
         if (mapper == null) {
             return "";
         }
-//        NAssert.requireNonNull(regexp, "regexp");
-//        if (NBlankable.isBlank(patternVarName)) {
-//            patternVarName = DEFAULT_VAR_NAME;
-//        }
-//        Matcher matcher = regexp.matcher(text);
-//        StringBuffer sb = new StringBuffer();
-//        while (matcher.find()) {
-//            String name = matcher.group(patternVarName);
-//            String all = matcher.group();
-//            String v = mapper.apply(name);
-//            if (v == null) {
-//                v = all;
-//            }
-//            matcher.appendReplacement(sb, Matcher.quoteReplacement(v));
-//        }
-//        matcher.appendTail(sb);
-//        return sb.toString();
-
         return parsePlaceHolder(text, regexp, varName)
                 .map(t -> {
                     switch (t.ttype) {

@@ -91,22 +91,22 @@ public abstract class NExprContextBase implements NExprContext {
     }
 
     @Override
-    public NOptional<NExprFctDeclaration> getFunction(String fctName, NExprNodeValue... args) {
+    public NOptional<NExprFunction> getFunction(String fctName, NExprNodeValue... args) {
         return null;
     }
 
     @Override
-    public NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNodeValue... args) {
+    public NOptional<NExprFunction> getConstruct(String constructName, NExprNodeValue... args) {
         return null;
     }
 
     @Override
-    public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
+    public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
         return null;
     }
 
     @Override
-    public List<NExprOpDeclaration> getOperators() {
+    public List<NExprOperator> getOperators() {
         return Collections.emptyList();
     }
 

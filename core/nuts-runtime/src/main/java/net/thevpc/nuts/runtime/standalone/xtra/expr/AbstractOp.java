@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.expr.NExprOp;
+import net.thevpc.nuts.expr.NExprOperatorHandler;
 import net.thevpc.nuts.elem.NOperatorAssociativity;
 import net.thevpc.nuts.expr.NExprOpType;
 
-public abstract class AbstractOp implements NExprOp {
+public abstract class AbstractOp implements NExprOperatorHandler {
     private final NExprOpType type;
     private final String name;
     private final int precedence;

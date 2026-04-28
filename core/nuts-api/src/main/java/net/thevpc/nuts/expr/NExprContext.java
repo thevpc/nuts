@@ -17,13 +17,13 @@ public interface NExprContext {
         return NExprRPI.of().createDefaultContext();
     }
 
-    NOptional<NExprFctDeclaration> getFunction(String fctName, NExprNodeValue... args);
+    NOptional<NExprFunction> getFunction(String fctName, NExprNodeValue... args);
 
-    NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNodeValue... args);
+    NOptional<NExprFunction> getConstruct(String constructName, NExprNodeValue... args);
 
-    NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNodeValue... args);
+    NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... args);
 
-    List<NExprOpDeclaration> getOperators();
+    List<NExprOperator> getOperators();
 
 
     NOptional<NExprVar> getVar(String varName);

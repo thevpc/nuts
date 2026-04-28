@@ -280,7 +280,7 @@ public class SyntaxParser {
     }
 
     private NOptional<NExprNode> _nextPrefixOp(NToken t, int precedence) {
-        NExprOpDeclaration op = withCache.getOp(t, NExprOpType.PREFIX);
+        NExprOperator op = withCache.getOp(t, NExprOpType.PREFIX);
         if (op != null && !(op.getPrecedence() < precedence)) {
             tokens.next();
             NOptional<NExprNode> q = nextNonTerminal(precedence);
@@ -333,7 +333,7 @@ public class SyntaxParser {
                     return new DefaultOpNode(finalInfixOp.sval, opName, NExprOpType.POSTFIX, -1, cc);
                 });
             } else {
-                NExprOpDeclaration op = withCache.getOp(t, NExprOpType.POSTFIX);
+                NExprOperator op = withCache.getOp(t, NExprOpType.POSTFIX);
                 if (op != null && !(op.getPrecedence() < precedence)) {
                     tokens.next();
                     first = NOptional.of(new DefaultOpNode(t.sval, opName(t), NExprOpType.POSTFIX, op.getPrecedence(), Arrays.asList(first.get())));
@@ -434,7 +434,7 @@ public class SyntaxParser {
             }
 
             // try regular postfix
-            NExprOpDeclaration postfixOp = withCache.getOp(t, NExprOpType.POSTFIX);
+            NExprOperator postfixOp = withCache.getOp(t, NExprOpType.POSTFIX);
             if (postfixOp != null && !(postfixOp.getPrecedence() < precedence)) {
                 tokens.next();
                 first = NOptional.of(new DefaultOpNode(t.sval, opName(t), NExprOpType.POSTFIX, postfixOp.getPrecedence(), Arrays.asList(first.get())));
@@ -442,7 +442,7 @@ public class SyntaxParser {
             }
 
             // try infix
-            NExprOpDeclaration infixOp = withCache.getOp(t, NExprOpType.INFIX);
+            NExprOperator infixOp = withCache.getOp(t, NExprOpType.INFIX);
             if (infixOp != null && !(infixOp.getPrecedence() < precedence)) {
                 tokens.next();
                 int nextPrecedence = infixOp.getPrecedence();
@@ -483,7 +483,7 @@ public class SyntaxParser {
             if (infixOp == null) {
                 break;
             }
-            NExprOpDeclaration op = withCache.getOp(infixOp, NExprOpType.INFIX);
+            NExprOperator op = withCache.getOp(infixOp, NExprOpType.INFIX);
             if (op == null) {
                 break;
             }

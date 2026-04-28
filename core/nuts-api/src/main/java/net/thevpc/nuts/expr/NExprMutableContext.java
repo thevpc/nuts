@@ -1,14 +1,17 @@
 package net.thevpc.nuts.expr;
 
 import net.thevpc.nuts.elem.NOperatorAssociativity;
-import net.thevpc.nuts.util.NOptional;
 
 import java.util.function.Supplier;
 
 public interface NExprMutableContext extends NExprContext {
-    NExprFctDeclaration declareFunction(String name, NExprFct fctImpl);
+    NExprFunction declareFunction(NExprFunction fctImpl);
 
-    NExprConstructDeclaration declareConstruct(String name, NExprConstruct constructImpl);
+    NExprFunction declareFunction(String name, NExprFunctionHandler fctImpl);
+
+    NExprFunction declareConstruct(NExprFunction constructImpl);
+
+    NExprFunction declareConstruct(String name, NExprFunctionHandler constructImpl);
 
     NExprVar declareVar(String name);
 
@@ -16,31 +19,33 @@ public interface NExprMutableContext extends NExprContext {
 
     NExprVar declareVar(NExprVar varImpl);
 
-    NExprOpDeclaration declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprConstruct impl);
+    NExprOperator declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprFunctionHandler impl);
 
-    NExprOpDeclaration declareOperator(String name, NExprConstruct impl);
+    NExprOperator declareOperator(String name, NExprFunctionHandler impl);
 
-    NExprOpDeclaration declareOperator(String name, NExprOpType type, NExprConstruct impl);
+    NExprOperator declareOperator(NExprOperator impl);
+
+    NExprOperator declareOperator(String name, NExprOpType type, NExprFunctionHandler impl);
 
     void setVarValue(String varName, Object value);
 
     NExprVar getOrDeclareVar(String name, Supplier<Object> initialValue);
 
-    void undeclare(NExprVar member);
+    void undeclareVar(NExprVar member);
 
-    void undeclare(NExprFctDeclaration member);
+    void undeclareFunction(NExprFunction member);
 
-    void undeclare(NExprConstructDeclaration member);
+    void undeclareConstruct(NExprFunction member);
 
-    void undeclare(NExprOpDeclaration member);
+    void undeclareOperator(NExprOperator member);
 
-    void remove(NExprVar member);
+    void removeVar(NExprVar member);
 
-    void remove(NExprFctDeclaration member);
+    void removeFunction(NExprFunction member);
 
-    void remove(NExprConstructDeclaration member);
+    void removeConstruct(NExprFunction member);
 
-    void remove(NExprOpDeclaration member);
+    void removeOperator(NExprOperator member);
 
 
 }

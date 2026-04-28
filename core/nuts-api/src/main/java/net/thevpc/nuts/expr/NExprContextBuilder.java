@@ -2,9 +2,6 @@ package net.thevpc.nuts.expr;
 
 import net.thevpc.nuts.elem.NOperatorAssociativity;
 
-import java.util.Map;
-import java.util.function.Function;
-
 public interface NExprContextBuilder {
     /**
      * creates a new context builder with default settings.
@@ -24,7 +21,7 @@ public interface NExprContextBuilder {
         return NExprContext.ofEmpty().childContext();
     }
 
-    NExprContextBuilder declareConstructs(NExprConstructResolver resolver);
+    NExprContextBuilder declareConstructs(NExprFunctionResolver resolver);
 
     NExprContextBuilder declareFunctions(NExprFunctionResolver resolver);
 
@@ -34,7 +31,7 @@ public interface NExprContextBuilder {
 
     NExprContextBuilder declareResolver(NExprResolver resolver);
 
-    NExprContextBuilder removeConstructs(NExprConstructResolver resolver);
+    NExprContextBuilder removeConstructs(NExprFunctionResolver resolver);
 
     NExprContextBuilder removeFunctions(NExprFunctionResolver resolver);
 
@@ -46,17 +43,17 @@ public interface NExprContextBuilder {
 
     NExprContext build();
 
-    NExprContextBuilder declareFunction(String name, NExprFct fctImpl);
+    NExprContextBuilder declareFunction(String name, NExprFunctionHandler fctImpl);
 
-    NExprContextBuilder declareConstruct(String name, NExprConstruct constructImpl);
+    NExprContextBuilder declareConstruct(String name, NExprFunctionHandler constructImpl);
 
     NExprContextBuilder declareVar(NExprVar variable);
 
-    NExprContextBuilder declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprConstruct impl);
+    NExprContextBuilder declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprFunctionHandler impl);
 
-    NExprContextBuilder declareOperator(String name, NExprConstruct impl);
+    NExprContextBuilder declareOperator(String name, NExprFunctionHandler impl);
 
-    NExprContextBuilder declareOperator(String name, NExprOpType type, NExprConstruct impl);
+    NExprContextBuilder declareOperator(String name, NExprOpType type, NExprFunctionHandler impl);
 
     NExprContextBuilder removeVar(String name);
 

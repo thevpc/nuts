@@ -5,11 +5,11 @@ import net.thevpc.nuts.expr.*;
 
 import java.util.List;
 
-public class DefaultNExprOpDeclaration implements NExprOpDeclaration {
+public class DefaultNExprOpDeclaration implements NExprOperator {
     private final String name;
-    private final NExprOp op;
+    private final NExprOperatorHandler op;
 
-    public DefaultNExprOpDeclaration(String name, NExprOp op) {
+    public DefaultNExprOpDeclaration(String name, NExprOperatorHandler op) {
         this.name = name;
         this.op = op;
     }

@@ -14,17 +14,17 @@ public class EmptyRootContext extends NExprContextBase {
     }
 
     @Override
-    public NOptional<NExprFctDeclaration> getFunction(String fctName, NExprNodeValue... args) {
+    public NOptional<NExprFunction> getFunction(String fctName, NExprNodeValue... args) {
         return NOptional.ofEmpty(() -> NMsg.ofC("function not found %s", fctName));
     }
 
     @Override
-    public NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNodeValue... args) {
+    public NOptional<NExprFunction> getConstruct(String constructName, NExprNodeValue... args) {
         return NOptional.ofEmpty(() -> NMsg.ofC("construct not found %s", constructName));
     }
 
     @Override
-    public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
+    public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
         return NOptional.ofEmpty(() -> NMsg.ofC("operator not found %s", opName));
     }
 
@@ -34,7 +34,7 @@ public class EmptyRootContext extends NExprContextBase {
     }
 
     @Override
-    public List<NExprOpDeclaration> getOperators() {
+    public List<NExprOperator> getOperators() {
         return Collections.emptyList();
     }
 }

@@ -13,9 +13,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class DefaultRootContext extends NExprContextBase {
-    final Map<String, NExprFctDeclaration> defaultFunctions = new HashMap<>();
-    final Map<String, NExprConstructDeclaration> defaultConstructs = new HashMap<>();
-    final Map<NExprOpNameAndType, NExprOpDeclaration> ops = new HashMap<>();
+    final Map<String, NExprFunction> defaultFunctions = new HashMap<>();
+    final Map<String, NExprFunction> defaultConstructs = new HashMap<>();
+    final Map<NExprOpNameAndType, NExprOperator> ops = new HashMap<>();
     final Map<String, NExprVar> defaultVars = new HashMap<>();
     private NReflectRepository reflectRepository;
 
@@ -152,55 +152,55 @@ public class DefaultRootContext extends NExprContextBase {
         addDefaultOp(new ParsFctNode(), "(");
         addDefaultOp(new BracketsFctNode(), "[");
         addDefaultOp(new BracesFctNode(), "{");
-        addDefaultFct(new NExprFct() {
+        addDefaultFct(new NExprFunctionHandler() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asShort().orNull();
             }
         }, "string");
-        addDefaultFct(new NExprFct() {
+        addDefaultFct(new NExprFunctionHandler() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asBoolean().orNull();
             }
         }, "boolean");
-        addDefaultFct(new NExprFct() {
+        addDefaultFct(new NExprFunctionHandler() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asDouble().orNull();
             }
         }, "double");
-        addDefaultFct(new NExprFct() {
+        addDefaultFct(new NExprFunctionHandler() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asLong().orNull();
             }
         }, "long");
-        addDefaultFct(new NExprFct() {
+        addDefaultFct(new NExprFunctionHandler() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asInt().orNull();
             }
         }, "int");
-        addDefaultFct(new NExprFct() {
+        addDefaultFct(new NExprFunctionHandler() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asFloat().orNull();
             }
         }, "float");
-        addDefaultFct(new NExprFct() {
+        addDefaultFct(new NExprFunctionHandler() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asNumber().isPresent();
             }
         }, "isNumber");
-        addDefaultFct(new NExprFct() {
+        addDefaultFct(new NExprFunctionHandler() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 return NLiteral.of(args.get(0).getValue().orNull()).asBoolean().isPresent();
             }
         }, "isBoolean");
-        addDefaultFct(new NExprFct() {
+        addDefaultFct(new NExprFunctionHandler() {
             @Override
             public Object eval(String name, List<NExprNodeValue> args, NExprContext context) {
                 NLiteral v = NLiteral.of(args.get(0).getValue().orNull());
@@ -307,9 +307,9 @@ public class DefaultRootContext extends NExprContextBase {
         throw new IllegalArgumentException("unsupported " + instance + "." + b);
     }
 
-    private void addDefaultFct(NExprFct fct, String... names) {
+    private void addDefaultFct(NExprFunctionHandler fct, String... names) {
         for (String name : names) {
-            defaultFunctions.put(name, new DefaultNExprFctDeclaration(name, fct));
+            defaultFunctions.put(name, new DefaultNExprFunction(name, fct));
         }
     }
 
@@ -405,7 +405,7 @@ public class DefaultRootContext extends NExprContextBase {
 
 
     @Override
-    public NOptional<NExprFctDeclaration> getFunction(String fctName, NExprNodeValue... args) {
+    public NOptional<NExprFunction> getFunction(String fctName, NExprNodeValue... args) {
         return NOptional.of(
                 defaultFunctions.get(fctName),
                 () -> NMsg.ofC("function not found %s", fctName)
@@ -413,7 +413,7 @@ public class DefaultRootContext extends NExprContextBase {
     }
 
     @Override
-    public NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNodeValue... args) {
+    public NOptional<NExprFunction> getConstruct(String constructName, NExprNodeValue... args) {
         return NOptional.of(
                 defaultConstructs.get(constructName),
                 () -> NMsg.ofC("construct not found %s", constructName)
@@ -421,7 +421,7 @@ public class DefaultRootContext extends NExprContextBase {
     }
 
     @Override
-    public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
+    public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
         return NOptional.of(
                 ops.get(new NExprOpNameAndType(opName, type)),
                 () -> NMsg.ofC("operator not found %s", opName)
@@ -437,8 +437,8 @@ public class DefaultRootContext extends NExprContextBase {
     }
 
     @Override
-    public List<NExprOpDeclaration> getOperators() {
-        List<NExprOpDeclaration> all = new ArrayList<>();
+    public List<NExprOperator> getOperators() {
+        List<NExprOperator> all = new ArrayList<>();
         all.addAll(ops.values());
         return all;
     }

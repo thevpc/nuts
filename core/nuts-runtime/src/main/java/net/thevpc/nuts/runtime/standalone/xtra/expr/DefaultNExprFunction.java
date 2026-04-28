@@ -1,17 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.expr.NExprContext;
-import net.thevpc.nuts.expr.NExprFct;
-import net.thevpc.nuts.expr.NExprFctDeclaration;
+import net.thevpc.nuts.expr.NExprFunctionHandler;
+import net.thevpc.nuts.expr.NExprFunction;
 import net.thevpc.nuts.expr.NExprNodeValue;
 
 import java.util.List;
 
-public class DefaultNExprFctDeclaration implements NExprFctDeclaration {
+public class DefaultNExprFunction implements NExprFunction {
     private String name;
-    private NExprFct impl;
+    private NExprFunctionHandler impl;
 
-    public DefaultNExprFctDeclaration(String name, NExprFct impl) {
+    public DefaultNExprFunction(String name, NExprFunctionHandler impl) {
         this.name = name;
         this.impl = impl;
     }

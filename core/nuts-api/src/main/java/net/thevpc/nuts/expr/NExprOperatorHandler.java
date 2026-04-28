@@ -4,7 +4,7 @@ import net.thevpc.nuts.elem.NOperatorAssociativity;
 
 import java.util.List;
 
-public interface NExprOp {
+public interface NExprOperatorHandler {
     NOperatorAssociativity getAssociativity();
 
     NExprOpType getType();

@@ -41,7 +41,7 @@ public class ExprTest {
         TestUtils.openNewMinTestWorkspace();
     }
 
-    private boolean accept(NExprOpDeclaration d, String pattern) {
+    private boolean accept(NExprOperator d, String pattern) {
         NExprOpType f;
         String n;
         if (pattern.startsWith("prefix:")) {
@@ -60,7 +60,7 @@ public class ExprTest {
 
     }
 
-    private boolean accept(NExprOpDeclaration d, String... patterns) {
+    private boolean accept(NExprOperator d, String... patterns) {
         for (String pattern : patterns) {
             if (accept(d, pattern)) {
                 return true;
@@ -72,9 +72,9 @@ public class ExprTest {
     private void _retain(NExprContext expr, String... patterns) {
         if (expr instanceof NExprMutableContext) {
             NExprMutableContext d = (NExprMutableContext) expr;
-            for (NExprOpDeclaration operator : d.getOperators()) {
+            for (NExprOperator operator : d.getOperators()) {
                 if (!accept(operator, patterns)) {
-                    d.remove(operator);
+                    d.removeOperator(operator);
                 }
             }
         }

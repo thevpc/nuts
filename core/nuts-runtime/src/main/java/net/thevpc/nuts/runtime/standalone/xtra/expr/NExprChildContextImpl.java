@@ -21,25 +21,22 @@ public class NExprChildContextImpl extends NExprContextBase {
 
 
     @Override
-    public NOptional<NExprFctDeclaration> getFunction(String fctName, NExprNodeValue... args) {
+    public NOptional<NExprFunction> getFunction(String fctName, NExprNodeValue... args) {
         return resolver.getFunction(fctName, args, this)
-                .<NExprFctDeclaration>map(x -> new DefaultNExprFctDeclaration(fctName, x))
                 .orElseGetOptionalFrom(() -> parent.getFunction(fctName, args))
                 ;
     }
 
     @Override
-    public NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNodeValue... args) {
+    public NOptional<NExprFunction> getConstruct(String constructName, NExprNodeValue... args) {
         return resolver.getConstruct(constructName, args, this)
-                .<NExprConstructDeclaration>map(x -> new DefaultNExprConstructDeclaration(constructName, x))
                 .orElseGetOptionalFrom(() -> parent.getConstruct(constructName, args))
                 ;
     }
 
     @Override
-    public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
+    public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
         return resolver.getOperator(opName, type, args, this)
-                .<NExprOpDeclaration>map(x -> new DefaultNExprOpDeclaration(opName, x))
                 .orElseGetOptionalFrom(() -> parent.getOperator(opName, type, args))
                 ;
     }
@@ -60,7 +57,7 @@ public class NExprChildContextImpl extends NExprContextBase {
     }
 
     @Override
-    public List<NExprOpDeclaration> getOperators() {
+    public List<NExprOperator> getOperators() {
         return parent.getOperators();
     }
 }
