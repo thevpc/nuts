@@ -1,17 +1,19 @@
 package net.thevpc.nuts.expr;
 
-import net.thevpc.nuts.elem.NOperatorAssociativity;
-
-import java.util.List;
+import net.thevpc.nuts.internal.expr.NExprRPI;
 
 public interface NExprOperator {
-    NOperatorAssociativity getAssociativity();
+    static NExprOperator of(String name, NExprOpType operatorType, int operatorPrecedence, NOperatorAssociativity associativity,NExprCallHandler handler) {
+        return NExprRPI.of().createOperator(name, operatorType, operatorPrecedence, associativity, handler);
+    }
 
-    String getName();
+    NOperatorAssociativity operatorAssociativity();
 
-    NExprOpType getType();
+    String name();
 
-    int getPrecedence();
+    NExprOpType operatorType();
 
-    Object eval(List<NExprNodeValue> args, NExprContext context);
+    int operatorPrecedence();
+
+    Object eval(NExprCallContext callContext);
 }

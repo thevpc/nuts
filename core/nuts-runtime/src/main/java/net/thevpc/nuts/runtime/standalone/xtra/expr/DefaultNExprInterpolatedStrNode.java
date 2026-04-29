@@ -13,7 +13,7 @@ public class DefaultNExprInterpolatedStrNode implements NExprInterpolatedStrNode
     private final String expression;
 
     @Override
-    public NExprNodeType getType() {
+    public NExprNodeType nodeType() {
         return NExprNodeType.LITERAL;
     }
 
@@ -23,12 +23,12 @@ public class DefaultNExprInterpolatedStrNode implements NExprInterpolatedStrNode
     }
 
     @Override
-    public List<NExprNode> getChildren() {
+    public List<NExprNode> children() {
         return Collections.emptyList();
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return null;
     }
 

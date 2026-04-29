@@ -9,12 +9,9 @@ import java.util.List;
 
 public interface NExprContext {
 
-    static NExprContext ofEmpty(){
-        return NExprRPI.of().createEmptyContext();
-    }
 
-    static NExprContext ofDefault(){
-        return NExprRPI.of().createDefaultContext();
+    static NExprContext of(){
+        return NExprRPI.of().createEmptyContext();
     }
 
     NOptional<NExprFunction> getFunction(String fctName, NExprNodeValue... args);

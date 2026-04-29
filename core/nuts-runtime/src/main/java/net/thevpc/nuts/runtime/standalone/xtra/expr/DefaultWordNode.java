@@ -14,18 +14,18 @@ public class DefaultWordNode implements NExprWordNode {
     private final String name;
 
     @Override
-    public NExprNodeType getType() {
+    public NExprNodeType nodeType() {
         return NExprNodeType.WORD;
     }
 
 
     @Override
-    public List<NExprNode> getChildren() {
+    public List<NExprNode> children() {
         return Collections.emptyList();
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 

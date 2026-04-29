@@ -17,15 +17,20 @@ public abstract class NExprContextBase implements NExprContext {
     }
 
     public NOptional<Object> evalFunction(String fctName, NExprNodeValue... args) {
-        return getFunction(fctName, args).flatMap(x -> NOptional.ofNullable(x.eval(Arrays.asList(args), this)));
+        NExprCallContext  c=NExprCallContextImpl.ofFunction(fctName, Arrays.asList(args), this);
+        return getFunction(fctName, args).flatMap(x -> NOptional.ofNullable(x.eval(c)));
     }
 
     public NOptional<Object> evalConstruct(String constructName, NExprNodeValue... args) {
-        return getConstruct(constructName, args).flatMap(x -> NOptional.ofNullable(x.eval(Arrays.asList(args), this)));
+        NExprCallContext  c=NExprCallContextImpl.ofConstruct(constructName, Arrays.asList(args), this);
+        return getConstruct(constructName, args).flatMap(x -> NOptional.ofNullable(x.eval(c)));
     }
 
     public NOptional<Object> evalOperator(String opName, NExprOpType type, NExprNodeValue... args) {
-        return getOperator(opName, type, args).flatMap(x -> NOptional.ofNullable(x.eval(Arrays.asList(args), this)));
+
+        return getOperator(opName, type, args).flatMap(x -> NOptional.ofNullable(x.eval(
+                NExprCallContextImpl.ofOperator(x.name(), Arrays.asList(args), this,x.operatorType(),x.operatorPrecedence(),x.operatorAssociativity())
+        )));
     }
 
     @Override
@@ -43,9 +48,7 @@ public abstract class NExprContextBase implements NExprContext {
         return evalOperator(opName, NExprOpType.POSTFIX, arg);
     }
 
-    public void setVarValue(String varName, Object value) {
-        getVar(varName).get().set(value, this);
-    }
+
 
     public NOptional<Object> getVarValue(String varName) {
         NOptional<NExprVar> var = getVar(varName);

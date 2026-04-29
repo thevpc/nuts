@@ -19,7 +19,7 @@ public class DefaultNExprNodeValue implements NExprNodeValue {
     }
 
     @Override
-    public NOptional<Object> getValue() {
+    public NOptional<Object> value() {
         if (value != null) {
             return value;
         }
@@ -27,7 +27,7 @@ public class DefaultNExprNodeValue implements NExprNodeValue {
     }
 
     @Override
-    public NExprNode getNode() {
+    public NExprNode node() {
         return node;
     }
 
@@ -38,22 +38,22 @@ public class DefaultNExprNodeValue implements NExprNodeValue {
     @Override
     public NOptional<Object> eval(NExprContext context) {
         //ignore context and use bound context!!
-        return getValue();
+        return value();
     }
 
     @Override
-    public NExprNodeType getType() {
-        return node.getType();
+    public NExprNodeType nodeType() {
+        return node.nodeType();
     }
 
     @Override
-    public List<NExprNode> getChildren() {
-        return node.getChildren();
+    public List<NExprNode> children() {
+        return node.children();
     }
 
     @Override
-    public String getName() {
-        return node.getName();
+    public String name() {
+        return node.name();
     }
 
     @Override

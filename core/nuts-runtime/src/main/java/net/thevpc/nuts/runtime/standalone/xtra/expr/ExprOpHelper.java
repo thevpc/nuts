@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.elem.NOperatorAssociativity;
+import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.expr.NExprOpPrecedence;
 import net.thevpc.nuts.expr.NExprOpType;
 import net.thevpc.nuts.util.NAssert;

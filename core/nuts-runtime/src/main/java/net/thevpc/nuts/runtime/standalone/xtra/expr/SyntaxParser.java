@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.elem.NOperatorAssociativity;
+import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.text.NMsg;
@@ -281,7 +281,7 @@ public class SyntaxParser {
 
     private NOptional<NExprNode> _nextPrefixOp(NToken t, int precedence) {
         NExprOperator op = withCache.getOp(t, NExprOpType.PREFIX);
-        if (op != null && !(op.getPrecedence() < precedence)) {
+        if (op != null && !(op.operatorPrecedence() < precedence)) {
             tokens.next();
             NOptional<NExprNode> q = nextNonTerminal(precedence);
             if (q.isEmpty()) {
@@ -291,7 +291,7 @@ public class SyntaxParser {
                 return q;
             }
             return NOptional.of(
-                    new DefaultOpNode(t.image, opName(t), NExprOpType.PREFIX, op.getPrecedence(), Arrays.asList(q.get()))
+                    new DefaultOpNode(t.image, opName(t), NExprOpType.PREFIX, op.operatorPrecedence(), Arrays.asList(q.get()))
             );
         }
         return nextTerminalOrStmt();
@@ -311,7 +311,7 @@ public class SyntaxParser {
                 first = e.map(x -> {
                     List<NExprNode> cc = new ArrayList<>();
                     cc.add(finalFirst.get());
-                    cc.addAll(x.getChildren());
+                    cc.addAll(x.children());
                     String opName = "()";
                     switch (finalInfixOp.ttype) {
                         case '[': {
@@ -334,9 +334,9 @@ public class SyntaxParser {
                 });
             } else {
                 NExprOperator op = withCache.getOp(t, NExprOpType.POSTFIX);
-                if (op != null && !(op.getPrecedence() < precedence)) {
+                if (op != null && !(op.operatorPrecedence() < precedence)) {
                     tokens.next();
-                    first = NOptional.of(new DefaultOpNode(t.sval, opName(t), NExprOpType.POSTFIX, op.getPrecedence(), Arrays.asList(first.get())));
+                    first = NOptional.of(new DefaultOpNode(t.sval, opName(t), NExprOpType.POSTFIX, op.operatorPrecedence(), Arrays.asList(first.get())));
                 } else {
                     break;
                 }
@@ -435,18 +435,18 @@ public class SyntaxParser {
 
             // try regular postfix
             NExprOperator postfixOp = withCache.getOp(t, NExprOpType.POSTFIX);
-            if (postfixOp != null && !(postfixOp.getPrecedence() < precedence)) {
+            if (postfixOp != null && !(postfixOp.operatorPrecedence() < precedence)) {
                 tokens.next();
-                first = NOptional.of(new DefaultOpNode(t.sval, opName(t), NExprOpType.POSTFIX, postfixOp.getPrecedence(), Arrays.asList(first.get())));
+                first = NOptional.of(new DefaultOpNode(t.sval, opName(t), NExprOpType.POSTFIX, postfixOp.operatorPrecedence(), Arrays.asList(first.get())));
                 continue;
             }
 
             // try infix
             NExprOperator infixOp = withCache.getOp(t, NExprOpType.INFIX);
-            if (infixOp != null && !(infixOp.getPrecedence() < precedence)) {
+            if (infixOp != null && !(infixOp.operatorPrecedence() < precedence)) {
                 tokens.next();
-                int nextPrecedence = infixOp.getPrecedence();
-                if (infixOp.getAssociativity() == NOperatorAssociativity.LEFT) {
+                int nextPrecedence = infixOp.operatorPrecedence();
+                if (infixOp.operatorAssociativity() == NOperatorAssociativity.LEFT) {
                     nextPrecedence--;
                 }
                 NOptional<NExprNode> q = nextNonTerminal(nextPrecedence);
@@ -454,7 +454,7 @@ public class SyntaxParser {
                     if (isOpIgnoresMissingSecondOperand(t, NExprOpType.INFIX)) {
                         // do nothing
                     } else if (isOpAcceptsMissingSecondOperand(t, NExprOpType.INFIX)) {
-                        first = NOptional.of(createInfixOpNodeOrCombine(t.sval, opName(t), infixOp.getPrecedence(), first.get(), null));
+                        first = NOptional.of(createInfixOpNodeOrCombine(t.sval, opName(t), infixOp.operatorPrecedence(), first.get(), null));
                     } else {
                         return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
                     }
@@ -462,12 +462,12 @@ public class SyntaxParser {
                     if (isOpIgnoresMissingSecondOperand(t, NExprOpType.INFIX)) {
                         // do nothing
                     } else if (isOpAcceptsMissingSecondOperand(t, NExprOpType.INFIX)) {
-                        first = NOptional.of(createInfixOpNodeOrCombine(t.sval, opName(t), infixOp.getPrecedence(), first.get(), null));
+                        first = NOptional.of(createInfixOpNodeOrCombine(t.sval, opName(t), infixOp.operatorPrecedence(), first.get(), null));
                     } else {
                         return q;
                     }
                 } else {
-                    first = NOptional.of(createInfixOpNodeOrCombine(t.sval, opName(t), infixOp.getPrecedence(), first.get(), q.get()));
+                    first = NOptional.of(createInfixOpNodeOrCombine(t.sval, opName(t), infixOp.operatorPrecedence(), first.get(), q.get()));
                 }
                 continue;
             }
@@ -487,12 +487,12 @@ public class SyntaxParser {
             if (op == null) {
                 break;
             }
-            if (op.getPrecedence() < precedence) {
+            if (op.operatorPrecedence() < precedence) {
                 break;
             }
             tokens.next();
-            int nextPrecedence = op.getPrecedence();
-            if (op.getAssociativity() == NOperatorAssociativity.LEFT) {
+            int nextPrecedence = op.operatorPrecedence();
+            if (op.operatorAssociativity() == NOperatorAssociativity.LEFT) {
                 nextPrecedence--;
             }
             NOptional<NExprNode> q = nextNonTerminal(nextPrecedence);
@@ -501,7 +501,7 @@ public class SyntaxParser {
                 if (isOpIgnoresMissingSecondOperand(infixOp, NExprOpType.INFIX)) {
                     //do nothing
                 } else if (isOpAcceptsMissingSecondOperand(infixOp, NExprOpType.INFIX)) {
-                    first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), op.getPrecedence(), first.get(), null));
+                    first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), op.operatorPrecedence(), first.get(), null));
                 } else {
                     return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
                 }
@@ -509,12 +509,12 @@ public class SyntaxParser {
                 if (isOpIgnoresMissingSecondOperand(infixOp, NExprOpType.INFIX)) {
                     //do nothing
                 } else if (isOpAcceptsMissingSecondOperand(infixOp, NExprOpType.INFIX)) {
-                    first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), op.getPrecedence(), first.get(), null));
+                    first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), op.operatorPrecedence(), first.get(), null));
                 } else {
                     return q;
                 }
             } else {
-                first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), op.getPrecedence(), first.get(), q.get()));
+                first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), op.operatorPrecedence(), first.get(), q.get()));
             }
         }
         return first;
@@ -522,15 +522,15 @@ public class SyntaxParser {
 
     private NExprOpNode createInfixOpNodeOrCombine(String name, String uniformName, int precedence, NExprNode a, NExprNode b) {
         if (isInfixOpZipped(name, uniformName)) {
-            if ((a != null && a.getName().equals(name)) || (b != null && b.getName().equals(name))) {
+            if ((a != null && a.name().equals(name)) || (b != null && b.name().equals(name))) {
                 List<NExprNode> aa = new ArrayList<>();
-                if ((a != null && a.getName().equals(name))) {
-                    aa.addAll(a.getChildren());
+                if ((a != null && a.name().equals(name))) {
+                    aa.addAll(a.children());
                 } else {
                     aa.add(a);
                 }
-                if ((b != null && b.getName().equals(name))) {
-                    aa.addAll(b.getChildren());
+                if ((b != null && b.name().equals(name))) {
+                    aa.addAll(b.children());
                 } else {
                     aa.add(b);
                 }

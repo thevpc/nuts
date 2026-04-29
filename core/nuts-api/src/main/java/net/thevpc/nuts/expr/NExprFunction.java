@@ -1,8 +1,13 @@
 package net.thevpc.nuts.expr;
 
-import java.util.List;
+import net.thevpc.nuts.internal.expr.NExprRPI;
 
 public interface NExprFunction {
-    String getName();
-    Object eval(List<NExprNodeValue> args, NExprContext context);
+    static NExprFunction of(String fctName, NExprCallHandler handler) {
+        return NExprRPI.of().createFunction(fctName, handler);
+    }
+
+    String name();
+
+    Object eval(NExprCallContext callContext);
 }

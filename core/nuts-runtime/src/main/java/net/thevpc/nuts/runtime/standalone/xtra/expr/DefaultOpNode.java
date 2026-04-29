@@ -38,16 +38,16 @@ public class DefaultOpNode implements NExprOpNode {
     }
 
     @Override
-    public NExprNodeType getType() {
+    public NExprNodeType nodeType() {
         return NExprNodeType.OPERATOR;
     }
 
     @Override
-    public List<NExprNode> getChildren() {
+    public List<NExprNode> children() {
         return args;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -131,14 +131,14 @@ public class DefaultOpNode implements NExprOpNode {
             case "()":
             case "(":
             {
-                if(getChildren().size()==1){
-                    return getChildren().get(0).eval(context);
+                if(children().size()==1){
+                    return children().get(0).eval(context);
                 }
                 break;
             }
         }
         try {
-            return context.evalOperator(getName(), opType,
+            return context.evalOperator(name(), opType,
                     args.stream().map(context::bindNode).toArray(NExprNodeValue[]::new)
                     );
         } catch (Exception ex) {

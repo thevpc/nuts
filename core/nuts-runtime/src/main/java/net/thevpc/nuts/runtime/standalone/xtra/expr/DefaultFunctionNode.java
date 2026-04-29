@@ -31,16 +31,16 @@ public class DefaultFunctionNode implements NExprFunctionNode {
     }
 
     @Override
-    public NExprNodeType getType() {
+    public NExprNodeType nodeType() {
         return NExprNodeType.FUNCTION;
     }
 
     @Override
-    public List<NExprNode> getChildren() {
+    public List<NExprNode> children() {
         return Collections.emptyList();
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -54,7 +54,7 @@ public class DefaultFunctionNode implements NExprFunctionNode {
     @Override
     public NOptional<Object> eval(NExprContext context) {
         try {
-            return context.evalFunction(getName(),
+            return context.evalFunction(name(),
                     Arrays.stream(args).map(context::bindNode).toArray(NExprNodeValue[]::new)
             );
         }catch (Exception ex){

@@ -143,4 +143,17 @@ public class NExprRPIImpl implements NExprRPI {
         return new DefaultLiteralNode(a);
     }
 
+    @Override
+    public NExprFunction createFunction(String name, NExprCallHandler handler) {
+        return new DefaultNExprFunction(name, handler);
+    }
+
+    @Override
+    public NExprOperator createOperator(String name, NExprOpType operatorType, int operatorPrecedence, NOperatorAssociativity associativity,NExprCallHandler handler) {
+        String nameOk=NAssert.requireNamedNonNull(NStringUtils.trimToNull(name),"name");
+        NExprOpType typeOk = ExprOpHelper.resolveOpDefaultType(name, operatorType);
+        NOperatorAssociativity assOk = ExprOpHelper.resolveOpDefaultAssociativity(name, typeOk,associativity);
+        int precOk = ExprOpHelper.resolveOpPrecedence(name, typeOk,operatorPrecedence);
+        return new DefaultNExprOpDeclaration(nameOk,typeOk, precOk, assOk, handler);
+    }
 }

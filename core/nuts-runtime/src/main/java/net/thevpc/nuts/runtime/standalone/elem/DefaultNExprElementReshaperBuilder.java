@@ -1,10 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.expr.NOperatorAssociativity;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DefaultNExprElementReshaperBuilder implements NExprElementReshaperBuilder {

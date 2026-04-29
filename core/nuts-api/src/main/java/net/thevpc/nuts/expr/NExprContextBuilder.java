@@ -1,24 +1,11 @@
 package net.thevpc.nuts.expr;
 
-import net.thevpc.nuts.elem.NOperatorAssociativity;
-
 public interface NExprContextBuilder {
     /**
-     * creates a new context builder with default settings.
-     * synonym for {@link #ofDefault()}
-     *
-     * @return ofDefault()
+     * creates a new context builder with empty settings.
      */
     static NExprContextBuilder of() {
-        return ofDefault();
-    }
-
-    static NExprContextBuilder ofDefault() {
-        return NExprContext.ofDefault().childContext();
-    }
-
-    static NExprContextBuilder ofEmpty() {
-        return NExprContext.ofEmpty().childContext();
+        return NExprContext.of().childContext();
     }
 
     NExprContextBuilder declareConstructs(NExprFunctionResolver resolver);
@@ -43,17 +30,19 @@ public interface NExprContextBuilder {
 
     NExprContext build();
 
-    NExprContextBuilder declareFunction(String name, NExprFunctionHandler fctImpl);
+    NExprContextBuilder declareFunction(NExprFunction fctImpl);
 
-    NExprContextBuilder declareConstruct(String name, NExprFunctionHandler constructImpl);
+    NExprContextBuilder declareConstruct(NExprFunction fctImpl);
+
+    NExprContextBuilder declareOperator(NExprOperator fctImpl);
 
     NExprContextBuilder declareVar(NExprVar variable);
 
-    NExprContextBuilder declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprFunctionHandler impl);
+    NExprContextBuilder declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprCallHandler impl);
 
-    NExprContextBuilder declareOperator(String name, NExprFunctionHandler impl);
+    NExprContextBuilder declareOperator(String name, NExprCallHandler impl);
 
-    NExprContextBuilder declareOperator(String name, NExprOpType type, NExprFunctionHandler impl);
+    NExprContextBuilder declareOperator(String name, NExprOpType type, NExprCallHandler impl);
 
     NExprContextBuilder removeVar(String name);
 
@@ -67,4 +56,11 @@ public interface NExprContextBuilder {
 
     NExprMutableContext buildMutable();
 
+    NExprContextBuilder declareMathConstants();
+
+    NExprContextBuilder declarePhysicsConstants();
+
+    NExprContextBuilder declareMathFunctions();
+
+    NExprContextBuilder declareBuiltins();
 }

@@ -12,6 +12,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.expr.NExprCommonOp;
 import net.thevpc.nuts.expr.NExprNodeType;
 import net.thevpc.nuts.expr.NExprOpType;
+import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.math.NIndexSelectionStrategy;
 import net.thevpc.nuts.net.NHttpMethod;

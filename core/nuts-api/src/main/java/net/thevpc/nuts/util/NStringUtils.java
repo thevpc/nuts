@@ -438,7 +438,7 @@ public class NStringUtils {
         return formatStringLiteral(text, quoteType, condition, false, "");
     }
 
-    public static String formatStringLiteral(String text, NElementType quoteType, NSupportMode condition, boolean skipBoundaries,String extraEscapeChars) {
+    public static String formatStringLiteral(String text, NElementType quoteType, NSupportMode condition, boolean skipBoundaries, String extraEscapeChars) {
         if (text == null) {
             return "null";
         }
@@ -1044,9 +1044,9 @@ public class NStringUtils {
             for (String item : items) {
                 if (item != null && !item.isEmpty()) {
                     int length = builder.length();
-                    if(length==0){
+                    if (length == 0) {
                         builder.append(item);
-                    }else {
+                    } else {
                         boolean o = length > 0 && builder.substring(length - delimiter.length(), length).equals(delimiter);
                         boolean n = item.startsWith(delimiter);
                         if (!o && !n) {
@@ -1164,6 +1164,24 @@ public class NStringUtils {
 
     public static String commonPrefix(List<String> all) {
         return commonPrefix(all, null);
+    }
+
+    public static boolean isJavaIdentifier(String s) {
+        if (s == null) {
+            return false;
+        }
+        if (s.isEmpty()) {
+            return false;
+        }
+        if (!Character.isJavaIdentifierStart(s.charAt(0))) {
+            return false;
+        }
+        for (int i = 1; i < s.length(); i++) {
+            if (!Character.isJavaIdentifierPart(s.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public interface CommonPrefixFilter {

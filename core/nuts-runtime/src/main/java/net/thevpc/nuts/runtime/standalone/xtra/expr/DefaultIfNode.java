@@ -13,18 +13,18 @@ public class DefaultIfNode implements NExprIfNode {
     private final NExprNode falseNode;
 
     @Override
-    public NExprNodeType getType() {
+    public NExprNodeType nodeType() {
         return NExprNodeType.IF;
     }
 
 
     @Override
-    public List<NExprNode> getChildren() {
+    public List<NExprNode> children() {
         return Collections.emptyList();
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "if";
     }
 

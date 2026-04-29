@@ -16,9 +16,9 @@ public interface NExprNode {
 
     NOptional<Object> eval(NExprContext context);
 
-    NExprNodeType getType();
+    NExprNodeType nodeType();
 
-    List<NExprNode> getChildren();
+    List<NExprNode> children();
 
-    String getName();
+    String name();
 }

@@ -56,7 +56,7 @@ public class ExprTest {
         } else {
             return false;
         }
-        return f.equals(d.getType()) && n.equals(d.getName());
+        return f.equals(d.operatorType()) && n.equals(d.name());
 
     }
 
@@ -82,16 +82,22 @@ public class ExprTest {
 
     @Test
     public void test1() throws Exception {
-        NExprContext expr = NExprContextBuilder.of().build();
+        NExprContext expr = _declareDefault();
         _retain(expr, "infix:+");
         NExprNode n = expr.parse("1+2+3").get();
         TestUtils.println(n);
         Assertions.assertEquals("1 + 2 + 3", n.toString());
     }
 
+    private static NExprContext _declareDefault() {
+        return NExprContextBuilder.of()
+                .declareBuiltins()
+                .build();
+    }
+
     @Test
     public void test2() throws Exception {
-        NExprContext expr = NExprContextBuilder.of().build();
+        NExprContext expr = _declareDefault();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("1+2*3").get();
         TestUtils.println(n);
@@ -100,36 +106,36 @@ public class ExprTest {
 
     @Test
     public void test3() throws Exception {
-        NExprContext expr = NExprContextBuilder.of().build();
+        NExprContext expr = _declareDefault();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("a").get();
-        Assertions.assertEquals(NExprNodeType.WORD, n.getType());
+        Assertions.assertEquals(NExprNodeType.WORD, n.nodeType());
         TestUtils.println(n);
     }
 
     @Test
     public void test4() throws Exception {
-        NExprContext expr = NExprContextBuilder.of().build();
+        NExprContext expr = _declareDefault();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("(a&b)").get();
         n.toString();
-        Assertions.assertEquals(NExprNodeType.OPERATOR, n.getType());
-        Assertions.assertEquals("(", n.getName());
-        Assertions.assertEquals(NExprNodeType.OPERATOR, n.getChildren().get(0).getType());
-        Assertions.assertEquals("&", n.getChildren().get(0).getName());
+        Assertions.assertEquals(NExprNodeType.OPERATOR, n.nodeType());
+        Assertions.assertEquals("(", n.name());
+        Assertions.assertEquals(NExprNodeType.OPERATOR, n.children().get(0).nodeType());
+        Assertions.assertEquals("&", n.children().get(0).name());
         TestUtils.println(n);
     }
 
 
     @Test
     public void test5() throws Exception {
-        NExprContext expr = NExprContextBuilder.of().build();
+        NExprContext expr = _declareDefault();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("(a&&b)").get();
-        Assertions.assertEquals(NExprNodeType.OPERATOR, n.getType());
-        Assertions.assertEquals("(", n.getName());
-        Assertions.assertEquals(NExprNodeType.OPERATOR, n.getChildren().get(0).getType());
-        Assertions.assertEquals("&&", n.getChildren().get(0).getName());
+        Assertions.assertEquals(NExprNodeType.OPERATOR, n.nodeType());
+        Assertions.assertEquals("(", n.name());
+        Assertions.assertEquals(NExprNodeType.OPERATOR, n.children().get(0).nodeType());
+        Assertions.assertEquals("&&", n.children().get(0).name());
         TestUtils.println(n);
     }
 
@@ -160,20 +166,16 @@ public class ExprTest {
 
     @Test
     public void test6() throws Exception {
-        NExprContext expr = NExprContextBuilder.of()
-
-                .buildMutable();
+        NExprContext expr = declareMutable();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("if (a) 'hello' else 'hella'").get();
-        Assertions.assertEquals(NExprNodeType.IF, n.getType());
+        Assertions.assertEquals(NExprNodeType.IF, n.nodeType());
         TestUtils.println(n);
     }
 
     @Test
     public void test7b() throws Exception {
-        NExprMutableContext expr = NExprContextBuilder.of()
-
-                .buildMutable();
+        NExprMutableContext expr = declareMutable();
 //        _retain(expr,"infix:+");
         expr.declareVar("a");
         NExprNode n = expr.parse("a=1").get();
@@ -183,9 +185,7 @@ public class ExprTest {
 
     @Test
     public void test7() throws Exception {
-        NExprContext expr = NExprContextBuilder.of()
-
-                .buildMutable();
+        NExprContext expr = declareMutable();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("if (a) 'hello' else {'hella'};x=3").get();
 //        Assertions.assertEquals(NExprNodeType.IF, n.getType());
@@ -194,9 +194,7 @@ public class ExprTest {
 
     @Test
     public void test8() throws Exception {
-        NExprContext expr = NExprContextBuilder.of()
-
-                .buildMutable();
+        NExprContext expr = declareMutable();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("printChunk(0);;;;\n").get();
 //        Assertions.assertEquals(NExprNodeType.IF, n.getType());
@@ -205,21 +203,23 @@ public class ExprTest {
 
     @Test
     public void test9() throws Exception {
-        NExprContext expr = NExprContextBuilder.of()
-
-                .buildMutable();
+        NExprContext expr = declareMutable();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("printChunk(0);;printChunk(0);;printChunk(0)\n").get();
 //        Assertions.assertEquals(NExprNodeType.IF, n.getType());
         TestUtils.println(n);
     }
 
+    private static NExprMutableContext declareMutable() {
+        return NExprContextBuilder.of()
+                .declareBuiltins()
+                .buildMutable();
+    }
+
 
     @Test
     public void test10() throws Exception {
-        NExprMutableContext expr = NExprContextBuilder.of()
-
-                .buildMutable();
+        NExprMutableContext expr = declareMutable();
         expr.declareVar("v");
         expr.setVarValue("v", "me");
 //        _retain(expr,"infix:+");
@@ -230,58 +230,50 @@ public class ExprTest {
 
     @Test
     public void test11() throws Exception {
-        NExprMutableContext expr = NExprContextBuilder.of()
-
-                .buildMutable();
+        NExprMutableContext expr = declareMutable();
         NExprNode n = expr.parse("a*b+c").get();
-        Assertions.assertTrue(n.getName().equals("+"));
-        Assertions.assertTrue(n.getChildren().size() == 2);
-        Assertions.assertTrue(n.getChildren().get(0).getName().equals("*"));
-        Assertions.assertTrue(n.getChildren().get(1) instanceof NExprWordNode);
+        Assertions.assertTrue(n.name().equals("+"));
+        Assertions.assertTrue(n.children().size() == 2);
+        Assertions.assertTrue(n.children().get(0).name().equals("*"));
+        Assertions.assertTrue(n.children().get(1) instanceof NExprWordNode);
     }
 
     @Test
     public void test12() throws Exception {
-        NExprMutableContext expr = NExprContextBuilder.of()
-
-                .buildMutable();
+        NExprMutableContext expr = declareMutable();
         NExprNode n = expr.parse("a.b>1").get();
-        Assertions.assertTrue(n.getName().equals(">"));
-        Assertions.assertTrue(n.getChildren().size() == 2);
-        Assertions.assertTrue(n.getChildren().get(0).getName().equals("."));
-        Assertions.assertTrue(n.getChildren().get(1) instanceof NExprLiteralNode);
+        Assertions.assertTrue(n.name().equals(">"));
+        Assertions.assertTrue(n.children().size() == 2);
+        Assertions.assertTrue(n.children().get(0).name().equals("."));
+        Assertions.assertTrue(n.children().get(1) instanceof NExprLiteralNode);
     }
     @Test
     public void test13() throws Exception {
-        NExprMutableContext expr = NExprContextBuilder.of()
-
-                .buildMutable();
+        NExprMutableContext expr = declareMutable();
         NExprNode n = expr.parse("a=b.c>2").get();
-        Assertions.assertTrue(n.getName().equals("="));
-        Assertions.assertTrue(n.getChildren().size() == 2);
-        Assertions.assertTrue(n.getChildren().get(0).getName().equals("a"));
-        Assertions.assertTrue(n.getChildren().get(1).getName().equals(">"));
+        Assertions.assertTrue(n.name().equals("="));
+        Assertions.assertTrue(n.children().size() == 2);
+        Assertions.assertTrue(n.children().get(0).name().equals("a"));
+        Assertions.assertTrue(n.children().get(1).name().equals(">"));
     }
 
     @Test
     public void test14() throws Exception {
-        NExprMutableContext expr = NExprContextBuilder.of()
-
-                .buildMutable();
+        NExprMutableContext expr = declareMutable();
         NExprNode n = expr.parse("(b.c)>2").get();
-        Assertions.assertTrue(n.getName().equals(">"));
-        Assertions.assertTrue(n.getChildren().size() == 2);
-        Assertions.assertTrue(n.getChildren().get(0).getName().equals("("));
-        Assertions.assertTrue(n.getChildren().get(1) instanceof NExprLiteralNode);
+        Assertions.assertTrue(n.name().equals(">"));
+        Assertions.assertTrue(n.children().size() == 2);
+        Assertions.assertTrue(n.children().get(0).name().equals("("));
+        Assertions.assertTrue(n.children().get(1) instanceof NExprLiteralNode);
     }
 
     @Test
     public void test15() throws Exception {
-        NExprMutableContext expr = NExprContextBuilder.of().buildMutable();
+        NExprMutableContext expr = declareMutable();
         NExprNode n = expr.parse("plots[plotId].title").get();
-        Assertions.assertTrue(n.getName().equals("."));
-        Assertions.assertTrue(n.getChildren().size() == 2);
-        Assertions.assertTrue(n.getChildren().get(0).getName().equals("["));
-        Assertions.assertTrue(n.getChildren().get(1) instanceof NExprWordNode);
+        Assertions.assertTrue(n.name().equals("."));
+        Assertions.assertTrue(n.children().size() == 2);
+        Assertions.assertTrue(n.children().get(0).name().equals("["));
+        Assertions.assertTrue(n.children().get(1) instanceof NExprWordNode);
     }
 }

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.text.NMsg;
 
 import java.util.*;
