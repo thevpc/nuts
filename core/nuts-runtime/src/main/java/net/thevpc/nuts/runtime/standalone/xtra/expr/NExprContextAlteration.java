@@ -356,7 +356,7 @@ public class NExprContextAlteration {
     /// ///////////////////
 
 
-    public NOptional<NExprOperator> getOperator(NExprContext parent, String opName, NExprOpType type, NExprNodeValue... nodes) {
+    public NOptional<NExprOperator> getOperator(NExprContext current, NExprContext parent, String opName, NExprOpType type, NExprNodeValue... nodes) {
         if (userOperators != null) {
             NExprContextAlteration.DecInfo<NExprOperator> f = userOperators.get(new NExprOpNameAndType(opName, type));
             if (f != null) {
@@ -373,7 +373,7 @@ public class NExprContextAlteration {
     }
 
 
-    public NOptional<NExprVar> getVar(NExprContext parent, String name) {
+    public NOptional<NExprVar> getVar(NExprContext current, NExprContext parent, String name) {
         if (this.userVars != null) {
             NExprContextAlteration.DecInfo<NExprVar> f = this.userVars.get(name);
             if (f != null) {
@@ -383,6 +383,22 @@ public class NExprContextAlteration {
                 return NOptional.ofEmpty(() -> NMsg.ofC("expr var not found %s", name));
             }
         }
+        if (varEvaluators != null) {
+            for (NExprVarResolver ev : varEvaluators) {
+                NOptional<NExprVar> a = ev.getVar(name, current);
+                if (a != null && a.isPresent()) {
+                    return a;
+                }
+            }
+        }
+        if (evaluators != null) {
+            for (NExprResolver ev : evaluators) {
+                NOptional<NExprVar> a = ev.getVar(name, current);
+                if (a != null && a.isPresent()) {
+                    return a;
+                }
+            }
+        }
         if (parent != null) {
             return parent.getVar(name);
         }
@@ -390,7 +406,7 @@ public class NExprContextAlteration {
     }
 
     public NExprVar getOrDeclareVar(NExprContext context, NExprContext parent, String name, Supplier<Object> value) {
-        NExprVar o = getVar(parent, name).orNull();
+        NExprVar o = getVar(context,parent, name).orNull();
         if (o != null) {
             return o;
         }
@@ -401,7 +417,7 @@ public class NExprContextAlteration {
         return e;
     }
 
-    public NOptional<NExprFunction> getFunction(NExprContext parent, String name, NExprNodeValue... args) {
+    public NOptional<NExprFunction> getFunction(NExprContext current, NExprContext parent, String name, NExprNodeValue... args) {
         if (this.userFunctions != null) {
             NExprContextAlteration.DecInfo<NExprFunction> f = this.userFunctions.get(name);
             if (f != null) {
@@ -411,13 +427,29 @@ public class NExprContextAlteration {
                 return NOptional.ofEmpty(() -> NMsg.ofC("function not found %s", name));
             }
         }
+        if (fctEvaluators != null) {
+            for (NExprFunctionResolver ev : fctEvaluators) {
+                NOptional<NExprFunction> a = ev.getFunction(name,args, current);
+                if (a != null && a.isPresent()) {
+                    return a;
+                }
+            }
+        }
+        if (evaluators != null) {
+            for (NExprResolver ev : evaluators) {
+                NOptional<NExprFunction> a = ev.getFunction(name,args, current);
+                if (a != null && a.isPresent()) {
+                    return a;
+                }
+            }
+        }
         if (parent != null) {
             return parent.getFunction(name, args);
         }
         return NOptional.ofEmpty(() -> NMsg.ofC("function not found %s", name));
     }
 
-    public NOptional<NExprFunction> getConstruct(NExprContext parent, String name, NExprNodeValue... args) {
+    public NOptional<NExprFunction> getConstruct(NExprContext current, NExprContext parent, String name, NExprNodeValue... args) {
         if (this.userConstructs != null) {
             NExprContextAlteration.DecInfo<NExprFunction> f = this.userConstructs.get(name);
             if (f != null) {
@@ -425,6 +457,22 @@ public class NExprContextAlteration {
                     return NOptional.of(f.value);
                 }
                 return NOptional.ofEmpty(() -> NMsg.ofC("construct not found %s", name));
+            }
+        }
+        if (consEvaluators != null) {
+            for (NExprFunctionResolver ev : consEvaluators) {
+                NOptional<NExprFunction> a = ev.getFunction(name,args, current);
+                if (a != null && a.isPresent()) {
+                    return a;
+                }
+            }
+        }
+        if (evaluators != null) {
+            for (NExprResolver ev : evaluators) {
+                NOptional<NExprFunction> a = ev.getConstruct(name,args, current);
+                if (a != null && a.isPresent()) {
+                    return a;
+                }
             }
         }
         if (parent != null) {

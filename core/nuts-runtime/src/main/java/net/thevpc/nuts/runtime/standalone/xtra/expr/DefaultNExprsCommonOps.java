@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.expr.NGlob;
 import net.thevpc.nuts.reflect.NPlatformSignature;
 import net.thevpc.nuts.runtime.standalone.reflect.NPlatformSignatureImpl;
 import net.thevpc.nuts.runtime.standalone.reflect.NSignatureMapImpl;
@@ -14,6 +15,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class DefaultNExprsCommonOps {
@@ -21,6 +23,8 @@ public class DefaultNExprsCommonOps {
 
     public DefaultNExprsCommonOps() {
         declareEq();
+        declareGlob();
+        declareRegex();
         declareNe();
         declareGt();
         declareGte();
@@ -52,9 +56,54 @@ public class DefaultNExprsCommonOps {
                             return false;
                         }
                         if (a instanceof Number && b instanceof Number) {
-                            return NNumberUtils.eqNumbers((Number) a, (Number) b);
+                            return NNumberUtils.equals((Number) a, (Number) b);
                         }
                         return Objects.equals(a, b);
+                    }
+                }
+        );
+    }
+    private void declareGlob() {
+        declare2(NExprCommonOp.LIKE, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+                new NFunction2<Object, Object, Boolean>() {
+                    @Override
+                    public Boolean apply(Object a, Object b) {
+                        if (a == null && b == null) {
+                            return true;
+                        }
+                        if (a == null || b == null) {
+                            return false;
+                        }
+                        if (a instanceof Number && b instanceof Number) {
+                            return NNumberUtils.equals((Number) a, (Number) b,1E-9);
+                        }
+                        if(Objects.equals(a, b)){
+                            return true;
+                        }
+                        return NGlob.of().toPattern(String.valueOf(b)).matcher(String.valueOf(a)).matches();
+                    }
+                }
+        );
+    }
+
+    private void declareRegex() {
+        declare2(NExprCommonOp.EQ_REGEX, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+                new NFunction2<Object, Object, Boolean>() {
+                    @Override
+                    public Boolean apply(Object a, Object b) {
+                        if (a == null && b == null) {
+                            return true;
+                        }
+                        if (a == null || b == null) {
+                            return false;
+                        }
+                        if (a instanceof Number && b instanceof Number) {
+                            return NNumberUtils.equals((Number) a, (Number) b);
+                        }
+                        if(Objects.equals(a, b)){
+                            return true;
+                        }
+                        return Pattern.compile(String.valueOf(b)).matcher(String.valueOf(a)).matches();
                     }
                 }
         );
@@ -72,7 +121,7 @@ public class DefaultNExprsCommonOps {
                             return true;
                         }
                         if (a instanceof Number && b instanceof Number) {
-                            return !NNumberUtils.eqNumbers((Number) a, (Number) b);
+                            return !NNumberUtils.equals((Number) a, (Number) b);
                         }
                         return !Objects.equals(a, b);
                     }
@@ -316,7 +365,7 @@ public class DefaultNExprsCommonOps {
                         }
                         Number n = NLiteral.of(a).asNumber().orNull();
                         if (n != null) {
-                            return NNumberUtils.eqNumbers(n, 0);
+                            return NNumberUtils.equals(n, 0);
                         }
                         if (a instanceof CharSequence) {
                             return ((CharSequence) a).length() == 0;

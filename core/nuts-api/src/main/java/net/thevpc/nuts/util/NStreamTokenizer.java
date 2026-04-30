@@ -54,6 +54,7 @@ public class NStreamTokenizer {
     private static final byte CT_ALPHA = 4;
     private static final byte CT_QUOTE = 8;
     private static final byte CT_COMMENT = 16;
+    private static final byte CT_OP = 32;
 
     private final StringBuilder bufImage = new StringBuilder();
     private final byte[] commonCharTypes = new byte[256];
@@ -332,35 +333,35 @@ public class NStreamTokenizer {
         return tt <= 0 && tt > -parsableTokenTypes.length && parsableTokenTypes[-tt];
     }
 
-    public void parseOperators(boolean parse) {
-        parsableTokenTypes[-NToken.TT_AND] = parse;
-        parsableTokenTypes[-NToken.TT_OR] = parse;
-        parsableTokenTypes[-NToken.TT_LEFT_SHIFT] = parse;
-        parsableTokenTypes[-NToken.TT_RIGHT_SHIFT] = parse;
-        parsableTokenTypes[-NToken.TT_LEFT_SHIFT_UNSIGNED] = parse;
-        parsableTokenTypes[-NToken.TT_RIGHT_SHIFT_UNSIGNED] = parse;
-        parsableTokenTypes[-NToken.TT_LTE] = parse;
-        parsableTokenTypes[-NToken.TT_GTE] = parse;
-        parsableTokenTypes[-NToken.TT_LTGT] = parse;
-        parsableTokenTypes[-NToken.TT_EQ2] = parse;
-        parsableTokenTypes[-NToken.TT_EQ3] = parse;
-        parsableTokenTypes[-NToken.TT_NEQ] = parse;
-        parsableTokenTypes[-NToken.TT_NEQ2] = parse;
-        parsableTokenTypes[-NToken.TT_RIGHT_ARROW] = parse;
-        parsableTokenTypes[-NToken.TT_PLUS_PLUS] = parse;
-        parsableTokenTypes[-NToken.TT_MINUS_MINUS] = parse;
-        parsableTokenTypes[-NToken.TT_MUL_MUL] = parse;
-        parsableTokenTypes[-NToken.TT_DIV_DIV] = parse;
-
-        parsableTokenTypes[-NToken.TT_POW_POW] = parse;
-        parsableTokenTypes[-NToken.TT_REM_REM] = parse;
-        parsableTokenTypes[-NToken.TT_MUL_EQ] = parse;
-        parsableTokenTypes[-NToken.TT_PLUS_EQ] = parse;
-        parsableTokenTypes[-NToken.TT_MINUS_EQ] = parse;
-        parsableTokenTypes[-NToken.TT_DIV_EQ] = parse;
-        parsableTokenTypes[-NToken.TT_POW_EQ] = parse;
-        parsableTokenTypes[-NToken.TT_REM_EQ] = parse;
-    }
+//    public void parseOperators(boolean parse) {
+//        parsableTokenTypes[-NToken.TT_AND] = parse;
+//        parsableTokenTypes[-NToken.TT_OR] = parse;
+//        parsableTokenTypes[-NToken.TT_LEFT_SHIFT] = parse;
+//        parsableTokenTypes[-NToken.TT_RIGHT_SHIFT] = parse;
+//        parsableTokenTypes[-NToken.TT_LEFT_SHIFT_UNSIGNED] = parse;
+//        parsableTokenTypes[-NToken.TT_RIGHT_SHIFT_UNSIGNED] = parse;
+//        parsableTokenTypes[-NToken.TT_LTE] = parse;
+//        parsableTokenTypes[-NToken.TT_GTE] = parse;
+//        parsableTokenTypes[-NToken.TT_LTGT] = parse;
+//        parsableTokenTypes[-NToken.TT_EQ2] = parse;
+//        parsableTokenTypes[-NToken.TT_EQ3] = parse;
+//        parsableTokenTypes[-NToken.TT_NEQ] = parse;
+//        parsableTokenTypes[-NToken.TT_NEQ2] = parse;
+//        parsableTokenTypes[-NToken.TT_RIGHT_ARROW] = parse;
+//        parsableTokenTypes[-NToken.TT_PLUS_PLUS] = parse;
+//        parsableTokenTypes[-NToken.TT_MINUS_MINUS] = parse;
+//        parsableTokenTypes[-NToken.TT_MUL_MUL] = parse;
+//        parsableTokenTypes[-NToken.TT_DIV_DIV] = parse;
+//
+//        parsableTokenTypes[-NToken.TT_POW_POW] = parse;
+//        parsableTokenTypes[-NToken.TT_REM_REM] = parse;
+//        parsableTokenTypes[-NToken.TT_MUL_EQ] = parse;
+//        parsableTokenTypes[-NToken.TT_PLUS_EQ] = parse;
+//        parsableTokenTypes[-NToken.TT_MINUS_EQ] = parse;
+//        parsableTokenTypes[-NToken.TT_DIV_EQ] = parse;
+//        parsableTokenTypes[-NToken.TT_POW_EQ] = parse;
+//        parsableTokenTypes[-NToken.TT_REM_EQ] = parse;
+//    }
 
     public void doNotParseNumbers() {
     }
@@ -591,332 +592,384 @@ public class NStreamTokenizer {
             peekc = c;
             return nextToken();
         }
-        switch (c) {
-            case '&': {
-                if (isParsable(NToken.TT_AND)) {
-                    markChar(1);
-                    int n = readChar();
-                    if (n < 0) {
-                        //EOF, this is okkay
-                    } else if (n == '&') {
-                        image = "&&";
-                        return ttype = NToken.TT_AND;
-                    } else {
-                        resetChar();
-                    }
+        if(isOp(c)){
+            StringBuilder sb = new StringBuilder();
+            sb.append((char) c);
+            while ((c = readChar()) != -1) {
+                if(isOp(c)) {
+                    sb.append((char) c);
+                }else{
+                    peekc = c;
+                    break;
                 }
-                break;
             }
-            case '|': {
-                if (isParsable(NToken.TT_OR)) {
-                    markChar(1);
-                    int n = readChar();
-                    if (n < 0) {
-                        //EOF, this is okkay
-                    } else if (n == '|') {
-                        image = "||";
-                        return ttype = NToken.TT_OR;
-                    } else {
-                        resetChar();
-                    }
-                } else {
-                    image = String.valueOf((char) c);
-                    return ttype = c;
-                }
-                break;
-            }
-            case '<': {
-                if (isParsable(NToken.TT_LEFT_SHIFT_UNSIGNED) || isParsable(NToken.TT_LEFT_SHIFT) || isParsable(NToken.TT_LTE) || isParsable(NToken.TT_LTGT)) {
-                    markChar(1);
-                    int n = readChar();
-                    if (n < 0) {
-                        //EOF, this is okkay
-                    } else if (n == '<' && (isParsable(NToken.TT_LEFT_SHIFT_UNSIGNED) || isParsable(NToken.TT_LEFT_SHIFT))) {
-                        markChar(1);
-                        int n2 = readChar();
-                        if (n2 == '<' && isParsable(NToken.TT_LEFT_SHIFT_UNSIGNED)) {
-                            image = "<<<";
-                            return ttype = NToken.TT_LEFT_SHIFT_UNSIGNED;
-                        } else if (isParsable(NToken.TT_LEFT_SHIFT)) {
-                            resetChar();
-                            image = "<<";
-                            return ttype = NToken.TT_LEFT_SHIFT;
-                        } else {
-                            resetChar();
-                        }
-                    } else if (n == '=' && isParsable(NToken.TT_LTE)) {
-                        image = "<=";
-                        return ttype = NToken.TT_LTE;
-                    } else if (n == '>' && isParsable(NToken.TT_LTGT)) {
-                        image = "<>";
-                        return ttype = NToken.TT_LTGT;
-                    } else {
-                        resetChar();
-                    }
-                }
-                break;
-            }
-            case '>': {
-                if (isParsable(NToken.TT_RIGHT_SHIFT_UNSIGNED) || isParsable(NToken.TT_RIGHT_SHIFT) || isParsable(NToken.TT_GTE)) {
-                    markChar(1);
-                    int n = readChar();
-                    if (n < 0) {
-                        //EOF, this is okkay
-                    } else if (n == '>' && (isParsable(NToken.TT_RIGHT_SHIFT_UNSIGNED) || isParsable(NToken.TT_RIGHT_SHIFT))) {
-                        markChar(1);
-                        int n2 = readChar();
-                        if (n2 == '>' && isParsable(NToken.TT_RIGHT_SHIFT_UNSIGNED)) {
-                            image = ">>>";
-                            return ttype = NToken.TT_RIGHT_SHIFT_UNSIGNED;
-                        } else if (isParsable(NToken.TT_RIGHT_SHIFT)) {
-                            resetChar();
-                            image = ">>";
-                            return ttype = NToken.TT_RIGHT_SHIFT;
-                        } else {
-                            resetChar();
-                        }
-                    } else if (n == '=' && isParsable(NToken.TT_GTE)) {
-                        image = ">=";
-                        return ttype = NToken.TT_GTE;
-                    } else {
-                        resetChar();
-                    }
-                }
-                break;
-            }
-            case '=': {
-                if (isParsable(NToken.TT_RIGHT_ARROW) || isParsable(NToken.TT_EQ2) || isParsable(NToken.TT_EQ3)) {
-                    markChar(1);
-                    int n = readChar();
-                    if (n < 0) {
-                        //EOF, this is okkay
-                    } else if (n == '>' && isParsable(NToken.TT_RIGHT_ARROW)) {
-                        resetChar();
-                        image = "=>";
-                        return ttype = NToken.TT_RIGHT_ARROW;
-                    } else if (n == '=' && (isParsable(NToken.TT_EQ2) || isParsable(NToken.TT_EQ3))) {
-                        markChar(1);
-                        int n2 = readChar();
-                        if (n2 == '=' && isParsable(NToken.TT_EQ3)) {
-                            image = "===";
-                            return ttype = NToken.TT_EQ3;
-                        } else if (isParsable(NToken.TT_EQ2)) {
-                            image = "==";
-                            return ttype = NToken.TT_EQ2;
-                        } else {
-                            resetChar();
-                        }
-                    } else {
-                        resetChar();
-                    }
-                }
-                break;
-            }
-            case '!': {
-                if (isParsable(NToken.TT_NEQ2) || isParsable(NToken.TT_NEQ)) {
-                    markChar(1);
-                    int n = readChar();
-                    if (n < 0) {
-                        //EOF, this is okkay
-                    } else if (n == '=') {
-                        if (isParsable(NToken.TT_NEQ2)) {
-                            markChar(1);
-                            int n2 = readChar();
-                            if (n2 == '=') {
-                                image = "!==";
-                                return ttype = NToken.TT_NEQ2;
-                            } else {
-                                resetChar();
-                                image = "!=";
-                                return ttype = NToken.TT_NEQ;
-                            }
-                        } else {
-                            image = "!=";
-                            return ttype = NToken.TT_NEQ;
-                        }
-                    } else {
-                        resetChar();
-                    }
-                }
-                break;
-            }
-            case '+': {
-                if (isParsable(NToken.TT_PLUS_PLUS) || isParsable(NToken.TT_PLUS_EQ)) {
-                    markChar(1);
-                    int n = readChar();
-                    if (n < 0) {
-                        //EOF, this is okkay
-                    } else if (n == '+') {
-                        if (isParsable(NToken.TT_PLUS_PLUS)) {
-                            image = "++";
-                            return ttype = NToken.TT_PLUS_PLUS;
-                        } else {
-                            image = "+";
-                            return ttype = '+';
-                        }
-                    } else if (n == '=') {
-                        if (isParsable(NToken.TT_PLUS_PLUS)) {
-                            image = "+=";
-                            return ttype = NToken.TT_PLUS_PLUS;
-                        } else {
-                            image = "+";
-                            return ttype = '+';
-                        }
-                    } else {
-                        image = "+";
-                        resetChar();
-                    }
-                }
-                break;
-            }
-            case '-': {
-                if (isParsable(NToken.TT_MINUS_MINUS) || isParsable(NToken.TT_MINUS_EQ)) {
-                    markChar(1);
-                    int n = readChar();
-                    if (n < 0) {
-                        //EOF, this is okkay
-                    } else if (n == '-') {
-                        if (isParsable(NToken.TT_MINUS_MINUS)) {
-                            image = "--";
-                            return ttype = NToken.TT_MINUS_MINUS;
-                        } else {
-                            image = "-";
-                            return ttype = '-';
-                        }
-                    } else if (n == '=') {
-                        if (isParsable(NToken.TT_MINUS_EQ)) {
-                            image = "-=";
-                            return ttype = NToken.TT_MINUS_EQ;
-                        } else {
-                            image = "-";
-                            return ttype = '-';
-                        }
-                    } else {
-                        image = "-";
-                        resetChar();
-                    }
-                }
-                break;
-            }
-            case '*': {
-                if (isParsable(NToken.TT_MUL_MUL) || isParsable(NToken.TT_MUL_EQ)) {
-                    markChar(1);
-                    int n = readChar();
-                    if (n < 0) {
-                        //EOF, this is okkay
-                    } else if (n == '*') {
-                        if (isParsable(NToken.TT_MUL_MUL)) {
-                            image = "**";
-                            return ttype = NToken.TT_MUL_MUL;
-                        } else {
-                            image = "*";
-                            return ttype = '*';
-                        }
-                    } else if (n == '=') {
-                        if (isParsable(NToken.TT_MUL_EQ)) {
-                            image = "*=";
-                            return ttype = NToken.TT_MUL_EQ;
-                        } else {
-                            image = "*";
-                            return ttype = '*';
-                        }
-                    } else {
-                        image = "*";
-                        resetChar();
-                    }
-                }
-                break;
-            }
-            case '/': {
-                if (isParsable(NToken.TT_DIV_DIV) || isParsable(NToken.TT_DIV_EQ)) {
-                    markChar(1);
-                    int n = readChar();
-                    if (n < 0) {
-                        //EOF, this is okkay
-                    } else if (n == '/') {
-                        if (isParsable(NToken.TT_DIV_DIV)) {
-                            image = "//";
-                            return ttype = NToken.TT_DIV_DIV;
-                        } else {
-                            image = "/";
-                            return ttype = '/';
-                        }
-                    } else if (n == '=') {
-                        if (isParsable(NToken.TT_DIV_EQ)) {
-                            image = "/=";
-                            return ttype = NToken.TT_DIV_EQ;
-                        } else {
-                            image = "/";
-                            return ttype = '/';
-                        }
-                    } else {
-                        image = "/";
-                        resetChar();
-                    }
-                }
-                break;
-            }
-            case '^': {
-                if (isParsable(NToken.TT_POW_POW) || isParsable(NToken.TT_POW_EQ)) {
-                    markChar(1);
-                    int n = readChar();
-                    if (n < 0) {
-                        //EOF, this is okkay
-                    } else if (n == '^') {
-                        if (isParsable(NToken.TT_POW_POW)) {
-                            image = "^^";
-                            return ttype = NToken.TT_POW_POW;
-                        } else {
-                            image = "^";
-                            return ttype = '^';
-                        }
-                    } else if (n == '=') {
-                        if (isParsable(NToken.TT_POW_EQ)) {
-                            image = "^=";
-                            return ttype = NToken.TT_POW_EQ;
-                        } else {
-                            image = "^";
-                            return ttype = '^';
-                        }
-                    } else {
-                        image = "^";
-                        resetChar();
-                    }
-                }
-                break;
-            }
-            case '%': {
-                if (isParsable(NToken.TT_REM_REM) || isParsable(NToken.TT_REM_EQ)) {
-                    markChar(1);
-                    int n = readChar();
-                    if (n < 0) {
-                        //EOF, this is okkay
-                    } else if (n == '%') {
-                        if (isParsable(NToken.TT_REM_REM)) {
-                            image = "%%";
-                            return ttype = NToken.TT_REM_REM;
-                        } else {
-                            image = "%";
-                            return ttype = '%';
-                        }
-                    } else if (n == '=') {
-                        if (isParsable(NToken.TT_REM_EQ)) {
-                            image = "%=";
-                            return ttype = NToken.TT_REM_EQ;
-                        } else {
-                            image = "%";
-                            return ttype = '%';
-                        }
-                    } else {
-                        image = "%";
-                        resetChar();
-                    }
-                }
-                break;
-            }
+            ttype=NToken.TT_OP;
+            image=sb.toString();
+            sval=image;
+            nval=null;
+            return ttype;
         }
+//        switch (c) {
+//            case '&': {
+//                if (isParsable(NToken.TT_AND)) {
+//                    markChar(1);
+//                    int n = readChar();
+//                    if (n < 0) {
+//                        //EOF, this is okkay
+//                    } else if (n == '&') {
+//                        image = "&&";
+//                        return ttype = NToken.TT_AND;
+//                    } else {
+//                        resetChar();
+//                    }
+//                }
+//                break;
+//            }
+//            case '|': {
+//                if (isParsable(NToken.TT_OR)) {
+//                    markChar(1);
+//                    int n = readChar();
+//                    if (n < 0) {
+//                        //EOF, this is okkay
+//                    } else if (n == '|') {
+//                        image = "||";
+//                        return ttype = NToken.TT_OR;
+//                    } else {
+//                        resetChar();
+//                    }
+//                } else {
+//                    image = String.valueOf((char) c);
+//                    return ttype = c;
+//                }
+//                break;
+//            }
+//            case '<': {
+//                if (isParsable(NToken.TT_LEFT_SHIFT_UNSIGNED) || isParsable(NToken.TT_LEFT_SHIFT) || isParsable(NToken.TT_LTE) || isParsable(NToken.TT_LTGT)) {
+//                    markChar(1);
+//                    int n = readChar();
+//                    if (n < 0) {
+//                        //EOF, this is okkay
+//                    } else if (n == '<' && (isParsable(NToken.TT_LEFT_SHIFT_UNSIGNED) || isParsable(NToken.TT_LEFT_SHIFT))) {
+//                        markChar(1);
+//                        int n2 = readChar();
+//                        if (n2 == '<' && isParsable(NToken.TT_LEFT_SHIFT_UNSIGNED)) {
+//                            image = "<<<";
+//                            return ttype = NToken.TT_LEFT_SHIFT_UNSIGNED;
+//                        } else if (isParsable(NToken.TT_LEFT_SHIFT)) {
+//                            resetChar();
+//                            image = "<<";
+//                            return ttype = NToken.TT_LEFT_SHIFT;
+//                        } else {
+//                            resetChar();
+//                        }
+//                    } else if (n == '=' && isParsable(NToken.TT_LTE)) {
+//                        image = "<=";
+//                        return ttype = NToken.TT_LTE;
+//                    } else if (n == '>' && isParsable(NToken.TT_LTGT)) {
+//                        image = "<>";
+//                        return ttype = NToken.TT_LTGT;
+//                    } else {
+//                        resetChar();
+//                    }
+//                }
+//                break;
+//            }
+//            case '>': {
+//                if (isParsable(NToken.TT_RIGHT_SHIFT_UNSIGNED) || isParsable(NToken.TT_RIGHT_SHIFT) || isParsable(NToken.TT_GTE)) {
+//                    markChar(1);
+//                    int n = readChar();
+//                    if (n < 0) {
+//                        //EOF, this is okkay
+//                    } else if (n == '>' && (isParsable(NToken.TT_RIGHT_SHIFT_UNSIGNED) || isParsable(NToken.TT_RIGHT_SHIFT))) {
+//                        markChar(1);
+//                        int n2 = readChar();
+//                        if (n2 == '>' && isParsable(NToken.TT_RIGHT_SHIFT_UNSIGNED)) {
+//                            image = ">>>";
+//                            return ttype = NToken.TT_RIGHT_SHIFT_UNSIGNED;
+//                        } else if (isParsable(NToken.TT_RIGHT_SHIFT)) {
+//                            resetChar();
+//                            image = ">>";
+//                            return ttype = NToken.TT_RIGHT_SHIFT;
+//                        } else {
+//                            resetChar();
+//                        }
+//                    } else if (n == '=' && isParsable(NToken.TT_GTE)) {
+//                        image = ">=";
+//                        return ttype = NToken.TT_GTE;
+//                    } else {
+//                        resetChar();
+//                    }
+//                }
+//                break;
+//            }
+//            case '=': {
+//                if (isParsable(NToken.TT_RIGHT_ARROW) || isParsable(NToken.TT_EQ2) || isParsable(NToken.TT_EQ3) || isParsable(NToken.TT_EQ_TILDE) || isParsable(NToken.TT_EQ2_TILDE)) {
+//                    markChar(1);
+//                    int n = readChar();
+//                    if (n < 0) {
+//                        //EOF, this is okkay
+//                    } else if (n == '>' && isParsable(NToken.TT_RIGHT_ARROW)) {
+//                        resetChar();
+//                        image = "=>";
+//                        return ttype = NToken.TT_RIGHT_ARROW;
+//                    } else if (n == '>' && isParsable(NToken.TT_EQ_TILDE)) {
+//                        resetChar();
+//                        image = "=~";
+//                        return ttype = NToken.TT_EQ_TILDE;
+//                    } else if (n == '=' && (isParsable(NToken.TT_EQ2) || isParsable(NToken.TT_EQ3) || isParsable(NToken.TT_EQ2_TILDE))) {
+//                        markChar(1);
+//                        int n2 = readChar();
+//                        if (n2 == '=' && isParsable(NToken.TT_EQ3)) {
+//                            image = "===";
+//                            return ttype = NToken.TT_EQ3;
+//                        } else if (isParsable(NToken.TT_EQ2)) {
+//                            image = "==";
+//                            return ttype = NToken.TT_EQ2;
+//                        } else {
+//                            resetChar();
+//                        }
+//                    } else {
+//                        resetChar();
+//                    }
+//                }
+//                break;
+//            }
+//            case '!': {
+//                if (isParsable(NToken.TT_NEQ2) || isParsable(NToken.TT_NEQ)) {
+//                    markChar(1);
+//                    int n = readChar();
+//                    if (n < 0) {
+//                        //EOF, this is okkay
+//                    } else if (n == '=') {
+//                        if (isParsable(NToken.TT_NEQ2)) {
+//                            markChar(1);
+//                            int n2 = readChar();
+//                            if (n2 == '=') {
+//                                image = "!==";
+//                                return ttype = NToken.TT_NEQ2;
+//                            } else {
+//                                resetChar();
+//                                image = "!=";
+//                                return ttype = NToken.TT_NEQ;
+//                            }
+//                        } else {
+//                            image = "!=";
+//                            return ttype = NToken.TT_NEQ;
+//                        }
+//                    } else {
+//                        resetChar();
+//                    }
+//                }
+//                break;
+//            }
+//            case '+': {
+//                if (isParsable(NToken.TT_PLUS_PLUS) || isParsable(NToken.TT_PLUS_EQ)) {
+//                    markChar(1);
+//                    int n = readChar();
+//                    if (n < 0) {
+//                        //EOF, this is okkay
+//                    } else if (n == '+') {
+//                        if (isParsable(NToken.TT_PLUS_PLUS)) {
+//                            image = "++";
+//                            return ttype = NToken.TT_PLUS_PLUS;
+//                        } else {
+//                            image = "+";
+//                            return ttype = '+';
+//                        }
+//                    } else if (n == '=') {
+//                        if (isParsable(NToken.TT_PLUS_PLUS)) {
+//                            image = "+=";
+//                            return ttype = NToken.TT_PLUS_PLUS;
+//                        } else {
+//                            image = "+";
+//                            return ttype = '+';
+//                        }
+//                    } else {
+//                        image = "+";
+//                        resetChar();
+//                    }
+//                }
+//                break;
+//            }
+//            case '-': {
+//                if (isParsable(NToken.TT_MINUS_MINUS) || isParsable(NToken.TT_MINUS_EQ)) {
+//                    markChar(1);
+//                    int n = readChar();
+//                    if (n < 0) {
+//                        //EOF, this is okkay
+//                    } else if (n == '-') {
+//                        if (isParsable(NToken.TT_MINUS_MINUS)) {
+//                            image = "--";
+//                            return ttype = NToken.TT_MINUS_MINUS;
+//                        } else {
+//                            image = "-";
+//                            return ttype = '-';
+//                        }
+//                    } else if (n == '=') {
+//                        if (isParsable(NToken.TT_MINUS_EQ)) {
+//                            image = "-=";
+//                            return ttype = NToken.TT_MINUS_EQ;
+//                        } else {
+//                            image = "-";
+//                            return ttype = '-';
+//                        }
+//                    } else {
+//                        image = "-";
+//                        resetChar();
+//                    }
+//                }
+//                break;
+//            }
+//            case '*': {
+//                if (isParsable(NToken.TT_MUL_MUL) || isParsable(NToken.TT_MUL_EQ)) {
+//                    markChar(1);
+//                    int n = readChar();
+//                    if (n < 0) {
+//                        //EOF, this is okkay
+//                    } else if (n == '*') {
+//                        if (isParsable(NToken.TT_MUL_MUL)) {
+//                            image = "**";
+//                            return ttype = NToken.TT_MUL_MUL;
+//                        } else {
+//                            image = "*";
+//                            return ttype = '*';
+//                        }
+//                    } else if (n == '=') {
+//                        if (isParsable(NToken.TT_MUL_EQ)) {
+//                            image = "*=";
+//                            return ttype = NToken.TT_MUL_EQ;
+//                        } else {
+//                            image = "*";
+//                            return ttype = '*';
+//                        }
+//                    } else {
+//                        image = "*";
+//                        resetChar();
+//                    }
+//                }
+//                break;
+//            }
+//            case '/': {
+//                if (isParsable(NToken.TT_DIV_DIV) || isParsable(NToken.TT_DIV_EQ)) {
+//                    markChar(1);
+//                    int n = readChar();
+//                    if (n < 0) {
+//                        //EOF, this is okkay
+//                    } else if (n == '/') {
+//                        if (isParsable(NToken.TT_DIV_DIV)) {
+//                            image = "//";
+//                            return ttype = NToken.TT_DIV_DIV;
+//                        } else {
+//                            image = "/";
+//                            return ttype = '/';
+//                        }
+//                    } else if (n == '=') {
+//                        if (isParsable(NToken.TT_DIV_EQ)) {
+//                            image = "/=";
+//                            return ttype = NToken.TT_DIV_EQ;
+//                        } else {
+//                            image = "/";
+//                            return ttype = '/';
+//                        }
+//                    } else {
+//                        image = "/";
+//                        resetChar();
+//                    }
+//                }
+//                break;
+//            }
+//            case '^': {
+//                if (isParsable(NToken.TT_POW_POW) || isParsable(NToken.TT_POW_EQ)) {
+//                    markChar(1);
+//                    int n = readChar();
+//                    if (n < 0) {
+//                        //EOF, this is okkay
+//                    } else if (n == '^') {
+//                        if (isParsable(NToken.TT_POW_POW)) {
+//                            image = "^^";
+//                            return ttype = NToken.TT_POW_POW;
+//                        } else {
+//                            image = "^";
+//                            return ttype = '^';
+//                        }
+//                    } else if (n == '=') {
+//                        if (isParsable(NToken.TT_POW_EQ)) {
+//                            image = "^=";
+//                            return ttype = NToken.TT_POW_EQ;
+//                        } else {
+//                            image = "^";
+//                            return ttype = '^';
+//                        }
+//                    } else {
+//                        image = "^";
+//                        resetChar();
+//                    }
+//                }
+//                break;
+//            }
+//            case '%': {
+//                if (isParsable(NToken.TT_REM_REM) || isParsable(NToken.TT_REM_EQ)) {
+//                    markChar(1);
+//                    int n = readChar();
+//                    if (n < 0) {
+//                        //EOF, this is okkay
+//                    } else if (n == '%') {
+//                        if (isParsable(NToken.TT_REM_REM)) {
+//                            image = "%%";
+//                            return ttype = NToken.TT_REM_REM;
+//                        } else {
+//                            image = "%";
+//                            return ttype = '%';
+//                        }
+//                    } else if (n == '=') {
+//                        if (isParsable(NToken.TT_REM_EQ)) {
+//                            image = "%=";
+//                            return ttype = NToken.TT_REM_EQ;
+//                        } else {
+//                            image = "%";
+//                            return ttype = '%';
+//                        }
+//                    } else {
+//                        image = "%";
+//                        resetChar();
+//                    }
+//                }
+//                break;
+//            }
+//        }
         image = String.valueOf((char) c);
         return ttype = c;
+    }
+
+    private boolean isOp(int c) {
+        // = < > ! & | + - * / ^ % ~ . :
+        switch (c){
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+            case '>':
+            case '<':
+            case '!':
+            case '~':
+            case '#':
+            case '=':
+            case '&':
+            case '|':
+            case '^':
+            case '%':
+            case ':':
+            case '?':
+                return true;
+        }
+        switch (Character.getType(c)) {
+            case Character.MATH_SYMBOL:        // ≤ ≥ ≠ × ÷ ± √ ∑ ∏ ∞ ∂ ∫
+            case Character.OTHER_SYMBOL:       // © ® ™ — catchall symbols
+            case Character.MODIFIER_SYMBOL:    // ` ^ ~ modifier-like chars
+                return true;
+            default:
+                return false;
+        }
     }
 
     private boolean _read_word() {
@@ -936,6 +989,26 @@ public class NStreamTokenizer {
             if (forceLower)
                 sval = sval.toLowerCase();
             ttype = NToken.TT_WORD;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean _read_op() {
+        if (isOp(c)) {
+            int i = 0;
+            do {
+                if (i >= buf.length) {
+                    buf = Arrays.copyOf(buf, buf.length * 2);
+                }
+                buf[i++] = (char) c;
+                c = readChar();
+                ctype = c < 0 ? CT_WHITESPACE : c < 256 ? commonCharTypes[c] : CT_ALPHA;
+            } while (isOp(c));
+            peekc = c;
+            sval = String.copyValueOf(buf, 0, i);
+            image = sval;
+            ttype = NToken.TT_OP;
             return true;
         }
         return false;
@@ -1388,6 +1461,9 @@ public class NStreamTokenizer {
                 break;
             case NToken.TT_BIG_DECIMAL:
                 ret = "BD=" + nval;
+                break;
+            case NToken.TT_OP:
+                ret = "O=" + sval;
                 break;
             case NToken.TT_NOTHING:
                 ret = "NOTHING";

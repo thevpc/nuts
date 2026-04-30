@@ -69,218 +69,218 @@ public class NTokenIterator implements Iterator<NToken> {
                     }
                     break;
                 }
-                case '&':{
-                    int i = st.nextToken();
-                    if(i==NToken.TT_EOF){
-                        previous = NToken.ofChar((char)nt, st.lineno());
-                        return true;
-                    }else if(i=='&'){
-                        previous = NToken.ofStr(NToken.TT_AND, "&&","AND", st.lineno());
-                        return true;
-                    }else{
-                        st.pushBack();
-                        previous = NToken.ofChar((char)nt, st.lineno());
-                        return true;
-                    }
-//                    break;
-                }
-                case '|':{
-                    int i = st.nextToken();
-                    if(i==StreamTokenizer.TT_EOF){
-                        previous = NToken.ofChar((char)nt, st.lineno());
-                        return true;
-                    }else if(i=='|'){
-                        previous = NToken.ofStr(NToken.TT_OR, "||","OR", st.lineno());
-                        return true;
-                    }else{
-                        st.pushBack();
-                        previous = NToken.ofChar((char)nt, st.lineno());
-                        return true;
-                    }
-//                    break;
-                }
-                case '?':{
-                    int i = st.nextToken();
-                    if(i==StreamTokenizer.TT_EOF){
-                        previous = NToken.ofChar((char)nt, st.lineno());
-                        return true;
-                    }else if(i=='?'){
-                        previous = NToken.ofStr(NToken.TT_COALESCE, "??", "COALESCE", st.lineno());
-                        return true;
-                    }else{
-                        st.pushBack();
-                        previous = NToken.ofChar((char)nt, st.lineno());
-                        return true;
-                    }
-//                    break;
-                }
-                case '.':{
-                    int i = st.nextToken();
-                    if(i==StreamTokenizer.TT_EOF){
-                        previous = NToken.ofChar((char)nt, st.lineno());
-                        return true;
-                    }else if(i=='.'){
-                        i = st.nextToken();
-                        if(i==StreamTokenizer.TT_EOF){
-                            previous = NToken.ofStr(NToken.TT_DOTS2, "..", "DOTS2", st.lineno());
-                        }else if(i=='.'){
-                            previous = NToken.ofStr(NToken.TT_DOTS3, "...", "DOTS3", st.lineno());
-                        }else{
-                            st.pushBack();
-                            previous = NToken.ofStr(NToken.TT_DOTS2, "..", "DOTS2", st.lineno());
-                        }
-                        return true;
-                    }else{
-                        st.pushBack();
-                        previous = NToken.ofChar((char)nt, st.lineno());
-                        return true;
-                    }
-//                    break;
-                }
-                case '<':{
-                    int i = st.nextToken();
-                    if(i=='<'){
-                        i = st.nextToken();
-                        if(i=='<') {
-                            previous = NToken.ofStr(NToken.TT_LEFT_SHIFT_UNSIGNED, "<<<", "LEFT_SHIFT_UNSIGNED", st.lineno());
-                            return true;
-                        }else if(i=='>'){
-                            previous = NToken.ofStr(NToken.TT_LTGT, "<>", "LTGT", st.lineno());
-                            return true;
-                        }else{
-                            if(i!=StreamTokenizer.TT_EOF) {
-                                st.pushBack();
-                            }
-                            previous = NToken.ofStr(NToken.TT_LEFT_SHIFT, "<<", "LEFT_SHIFT", st.lineno());
-                            return true;
-                        }
-                    }else if(i=='='){
-                        previous = NToken.ofStr(NToken.TT_LTE, "<=", "LTE", st.lineno());
-                        return true;
-                    }else{
-                        if(i!=StreamTokenizer.TT_EOF) {
-                            st.pushBack();
-                        }
-                        previous = NToken.ofChar((char)nt, st.lineno());
-                        return true;
-                    }
-//                    break;
-                }
-                case '>':{
-                    int i = st.nextToken();
-                    if(i=='>'){
-                        i = st.nextToken();
-                        if(i=='>'){
-                            previous = NToken.ofStr(NToken.TT_RIGHT_SHIFT_UNSIGNED, ">>>", "RIGHT_SHIFT_UNSIGNED", st.lineno());
-                            return true;
-                        }else{
-                            if(i!=StreamTokenizer.TT_EOF) {
-                                st.pushBack();
-                            }
-                            previous = NToken.ofStr(NToken.TT_RIGHT_SHIFT, ">>", "RIGHT_SHIFT", st.lineno());
-                            return true;
-                        }
-                    }else if(i=='='){
-                        previous = NToken.ofStr(NToken.TT_GTE, ">=", "GTE", st.lineno());
-                        return true;
-                    }else{
-                        if(i!=StreamTokenizer.TT_EOF) {
-                            st.pushBack();
-                        }
-                        previous = NToken.ofChar((char)nt, st.lineno());
-                        return true;
-                    }
-//                    break;
-                }
-                case '=':{
-                    int i = st.nextToken();
-                    if(i=='='){
-                        i = st.nextToken();
-                        if(i=='='){
-                            previous = NToken.ofStr(NToken.TT_EQ3, "===", "EQ3", st.lineno());
-                            return true;
-                        }else if(i=='>'){
-                            previous = NToken.ofStr(NToken.TT_RIGHT_ARROW2, "==>", "RIGHT_ARROW2", st.lineno());
-                            return true;
-                        }else{
-                            if(i!=StreamTokenizer.TT_EOF) {
-                                st.pushBack();
-                            }
-                            previous = NToken.ofStr(NToken.TT_EQ2, "==", "EQ2", st.lineno());
-                            return true;
-                        }
-                    }else if(i=='>'){
-                        previous = NToken.ofStr(NToken.TT_RIGHT_ARROW, "=>", "RIGHT_ARROW", st.lineno());
-                        return true;
-                    }else{
-                        if(i!=StreamTokenizer.TT_EOF) {
-                            st.pushBack();
-                        }
-                        previous = NToken.ofChar((char)nt, st.lineno());
-                        return true;
-                    }
-//                    break;
-                }
-                case '~':{
-                    int i = st.nextToken();
-                    if(i=='~'){
-                        i = st.nextToken();
-                        if(i=='~'){
-                            previous = NToken.ofStr(NToken.TT_LIKE3, "~~~", "LIKE3", st.lineno());
-                            return true;
-                        }else{
-                            if(i!=StreamTokenizer.TT_EOF) {
-                                st.pushBack();
-                            }
-                            previous = NToken.ofStr(NToken.TT_LIKE2, "~~", "LIKE2", st.lineno());
-                            return true;
-                        }
-                    }else{
-                        if(i!=StreamTokenizer.TT_EOF) {
-                            st.pushBack();
-                        }
-                        previous = NToken.ofChar((char)nt, st.lineno());
-                        return true;
-                    }
-//                    break;
-                }
-                case '!':{
-                    int i = st.nextToken();
-                    if(i=='!'){
-                        i = st.nextToken();
-                        if(i=='!'){
-                            previous = NToken.ofStr(NToken.TT_NOT3, "!!!", "NOT3", st.lineno());
-                            return true;
-                        }else{
-                            if(i!=StreamTokenizer.TT_EOF) {
-                                st.pushBack();
-                            }
-                            previous = NToken.ofStr(NToken.TT_NOT2, "!!", "NOT2", st.lineno());
-                            return true;
-                        }
-                    }else if(i=='='){
-                        i = st.nextToken();
-                        if(i=='='){
-                            previous = NToken.ofStr(NToken.TT_NEQ2, "!==", "NEQ2", st.lineno());
-                        }else{
-                            if(i!=StreamTokenizer.TT_EOF) {
-                                st.pushBack();
-                            }
-                            previous = NToken.ofStr(NToken.TT_NEQ, "!=", "NEQ", st.lineno());
-                        }
-                        return true;
-                    }else if(i=='~'){
-                        previous = NToken.ofStr(NToken.TT_NOT_LIKE, "!~", "NOT_LIKE", st.lineno());
-                        return true;
-                    }else{
-                        if(i!=StreamTokenizer.TT_EOF) {
-                            st.pushBack();
-                        }
-                        previous = NToken.ofChar((char) nt, st.lineno());
-                        return true;
-                    }
-//                    break;
-                }
+//                case '&':{
+//                    int i = st.nextToken();
+//                    if(i==NToken.TT_EOF){
+//                        previous = NToken.ofChar((char)nt, st.lineno());
+//                        return true;
+//                    }else if(i=='&'){
+//                        previous = NToken.ofStr(NToken.TT_AND, "&&","AND", st.lineno());
+//                        return true;
+//                    }else{
+//                        st.pushBack();
+//                        previous = NToken.ofChar((char)nt, st.lineno());
+//                        return true;
+//                    }
+////                    break;
+//                }
+//                case '|':{
+//                    int i = st.nextToken();
+//                    if(i==StreamTokenizer.TT_EOF){
+//                        previous = NToken.ofChar((char)nt, st.lineno());
+//                        return true;
+//                    }else if(i=='|'){
+//                        previous = NToken.ofStr(NToken.TT_OR, "||","OR", st.lineno());
+//                        return true;
+//                    }else{
+//                        st.pushBack();
+//                        previous = NToken.ofChar((char)nt, st.lineno());
+//                        return true;
+//                    }
+////                    break;
+//                }
+//                case '?':{
+//                    int i = st.nextToken();
+//                    if(i==StreamTokenizer.TT_EOF){
+//                        previous = NToken.ofChar((char)nt, st.lineno());
+//                        return true;
+//                    }else if(i=='?'){
+//                        previous = NToken.ofStr(NToken.TT_COALESCE, "??", "COALESCE", st.lineno());
+//                        return true;
+//                    }else{
+//                        st.pushBack();
+//                        previous = NToken.ofChar((char)nt, st.lineno());
+//                        return true;
+//                    }
+////                    break;
+//                }
+//                case '.':{
+//                    int i = st.nextToken();
+//                    if(i==StreamTokenizer.TT_EOF){
+//                        previous = NToken.ofChar((char)nt, st.lineno());
+//                        return true;
+//                    }else if(i=='.'){
+//                        i = st.nextToken();
+//                        if(i==StreamTokenizer.TT_EOF){
+//                            previous = NToken.ofStr(NToken.TT_DOTS2, "..", "DOTS2", st.lineno());
+//                        }else if(i=='.'){
+//                            previous = NToken.ofStr(NToken.TT_DOTS3, "...", "DOTS3", st.lineno());
+//                        }else{
+//                            st.pushBack();
+//                            previous = NToken.ofStr(NToken.TT_DOTS2, "..", "DOTS2", st.lineno());
+//                        }
+//                        return true;
+//                    }else{
+//                        st.pushBack();
+//                        previous = NToken.ofChar((char)nt, st.lineno());
+//                        return true;
+//                    }
+////                    break;
+//                }
+//                case '<':{
+//                    int i = st.nextToken();
+//                    if(i=='<'){
+//                        i = st.nextToken();
+//                        if(i=='<') {
+//                            previous = NToken.ofStr(NToken.TT_LEFT_SHIFT_UNSIGNED, "<<<", "LEFT_SHIFT_UNSIGNED", st.lineno());
+//                            return true;
+//                        }else if(i=='>'){
+//                            previous = NToken.ofStr(NToken.TT_LTGT, "<>", "LTGT", st.lineno());
+//                            return true;
+//                        }else{
+//                            if(i!=StreamTokenizer.TT_EOF) {
+//                                st.pushBack();
+//                            }
+//                            previous = NToken.ofStr(NToken.TT_LEFT_SHIFT, "<<", "LEFT_SHIFT", st.lineno());
+//                            return true;
+//                        }
+//                    }else if(i=='='){
+//                        previous = NToken.ofStr(NToken.TT_LTE, "<=", "LTE", st.lineno());
+//                        return true;
+//                    }else{
+//                        if(i!=StreamTokenizer.TT_EOF) {
+//                            st.pushBack();
+//                        }
+//                        previous = NToken.ofChar((char)nt, st.lineno());
+//                        return true;
+//                    }
+////                    break;
+//                }
+//                case '>':{
+//                    int i = st.nextToken();
+//                    if(i=='>'){
+//                        i = st.nextToken();
+//                        if(i=='>'){
+//                            previous = NToken.ofStr(NToken.TT_RIGHT_SHIFT_UNSIGNED, ">>>", "RIGHT_SHIFT_UNSIGNED", st.lineno());
+//                            return true;
+//                        }else{
+//                            if(i!=StreamTokenizer.TT_EOF) {
+//                                st.pushBack();
+//                            }
+//                            previous = NToken.ofStr(NToken.TT_RIGHT_SHIFT, ">>", "RIGHT_SHIFT", st.lineno());
+//                            return true;
+//                        }
+//                    }else if(i=='='){
+//                        previous = NToken.ofStr(NToken.TT_GTE, ">=", "GTE", st.lineno());
+//                        return true;
+//                    }else{
+//                        if(i!=StreamTokenizer.TT_EOF) {
+//                            st.pushBack();
+//                        }
+//                        previous = NToken.ofChar((char)nt, st.lineno());
+//                        return true;
+//                    }
+////                    break;
+//                }
+//                case '=':{
+//                    int i = st.nextToken();
+//                    if(i=='='){
+//                        i = st.nextToken();
+//                        if(i=='='){
+//                            previous = NToken.ofStr(NToken.TT_EQ3, "===", "EQ3", st.lineno());
+//                            return true;
+//                        }else if(i=='>'){
+//                            previous = NToken.ofStr(NToken.TT_RIGHT_ARROW2, "==>", "RIGHT_ARROW2", st.lineno());
+//                            return true;
+//                        }else{
+//                            if(i!=StreamTokenizer.TT_EOF) {
+//                                st.pushBack();
+//                            }
+//                            previous = NToken.ofStr(NToken.TT_EQ2, "==", "EQ2", st.lineno());
+//                            return true;
+//                        }
+//                    }else if(i=='>'){
+//                        previous = NToken.ofStr(NToken.TT_RIGHT_ARROW, "=>", "RIGHT_ARROW", st.lineno());
+//                        return true;
+//                    }else{
+//                        if(i!=StreamTokenizer.TT_EOF) {
+//                            st.pushBack();
+//                        }
+//                        previous = NToken.ofChar((char)nt, st.lineno());
+//                        return true;
+//                    }
+////                    break;
+//                }
+//                case '~':{
+//                    int i = st.nextToken();
+//                    if(i=='~'){
+//                        i = st.nextToken();
+//                        if(i=='~'){
+//                            previous = NToken.ofStr(NToken.TT_LIKE3, "~~~", "LIKE3", st.lineno());
+//                            return true;
+//                        }else{
+//                            if(i!=StreamTokenizer.TT_EOF) {
+//                                st.pushBack();
+//                            }
+//                            previous = NToken.ofStr(NToken.TT_LIKE2, "~~", "LIKE2", st.lineno());
+//                            return true;
+//                        }
+//                    }else{
+//                        if(i!=StreamTokenizer.TT_EOF) {
+//                            st.pushBack();
+//                        }
+//                        previous = NToken.ofChar((char)nt, st.lineno());
+//                        return true;
+//                    }
+////                    break;
+//                }
+//                case '!':{
+//                    int i = st.nextToken();
+//                    if(i=='!'){
+//                        i = st.nextToken();
+//                        if(i=='!'){
+//                            previous = NToken.ofStr(NToken.TT_NOT3, "!!!", "NOT3", st.lineno());
+//                            return true;
+//                        }else{
+//                            if(i!=StreamTokenizer.TT_EOF) {
+//                                st.pushBack();
+//                            }
+//                            previous = NToken.ofStr(NToken.TT_NOT2, "!!", "NOT2", st.lineno());
+//                            return true;
+//                        }
+//                    }else if(i=='='){
+//                        i = st.nextToken();
+//                        if(i=='='){
+//                            previous = NToken.ofStr(NToken.TT_NEQ2, "!==", "NEQ2", st.lineno());
+//                        }else{
+//                            if(i!=StreamTokenizer.TT_EOF) {
+//                                st.pushBack();
+//                            }
+//                            previous = NToken.ofStr(NToken.TT_NEQ, "!=", "NEQ", st.lineno());
+//                        }
+//                        return true;
+//                    }else if(i=='~'){
+//                        previous = NToken.ofStr(NToken.TT_NOT_LIKE, "!~", "NOT_LIKE", st.lineno());
+//                        return true;
+//                    }else{
+//                        if(i!=StreamTokenizer.TT_EOF) {
+//                            st.pushBack();
+//                        }
+//                        previous = NToken.ofChar((char) nt, st.lineno());
+//                        return true;
+//                    }
+////                    break;
+//                }
                 default: {
                     switch (st.ttype) {
                         case ' ':

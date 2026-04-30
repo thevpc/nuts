@@ -185,7 +185,7 @@ public class NNumberUtils {
         throw new NIllegalArgumentException(NMsg.ofC("unable to 'and' numbers %s and %s", a, b));
     }
 
-    public static boolean eqNumbers(Number a, Number b) {
+    public static boolean equals(Number a, Number b) {
         Class<? extends Number> at = a.getClass();
         Class<? extends Number> bt = b.getClass();
         NElementType e = commonElementNumberType(at, bt);
@@ -211,6 +211,91 @@ public class NNumberUtils {
                 return NLiteral.of(a).asByte().get().equals(NLiteral.of(b).asByte().get());
         }
         throw new NIllegalArgumentException(NMsg.ofC("unable to 'eq'' numbers %s and %s", a, b));
+    }
+
+    public static boolean equals(Number a, Number b, double epsilon) {
+        Class<? extends Number> at = a.getClass();
+        Class<? extends Number> bt = b.getClass();
+        NElementType e = commonElementNumberType(at, bt);
+        switch (e) {
+            case BIG_COMPLEX:
+            {
+                NBigComplex aa = (NBigComplex) a;
+                NBigComplex bb = (NBigComplex) b;
+                BigDecimal ar = aa.realValue(), ai = aa.imagValue();
+                BigDecimal br = bb.realValue(), bi = bb.imagValue();
+                BigDecimal diffR = ar.subtract(br).abs();
+                BigDecimal diffI = ai.subtract(bi).abs();
+                if (diffR.signum() == 0 && diffI.signum() == 0) return true;
+                BigDecimal mag = ar.abs().max(ai.abs()).max(br.abs()).max(bi.abs());
+                if (mag.signum() == 0) return true;
+                double rR = Math.abs(diffR.divide(mag, MathContext.DECIMAL64).doubleValue());
+                double rI = Math.abs(diffI.divide(mag, MathContext.DECIMAL64).doubleValue());
+                return rR <= Math.abs(epsilon) && rI <= Math.abs(epsilon);
+            }
+            case DOUBLE_COMPLEX:{
+                NDoubleComplex aa = (NDoubleComplex) a;
+                NDoubleComplex bb = (NDoubleComplex) b;
+                double ar = aa.realValue(), ai = aa.imagValue();
+                double br = bb.realValue(), bi = bb.imagValue();
+                double mag = Math.max(
+                        Math.max(Math.abs(ar), Math.abs(ai)),
+                        Math.max(Math.abs(br), Math.abs(bi))
+                );
+                double diffR = Math.abs(ar - br);
+                double diffI = Math.abs(ai - bi);
+                if (mag == 0) return diffR == 0 && diffI == 0;
+                return diffR / mag < epsilon && diffI / mag < epsilon;
+            }
+            case FLOAT_COMPLEX:{
+                NFloatComplex aa = (NFloatComplex) a;
+                NFloatComplex bb = (NFloatComplex) b;
+                double ar = aa.realValue(), ai = aa.imagValue();
+                double br = bb.realValue(), bi = bb.imagValue();
+                double mag = Math.max(
+                        Math.max(Math.abs(ar), Math.abs(ai)),
+                        Math.max(Math.abs(br), Math.abs(bi))
+                );
+                double diffR = Math.abs(ar - br);
+                double diffI = Math.abs(ai - bi);
+                if (mag == 0) return diffR == 0 && diffI == 0;
+                return diffR / mag < epsilon && diffI / mag < epsilon;
+            }
+            case BIG_DECIMAL:
+            {
+                BigDecimal aa = NLiteral.of(a).asBigDecimal().get();
+                BigDecimal bb = NLiteral.of(b).asBigDecimal().get();
+                BigDecimal diff = aa.subtract(bb).abs();
+                if (diff.signum() == 0) return true;
+                BigDecimal mag = aa.abs().max(bb.abs());
+                if (mag.signum() == 0) return true;
+                return Math.abs(diff.divide(mag, MathContext.DECIMAL64).doubleValue()) <= Math.abs(epsilon);
+            }
+            case BIG_INT:
+            case ULONG:
+            {
+                BigInteger aa = NLiteral.of(a).asBigInt().get();
+                BigInteger bb = NLiteral.of(b).asBigInt().get();
+                return aa.equals(bb);
+            }
+            case DOUBLE:
+            case FLOAT:
+            {
+                double aa = NLiteral.of(a).asDouble().get();
+                double bb = NLiteral.of(b).asDouble().get();
+                double mag  = Math.max(Math.abs(aa), Math.abs(bb));
+                double diff = Math.abs(aa-bb);
+                return mag == 0 ? diff == 0 : diff / mag < epsilon;            }
+            case LONG:
+            case INT:
+            case UINT:
+            case SHORT:
+            case USHORT:
+            case BYTE:
+            case UBYTE:
+                return NLiteral.of(a).asLong().get().equals(NLiteral.of(b).asLong().get());
+        }
+        throw new NIllegalArgumentException(NMsg.ofC("unable to 'like' numbers %s and %s", a, b));
     }
 
     public static int compareNumbers(Number a, Number b) {

@@ -157,10 +157,11 @@ public class ExprTest {
     @Test
     public void testTokenize2() {
         NStreamTokenizer st = new NStreamTokenizer("<<");
-        st.acceptTokenType(NToken.TT_LEFT_SHIFT);
+//        st.acceptTokenType(NToken.TT_LEFT_SHIFT);
         int i = st.nextToken();
-        Assertions.assertEquals(NToken.TT_LEFT_SHIFT, i);
-        System.out.println(i);
+        Assertions.assertEquals(st.image, "<<");
+        System.out.println(st.image);
+        System.out.println(st);
     }
 
 
@@ -275,5 +276,16 @@ public class ExprTest {
         Assertions.assertTrue(n.children().size() == 2);
         Assertions.assertTrue(n.children().get(0).name().equals("["));
         Assertions.assertTrue(n.children().get(1) instanceof NExprWordNode);
+    }
+
+    @Test
+    public void test16() throws Exception {
+        NStreamTokenizer st = new NStreamTokenizer(new StringReader("1++ -2"));
+        st.xmlComments(true);
+        st.parseNumbers(true);
+        int s;
+        while ((s = st.nextToken()) != NToken.TT_EOF) {
+            TestUtils.println("'"+st.image+"'");
+        }
     }
 }

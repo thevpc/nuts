@@ -82,6 +82,8 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
         addDefaultOp(NExprCommonOp.GT, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
         addDefaultOp(NExprCommonOp.GTE, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
         addDefaultOp(NExprCommonOp.EQ, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.LIKE, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.EQ_REGEX, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
         addDefaultOp(NExprCommonOp.NE, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT, "!=", "!==", "<>");
         addDefaultOp(NExprCommonOp.PLUS, NExprOpType.INFIX, NExprOpPrecedence.PLUS, NOperatorAssociativity.LEFT);
         addDefaultOp(NExprCommonOp.MINUS, NExprOpType.INFIX, NExprOpPrecedence.PLUS, NOperatorAssociativity.LEFT);

@@ -163,7 +163,7 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
     ///////////////////////////////////////////////////
     @Override
     public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... nodes) {
-        return alteration.getOperator(parent,opName, type,nodes);
+        return alteration.getOperator(this,parent,opName, type,nodes);
     }
 
     @Override
@@ -190,7 +190,7 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
     }
     @Override
     public NOptional<NExprVar> getVar(String name) {
-        return alteration.getVar(parent,name);
+        return alteration.getVar(this,parent,name);
     }
 
     @Override
@@ -200,12 +200,12 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
 
     @Override
     public NOptional<NExprFunction> getFunction(String name, NExprNodeValue... args) {
-        return alteration.getFunction(parent,name,args);
+        return alteration.getFunction(this,parent,name,args);
     }
 
     @Override
     public NOptional<NExprFunction> getConstruct(String name, NExprNodeValue... args) {
-        return alteration.getConstruct(parent,name,args);
+        return alteration.getConstruct(this,parent,name,args);
     }
 
 }

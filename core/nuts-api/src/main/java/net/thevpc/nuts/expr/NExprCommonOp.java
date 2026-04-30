@@ -8,7 +8,11 @@ import java.util.HashSet;
 import java.util.Map;
 
 public enum NExprCommonOp implements NEnum {
-    PLUS("+"), MINUS("-"), MUL("*"), DIV("/"), REM("%"), XOR("^"), POW("**"), OR_BITS("|"), AND_BITS("&"), OR("||"), AND("&&"), EQ("=="), NOT("!"), LT("<"), GT(">"), LTE("<="), GTE(">="), NE("!="), DOT("."), ASSIGN("=");
+    PLUS("+"), MINUS("-"), MUL("*"), DIV("/"), REM("%"), XOR("^"), POW("**"), OR_BITS("|"), AND_BITS("&"), OR("||"), AND("&&"),
+    EQ("=="), NOT("!"), LT("<"), GT(">"), LTE("<="), GTE(">="), NE("!="), DOT("."), ASSIGN("="),
+    LIKE("=~"),
+    EQ_REGEX("==~"),
+    ;
     /**
      * lower-cased identifier for the enum entry
      */
