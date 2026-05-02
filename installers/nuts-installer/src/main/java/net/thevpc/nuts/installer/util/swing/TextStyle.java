@@ -1,6 +1,7 @@
 package net.thevpc.nuts.installer.util.swing;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class TextStyle implements Cloneable {
     Color foreColor;
@@ -70,5 +71,11 @@ public class TextStyle implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
+    }
+    public TextStyle build(){
+        if(Objects.equals(foreColor,backColor)){
+            System.out.println("why");
+        }
+        return this;
     }
 }

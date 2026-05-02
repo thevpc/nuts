@@ -107,11 +107,11 @@ public class JavaPanel extends WizardPageBase {
             SwingUtilities.invokeLater(() -> {
                 if (e.length() > 0) {
                     javaResultLabel.setText("Detected java version :\n" + e);
-                    javaResultLabelScroll.setBorder(BorderFactory.createLineBorder(Color.GREEN.darker(),3));
+                    javaResultLabelScroll.setBorder(BorderFactory.createLineBorder(new Color(0X057b7d),3));
                     getInstallerContext().getNextButton().setEnabled(true);
                 } else {
                     javaResultLabel.setText("Invalid java location");
-                    javaResultLabelScroll.setBorder(BorderFactory.createLineBorder(Color.RED.darker(),3));
+                    javaResultLabelScroll.setBorder(BorderFactory.createLineBorder(new Color(0xB3, 0x3A, 0x3A),3));
                     getInstallerContext().getNextButton().setEnabled(false);
                 }
             });

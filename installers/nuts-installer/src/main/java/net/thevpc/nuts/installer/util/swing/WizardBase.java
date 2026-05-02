@@ -1,5 +1,10 @@
 package net.thevpc.nuts.installer.util.swing;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+import net.thevpc.nuts.installer.NutsInstaller;
+import net.thevpc.nuts.installer.model.InstallData;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -26,6 +31,7 @@ public abstract class WizardBase implements Wizard {
     private Image frameIconImage;
     private boolean exitOnCloseFrame;
     private boolean loading;
+    private JCheckBox darkThemeToggle;
 
     public boolean isExitOnCloseFrame() {
         return exitOnCloseFrame;
@@ -131,14 +137,43 @@ public abstract class WizardBase implements Wizard {
     @Override
     public void applyPlaf() {
         JFrame f = getFrame();
+        boolean darkMode = InstallData.of(this).isDarkMode();
+        if (darkMode) {
+            FlatDarkLaf.setup();
+        } else {
+            FlatLightLaf.setup();
+        }
         if (f != null) {
             SwingUtilities.invokeLater(() -> {
-                SwingUtilities.updateComponentTreeUI(f);
+                try {
+                    SwingUtilities.updateComponentTreeUI(f);
+                    SwingUtilities.updateComponentTreeUI(f.getContentPane());
+                    applyPlafLeftSidebar();
+                    SwingUtilities.updateComponentTreeUI(loadingPage());
+                    SwingUtilities.updateComponentTreeUI(currentPage());
+                    currentPage().applyPlaf();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
+        } else {
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    applyPlafLeftSidebar();
+                    SwingUtilities.updateComponentTreeUI(loadingPage());
+                    SwingUtilities.updateComponentTreeUI(currentPage());
+                    currentPage().applyPlaf();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             });
         }
-        SwingUtilities.invokeLater(() -> {
-            SwingUtilities.updateComponentTreeUI(loadingPage());
-        });
+    }
+
+    protected void applyPlafLeftSidebar() {
+        boolean darkMode = InstallData.of(this).isDarkMode();
+        leftComponent.setBackground(darkMode ? new Color(0x3b3e40) : new Color(0xf2f2f2));
+        SwingUtilities.updateComponentTreeUI(leftComponent);
     }
 
     public JFrame showFrame() {
@@ -181,52 +216,57 @@ public abstract class WizardBase implements Wizard {
         return main;
     }
 
-
     public JPanel createBottom() {
         JPanel p = new JPanel(new BorderLayout());
         Box line = Box.createHorizontalBox();
         line.add(new JSeparator(JSeparator.HORIZONTAL));
         p.add(line, BorderLayout.PAGE_START);
+
         Box hb = Box.createHorizontalBox();
+        hb.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10)); // Add side padding
         p.add(hb, BorderLayout.CENTER);
-        hb.add(Box.createHorizontalGlue());
-        hb.add(Box.createRigidArea(new Dimension(10, 40)));
-        previousButton = new JButton("Previous");
-        previousButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                onPreviousButton();
-            }
+
+        // --- NEW THEME SWITCHER ---
+        // Using a checkbox for simplicity, but you can style this as a toggle button
+        darkThemeToggle = new JCheckBox("Dark Mode");
+        darkThemeToggle.setFocusPainted(false);
+        darkThemeToggle.setOpaque(false);
+        // Initialize state based on current config
+        darkThemeToggle.setSelected(InstallData.of(this).isDarkMode());
+
+        darkThemeToggle.addActionListener(e -> {
+            boolean isDark = darkThemeToggle.isSelected();
+            InstallData.of(this).setDarkMode(isDark);
+            applyPlaf();
+            // Trigger your theme change logic here
+            //onThemeChanged(isDark);
         });
+        hb.add(darkThemeToggle);
+        // --------------------------
+
+        hb.add(Box.createHorizontalGlue()); // This pushes navigation buttons to the right
+        hb.add(Box.createRigidArea(new Dimension(10, 40)));
+
+        previousButton = new JButton("Previous");
+        previousButton.addActionListener(e -> onPreviousButton());
         hb.add(previousButton);
+
         hb.add(Box.createRigidArea(new Dimension(10, 0)));
         nextButton = new JButton("Next");
+        nextButton.addActionListener(e -> onNextButton());
         hb.add(nextButton);
-        nextButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                onNextButton();
-            }
-        });
+
         hb.add(Box.createRigidArea(new Dimension(10, 0)));
         cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(e -> onCancelButton());
         hb.add(cancelButton);
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                onCancelButton();
-            }
-        });
+
         hb.add(Box.createRigidArea(new Dimension(10, 0)));
         exitButton = new JButton("Finish");
+        exitButton.addActionListener(e -> onExitButton());
         hb.add(exitButton);
         hb.add(Box.createRigidArea(new Dimension(10, 0)));
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                onExitButton();
-            }
-        });
+
         return p;
     }
 
@@ -317,6 +357,18 @@ public abstract class WizardBase implements Wizard {
             }
             case "cancel": {
                 SwingUtilities.invokeLater(() -> cancelButton.doClick());
+                return;
+            }
+            case "light": {
+                if (darkThemeToggle.isSelected()) {
+                    darkThemeToggle.doClick();
+                }
+                return;
+            }
+            case "dark": {
+                if (!darkThemeToggle.isSelected()) {
+                    darkThemeToggle.doClick();
+                }
                 return;
             }
             case "finish":

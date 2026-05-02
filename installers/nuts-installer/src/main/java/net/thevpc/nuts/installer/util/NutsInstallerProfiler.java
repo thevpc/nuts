@@ -14,32 +14,73 @@ public class NutsInstallerProfiler {
         new Thread() {
             @Override
             public void run() {
+                // IntroductionPanel
+                waitAndSendAction(1, "wait-loading");
                 waitAndSendAction(2, "light");
                 waitAndSendAction(1, "dark");
                 waitAndSendAction(1, "light");
                 waitAndSendAction(1, "next");
-                waitAndSendAction(1, "next");
+
+                // LicensePanel
+                waitAndSendAction(1, "wait-loading");
+                waitAndSendAction(2, "light");
+                waitAndSendAction(1, "dark");
+                waitAndSendAction(1, "light");
                 waitAndSendAction(1, "accept");
                 waitAndSendAction(1, "reject");
                 waitAndSendAction(1, "accept");
                 waitAndSendAction(1, "next");
 
+                // VersionsPanel
                 waitAndSendAction(1, "wait-loading");
+                waitAndSendAction(1, "light");
+                waitAndSendAction(1, "dark");
+                waitAndSendAction(1, "light");
                 waitAndSendAction(1, "lts");
                 waitAndSendAction(1, "standard");
                 waitAndSendAction(1, "lts");
                 waitAndSendAction(1, "standard");
                 waitAndSendAction(1, "next");
+
+                // PackagesPanel
                 waitAndSendAction(1, "wait-loading");
-                for (int i = 0; i < 20; i++) {
+                waitAndSendAction(1, "light");
+                waitAndSendAction(1, "dark");
+                waitAndSendAction(1, "light");
+                for (int i = 0; i < 5; i++) {
                     waitAndSendAction(1, "change","rand");
                 }
                 waitAndSendAction(1, "next");
+
+                // ConfigurePanel
+                waitAndSendAction(1, "light");
+                waitAndSendAction(1, "dark");
+                waitAndSendAction(1, "light");
                 waitAndSendAction(1, "next");
+
+                // JavaPanel
+                waitAndSendAction(1, "light");
+                waitAndSendAction(1, "dark");
+                waitAndSendAction(1, "light");
                 waitAndSendAction(1, "next");
+
+                // JavaPanel
+                waitAndSendAction(1, "light");
+                waitAndSendAction(1, "dark");
+                waitAndSendAction(1, "light");
                 waitAndSendAction(1, "next");
+
+                // ProcessPanel
                 waitAndSendAction(1, "wait-loading");
+                waitAndSendAction(1, "light");
+                waitAndSendAction(1, "dark");
+                waitAndSendAction(1, "light");
                 waitAndSendAction(1, "next");
+
+                // SummaryPanel
+                waitAndSendAction(1, "light");
+                waitAndSendAction(1, "dark");
+                waitAndSendAction(1, "light");
                 waitAndSendAction(1, "finish");
             }
         }.start();

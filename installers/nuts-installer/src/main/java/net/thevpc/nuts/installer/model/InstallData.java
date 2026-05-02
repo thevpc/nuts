@@ -167,6 +167,7 @@ public class InstallData {
         return this;
     }
 
+
     public boolean isOptionZ() {
         return optionZ;
     }

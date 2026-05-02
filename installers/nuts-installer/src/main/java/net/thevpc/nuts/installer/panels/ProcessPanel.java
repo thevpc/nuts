@@ -250,6 +250,11 @@ public class ProcessPanel extends WizardPageBase {
         logLabel.setText(sb.toString());
     }
 
+    @Override
+    public void applyPlaf() {
+        ansiTermPane.setDarkMode(InstallData.of(getInstallerContext()).darkMode);
+    }
+
     private void printlnStdOut(String str) {
         SwingUtilities.invokeLater(() -> ansiTermPane.appendANSI(str));
         SwingUtilities.invokeLater(() -> ansiTermPane.appendANSI("\n"));

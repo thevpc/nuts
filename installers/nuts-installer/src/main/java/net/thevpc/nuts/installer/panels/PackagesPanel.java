@@ -11,6 +11,7 @@ import net.thevpc.nuts.installer.util.UiHelper2;
 import net.thevpc.nuts.installer.util.Utils;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicToggleButtonUI;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -31,11 +32,11 @@ public class PackagesPanel extends WizardPageBase {
     int w = 160;
     java.util.List<ButtonComponent> buttons = new ArrayList<>();
     volatile boolean buttonsLoaded = false;
+    int maxCols=3;
     private static class ButtonComponent {
         JToggleButton button;
         PackageButtonInfo bi;
         String title;
-        JLabel label;
     }
 
     public PackagesPanel() {
@@ -74,13 +75,24 @@ public class PackagesPanel extends WizardPageBase {
     private void updateJep() {
         java.util.List<String> selection = new ArrayList<>();
         boolean companionsSelected = false;
+        int col=0;
+        int row=0;
         for (ButtonComponent a : buttons) {
             PackageButtonInfo button = a.bi;
-            if (a.button.isSelected()) {
-                if (button.app.getId().equals("<companions>")) {
-                    companionsSelected = true;
-                }
-                selection.add(button.name);
+
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.BOTH;
+            c.insets = new Insets(6, 6, 6, 6);
+            c.weightx = 1;
+            c.weighty = 1;
+            c.gridx = col;
+            c.gridy = row;
+            panel.add(a.button, c);
+
+            col++;
+            if (col >= maxCols) {
+                col = 0;
+                row++;
             }
         }
         if (!selection.isEmpty()) {
@@ -213,7 +225,7 @@ public class PackagesPanel extends WizardPageBase {
                     if(a.matches("[0-9]+")){
                         int x=Integer.parseInt(a);
                         ButtonComponent b = buttons.get(x % buttons.size());
-                        b.button.setSelected(b.button.isSelected());
+                        b.button.setSelected(!b.button.isSelected());
                     }
                 });
 
@@ -337,7 +349,7 @@ public class PackagesPanel extends WizardPageBase {
             if (u != null) {
                 for (PackageButtonInfo b : u) {
                     if (b != null) {
-                        JToggleButton a = new JToggleButton();
+                        JToggleButton a = createPackageCard(b);
                         b.imageIcon = gelAppUi(b.icon, b.gui, false);
                         b.selectedImageIcon = gelAppUi(b.icon, b.gui, true);
                         a.putClientProperty("buttonInfo", b);
@@ -358,7 +370,6 @@ public class PackagesPanel extends WizardPageBase {
             removeAllComponents2();
             int row = 0;
             int col = 0;
-            int maxCols = 3;
 //            if(buttons.size()>4){
 //                maxCols = 3;
 //            }
@@ -368,7 +379,7 @@ public class PackagesPanel extends WizardPageBase {
                 a.button.setIcon(button.imageIcon);
                 a.button.setSelectedIcon(button.selectedImageIcon);
                 a.button.setToolTipText(button.desc);
-                a.button.setSelected(button.selected);
+                //a.button.setSelected(button.selected);
                 a.button.addItemListener(buttonInfoItemListener);
 //                a.addMouseListener(buttonInfoMouseListener);
                 a.button.setMinimumSize(new Dimension(20, 20));
@@ -377,24 +388,13 @@ public class PackagesPanel extends WizardPageBase {
 //                c.insets = new Insets(5, 10, 5, 10);
                 c.insets = new Insets(2, 2, 2, 2);
                 c.anchor = GridBagConstraints.CENTER;
-                c.weightx = 0;
+                c.weightx = 1;
                 c.weighty = 1;
                 c.gridx = col;
                 c.gridy = row;
                 panel.add(a.button, c);
                 col++;
-                c.weightx = 1;
-                c.weighty = 1;
-                c.gridx = col;
-                c.gridy = row;
-                a.label = new JLabel(a.title);
-                a.label.setFont(new Font("arial", Font.PLAIN, 10));
-                a.label.setToolTipText(button.desc);
-                panel.add(a.label, c);
-
-
-                col++;
-                if (col >= maxCols * 2) {
+                if (col >= maxCols) {
                     col = 0;
                     row++;
                 }
@@ -480,5 +480,112 @@ public class PackagesPanel extends WizardPageBase {
             this.icon = icon;
             this.selected = selected;
         }
+    }
+
+
+    private JToggleButton createPackageCard(PackageButtonInfo b) {
+        JToggleButton card = new JToggleButton() {
+            @Override
+            public void updateUI() {
+            }
+
+
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(120, 110);
+            }
+        };
+        card.setRolloverEnabled(true);
+        card.setUI(new BasicToggleButtonUI() {
+
+            @Override
+            public void update(Graphics g, JComponent c) {
+                paint(g, c);
+            }
+
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                boolean darkMode = InstallData.of(getInstallerContext()).isDarkMode();
+                JToggleButton btn = (JToggleButton) c;
+                boolean selected = btn.isSelected();
+                boolean hover = btn.getModel().isRollover();
+//
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+                int w = c.getWidth();
+                int h = c.getHeight();
+
+                // background
+                if (selected) {
+                    g2.setColor(darkMode ? new Color(0x1A, 0x4A, 0x80) : new Color(0xA8, 0xCB, 0xF0));
+                } else if (hover) {
+                    g2.setColor(darkMode ? new Color(0x2E, 0x4A, 0x68) : new Color(0xD0, 0xDC, 0xF0));
+                } else {
+                    g2.setColor(darkMode ? new Color(0x55, 0x5A, 0x5D) : new Color(0xE8, 0xE8, 0xE8));
+                }
+                g2.fillRoundRect(0, 0, w, h, 16, 16);
+
+                // icon background pill
+                int iconSize = 48;
+                int iconX = (w - iconSize) / 2;
+                int iconY = 24; // was 16, now lower
+
+                if (selected) {
+                    g2.setColor(new Color(255, 255, 255, 80));
+                } else {
+                    g2.setColor(darkMode ? new Color(0x42, 0x45, 0x47) : new Color(0xD0, 0xD0, 0xD0));
+                }
+                g2.fillRoundRect(iconX, iconY, iconSize, iconSize, 10, 10);
+
+                // icon
+                Icon icon = btn.getIcon();
+                if (icon != null) {
+                    int iw = icon.getIconWidth();
+                    int ih = icon.getIconHeight();
+                    icon.paintIcon(c, g2, iconX + (iconSize - iw) / 2, iconY + (iconSize - ih) / 2);
+                }
+
+                // label
+                g2.setFont(btn.getFont().deriveFont(selected ? Font.BOLD : Font.PLAIN).deriveFont(11f));
+                g2.setColor(selected
+                        ? (darkMode ? new Color(0xC0, 0xD8, 0xF0) : new Color(0x0D, 0x3D, 0x7A))
+                        : (darkMode ? new Color(0xCC, 0xCC, 0xCC) : new Color(0x44, 0x44, 0x44)));
+                FontMetrics fm = g2.getFontMetrics();
+                String name = b.name;
+                // wrap long names
+                if (fm.stringWidth(name) > w - 12) {
+                    name = name.substring(0, name.length() - 3);
+                    while (fm.stringWidth(name + "...") > w - 12 && name.length() > 0) {
+                        name = name.substring(0, name.length() - 1);
+                    }
+                    name = name + "...";
+                }
+                int tx = (w - fm.stringWidth(name)) / 2;
+                int ty = iconY + iconSize + 10 + fm.getAscent();
+                g2.drawString(name, tx, ty);
+
+                // checkmark badge (top-right) when selected
+                if (selected) {
+                    int r = 8; // was 0, fixed
+                    int cx = w - r - 8;
+                    int cy = r + 8;
+                    g2.setColor(darkMode ? new Color(0x1E, 0x6F, 0xB5) : new Color(0x15, 0x65, 0xC0));
+                    g2.fillOval(cx - r, cy - r, r * 2, r * 2);
+                    g2.setColor(Color.WHITE);
+                    g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                    int[] px = {cx - 4, cx - 1, cx + 4};
+                    int[] py = {cy, cy + 3, cy - 4};
+                    g2.drawPolyline(px, py, 3);
+                }
+
+                g2.dispose();
+            }
+        });
+        card.setSelected(b.selected);
+        card.putClientProperty("buttonInfo", b);
+        card.addItemListener(buttonInfoItemListener);
+        return card;
     }
 }

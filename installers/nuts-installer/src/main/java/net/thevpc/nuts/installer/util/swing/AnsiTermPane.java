@@ -45,7 +45,6 @@ public class AnsiTermPane extends JTextPane {
 
     public void setDarkMode(boolean darkMode) {
         ansiColors.setDarkMode(darkMode);
-        ansiColors.cResetBackground = getBackground();
         applyFont();
         setForeground(ansiColors.cResetForeground);
         setBackground(ansiColors.preferredBackground);
@@ -105,7 +104,7 @@ public class AnsiTermPane extends JTextPane {
     }
 
     public void append(int color256, String s) {
-        append(currentStyle.copy().setForeColor(ansiColors.color256(color256)), s);
+        append(currentStyle.copy().setForeColor(ansiColors.color256(color256)).build(), s);
     }
 
     public void append(TextStyle c, String s) {
@@ -259,7 +258,7 @@ public class AnsiTermPane extends JTextPane {
                 return;
             }
         }
-        currentStyle = ansiColors.applyANSIColor(ANSIColor, currentStyle);
+        currentStyle = ansiColors.applyANSIColor(ANSIColor, currentStyle).build();
     }
 
     public void clearScreen() {

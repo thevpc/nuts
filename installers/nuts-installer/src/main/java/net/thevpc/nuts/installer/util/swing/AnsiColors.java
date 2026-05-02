@@ -86,22 +86,58 @@ public class AnsiColors {
     }
 
     public void setDarkMode(boolean darkMode) {
-        cResetForeground = darkMode ? Color.WHITE : Color.BLACK;
         if (darkMode) {
-            D_Blue = new Color(124, 124, 220);
-            B_Blue = new Color(162, 162, 225);
-            B_White = new Color(255, 255, 255);
-            D_Red = new Color(200, 0, 0);
-            D_Magenta = new Color(142, 57, 137);
-            preferredBackground=(new Color(22, 22, 22));
+            // FlatLaf dark background: #3b3e40
+            cResetBackground = new Color(0x3b, 0x3e, 0x40);
+            preferredBackground = new Color(0x3b, 0x3e, 0x40);
+            cResetForeground = new Color(0xe0, 0xe0, 0xe0); // soft white
+
+            // Dark (normal) colors
+            D_Black   = new Color(0x2a, 0x2c, 0x2e);
+            D_Red     = new Color(0xe0, 0x6c, 0x75);
+            D_Green   = new Color(0x98, 0xc3, 0x79);
+            D_Yellow  = new Color(0xe5, 0xc0, 0x7b);
+            D_Blue    = new Color(0x61, 0xaf, 0xef);
+            D_Magenta = new Color(0xc6, 0x78, 0xdd);
+            D_Cyan    = new Color(0x56, 0xb6, 0xc2);
+            D_White   = new Color(0xab, 0xb2, 0xbf);
+
+            // Bright (bold) colors
+            B_Black   = new Color(0x6c, 0x6f, 0x73);
+            B_Red     = new Color(0xf0, 0x71, 0x78);
+            B_Green   = new Color(0xb5, 0xd9, 0x9c);
+            B_Yellow  = new Color(0xff, 0xcb, 0x6b);
+            B_Blue    = new Color(0x82, 0xaa, 0xff);
+            B_Magenta = new Color(0xc7, 0x92, 0xea);
+            B_Cyan    = new Color(0x89, 0xdd, 0xff);
+            B_White   = new Color(0xff, 0xff, 0xff);
         } else {
-            D_Blue = Color.getHSBColor(0.667f, 1.000f, 0.502f);
-            B_Blue = Color.getHSBColor(0.667f, 1.000f, 1.000f);
-            B_White = new Color(0, 0, 0);
-            D_Red = Color.getHSBColor(0.000f, 1.000f, 0.502f);
-            D_Magenta = Color.getHSBColor(0.833f, 1.000f, 0.502f);
-            preferredBackground=(new Color(250, 250, 250));
+            // FlatLaf light background: #f2f2f2
+            cResetBackground = new Color(0xf2, 0xf2, 0xf2);
+            preferredBackground = new Color(0xf2, 0xf2, 0xf2);
+            cResetForeground = new Color(0x2c, 0x2e, 0x31); // dark gray
+
+            // Dark (normal) colors
+            D_Black   = new Color(0x4f, 0x52, 0x59);
+            D_Red     = new Color(0xd1, 0x4a, 0x5c);
+            D_Green   = new Color(0x2e, 0x7d, 0x5e);
+            D_Yellow  = new Color(0xb2, 0x7e, 0x1a);
+            D_Blue    = new Color(0x3b, 0x6e, 0xa5);
+            D_Magenta = new Color(0x8f, 0x5e, 0x8c);
+            D_Cyan    = new Color(0x2c, 0x7b, 0x7f);
+            D_White   = new Color(0xd9, 0xdb, 0xdf);
+
+            // Bright (bold) colors
+            B_Black   = new Color(0x2c, 0x2e, 0x31);
+            B_Red     = new Color(0xe6, 0x50, 0x62);
+            B_Green   = new Color(0x3d, 0x9a, 0x6f);
+            B_Yellow  = new Color(0xdc, 0x9a, 0x2c);
+            B_Blue    = new Color(0x53, 0x8c, 0xc6);
+            B_Magenta = new Color(0xb2, 0x69, 0xa4);
+            B_Cyan    = new Color(0x3c, 0x9b, 0x9f);
+            B_White   = new Color(0xf5, 0xf5, 0xf7);
         }
+
         COLS = new Color[]{
                 D_Black, D_Red, D_Green, D_Yellow, D_Blue, D_Magenta, D_Cyan, D_White,
                 B_Black, B_Red, B_Green, B_Yellow, B_Blue, B_Magenta, B_Cyan, B_White,
@@ -115,7 +151,7 @@ public class AnsiColors {
         return new Color(rr,gg,bb);
     }
     public TextStyle resetStyle() {
-        return new TextStyle().setForeColor(cResetForeground).setBackColor(cResetBackground);
+        return new TextStyle().setForeColor(cResetForeground).setBackColor(cResetBackground).build();
     }
     public TextStyle applyANSIColor(String ANSIColor, TextStyle currentStyle) {
         Pattern p = Pattern.compile("\u001B\\[(?<a>\\d+)(;(?<b>\\d+)(;(?<c>\\d+)(;(?<d>\\d+)(;(?<e>\\d+))?)?)?)?m");
