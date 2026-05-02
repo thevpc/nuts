@@ -38,7 +38,7 @@ public interface NFunction<T, V> extends Function<T, V>, NRedescribable<NFunctio
                     return onError.apply(e);
                 }
             }
-        }, NElement.ofNamedUplet("unsafe", NDescribables.describeResolveOrDestructAsObject(o)));
+        }, NElement.ofNamedUplet("unsafe", NDescribables.describeResolveOrSimplifyAsObject(o)));
     }
 
     default NElement describe() {
