@@ -119,7 +119,7 @@ public interface NRepositoryConfigManager{
      * @param options repository definition
      * @return {@code this} instance
      */
-    NRepository addMirror(NAddRepositoryOptions options);
+    NRepository addMirror(NRepositorySpec options);
 
     /**
      * @param repositoryId repository id pr id

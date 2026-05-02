@@ -41,7 +41,7 @@ public interface NRepositories extends NComponent {
 
     NRepositoryFilters filter();
 
-    NRepository addRepository(NAddRepositoryOptions options);
+    NRepository addRepository(NRepositorySpec options);
 
     /**
      * creates a new repository from the given

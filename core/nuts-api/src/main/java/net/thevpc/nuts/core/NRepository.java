@@ -109,7 +109,7 @@ public interface NRepository {
      */
     Map<String, Object> getUserProperties();
 
-    boolean containsTags(String tag);
+    boolean containsTag(String tag);
 
     Set<String> getTags();
 

@@ -151,7 +151,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     /// ///////////////////////////////
 
-    NRepository addRepository(NAddRepositoryOptions options);
+    NRepository addRepository(NRepositorySpec options);
 
     /**
      * creates a new repository from the given
@@ -422,7 +422,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     boolean isSupportedRepositoryType(String repositoryType);
 
-    List<NAddRepositoryOptions> getDefaultRepositories();
+    List<NRepositorySpec> getDefaultRepositories();
 
     Set<String> getAvailableArchetypes();
 

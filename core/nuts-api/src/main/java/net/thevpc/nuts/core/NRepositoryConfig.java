@@ -29,6 +29,7 @@ import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.security.NNamedCredentialConfig;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.io.Serializable;
 import java.util.*;
@@ -265,13 +266,19 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
 
     @Override
     public String toString() {
-        return "NutsRepositoryConfig{" + ", uuid=" + uuid + ", name=" + name
-//                + ", type=" + type
-                + ", location=" + location + ", storeLocations=" + (storeLocations == null ? "null" : storeLocations.toString()) + ", storeStrategy=" + storeStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors
-                + ", indexEnabled=" + indexEnabled
-                + ", authenticationAgent=" + authenticationAgent
-                + ", tags=" + (tags==null?"[]":Arrays.toString(tags))
-                + '}';
+        return new NToStringBuilder("NutsRepositoryConfig")
+                .add("name",name)
+                .addIfNonBlank("uuid",uuid)
+                .addIfNonBlank("location",location)
+                .addIfNonBlank("storeLocations",storeLocations)
+                .addIfNonBlank("storeStrategy",storeStrategy)
+                .addIfNonBlank("groups",groups)
+                .addIfNonBlank("env",env)
+                .addIfNonBlank("mirrors",mirrors)
+                .addIfNonBlank("indexEnabled",indexEnabled)
+                .addIfNonBlank("authenticationAgent",authenticationAgent)
+                .addIfNonBlank("tags",tags)
+                .toString();
     }
 
 }
