@@ -75,9 +75,9 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
         return NElement.ofObjectBuilder()
                 .name("ScanPath")
                 .addParam(NElement.ofString(name))
-                .set("path", NDescribables.describeResolveOrDestruct(folder))
+                .set("path", NDescribables.describeResolveOrSimplify(folder))
                 .set("maxDepth", maxDepth)
-                .set("filter", NDescribables.describeResolveOrDestruct(filter))
+                .set("filter", NDescribables.describeResolveOrSimplify(filter))
                 .build();
     }
 

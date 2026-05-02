@@ -4,14 +4,10 @@ import java.util.*;
 
 import java.util.regex.Pattern;
 
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NRepositoryFilter;
-import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.core.*;
+import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
-import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositorySelectorList;
-import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NFilterOp;
 
@@ -25,14 +21,14 @@ public class DefaultNRepositorySelectorFilter extends AbstractRepositoryFilter{
         this.exactRepos = new HashSet<>();
         this.wildcardRepos = new HashSet<>();
         NRepositorySelectorList li=new NRepositorySelectorList();
-        NRepositoryDB db = NRepositoryDB.of();
         for (String exactRepo : exactRepos) {
-            li=li.merge(NRepositorySelectorList.of(exactRepo, db).get());
+            li=li.merge(NRepositoryUtils.createRepositorySelectorList(exactRepo).get());
         }
-        NRepositoryLocation[] input = NWorkspace.of().getRepositories().stream()
+        NRepositorySpec[] input = NWorkspace.of().getRepositories().stream()
                 .map(x -> x.config().getLocation().setName(x.getName()))
-                .toArray(NRepositoryLocation[]::new);
-        String[] names = Arrays.stream(li.resolve(input,db)).map(NRepositoryLocation::getName).toArray(String[]::new);
+                .map(x->new NRepositorySpec().setSourceLocation(x))
+                .toArray(NRepositorySpec[]::new);
+        String[] names = Arrays.stream(NRepositoryUtils.resolve(li,input)).map(NRepositorySpec::getName).toArray(String[]::new);
         for (String repo : names) {
             if (!NBlankable.isBlank(repo)) {
                 if(repo.indexOf('*')>0) {

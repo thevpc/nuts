@@ -12,13 +12,13 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
@@ -31,7 +31,9 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetch;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NSecurityManager;
@@ -57,15 +59,14 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
 
     @Override
     public void initializeWorkspace() {
-        NRepositoryLocation[] br = NWorkspaceExt.of().getConfigModel().resolveBootRepositoriesList().resolve(
-                new NRepositoryLocation[]{
-                        NRepositoryLocation.ofName("maven-local"),
-                        NRepositoryLocation.ofName("maven-central"),
-                        NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME),
-                },
-                NRepositoryDB.of()
+        NRepositorySpec[] br = NRepositoryUtils.resolve(NWorkspaceExt.of().getConfigModel().resolveBootRepositoriesList(),
+                new NRepositorySpec[]{
+                        new NRepositorySpec().setSourceLocation(NRepositoryLocation.ofName("maven-local")),
+                        new NRepositorySpec().setSourceLocation(NRepositoryLocation.ofName("maven-central")),
+                        new NRepositorySpec().setSourceLocation(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME)),
+                }
         );
-        for (NRepositoryLocation s : br) {
+        for (NRepositorySpec s : br) {
             NWorkspace.of().addRepository(s.toString());
         }
         NSecurityManager sec = NSecurityManager.of();

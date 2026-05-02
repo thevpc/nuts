@@ -35,7 +35,7 @@ import net.thevpc.nuts.command.NFetchModeNotSupportedException;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -70,7 +70,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     private final NRepositoryMirroringHelper mirroring;
     private boolean lockEnabled = true;
 
-    public NCachedRepository(NAddRepositoryOptions options, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
+    public NCachedRepository(NRepositorySpec options, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
         super(options, parent, speed, supportedMirroring, repositoryType, supportsDeploy);
         cache = new NRepositoryFolderHelper(this, config().getStoreLocation(NStoreType.CACHE).resolve(NConstants.Folders.ID), true,
                 "cache", NElement.ofObjectBuilder().set("repoKind", "cache").build()
@@ -415,8 +415,8 @@ public class NCachedRepository extends AbstractNRepositoryBase {
 
     @Override
     public String getBootConnectionString() {
-        if(options.getConfig()!=null && options.getConfig().getLocation()!=null){
-            return getName()+"="+options.getConfig().getLocation().toString();
+        if(options.getSourceLocation()!=null){
+            return getName()+"="+options.getSourceLocation().toString();
         }
         return null;
     }

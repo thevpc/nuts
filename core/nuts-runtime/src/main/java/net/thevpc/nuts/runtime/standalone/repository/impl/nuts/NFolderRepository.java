@@ -34,7 +34,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NFolderRepositoryBase;
@@ -56,10 +56,21 @@ import java.util.Map;
 public class NFolderRepository extends NFolderRepositoryBase {
     private boolean userPom=false;
 
-    public NFolderRepository(NAddRepositoryOptions options, NRepository parentRepository) {
+    public NFolderRepository(NRepositorySpec options, NRepository parentRepository) {
         super(options, parentRepository, null, true, NConstants.RepoTypes.NUTS, true);
         repoIter = new NRepoIter(this);
         extensions.put("src", "-src.zip");
+//        if (
+//                "system".equals(options.getName())
+//                        && "system".equals(options.config().getGlobalName())
+//                        && (
+//                        nr.config().getLocationPath() == null
+//                                || !nr.config().getLocationPath().isDirectory()
+//                )
+//        ) {
+//            //runtime disable system repo if It's not accessible.
+//            options.setEnabled(false);
+//        }
     }
 
     @Override

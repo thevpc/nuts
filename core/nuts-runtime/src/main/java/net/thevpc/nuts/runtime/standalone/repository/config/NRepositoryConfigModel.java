@@ -28,11 +28,10 @@ import net.thevpc.nuts.core.NSpeedQualifier;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfig;
 import net.thevpc.nuts.core.NRepositoryRef;
-import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.NLiteral;
@@ -56,7 +55,7 @@ public interface NRepositoryConfigModel {
 
     void addMirror(NRepository repo);
 
-    NRepository addMirror(NAddRepositoryOptions options);
+    NRepository addMirror(NRepositorySpec options);
 
     NRepository findMirrorById(String repositoryNameOrId);
 

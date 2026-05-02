@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.repository.toolbox;
+package net.thevpc.nuts.runtime.standalone.repository.impl.toolbox;
 
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.artifact.NDescriptor;

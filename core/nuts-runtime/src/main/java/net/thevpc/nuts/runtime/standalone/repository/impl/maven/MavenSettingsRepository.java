@@ -30,15 +30,15 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NRepositoryConfig;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryList;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -48,7 +48,7 @@ public class MavenSettingsRepository extends NRepositoryList {
 
     private NMavenSettings settings;
 
-    public MavenSettingsRepository(NAddRepositoryOptions options, NRepository parentRepository) {
+    public MavenSettingsRepository(NRepositorySpec options, NRepository parentRepository) {
         super(options, new NRepository[0], parentRepository, null, false, NConstants.RepoTypes.MAVEN, false);
         NLog LOG = NLog.of(MavenSettingsRepository.class);
         this.settings = new NMavenSettingsLoader(LOG).loadSettingsRepos();
@@ -62,11 +62,11 @@ public class MavenSettingsRepository extends NRepositoryList {
         this.repoItems = base.toArray(base.toArray(new NRepository[0]));
     }
 
-    private MavenFolderRepository createChild(NAddRepositoryOptions options0, String type, String id, String url) {
+    private MavenFolderRepository createChild(NRepositorySpec options0, String type, String id, String url) {
         NPath p = NPath.of(url);
         String pr = NStringUtils.trim(p.getProtocol());
         MavenFolderRepository mavenChild = null;
-        NAddRepositoryOptions options = new NAddRepositoryOptions();
+        NRepositorySpec options = new NRepositorySpec();
         options.setName(id);
         options.setLocation(
                 NPath.of(id).toAbsolute(NWorkspaceExt.of().getConfigModel().getRepositoriesRoot()).toString()
@@ -74,11 +74,8 @@ public class MavenSettingsRepository extends NRepositoryList {
         options.setEnabled(true);
         options.setTemporary(true);
         options.setFailSafe(false);
-        NRepositoryConfig config = new NRepositoryConfig();
-        options.setConfig(config);
-        config.setName(id);
-        config.setEnv(options0.getConfig().getEnv());
-        config.setLocation(new NRepositoryLocation(id, "maven", url));
+        options.setEnv(options0.getEnv()==null?null:new HashMap<>(options0.getEnv()));
+        options.setSourceLocation(new NRepositoryLocation(id, "maven", url));
         switch (pr) {
             //non traversable!
             case "http":
@@ -102,7 +99,7 @@ public class MavenSettingsRepository extends NRepositoryList {
                             repositoryLayout = o.getStringValue("repositoryLayout").orNull();
                         }
                         if(!NBlankable.isBlank(repositoryLayout)) {
-                            config.setLocation(new NRepositoryLocation(id, "maven", NStringUtils.trim(repositoryLayout)+"+"+url));
+                            options.setSourceLocation(new NRepositoryLocation(id, "maven", NStringUtils.trim(repositoryLayout)+"+"+url));
                         }
 //                        if(!NBlankable.isBlank(repositoryName)) {
 //                            config.setName(repositoryName);

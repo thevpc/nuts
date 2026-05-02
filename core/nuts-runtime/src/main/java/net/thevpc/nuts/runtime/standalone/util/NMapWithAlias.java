@@ -7,6 +7,12 @@ public class NMapWithAlias<K, V> {
     private final Map<K, K> aliasToBase = new LinkedHashMap<>();
     private final Map<K, Set<K>> baseToAliases = new LinkedHashMap<>();
 
+    public void clear(){
+        base.clear();
+        aliasToBase.clear();
+        baseToAliases.clear();
+    }
+
     public NMapWithAlias<K, V> alias(K key, K value) {
         aliasToBase.put(key, value);
         baseToAliases.computeIfAbsent(key, k -> new LinkedHashSet<>()).add(value);

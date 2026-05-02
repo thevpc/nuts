@@ -11,16 +11,16 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NRepositoryConfig;
+import net.thevpc.nuts.runtime.standalone.repository.DefaultNRepositoryDB;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NMutableTableModel;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.NSettingsUserSubCommand;
-import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArt;
@@ -120,7 +120,12 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 String location = cmdLine.nextNonOption(NArgName.of("folder")).flatMap(NArg::asString).get();
 
                 NRepository editedRepo = workspace.getRepository(repoId).get();
-                NRepository repo = editedRepo.config().addMirror(new NAddRepositoryOptions().setName(repositoryName).setLocation(repositoryName).setConfig(new NRepositoryConfig().setName(repositoryName).setLocation(NRepositoryLocation.of(location))));
+                NRepository repo = editedRepo.config().addMirror(
+                        new NRepositorySpec()
+                                .setName(repositoryName)
+                        .setLocation(repositoryName)
+                                .setSourceLocation(NRepositoryLocation.of(location))
+                );
                 workspace.saveConfig();
 
             } else if (cmdLine.next("remove repo", "rr").isPresent()) {
@@ -329,8 +334,9 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                             d.location = n.getStringValue().get();
                         } else {
                             d.location = cmdLine.next().flatMap(NArg::asString).get();
-                            NAddRepositoryOptions ro = NRepositoryDB.of().getRepositoryOptionsByName(d.location).orNull();
-                            String loc2 = ro == null ? null : ro.getConfig().getLocation().getFullLocation();
+                            DefaultNRepositoryDB db = NWorkspaceExt.of().getRepositoryModel().getDB();
+                            NRepositorySpec ro = db.getDefinitionByName(d.location).orNull();
+                            String loc2 = ro == null ? null : ro.getSourceLocation().getFullLocation();
                             if (loc2 != null) {
                                 d.repositoryName = d.location;
                                 d.location = loc2;
@@ -349,7 +355,11 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
 
         if (cmdLine.isExecMode()) {
             NRepository repo = null;
-            NAddRepositoryOptions o = new NAddRepositoryOptions().setName(d.repositoryName).setLocation(d.repositoryName).setConfig(d.location == null ? null : new NRepositoryConfig().setName(d.repositoryName).setLocation(NRepositoryLocation.of(d.location)).setEnv(d.env));
+            NRepositorySpec o = new NRepositorySpec()
+                    .setName(d.repositoryName)
+                    .setLocation(d.repositoryName)
+                    .setSourceLocation(d.location == null ? null : NRepositoryLocation.of(d.location))
+                    .setEnv(d.env);
             if (d.parent == null) {
                 repo = NWorkspace.of().addRepository(o);
             } else {

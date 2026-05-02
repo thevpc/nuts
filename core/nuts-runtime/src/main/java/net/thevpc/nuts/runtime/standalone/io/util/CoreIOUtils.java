@@ -28,9 +28,7 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.platform.NStoreScope;
-import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NMsg;
@@ -169,12 +167,9 @@ public class CoreIOUtils {
         }
     }
 
-    public static String resolveRepositoryPath(NAddRepositoryOptions options, Path rootFolder) {
+    public static String resolveRepositoryPath(NRepositorySpec options, Path rootFolder) {
         String loc = options.getLocation();
         String goodName = options.getName();
-        if (NBlankable.isBlank(goodName)) {
-            goodName = options.getConfig().getName();
-        }
         if (NBlankable.isBlank(goodName)) {
             goodName = options.getName();
         }

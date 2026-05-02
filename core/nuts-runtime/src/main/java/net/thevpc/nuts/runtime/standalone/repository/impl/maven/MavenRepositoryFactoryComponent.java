@@ -29,47 +29,118 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfig;
-import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by vpc on 1/15/17.
  */
 @NComponentScope(NScopeType.WORKSPACE)
-public class MavenRepositoryFactoryComponent implements NRepositoryFactoryComponent {
+public class MavenRepositoryFactoryComponent implements NRepositoryFactoryComponent, NRepositorySpecDefaultResolverComponent,
+        NRepositorySpecTemplateResolverComponent {
+    private final List<NRepositorySpec> templates = new ArrayList<>();
 
     public MavenRepositoryFactoryComponent() {
+        templates.add(new NRepositorySpec().setName("maven")
+                .setFailSafe(false)
+                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
+                .setSourceLocation(NRepositoryLocation.of("maven@maven"))
+                .setEnv(NMaps.of(
+                        "maven.solrsearch.url", "https://search.maven.org/solrsearch/select",
+                        "maven.solrsearch.enable", "true"
+                ))
+                .setAliases("mvn"));
+        templates.add(new NRepositorySpec().setName("maven-central")
+                .setFailSafe(false)
+                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
+                .setSourceLocation(NRepositoryLocation.of("maven@htmlfs+https://repo.maven.apache.org/maven2"))
+                .setEnv(NMaps.of(
+                                "maven.solrsearch.url", "https://search.maven.org/solrsearch/select",
+                                "maven.solrsearch.enable", "true"
+                        )
+                ).setAliases("central"));
+        templates.add(new NRepositorySpec().setName("jcenter")
+                .setFailSafe(false)
+                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
+                .setSourceLocation(NRepositoryLocation.of("maven@https://jcenter.bintray.com"))
+        );
+        templates.add(new NRepositorySpec().setName("jboss")
+                .setFailSafe(false)
+                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
+                .setSourceLocation(NRepositoryLocation.of("maven@https://repository.jboss.org/nexus/content/repositories/releases"))
+        );
+        templates.add(new NRepositorySpec().setName("clojars")
+                .setFailSafe(false)
+                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
+                .setSourceLocation(NRepositoryLocation.of("maven@https://repo.clojars.org"))
+        );
+        templates.add(new NRepositorySpec().setName("atlassian")
+                .setFailSafe(false)
+                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
+                .setSourceLocation(NRepositoryLocation.of("maven@htmlfs+https://packages.atlassian.com/maven/public"))
+        );
+        templates.add(new NRepositorySpec().setName("atlassian-atlassian")
+                .setFailSafe(false)
+                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
+                .setSourceLocation(NRepositoryLocation.of("maven@https://packages.atlassian.com/maven/public-snapshot"))
+        );
+        templates.add(new NRepositorySpec().setName("oracle")
+                .setFailSafe(false)
+                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
+                .setSourceLocation(NRepositoryLocation.of("maven@https://maven.oracle.com"))
+        );
+        templates.add(new NRepositorySpec().setName("google")
+                .setFailSafe(false)
+                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
+                .setSourceLocation(NRepositoryLocation.of("maven@https://maven.google.com"))
+        );
+        templates.add(new NRepositorySpec().setName("spring")
+                .setFailSafe(false)
+                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
+                .setSourceLocation(NRepositoryLocation.of("maven@https://repo.spring.io/release"))
+                .setAliases("spring-framework"));
+        templates.add(new NRepositorySpec().setName("maven-local")
+                .setFailSafe(false).setOrder(NRepositorySpec.ORDER_USER_LOCAL)
+                .setSourceLocation(NRepositoryLocation.of("maven@"
+                                + NPath.ofUserHome().resolve(".m2/repository").toString()
+                        )
+                )
+                .setAliases(".m2", "m2"));
     }
 
     @Override
-    public List<NAddRepositoryOptions> getDefaultRepositories() {
-        return Arrays.asList(
-                NRepositorySelectorHelper.createRepositoryOptions(
-                        NRepositoryLocation.of("maven", NRepositoryDB.of()).get(),
-                        true)
+    public List<NRepositorySpec> getDefaultRepositoryDefinitions() {
+        return Collections.singletonList(
+                new NRepositorySpec().setName("maven")
         );
     }
 
     @Override
-    public NRepository create(NAddRepositoryOptions options, NRepository parentRepository) {
+    public List<NRepositorySpec> getTemplateRepositoryDefinitions() {
+        return Collections.unmodifiableList(templates);
+    }
+
+    @Override
+    public NRepository createRepository(NRepositoryFactoryContext context) {
+        NRepositorySpec options = context.spec();
+        NRepository parentRepository = context.parentRepository();
+        String type = context.repositoryType();
         if (MavenUtils.isMavenSettingsRepository(options)) {
             return new MavenSettingsRepository(options, parentRepository);
         }
-        final NRepositoryConfig config = options.getConfig();
-        String type = NRepositoryUtils.getRepoType(config);
         if (NBlankable.isBlank(type)) {
             return null;
         }
-        NPath p = NPath.of(config.getLocation().getPath());
+        NPath p = NPath.of(options.getSourceLocation().getPath());
         String pr = NStringUtils.trim(p.getProtocol());
         switch (pr) {
             //non traversable!
@@ -94,7 +165,7 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
                         repositoryLayout = o.getStringValue("repositoryLayout").orNull();
                     }
                     if (!NBlankable.isBlank(repositoryLayout)) {
-                        config.setLocation(config.getLocation().setPath(NStringUtils.trim(repositoryLayout) + "+" + config.getLocation().getPath()));
+                        options.setSourceLocation(options.getSourceLocation().setPath(NStringUtils.trim(repositoryLayout) + "+" + options.getSourceLocation().getPath()));
                     }
                     return new MavenFolderRepository(options, parentRepository);
                 } else {
@@ -107,20 +178,19 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
 
     @NScore
     public static int getScore(NScorableContext criteria) {
-        if (criteria == null) {
-            return NScorable.UNSUPPORTED_SCORE;
-        }
-        NRepositoryConfig r = criteria.getCriteria(NRepositoryConfig.class);
-        if (r != null) {
-            String type = NRepositoryUtils.getRepoType(r);
-            if (NBlankable.isBlank(type)) {
-                return NScorable.UNSUPPORTED_SCORE;
-            }
-            if (NConstants.RepoTypes.MAVEN.equals(type)) {
-                return NScorable.DEFAULT_SCORE + 10;
-            }
-            if (NBlankable.isBlank(type)) {
-                return NScorable.DEFAULT_SCORE + 5;
+        if (criteria != null) {
+            NRepositoryFactoryContext context = criteria.getCriteria(NRepositoryFactoryContext.class);
+            if (context != null) {
+                String type = context.repositoryType();
+                if (NBlankable.isBlank(type)) {
+                    return NScorable.UNSUPPORTED_SCORE;
+                }
+                if (NConstants.RepoTypes.MAVEN.equals(type)) {
+                    return NScorable.DEFAULT_SCORE + 10;
+                }
+                if (NBlankable.isBlank(type)) {
+                    return NScorable.DEFAULT_SCORE + 5;
+                }
             }
         }
         return NScorable.UNSUPPORTED_SCORE;

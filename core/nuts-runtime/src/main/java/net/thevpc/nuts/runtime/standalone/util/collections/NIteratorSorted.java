@@ -25,11 +25,11 @@ class NIteratorSorted<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NDescribables.describeResolveOrDestructAsObject(base)
+        return NDescribables.describeResolveOrSimplifyAsObject(base)
                 .builder()
                 .set("sort",
                         NElement.ofObjectBuilder()
-                                .set("comparator", NDescribables.describeResolveOrDestruct(c))
+                                .set("comparator", NDescribables.describeResolveOrSimplify(c))
                                 .set("distinct", removeDuplicates)
                                 .build()
                         )

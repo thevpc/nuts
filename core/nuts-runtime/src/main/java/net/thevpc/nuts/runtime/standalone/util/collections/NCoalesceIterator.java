@@ -29,7 +29,7 @@ public class NCoalesceIterator<T> extends NIteratorBase<T> {
                 .addAll(
                         children
                                 .stream().map(
-                                        x -> NDescribables.describeResolveOrDestruct(x)
+                                        x -> NDescribables.describeResolveOrSimplify(x)
                                 ).toArray(NElement[]::new)
                 )
                 .build();

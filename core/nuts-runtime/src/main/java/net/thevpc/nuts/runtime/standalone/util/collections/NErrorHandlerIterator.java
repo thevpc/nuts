@@ -31,7 +31,7 @@ public class NErrorHandlerIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NDescribables.describeResolveOrDestructAsObject(base)
+        return NDescribables.describeResolveOrSimplifyAsObject(base)
                 .builder()
                 .set("onError",type.toString().toLowerCase())
                 .build();

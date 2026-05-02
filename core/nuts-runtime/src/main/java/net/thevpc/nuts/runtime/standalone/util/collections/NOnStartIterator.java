@@ -20,7 +20,7 @@ class NOnStartIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe() {
-        return NDescribables.describeResolveOrDestructAsObject(base)
+        return NDescribables.describeResolveOrSimplifyAsObject(base)
                 .builder()
                 .set("onStart", NDescribables.describeResolveOrToString(r))
                 .build()

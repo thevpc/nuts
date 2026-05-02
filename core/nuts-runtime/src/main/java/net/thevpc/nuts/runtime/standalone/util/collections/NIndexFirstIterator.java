@@ -35,8 +35,8 @@ public class NIndexFirstIterator<T> extends NIteratorBase<T> {
         return NElement
                 .ofObjectBuilder()
                 .name("IndexFirst")
-                .set("index", NDescribables.describeResolveOrDestruct(index))
-                .set("nonIndex", NDescribables.describeResolveOrDestruct(other))
+                .set("index", NDescribables.describeResolveOrSimplify(index))
+                .set("nonIndex", NDescribables.describeResolveOrSimplify(other))
                 .build()
                 ;
     }

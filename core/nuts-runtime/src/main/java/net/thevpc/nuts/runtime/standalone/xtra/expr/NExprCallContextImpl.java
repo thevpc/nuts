@@ -50,10 +50,10 @@ public class NExprCallContextImpl implements NExprCallContext {
 
     @Override
     public NOptional<NExprNodeValue> arg(int index) {
-        if (index < 0 || index >= args.size()) {
+        if (index >= 0 && index < args.size()) {
             return NOptional.ofNullable(args.get(index));
         }
-        return NOptional.ofNamedEmpty(NMsg.ofC("argument index out of range %d", index));
+        return NOptional.ofEmpty(NMsg.ofC("argument index out of range %d", index));
     }
 
     @Override

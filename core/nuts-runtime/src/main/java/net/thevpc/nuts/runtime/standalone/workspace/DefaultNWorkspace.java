@@ -30,6 +30,7 @@ import net.thevpc.nuts.app.NApplicationHandleMode;
 import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
+import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.security.NUserSpec;
@@ -40,7 +41,7 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.platform.*;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.text.NDescriptorWriter;
@@ -450,8 +451,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         // load default NRepositoryModel instances
         for (NRepositoryModel m : wsModel.extensionModel.createAll(NRepositoryModel.class)) {
             NWorkspace.of().addRepository(
-                    new NAddRepositoryOptions()
-                            .setRepositoryModel(m)
+                    new NRepositorySpec()
+                            .setSourceModel(m)
                             .setTemporary(true)
 
             );
@@ -493,8 +494,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             wsModel.configModel.setBootRuntimeId(cfg.getRuntimeId(),
                     effectiveBootOptions.getRuntimeBootDescriptor().isEmpty() ? "" :
                             NBootHelper.toDependencyList(effectiveBootOptions.getRuntimeBootDescriptor().get().getDependencies()).stream()
-                                    .map(NDependency::toString)
-                                    .collect(Collectors.joining(";"))
+                            .map(NDependency::toString)
+                            .collect(Collectors.joining(";"))
             );
             wsModel.configModel.setBootRepositories(cfg.getBootRepositories());
             try {
@@ -513,23 +514,39 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
         List<String> transientRepositoriesSet =
                 NCollections.nonNullList(effectiveBootOptions.getRepositories().orElseGet(Collections::emptyList));
-        NRepositoryDB repoDB = NRepositoryDB.of();
-        NRepositorySelectorList expected = NRepositorySelectorList.of(transientRepositoriesSet, repoDB).get();
-        for (NRepositoryLocation loc : expected.resolve(null, repoDB)) {
-            NAddRepositoryOptions d = NRepositorySelectorHelper.createRepositoryOptions(loc, false);
+        NRepositorySelectorList expected = NRepositoryUtils.createRepositorySelectorList(transientRepositoriesSet).get();
+        for (NRepositorySpec d : NRepositoryUtils.resolve(expected,null)) {
             String n = d.getName();
             String ruuid = (NBlankable.isBlank(n) ? "temporary" : n) + "_" + UUID.randomUUID().toString().replace("-", "");
             d.setName(ruuid);
             d.setTemporary(true);
             d.setEnabled(true);
             d.setFailSafe(false);
-            if (d.getConfig() != null) {
-                d.getConfig().setName(NBlankable.isBlank(n) ? ruuid : n);
-                d.getConfig().setStoreStrategy(NStoreStrategy.STANDALONE);
-            }
+            d.setStoreStrategy(NStoreStrategy.STANDALONE);
             addRepository(d);
         }
+        loadRuntimeRepositories(expected);
     }
+
+    public void loadRuntimeRepositories(NRepositorySelectorList expected) {
+        if (expected == null) {
+            List<String> transientRepositoriesSet =
+                    NCollections.nonNullList(getBootOptions().getRepositories().orElseGet(Collections::emptyList));
+            expected = NRepositoryUtils.createRepositorySelectorList(transientRepositoriesSet).get();
+        }
+        for (NRepositorySpec liveRepository : getConfigModel().getRuntimeRepositoryDefinitions()) {
+            NOptional<NRepository> n = findRepositoryByName(liveRepository.getName());
+            if (!n.isPresent()) {
+                if(expected.acceptExisting(liveRepository)){
+                    liveRepository.setTemporary(true);
+                    liveRepository.setStoreStrategy(NStoreStrategy.STANDALONE);
+                    addRepository(liveRepository);
+                }
+            }
+        }
+    }
+
+
 
     private void _createWorkspaceFirstBoot(InitWorkspaceData data) {
         NBootOptions effectiveBootOptions = data.effectiveBootOptions;
@@ -559,8 +576,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         rconfig.setDependencies(
                 effectiveBootOptions.getRuntimeBootDescriptor().isEmpty() ? "" :
                         NBootHelper.toDependencyList(effectiveBootOptions.getRuntimeBootDescriptor().get().getDependencies()).stream()
-                                .map(NDependency::toString)
-                                .collect(Collectors.joining(";"))
+                        .map(NDependency::toString)
+                        .collect(Collectors.joining(";"))
         );
         rconfig.setId(this.wsModel.askedRuntimeId);
 
@@ -1073,7 +1090,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
         archetypeInstance.initializeWorkspace();
         //now that all repos are created we need to update boot repositories
-
+        loadRuntimeRepositories(null);
         if (!isReadOnly()) {
             saveConfig();
         }
@@ -1516,11 +1533,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 pr.put("project.id", def.getId().getShortId().toString());
                 pr.put("project.name", def.getId().getShortId().toString());
                 pr.put("project.version", def.getId().getVersion().toString());
-                NRepositoryDB repoDB = NRepositoryDB.of();
                 pr.put("repositories", "~/.m2/repository"
-                        + ";" + NRepositorySelectorHelper.createRepositoryOptions(NRepositoryLocation.of("vpc-public-maven", repoDB).get(), true).getConfig().getLocation()
-                        + ";" + NRepositorySelectorHelper.createRepositoryOptions(NRepositoryLocation.of("maven-central", repoDB).get(), true).getConfig().getLocation()
-                        + ";" + NRepositorySelectorHelper.createRepositoryOptions(NRepositoryLocation.of("nuts-public", repoDB).get(), true).getConfig().getLocation()
+                        + ";" + NRepositorySelectorHelper.createRepositoryOptions(NRepositoryUtils.createRepositoryLocation("vpc-public-maven").get(), true).getSourceLocation()
+                        + ";" + NRepositorySelectorHelper.createRepositoryOptions(NRepositoryUtils.createRepositoryLocation("maven-central").get(), true).getSourceLocation()
+                        + ";" + NRepositorySelectorHelper.createRepositoryOptions(NRepositoryUtils.createRepositoryLocation("nuts-public").get(), true).getSourceLocation()
                 );
                 pr.put("project.dependencies.compile",
                         String.join(";",
@@ -1721,7 +1737,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     @Override
-    public NRepository addRepository(NAddRepositoryOptions options) {
+    public NRepository addRepository(NRepositorySpec options) {
         return getRepositoryModel().addRepository(options);
     }
 
@@ -1906,7 +1922,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             paths.addAll(Arrays.asList("C:\\Windows\\system32", "C:\\Windows"));
                         }
                         if (execExtensions.isEmpty()) {
-                            execExtensions.addAll(Arrays.asList(".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC"));
+                            execExtensions.addAll(Collections.singletonList(".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC"));
                         }
                         for (String z : paths) {
                             NPath t = NPath.of(z);
@@ -2069,8 +2085,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     @Override
-    public List<NAddRepositoryOptions> getDefaultRepositories() {
-        return getConfigModel().getDefaultRepositories();
+    public List<NRepositorySpec> getDefaultRepositories() {
+        return getConfigModel().getDefaultRepositoryDefinitions();
     }
 
     @Override
@@ -2274,7 +2290,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public void runApplication(NApplicationHandleMode handleMode) {
-        NWorkspaceHelper.runApplication(this,handleMode);
+        NWorkspaceHelper.runApplication(this, handleMode);
     }
 
     @Override

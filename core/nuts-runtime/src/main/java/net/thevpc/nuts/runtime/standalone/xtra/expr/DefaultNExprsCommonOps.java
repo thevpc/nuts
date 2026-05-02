@@ -377,7 +377,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareAnd() {
-        declare2(NExprCommonOp.XOR, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.AND, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Object>() {
                     @Override
                     public Object apply(Object a, Object b) {
@@ -403,7 +403,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareOr() {
-        declare2(NExprCommonOp.XOR, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.OR, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Object>() {
                     @Override
                     public Object apply(Object a, Object b) {
@@ -476,7 +476,7 @@ public class DefaultNExprsCommonOps {
         NAssert.requireNamedTrue(sig.size() == 2, "sig size");
         if (sig.getType(0) == null || sig.getType(1) == null) {
             List<Object> acceptable = commonOps.entrySet().stream().filter(x -> x.getKey().getType() == type && x.getKey().getOp() == op)
-                    .flatMap(x -> x.getValue().toMap().entrySet().stream().filter(y -> y.getKey().matches(sig)))
+                    .flatMap(x -> x.getValue().toMap().entrySet().stream().filter(y -> y.getKey().matches(sig)).map(y->y.getValue()))
                     .collect(Collectors.toList());
             if (acceptable.size() == 1) {
                 return NOptional.of((NFunction2) acceptable.get(0));

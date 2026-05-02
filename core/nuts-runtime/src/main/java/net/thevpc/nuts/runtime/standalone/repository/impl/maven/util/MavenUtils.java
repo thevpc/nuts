@@ -36,7 +36,7 @@ import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.platform.NArchFamily;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NShellFamily;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
@@ -707,21 +707,16 @@ public class MavenUtils {
         return null;
     }
 
-    public static boolean isMavenSettingsRepository(NAddRepositoryOptions options){
+    public static boolean isMavenSettingsRepository(NRepositorySpec options){
         if(!"maven".equals(options.getName())){
             return false;
         }
-        if(options.getRepositoryModel()!=null){
+        if(options.getSourceModel()!=null){
             return false;
         }
-        if(options.getConfig()!=null){
-            if(!NBlankable.isBlank(options.getConfig().getName())){
-                if(!"maven".equals(options.getConfig().getName())) {
-                    return false;
-                }
-            }
-            if(!NBlankable.isBlank(options.getConfig().getLocation())){
-                String n = options.getConfig().getLocation().toString();
+        if(!NBlankable.isBlank(options.getSourceLocation())){
+            if(!NBlankable.isBlank(options.getSourceLocation())){
+                String n = options.getSourceLocation().toString();
                 if(!NBlankable.isBlank(n)){
                     if(!"maven".equals(n) && !"maven@maven".equals(n)){
                         return false;

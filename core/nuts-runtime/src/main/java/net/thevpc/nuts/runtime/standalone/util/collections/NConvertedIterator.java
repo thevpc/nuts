@@ -52,8 +52,8 @@ public class NConvertedIterator<F, T> extends NIteratorBase<T> {
     public NElement describe() {
         return NElement.ofObjectBuilder()
                 .name("Map")
-                .set("mapper", NDescribables.describeResolveOrDestruct(converter))
-                .set("base", NDescribables.describeResolveOrDestruct(base))
+                .set("mapper", NDescribables.describeResolveOrSimplify(converter))
+                .set("base", NDescribables.describeResolveOrSimplify(base))
                 .build();
     }
 

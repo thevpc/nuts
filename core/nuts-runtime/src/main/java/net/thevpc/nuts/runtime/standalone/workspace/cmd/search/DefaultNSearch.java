@@ -138,7 +138,7 @@ public class DefaultNSearch extends AbstractNSearch {
                                                                     .set("description", "searchVersions")
                                                                     .set("repository", repoAndMode.getRepository().getName())
                                                                     .set("fetchMode", repoAndMode.getFetchMode().id())
-                                                                    .set("filter", NDescribables.describeResolveOrDestruct(filter))
+                                                                    .set("filter", NDescribables.describeResolveOrSimplify(filter))
                                                                     .build()
                                                     ).safeIgnore().iterator();
                                             z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
@@ -156,7 +156,7 @@ public class DefaultNSearch extends AbstractNSearch {
                                                                     .set("description", "search")
                                                                     .set("repository", repoAndMode.getRepository().getName())
                                                                     .set("fetchMode", repoAndMode.getFetchMode().id())
-                                                                    .set("filter", NDescribables.describeResolveOrDestruct(restrictedFilter))
+                                                                    .set("filter", NDescribables.describeResolveOrSimplify(restrictedFilter))
                                                                     .build()
                                                     ).safeIgnore().iterator();
                                             z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
@@ -196,7 +196,7 @@ public class DefaultNSearch extends AbstractNSearch {
                                                 .set("description", "searchRepository")
                                                 .set("repository", repoAndMode.getRepository().getName())
                                                 .set("fetchMode", repoAndMode.getFetchMode().id())
-                                                .set("filter", NDescribables.describeResolveOrDestruct(filter))
+                                                .set("filter", NDescribables.describeResolveOrSimplify(filter))
                                                 .build())
                                 )
                                 .safeIgnore()
@@ -263,7 +263,7 @@ public class DefaultNSearch extends AbstractNSearch {
                             }
                         }
                         return visited.values().iterator();
-                    }, () -> NDescribables.describeResolveOrDestructAsObject(baseIterator)
+                    }, () -> NDescribables.describeResolveOrSimplifyAsObject(baseIterator)
                             .builder()
                             .set("latest", true)
                             .set("distinct", true)
@@ -284,7 +284,7 @@ public class DefaultNSearch extends AbstractNSearch {
                                     }
                                 }
                                 return NIteratorBuilder.ofFlatMap(NIterator.of(visited.values().iterator()).withDescription(NDescribables.ofDesc("visited"))).build();
-                            }, () -> NDescribables.describeResolveOrDestructAsObject(baseIterator)
+                            }, () -> NDescribables.describeResolveOrSimplifyAsObject(baseIterator)
                                     .builder()
                                     .set("latest", true)
                                     .set("duplicates", true)

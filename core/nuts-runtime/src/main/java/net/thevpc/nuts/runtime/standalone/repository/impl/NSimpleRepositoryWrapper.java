@@ -5,7 +5,7 @@ import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
@@ -15,7 +15,7 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
     private NRepositoryModel base;
     private int mode;
 
-    public NSimpleRepositoryWrapper(NAddRepositoryOptions options, NRepository parent, NRepositoryModel base) {
+    public NSimpleRepositoryWrapper(NRepositorySpec options, NRepository parent, NRepositoryModel base) {
         super(options, parent,
                 base.getSpeed(),
                 (base.getMode() & NRepositoryModel.MIRRORING) != 0,

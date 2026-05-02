@@ -30,7 +30,9 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetch;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.security.NUserSpec;
@@ -55,11 +57,12 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
     @Override
     public void initializeWorkspace() {
-//        defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
-        NRepositoryLocation[] br = NWorkspaceExt.of().getConfigModel().resolveBootRepositoriesList().resolve(
-                new NRepositoryLocation[0], NRepositoryDB.of());
+        NRepositorySpec[] br =
+                NRepositoryUtils.resolve(
+                        NWorkspaceExt.of().getConfigModel().resolveBootRepositoriesList(),
+                        new NRepositorySpec[0]);
         NWorkspace workspace = NWorkspace.of();
-        for (NRepositoryLocation s : br) {
+        for (NRepositorySpec s : br) {
             workspace.addRepository(s.toString());
         }
         //simple rights for minimal utilization
@@ -68,18 +71,11 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
     @Override
     public void startWorkspace() {
-//        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
-//        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
         NWorkspace workspace = NWorkspace.of();
         boolean initializeScripts = workspace.getBootOptions().getInitScripts().onEmpty(true).get();
         boolean initializeLaunchers = workspace.getBootOptions().getInitLaunchers().onEmpty(true).get();
         Boolean installCompanions = workspace.getBootOptions().getInstallCompanions().orElse(false);
 
-//        if (initializeJava) {
-//            NWorkspaceUtils.of().installAllJVM();
-//        } else {
-//            NWorkspaceUtils.of().installCurrentJVM();
-//        }
         if (initializeScripts || initializeLaunchers || installCompanions) {
             NId api = NFetch.of().setId(workspace.getApiId())
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())

@@ -35,11 +35,10 @@ import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.command.NFetchModeNotSupportedException;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NFolderRepositoryBase;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.solrsearch.MavenSolrSearchCommand;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MvnClient;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
@@ -65,7 +64,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     private MvnClient wrapper;
     private boolean disableMe;
 
-    public MavenFolderRepository(NAddRepositoryOptions options, NRepository parentRepository) {
+    public MavenFolderRepository(NRepositorySpec options, NRepository parentRepository) {
         super(options, parentRepository,null,false, NConstants.RepoTypes.MAVEN,false);
         repoIter = new MavenRepoIter(this);
         if("maven-local".equals(options.getName())) {

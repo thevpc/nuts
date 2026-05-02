@@ -48,16 +48,15 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     private final NWorkspace workspace;
     private final NRepositoryRef repositoryRef;
 
-    public DefaultNRepositoryConfigModel(NRepository repository, NAddRepositoryOptions options, NWorkspace workspace,
+    public DefaultNRepositoryConfigModel(NRepository repository, NRepositorySpec options, NWorkspace workspace,
                                          NSpeedQualifier speed,
                                          boolean supportedMirroring, String repositoryType) {
         this.workspace = workspace;
         NAssert.requireNamedNonNull(options, "repository options");
-        NAssert.requireNamedNonNull(options.getConfig(), "repository options config");
         this.repositoryRef = NRepositoryUtils.optionsToRef(options);
         String storeLocation = options.getLocation();
-        NRepositoryConfig config = options.getConfig();
-        String globalName = options.getConfig().getName();
+        NRepositoryConfig config = options.toConfig();
+        String globalName = options.getName();
         String repositoryName = options.getName();
 
         speed = speed == null ? NSpeedQualifier.NORMAL : speed;
@@ -79,7 +78,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         this.speed = speed;
         this.deployWeight = options.getDeployWeight();
         this.temporary = options.isTemporary();
-        this.tags.addAll(new NRepositoryTagsListHelper().add(options.getConfig().getTags()).toSet());
+        this.tags.addAll(new NRepositoryTagsListHelper().add(options.getTags()).toSet());
         this.supportedMirroring = supportedMirroring;
         this.repositoryType = repositoryType;
         setConfig(config, false);
@@ -586,7 +585,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         return Arrays.asList(repositoryRegistryHelper.getRepositories());
     }
 
-    public NRepository addMirror(NAddRepositoryOptions options) {
+    public NRepository addMirror(NRepositorySpec options) {
         if (!isSupportedMirroring()) {
             throw new NUnsupportedOperationException(NMsg.ofC("unsupported operation '%s'", "addMirror"));
         }

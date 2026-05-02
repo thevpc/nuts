@@ -40,7 +40,7 @@ public class NIteratorAdapter<T> extends NIteratorBase<T> {
         if(!a.isObject()){
             a= NElement.ofObjectBuilder().set("name",a).build();
         }
-        return NDescribables.describeResolveOrDestructAsObject(base)
+        return NDescribables.describeResolveOrSimplifyAsObject(base)
                 .builder()
                         .addAll(a.asObject().get().children().toArray(new NElement[0]))
                 .build();

@@ -24,8 +24,8 @@ public class NFlatMapIterator<TT, RR> extends NIteratorBase<RR> {
     public NElement describe() {
         return NElement.ofObjectBuilder()
                 .name("FlatMap")
-                .set("base", NDescribables.describeResolveOrDestruct(from))
-                .set("mapper", NDescribables.describeResolveOrDestruct(converter))
+                .set("base", NDescribables.describeResolveOrSimplify(from))
+                .set("mapper", NDescribables.describeResolveOrSimplify(converter))
                 .build()
                 ;
     }

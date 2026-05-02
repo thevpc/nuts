@@ -4,7 +4,7 @@ import net.thevpc.nuts.core.NSpeedQualifier;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfigManager;
 import net.thevpc.nuts.core.NRepositoryRef;
@@ -167,7 +167,7 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     }
 
     @Override
-    public NRepository addMirror(NAddRepositoryOptions options) {
+    public NRepository addMirror(NRepositorySpec options) {
         return getModel().addMirror(options);
     }
 

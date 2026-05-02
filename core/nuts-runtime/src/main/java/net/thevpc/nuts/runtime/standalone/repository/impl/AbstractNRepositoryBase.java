@@ -34,7 +34,7 @@ import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
@@ -47,6 +47,7 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.search.DefaultNSearchVe
 import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNRepositoryUndeployCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUpdateRepositoryStatsCmd;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryConfigModel;
+import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
 import net.thevpc.nuts.spi.*;
 
 import java.util.*;
@@ -65,7 +66,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     protected NIndexStore nIndexStore;
 
 
-    public AbstractNRepositoryBase(NAddRepositoryOptions options, NRepository parentRepository, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
+    public AbstractNRepositoryBase(NRepositorySpec options, NRepository parentRepository, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
         super();
         this.supportsDeploy=supportsDeploy;
         init(options, parentRepository, speed, supportedMirroring, repositoryType);
@@ -76,7 +77,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
         return nIndexStore;
     }
 
-    protected void init(NAddRepositoryOptions options, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
+    protected void init(NRepositorySpec options, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
         this.options = options.copy();
         this.parentRepository = parent;
         this.configModel = new DefaultNRepositoryConfigModel(this, options, workspace,speed, supportedMirroring, repositoryType);
@@ -98,10 +99,11 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
         NRepositoryConfigManagerExt c = NRepositoryConfigManagerExt.of(config());
         String name = getName();
         String storePath = null;
-        NRepositoryLocation loc = c.getModel().getLocation();
+        NRepositoryConfigModel model = c.getModel();
+        NRepositoryLocation loc = model==null?null:model.getLocation();
         String impl = getClass().getSimpleName();
         if (c != null) {
-            storePath = c.getModel().getStoreLocation().toAbsolute().toString();
+            storePath = model==null?null:model.getStoreLocation().toAbsolute().toString();
         }
         LinkedHashMap<String, String> a = new LinkedHashMap<>();
         if (name != null) {

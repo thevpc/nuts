@@ -692,7 +692,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                             }
                             return null;
                         }, NElement.ofNamedUplet("filter",
-                                NDescribables.describeResolveOrDestruct(filter0)
+                                NDescribables.describeResolveOrSimplify(filter0)
                         ))).nonNull().iterator();
                 return this;
             }

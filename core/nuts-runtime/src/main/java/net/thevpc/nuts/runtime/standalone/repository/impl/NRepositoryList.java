@@ -7,7 +7,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NIteratorBuilder;
@@ -23,7 +23,7 @@ import java.util.Objects;
 public class NRepositoryList extends NCachedRepository implements NRepositoryWithChildren {
     protected NRepository[] repoItems;
 
-    public NRepositoryList(NAddRepositoryOptions options, NRepository[] repoItems, NRepository parentRepository,
+    public NRepositoryList(NRepositorySpec options, NRepository[] repoItems, NRepository parentRepository,
                            NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
         super(options, parentRepository, speed, supportedMirroring, repositoryType, supportsDeploy);
         this.repoItems = repoItems;

@@ -36,7 +36,7 @@ import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.platform.*;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfig;
 import net.thevpc.nuts.core.NRepositoryRef;
@@ -97,7 +97,13 @@ import java.util.stream.Collectors;
  * @author thevpc
  */
 public class DefaultNWorkspaceConfigModel {
-    private static Pattern PRELOAD_EXTENSION_PATH_PATTERN = Pattern.compile("^(?<protocol>[a-z][a-z0-9_-]*):.*");
+    public static final Comparator<NRepositorySpec> REPOSITORY_ORDER_COMPARATOR = new Comparator<NRepositorySpec>() {
+
+        public int compare(NRepositorySpec o1, NRepositorySpec o2) {
+            return Integer.compare(o1.getOrder(), o2.getOrder());
+        }
+    };
+    private static final Pattern PRELOAD_EXTENSION_PATH_PATTERN = Pattern.compile("^(?<protocol>[a-z][a-z0-9_-]*):.*");
 
     private final DefaultNWorkspace workspace;
     private final List<NRepositoryAccessConfig> configRepoUsers = new ArrayList<>();
@@ -157,7 +163,7 @@ public class DefaultNWorkspaceConfigModel {
         if (NPathFactorySPI.class.isAssignableFrom(componentType)) {
             DefaultNWorkspaceFactory aa = (DefaultNWorkspaceFactory) (workspace.getModel().extensionModel.getObjectFactory());
             addPathFactory(
-                    (NPathFactorySPI) aa.newInstance(componentType, NPathFactorySPI.class)
+                    aa.newInstance(componentType, NPathFactorySPI.class)
             );
         }
     }
@@ -332,20 +338,39 @@ public class DefaultNWorkspaceConfigModel {
                 )).size() > 0;
     }
 
-    public List<NAddRepositoryOptions> getDefaultRepositories() {
-        List<NAddRepositoryOptions> all = new ArrayList<>();
-        for (NRepositoryFactoryComponent provider : NExtensions.of()
-                .createAll(NRepositoryFactoryComponent.class)) {
-            for (NAddRepositoryOptions d : provider.getDefaultRepositories()) {
+    public List<NRepositorySpec> getRuntimeRepositoryDefinitions() {
+        List<NRepositorySpec> all = new ArrayList<>();
+        for (NRepositorySpecRuntimeResolverComponent provider : NExtensions.of()
+                .createAll(NRepositorySpecRuntimeResolverComponent.class)) {
+            for (NRepositorySpec d : provider.getRuntimeRepositoryDefinitions()) {
                 all.add(d);
             }
         }
-        Collections.sort(all, new Comparator<NAddRepositoryOptions>() {
+        Collections.sort(all, REPOSITORY_ORDER_COMPARATOR);
+        return all;
+    }
 
-            public int compare(NAddRepositoryOptions o1, NAddRepositoryOptions o2) {
-                return Integer.compare(o1.getOrder(), o2.getOrder());
+    public List<NRepositorySpec> getTemplateRepositoryDefinitions() {
+        List<NRepositorySpec> all = new ArrayList<>();
+        for (NRepositorySpecTemplateResolverComponent provider : NExtensions.of()
+                .createAll(NRepositorySpecTemplateResolverComponent.class)) {
+            for (NRepositorySpec d : provider.getTemplateRepositoryDefinitions()) {
+                all.add(d);
             }
-        });
+        }
+        Collections.sort(all, REPOSITORY_ORDER_COMPARATOR);
+        return all;
+    }
+
+    public List<NRepositorySpec> getDefaultRepositoryDefinitions() {
+        List<NRepositorySpec> all = new ArrayList<>();
+        for (NRepositorySpecDefaultResolverComponent provider : NExtensions.of()
+                .createAll(NRepositorySpecDefaultResolverComponent.class)) {
+            for (NRepositorySpec d : provider.getDefaultRepositoryDefinitions()) {
+                all.add(d);
+            }
+        }
+        Collections.sort(all, REPOSITORY_ORDER_COMPARATOR);
         return all;
     }
 
@@ -364,7 +389,7 @@ public class DefaultNWorkspaceConfigModel {
         return repositoryLocation
                 .toAbsolute(root != null ? root :
                         NPath.of(NStoreKey.ofConf())
-                                .resolve(NConstants.Folders.REPOSITORIES))
+                        .resolve(NConstants.Folders.REPOSITORIES))
                 ;
     }
 
@@ -814,14 +839,14 @@ public class DefaultNWorkspaceConfigModel {
     public NOptional<NRepositoryAccessConfig> getRepositoryUser(String repository, String user) {
         NRepository crepository = workspace.getRepositoryModel().getRepository(repository).orNull();
         if (crepository == null) {
-            return NOptional.ofNamedEmpty(String.valueOf(repository) + "/" + user);
+            return NOptional.ofNamedEmpty(repository + "/" + user);
         }
         Optional<NRepositoryAccessConfig> o = configRepoUsers.stream().filter(
                 x ->
                         Objects.equals(x.getUserName(), user)
                                 && Objects.equals(x.getRepository(), crepository.getUuid())
         ).findFirst().map(NRepositoryAccessConfig::copy);
-        return NOptional.ofNamedOptional(o, String.valueOf(repository) + "/" + user);
+        return NOptional.ofNamedOptional(o, repository + "/" + user);
     }
 
     public boolean removeRepositoryUser(String repository, String user) {
@@ -1170,8 +1195,8 @@ public class DefaultNWorkspaceConfigModel {
                 + "workspaceBootId=" + s1
                 + ", workspaceRuntimeId=" + s2
                 + ", workspace=" + ((currentConfig == null) ? "NULL" : ("'"
-                +
-                (workspace == null ? "?" : "" + NWorkspaceExt.of(workspace).getLocationModel().getWorkspaceLocation()) + '\''))
+                                                                        +
+                                                                        (workspace == null ? "?" : "" + NWorkspaceExt.of(workspace).getLocationModel().getWorkspaceLocation()) + '\''))
                 + '}';
     }
 
@@ -1212,8 +1237,8 @@ public class DefaultNWorkspaceConfigModel {
             String contentPath = id.getMavenPath(null);
             NPath jarPath = null;
             NPath pomPath = null;
-            for (NRepositoryLocation nutsRepositoryLocation : resolveBootRepositoriesBootSelectionArray()) {
-                NPath base = NPath.of(nutsRepositoryLocation.getPath());
+            for (NRepositorySpec nutsRepositoryLocation : resolveBootRepositoriesBootSelectionArray()) {
+                NPath base = NPath.of(nutsRepositoryLocation.getSourceLocation().getPath());
                 if (base.isLocal() && base.isDirectory()) {
                     NPath a = base.resolve(contentPath + ".jar");
                     NPath b = base.resolve(contentPath + ".pom");
@@ -1416,14 +1441,12 @@ public class DefaultNWorkspaceConfigModel {
     }
 
 
-    public NRepositoryLocation[] resolveBootRepositoriesBootSelectionArray() {
-        List<NRepositoryLocation> defaults = new ArrayList<>();
-        for (NAddRepositoryOptions d : workspace.getDefaultRepositories()) {
-            defaults.add(NRepositoryLocation.of(d.getName(), (String) null));
+    public NRepositorySpec[] resolveBootRepositoriesBootSelectionArray() {
+        List<NRepositorySpec> defaults = new ArrayList<>();
+        for (NRepositorySpec d : workspace.getDefaultRepositories()) {
+            defaults.add(new NRepositorySpec().setSourceLocation(NRepositoryLocation.of(d.getName(), null)));
         }
-        return resolveBootRepositoriesList().resolve(defaults.toArray(new NRepositoryLocation[0]),
-                NRepositoryDB.of()
-        );
+        return NRepositoryUtils.resolve(resolveBootRepositoriesList(), defaults.toArray(new NRepositorySpec[0]));
     }
 
     public NRepositorySelectorList resolveBootRepositoriesList() {
@@ -1431,8 +1454,8 @@ public class DefaultNWorkspaceConfigModel {
             return parsedBootRepositoriesList;
         }
         DefaultNBootModel bm = NWorkspaceExt.of().getModel().bootModel;
-        parsedBootRepositoriesList = NRepositorySelectorList.of(
-                bm.getBootUserOptions().getRepositories().orNull(), NRepositoryDB.of()).get();
+        parsedBootRepositoriesList = NRepositoryUtils.createRepositorySelectorList(
+                bm.getBootUserOptions().getRepositories().orNull()).get();
         return parsedBootRepositoriesList;
     }
 

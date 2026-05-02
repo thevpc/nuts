@@ -272,7 +272,7 @@ public class NStreamBase<T> implements NStream<T> {
 
             @Override
             public NElement transformDescription(NElement desc) {
-                return NDescribables.describeWithTransform("sort", NElement.ofPair("comparator", NDescribables.describeResolveOrDestruct(comp)), desc);
+                return NDescribables.describeWithTransform("sort", NElement.ofPair("comparator", NDescribables.describeResolveOrSimplify(comp)), desc);
             }
         });
     }
@@ -302,7 +302,7 @@ public class NStreamBase<T> implements NStream<T> {
 
             @Override
             public NElement transformDescription(NElement desc) {
-                return NDescribables.describeWithTransform("distinct", NElement.ofPair("by", NDescribables.describeResolveOrDestruct(condition)), desc);
+                return NDescribables.describeWithTransform("distinct", NElement.ofPair("by", NDescribables.describeResolveOrSimplify(condition)), desc);
             }
         });
     }
@@ -341,7 +341,7 @@ public class NStreamBase<T> implements NStream<T> {
 
             @Override
             public NElement transformDescription(NElement desc) {
-                return NDescribables.describeWithTransform("filter", NElement.ofPair("accept", NDescribables.describeResolveOrDestruct(predicate)), desc);
+                return NDescribables.describeWithTransform("filter", NElement.ofPair("accept", NDescribables.describeResolveOrSimplify(predicate)), desc);
             }
         });
     }
@@ -358,7 +358,7 @@ public class NStreamBase<T> implements NStream<T> {
 
             @Override
             public NElement transformDescription(NElement desc) {
-                return NDescribables.describeWithTransform("coalesce", desc, NDescribables.describeResolveOrDestruct(other));
+                return NDescribables.describeWithTransform("coalesce", desc, NDescribables.describeResolveOrSimplify(other));
             }
         });
     }
@@ -382,7 +382,7 @@ public class NStreamBase<T> implements NStream<T> {
 
             @Override
             public NElement transformDescription(NElement desc) {
-                return NDescribables.describeWithTransform("concat", desc, NDescribables.describeResolveOrDestruct(other));
+                return NDescribables.describeWithTransform("concat", desc, NDescribables.describeResolveOrSimplify(other));
             }
         });
     }
@@ -398,7 +398,7 @@ public class NStreamBase<T> implements NStream<T> {
 
             @Override
             public NElement transformDescription(NElement desc) {
-                return NDescribables.describeWithTransform("coalesce", desc, NDescribables.describeResolveOrDestruct(other));
+                return NDescribables.describeWithTransform("coalesce", desc, NDescribables.describeResolveOrSimplify(other));
             }
         });
     }
@@ -414,7 +414,7 @@ public class NStreamBase<T> implements NStream<T> {
 
             @Override
             public NElement transformDescription(NElement desc) {
-                return NDescribables.describeWithTransform("concat", desc, NDescribables.describeResolveOrDestruct(other));
+                return NDescribables.describeWithTransform("concat", desc, NDescribables.describeResolveOrSimplify(other));
             }
         });
     }
@@ -548,7 +548,7 @@ public class NStreamBase<T> implements NStream<T> {
 
             @Override
             public NElement transformDescription(NElement desc) {
-                return NDescribables.describeWithTransform("flatMapIter", NElement.ofPair("by", NDescribables.describeResolveOrDestruct(mapper)), desc);
+                return NDescribables.describeWithTransform("flatMapIter", NElement.ofPair("by", NDescribables.describeResolveOrSimplify(mapper)), desc);
             }
         });
     }
@@ -566,7 +566,7 @@ public class NStreamBase<T> implements NStream<T> {
 
             @Override
             public NElement transformDescription(NElement desc) {
-                return NDescribables.describeWithTransform("flatMapList", NElement.ofPair("by", NDescribables.describeResolveOrDestruct(mapper)), desc);
+                return NDescribables.describeWithTransform("flatMapList", NElement.ofPair("by", NDescribables.describeResolveOrSimplify(mapper)), desc);
             }
         });
     }
@@ -585,7 +585,7 @@ public class NStreamBase<T> implements NStream<T> {
 
             @Override
             public NElement transformDescription(NElement desc) {
-                return NDescribables.describeWithTransform("flatMapArray", NElement.ofPair("by", NDescribables.describeResolveOrDestruct(mapper)), desc);
+                return NDescribables.describeWithTransform("flatMapArray", NElement.ofPair("by", NDescribables.describeResolveOrSimplify(mapper)), desc);
             }
         });
     }
@@ -602,7 +602,7 @@ public class NStreamBase<T> implements NStream<T> {
 
             @Override
             public NElement transformDescription(NElement desc) {
-                return NDescribables.describeWithTransform("flatMap", NElement.ofPair("by", NDescribables.describeResolveOrDestruct(mapper)), desc);
+                return NDescribables.describeWithTransform("flatMap", NElement.ofPair("by", NDescribables.describeResolveOrSimplify(mapper)), desc);
             }
         });
     }
@@ -620,7 +620,7 @@ public class NStreamBase<T> implements NStream<T> {
 
             @Override
             public NElement transformDescription(NElement desc) {
-                return NDescribables.describeWithTransform("flatMapStream", NElement.ofPair("by", NDescribables.describeResolveOrDestruct(mapper)), desc);
+                return NDescribables.describeWithTransform("flatMapStream", NElement.ofPair("by", NDescribables.describeResolveOrSimplify(mapper)), desc);
             }
         });
     }

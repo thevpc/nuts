@@ -273,7 +273,7 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public NRepository addRepository(NAddRepositoryOptions options) {
+    public NRepository addRepository(NRepositorySpec options) {
         return base.addRepository(options);
     }
 
@@ -503,7 +503,7 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public List<NAddRepositoryOptions> getDefaultRepositories() {
+    public List<NRepositorySpec> getDefaultRepositories() {
         return base.getDefaultRepositories();
     }
 

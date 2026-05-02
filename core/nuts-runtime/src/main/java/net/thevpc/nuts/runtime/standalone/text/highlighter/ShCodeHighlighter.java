@@ -720,11 +720,9 @@ public class ShCodeHighlighter implements NCodeHighlighter {
                     }
                     return false;
                 }
-                default:{
-                    return false;
-                }
             }
-        }else if(len >=2){
+        }
+        if(len >=2){
             switch(s2.substring(0,2)){
                 case "--":
                 case "++":
@@ -738,20 +736,15 @@ public class ShCodeHighlighter implements NCodeHighlighter {
                     }
                     return false;
                 }
-                default:{
-                    return false;
-                }
             }
-        }else if(len >=1){
-            switch(s2.substring(1)){
+        }
+        if(len >=1){
+            switch(s2.substring(0,1)){
                 case "-":
                 case "+":{
                     if(isSynopsisWord(s2.substring(1))){
                         return true;
                     }
-                    return false;
-                }
-                default:{
                     return false;
                 }
             }

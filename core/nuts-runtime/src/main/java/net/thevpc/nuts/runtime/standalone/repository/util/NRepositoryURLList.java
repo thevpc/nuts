@@ -24,25 +24,26 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.spi;
+package net.thevpc.nuts.runtime.standalone.repository.util;
 
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NRepositoryURLList {
-    private final List<NRepositoryLocation> all = new ArrayList<>();
+    private final List<NRepositorySpec> all = new ArrayList<>();
 
-    public NRepositoryURLList(NRepositoryLocation[] all) {
+    public NRepositoryURLList(NRepositorySpec[] all) {
         addAll(all);
     }
 
     public NRepositoryURLList() {
     }
 
-    public NRepositoryLocation[] toArray() {
-        return all.toArray(new NRepositoryLocation[0]);
+    public NRepositorySpec[] toArray() {
+        return all.toArray(new NRepositorySpec[0]);
     }
 
     public boolean containsName(String name) {
@@ -53,7 +54,7 @@ public class NRepositoryURLList {
         return indexOfURL(url, 0) >= 0;
     }
 
-    public boolean containsSelection(NRepositoryLocation s) {
+    public boolean containsSelection(NRepositorySpec s) {
         return indexOf(s, 0) >= 0;
     }
 
@@ -68,7 +69,7 @@ public class NRepositoryURLList {
     }
     public int indexOfNames(String[] names, int offset) {
         for (int i = offset; i < all.size(); i++) {
-            NRepositoryLocation loc = all.get(i);
+            NRepositorySpec loc = all.get(i);
             String trimmedLocName = NStringUtils.trim(loc.getName());
             for (String name : names) {
                 String trimmedName = NStringUtils.trim(name);
@@ -83,21 +84,21 @@ public class NRepositoryURLList {
     public int indexOfURL(String url, int offset) {
         String trimmedName = NStringUtils.trim(url);
         for (int i = offset; i < all.size(); i++) {
-            if (trimmedName.equals(NStringUtils.trim(all.get(i).getPath()))) {
+            if (trimmedName.equals(NStringUtils.trim(all.get(i).getSourceLocation().getPath()))) {
                 return i;
             }
         }
         return -1;
     }
 
-    public int indexOf(NRepositoryLocation other, int offset) {
+    public int indexOf(NRepositorySpec other, int offset) {
         if (other == null) {
             return -1;
         }
         for (int i = offset; i < all.size(); i++) {
-            NRepositoryLocation o = all.get(i);
+            NRepositorySpec o = all.get(i);
             if (NStringUtils.trim(other.getName()).equals(NStringUtils.trim(o.getName()))) {
-                if (NStringUtils.trim(other.getPath()).equals(NStringUtils.trim(o.getPath()))) {
+                if (NStringUtils.trim(other.getSourceLocation().getPath()).equals(NStringUtils.trim(o.getSourceLocation().getPath()))) {
                     return i;
                 }
             }
@@ -105,16 +106,16 @@ public class NRepositoryURLList {
         return -1;
     }
 
-    public NRepositoryURLList addAll(NRepositoryLocation[] all) {
+    public NRepositoryURLList addAll(NRepositorySpec[] all) {
         if (all != null) {
-            for (NRepositoryLocation a : all) {
+            for (NRepositorySpec a : all) {
                 add(a);
             }
         }
         return this;
     }
 
-    public NRepositoryURLList add(NRepositoryLocation a) {
+    public NRepositoryURLList add(NRepositorySpec a) {
         if (a != null) {
             String n = NStringUtils.trim(a.getName());
             if (n.isEmpty()) {
@@ -130,7 +131,7 @@ public class NRepositoryURLList {
         return this;
     }
 
-    public NRepositoryLocation removeAt(int i) {
+    public NRepositorySpec removeAt(int i) {
         return all.remove(i);
     }
 

@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.repository.toolbox;
+package net.thevpc.nuts.runtime.standalone.repository.impl.toolbox;
 
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.artifact.NDescriptor;
@@ -8,14 +8,15 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryModel;
-import net.thevpc.nuts.runtime.standalone.repository.toolbox.helpers.NetbeansRepoHelper;
-import net.thevpc.nuts.runtime.standalone.repository.toolbox.helpers.PostgresRepoHelper;
-import net.thevpc.nuts.runtime.standalone.repository.toolbox.helpers.TomcatRepoHelper;
+import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers.NetbeansRepoHelper;
+import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers.PostgresRepoHelper;
+import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers.TomcatRepoHelper;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
 
 public class ToolboxRepositoryModel implements NRepositoryModel {
+    public static final String REPOSITORY_TYPE = "toolbox";
     private Map<String, ToolboxRepoHelper> mapByShortId = new HashMap<>();
     private List<ToolboxRepoHelper> map = new ArrayList<>();
 
@@ -29,10 +30,14 @@ public class ToolboxRepositoryModel implements NRepositoryModel {
         map.add(t);
     }
 
+    @Override
+    public String getRepositoryType() {
+        return REPOSITORY_TYPE;
+    }
 
     @Override
     public String getName() {
-        return "toolbox";
+        return REPOSITORY_TYPE;
     }
 
     @Override

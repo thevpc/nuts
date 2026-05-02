@@ -1026,7 +1026,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
         return
                 NElement.ofObjectBuilder()
                         .set("SearchQueryPlan",
-                                NDescribables.describeResolveOrDestruct(it))
+                                NDescribables.describeResolveOrSimplify(it))
                         .build();
     }
 

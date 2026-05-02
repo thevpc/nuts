@@ -59,7 +59,7 @@ public class NConvertedNonNullIterator<F, T> extends NIteratorBase<T> {
         return NElement.ofObjectBuilder()
                 .name("Map")
                 .set("accept", "isNotNull")
-                .set("mapper", NDescribables.describeResolveOrDestructAsObject(converter)
+                .set("mapper", NDescribables.describeResolveOrSimplifyAsObject(converter)
                         .builder()
                         .set("name", convertName)
                         .build()

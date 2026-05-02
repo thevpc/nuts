@@ -4,6 +4,7 @@ import net.thevpc.nuts.core.*;
 
 
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.runtime.standalone.repository.DefaultNRepositoryDB;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryWithChildren;
@@ -23,6 +24,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
 public class DefaultNRepositoryModel {
 
     private final NRepositoryRegistryHelper repositoryRegistryHelper;
+    private DefaultNRepositoryDB db = new DefaultNRepositoryDB();
     private final NWorkspace workspace;
 
     public DefaultNRepositoryModel(NWorkspace workspace) {
@@ -183,7 +186,7 @@ public class DefaultNRepositoryModel {
         }
     }
 
-    public NRepository addRepository(NAddRepositoryOptions options) {
+    public NRepository addRepository(NRepositorySpec options) {
         //TODO excludedRepositoriesSet
 //        if (excludedRepositoriesSet != null && excludedRepositoriesSet.contains(options.getName())) {
 //            return null;
@@ -196,12 +199,33 @@ public class DefaultNRepositoryModel {
         return r;
     }
 
-    public NRepository createRepository(NAddRepositoryOptions options, NRepository parentRepository) {
+    public NRepository createRepository(NRepositorySpec options, NRepository parentRepository) {
         return createRepository(options, null, parentRepository);
     }
 
-    public NRepository createRepository(NAddRepositoryOptions options, Path rootFolder, NRepository parentRepository) {
-        NRepositoryModel repoModel = options.getRepositoryModel();
+    public NRepository createRepository(NRepositorySpec options, Path rootFolder, NRepository parentRepository, NRepositoryModel repoModel) {
+        String name = repoModel.getName();
+        String uuid = repoModel.getUuid();
+        if (NBlankable.isBlank(name)) {
+            name = "custom";
+        }
+        if (NBlankable.isBlank(uuid)) {
+            uuid = UUID.randomUUID().toString();
+        }
+        NRepositorySpec options2 = new NRepositorySpec();
+        options2.setName(NStringUtils.firstNonBlankTrimmed(options.getName(),name));
+        options2.setSourceLocation(NRepositoryLocation.of("custom@"));
+        options2.setUuid(uuid);
+        options2.setStoreStrategy(repoModel.getStoreStrategy());
+        options2.setDeployWeight(options.getDeployWeight());
+        options2.setTemporary(true);
+        options2.setEnabled(options.isEnabled());
+        options2.setLocation(CoreIOUtils.resolveRepositoryPath(options2, rootFolder));
+        return new NSimpleRepositoryWrapper(options2, parentRepository, repoModel);
+    }
+
+    public NRepository createRepository(NRepositorySpec options, Path rootFolder, NRepository parentRepository) {
+        NRepositoryModel repoModel = options.getSourceModel();
         if (rootFolder == null) {
             if (parentRepository == null) {
                 rootFolder = options.isTemporary() ?
@@ -214,41 +238,20 @@ public class DefaultNRepositoryModel {
             }
         }
         if (repoModel != null) {
-            NRepositoryConfig config = new NRepositoryConfig();
-            String name = repoModel.getName();
-            String uuid = repoModel.getUuid();
-            if (NBlankable.isBlank(name)) {
-                name = "custom";
-            }
-            if (NBlankable.isBlank(uuid)) {
-                uuid = UUID.randomUUID().toString();
-            }
-            config.setName(name);
-            config.setLocation(NRepositoryLocation.of("custom@"));
-            config.setUuid(uuid);
-            config.setStoreStrategy(repoModel.getStoreStrategy());
-            NAddRepositoryOptions options2 = new NAddRepositoryOptions();
-            options2.setName(config.getName());
-            options2.setConfig(config);
-            options2.setDeployWeight(options.getDeployWeight());
-            options2.setTemporary(true);
-            options2.setEnabled(options.isEnabled());
-            options2.setLocation(CoreIOUtils.resolveRepositoryPath(options2, rootFolder));
-            return new NSimpleRepositoryWrapper(options2, null, repoModel);
+            return createRepository(options, rootFolder,parentRepository,repoModel);
         }
 
         options = options.copy();
         try {
             boolean temporary = options.isTemporary();
-            NRepositoryConfig conf = options.getConfig();
             if (temporary) {
 //                options.setLocation(options.getName());
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder));
                 options.setEnabled(true);
-            } else if (conf == null) {
+            } else if (options.getSourceLocation() == null) {
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder));
-                conf = loadRepository(options);
-                if (conf == null) {
+                NRepositoryConfig conf2 = loadRepository(options);
+                if (conf2 == null) {
                     if (options.isFailSafe()) {
                         return null;
                     }
@@ -256,53 +259,74 @@ public class DefaultNRepositoryModel {
                             NMsg.ofC("invalid repository location ", options.getLocation())
                     );
                 }
-                options.setConfig(conf);
+                options.mergeConfig(conf2);
                 if (options.isEnabled()) {
+                    NRepositorySpec cp = options.copy();
+                    cp.setSourceLocation(options.getSourceLocation().copy().setName(options.getName()));
                     options.setEnabled(
                             NWorkspace.of().getBootOptions().getRepositories() == null
-                                    || NRepositorySelectorList.of(
-                                    NWorkspace.of().getBootOptions().getRepositories().orNull(),
-                                    NRepositoryDB.of()
-                            ).get().acceptExisting(
-                                    conf.getLocation().setName(options.getName())
-                            ));
+                                    || NRepositoryUtils.createRepositorySelectorList(
+                                    NWorkspace.of().getBootOptions().getRepositories().orNull()
+                            ).get().acceptExisting(cp));
                 }
             } else {
-                options.setConfig(conf);
                 if (options.isEnabled()) {
+                    NRepositorySpec cp = options.copy();
+                    cp.setSourceLocation(options.getSourceLocation().copy().setName(options.getName()));
                     options.setEnabled(
                             NWorkspace.of().getBootOptions().getRepositories() == null
-                                    || NRepositorySelectorList.of(
-                                    NWorkspace.of().getBootOptions().getRepositories().orNull(),
-                                    NRepositoryDB.of()
-                            ).get().acceptExisting(
-                                    conf.getLocation().setName(options.getName())
-                            ));
+                                    || NRepositoryUtils.createRepositorySelectorList(
+                                    NWorkspace.of().getBootOptions().getRepositories().orNull()
+                            ).get().acceptExisting(cp));
                 }
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder));
             }
-            if (NBlankable.isBlank(conf.getName())) {
-                conf.setName(options.getName());
-            }
-            if (NBlankable.isBlank(conf.getLocation())
+            if (NBlankable.isBlank(options.getSourceLocation())
                     && !NBlankable.isBlank(options.getLocation())
                 //&& NPath.of(options.getLocation(), session).isFile()
             ) {
-                conf.setLocation(NRepositoryLocation.of(options.getLocation()));
+                options.setSourceLocation(NRepositoryLocation.of(options.getLocation()));
             }
+            NRepositorySpec finalOptions = options;
+            NRepositoryConfig config = options.toConfig();
+            NRepositoryFactoryContext context = new NRepositoryFactoryContext() {
+                @Override
+                public NRepositorySpec spec() {
+                    return finalOptions;
+                }
+                @Override
+                public NRepositoryConfig config() {
+                    return config;
+                }
 
+                @Override
+                public String repositoryType() {
+                    return NRepositoryUtils.getRepoType(spec());
+                }
+
+                @Override
+                public NRepository parentRepository() {
+                    return parentRepository;
+                }
+
+                @Override
+                public NRepository createDefaultRepository(NRepositoryModel model) {
+                    return new NSimpleRepositoryWrapper(spec(), parentRepository(), model);
+                }
+            };
             NRepositoryFactoryComponent factory_ = NExtensions.of()
-                    .createSupported(NRepositoryFactoryComponent.class, conf).orNull();
+                    .createSupported(NRepositoryFactoryComponent.class, context).orNull();
             if (factory_ != null) {
-                NRepository r = factory_.create(options, parentRepository);
+
+                NRepository r = factory_.createRepository(context);
                 if (r != null) {
                     return r;
                 }
             }
-            String repoType = NRepositoryUtils.getRepoType(conf);
+            String repoType = NRepositoryUtils.getRepoType(options);
             if (options.isTemporary()) {
                 if (NBlankable.isBlank(repoType)) {
-                    throw new NInvalidRepositoryException(options.getName(), NMsg.ofC("unable to detect valid type for temporary repository %s", conf.getLocation()));
+                    throw new NInvalidRepositoryException(options.getName(), NMsg.ofC("unable to detect valid type for temporary repository %s", options.getSourceLocation()));
                 } else {
                     throw new NInvalidRepositoryException(options.getName(), NMsg.ofC("invalid repository type %s", repoType));
                 }
@@ -322,12 +346,12 @@ public class DefaultNRepositoryModel {
     }
 
     public NRepository addRepository(String repositoryNamedUrl) {
-        NRepositoryLocation r = NRepositoryLocation.of(repositoryNamedUrl, NRepositoryDB.of()).get();
-        NAddRepositoryOptions options = NRepositorySelectorHelper.createRepositoryOptions(r, true);
+        NRepositoryLocation r = NRepositoryUtils.createRepositoryLocation(repositoryNamedUrl).get();
+        NRepositorySpec options = NRepositorySelectorHelper.createRepositoryOptions(r, true);
         return addRepository(options);
     }
 
-    public NRepositoryConfig loadRepository(NAddRepositoryOptions options) {
+    public NRepositoryConfig loadRepository(NRepositorySpec options) {
         return ((NWorkspaceExt) workspace).store().loadRepoConfig(options.getLocation(), options.getName());
     }
 
@@ -336,4 +360,7 @@ public class DefaultNRepositoryModel {
     }
 
 
+    public DefaultNRepositoryDB getDB() {
+        return db;
+    }
 }

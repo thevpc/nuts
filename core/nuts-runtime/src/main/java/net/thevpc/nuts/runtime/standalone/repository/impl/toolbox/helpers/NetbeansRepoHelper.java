@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.repository.toolbox.helpers;
+package net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NConstants;
@@ -7,8 +7,8 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.platform.NEnv;
-import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepoHelper;
-import net.thevpc.nuts.runtime.standalone.repository.toolbox.ToolboxRepositoryModel;
+import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepoHelper;
+import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.util.SingleBaseIdFilterHelper;
 import net.thevpc.nuts.util.*;
 

@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.folder;
 
-import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetchMode;
@@ -10,7 +9,7 @@ import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.core.NSpeedQualifier;
 import net.thevpc.nuts.core.NStoreStrategy;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
@@ -38,15 +37,15 @@ import java.util.logging.Level;
 public abstract class NFolderRepositoryBase extends NCachedRepository {
     protected NIdPathIteratorBase repoIter;
 
-    public NFolderRepositoryBase(NAddRepositoryOptions options,
+    public NFolderRepositoryBase(NRepositorySpec options,
                                  NRepository parent, NSpeedQualifier speed,
                                  boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
         super(options, parent,
-                speed == null ? (NPath.of(options.getConfig().getLocation().getPath()
+                speed == null ? (NPath.of(options.getSourceLocation().getPath()
                 ).isRemote() ? NSpeedQualifier.SLOW : NSpeedQualifier.FASTER) : speed
                 , supportedMirroring, repositoryType, supportsDeploy);
         if (!isRemote()) {
-            if (options.getConfig().getStoreStrategy() != NStoreStrategy.STANDALONE) {
+            if (options.getStoreStrategy() != NStoreStrategy.STANDALONE) {
                 cache.setWriteEnabled(false);
                 cache.setReadEnabled(false);
             }

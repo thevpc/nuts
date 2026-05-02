@@ -32,7 +32,7 @@ import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.util.NBlankable;
 
@@ -55,12 +55,10 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
         TreeSet<String> allValid = new TreeSet<>();
         allValid.add(NConstants.RepoTypes.NUTS);
         allValid.add(NConstants.RepoTypes.MAVEN);
-        for (NAddRepositoryOptions repo : NWorkspace.of().getDefaultRepositories()) {
-            if(repo.getConfig()!=null) {
-                String t = NRepositoryUtils.getRepoType(repo.getConfig());
-                if(!NBlankable.isBlank(t)){
-                    allValid.add(t.trim());
-                }
+        for (NRepositorySpec repo : NWorkspace.of().getDefaultRepositories()) {
+            String t = NRepositoryUtils.getRepoType(repo);
+            if(!NBlankable.isBlank(t)){
+                allValid.add(t.trim());
             }
         }
         List<NArgCandidate> all = new ArrayList<>();

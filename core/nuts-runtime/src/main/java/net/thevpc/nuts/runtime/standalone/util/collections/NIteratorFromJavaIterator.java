@@ -24,7 +24,7 @@ public class NIteratorFromJavaIterator<T> extends NIteratorBase<T> {
         return NElement.ofObjectBuilder()
                 .name("Collector")
                 .addParam(NElement.ofString(name))
-                .set("base", NDescribables.describeResolveOrDestruct(base))
+                .set("base", NDescribables.describeResolveOrSimplify(base))
                 .build();
     }
 

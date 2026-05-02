@@ -1,10 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
-import net.thevpc.nuts.core.NRepositoryConfig;
+import net.thevpc.nuts.core.NRepositorySpec;
+import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySelectorList;
 import net.thevpc.nuts.util.NAssert;
@@ -14,60 +13,68 @@ import java.util.Objects;
 
 public class NRepositorySelectorHelper {
 
-    public static NAddRepositoryOptions createRepositoryOptions(String s, boolean requireName) {
+    public static NRepositorySpec createRepositoryOptions(String s, boolean requireName) {
         return createRepositoryOptions(s, requireName, null);
     }
 
-    public static NAddRepositoryOptions createRepositoryOptions(String s, boolean requireName, String[] tags) {
-        NRepositorySelectorList r = NRepositorySelectorList.of(s, NRepositoryDB.of()).get();
-        NRepositoryLocation[] all = r.resolve(null, NRepositoryDB.of());
+    public static NRepositorySpec createRepositoryOptions(String s, boolean requireName, String[] tags) {
+        NRepositorySelectorList r = NRepositoryUtils.createRepositorySelectorList(s).get();
+        NRepositorySpec[] all = NRepositoryUtils.resolve(r,null);
         if (all.length != 1) {
             throw new IllegalArgumentException("unexpected");
         }
-        return createRepositoryOptions(all[0], requireName, tags);
+        NRepositorySpec found = all[0];
+        String name= found.getName();
+        if ((name == null || name.isEmpty()) && requireName) {
+            NAssert.requireNamedNonBlank(name, "repository name (<name>=<url>)");
+        }
+        found.setTags(
+                new NRepositoryTagsListHelper()
+                        .add(found.getTags())
+                        .add(tags).toArray()
+        );
+        return found;
     }
 
-    public static NAddRepositoryOptions createRepositoryOptions(NRepositoryLocation loc, boolean requireName) {
+    public static NRepositorySpec createRepositoryOptions(NRepositoryLocation loc, boolean requireName) {
         return createRepositoryOptions(loc, requireName, null);
     }
 
-    public static NAddRepositoryOptions createRepositoryOptions(NRepositoryLocation loc, boolean requireName, String[] tags) {
+    public static NRepositorySpec createRepositoryOptions(NRepositoryLocation loc, boolean requireName, String[] tags) {
         String defaultName = null;
-        NRepositoryDB db = NRepositoryDB.of();
+        DefaultNRepositoryDB db = NWorkspaceExt.of().getRepositoryModel().getDB();
         if (!db.findAllNamesByName(loc.getName()).isEmpty()) {
             defaultName = loc.getName();
         } else {
-            String nn = db.getRepositoryOptionsByLocation(loc.getPath()).map(x -> x.getName()).orNull();
+            String nn = db.getDefinitionByPath(loc.getPath()).map(x -> x.getName()).orNull();
             if (nn != null) {
                 defaultName = nn;
             }
         }
         if (defaultName != null) {
-            NAddRepositoryOptions u = db.getRepositoryOptionsByName(defaultName).orNull();
+            NRepositorySpec u = db.getDefinitionByName(defaultName).orNull();
             if (u != null
                     && (loc.getPath().isEmpty()
-                    || Objects.equals(loc.getPath(), u.getConfig().getLocation().getPath())
-                    || Objects.equals(loc.getFullLocation(), u.getConfig().getLocation().getFullLocation()))) {
+                    || Objects.equals(loc.getPath(), u.getSourceLocation().getPath())
+                    || Objects.equals(loc.getFullLocation(), u.getSourceLocation().getFullLocation()))) {
                 //this is acceptable!
                 if (!u.getName().equals(loc.getName())) {
                     u.setName(loc.getName());
                 }
             }
             if (u != null) {
-                if (u.getConfig() != null) {
-                    u.getConfig().setTags(
-                            new NRepositoryTagsListHelper()
-                                    .add(u.getConfig().getTags())
-                                    .add(tags).toArray()
-                    );
-                }
+                u.setTags(
+                        new NRepositoryTagsListHelper()
+                                .add(u.getTags())
+                                .add(tags).toArray()
+                );
                 return u;
             }
         }
         return createCustomRepositoryOptions(loc.getName(), loc.getFullLocation(), requireName);
     }
 
-    public static NAddRepositoryOptions createCustomRepositoryOptions(String name, String url, boolean requireName) {
+    public static NRepositorySpec createCustomRepositoryOptions(String name, String url, boolean requireName) {
         if ((name == null || name.isEmpty()) && requireName) {
             NAssert.requireNamedNonBlank(name, "repository name (<name>=<url>)");
         }
@@ -98,18 +105,16 @@ public class NRepositorySelectorHelper {
                         : nPath.toAbsolute().toString();
         loc = loc.setPath(sloc);
 
-        return new NAddRepositoryOptions().setName(name)
+        return new NRepositorySpec().setName(name)
                 .setFailSafe(false).setCreate(true)
                 .setOrder((!NBlankable.isBlank(url) && NPath.of(url).isLocal())
-                        ? NAddRepositoryOptions.ORDER_USER_LOCAL
-                        : NAddRepositoryOptions.ORDER_USER_REMOTE
+                        ? NRepositorySpec.ORDER_USER_LOCAL
+                        : NRepositorySpec.ORDER_USER_REMOTE
                 )
-                .setConfig(new NRepositoryConfig()
-                        .setLocation(loc)
-                );
+                .setSourceLocation(loc);
     }
 
-    public static NAddRepositoryOptions createDefaultRepositoryOptions(String nameOrURL) {
+    public static NRepositorySpec createDefaultRepositoryOptions(String nameOrURL) {
         switch (nameOrURL) {
 //            case "local": {
 //                return new NAddRepositoryOptions()

@@ -24,47 +24,21 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
-import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
-import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetchMode;
-import net.thevpc.nuts.command.NFetchModeNotSupportedException;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
-import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.io.NIOUtils;
-import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NFolderRepositoryBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.solrsearch.MavenSolrSearchCommand;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MvnClient;
-import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.spi.NRepositorySPI;
-import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NUnsupportedArgumentException;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.util.Map;
 
 /**
  * Created by vpc on 1/15/17.
  */
 public class MavenSolrRepository extends MavenFolderRepository {
-    public MavenSolrRepository(NAddRepositoryOptions options, NRepository parentRepository) {
+    public MavenSolrRepository(NRepositorySpec options, NRepository parentRepository) {
         super(options, parentRepository);
     }
 

@@ -32,7 +32,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
@@ -55,7 +55,7 @@ import java.util.List;
  */
 public class MavenRemoteXmlRepository extends MavenFolderRepository {
 
-    public MavenRemoteXmlRepository(NAddRepositoryOptions options, NRepository parentRepository) {
+    public MavenRemoteXmlRepository(NRepositorySpec options, NRepository parentRepository) {
         super(options, parentRepository);
     }
 

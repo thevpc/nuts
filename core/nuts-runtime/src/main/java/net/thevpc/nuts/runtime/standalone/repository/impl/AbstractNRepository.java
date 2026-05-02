@@ -58,7 +58,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     protected NCachedValue<Boolean> available;
     protected boolean supportsDeploy;
     protected boolean enabled = true;
-    protected NAddRepositoryOptions options;
+    protected NRepositorySpec options;
 
     public AbstractNRepository() {
         this.workspace = NWorkspace.of();
@@ -76,7 +76,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     @Override
-    public boolean containsTags(String tag) {
+    public boolean containsTag(String tag) {
         return configModel.containsTag(NStringUtils.trim(tag));
     }
 
@@ -131,12 +131,12 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
 
     @Override
     public String getUuid() {
-        return configModel.getUuid();
+        return configModel==null?null:configModel.getUuid();
     }
 
     @Override
     public String getName() {
-        return configModel.getName();
+        return configModel==null?null:configModel.getName();
     }
 
     @Override

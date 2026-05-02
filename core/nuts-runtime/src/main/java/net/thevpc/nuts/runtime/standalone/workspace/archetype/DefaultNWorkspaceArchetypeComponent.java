@@ -36,14 +36,13 @@ import net.thevpc.nuts.core.NIsolationLevel;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
-import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositorySpec;
+import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.security.NUserSpec;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
@@ -63,17 +62,17 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         return "default";
     }
 
-    private String defaultRepoDiscriminator(NAddRepositoryOptions d) {
+    private String defaultRepoDiscriminator(NRepositorySpec d) {
         NPath repositoriesRoot = NWorkspaceExt.of().getConfigModel().getRepositoriesRoot();
-        if (d.getConfig() != null && d.getConfig().getLocation() != null && d.getConfig().getLocation().getPath() != null) {
-            return NPath.of(d.getConfig().getLocation().getPath()).toAbsolute(repositoriesRoot).toString();
+        if (!NBlankable.isBlank(d.getSourceLocation())) {
+            return NPath.of(d.getSourceLocation().getPath()).toAbsolute(repositoriesRoot).toString();
         } else if (!NBlankable.isBlank(d.getLocation())) {
             return NPath.of(d.getLocation()).toAbsolute(repositoriesRoot).toString();
         } else if (!NBlankable.isBlank(d.getName())) {
             return NPath.of(d.getName()).toAbsolute(repositoriesRoot).toString();
-        } else if (d.getRepositoryModel() != null) {
+        } else if (d.getSourceModel() != null) {
             String n = NAssert.requireNamedNonBlank(
-                    NStringUtils.firstNonBlank(d.getRepositoryModel().getName(), d.getRepositoryModel().getUuid()),
+                    NStringUtils.firstNonBlank(d.getSourceModel().getName(), d.getSourceModel().getUuid()),
                     "RepositoryModel name"
             );
             return NPath.of(n).toAbsolute(NWorkspaceExt.of().getConfigModel().getRepositoriesRoot()).toString();
@@ -84,71 +83,16 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
     @Override
     public void initializeWorkspace() {
-        LinkedHashMap<String, NAddRepositoryOptions> def = new LinkedHashMap<>();
-        List<NRepositoryLocation> defaults = new ArrayList<>();
         NWorkspace workspace = NWorkspace.of();
-        for (NAddRepositoryOptions d : workspace.getDefaultRepositories()) {
-            String discriminator = defaultRepoDiscriminator(d);
-            String name = d.getName();
-            if (NBlankable.isBlank(name)) {
-                if (d.getConfig() != null && !NBlankable.isBlank(d.getConfig().getName())) {
-                    name = d.getConfig().getName();
-                } else if (d.getRepositoryModel() != null) {
-                    name = NAssert.requireNamedNonBlank(
-                            NStringUtils.firstNonBlank(d.getRepositoryModel().getName(), d.getRepositoryModel().getUuid()),
-                            "RepositoryModel name"
-                    );
-                } else {
-                    throw new NIllegalArgumentException(NMsg.ofC("unable to load default repository location: %s", d.getLocation()));
-                }
-                d.setName(name);
-            }
-            def.put(discriminator, d);
-            defaults.add(NRepositoryLocation.of(d.getName(), (String) null));
-        }
+        List<NRepositorySpec> defaults =new ArrayList<>(workspace.getDefaultRepositories());
         NWorkspaceExt.of().getModel().configModel.getStoredConfigMain().setEnablePreviewRepositories(NSession.of().isPreviewRepo());
         NWorkspaceExt.of().getModel().configModel.invalidateStoreModelMain();
-        defaults.add(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME));
-        NRepositoryLocation[] br = NWorkspaceExt.of().getConfigModel().resolveBootRepositoriesList().resolve(defaults.toArray(new NRepositoryLocation[0]), NRepositoryDB.of());
-        for (NRepositoryLocation s : br) {
-            NAddRepositoryOptions oo = NRepositorySelectorHelper.createRepositoryOptions(s, false);
-            String sloc = defaultRepoDiscriminator(oo);
-            if (def.containsKey(sloc)) {
-                NAddRepositoryOptions r = def.get(sloc).copy();
-                if (!NBlankable.isBlank(s.getName())) {
-                    r.setName(oo.getName());
-                }
-                NRepository nr = workspace.addRepository(r);
-                if (
-                        "system".equals(nr.getName())
-                                && "system".equals(nr.config().getGlobalName())
-                                && (
-                                nr.config().getLocationPath() == null
-                                        || !nr.config().getLocationPath().isDirectory()
-                        )
-                ) {
-                    //runtime disable system repo if It's not accessible.
-                    nr.setEnabled(false);
-                }
-                def.remove(sloc);
-            } else {
-                workspace.addRepository(oo
-                        //.setTemporary(!defaults.containsKey(oo.getName()))
-                );
-            }
+        defaults.add(new NRepositorySpec().setSourceLocation(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME)));
+        NRepositorySpec[] br = NRepositoryUtils.resolve(NWorkspaceExt.of().getConfigModel().resolveBootRepositoriesList(),defaults.toArray(new NRepositorySpec[0]));
+        for (NRepositorySpec oo : br) {
+            workspace.addRepository(oo);
         }
-//        for (NutsAddRepositoryOptions d : def.values()) {
-//            ws.repos().addRepository(d);
-//        }
-        workspace.addImports(
-                "net.thevpc"
-        );
-
-//        NSecurityManager.of().updateUser(
-//                NSecurityManager.of().findUser(NConstants.Users.ANONYMOUS).get()
-//                        .toSpec()
-//                        .setPermissions(new ArrayList<>())
-//        );
+        workspace.addImports("net.thevpc");
 
         //has read rights
         try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
@@ -167,9 +111,6 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
                             )
             );
         }
-//        NWorkspaceSecurityManager.of().setRepositoryRemoteUserName()
-//        .setRemoteIdentity("contributor")
-//                .run();
     }
 
     @Override

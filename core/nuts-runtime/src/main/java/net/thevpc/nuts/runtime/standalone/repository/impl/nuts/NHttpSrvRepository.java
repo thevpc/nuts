@@ -31,7 +31,7 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.command.NFetchModeNotSupportedException;
 import net.thevpc.nuts.net.NWebCli;
-import net.thevpc.nuts.core.NAddRepositoryOptions;
+import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.net.NWebRequest;
 import net.thevpc.nuts.security.*;
@@ -64,7 +64,7 @@ public class NHttpSrvRepository extends NCachedRepository {
     //    private final NLog LOG;
     private NId remoteId;
 
-    public NHttpSrvRepository(NAddRepositoryOptions options, NRepository parentRepository) {
+    public NHttpSrvRepository(NRepositorySpec options, NRepository parentRepository) {
         super(options, parentRepository, NSpeedQualifier.SLOW, false, NConstants.RepoTypes.NUTS, true);
         try {
             remoteId = getRemoteId();
