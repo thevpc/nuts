@@ -93,4 +93,4 @@ elif [ -n "${JAVA_HOME}" ]; then
 fi
 
 # Execute the Java application with debugging options and arguments
-$JAVA_CMD $JAVA_OPTS $NUTS_DEBUG_ARG -jar "$NUTS_APP_JAR" -w development "$@"
+$JAVA_CMD $JAVA_OPTS $NUTS_DEBUG_ARG -jar "$NUTS_APP_JAR" -w development nsh -c "$@"
