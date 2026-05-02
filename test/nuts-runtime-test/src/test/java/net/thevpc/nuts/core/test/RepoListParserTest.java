@@ -1,6 +1,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySelectorList;
 import org.junit.jupiter.api.Assertions;
@@ -113,7 +114,7 @@ public class RepoListParserTest {
 
     @Test
     public void test13() {
-        NRepositorySelectorList li = NRepositorySelectorList.of(Arrays.asList("+/toto")).get();
+        NRepositorySelectorList li = NRepositoryUtils.createRepositorySelectorList(Arrays.asList("+/toto")).get();
         System.out.println(li);
     }
 }

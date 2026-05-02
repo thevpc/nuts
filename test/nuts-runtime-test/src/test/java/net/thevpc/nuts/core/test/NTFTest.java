@@ -1352,4 +1352,14 @@ public class NTFTest {
         Assertions.assertEquals(result, parsed.toString());
     }
 
+    @Test
+    public void test45(){
+        String txt = "nuts [<-options>]... <command> <args> ...";
+        NTextCode a = NText.ofCode("sh", txt);
+        NNormalizedText b = a.normalize();
+        TestUtils.println(a);
+        TestUtils.println(b);
+        Assertions.assertEquals(txt, b.filteredText());
+    }
+
 }

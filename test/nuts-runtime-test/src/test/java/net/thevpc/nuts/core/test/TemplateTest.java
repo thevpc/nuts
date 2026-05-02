@@ -19,7 +19,8 @@ public class TemplateTest {
     /**
      *     {{: statement}}
      *     {{expression}}
-     *     {{:for varName(,index):<expression}} ... \{{:end}}
+     *     {{:for varName:<expression}} ... \{{:end}}
+     *     {{:for varName,index:<expression}} ... \{{:end}}
      *     {{:if expression}} ... \{{:else if expression}} ... \{{:else if expression}} \{{:end}}
      * @throws Exception
      */
@@ -28,8 +29,19 @@ public class TemplateTest {
         Map<String,Object> varsMap = new HashMap<>();
         varsMap.put("world","Earth");
         varsMap.put("yellow",true);
-        String s = render("hello {{:if yellow }} {{world}} {{:else}} World {{:end}}", varsMap);
+        varsMap.put("blue",true);
+        varsMap.put("my",true);
+        String s = render("hello {{:if yellow }} {{world}} {{:else if blue }} my  {{:else}} World {{:end}}", varsMap);
+        TestUtils.println(s);
         Assertions.assertEquals("hello  Earth ",s);
+        varsMap.put("world","Earth");
+        varsMap.put("yellow",false);
+        varsMap.put("blue",true);
+        varsMap.put("my",true);
+        s = render("hello {{:if yellow }} {{world}} {{:else if blue }} my  {{:else}} World {{:end}}", varsMap);
+        TestUtils.println(s);
+        Assertions.assertEquals("hello  my  ",s);
+
     }
 
     public static String render(String text, Map<String,Object> varsMap) {
