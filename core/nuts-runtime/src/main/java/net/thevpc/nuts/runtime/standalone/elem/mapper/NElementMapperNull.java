@@ -2,14 +2,13 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 
 import java.lang.reflect.Type;
 
 public class NElementMapperNull implements NElementMapper<Object> {
 
     @Override
-    public Object destruct(Object src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(Object src, Type typeOfSrc, NElementFactoryContext context) {
         return null;
     }
 

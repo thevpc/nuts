@@ -4,15 +4,14 @@ import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorLicenseBuilder;
 import net.thevpc.nuts.artifact.NDescriptorLicense;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 
 import java.lang.reflect.Type;
 
 public class NElementMapperNDescriptorLicense implements NElementMapper<NDescriptorLicense> {
 
     @Override
-    public Object destruct(NDescriptorLicense src, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultDestruct(
+    public Object toSimple(NDescriptorLicense src, Type typeOfSrc, NElementFactoryContext context) {
+        return context.defaultToSimple(
                 new DefaultNDescriptorLicenseBuilder(src), null
         );
     }
@@ -26,7 +25,7 @@ public class NElementMapperNDescriptorLicense implements NElementMapper<NDescrip
 
     @Override
     public NDescriptorLicense createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        DefaultNDescriptorLicenseBuilder builder = (DefaultNDescriptorLicenseBuilder) context.defaultCreateObject(o, DefaultNDescriptorLicenseBuilder.class);
+        DefaultNDescriptorLicenseBuilder builder = (DefaultNDescriptorLicenseBuilder) context.defaultToObject(o, DefaultNDescriptorLicenseBuilder.class);
         return new DefaultNDescriptorLicenseBuilder(builder).build();
     }
 

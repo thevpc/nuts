@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 
@@ -12,9 +11,9 @@ import java.lang.reflect.Type;
 public class NElementMapperNDefinition implements NElementMapper<NDefinition> {
 
     @Override
-    public Object destruct(NDefinition src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NDefinition src, Type typeOfSrc, NElementFactoryContext context) {
         DefaultNDefinition dd = (src instanceof DefaultNDefinition) ? (DefaultNDefinition) src : new DefaultNDefinition(src);
-        return context.defaultDestruct(dd, null);
+        return context.defaultToSimple(dd, null);
     }
 
     @Override
@@ -25,7 +24,7 @@ public class NElementMapperNDefinition implements NElementMapper<NDefinition> {
 
     @Override
     public NDefinition createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        DefaultNDefinitionBuilder d = context.defaultCreateObject(o, DefaultNDefinitionBuilder.class);
+        DefaultNDefinitionBuilder d = context.defaultToObject(o, DefaultNDefinitionBuilder.class);
         //pass the session the instance
         return d.build();
     }

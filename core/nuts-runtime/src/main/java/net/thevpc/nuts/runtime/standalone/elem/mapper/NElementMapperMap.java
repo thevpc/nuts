@@ -17,14 +17,14 @@ public class NElementMapperMap implements NElementMapper<Map> {
     }
 
     @Override
-    public Object destruct(Map src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(Map src, Type typeOfSrc, NElementFactoryContext context) {
         Map je = (Map) src;
         Map<Object, Object> m = new LinkedHashMap<>();
         if (je != null) {
             for (Object e0 : je.entrySet()) {
                 Map.Entry e = (Map.Entry) e0;
-                Object k = context.destruct(e.getKey(), null);
-                Object v = context.destruct(e.getValue(), null);
+                Object k = context.toSimple(e.getKey(), null);
+                Object v = context.toSimple(e.getValue(), null);
                 m.put(k, v);
             }
         }
@@ -38,11 +38,11 @@ public class NElementMapperMap implements NElementMapper<Map> {
         if (je != null) {
             for (Object e0 : je.entrySet()) {
                 Map.Entry e = (Map.Entry) e0;
-                NElement k = context.createElement(e.getKey());
+                NElement k = context.toElement(e.getKey());
                 if(!(e.getKey() instanceof NElement) && k.isString()){
                     k= NElement.ofNameOrString(k.asStringValue().get());
                 }
-                NElement v = context.createElement(e.getValue());
+                NElement v = context.toElement(e.getValue());
                 m.add(new DefaultNPairElement(k, v));
             }
         }
@@ -55,14 +55,14 @@ public class NElementMapperMap implements NElementMapper<Map> {
                 NPairElement kv = (NPairElement) ee;
                 NElement k = kv.key();
                 NElement v = kv.value();
-                all.put(context.createObject(k, elemType1), context.createObject(v, elemType2));
+                all.put(context.toObject(k, elemType1), context.toObject(v, elemType2));
             }
         } else if (o.isAnyArray()) {
             for (NElement ee : o.asArray().get().children()) {
                 NPairElement kv = (NPairElement) ee;
                 NElement k = kv.key();
                 NElement v = kv.value();
-                all.put(context.createObject(k, elemType1), context.createObject(v, elemType2));
+                all.put(context.toObject(k, elemType1), context.toObject(v, elemType2));
             }
         } else {
             throw new NUnsupportedEnumException(o.type());

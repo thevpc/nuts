@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.format.table;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NPairElement;
 import net.thevpc.nuts.elem.NElements;
@@ -116,7 +115,7 @@ public class DefaultTableObjectWriter extends DefaultObjectWriterBase<NTableWrit
             a.add(NElements.of().toElement(o));
             return createTableModel(NElements.of().toElement(a));
         }
-        o = NElements.of().destruct(o);
+        o = NElements.of().toSimple(o);
         if (o instanceof Collection) {
             return _model2(o);
         }

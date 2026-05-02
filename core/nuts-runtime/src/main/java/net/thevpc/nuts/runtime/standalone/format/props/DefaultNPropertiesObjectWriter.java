@@ -67,7 +67,7 @@ public class DefaultNPropertiesObjectWriter extends DefaultObjectWriterBase<NPro
 
     public Map buildModel(Object aValue) {
         NElements e = NElements.of();
-        Object value = e.destruct(aValue);
+        Object value = e.toSimple(aValue);
         LinkedHashMap<NText, NText> map = new LinkedHashMap<>();
         fillMap(NText.of((rootName==null?"":rootName)), value, map);
         return map;

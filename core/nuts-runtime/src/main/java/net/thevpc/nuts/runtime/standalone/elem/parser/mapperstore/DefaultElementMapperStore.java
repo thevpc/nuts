@@ -20,6 +20,7 @@ import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NLiteral;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.Path;
@@ -91,8 +92,13 @@ public class DefaultElementMapperStore {
     public final NElementMapper F_COLLECTION = new NElementMapperCollection();
     public final NElementMapper F_MAP = new NElementMapperMap();
 
-    private final NClassMap<?,NElementMapper> defaultMappers = new NClassMapImpl<>(null, NElementMapper.class);
-    private final NClassMap<?,NElementMapper> coreMappers = new NClassMapImpl<>(null, NElementMapper.class);
+    private final NClassMap<?, NElementSerializer> defaultSerializers = new NClassMapImpl<>(null, NElementSerializer.class);
+    private final NClassMap<?, NElementDeserializer> defaultDeserializers = new NClassMapImpl<>(null, NElementDeserializer.class);
+    private final NClassMap<?, NElementSimplifier> defaultDestructors = new NClassMapImpl<>(null, NElementSimplifier.class);
+
+    private final NClassMap<?, NElementSerializer> coreSerializers = new NClassMapImpl<>(null, NElementSerializer.class);
+    private final NClassMap<?, NElementDeserializer> coreDeserializers = new NClassMapImpl<>(null, NElementDeserializer.class);
+    private final NClassMap<?, NElementSimplifier> coreDestructors = new NClassMapImpl<>(null, NElementSimplifier.class);
 
     public DefaultElementMapperStore() {
         addDefaultMapper(Boolean.class, F_BOOLEANS);
@@ -171,31 +177,66 @@ public class DefaultElementMapperStore {
         addCoreMapper(NRepositoryLocation.class, F_NUTS_REPO_LOCATION);
         addCoreMapper(NLiteral.class, F_LITERAL);
 
+
+        defaultSerializers.put((Class) NToElement.class, new NElementSerializer<NToElement>() {
+            @Override
+            public NElement createElement(NToElement src, Type typeOfSrc, NElementFactoryContext context) {
+                return src.toElement();
+            }
+        });
+        defaultDestructors.put((Class) NToElement.class, new NElementSimplifier<NToElement>() {
+            @Override
+            public Object toSimple(NToElement src, Type typeOfSrc, NElementFactoryContext context) {
+                return src.toElement();
+            }
+        });
+
     }
 
     public final void addCoreMapper(Class cls, NElementMapper instance) {
-        coreMappers.put(cls, instance);
+        coreSerializers.put(cls, instance);
+        coreDeserializers.put(cls, instance);
+        coreDestructors.put(cls, instance);
     }
 
-    public NClassMap<?,NElementMapper> getCoreMappers() {
-        return coreMappers;
-    }
 
     public final void addDefaultMapper(Class cls, NElementMapper instance) {
-        defaultMappers.put(cls, instance);
+        defaultSerializers.put(cls, instance);
+        defaultDeserializers.put(cls, instance);
+        defaultDestructors.put(cls, instance);
     }
 
-    public NClassMap<?,NElementMapper> getDefaultMappers() {
-        return defaultMappers;
+    public NClassMap<?, NElementSerializer> getDefaultSerializers() {
+        return defaultSerializers;
     }
 
-    public <T> NElementMapper<T> getMapper(NElement element, NElementMapperStore store) {
+    public NClassMap<?, NElementDeserializer> getDefaultDeserializers() {
+        return defaultDeserializers;
+    }
+
+    public NClassMap<?, NElementSimplifier> getDefaultDestructors() {
+        return defaultDestructors;
+    }
+
+    public NClassMap<?, NElementMapper> getCoreSerializers() {
+        return (NClassMap)coreSerializers;
+    }
+
+    public NClassMap<?, NElementDeserializer> getCoreDeserializers() {
+        return coreDeserializers;
+    }
+
+    public NClassMap<?, NElementSimplifier> getCoreDestructors() {
+        return coreDestructors;
+    }
+
+    public <T> NElementDeserializer<T> getDeserializer(NElement element, NElementMapperStore store) {
         switch (element.type()) {
             case OBJECT:
             case NAMED_OBJECT:
             case FULL_OBJECT:
             case PARAM_OBJECT: {
-                return store.getMapper(Map.class);
+                return store.getDeserializer(Map.class);
             }
             case ARRAY:
             case PARAM_ARRAY:
@@ -203,7 +244,7 @@ public class DefaultElementMapperStore {
             case FULL_ARRAY:
             case UPLET:
             case NAMED_UPLET: {
-                return store.getMapper(List.class);
+                return store.getDeserializer(List.class);
             }
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
@@ -214,70 +255,70 @@ public class DefaultElementMapperStore {
             case LINE_STRING:
             case BLOCK_STRING:
             case NAME: {
-                return store.getMapper(String.class);
+                return store.getDeserializer(String.class);
             }
             case INT: {
-                return store.getMapper(Integer.class);
+                return store.getDeserializer(Integer.class);
             }
             case FLOAT: {
-                return store.getMapper(Float.class);
+                return store.getDeserializer(Float.class);
             }
             case DOUBLE: {
-                return store.getMapper(Double.class);
+                return store.getDeserializer(Double.class);
             }
             case BOOLEAN: {
-                return store.getMapper(Boolean.class);
+                return store.getDeserializer(Boolean.class);
             }
             case INSTANT: {
-                return store.getMapper(Instant.class);
+                return store.getDeserializer(Instant.class);
             }
             case LOCAL_DATE: {
-                return store.getMapper(LocalDate.class);
+                return store.getDeserializer(LocalDate.class);
             }
             case LOCAL_DATETIME: {
-                return store.getMapper(LocalDateTime.class);
+                return store.getDeserializer(LocalDateTime.class);
             }
             case LOCAL_TIME: {
-                return store.getMapper(LocalTime.class);
+                return store.getDeserializer(LocalTime.class);
             }
             case BIG_DECIMAL: {
-                return store.getMapper(BigDecimal.class);
+                return store.getDeserializer(BigDecimal.class);
             }
             case BIG_INT: {
-                return store.getMapper(BigInteger.class);
+                return store.getDeserializer(BigInteger.class);
             }
             case LONG: {
-                return store.getMapper(Long.class);
+                return store.getDeserializer(Long.class);
             }
             case BYTE: {
-                return store.getMapper(Byte.class);
+                return store.getDeserializer(Byte.class);
             }
             case SHORT: {
-                return store.getMapper(Short.class);
+                return store.getDeserializer(Short.class);
             }
             case CHAR: {
-                return store.getMapper(Character.class);
+                return store.getDeserializer(Character.class);
             }
             case FLOAT_COMPLEX: {
-                return store.getMapper(NFloatComplex.class);
+                return store.getDeserializer(NFloatComplex.class);
             }
             case BIG_COMPLEX: {
-                return store.getMapper(NBigComplex.class);
+                return store.getDeserializer(NBigComplex.class);
             }
             case DOUBLE_COMPLEX: {
-                return store.getMapper(NDoubleComplex.class);
+                return store.getDeserializer(NDoubleComplex.class);
             }
             case NULL: {
                 return F_NULL;
             }
             case PAIR: {
-                return store.getMapper(Map.Entry.class);
+                return store.getDeserializer(Map.Entry.class);
             }
             case CHAR_STREAM: {
-                return store.getMapper(char[].class);
+                return store.getDeserializer(char[].class);
             }
             case BINARY_STREAM: {
-                return store.getMapper(byte[].class);
+                return store.getDeserializer(byte[].class);
             }
         }
         return null;

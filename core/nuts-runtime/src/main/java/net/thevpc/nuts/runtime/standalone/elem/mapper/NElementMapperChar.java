@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 public class NElementMapperChar implements NElementMapper<Character> {
 
     @Override
-    public Object destruct(Character src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(Character src, Type typeOfSrc, NElementFactoryContext context) {
         return src;
     }
 

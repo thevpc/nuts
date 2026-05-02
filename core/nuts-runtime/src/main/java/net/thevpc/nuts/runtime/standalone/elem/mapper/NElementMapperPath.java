@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 
@@ -13,7 +12,7 @@ import java.nio.file.Paths;
 public class NElementMapperPath implements NElementMapper<Path> {
 
     @Override
-    public Object destruct(Path src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(Path src, Type typeOfSrc, NElementFactoryContext context) {
         return src;
     }
 

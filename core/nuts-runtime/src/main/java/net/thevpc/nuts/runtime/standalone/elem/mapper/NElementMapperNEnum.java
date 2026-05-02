@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.runtime.standalone.reflect.ReflectUtils;
 import net.thevpc.nuts.util.NEnum;
 
@@ -24,7 +23,7 @@ public class NElementMapperNEnum implements NElementMapper<NEnum> {
     }
 
     @Override
-    public Object destruct(NEnum src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NEnum src, Type typeOfSrc, NElementFactoryContext context) {
         return src;
     }
 

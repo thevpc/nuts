@@ -69,13 +69,13 @@ public class DefaultNElements implements NElements {
     }
 
     @Override
-    public Object destruct(Object any) {
-        return createFactoryContext().destruct(any, null);
+    public Object toSimple(Object any) {
+        return createFactoryContext().toSimple(any, null);
     }
 
     @Override
     public NElement toElement(Object o) {
-        return createFactoryContext().createElement(o);
+        return createFactoryContext().toElement(o);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class DefaultNElements implements NElements {
 
 
     public Object elementToObject(NElement o, Type type) {
-        return createFactoryContext().createObject(o, type);
+        return createFactoryContext().toObject(o, type);
     }
 
     public NElementType commonNumberType(NElementType aa, NElementType bb) {

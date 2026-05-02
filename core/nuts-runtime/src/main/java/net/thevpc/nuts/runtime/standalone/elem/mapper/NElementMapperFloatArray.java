@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.elem.NArrayElement;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 
 import java.lang.reflect.Type;
@@ -19,7 +18,7 @@ public class NElementMapperFloatArray implements NElementMapper<float[]> {
     }
 
     @Override
-    public Object destruct(float[] src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(float[] src, Type typeOfSrc, NElementFactoryContext context) {
         return DefaultNElementFactoryService._destructArray1(src, context);
     }
 
@@ -28,7 +27,7 @@ public class NElementMapperFloatArray implements NElementMapper<float[]> {
         NArrayElement earr = o.asArray().get();
         float[] arr = new float[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (float) context.createObject(earr.get(i).get(), float.class);
+            arr[i] = (float) context.toObject(earr.get(i).get(), float.class);
         }
         return arr;
     }

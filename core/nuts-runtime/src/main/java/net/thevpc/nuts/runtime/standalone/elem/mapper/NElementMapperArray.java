@@ -75,7 +75,7 @@ public class NElementMapperArray implements NElementMapper<Object> {
                 default: {
                     Object[] x = (Object[]) Array.newInstance(componentType, e.size());
                     for (int i = 0; i < e.size(); i++) {
-                        x[i] = context.createObject(e.get(i).get(), componentType);
+                        x[i] = context.toObject(e.get(i).get(), componentType);
                     }
                     return x;
                 }
@@ -91,7 +91,7 @@ public class NElementMapperArray implements NElementMapper<Object> {
     }
 
     @Override
-    public Object destruct(Object src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(Object src, Type typeOfSrc, NElementFactoryContext context) {
         return DefaultNElementFactoryService._destructArray1(src, context);
     }
 

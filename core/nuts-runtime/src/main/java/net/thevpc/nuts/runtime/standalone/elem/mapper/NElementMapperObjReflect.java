@@ -23,13 +23,13 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
     }
 
     @Override
-    public Object destruct(Object src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(Object src, Type typeOfSrc, NElementFactoryContext context) {
         NReflectType m = context.getTypesRepository().getType(typeOfSrc);
         Map<String, Object> obj = new LinkedHashMap<>();
         for (NReflectProperty property : m.getProperties()) {
             final Object v = property.read(src);
             if (!property.isDefaultValue(v)) {
-                obj.put(property.getName(), context.destruct(v, null));
+                obj.put(property.getName(), context.toSimple(v, null));
             }
         }
         return obj;
@@ -42,7 +42,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
         for (NReflectProperty property : m.getProperties()) {
             final Object v = property.read(src);
             if (!property.isDefaultValue(v)) {
-                obj.set(property.getName(), context.createElement(v));
+                obj.set(property.getName(), context.toElement(v));
             }
         }
         return obj.build();
@@ -132,13 +132,13 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
             }
             case ARRAY: {
                 if (c.isAssignableFrom(List.class)) {
-                    return context.createObject(o,List.class);
+                    return context.toObject(o,List.class);
                 }
                 break;
             }
             case OBJECT: {
                 if (c.equals(Object.class)) {
-                    return context.createObject(o,Map.class);
+                    return context.toObject(o,Map.class);
                 }
                 break;
             }
@@ -158,7 +158,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
             if (property.isWrite()) {
                 NElement v = eobj.get(property.getName()).orNull();
                 if (v != null) {
-                    property.write(instance, context.createObject(v, property.getPropertyType().getJavaType()));
+                    property.write(instance, context.toObject(v, property.getPropertyType().getJavaType()));
                 }
             }
         }

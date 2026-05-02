@@ -229,7 +229,7 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
     }
 
     public Object elementToObject(NElement o, Type type) {
-        return createFactoryContext().createObject(o, type);
+        return createFactoryContext().toObject(o, type);
     }
 
     public NElementFactoryService getElementFactoryService() {

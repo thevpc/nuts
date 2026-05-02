@@ -12,12 +12,12 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
     }
 
     @Override
-    public Object destruct(NElementBuilder src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NElementBuilder src, Type typeOfSrc, NElementFactoryContext context) {
         switch (src.type()) {
             case ARRAY: {
                 return src.build().asArray()
                         .get()
-                        .children().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
+                        .children().stream().map(x -> context.toSimple(x, null)).collect(Collectors.toList());
             }
             case OBJECT: {
                 Set<Object> visited = new HashSet<>();
@@ -26,8 +26,8 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 for (NElement item : src.build().asObject().get().children()) {
                     if(map && item instanceof NPairElement) {
                         NPairElement nPairElement = (NPairElement) item;
-                        Object k = context.destruct(nPairElement.key(), null);
-                        Object v = context.destruct(nPairElement.value(), null);
+                        Object k = context.toSimple(nPairElement.key(), null);
+                        Object v = context.toSimple(nPairElement.value(), null);
                         if (map && visited.contains(k)) {
                             map = false;
                         } else {
@@ -35,7 +35,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                         }
                         all.add(new AbstractMap.SimpleEntry<>(k, v));
                     }else {
-                        all.add(context.destruct(item, null));
+                        all.add(context.toSimple(item, null));
                     }
                 }
                 if (map) {
@@ -52,7 +52,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 return src.build().asCustom().get();
             }
             default: {
-                return context.createElement(src, NPrimitiveElement.class);
+                return context.toElement(src, NPrimitiveElement.class);
             }
         }
     }
@@ -68,7 +68,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 List<NElement> children=new ArrayList<>(arr.size());
                 boolean someChange=false;
                 for (NElement c : arr) {
-                    NElement v2 = context.createElement(c);
+                    NElement v2 = context.toElement(c);
                     if(!someChange){
                         someChange=v2!=c;
                     }
@@ -85,7 +85,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 boolean someChange = false;
                 for (NElement e : obj) {
                     boolean someChange0;
-                    NElement k2 = context.createElement(e);
+                    NElement k2 = context.toElement(e);
                     someChange0 = k2 != e;
                     if (someChange0) {
                         if (!someChange) {
@@ -105,10 +105,10 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
             }
             case CUSTOM:{
                 Object v1 = src.build().asCustom().get().value();
-                if(context.isIndestructibleObject(v1)){
+                if(context.isSimpleObject(v1)){
                     return src.build();
                 }
-                return context.createElement(v1);
+                return context.toElement(v1);
             }
         }
         return src.build();

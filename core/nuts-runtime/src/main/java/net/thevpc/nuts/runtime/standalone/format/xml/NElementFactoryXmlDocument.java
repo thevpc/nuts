@@ -30,7 +30,7 @@ import net.thevpc.nuts.elem.NElementFactoryContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import net.thevpc.nuts.elem.NElementMapper;
+import net.thevpc.nuts.runtime.standalone.elem.mapper.NElementMapper;
 
 /**
  *
@@ -39,11 +39,11 @@ import net.thevpc.nuts.elem.NElementMapper;
 public class NElementFactoryXmlDocument implements NElementMapper {
 
     @Override
-    public Object destruct(Object o, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(Object o, Type typeOfSrc, NElementFactoryContext context) {
         Document doc = (Document) o;
         Element e = doc.getDocumentElement();
         Object x = NElementFactoryXmlElement.runWithDoc(context,
-                () -> context.destruct(e, Element.class),
+                () -> context.toSimple(e, Element.class),
                 doc);
         return x;
     }
@@ -54,7 +54,7 @@ public class NElementFactoryXmlDocument implements NElementMapper {
         Document doc = (Document) o;
         Element e = doc.getDocumentElement();
         NElement x = NElementFactoryXmlElement.runWithDoc(context,
-                () -> context.createElement(e, Element.class),
+                () -> context.toElement(e, Element.class),
                 doc);
         return x;
     }
@@ -64,7 +64,7 @@ public class NElementFactoryXmlDocument implements NElementMapper {
         Document doc = XmlUtils.createDocument();
         Node source = NElementFactoryXmlElement.runWithDoc(
                 context,
-                () -> (Node) context.createObject(o, Element.class),
+                () -> (Node) context.toObject(o, Element.class),
                 doc);
         doc.insertBefore(source,null);
 //        doc.adoptNode(source);

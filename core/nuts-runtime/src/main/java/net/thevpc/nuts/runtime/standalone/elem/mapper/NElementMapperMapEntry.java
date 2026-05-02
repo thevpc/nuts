@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -15,17 +14,17 @@ public class NElementMapperMapEntry implements NElementMapper<Map.Entry> {
     public NElement createElement(Map.Entry o, Type typeOfSrc, NElementFactoryContext context) {
         Map.Entry je = (Map.Entry) o;
         return NElement.ofObjectBuilder()
-                .set("key", context.createElement(je.getKey()))
-                .set("value", context.createElement(je.getValue()))
+                .set("key", context.toElement(je.getKey()))
+                .set("value", context.toElement(je.getValue()))
                 .build();
     }
 
     @Override
-    public Object destruct(Map.Entry src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(Map.Entry src, Type typeOfSrc, NElementFactoryContext context) {
         Map.Entry je = (Map.Entry) src;
         return new AbstractMap.SimpleEntry<>(
-                context.destruct(je.getKey(), null),
-                context.destruct(je.getValue(), null)
+                context.toSimple(je.getKey(), null),
+                context.toSimple(je.getValue(), null)
         );
     }
 
@@ -34,13 +33,13 @@ public class NElementMapperMapEntry implements NElementMapper<Map.Entry> {
         if (to instanceof ParameterizedType) {
             Type[] kvt = ((ParameterizedType) to).getActualTypeArguments();
             return new AbstractMap.SimpleEntry(
-                    context.createObject(o.asObject().get().get("key").orNull(), kvt[0]),
-                    context.createObject(o.asObject().get().get("value").orNull(), kvt[0])
+                    context.toObject(o.asObject().get().get("key").orNull(), kvt[0]),
+                    context.toObject(o.asObject().get().get("value").orNull(), kvt[0])
             );
         }
         return new AbstractMap.SimpleEntry(
-                context.createObject(o.asObject().get().get("key").orNull(), Object.class),
-                context.createObject(o.asObject().get().get("value").orNull(), Object.class)
+                context.toObject(o.asObject().get().get("key").orNull(), Object.class),
+                context.toObject(o.asObject().get().get("value").orNull(), Object.class)
         );
     }
 

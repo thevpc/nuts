@@ -28,9 +28,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Predicate;
 
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.UserElementMapperStore;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
@@ -59,30 +57,47 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
-    public NElement createElement(Object o) {
-        return createElement(o, null);
+    public NElement toElement(Object o) {
+        return toElement(o, null);
     }
 
-    public NElementMapper getMapper(Type type, boolean defaultOnly) {
-        return userElementMapperStore.getMapper(type, defaultOnly);
+//    public NElementMapper getMapper(Type type, boolean defaultOnly) {
+//        return userElementMapperStore.getMapper(type, defaultOnly);
+//    }
+//
+//    @Override
+//    public <T> NElementMapper<T> getMapper(NElement element, boolean defaultOnly) {
+//        return userElementMapperStore.getMapper(element, defaultOnly);
+//    }
+
+    public <T> NElementSerializer<T>  getSerializer(Type type, boolean defaultOnly) {
+        return userElementMapperStore.getSerializer(type, defaultOnly);
+    }
+
+    public <T> NElementSimplifier<T> getSimplifier(Type type, boolean defaultOnly) {
+        return userElementMapperStore.getSimplifier(type, defaultOnly);
+    }
+
+    public <T> NElementDeserializer<T> getDeserializer(Type type, boolean defaultOnly) {
+        return userElementMapperStore.getDeserializer(type, defaultOnly);
     }
 
     @Override
-    public <T> NElementMapper<T> getMapper(NElement element, boolean defaultOnly) {
-        return userElementMapperStore.getMapper(element, defaultOnly);
+    public <T> NElementDeserializer<T> getDeserializer(NElement element, boolean defaultOnly) {
+        return userElementMapperStore.getDeserializer(element, defaultOnly);
     }
 
     @Override
-    public Predicate<Type> getIndestructibleTypesFilter() {
+    public Predicate<Type> getSimpleTypesFilter() {
         return globalIndestructibleTypesFilter;
     }
 
     @Override
-    public boolean isIndestructibleObject(Object any) {
+    public boolean isSimpleObject(Object any) {
         if (any == null) {
             return false;
         }
-        Predicate<Type> f = getIndestructibleTypesFilter();
+        Predicate<Type> f = getSimpleTypesFilter();
         if (f == null) {
             return false;
         }
@@ -90,11 +105,11 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
-    public boolean isIndestructibleType(Type any) {
+    public boolean isSimpleType(Type any) {
         if (any == null) {
             return true;
         }
-        Predicate<Type> f = getIndestructibleTypesFilter();
+        Predicate<Type> f = getSimpleTypesFilter();
         if (f == null) {
             return true;
         }
@@ -102,15 +117,15 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
-    public boolean isSimpleObject(Object any) {
+    public boolean isAtomicObject(Object any) {
         if (any == null) {
             return true;
         }
-        return isSimpleType(any.getClass());
+        return isAtomicType(any.getClass());
     }
 
     @Override
-    public boolean isSimpleType(Type any) {
+    public boolean isAtomicType(Type any) {
         if (any == null) {
             return true;
         }
@@ -156,7 +171,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
-    public Object defaultDestruct(Object o, Type expectedType) {
+    public Object defaultToSimple(Object o, Type expectedType) {
         if (o != null) {
             RefItem ro = new RefItem(o, "defaultDestruct");
             if (visited.contains(ro)) {
@@ -173,7 +188,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
-    public NElement createElement(Object o, Type expectedType) {
+    public NElement toElement(Object o, Type expectedType) {
         if (o != null) {
             RefItem ro = new RefItem(o, "objectToElement");
             if (visited.contains(ro)) {
@@ -191,7 +206,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
-    public Object destruct(Object o, Type expectedType) {
+    public Object toSimple(Object o, Type expectedType) {
         if (o != null) {
             RefItem ro = new RefItem(o, "destruct");
             if (visited.contains(ro)) {
@@ -208,22 +223,22 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
-    public <T> T createObject(NElement o, Class<T> type) {
-        return (T) createObject(o, (Type) type);
+    public <T> T toObject(NElement o, Class<T> type) {
+        return (T) toObject(o, (Type) type);
     }
 
     @Override
-    public Object createObject(NElement o, Type type) {
+    public Object toObject(NElement o, Type type) {
         return model.getElementFactoryService().createObject(o, type, this);
     }
 
     @Override
-    public <T> T defaultCreateObject(NElement o, Class<T> type) {
-        return (T) defaultCreateObject(o, (Type) type);
+    public <T> T defaultToObject(NElement o, Class<T> type) {
+        return (T) defaultToObject(o, (Type) type);
     }
 
     @Override
-    public <T> T defaultCreateObject(NElement o, Type type) {
+    public <T> T defaultToObject(NElement o, Type type) {
         return (T) model.getElementFactoryService().defaultCreateObject(o, type, this);
     }
 
@@ -273,7 +288,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     private class globalIndestructibleTypesFilter implements Predicate<Type> {
         @Override
         public boolean test(Type type) {
-            List<Predicate<Type>> ff = userElementMapperStore.getIndestructibleTypesFilters();
+            List<Predicate<Type>> ff = userElementMapperStore.getSimpleTypesFilters();
             for (Predicate<Type> f : ff) {
                 if (f.test(type)) {
                     return true;

@@ -59,7 +59,7 @@ public class DefaultXmlNElementStreamFormat implements NElementStreamFormat {
         } catch (IOException ex) {
             throw new NIOException(ex);
         }
-        return context.createElement(doc, Document.class);
+        return context.toElement(doc, Document.class);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class DefaultXmlNElementStreamFormat implements NElementStreamFormat {
 
     @Override
     public void printElement(NElement value, NPrintStream out, NElementFormatter formatter, NElementFactoryContext context) {
-        Document doc = (Document) context.createObject(value, Document.class);
+        Document doc = (Document) context.toObject(value, Document.class);
         if (out.isNtf()) {
             NPrintStream bos = NMemoryPrintStream.of();
             XmlUtils.writeDocument(doc, new StreamResult(bos.asPrintStream()), true, true);

@@ -161,9 +161,9 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
         if (errorState != null) {
             u.add("success", !errorState);
             if (errorState) {
-                u.add("error", NDescribables.describeResolveOrDestruct(model.getValue()));
+                u.add("error", NDescribables.describeResolveOrSimplify(model.getValue()));
             } else {
-                u.add("value", NDescribables.describeResolveOrDestruct(model.getThrowable()));
+                u.add("value", NDescribables.describeResolveOrSimplify(model.getThrowable()));
             }
         }
         return u.build();

@@ -3,17 +3,14 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.text.NObjectWriter;
-import net.thevpc.nuts.text.NTexts;
 
 import java.lang.reflect.Type;
 
 public class NElementMapperNId implements NElementMapper<NId> {
 
     @Override
-    public Object destruct(NId o, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NId o, Type typeOfSrc, NElementFactoryContext context) {
         if (context.isNtf()) {
             return NObjectWriter.of(o).setNtf(true).format(o);
         } else {

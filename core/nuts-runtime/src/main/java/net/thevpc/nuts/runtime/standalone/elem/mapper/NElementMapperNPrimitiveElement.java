@@ -10,7 +10,7 @@ public class NElementMapperNPrimitiveElement implements NElementMapper<NPrimitiv
     }
 
     @Override
-    public Object destruct(NPrimitiveElement src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NPrimitiveElement src, Type typeOfSrc, NElementFactoryContext context) {
         return src.asLiteral().asObject().orNull();
     }
 

@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.artifact.NEnvCondition;
 import net.thevpc.nuts.artifact.NEnvConditionBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNEnvConditionBuilder;
@@ -12,8 +11,8 @@ import java.lang.reflect.Type;
 public class NElementMapperNEnvCondition implements NElementMapper<NEnvCondition> {
 
     @Override
-    public Object destruct(NEnvCondition src, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultDestruct(
+    public Object toSimple(NEnvCondition src, Type typeOfSrc, NElementFactoryContext context) {
+        return context.defaultToSimple(
                 new DefaultNEnvConditionBuilder(src), null
         );
     }
@@ -25,7 +24,7 @@ public class NElementMapperNEnvCondition implements NElementMapper<NEnvCondition
 
     @Override
     public NEnvCondition createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NEnvConditionBuilder builder = context.defaultCreateObject(o, DefaultNEnvConditionBuilder.class);
+        NEnvConditionBuilder builder = context.defaultToObject(o, DefaultNEnvConditionBuilder.class);
         return new DefaultNEnvConditionBuilder(builder).build();
     }
 

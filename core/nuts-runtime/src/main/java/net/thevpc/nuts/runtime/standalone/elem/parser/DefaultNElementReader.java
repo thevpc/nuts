@@ -236,7 +236,7 @@ public class DefaultNElementReader implements NElementReader {
 
     @Override
     public <T> T readWithSource(Reader reader, Class<T> clazz, Object source) {
-        return (T) createFactoryContext().createObject(model.getStreamFormat(contentType == null ? NContentType.JSON : contentType).parseElement(reader, createFactoryContext(), source), clazz);
+        return (T) createFactoryContext().toObject(model.getStreamFormat(contentType == null ? NContentType.JSON : contentType).parseElement(reader, createFactoryContext(), source), clazz);
     }
 
     @Override
@@ -344,7 +344,7 @@ public class DefaultNElementReader implements NElementReader {
     }
 
     public Object elementToObject(NElement o, Type type) {
-        return createFactoryContext().createObject(o, type);
+        return createFactoryContext().toObject(o, type);
     }
 
     @Override

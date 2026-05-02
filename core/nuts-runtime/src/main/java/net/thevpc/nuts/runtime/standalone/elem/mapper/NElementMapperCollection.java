@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementAnnotation;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.runtime.standalone.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNArrayElement;
@@ -22,21 +20,21 @@ public class NElementMapperCollection implements NElementMapper {
     }
 
     @Override
-    public Object destruct(Object src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(Object src, Type typeOfSrc, NElementFactoryContext context) {
         Collection<Object> coll = (Collection) src;
-        return coll.stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
+        return coll.stream().map(x -> context.toSimple(x, null)).collect(Collectors.toList());
     }
 
     @Override
     public NElement createElement(Object o, Type typeOfSrc, NElementFactoryContext context) {
         Collection<Object> coll = (Collection) o;
-        List<NElement> collect = coll.stream().map(x -> context.createElement(x)).collect(Collectors.toList());
+        List<NElement> collect = coll.stream().map(x -> context.toElement(x)).collect(Collectors.toList());
         return new DefaultNArrayElement(null, null, collect);
     }
 
     public Collection fillObject(NElement o, Collection coll, Type elemType, Type to, NElementFactoryContext context) {
         for (NElement nutsElement : o.asArray().get().children()) {
-            coll.add(context.createObject(nutsElement, elemType));
+            coll.add(context.toObject(nutsElement, elemType));
         }
         return coll;
     }

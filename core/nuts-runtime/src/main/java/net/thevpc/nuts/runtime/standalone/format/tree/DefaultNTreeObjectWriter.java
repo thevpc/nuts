@@ -70,7 +70,7 @@ public class DefaultNTreeObjectWriter extends DefaultObjectWriterBase<NTreeObjec
         NElements ee = NElements.of();
         //ee.mapperStore().
         Object destructredObject = ee
-                .destruct(tree);
+                .toSimple(tree);
         return XNode.root(destructredObject, rootName, xNodeFormatter);
     }
 

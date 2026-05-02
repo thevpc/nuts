@@ -14,24 +14,24 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
     }
 
     @Override
-    public Object destruct(NElement src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NElement src, Type typeOfSrc, NElementFactoryContext context) {
         switch (src.type()) {
             case PAIR: {
                 NPairElement p = src.asPair().get();
                 return new AbstractMap.SimpleEntry<Object, Object>(
-                        context.defaultDestruct(p.key(), NElement.class),
-                        context.defaultDestruct(p.value(), NElement.class)
+                        context.defaultToSimple(p.key(), NElement.class),
+                        context.defaultToSimple(p.value(), NElement.class)
                 );
             }
             case UPLET:
             case NAMED_UPLET: {
-                return src.asUplet().get().params().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
+                return src.asUplet().get().params().stream().map(x -> context.toSimple(x, null)).collect(Collectors.toList());
             }
             case ARRAY:
             case FULL_ARRAY:
             case NAMED_ARRAY:
             case PARAM_ARRAY: {
-                return src.asArray().get().children().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
+                return src.asArray().get().children().stream().map(x -> context.toSimple(x, null)).collect(Collectors.toList());
             }
             case OBJECT:
             case PARAM_OBJECT:
@@ -43,8 +43,8 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 for (NElement nElement : src.asObject().get().children()) {
                     if (map && nElement instanceof NPairElement) {
                         NPairElement nPairElement = (NPairElement) nElement;
-                        Object k = context.destruct(nPairElement.key(), null);
-                        Object v = context.destruct(nPairElement.value(), null);
+                        Object k = context.toSimple(nPairElement.key(), null);
+                        Object v = context.toSimple(nPairElement.value(), null);
                         if (visited.contains(k)) {
                             map = false;
                         } else {
@@ -52,7 +52,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                         }
                         all.add(new AbstractMap.SimpleEntry<>(k, v));
                     } else {
-                        Object k = context.destruct(nElement, null);
+                        Object k = context.toSimple(nElement, null);
                         all.add(k);
                     }
                 }
@@ -70,7 +70,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 return src.asCustom().get();
             }
             default: {
-                return context.createElement(src, NPrimitiveElement.class);
+                return context.toElement(src, NPrimitiveElement.class);
             }
         }
     }
@@ -159,10 +159,10 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
             }
             case CUSTOM: {
                 Object v1 = src.asCustom().get().value();
-                if (context.isIndestructibleObject(v1)) {
+                if (context.isSimpleObject(v1)) {
                     return src;
                 }
-                return context.createElement(v1);
+                return context.toElement(v1);
             }
         }
         return src;
@@ -193,7 +193,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
     }
 
     private NElement convertOne_objectToElement(NElement k, NElement src, Type typeOfSrc, NElementFactoryContext context, NBooleanRef someChange) {
-        NElement k2 = context.createElement(k);
+        NElement k2 = context.toElement(k);
         if (k2 != k) {
             someChange.set();
             return k2;
@@ -207,7 +207,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
             newParams = new ArrayList<>(oldParams.size());
             for (NElement e : oldParams) {
                 boolean someChange0;
-                NElement k2 = context.createElement(e);
+                NElement k2 = context.toElement(e);
                 someChange0 = k2 != e;
                 if (someChange0) {
                     someChange.set(true);

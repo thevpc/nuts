@@ -14,7 +14,7 @@ import java.util.Map;
 public class NElementMapperEnum implements NElementMapper<Enum> {
 
     @Override
-    public Object destruct(Enum src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(Enum src, Type typeOfSrc, NElementFactoryContext context) {
         return src;
     }
 

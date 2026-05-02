@@ -54,13 +54,13 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             return DefaultElementMapperStore.F_NULL.createObject(o, to, context);
         }
         if (to == null) {
-            NElementMapper f = context.getMapper(o, defaultOnly);
+            NElementDeserializer f = context.getDeserializer(o, defaultOnly);
             if (f == null) {
                 throw new NUnsupportedEnumException(o.type());
             }
             return f.createObject(o, to, context);
         }
-        NElementMapper f = context.getMapper(to, defaultOnly);
+        NElementDeserializer f = context.getDeserializer(to, defaultOnly);
         return f.createObject(o, to, context);
     }
 
@@ -81,10 +81,10 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         if (expectedType == null) {
             expectedType = o.getClass();
         }
-        if (context.isIndestructibleObject(o)) {
+        if (context.isSimpleObject(o)) {
             return o;
         }
-        return context.getMapper(expectedType, defaultOnly).destruct(o, expectedType, context);
+        return context.getSimplifier(expectedType, defaultOnly).toSimple(o, expectedType, context);
     }
 
     @Override
@@ -104,10 +104,10 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         if (expectedType == null) {
             expectedType = o.getClass();
         }
-        if (context.isIndestructibleObject(o)) {
+        if (context.isSimpleObject(o)) {
             return createUndestructableElement(o, expectedType, context);
         }
-        NElementMapper mapper = context.getMapper(expectedType, defaultOnly);
+        NElementSerializer mapper = context.getSerializer(expectedType, defaultOnly);
         return mapper.createElement(o, expectedType, context);
     }
 
@@ -150,13 +150,13 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
                 case "java.util.Date":
                 case "java.sql.Time":
                 case "java.time.Duration":
-                    return context.getMapper(expectedType, true).createElement(o, expectedType, context);
+                    return context.getSerializer(expectedType, true).createElement(o, expectedType, context);
             }
             if (Temporal.class.isAssignableFrom(cls)) {
-                return context.getMapper(expectedType, true).createElement(o, expectedType, context);
+                return context.getSerializer(expectedType, true).createElement(o, expectedType, context);
             }
             if (java.util.Date.class.isAssignableFrom(cls)) {
-                return context.getMapper(expectedType, true).createElement(o, expectedType, context);
+                return context.getSerializer(expectedType, true).createElement(o, expectedType, context);
             }
         }
         return NElement.ofCustom(o);
@@ -178,11 +178,11 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             List<Object> preloaded = new ArrayList<>();
             int length = Array.getLength(array);
             for (int i = 0; i < length; i++) {
-                preloaded.add(context.destruct(Array.get(array, i), null));
+                preloaded.add(context.toSimple(Array.get(array, i), null));
             }
             return preloaded;
         } else {
-            return Arrays.stream((Object[]) array).map(x -> context.destruct(x, null)).collect(Collectors.toList());
+            return Arrays.stream((Object[]) array).map(x -> context.toSimple(x, null)).collect(Collectors.toList());
         }
     }
 
@@ -191,12 +191,12 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             List<NElement> preloaded = new ArrayList<>();
             int length = Array.getLength(array);
             for (int i = 0; i < length; i++) {
-                preloaded.add(context.createElement(Array.get(array, i)));
+                preloaded.add(context.toElement(Array.get(array, i)));
             }
             return new DefaultNArrayElement(null, null, preloaded);
         } else {
             return new DefaultNArrayElement(null, null,
-                    Arrays.stream((Object[]) array).map(x -> context.createElement(x)).collect(Collectors.toList())
+                    Arrays.stream((Object[]) array).map(x -> context.toElement(x)).collect(Collectors.toList())
             );
         }
     }

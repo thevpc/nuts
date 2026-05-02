@@ -11,7 +11,7 @@ public class NElementMapperPrimitiveCharArray implements NElementMapper<char[]> 
     }
 
     @Override
-    public Object destruct(char[] src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(char[] src, Type typeOfSrc, NElementFactoryContext context) {
         return DefaultNElementFactoryService._destructArray1(src, context);
     }
 
@@ -23,7 +23,7 @@ public class NElementMapperPrimitiveCharArray implements NElementMapper<char[]> 
     @Override
     public char[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NArrayElement earr = o.asArray().get();
-        String s = (String) context.createObject(o, String.class);
+        String s = (String) context.toObject(o, String.class);
         return s.toCharArray();
     }
 }

@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.util.NLiteral;
 
 import java.lang.reflect.Type;
@@ -10,8 +9,8 @@ import java.lang.reflect.Type;
 public class NElementMapperNLiteral implements NElementMapper<NLiteral> {
 
     @Override
-    public Object destruct(NLiteral src, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultDestruct(
+    public Object toSimple(NLiteral src, Type typeOfSrc, NElementFactoryContext context) {
+        return context.defaultToSimple(
                 src.asObject().orNull(), null
         );
     }
@@ -23,7 +22,7 @@ public class NElementMapperNLiteral implements NElementMapper<NLiteral> {
 
     @Override
     public NLiteral createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        Object any = context.defaultCreateObject(o, Object.class);
+        Object any = context.defaultToObject(o, Object.class);
         return NLiteral.of(any);
     }
 

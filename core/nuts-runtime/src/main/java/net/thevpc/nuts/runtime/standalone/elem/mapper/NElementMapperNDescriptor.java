@@ -4,15 +4,14 @@ import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 
 import java.lang.reflect.Type;
 
 public class NElementMapperNDescriptor implements NElementMapper<NDescriptor> {
 
     @Override
-    public Object destruct(NDescriptor src, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultDestruct(
+    public Object toSimple(NDescriptor src, Type typeOfSrc, NElementFactoryContext context) {
+        return context.defaultToSimple(
                 new DefaultNDescriptorBuilder().copyFrom(src), null
         );
     }
@@ -26,7 +25,7 @@ public class NElementMapperNDescriptor implements NElementMapper<NDescriptor> {
 
     @Override
     public NDescriptor createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        DefaultNDescriptorBuilder builder = (DefaultNDescriptorBuilder) context.defaultCreateObject(o, DefaultNDescriptorBuilder.class);
+        DefaultNDescriptorBuilder builder = (DefaultNDescriptorBuilder) context.defaultToObject(o, DefaultNDescriptorBuilder.class);
         return new DefaultNDescriptorBuilder().copyFrom(builder).build();
     }
 

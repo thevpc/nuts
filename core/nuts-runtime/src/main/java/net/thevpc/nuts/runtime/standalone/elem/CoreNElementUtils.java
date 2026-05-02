@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
+import net.thevpc.nuts.elem.NElementSimple;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NFragmentElement;
 import net.thevpc.nuts.elem.NPairElement;
@@ -260,7 +261,7 @@ public class CoreNElementUtils {
             }
             if (type instanceof Class<?>) {
                 Class cls = (Class) type;
-                return net.thevpc.nuts.elem.NElementAutoUndestructable.class.isAssignableFrom(cls);
+                return NElementSimple.class.isAssignableFrom(cls);
             } else if (type instanceof ParameterizedType) {
                 // e.g. List<String> -> get raw type List
                 Type rawType = ((ParameterizedType) type).getRawType();

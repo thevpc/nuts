@@ -2,14 +2,13 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 
 import java.lang.reflect.Type;
 
 public class NElementMapperBoolean implements NElementMapper<Boolean> {
 
     @Override
-    public Object destruct(Boolean src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(Boolean src, Type typeOfSrc, NElementFactoryContext context) {
         return src;
     }
 

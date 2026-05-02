@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
 public class NElementMapperNFilter implements NElementMapper<NFilter> {
 
     @Override
-    public Object destruct(NFilter src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NFilter src, Type typeOfSrc, NElementFactoryContext context) {
         return src.toString();
     }
 

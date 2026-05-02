@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 public class NElementMapperString implements NElementMapper<String> {
 
     @Override
-    public Object destruct(String src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(String src, Type typeOfSrc, NElementFactoryContext context) {
         return src;
     }
 

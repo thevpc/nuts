@@ -22,7 +22,9 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.elem;
+package net.thevpc.nuts.runtime.standalone.elem.mapper;
+
+import net.thevpc.nuts.elem.*;
 
 import java.lang.reflect.Type;
 
@@ -30,10 +32,10 @@ import java.lang.reflect.Type;
  * @author thevpc
  * @since 0.8.1
  */
-public interface NElementMapper<T> {
+public interface NElementMapper<T> extends NElementSimplifier<T>, NElementSerializer<T>, NElementDeserializer<T> {
 
-    default Object destruct(T src, Type typeOfSrc, NElementFactoryContext context){
-        return context.defaultDestruct(src,typeOfSrc);
+    default Object toSimple(T src, Type typeOfSrc, NElementFactoryContext context){
+        return context.defaultToSimple(src,typeOfSrc);
     }
 
     default NElement createElement(T src, Type typeOfSrc, NElementFactoryContext context){
@@ -41,7 +43,7 @@ public interface NElementMapper<T> {
     }
 
     default T createObject(NElement o, Type typeOfResult, NElementFactoryContext context){
-        return context.defaultCreateObject(o,typeOfResult);
+        return context.defaultToObject(o,typeOfResult);
     }
 
 }

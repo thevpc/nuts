@@ -2,17 +2,17 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper.builder;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapperBuilderInstanceContext;
+import net.thevpc.nuts.elem.NElementDeserializerBuilderInstanceContext;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.NElementFactoryContextAdapter;
 
 import java.lang.reflect.Type;
 
-class NElementMapperBuilderInstanceContextImpl<T> extends NElementFactoryContextAdapter implements NElementMapperBuilderInstanceContext<T> {
+class NElementDeserializerBuilderInstanceContextImpl<T> extends NElementFactoryContextAdapter implements NElementDeserializerBuilderInstanceContext<T> {
     private final T finalInstance;
     private final NElement element;
     private final Type to;
 
-    public NElementMapperBuilderInstanceContextImpl(T finalInstance, NElement element, Type to, NElementFactoryContext context) {
+    public NElementDeserializerBuilderInstanceContextImpl(T finalInstance, NElement element, Type to, NElementFactoryContext context) {
         super(context);
         this.finalInstance = finalInstance;
         this.element = element;

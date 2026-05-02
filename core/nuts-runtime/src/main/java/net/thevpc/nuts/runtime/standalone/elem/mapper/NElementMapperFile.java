@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 
@@ -12,7 +11,7 @@ import java.lang.reflect.Type;
 public class NElementMapperFile implements NElementMapper<File> {
 
     @Override
-    public Object destruct(File src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(File src, Type typeOfSrc, NElementFactoryContext context) {
         return src;
     }
 

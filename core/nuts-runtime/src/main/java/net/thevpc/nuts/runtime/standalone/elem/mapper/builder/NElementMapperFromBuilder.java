@@ -3,31 +3,32 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper.builder;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reflect.NReflectProperty;
 import net.thevpc.nuts.reflect.NReflectType;
+import net.thevpc.nuts.reflect.NReflectUtils;
 
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-class NElementMapperFromBuilder<T> implements NElementMapper<T> {
-    private DefaultNElementMapperBuilder<T> builder;
-    NElementMapperBuilderInstanceFactory<T> onNewInstance;
+class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
+    private DefaultNElementDeserializerBuilder<T> builder;
+    NElementDeserializerBuilderInstanceFactory<T> onNewInstance;
     NReflectType type;
-    List<NElementMapperBuilderInitializer<T>> postProcess = new ArrayList<>();
+    List<NElementDeserializerBuilderInitializer<T>> postProcess = new ArrayList<>();
 
 
-    Function<String, String> renamer;
+    Function<String, String> fieldNameNormalizer;
     Predicate<String> paramFieldFieldFilter;
     Predicate<String> bodyFieldNameFilter;
     //        List<TFieldImpl<T>> allTFields = new ArrayList<>();
     //        boolean built = false;
 //        boolean wrapCollections = true;
 //        boolean containerIsCollection = false;
-    List<NElementMapperBuilderFieldConfigurer<T>> onUnsupportedBody = new ArrayList<>();
-    List<NElementMapperBuilderFieldConfigurer<T>> onUnsupportedArg = new ArrayList<>();
+    List<NElementDeserializerBuilderFieldConfigurer<T>> onUnsupportedBody = new ArrayList<>();
+    List<NElementDeserializerBuilderFieldConfigurer<T>> onUnsupportedArg = new ArrayList<>();
 //        Map<Type, Object> defaultValueByType = new HashMap<>();
 
-    public NElementMapperFromBuilder(DefaultNElementMapperBuilder<T> builder) {
+    public NElementMapperFromBuilder(DefaultNElementDeserializerBuilder<T> builder) {
         this.onNewInstance = builder.onNewInstance;
         this.builder = builder;
         this.type = builder.type;
@@ -36,17 +37,7 @@ class NElementMapperFromBuilder<T> implements NElementMapper<T> {
         this.postProcess.addAll(builder.postProcess);
         this.onUnsupportedBody.addAll(builder.onUnsupportedBody);
         this.onUnsupportedArg.addAll(builder.onUnsupportedArg);
-        this.renamer = builder.renamer;
-    }
-
-    @Override
-    public Object destruct(T src, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultDestruct(src, typeOfSrc);
-    }
-
-    @Override
-    public NElement createElement(T src, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultCreateElement(src, typeOfSrc);
+        this.fieldNameNormalizer = builder.fieldNameNormalizer;
     }
 
     @Override
@@ -55,7 +46,7 @@ class NElementMapperFromBuilder<T> implements NElementMapper<T> {
         List<NElement> args = container.isParametrized() ? container.asParametrizedContainer().get().params().orNull() : null;
         T instance = null;
         if (onNewInstance != null) {
-            instance = onNewInstance.newInstance(new NElementMapperBuilderFactoryContextImpl<>(element, to, context));
+            instance = onNewInstance.newInstance(new NElementDeserializerBuilderFactoryContextImpl<>(element, to, context));
         }
         if (instance == null) {
             Type rtype = type.getJavaType();
@@ -81,7 +72,16 @@ class NElementMapperFromBuilder<T> implements NElementMapper<T> {
 
         for (NReflectProperty property : effectiveType.getProperties()) {
             if (!allFields.containsKey(property.getName())) {
-                NElementMapperBuilderFieldImpl<T> f = new NElementMapperBuilderFieldImpl<>(property.getName(), builder);
+                NElementMapperBuilderFieldImpl<T> o = (NElementMapperBuilderFieldImpl<T>) builder.preConfiguredFields.get(property.getName());
+                if(o!=null){
+                    o=o.copy();
+                }else{
+                    o=new NElementMapperBuilderFieldImpl<>(property.getName(),builder);
+                }
+                NElementMapperBuilderFieldImpl<T> f = o;
+                if(o.isIgnored()){
+                    continue;
+                }
                 f.uniformName = uniformName(f.name);
                 f.field = null;
                 for (NReflectProperty field : effectiveType.getProperties()) {
@@ -99,11 +99,26 @@ class NElementMapperFromBuilder<T> implements NElementMapper<T> {
                 boolean arg = f.arg || (!f.arg && !f.body);
                 if (body) {
                     bodyFields.put(f.uniformName, f);
+                    if(f.aliases!=null){
+                        for (String alias : f.aliases) {
+                            bodyFields.put(uniformName(alias), f);
+                        }
+                    }
                 }
                 if (arg) {
                     argFields.put(f.uniformName, f);
+                    if(f.aliases!=null){
+                        for (String alias : f.aliases) {
+                            argFields.put(uniformName(alias), f);
+                        }
+                    }
                 }
                 allFields.put(property.getName(), f);
+                if(f.aliases!=null){
+                    for (String alias : f.aliases) {
+                        allFields.put(uniformName(alias), f);
+                    }
+                }
             }
         }
 
@@ -119,8 +134,8 @@ class NElementMapperFromBuilder<T> implements NElementMapper<T> {
             }
         }
         T finalInstance = instance;
-        NElementMapperBuilderInstanceContext<T> cc = new NElementMapperBuilderInstanceContextImpl<T>(finalInstance, element, to, context);
-        for (NElementMapperBuilderInitializer<T> process : postProcess) {
+        NElementDeserializerBuilderInstanceContext<T> cc = new NElementDeserializerBuilderInstanceContextImpl<T>(finalInstance, element, to, context);
+        for (NElementDeserializerBuilderInitializer<T> process : postProcess) {
             process.initializeInstance(cc);
         }
         return (T) instance;
@@ -158,11 +173,19 @@ class NElementMapperFromBuilder<T> implements NElementMapper<T> {
                         }
                     }
                 }
-                Class<?> jt = (Class<?>) tField.field.getPropertyType().getJavaType();
+                Class<?> jt;
+                if(tField.typeOverride!=null) {
+                    jt = (Class<?>) NReflectUtils.getClassFromType(tField.typeOverride).orNull();
+                    if(jt==null){
+                        jt = (Class<?>) tField.field.getPropertyType().getJavaType();
+                    }
+                }else{
+                    jt = (Class<?>) tField.field.getPropertyType().getJavaType();
+                }
                 if((jt.isArray() || Collection.class.isAssignableFrom(jt)) && !value.isAnyArray()) {
-                    tField.field.write(instance, context.createObject(value.wrapIntoArray(), jt));
+                    tField.field.write(instance, context.toObject(value.wrapIntoArray(), jt));
                 }else {
-                    tField.field.write(instance, context.createObject(value, jt));
+                    tField.field.write(instance, context.toObject(value, jt));
                 }
             } else {
                 onBodyNotSupported(instance, arg, isArg, element, to, context);
@@ -189,9 +212,9 @@ class NElementMapperFromBuilder<T> implements NElementMapper<T> {
     private void onBodyNotSupported(T instance, NElement arg, boolean isArg, NElement element, Class<T> to, NElementFactoryContext context) {
         boolean found = false;
         if (!found) {
-            List<NElementMapperBuilderFieldConfigurer<T>> list = isArg ? onUnsupportedArg : onUnsupportedBody;
-            NElementMapperBuilderFieldContext<T> cc = new NElementMapperBuilderFieldContextImpl<T>(instance, arg, element, to, context);
-            for (NElementMapperBuilderFieldConfigurer<T> tOnUnsupported : list) {
+            List<NElementDeserializerBuilderFieldConfigurer<T>> list = isArg ? onUnsupportedArg : onUnsupportedBody;
+            NElementDeserializerBuilderFieldContext<T> cc = new NElementDeserializerBuilderFieldContextImpl<T>(instance, arg, element, to, context);
+            for (NElementDeserializerBuilderFieldConfigurer<T> tOnUnsupported : list) {
 
                 if (tOnUnsupported.prepareField(cc)) {
                     found = true;
@@ -204,13 +227,12 @@ class NElementMapperFromBuilder<T> implements NElementMapper<T> {
         }
     }
 
-
     private String uniformName(String s) {
         s = s.trim();
-        if (renamer == null) {
-            return s;
+        if(fieldNameNormalizer !=null){
+            return fieldNameNormalizer.apply(s);
         }
-        return renamer.apply(s);
+        return s;
     }
 
 }

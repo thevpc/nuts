@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
@@ -11,7 +10,7 @@ import java.util.Date;
 public class NElementMapperUtilDate implements NElementMapper<Date> {
 
     @Override
-    public Object destruct(Date src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(Date src, Type typeOfSrc, NElementFactoryContext context) {
         return src;
     }
 
@@ -22,7 +21,7 @@ public class NElementMapperUtilDate implements NElementMapper<Date> {
 
     @Override
     public Date createObject(NElement o, Type to, NElementFactoryContext context) {
-        Instant i = (Instant) context.defaultCreateObject(o, Instant.class);
+        Instant i = (Instant) context.defaultToObject(o, Instant.class);
         return new Date(i.toEpochMilli());
     }
 }

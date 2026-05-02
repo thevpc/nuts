@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.text.NObjectWriter;
 
 import java.lang.reflect.Type;
@@ -11,7 +10,7 @@ import java.lang.reflect.Type;
 public class NElementMapperNVersion implements NElementMapper<NVersion> {
 
     @Override
-    public Object destruct(NVersion src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NVersion src, Type typeOfSrc, NElementFactoryContext context) {
         if (context.isNtf()) {
             return NObjectWriter.of(src).setNtf(true).format(src);
         } else {

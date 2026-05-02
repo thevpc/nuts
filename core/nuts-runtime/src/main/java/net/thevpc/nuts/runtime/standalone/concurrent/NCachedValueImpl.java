@@ -258,23 +258,23 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
     @Override
     public NElement describe() {
         NUpletElementBuilder b = NElement.ofUpletBuilder("CachedValue")
-                .add("supplier", NDescribables.describeResolveOrDestruct(supplier));
+                .add("supplier", NDescribables.describeResolveOrSimplify(supplier));
 
         if (model.getExpiry() != null) {
-            b.add("expiry", NDescribables.describeResolveOrDestruct(model.getExpiry().toMillis()));
+            b.add("expiry", NDescribables.describeResolveOrSimplify(model.getExpiry().toMillis()));
         }
         if (model.getRetryPeriod() != null) {
-            b.add("retryPeriod", NDescribables.describeResolveOrDestruct(model.getRetryPeriod().toMillis()));
+            b.add("retryPeriod", NDescribables.describeResolveOrSimplify(model.getRetryPeriod().toMillis()));
         }
-        b.add("maxRetries", NDescribables.describeResolveOrDestruct(model.getMaxRetries()));
+        b.add("maxRetries", NDescribables.describeResolveOrSimplify(model.getMaxRetries()));
         Boolean ev = model.getErrorState();
         b.add("evaluated", ev != null);
         if (ev != null) {
             b.add("success", !ev);
             if (!ev) {
-                b.add("value", NDescribables.describeResolveOrDestruct(model.getValue()));
+                b.add("value", NDescribables.describeResolveOrSimplify(model.getValue()));
             } else {
-                b.add("error", NDescribables.describeResolveOrDestruct(model.getThrowable()));
+                b.add("error", NDescribables.describeResolveOrSimplify(model.getThrowable()));
             }
         }
         return b

@@ -2,12 +2,10 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NDependencyBuilder;
-import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.text.NDependencyWriter;
 import net.thevpc.nuts.runtime.standalone.DefaultNDependencyBuilder;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.text.NObjectWriter;
 import net.thevpc.nuts.text.NText;
 
@@ -16,19 +14,19 @@ import java.lang.reflect.Type;
 public class NElementMapperNDependency implements NElementMapper<NDependency> {
 
     @Override
-    public Object destruct(NDependency o, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NDependency o, Type typeOfSrc, NElementFactoryContext context) {
         if (o.getExclusions().isEmpty()) {
             //use compact form
             if (context.isNtf()) {
                 return NDependencyWriter.of().setNtf(true).format(o);
             } else {
 
-                return context.defaultDestruct(NObjectWriter.of(o)
+                return context.defaultToSimple(NObjectWriter.of(o)
                         .setNtf(context.isNtf())
                         .format(o), null);
             }
         }
-        return context.defaultDestruct(NDependencyBuilder.of().copyFrom(o), null);
+        return context.defaultToSimple(NDependencyBuilder.of().copyFrom(o), null);
     }
 
     @Override
@@ -59,7 +57,7 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
         if (o.type().isAnyString()) {
             return NDependency.get(o.asStringValue().get()).get();
         }
-        NDependencyBuilder builder = context.defaultCreateObject(o, DefaultNDependencyBuilder.class);
+        NDependencyBuilder builder = context.defaultToObject(o, DefaultNDependencyBuilder.class);
         return NDependencyBuilder.of().copyFrom(builder).build();
     }
 

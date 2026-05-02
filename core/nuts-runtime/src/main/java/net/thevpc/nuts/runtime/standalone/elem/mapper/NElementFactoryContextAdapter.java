@@ -1,8 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
 
 import java.lang.reflect.Type;
@@ -17,18 +15,8 @@ public class NElementFactoryContextAdapter implements NElementFactoryContext {
     }
 
     @Override
-    public Predicate<Type> getIndestructibleTypesFilter() {
-        return base.getIndestructibleTypesFilter();
-    }
-
-    @Override
-    public boolean isIndestructibleObject(Object any) {
-        return base.isIndestructibleObject(any);
-    }
-
-    @Override
-    public boolean isIndestructibleType(Type any) {
-        return base.isIndestructibleType(any);
+    public Predicate<Type> getSimpleTypesFilter() {
+        return base.getSimpleTypesFilter();
     }
 
     @Override
@@ -42,6 +30,16 @@ public class NElementFactoryContextAdapter implements NElementFactoryContext {
     }
 
     @Override
+    public boolean isAtomicObject(Object any) {
+        return base.isAtomicObject(any);
+    }
+
+    @Override
+    public boolean isAtomicType(Type any) {
+        return base.isAtomicType(any);
+    }
+
+    @Override
     public Map<String, Object> getProperties() {
         return base.getProperties();
     }
@@ -52,43 +50,43 @@ public class NElementFactoryContextAdapter implements NElementFactoryContext {
     }
 
     @Override
-    public Object defaultDestruct(Object o, Type expectedType) {
-        return base.defaultDestruct(o, expectedType);
+    public Object defaultToSimple(Object o, Type expectedType) {
+        return base.defaultToSimple(o, expectedType);
     }
 
     @Override
-    public NElement createElement(Object o) {
-        return base.createElement(o);
+    public NElement toElement(Object o) {
+        return base.toElement(o);
     }
 
     @Override
-    public NElement createElement(Object o, Type expectedType) {
-        return base.createElement(o, expectedType);
+    public NElement toElement(Object o, Type expectedType) {
+        return base.toElement(o, expectedType);
     }
 
     @Override
-    public Object destruct(Object o, Type expectedType) {
-        return base.destruct(o, expectedType);
+    public Object toSimple(Object o, Type expectedType) {
+        return base.toSimple(o, expectedType);
     }
 
     @Override
-    public <T> T createObject(NElement o, Class<T> type) {
-        return base.createObject(o, type);
+    public <T> T toObject(NElement o, Class<T> type) {
+        return base.toObject(o, type);
     }
 
     @Override
-    public Object createObject(NElement o, Type type) {
-        return base.createObject(o, type);
+    public Object toObject(NElement o, Type type) {
+        return base.toObject(o, type);
     }
 
     @Override
-    public <T> T defaultCreateObject(NElement o, Class<T> type) {
-        return base.defaultCreateObject(o, type);
+    public <T> T defaultToObject(NElement o, Class<T> type) {
+        return base.defaultToObject(o, type);
     }
 
     @Override
-    public <T> T defaultCreateObject(NElement o, Type type) {
-        return base.defaultCreateObject(o, type);
+    public <T> T defaultToObject(NElement o, Type type) {
+        return base.defaultToObject(o, type);
     }
 
     @Override
@@ -101,13 +99,33 @@ public class NElementFactoryContextAdapter implements NElementFactoryContext {
         return base.getTypesRepository();
     }
 
+//    @Override
+//    public <T> NElementMapper<T> getMapper(Type expectedType, boolean defaultOnly) {
+//        return base.getMapper(expectedType, defaultOnly);
+//    }
+//
+//    @Override
+//    public <T> NElementMapper<T> getMapper(NElement element, boolean defaultOnly) {
+//        return base.getMapper(element, defaultOnly);
+//    }
+
     @Override
-    public <T> NElementMapper<T> getMapper(Type expectedType, boolean defaultOnly) {
-        return base.getMapper(expectedType, defaultOnly);
+    public <T> NElementSerializer<T> getSerializer(Type type, boolean defaultOnly) {
+        return base.getSerializer(type, defaultOnly);
     }
 
     @Override
-    public <T> NElementMapper<T> getMapper(NElement element, boolean defaultOnly) {
-        return base.getMapper(element, defaultOnly);
+    public <T> NElementSimplifier<T> getSimplifier(Type type, boolean defaultOnly) {
+        return base.getSimplifier(type, defaultOnly);
+    }
+
+    @Override
+    public <T> NElementDeserializer<T> getDeserializer(Type type, boolean defaultOnly) {
+        return base.getDeserializer(type, defaultOnly);
+    }
+
+    @Override
+    public <T> NElementDeserializer<T> getDeserializer(NElement element, boolean defaultOnly) {
+        return base.getDeserializer(element, defaultOnly);
     }
 }

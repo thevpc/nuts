@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
 public class NElementMapperNRepositoryLocation implements NElementMapper<NRepositoryLocation> {
 
     @Override
-    public Object destruct(NRepositoryLocation o, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NRepositoryLocation o, Type typeOfSrc, NElementFactoryContext context) {
         return o.toString();
     }
 
