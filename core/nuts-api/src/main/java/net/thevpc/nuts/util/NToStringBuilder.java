@@ -78,10 +78,50 @@ public class NToStringBuilder {
     }
 
     public NToStringBuilder add(String key, Object value) {
-        if (value instanceof CharSequence) {
-            return add(key, ((CharSequence) value).toString());
+        String className = value == null ? "null" : value.getClass().getName();
+        switch (className) {
+            case "null":
+                str.add(new AbstractMap.SimpleEntry<>(key, "null"));
+                break;
+            case "java.lang.String":
+                add(key, ((CharSequence) value).toString());
+                break;
+            case "double[]":
+                str.add(new AbstractMap.SimpleEntry<>(key, Arrays.toString((double[]) value)));
+                break;
+            case "boolean[]":
+                str.add(new AbstractMap.SimpleEntry<>(key, Arrays.toString((boolean[]) value)));
+                break;
+            case "char[]":
+                str.add(new AbstractMap.SimpleEntry<>(key, Arrays.toString((char[]) value)));
+                break;
+            case "byte[]":
+                str.add(new AbstractMap.SimpleEntry<>(key, Arrays.toString((byte[]) value)));
+                break;
+            case "short[]":
+                str.add(new AbstractMap.SimpleEntry<>(key, Arrays.toString((short[]) value)));
+                break;
+            case "int[]":
+                str.add(new AbstractMap.SimpleEntry<>(key, Arrays.toString((int[]) value)));
+                break;
+            case "long[]":
+                str.add(new AbstractMap.SimpleEntry<>(key, Arrays.toString((long[]) value)));
+                break;
+            case "float[]":
+                str.add(new AbstractMap.SimpleEntry<>(key, Arrays.toString((float[]) value)));
+                break;
+            default: {
+                if (value instanceof CharSequence) {
+                    return add(key, ((CharSequence) value).toString());
+                }
+                if (value instanceof Object[]) {
+                    str.add(new AbstractMap.SimpleEntry<>(key, Arrays.deepToString((Object[]) value)));
+                    return this;
+                }
+                str.add(new AbstractMap.SimpleEntry<>(key, value.toString()));
+                break;
+            }
         }
-        str.add(new AbstractMap.SimpleEntry<>(key, value == null ? "null" : value));
         return this;
     }
 
