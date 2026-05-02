@@ -6,7 +6,13 @@
   "name":"[Ljava.lang.String;"
 },
 {
+  "name":"[Lnet.thevpc.nuts.elem.NElementDeserializer;"
+},
+{
   "name":"[Lnet.thevpc.nuts.elem.NElementMapper;"
+},
+{
+  "name":"[Lnet.thevpc.nuts.elem.NElementSerializer;"
 },
 {
   "name":"[Lnet.thevpc.nuts.runtime.standalone.text.DefaultNTexts$NObjectWriterMapper;"
@@ -91,6 +97,10 @@
   "fields":[{"name":"threadLocalRandomProbe"}]
 },
 {
+  "name":"java.net.SocketTimeoutException",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
+},
+{
   "name":"java.net.UnknownHostException",
   "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
 },
@@ -117,6 +127,10 @@
 },
 {
   "name":"java.util.Date"
+},
+{
+  "name":"java.util.concurrent.atomic.AtomicBoolean",
+  "fields":[{"name":"value"}]
 },
 {
   "name":"java.util.concurrent.atomic.AtomicReference",
@@ -437,7 +451,19 @@
   "name":"net.thevpc.nuts.runtime.standalone.repository.filter.InternalNRepositoryFilters"
 },
 {
+  "name":"net.thevpc.nuts.runtime.standalone.repository.impl.defaults.DefaultNRepoFactoryComponent",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
+},
+{
   "name":"net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenRepositoryFactoryComponent",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepositoryFactoryComponent",
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
   "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
@@ -793,6 +819,9 @@
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.xtra.expr.DefaultNExprs"
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.xtra.expr.NExprRPIImpl"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.xtra.glob.DefaultNGlob"
