@@ -1265,7 +1265,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 }
             }
             NBootWorkspaceFactory factoryInstance;
-            List<Throwable> exceptions = new ArrayList<>();
+            List<String> exceptions = new ArrayList<>();
             for (NBootWorkspaceFactory a : factories) {
                 factoryInstance = a;
                 try {
@@ -1276,7 +1276,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     result.factory = factoryInstance;
                     wsInstance = a.createWorkspace(options);
                 } catch (UnsatisfiedLinkError | Exception ex) {
-                    exceptions.add(ex.fillInStackTrace());
+                    exceptions.add(NBootUtils.stacktrace(ex));
                     log.error(NBootMsg.ofC(NBootI18n.of("unable to create workspace using factory %s"), a), ex);
                     // if the creation generates an error
                     // just stop
@@ -1295,11 +1295,11 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 if (exceptions.isEmpty()) {
                     log.error(NBootMsg.ofC(NBootI18n.of("current classpath does not any Nuts Workspace implementation at %s"), options.getWorkspace()));
                 }
-                for (Throwable exception : exceptions) {
-                    log.error(NBootMsg.ofC("%s", exception), exception);
+                for (String exception : exceptions) {
+                    log.error(NBootMsg.ofC("%s", exception));
                 }
                 log.error(NBootMsg.ofC(NBootI18n.of("unable to load Workspace Component from ClassPath : %s"), Arrays.asList(bootClassWorldURLs)));
-                result.withError(new NBootInvalidWorkspaceException(this.options.getWorkspace(), NBootMsg.ofC(NBootI18n.of("unable to load Workspace Component from ClassPath : %s%n  caused by:%n\t%s"), Arrays.asList(bootClassWorldURLs), exceptions.stream().map(Throwable::toString).collect(Collectors.joining("\n\t")))));
+                result.withError(new NBootInvalidWorkspaceException(this.options.getWorkspace(), NBootMsg.ofC(NBootI18n.of("unable to load Workspace Component from ClassPath : %s%n  caused by:%n\t%s"), Arrays.asList(bootClassWorldURLs), exceptions.stream().map(Object::toString).collect(Collectors.joining("\n\t")))));
             } else {
                 result.workspace = wsInstance;
             }
