@@ -4,6 +4,10 @@ import net.thevpc.nuts.log.NLogUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -965,4 +969,32 @@ public class NReflectUtils {
             return 0;
         }
     }
+
+    public static NOptional<Class<?>> getClassFromType(Type type) {
+        if (type instanceof Class<?>) {
+            return NOptional.of((Class<?>) type);
+        }
+
+        if (type instanceof ParameterizedType) {
+            // getRawType() is almost always a Class
+            return getClassFromType(((ParameterizedType) type).getRawType());
+        }
+
+        if (type instanceof GenericArrayType) {
+            return getClassFromType(((GenericArrayType) type).getGenericComponentType())
+                    .map(cc -> java.lang.reflect.Array.newInstance(cc, 0).getClass());
+        }
+
+        if (type instanceof WildcardType) {
+            // Example: ? extends Number -> treat as Number
+            Type[] upperBounds = ((WildcardType) type).getUpperBounds();
+            if (upperBounds.length > 0) {
+                return getClassFromType(upperBounds[0]);
+            }
+        }
+        return NOptional.ofNamedEmpty(NMsg.ofC("class from %s",type));
+    }
+
+
+
 }
