@@ -112,13 +112,13 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
                     .add("evaluated", true)
                     .add("error", result.isError())
                     .add("empty", result.isEmpty())
-                    .add("value", NDescribables.describeResolveOrDestruct(result.get()))
+                    .add("value", NDescribables.describeResolveOrSimplify(result.get()))
                     .build()
                     ;
         } else {
             return NElement.ofUpletBuilder("Optional")
                     .add("evaluated", false)
-                    .add("expression", NDescribables.describeResolveOrDestruct(value))
+                    .add("expression", NDescribables.describeResolveOrSimplify(value))
                     .build()
                     ;
         }

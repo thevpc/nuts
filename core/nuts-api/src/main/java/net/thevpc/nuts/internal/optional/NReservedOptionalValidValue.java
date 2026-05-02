@@ -45,7 +45,7 @@ public class NReservedOptionalValidValue<T> extends NReservedOptionalValid<T> im
                 .add("evaluated", true)
                 .add("empty", false)
                 .add("error", false)
-                .add("value", NDescribables.describeResolveOrDestruct(value))
+                .add("value", NDescribables.describeResolveOrSimplify(value))
                 .build()
                 ;
     }
