@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  */
 public interface NDescribables {
     static NElement describeWithTransform(String name, Object transformer, NElement... params) {
-        NElement t = NDescribables.describeResolveOrDestruct(transformer);
+        NElement t = NDescribables.describeResolveOrSimplify(transformer);
         return NElement.ofUpletBuilder()
                 .name(name)
                 .add(t)
@@ -87,8 +87,8 @@ public interface NDescribables {
         return d == null ? null : d.get();
     }
 
-    static NObjectElement describeResolveOrDestructAsObject(Object o) {
-        NElement e = describeResolveOrDestruct(o);
+    static NObjectElement describeResolveOrSimplifyAsObject(Object o) {
+        NElement e = describeResolveOrSimplify(o);
         if (e instanceof NObjectElement) {
             return (NObjectElement) e;
         }
@@ -97,7 +97,7 @@ public interface NDescribables {
                 .build();
     }
 
-    static NElement describeResolveOrDestruct(Object o) {
+    static NElement describeResolveOrSimplify(Object o) {
         if (o == null) {
             return NElement.ofNull();
         }

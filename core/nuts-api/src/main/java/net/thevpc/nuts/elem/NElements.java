@@ -87,7 +87,7 @@ public interface NElements extends NComponent {
     <T> T convert(Object any, Class<T> to);
 
     /**
-     * destruct an object is to convert it to a simple object composed only of :
+     * simplify an object is to convert it to a simple object composed only of :
      * <ul>
      * <li>boxed primitives</li>
      * <li>simple objects like String,Date,Instant and Path</li>
@@ -97,9 +97,9 @@ public interface NElements extends NComponent {
      * </ul>
      *
      * @param any object
-     * @return destructed object
+     * @return atomized object
      */
-    Object destruct(Object any);
+    Object toSimple(Object any);
 
     NElement toElement(Object any);
 

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.elem;
 
-public interface NElementMapperBuilderFieldContext<T2> extends NElementFactoryContext {
+public interface NElementDeserializerBuilderFieldContext<T2> extends NElementFactoryContext {
     T2 instance();
 
     NElement field();

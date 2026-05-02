@@ -139,10 +139,10 @@ public enum NElementType implements NEnum {
     ORDERED_LIST(NElementTypeGroup.CONTAINER),
     UNORDERED_LIST(NElementTypeGroup.CONTAINER),
 
-    /**
-     * custom object that is not destructed. Cannot be null or primitive
-     */
     FRAGMENT(NElementTypeGroup.CUSTOM),
+    /**
+     * custom object that is not simplified. Cannot be null or primitive
+     */
     CUSTOM(NElementTypeGroup.CUSTOM),
     EMPTY(NElementTypeGroup.OTHER),
     ;

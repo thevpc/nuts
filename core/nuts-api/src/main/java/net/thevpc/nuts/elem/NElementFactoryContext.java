@@ -35,41 +35,42 @@ import java.util.function.Predicate;
  */
 public interface NElementFactoryContext {
 
-    boolean isIndestructibleObject(Object any);
-
-    boolean isIndestructibleType(Type any);
-
     boolean isSimpleObject(Object any);
 
     boolean isSimpleType(Type any);
 
-    Predicate<Type> getIndestructibleTypesFilter();
+    boolean isAtomicObject(Object any);
+
+    boolean isAtomicType(Type any);
+
+    Predicate<Type> getSimpleTypesFilter();
 
     Map<String, Object> getProperties();
 
     NElement defaultCreateElement(Object o, Type expectedType);
 
-    Object defaultDestruct(Object o, Type expectedType);
+    Object defaultToSimple(Object o, Type expectedType);
 
-    NElement createElement(Object o);
+    NElement toElement(Object o);
 
-    NElement createElement(Object o, Type expectedType);
+    NElement toElement(Object o, Type expectedType);
 
-    Object destruct(Object o, Type expectedType);
+    Object toSimple(Object o, Type expectedType);
 
-    <T> T createObject(NElement o, Class<T> type);
+    <T> T toObject(NElement o, Class<T> type);
 
-    Object createObject(NElement o, Type type);
+    Object toObject(NElement o, Type type);
 
-    <T> T defaultCreateObject(NElement o, Class<T> type);
+    <T> T defaultToObject(NElement o, Class<T> type);
 
-    <T> T defaultCreateObject(NElement o, Type type);
+    <T> T defaultToObject(NElement o, Type type);
 
     boolean isNtf();
 
     NReflectRepository getTypesRepository();
 
-    <T> NElementMapper<T> getMapper(Type expectedType, boolean defaultOnly);
-
-    <T> NElementMapper<T> getMapper(NElement element, boolean defaultOnly);
+    <T> NElementSerializer<T>  getSerializer(Type type, boolean defaultOnly) ;
+    <T> NElementSimplifier<T> getSimplifier(Type type, boolean defaultOnly) ;
+    <T> NElementDeserializer<T> getDeserializer(Type type, boolean defaultOnly) ;
+    <T> NElementDeserializer<T> getDeserializer(NElement element, boolean defaultOnly) ;
 }

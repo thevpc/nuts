@@ -31,7 +31,6 @@ import net.thevpc.nuts.io.NInputStreamProvider;
 import net.thevpc.nuts.io.NReaderProvider;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.*;
 
@@ -58,7 +57,7 @@ import java.util.function.Predicate;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NElement extends NDescribable, NBlankable, NElementAutoUndestructable {
+public interface NElement extends NDescribable, NBlankable, NElementSimple {
 
     /// ///////////////////////////////////////////////////////////////////////////////////
 
