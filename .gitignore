@@ -267,3 +267,4 @@ core/nuts-app-full/target
 /docs/download/
 /local-test-commands.md
 /nuts-release-tool.tson.local
+/nuts-release-tool.local.tson
