@@ -26,11 +26,11 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.elem.NElementAutoUndestructable;
+import net.thevpc.nuts.elem.NElementSimple;
 
 /**
  * @app.category Format
  */
-public interface NFormatted extends NElementAutoUndestructable {
+public interface NFormatted extends NElementSimple {
     NText format();
 }

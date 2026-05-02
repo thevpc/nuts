@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.elem.NElementAutoUndestructable;
+import net.thevpc.nuts.elem.NElementSimple;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.*;
 
@@ -36,7 +36,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import net.thevpc.nuts.time.NDuration;
 
-public class NMsg implements NBlankable, NElementAutoUndestructable {
+public class NMsg implements NBlankable, NElementSimple {
 
     public static final Object[] NO_PARAMS = new Object[0];
     private final String codeLang;
