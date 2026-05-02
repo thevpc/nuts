@@ -29,7 +29,7 @@ class NComparatorBase<T> implements NComparator<T> {
 
     @Override
     public NElement describe() {
-        NObjectElement b = NDescribables.describeResolveOrDestructAsObject(base);
+        NObjectElement b = NDescribables.describeResolveOrSimplifyAsObject(base);
         NElement a = nfo.get();
         if (b.isEmpty()) {
             return a;
