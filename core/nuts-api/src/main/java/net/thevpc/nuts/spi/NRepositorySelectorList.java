@@ -26,11 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.core.NAddRepositoryOptions;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.core.NRepositorySpec;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,50 +46,8 @@ public class NRepositorySelectorList {
         }
     }
 
-    public static NOptional<NRepositorySelectorList> of(List<String> expressions) {
-        return of(expressions, NRepositoryDB.of());
-    }
-
-    public static NOptional<NRepositorySelectorList> of(List<String> expressions, NRepositoryDB db) {
-        if (expressions == null) {
-            return NOptional.of(new NRepositorySelectorList());
-        }
-        NRepositorySelectorList result = new NRepositorySelectorList();
-        for (String t : expressions) {
-            if (t != null) {
-                t = t.trim();
-                if (!t.isEmpty()) {
-                    NOptional<NRepositorySelectorList> r = of(t, db);
-                    if (r.isNotPresent()) {
-                        String finalT = t;
-                        return NOptional.ofError(() -> NMsg.ofC("invalid selector list : %s", finalT));
-                    }
-                    result = result.merge(r.get());
-                }
-            }
-        }
-        return NOptional.of(result);
-    }
-
-    public static NOptional<NRepositorySelectorList> of(String expression, NRepositoryDB db) {
-        if (NBlankable.isBlank(expression)) {
-            return NOptional.of(new NRepositorySelectorList());
-        }
-        NSelectorOp op = NSelectorOp.INCLUDE;
-        List<NRepositorySelector> all = new ArrayList<>();
-        for (String s : NStringUtils.split(expression, ",;", true, true)) {
-            s = s.trim();
-            if (s.length() > 0) {
-                NOptional<NRepositorySelector> oe = NRepositorySelector.of(op, s, db);
-                if (oe.isNotPresent()) {
-                    return NOptional.ofError(() -> NMsg.ofC("invalid selector list : %s", expression));
-                }
-                NRepositorySelector e = oe.get();
-                op = e.getOp();
-                all.add(e);
-            }
-        }
-        return NOptional.of(new NRepositorySelectorList(all.toArray(new NRepositorySelector[0])));
+    public List<NRepositorySelector> getSelectors() {
+        return Collections.unmodifiableList(selectors);
     }
 
     public NRepositorySelectorList merge(NRepositorySelectorList other) {
@@ -106,111 +60,10 @@ public class NRepositorySelectorList {
         return new NRepositorySelectorList(result.toArray(new NRepositorySelector[0]));
     }
 
-    public NRepositoryLocation[] resolve(NRepositoryLocation[] available, NRepositoryDB db) {
-        NRepositoryURLList current = new NRepositoryURLList();
-        if (available != null) {
-            for (NRepositoryLocation entry : available) {
-                if(entry!=null) {
-                    String k = entry.getName();
-                    String v = entry.getFullLocation();
-                    if (NBlankable.isBlank(v) && !NBlankable.isBlank(k)) {
-                        NAddRepositoryOptions ro = db.getRepositoryOptionsByName(k).orNull();
-                        String u = ro==null?null:ro.getConfig().getLocation().getFullLocation();
-                        if (u != null) {
-                            v = u;
-                        } else {
-                            v = k;
-                        }
-                    } else if (!NBlankable.isBlank(v) && NBlankable.isBlank(k)) {
-                        NAddRepositoryOptions ro = db.getRepositoryOptionsByLocation(k).orNull();
-                        String n = ro==null?null:ro.getName();
-                        if (n != null) {
-                            k = n;
-                        }
-                    }
-                    current.add(NRepositoryLocation.of(k, v));
-                }
-            }
-        }
-        List<NRepositoryLocation> result = new ArrayList<>();
-        Set<String> visited = new HashSet<>();
-
-        List<NRepositorySelector> selectorsExclude = new ArrayList<>();
-        List<NRepositorySelector> selectorsInclude = new ArrayList<>();
-        boolean exact = false;
-        for (NRepositorySelector selector : selectors) {
-            switch (selector.getOp()) {
-                case EXACT: {
-                    exact = true;
-                    selectorsInclude.add(selector);
-                    break;
-                }
-                case INCLUDE: {
-                    selectorsInclude.add(selector);
-                    break;
-                }
-                case EXCLUDE: {
-                    selectorsExclude.add(selector);
-                    break;
-                }
-            }
-        }
-        if (exact) {
-            current.clear();
-        }
-
-        //now remove all excluded
-        for (NRepositorySelector r : selectorsExclude) {
-            Set<String> allNames = getAllNames(r,db);
-            int i = current.indexOfNames(allNames.toArray(new String[0]), 0);
-            if (i >= 0) {
-                current.removeAt(i);
-            }
-        }
-        //finally add included in the defined order
-
-
-        for (NRepositorySelector r : selectorsInclude) {
-            Set<String> allNames = getAllNames(r,db);
-            if (!isVisitedFlag(allNames, visited)) {
-                visited.addAll(allNames);
-                result.add(NRepositoryLocation.of(r.getName(), r.getUrl()));
-            }
-        }
-        for (NRepositoryLocation e : current.toArray()) {
-            if (acceptExisting(e)) {
-                Set<String> allNames = db.findAllNamesByName(e.getName());
-                if (!isVisitedFlag(allNames, visited)) {
-                    visited.addAll(allNames);
-                    result.add(e);
-                }
-            }
-        }
-        return result.toArray(new NRepositoryLocation[0]);
-    }
-    private Set<String> getAllNames(NRepositorySelector r,NRepositoryDB db){
-        if (!NBlankable.isBlank(r.getName())) {
-            return db.findAllNamesByName(r.getName());
-        }else{
-            String name = db.getRepositoryOptionsByLocation(r.getUrl()).map(x->x.getName()).orNull();
-            return db.findAllNamesByName(name);
-        }
-    }
-    private boolean isVisitedFlag(Set<String> allNames, Set<String> visited) {
-        boolean visitedFlag = false;
-        for (String allName : allNames) {
-            if (visited.contains(allName)) {
-                visitedFlag = true;
-                break;
-            }
-        }
-        return visitedFlag;
-    }
-
-    public boolean acceptExisting(NRepositoryLocation location) {
+    public boolean acceptExisting(NRepositorySpec location) {
         boolean includeOthers = true;
         for (NRepositorySelector s : selectors) {
-            if (s.matches(location)) {
+            if (s.matches(location.getSourceLocation())) {
                 switch (s.getOp()) {
                     case EXACT:
                     case INCLUDE:

@@ -24,10 +24,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.core.NAddRepositoryOptions;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Objects;
@@ -116,72 +113,6 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
         return q;
     }
 
-    /**
-     * Create a new NutsRepositoryLocation. When the name is null,
-     * {@code fullLocation} will preserve any existing name (where
-     * {@code fullLocation} is entered as a {@code locationString})
-     *
-     * @param locationString location string in the format
-     *                       {@code name=locationType:path}
-     * @param db             repository database
-     * @return new Instance
-     */
-    public static NOptional<NRepositoryLocation> of(String locationString, NRepositoryDB db) {
-        String name = null;
-        String url = null;
-        if (locationString == null) {
-            return NOptional.<NRepositoryLocation>ofEmpty(() -> NMsg.ofPlain("repository location"));
-        }
-        locationString = locationString.trim();
-        if (locationString.startsWith("-")
-                || locationString.startsWith("+")
-                || locationString.startsWith("=")
-                || locationString.indexOf(',') >= 0
-                || locationString.indexOf(';') >= 0) {
-            String finalLocationString = locationString;
-            return NOptional.<NRepositoryLocation>ofError(() -> NMsg.ofC("invalid selection syntax : %s", finalLocationString));
-        }
-        Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.+)").matcher(locationString);
-        if (matcher.find()) {
-            name = matcher.group("name");
-            url = matcher.group("value");
-        } else {
-            if (locationString.matches("[a-zA-Z][a-zA-Z0-9-_]+")) {
-                name = locationString;
-                NAddRepositoryOptions ro = db.getRepositoryOptionsByName(name).orNull();
-                String u = ro==null?null:ro.getConfig().getLocation().getFullLocation();
-                if (u == null) {
-                    url = name;
-                } else {
-                    url = u;
-                }
-            } else {
-                url = locationString;
-                NAddRepositoryOptions ro = db.getRepositoryOptionsByLocation(name).orNull();
-                String n = ro==null?null:ro.getName();
-                if (n == null) {
-                    name = null;
-                } else {
-                    name = n;
-                }
-            }
-        }
-        if (url.length() > 0) {
-            return NOptional.of(NRepositoryLocation.of(name, url));
-        }
-        return NOptional.<NRepositoryLocation>ofEmpty(() -> NMsg.ofPlain("repository location"));
-    }
-
-    /**
-     * @param repositorySelectionExpression expression in the form +a,-b,=c
-     * @param available                     available (default) locations
-     * @param db                            repository database
-     * @return repository location list from db that include available/defaults
-     * and fulfills the condition {@code repositorySelectionExpression}
-     */
-    public static NOptional<NRepositoryLocation[]> of(String repositorySelectionExpression, NRepositoryLocation[] available, NRepositoryDB db) {
-        return NRepositorySelectorList.of(repositorySelectionExpression, db).map(x -> x.resolve(available, db));
-    }
 
     /**
      * location name

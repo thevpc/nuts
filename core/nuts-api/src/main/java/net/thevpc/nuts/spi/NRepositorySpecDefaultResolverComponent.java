@@ -26,16 +26,18 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NRepositorySpec;
+
+import java.util.List;
 
 /**
- * Created by vpc on 1/15/17.
+ * return default repositories included when creating a new workspace
  *
  * @app.category SPI Base
- * @since 0.5.4
+ * @since 0.8.9
  */
-public interface NRepositoryFactoryComponent extends NComponent {
+public interface NRepositorySpecDefaultResolverComponent extends NComponent {
 
-    NRepository createRepository(NRepositoryFactoryContext context);
+    List<NRepositorySpec> getDefaultRepositoryDefinitions();
 
 }
