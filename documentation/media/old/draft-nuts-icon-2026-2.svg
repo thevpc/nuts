@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#007a7a;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#005a5a;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+
+    <rect width="800" height="400" fill="#ffffff" />
+
+    <g transform="translate(80, 110) scale(0.9)">
+        <path d="M45 0 L135 0 L180 77.9 L135 155.8 L45 155.8 L0 77.9 Z" fill="none" stroke="#008080" stroke-width="18" stroke-linejoin="round"/>
+        <path d="M110 30 L155 107.9 L110 185.8 L20 185.8 L-25 107.9 L20 30" fill="none" stroke="#90ee90" stroke-width="18" stroke-linejoin="round" opacity="0.8"/>
+        <line x1="45" y1="0" x2="110" y2="185.8" stroke="#008080" stroke-width="12" stroke-linecap="round" opacity="0.3"/>
+    </g>
+
+    <text x="320" y="215" font-family="Verdana, Geneva, sans-serif" font-weight="900" font-size="130" fill="#007a7a" letter-spacing="-2">NUTS</text>
+
+    <text x="325" y="265" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#555555" font-weight="bold" letter-spacing="2">JAVA PACKAGE MANAGER</text>
+
+    <text x="325" y="305" font-family="monospace" font-size="18" fill="#008080">https://thevpc.github.io/nuts</text>
+</svg>
