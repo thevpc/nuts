@@ -255,6 +255,10 @@
   "name":"net.miginfocom.swing.MigLayout"
 },
 {
+  "name":"net.thevpc.nuts.installer.NutsInstaller$1",
+  "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
+},
+{
   "name":"net.thevpc.nuts.installer.connector.RequestAgent",
   "allDeclaredFields":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
@@ -263,6 +267,10 @@
   "name":"net.thevpc.nuts.installer.connector.RequestQuery",
   "allDeclaredFields":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"net.thevpc.nuts.installer.model.ButtonInfo$1",
+  "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
 },
 {
   "name":"net.thevpc.nuts.installer.panels.ConfigurePanel",
@@ -290,6 +298,10 @@
 },
 {
   "name":"net.thevpc.nuts.installer.panels.PackagesPanel",
+  "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
+},
+{
+  "name":"net.thevpc.nuts.installer.panels.PackagesPanel$2",
   "methods":[{"name":"coalesceEvents","parameterTypes":["java.awt.AWTEvent","java.awt.AWTEvent"] }]
 },
 {
