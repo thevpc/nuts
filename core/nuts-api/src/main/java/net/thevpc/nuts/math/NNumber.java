@@ -1,13 +1,13 @@
 package net.thevpc.nuts.math;
 
-import net.thevpc.nuts.elem.NElementAutoUndestructable;
+import net.thevpc.nuts.elem.NElementSimple;
 
 import java.io.Serializable;
 
 /**
  * classes implementing this interfaces MUST extend java.lang.Number
  */
-public interface NNumber extends Serializable, NElementAutoUndestructable {
+public interface NNumber extends Serializable, NElementSimple {
     int intValue();
 
     long longValue();
