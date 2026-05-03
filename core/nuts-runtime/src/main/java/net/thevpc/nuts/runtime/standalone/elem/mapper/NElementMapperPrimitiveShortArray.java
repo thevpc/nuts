@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.elem.NArrayElement;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementDeserializerContext;
-import net.thevpc.nuts.elem.NElementFactoryContext;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 
 import java.lang.reflect.Type;
@@ -14,17 +11,19 @@ public class NElementMapperPrimitiveShortArray implements NElementMapper<short[]
     }
 
     @Override
-    public NElement createElement(short[] src, Type typeOfSrc, NElementFactoryContext context) {
+    public NElement toElement(NElementSerializerContext<short[]> context) {
+        short[] src = context.instance();
         return DefaultNElementFactoryService._createArray1(src, context);
     }
 
     @Override
-    public Object toSimple(short[] src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NElementSerializerContext<short[]> context) {
+        short[] src = context.instance();
         return DefaultNElementFactoryService._destructArray1(src, context);
     }
 
     @Override
-    public short[] createObject(NElementDeserializerContext context) {
+    public short[] toObject(NElementDeserializerContext context) {
         NArrayElement earr = context.element().asArray().get();
         short[] arr = new short[earr.size()];
         for (int i = 0; i < arr.length; i++) {

@@ -23,11 +23,11 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
     }
 
     @Override
-    public Object toSimple(Object src, Type typeOfSrc, NElementFactoryContext context) {
-        NReflectType m = context.getTypesRepository().getType(typeOfSrc);
+    public Object toSimple(NElementSerializerContext<Object> context) {
+        NReflectType m = context.getTypesRepository().getType(context.instanceType());
         Map<String, Object> obj = new LinkedHashMap<>();
         for (NReflectProperty property : m.getProperties()) {
-            final Object v = property.read(src);
+            final Object v = property.read(context.instance());
             if (!property.isDefaultValue(v)) {
                 obj.put(property.getName(), context.toSimple(v, null));
             }
@@ -36,11 +36,11 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
     }
 
     @Override
-    public NElement createElement(Object src, Type typeOfSrc, NElementFactoryContext context) {
-        NReflectType m = context.getTypesRepository().getType(typeOfSrc);
+    public NElement toElement(NElementSerializerContext<Object> context) {
+        NReflectType m = context.getTypesRepository().getType(context.instanceType());
         NObjectElementBuilder obj = NElement.ofObjectBuilder();
         for (NReflectProperty property : m.getProperties()) {
-            final Object v = property.read(src);
+            final Object v = property.read(context.instance());
             if (!property.isDefaultValue(v)) {
                 obj.set(property.getName(), context.toElement(v));
             }
@@ -49,8 +49,8 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
     }
 
     @Override
-    public Object createObject(NElementDeserializerContext context) {
-        Type typeOfResult = context.to();
+    public Object toObject(NElementDeserializerContext context) {
+        Type typeOfResult = context.instanceType();
         NElement element = context.element();
 //        NSession session = context.getSession();
         Class c = NReflectUtils.getRawClass(typeOfResult).get();

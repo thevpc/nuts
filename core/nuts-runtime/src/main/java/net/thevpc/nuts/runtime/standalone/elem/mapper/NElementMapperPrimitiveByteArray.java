@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.elem.NArrayElement;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementDeserializerContext;
-import net.thevpc.nuts.elem.NElementFactoryContext;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 
 import java.lang.reflect.Type;
@@ -14,17 +11,17 @@ public class NElementMapperPrimitiveByteArray implements NElementMapper<byte[]> 
     }
 
     @Override
-    public NElement createElement(byte[] src, Type typeOfSrc, NElementFactoryContext context) {
-        return DefaultNElementFactoryService._createArray1(src, context);
+    public NElement toElement(NElementSerializerContext<byte[]> context) {
+        return DefaultNElementFactoryService._createArray1(context.instance(), context);
     }
 
     @Override
-    public Object toSimple(byte[] src, Type typeOfSrc, NElementFactoryContext context) {
-        return DefaultNElementFactoryService._destructArray1(src, context);
+    public Object toSimple(NElementSerializerContext<byte[]> context) {
+        return DefaultNElementFactoryService._destructArray1(context.instance(), context);
     }
 
     @Override
-    public byte[] createObject(NElementDeserializerContext context) {
+    public byte[] toObject(NElementDeserializerContext context) {
         NArrayElement earr = context.element().asArray().get();
         byte[] arr = new byte[earr.size()];
         for (int i = 0; i < arr.length; i++) {

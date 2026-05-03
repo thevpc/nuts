@@ -28,6 +28,7 @@ import java.lang.reflect.Type;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
+import net.thevpc.nuts.elem.NElementSerializerContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -37,11 +38,11 @@ import net.thevpc.nuts.runtime.standalone.elem.mapper.NElementMapper;
  *
  * @author thevpc
  */
-public class NElementFactoryXmlDocument implements NElementMapper {
+public class NElementFactoryXmlDocument implements NElementMapper<Document> {
 
     @Override
-    public Object toSimple(Object o, Type typeOfSrc, NElementFactoryContext context) {
-        Document doc = (Document) o;
+    public Object toSimple(NElementSerializerContext<Document> context) {
+        Document doc = context.instance();
         Element e = doc.getDocumentElement();
         Object x = NElementFactoryXmlElement.runWithDoc(context,
                 () -> context.toSimple(e, Element.class),
@@ -51,8 +52,8 @@ public class NElementFactoryXmlDocument implements NElementMapper {
     
 
     @Override
-    public NElement createElement(Object o, Type typeOfSrc, NElementFactoryContext context) {
-        Document doc = (Document) o;
+    public NElement toElement(NElementSerializerContext<Document> context) {
+        Document doc = (Document) context.instance();
         Element e = doc.getDocumentElement();
         NElement x = NElementFactoryXmlElement.runWithDoc(context,
                 () -> context.toElement(e, Element.class),
@@ -61,7 +62,7 @@ public class NElementFactoryXmlDocument implements NElementMapper {
     }
 
     @Override
-    public Object createObject(NElementDeserializerContext context) {
+    public Document toObject(NElementDeserializerContext context) {
         Document doc = XmlUtils.createDocument();
         Node source = NElementFactoryXmlElement.runWithDoc(
                 context,

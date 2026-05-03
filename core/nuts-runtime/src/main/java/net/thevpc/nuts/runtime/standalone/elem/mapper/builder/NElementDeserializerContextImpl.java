@@ -11,7 +11,7 @@ public class NElementDeserializerContextImpl<T> extends NElementFactoryContextAd
     private final NElement element;
     private final Type to;
 
-    public static final <T> NElementDeserializerContextImpl<T> of(NElement element, Type to, NElementFactoryContext context){
+    public static <T> NElementDeserializerContextImpl<T> of(NElement element, Type to, NElementFactoryContext context){
         return new NElementDeserializerContextImpl<>(element, to, context);
     }
     public NElementDeserializerContextImpl(NElement element, Type to, NElementFactoryContext context) {
@@ -26,7 +26,7 @@ public class NElementDeserializerContextImpl<T> extends NElementFactoryContextAd
     }
 
     @Override
-    public Class<T> to() {
-        return (Class<T>) to;
+    public Type instanceType() {
+        return to;
     }
 }

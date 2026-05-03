@@ -6,6 +6,7 @@ import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.artifact.DefaultNEnvCondition;
 import net.thevpc.nuts.artifact.NEnvCondition;
 import net.thevpc.nuts.artifact.NEnvConditionBuilder;
+import net.thevpc.nuts.elem.NElementSerializerContext;
 import net.thevpc.nuts.runtime.standalone.DefaultNEnvConditionBuilder;
 
 import java.lang.reflect.Type;
@@ -13,21 +14,21 @@ import java.lang.reflect.Type;
 public class NElementMapperNEnvConditionBuilder implements NElementMapper<NEnvConditionBuilder> {
 
     @Override
-    public Object toSimple(NEnvConditionBuilder src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NElementSerializerContext<NEnvConditionBuilder> context) {
         return context.defaultToSimple(
-                new DefaultNEnvConditionBuilder(src), null
+                new DefaultNEnvConditionBuilder(context.instance()), null
         );
     }
 
     @Override
-    public NElement createElement(NEnvConditionBuilder o, Type typeOfSrc, NElementFactoryContext context) {
+    public NElement toElement(NElementSerializerContext<NEnvConditionBuilder> context) {
         return context.defaultCreateElement(
-                new DefaultNEnvConditionBuilder(o), null
+                new DefaultNEnvConditionBuilder(context.instance()), null
         );
     }
 
     @Override
-    public NEnvConditionBuilder createObject(NElementDeserializerContext context) {
+    public NEnvConditionBuilder toObject(NElementDeserializerContext context) {
         NEnvCondition builder = context.defaultToObject(context.element(), DefaultNEnvCondition.class);
         return new DefaultNEnvConditionBuilder(builder);
     }

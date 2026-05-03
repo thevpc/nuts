@@ -4,23 +4,25 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
+import net.thevpc.nuts.elem.NElementSerializerContext;
+import net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementSerializerContextImpl;
 
 import java.lang.reflect.Type;
 
 public class NElementMapperCmdLine implements NElementMapper<NCmdLine> {
 
     @Override
-    public Object toSimple(NCmdLine src, Type typeOfSrc, NElementFactoryContext context) {
-        return src.toStringArray();
+    public Object toSimple(NElementSerializerContext<NCmdLine> context) {
+        return context.instance().toStringArray();
     }
 
     @Override
-    public NElement createElement(NCmdLine o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultCreateElement(this.toSimple(o, null, context), null);
+    public NElement toElement(NElementSerializerContext<NCmdLine> context) {
+        return context.defaultCreateElement(this.toSimple(NElementSerializerContextImpl.of(context.instance(), null, context)), null);
     }
 
     @Override
-    public NCmdLine createObject(NElementDeserializerContext context) {
+    public NCmdLine toObject(NElementDeserializerContext context) {
         String[] i = context.defaultToObject(context.element(), String[].class);
         return NCmdLine.of(i);
     }

@@ -15,19 +15,19 @@ import java.lang.reflect.Type;
 public class NElementMapperNFilter implements NElementMapper<NFilter> {
 
     @Override
-    public Object toSimple(NFilter src, Type typeOfSrc, NElementFactoryContext context) {
-        return src.toString();
+    public Object toSimple(NElementSerializerContext<NFilter> context) {
+        return context.instance().toString();
     }
 
     @Override
-    public NElement createElement(NFilter o, Type typeOfSrc, NElementFactoryContext context) {
-        return NElement.ofString(o.toString());
+    public NElement toElement(NElementSerializerContext<NFilter> context) {
+        return NElement.ofString(context.instance().toString());
     }
 
     @Override
-    public NFilter createObject(NElementDeserializerContext context) {
+    public NFilter toObject(NElementDeserializerContext context) {
         NElement element = context.element();
-        Type to = context.to();
+        Type to = context.instanceType();
         String s = element.asStringValue().orNull();
         if(s==null || s.trim().isEmpty()){
             s="true";

@@ -17,8 +17,8 @@ public class NElementMapperMap implements NElementMapper<Map> {
     }
 
     @Override
-    public Object toSimple(Map src, Type typeOfSrc, NElementFactoryContext context) {
-        Map je = (Map) src;
+    public Object toSimple(NElementSerializerContext<Map> context) {
+        Map je = context.instance();
         Map<Object, Object> m = new LinkedHashMap<>();
         if (je != null) {
             for (Object e0 : je.entrySet()) {
@@ -32,8 +32,8 @@ public class NElementMapperMap implements NElementMapper<Map> {
     }
 
     @Override
-    public NElement createElement(Map o, Type typeOfSrc, NElementFactoryContext context) {
-        Map je = (Map) o;
+    public NElement toElement(NElementSerializerContext<Map> context) {
+        Map je = (Map) context.instance();
         List<NElement> m = new ArrayList<>();
         if (je != null) {
             for (Object e0 : je.entrySet()) {
@@ -72,8 +72,8 @@ public class NElementMapperMap implements NElementMapper<Map> {
     }
 
     @Override
-    public Map createObject(NElementDeserializerContext context) {
-        Type to = context.to();
+    public Map toObject(NElementDeserializerContext context) {
+        Type to = context.instanceType();
         NElement element = context.element();
         Class cls = Map.class;
         Type elemType1 = null;//Object.class;

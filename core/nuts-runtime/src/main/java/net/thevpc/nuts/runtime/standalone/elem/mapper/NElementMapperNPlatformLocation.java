@@ -9,17 +9,17 @@ import java.lang.reflect.Type;
 public class NElementMapperNPlatformLocation implements NElementMapper<NExecutionEngineLocation> {
 
     @Override
-    public Object toSimple(NExecutionEngineLocation src, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultToSimple(src, null);
+    public Object toSimple(NElementSerializerContext<NExecutionEngineLocation> context) {
+        return context.defaultToSimple(context.instance(), null);
     }
 
     @Override
-    public NElement createElement(NExecutionEngineLocation o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultCreateElement(o, null);
+    public NElement toElement(NElementSerializerContext<NExecutionEngineLocation> context) {
+        return context.defaultCreateElement(context.instance(), null);
     }
 
     @Override
-    public NExecutionEngineLocation createObject(NElementDeserializerContext context) {
+    public NExecutionEngineLocation toObject(NElementDeserializerContext context) {
         NObjectElement obj = context.element().asObject().get();
         NId id = context.toObject(obj.get("id").orElse(NElement.ofString("")), NId.class);
         String product = context.toObject(obj.get("product").orElse(NElement.ofString("")), String.class);

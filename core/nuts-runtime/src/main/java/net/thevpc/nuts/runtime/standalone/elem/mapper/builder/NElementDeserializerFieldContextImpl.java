@@ -5,18 +5,20 @@ import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementDeserializerFieldContext;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.NElementFactoryContextAdapter;
 
+import java.lang.reflect.Type;
+
 class NElementDeserializerFieldContextImpl<T> extends NElementFactoryContextAdapter implements NElementDeserializerFieldContext<T> {
     private final T instance;
     private final NElement arg;
     private final NElement element;
-    private final Class<T> to;
+    private final Type instanceType;
 
-    public NElementDeserializerFieldContextImpl(T instance, NElement arg, NElement element, Class<T> to, NElementFactoryContext context) {
+    public NElementDeserializerFieldContextImpl(T instance, NElement arg, NElement element, Type instanceType, NElementFactoryContext context) {
         super(context);
         this.instance = instance;
         this.arg = arg;
         this.element = element;
-        this.to = to;
+        this.instanceType = instanceType;
     }
 
     @Override
@@ -35,7 +37,7 @@ class NElementDeserializerFieldContextImpl<T> extends NElementFactoryContextAdap
     }
 
     @Override
-    public Class<T> to() {
-        return to;
+    public Type instanceType() {
+        return instanceType;
     }
 }

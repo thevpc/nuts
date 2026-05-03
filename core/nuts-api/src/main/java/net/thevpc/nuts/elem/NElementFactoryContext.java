@@ -69,8 +69,11 @@ public interface NElementFactoryContext {
 
     NReflectRepository getTypesRepository();
 
-    <T> NElementSerializer<T>  getSerializer(Type type, boolean defaultOnly) ;
-    <T> NElementSimplifier<T> getSimplifier(Type type, boolean defaultOnly) ;
-    <T> NElementDeserializer<T> getDeserializer(Type type, boolean defaultOnly) ;
-    <T> NElementDeserializer<T> getDeserializer(NElement element, boolean defaultOnly) ;
+    <T> NElementSerializer<T> getSerializer(Type type, boolean defaultOnly);
+
+    <T> NElementSimplifier<T> getSimplifier(Type type, boolean defaultOnly);
+
+    <T> NElementDeserializer<T> getDeserializer(Type type, boolean defaultOnly);
+
+    <T> NElementDeserializer<T> getDeserializer(NElement element, boolean defaultOnly);
 }

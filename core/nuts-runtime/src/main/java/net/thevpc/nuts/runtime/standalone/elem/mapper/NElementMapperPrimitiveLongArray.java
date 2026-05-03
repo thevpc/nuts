@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.elem.NArrayElement;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementDeserializerContext;
-import net.thevpc.nuts.elem.NElementFactoryContext;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 
 import java.lang.reflect.Type;
@@ -14,17 +11,17 @@ public class NElementMapperPrimitiveLongArray implements NElementMapper<long[]> 
     }
 
     @Override
-    public NElement createElement(long[] src, Type typeOfSrc, NElementFactoryContext context) {
-        return DefaultNElementFactoryService._createArray1(src, context);
+    public NElement toElement(NElementSerializerContext<long[]> context) {
+        return DefaultNElementFactoryService._createArray1(context.instance(), context);
     }
 
     @Override
-    public Object toSimple(long[] src, Type typeOfSrc, NElementFactoryContext context) {
-        return DefaultNElementFactoryService._destructArray1(src, context);
+    public Object toSimple(NElementSerializerContext<long[]> context) {
+        return DefaultNElementFactoryService._destructArray1(context.instance(), context);
     }
 
     @Override
-    public long[] createObject(NElementDeserializerContext context) {
+    public long[] toObject(NElementDeserializerContext context) {
         NArrayElement earr = context.element().asArray().get();
         long[] arr = new long[earr.size()];
         for (int i = 0; i < arr.length; i++) {

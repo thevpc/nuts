@@ -10,17 +10,17 @@ public class NElementMapperNPrimitiveElement implements NElementMapper<NPrimitiv
     }
 
     @Override
-    public Object toSimple(NPrimitiveElement src, Type typeOfSrc, NElementFactoryContext context) {
-        return src.asLiteral().asObject().orNull();
+    public Object toSimple(NElementSerializerContext<NPrimitiveElement> context) {
+        return context.instance().asLiteral().asObject().orNull();
     }
 
     @Override
-    public NElement createElement(NPrimitiveElement src, Type typeOfSrc, NElementFactoryContext context) {
-        return src;
+    public NElement toElement(NElementSerializerContext<NPrimitiveElement> context) {
+        return context.instance();
     }
 
     @Override
-    public NPrimitiveElement createObject(NElementDeserializerContext context) {
+    public NPrimitiveElement toObject(NElementDeserializerContext context) {
         if (context.element().type().isAnyPrimitive()) {
             return context.element().asPrimitive().get();
         }

@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
+import net.thevpc.nuts.elem.NElementSerializerContext;
 import net.thevpc.nuts.util.NUnsupportedEnumException;
 
 import java.lang.reflect.Type;
@@ -11,17 +12,17 @@ import java.time.Instant;
 public class NElementMapperInstant implements NElementMapper<Instant> {
 
     @Override
-    public Object toSimple(Instant src, Type typeOfSrc, NElementFactoryContext context) {
-        return src;
+    public Object toSimple(NElementSerializerContext<Instant> context) {
+        return context.instance();
     }
 
     @Override
-    public NElement createElement(Instant o, Type typeOfSrc, NElementFactoryContext context) {
-        return NElement.ofInstant((Instant) o);
+    public NElement toElement(NElementSerializerContext<Instant> context) {
+        return NElement.ofInstant(context.instance());
     }
 
     @Override
-    public Instant createObject(NElementDeserializerContext context) {
+    public Instant toObject(NElementDeserializerContext context) {
         NElement element = context.element();
         switch (element.type()) {
             case INSTANT: {

@@ -4,6 +4,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
+import net.thevpc.nuts.elem.NElementSerializerContext;
 import net.thevpc.nuts.text.NObjectWriter;
 
 import java.lang.reflect.Type;
@@ -11,7 +12,8 @@ import java.lang.reflect.Type;
 public class NElementMapperNId implements NElementMapper<NId> {
 
     @Override
-    public Object toSimple(NId o, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NElementSerializerContext<NId> context) {
+        NId o = context.instance();
         if (context.isNtf()) {
             return NObjectWriter.of(o).setNtf(true).format(o);
         } else {
@@ -20,7 +22,8 @@ public class NElementMapperNId implements NElementMapper<NId> {
     }
 
     @Override
-    public NElement createElement(NId o, Type typeOfSrc, NElementFactoryContext context) {
+    public NElement toElement(NElementSerializerContext<NId> context) {
+        NId o = context.instance();
         if (context.isNtf()) {
 //                NutsWorkspace ws = context.getSession().getWorkspace();
 //                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
@@ -32,7 +35,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
     }
 
     @Override
-    public NId createObject(NElementDeserializerContext context) {
+    public NId toObject(NElementDeserializerContext context) {
         return NId.get(context.element().asPrimitive().flatMap(NElement::asStringValue).get()).get();
     }
 

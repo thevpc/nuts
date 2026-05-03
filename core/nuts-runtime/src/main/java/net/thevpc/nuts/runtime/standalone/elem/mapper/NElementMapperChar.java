@@ -7,19 +7,19 @@ import java.lang.reflect.Type;
 public class NElementMapperChar implements NElementMapper<Character> {
 
     @Override
-    public Object toSimple(Character src, Type typeOfSrc, NElementFactoryContext context) {
-        return src;
+    public Object toSimple(NElementSerializerContext<Character> context) {
+        return context.instance();
     }
 
     @Override
-    public NElement createElement(Character o, Type typeOfSrc, NElementFactoryContext context) {
-        return NElement.ofString(String.valueOf(o));
+    public NElement toElement(NElementSerializerContext<Character> context) {
+        return NElement.ofString(String.valueOf(context.instance()));
     }
 
     @Override
-    public Character createObject(NElementDeserializerContext context) {
+    public Character toObject(NElementDeserializerContext context) {
         NElement element = context.element();
-        Type to = context.to();
+        Type to = context.instanceType();
         final String s = element.asStringValue().get();
         if(to==null){
             to=Character.class;

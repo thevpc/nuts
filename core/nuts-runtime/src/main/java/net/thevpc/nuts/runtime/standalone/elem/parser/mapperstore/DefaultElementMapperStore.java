@@ -178,18 +178,8 @@ public class DefaultElementMapperStore {
         addCoreMapper(NLiteral.class, F_LITERAL);
 
 
-        defaultSerializers.put((Class) NToElement.class, new NElementSerializer<NToElement>() {
-            @Override
-            public NElement createElement(NToElement src, Type typeOfSrc, NElementFactoryContext context) {
-                return src.toElement();
-            }
-        });
-        defaultDestructors.put((Class) NToElement.class, new NElementSimplifier<NToElement>() {
-            @Override
-            public Object toSimple(NToElement src, Type typeOfSrc, NElementFactoryContext context) {
-                return src.toElement();
-            }
-        });
+        defaultSerializers.put((Class) NToElement.class, (NElementSerializer<NToElement>) context -> context.instance().toElement());
+        defaultDestructors.put((Class) NToElement.class, (NElementSimplifier<NToElement>) context -> context.instance().toElement());
 
     }
 

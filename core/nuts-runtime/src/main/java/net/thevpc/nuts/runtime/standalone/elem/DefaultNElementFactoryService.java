@@ -28,6 +28,7 @@ import net.thevpc.nuts.elem.*;
 
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNArrayElement;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementDeserializerContextImpl;
+import net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementSerializerContextImpl;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.DefaultElementMapperStore;
 
 import java.lang.reflect.Array;
@@ -52,17 +53,17 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
 
     protected Object createObject(NElement o, Type to, NElementFactoryContext context, boolean defaultOnly) {
         if (o == null || o.type() == NElementType.NULL) {
-            return DefaultElementMapperStore.F_NULL.createObject(NElementDeserializerContextImpl.of(o, to, context));
+            return DefaultElementMapperStore.F_NULL.toObject(NElementDeserializerContextImpl.of(o, to, context));
         }
         if (to == null) {
             NElementDeserializer f = context.getDeserializer(o, defaultOnly);
             if (f == null) {
                 throw new NUnsupportedEnumException(o.type());
             }
-            return f.createObject(NElementDeserializerContextImpl.of(o, to, context));
+            return f.toObject(NElementDeserializerContextImpl.of(o, to, context));
         }
         NElementDeserializer f = context.getDeserializer(to, defaultOnly);
-        return f.createObject(NElementDeserializerContextImpl.of(o, to, context));
+        return f.toObject(NElementDeserializerContextImpl.of(o, to, context));
     }
 
     @Override
@@ -85,7 +86,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         if (context.isSimpleObject(o)) {
             return o;
         }
-        return context.getSimplifier(expectedType, defaultOnly).toSimple(o, expectedType, context);
+        return context.getSimplifier(expectedType, defaultOnly).toSimple(NElementSerializerContextImpl.of(o, expectedType, context));
     }
 
     @Override
@@ -109,7 +110,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             return createUndestructableElement(o, expectedType, context);
         }
         NElementSerializer mapper = context.getSerializer(expectedType, defaultOnly);
-        return mapper.createElement(o, expectedType, context);
+        return mapper.toElement(NElementSerializerContextImpl.of(o, expectedType, context));
     }
 
     protected NElement createUndestructableElement(Object o, Type expectedType, NElementFactoryContext context) {
@@ -151,13 +152,13 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
                 case "java.util.Date":
                 case "java.sql.Time":
                 case "java.time.Duration":
-                    return context.getSerializer(expectedType, true).createElement(o, expectedType, context);
+                    return context.getSerializer(expectedType, true).toElement(NElementSerializerContextImpl.of(o, expectedType, context));
             }
             if (Temporal.class.isAssignableFrom(cls)) {
-                return context.getSerializer(expectedType, true).createElement(o, expectedType, context);
+                return context.getSerializer(expectedType, true).toElement(NElementSerializerContextImpl.of(o, expectedType, context));
             }
             if (java.util.Date.class.isAssignableFrom(cls)) {
-                return context.getSerializer(expectedType, true).createElement(o, expectedType, context);
+                return context.getSerializer(expectedType, true).toElement(NElementSerializerContextImpl.of(o, expectedType, context));
             }
         }
         return NElement.ofCustom(o);

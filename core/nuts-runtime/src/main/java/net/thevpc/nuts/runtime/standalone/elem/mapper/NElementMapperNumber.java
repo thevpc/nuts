@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDeserializerContext;
-import net.thevpc.nuts.elem.NElementFactoryContext;
+import net.thevpc.nuts.elem.NElementSerializerContext;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -11,18 +11,18 @@ import java.math.BigInteger;
 public class NElementMapperNumber implements NElementMapper<Number> {
 
     @Override
-    public Object toSimple(Number src, Type typeOfSrc, NElementFactoryContext context) {
-        return src;
+    public Object toSimple(NElementSerializerContext<Number> context) {
+        return context.instance();
     }
 
     @Override
-    public NElement createElement(Number o, Type typeOfSrc, NElementFactoryContext context) {
-        return NElement.ofNumber((Number) o);
+    public NElement toElement(NElementSerializerContext<Number> context) {
+        return NElement.ofNumber(context.instance());
     }
 
     @Override
-    public Number createObject(NElementDeserializerContext context) {
-        Type to = context.to();
+    public Number toObject(NElementDeserializerContext context) {
+        Type to = context.instanceType();
         NElement element = context.element();
         if(to==null){
             to=Number.class;

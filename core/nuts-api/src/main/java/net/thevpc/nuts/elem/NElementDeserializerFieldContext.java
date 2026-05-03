@@ -1,11 +1,7 @@
 package net.thevpc.nuts.elem;
 
-public interface NElementDeserializerFieldContext<T> extends NElementFactoryContext {
-    T instance();
+import java.lang.reflect.Type;
 
+public interface NElementDeserializerFieldContext<T> extends NElementDeserializerInstanceContext<T> {
     NElement field();
-
-    NElement element();
-
-    Class<T> to();
 }

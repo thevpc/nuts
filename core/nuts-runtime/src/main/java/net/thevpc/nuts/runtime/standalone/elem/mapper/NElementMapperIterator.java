@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
+import net.thevpc.nuts.elem.NElementSerializerContext;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNArrayElement;
 
 import java.lang.reflect.Type;
@@ -14,8 +15,8 @@ import java.util.stream.Collectors;
 public class NElementMapperIterator implements NElementMapper<Iterator> {
 
     @Override
-    public Object toSimple(Iterator o, Type typeOfSrc, NElementFactoryContext context) {
-        Iterator nl = (Iterator) o;
+    public Object toSimple(NElementSerializerContext<Iterator> context) {
+        Iterator nl = (Iterator) context.instance();
         List<Object> values = new ArrayList<>();
         while (nl.hasNext()) {
             values.add(context.toSimple(nl.next(), null));
@@ -24,8 +25,8 @@ public class NElementMapperIterator implements NElementMapper<Iterator> {
     }
 
     @Override
-    public NElement createElement(Iterator o, Type typeOfSrc, NElementFactoryContext context) {
-        Iterator nl = (Iterator) o;
+    public NElement toElement(NElementSerializerContext<Iterator> context) {
+        Iterator nl = (Iterator) context.instance();
         List<NElement> values = new ArrayList<>();
         while (nl.hasNext()) {
             values.add(context.toElement(nl.next()));
@@ -34,7 +35,7 @@ public class NElementMapperIterator implements NElementMapper<Iterator> {
     }
 
     @Override
-    public Iterator createObject(NElementDeserializerContext context) {
+    public Iterator toObject(NElementDeserializerContext context) {
         return context.element().asArray().get().children().stream().map(x -> context.toObject(x, Object.class)).collect(
                 Collectors.toList()).iterator();
     }

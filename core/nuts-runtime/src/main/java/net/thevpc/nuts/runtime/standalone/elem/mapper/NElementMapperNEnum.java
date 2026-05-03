@@ -2,11 +2,9 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDeserializerContext;
-import net.thevpc.nuts.elem.NElementFactoryContext;
+import net.thevpc.nuts.elem.NElementSerializerContext;
 import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.util.NEnum;
-
-import java.lang.reflect.Type;
 
 public class NElementMapperNEnum implements NElementMapper<NEnum> {
 
@@ -14,18 +12,18 @@ public class NElementMapperNEnum implements NElementMapper<NEnum> {
     }
 
     @Override
-    public NEnum createObject(NElementDeserializerContext context) {
-        Class cc = NReflectUtils.getRawClass(context.to()).get();
+    public NEnum toObject(NElementDeserializerContext context) {
+        Class cc = NReflectUtils.getRawClass(context.instanceType()).get();
         return (NEnum) NEnum.parse(cc, context.element().asStringValue().get()).get();
     }
 
-    public NElement createElement(NEnum src, Type typeOfSrc, NElementFactoryContext context) {
-        return NElement.ofString(src.id());
+    public NElement toElement(NElementSerializerContext<NEnum> context) {
+        return NElement.ofString(context.instance().id());
     }
 
     @Override
-    public Object toSimple(NEnum src, Type typeOfSrc, NElementFactoryContext context) {
-        return src;
+    public Object toSimple(NElementSerializerContext<NEnum> context) {
+        return context.instance();
     }
 
 }

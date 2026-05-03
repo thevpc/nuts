@@ -41,9 +41,9 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
     }
 
     @Override
-    public T createObject(NElementDeserializerContext context) {
+    public T toObject(NElementDeserializerContext context) {
         NElement element = context.element();
-        Type to = context.to();
+        Type instanceType = context.instanceType();
         NListContainerElement container = element.toListContainer().get();
         List<NElement> args = container.isParametrized() ? container.asParametrizedContainer().get().params().orNull() : null;
         T instance = null;
@@ -126,24 +126,24 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
 
         if (args != null) {
             for (NElement arg : args) {
-                processField(arg, true, instance, element, (Class) to, context, argFields, bodyFields);
+                processField(arg, true, instance, element, instanceType, context, argFields, bodyFields);
             }
         }
         List<NElement> body = container.children();
         if (body != null) {
             for (NElement arg : body) {
-                processField(arg, false, instance, element, (Class) to, context, argFields, bodyFields);
+                processField(arg, false, instance, element, instanceType, context, argFields, bodyFields);
             }
         }
         T finalInstance = instance;
-        NElementDeserializerInstanceContext<T> cc = new NElementDeserializerInstanceContextImpl<T>(finalInstance, element, to, context);
+        NElementDeserializerInstanceContext<T> cc = new NElementDeserializerInstanceContextImpl<T>(finalInstance, element, instanceType, context);
         for (NElementDeserializerInitializer<T> process : postProcess) {
             process.initializeInstance(cc);
         }
         return (T) instance;
     }
 
-    private void processField(NElement arg, boolean isArg, T instance, NElement element, Class<T> to, NElementFactoryContext context,
+    private void processField(NElement arg, boolean isArg, T instance, NElement element, Type instanceType, NElementFactoryContext context,
                               Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> argFields,
                               Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> bodyFields
     ) {
@@ -190,7 +190,7 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                     tField.field.write(instance, context.toObject(value, jt));
                 }
             } else {
-                onBodyNotSupported(instance, arg, isArg, element, to, context);
+                onBodyNotSupported(instance, arg, isArg, element, instanceType, context);
             }
         } else if (arg.isAnyString()) {
             String expectedName = uniformName(arg.asStringValue().get());
@@ -203,22 +203,21 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                 found = true;
             }
             if (!found) {
-                onBodyNotSupported(instance, arg, isArg, element, to, context);
+                onBodyNotSupported(instance, arg, isArg, element, instanceType, context);
             }
         } else {
-            onBodyNotSupported(instance, arg, isArg, element, to, context);
+            onBodyNotSupported(instance, arg, isArg, element, instanceType, context);
         }
     }
 
 
-    private void onBodyNotSupported(T instance, NElement arg, boolean isArg, NElement element, Class<T> to, NElementFactoryContext context) {
+    private void onBodyNotSupported(T instance, NElement arg, boolean isArg, NElement element, Type instanceType, NElementFactoryContext context) {
         boolean found = false;
         if (!found) {
             List<NElementDeserializerFieldConfigurer<T>> list = isArg ? onUnsupportedArg : onUnsupportedBody;
-            NElementDeserializerFieldContext<T> cc = new NElementDeserializerFieldContextImpl<T>(instance, arg, element, to, context);
+            NElementDeserializerFieldContext<T> cc = new NElementDeserializerFieldContextImpl<T>(instance, arg, element, instanceType, context);
             for (NElementDeserializerFieldConfigurer<T> tOnUnsupported : list) {
-
-                if (tOnUnsupported.prepareField(cc)) {
+                if (tOnUnsupported.configureField(cc)) {
                     found = true;
                     break;
                 }

@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.artifact.NIdLocation;
+import net.thevpc.nuts.elem.NElementSerializerContext;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -11,17 +12,17 @@ import java.util.Map;
 public class NElementMapperNIdLocation implements NElementMapper<NIdLocation> {
 
     @Override
-    public Object toSimple(NIdLocation src, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultToSimple(src, null);
+    public Object toSimple(NElementSerializerContext<NIdLocation> context) {
+        return context.defaultToSimple(context.instance(), null);
     }
 
     @Override
-    public NElement createElement(NIdLocation o, Type typeOfSrc, NElementFactoryContext context) {
-        return context.defaultCreateElement(o, null);
+    public NElement toElement(NElementSerializerContext<NIdLocation> context) {
+        return context.defaultCreateElement(context.instance(), null);
     }
 
     @Override
-    public NIdLocation createObject(NElementDeserializerContext context) {
+    public NIdLocation toObject(NElementDeserializerContext context) {
         Map builder = context.defaultToObject(context.element(), Map.class);
         return new NIdLocation(
                 (String) builder.get("url"),

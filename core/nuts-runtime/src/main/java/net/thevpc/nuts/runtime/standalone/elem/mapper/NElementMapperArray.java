@@ -14,9 +14,9 @@ public class NElementMapperArray implements NElementMapper<Object> {
     }
 
     @Override
-    public Object createObject(NElementDeserializerContext context) {
+    public Object toObject(NElementDeserializerContext context) {
         NElement element = context.element();
-        Type typeOfResult = context.to();
+        Type typeOfResult = context.instanceType();
         if(element instanceof NListContainerElement) {
             NListContainerElement e = (NListContainerElement) element;
             if (typeOfResult == null) {
@@ -88,13 +88,13 @@ public class NElementMapperArray implements NElementMapper<Object> {
         }
     }
 
-    public NElement createElement(Object src, Type typeOfSrc, NElementFactoryContext context) {
-        return DefaultNElementFactoryService._createArray1(src, context);
+    public NElement toElement(NElementSerializerContext<Object> context) {
+        return DefaultNElementFactoryService._createArray1(context.instance(), context);
     }
 
     @Override
-    public Object toSimple(Object src, Type typeOfSrc, NElementFactoryContext context) {
-        return DefaultNElementFactoryService._destructArray1(src, context);
+    public Object toSimple(NElementSerializerContext<Object> context) {
+        return DefaultNElementFactoryService._destructArray1(context.instance(), context);
     }
 
 }

@@ -7,17 +7,17 @@ import java.lang.reflect.Type;
 public class NElementMapperString implements NElementMapper<String> {
 
     @Override
-    public Object toSimple(String src, Type typeOfSrc, NElementFactoryContext context) {
-        return src;
+    public Object toSimple(NElementSerializerContext<String> context) {
+        return context.instance();
     }
 
     @Override
-    public NElement createElement(String o, Type typeOfSrc, NElementFactoryContext context) {
-        return NElement.ofString(String.valueOf(o));
+    public NElement toElement(NElementSerializerContext<String> context) {
+        return NElement.ofString(String.valueOf(context.instance()));
     }
 
     @Override
-    public String createObject(NElementDeserializerContext context) {
+    public String toObject(NElementDeserializerContext context) {
         return context.element().asStringValue().get();
     }
 }

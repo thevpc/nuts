@@ -6683,7 +6683,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.elem.NElementDeserializerBuilder$FieldConfig",
+    "name": "net.thevpc.nuts.elem.NElementDeserializerContext",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -6697,7 +6697,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.elem.NElementDeserializerBuilderFactoryContext",
+    "name": "net.thevpc.nuts.elem.NElementDeserializerField",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -6711,7 +6711,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.elem.NElementDeserializerBuilderFieldConfigurer",
+    "name": "net.thevpc.nuts.elem.NElementDeserializerFieldConfigurer",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -6725,7 +6725,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.elem.NElementDeserializerBuilderFieldContext",
+    "name": "net.thevpc.nuts.elem.NElementDeserializerFieldContext",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -6739,7 +6739,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.elem.NElementDeserializerBuilderInitializer",
+    "name": "net.thevpc.nuts.elem.NElementDeserializerInitializer",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -6753,7 +6753,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.elem.NElementDeserializerBuilderInstanceContext",
+    "name": "net.thevpc.nuts.elem.NElementDeserializerInstanceContext",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -6767,7 +6767,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.elem.NElementDeserializerBuilderInstanceFactory",
+    "name": "net.thevpc.nuts.elem.NElementDeserializerInstanceFactory",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -7104,6 +7104,20 @@
   },
   {
     "name": "net.thevpc.nuts.elem.NElementSerializer",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.elem.NElementSerializerContext",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -16763,7 +16777,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementDeserializerBuilderFactoryContextImpl",
+    "name": "net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementDeserializerBuilderNElementDeserializerFieldImpl",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -16777,7 +16791,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementDeserializerBuilderFieldContextImpl",
+    "name": "net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementDeserializerContextImpl",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -16791,7 +16805,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementDeserializerBuilderInstanceContextImpl",
+    "name": "net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementDeserializerFieldContextImpl",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -16805,7 +16819,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementMapperBuilderFieldImpl",
+    "name": "net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementDeserializerInstanceContextImpl",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -16820,6 +16834,20 @@
   },
   {
     "name": "net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementMapperFromBuilder",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementSerializerContextImpl",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -22910,20 +22938,6 @@
   },
   {
     "name": "net.thevpc.nuts.runtime.standalone.reflect.NUseDefaultUtils$MethodInfo",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
-    "name": "net.thevpc.nuts.runtime.standalone.reflect.ReflectUtils",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,

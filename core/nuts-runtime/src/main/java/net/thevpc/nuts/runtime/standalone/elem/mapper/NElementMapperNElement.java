@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementSerializerContextImpl;
 import net.thevpc.nuts.util.NBooleanRef;
 import net.thevpc.nuts.util.NRef;
 
@@ -14,7 +15,8 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
     }
 
     @Override
-    public Object toSimple(NElement src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NElementSerializerContext<NElement> context) {
+        NElement src = context.instance();
         switch (src.type()) {
             case PAIR: {
                 NPairElement p = src.asPair().get();
@@ -76,7 +78,9 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
     }
 
     @Override
-    public NElement createElement(NElement src, Type typeOfSrc, NElementFactoryContext context) {
+    public NElement toElement(NElementSerializerContext<NElement> context) {
+        NElement src = context.instance();
+        Type typeOfSrc = context.instanceType();
         if (src.type().isAnyPrimitive()) {
             return src;
         }
@@ -221,7 +225,9 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
     }
 
     @Override
-    public NElement createObject(NElementDeserializerContext context) {
-        return createElement(context.element(), context.to(), context);
+    public NElement toObject(NElementDeserializerContext context) {
+        return this.toElement(
+                NElementSerializerContextImpl.of(context.element(),context.instanceType(),context)
+        );
     }
 }

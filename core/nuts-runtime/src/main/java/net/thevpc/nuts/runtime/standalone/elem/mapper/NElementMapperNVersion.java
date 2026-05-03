@@ -4,6 +4,7 @@ import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
+import net.thevpc.nuts.elem.NElementSerializerContext;
 import net.thevpc.nuts.text.NObjectWriter;
 
 import java.lang.reflect.Type;
@@ -11,7 +12,8 @@ import java.lang.reflect.Type;
 public class NElementMapperNVersion implements NElementMapper<NVersion> {
 
     @Override
-    public Object toSimple(NVersion src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NElementSerializerContext<NVersion> context) {
+        NVersion src = context.instance();
         if (context.isNtf()) {
             return NObjectWriter.of(src).setNtf(true).format(src);
         } else {
@@ -20,7 +22,8 @@ public class NElementMapperNVersion implements NElementMapper<NVersion> {
     }
 
     @Override
-    public NElement createElement(NVersion o, Type typeOfSrc, NElementFactoryContext context) {
+    public NElement toElement(NElementSerializerContext<NVersion> context) {
+        NVersion o = context.instance();
         if (context.isNtf()) {
             return NElement.ofString(NObjectWriter.of(o).setNtf(true).format(o).toString());
         } else {
@@ -29,7 +32,7 @@ public class NElementMapperNVersion implements NElementMapper<NVersion> {
     }
 
     @Override
-    public NVersion createObject(NElementDeserializerContext context) {
+    public NVersion toObject(NElementDeserializerContext context) {
         return NVersion.get(context.element().asStringValue().get()).get();
     }
 

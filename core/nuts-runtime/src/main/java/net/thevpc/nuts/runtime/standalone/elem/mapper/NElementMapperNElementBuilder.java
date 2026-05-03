@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementSerializerContextImpl;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -12,7 +13,8 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
     }
 
     @Override
-    public Object toSimple(NElementBuilder src, Type typeOfSrc, NElementFactoryContext context) {
+    public Object toSimple(NElementSerializerContext<NElementBuilder> context) {
+        NElementBuilder src = context.instance();
         switch (src.type()) {
             case ARRAY: {
                 return src.build().asArray()
@@ -24,7 +26,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 boolean map = true;
                 List<Object> all = new ArrayList<>();
                 for (NElement item : src.build().asObject().get().children()) {
-                    if(map && item instanceof NPairElement) {
+                    if (map && item instanceof NPairElement) {
                         NPairElement nPairElement = (NPairElement) item;
                         Object k = context.toSimple(nPairElement.key(), null);
                         Object v = context.toSimple(nPairElement.value(), null);
@@ -34,14 +36,14 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                             visited.add(k);
                         }
                         all.add(new AbstractMap.SimpleEntry<>(k, v));
-                    }else {
+                    } else {
                         all.add(context.toSimple(item, null));
                     }
                 }
                 if (map) {
                     LinkedHashMap<Object, Object> m = new LinkedHashMap<>();
                     for (Object item : all) {
-                        Map.Entry<Object, Object> entry=(Map.Entry<Object, Object>) item;
+                        Map.Entry<Object, Object> entry = (Map.Entry<Object, Object>) item;
                         m.put(entry.getKey(), entry.getValue());
                     }
                     return m;
@@ -58,28 +60,29 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
     }
 
     @Override
-    public NElement createElement(NElementBuilder src, Type typeOfSrc, NElementFactoryContext context) {
-        if(src.type().isAnyPrimitive()){
+    public NElement toElement(NElementSerializerContext<NElementBuilder> context) {
+        NElementBuilder src = context.instance();
+        if (src.type().isAnyPrimitive()) {
             return src.build();
         }
-        switch (src.type()){
-            case ARRAY:{
+        switch (src.type()) {
+            case ARRAY: {
                 NArrayElement arr = src.build().asArray().get();
-                List<NElement> children=new ArrayList<>(arr.size());
-                boolean someChange=false;
+                List<NElement> children = new ArrayList<>(arr.size());
+                boolean someChange = false;
                 for (NElement c : arr) {
                     NElement v2 = context.toElement(c);
-                    if(!someChange){
-                        someChange=v2!=c;
+                    if (!someChange) {
+                        someChange = v2 != c;
                     }
                     children.add(v2);
                 }
-                if(someChange){
+                if (someChange) {
                     return NElement.ofArrayBuilder().addAll(children.toArray(new NElement[0])).build();
                 }
                 return src.build();
             }
-            case OBJECT:{
+            case OBJECT: {
                 NObjectElement obj = src.build().asObject().get();
                 List<NElement> children = new ArrayList<>(obj.size());
                 boolean someChange = false;
@@ -103,9 +106,9 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 }
                 return src.build();
             }
-            case CUSTOM:{
+            case CUSTOM: {
                 Object v1 = src.build().asCustom().get().value();
-                if(context.isSimpleObject(v1)){
+                if (context.isSimpleObject(v1)) {
                     return src.build();
                 }
                 return context.toElement(v1);
@@ -115,9 +118,9 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
     }
 
     @Override
-    public NElementBuilder createObject(NElementDeserializerContext context) {
+    public NElementBuilder toObject(NElementDeserializerContext context) {
         NElement element = context.element();
-        Type typeOfResult = context.to();
-        return createElement(element.builder(), typeOfResult, context).builder();
+        Type typeOfResult = context.instanceType();
+        return this.toElement(NElementSerializerContextImpl.of(element.builder(), typeOfResult, context)).builder();
     }
 }

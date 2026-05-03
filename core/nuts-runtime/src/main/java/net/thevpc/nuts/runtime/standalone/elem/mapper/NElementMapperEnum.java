@@ -14,12 +14,13 @@ import java.util.Map;
 public class NElementMapperEnum implements NElementMapper<Enum> {
 
     @Override
-    public Object toSimple(Enum src, Type typeOfSrc, NElementFactoryContext context) {
-        return src;
+    public Object toSimple(NElementSerializerContext<Enum> context) {
+        return context.instance();
     }
 
     @Override
-    public NElement createElement(Enum o, Type typeOfSrc, NElementFactoryContext context) {
+    public NElement toElement(NElementSerializerContext<Enum> context) {
+        Enum o = context.instance();
         if (o instanceof NEnum) {
             return NElement.ofString(((NEnum) o).id());
         }
@@ -27,9 +28,9 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
     }
 
     @Override
-    public Enum createObject(NElementDeserializerContext context) {
+    public Enum toObject(NElementDeserializerContext context) {
         NElement element = context.element();
-        Type to = context.to();
+        Type to = context.instanceType();
         switch (element.type()) {
             case BYTE:
             case SHORT:

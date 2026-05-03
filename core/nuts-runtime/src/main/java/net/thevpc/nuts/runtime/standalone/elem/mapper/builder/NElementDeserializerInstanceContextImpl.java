@@ -30,7 +30,7 @@ class NElementDeserializerInstanceContextImpl<T> extends NElementFactoryContextA
     }
 
     @Override
-    public Class<T> to() {
+    public Class<T> instanceType() {
         return (Class<T>) to;
     }
 }

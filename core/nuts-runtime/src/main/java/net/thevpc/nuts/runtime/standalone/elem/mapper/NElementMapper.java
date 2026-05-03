@@ -26,28 +26,23 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.*;
 
-import java.lang.reflect.Type;
-
 /**
  * @author thevpc
  * @since 0.8.1
  */
 public interface NElementMapper<T> extends NElementSimplifier<T>, NElementSerializer<T>, NElementDeserializer<T> {
 
-    default Object toSimple(T src, Type typeOfSrc, NElementFactoryContext context){
-        return context.defaultToSimple(src,typeOfSrc);
+    default Object toSimple(NElementSerializerContext<T> context){
+        return context.defaultToSimple(context.instance(),context.instanceType());
     }
-
-    default NElement createElement(T src, Type typeOfSrc, NElementFactoryContext context){
-        return context.defaultCreateElement(src,typeOfSrc);
-    }
-
-//    default T createObject(NElement element, Type typeOfResult, NElementFactoryContext context){
-//        return context.defaultToObject(element,typeOfResult);
-//    }
 
     @Override
-    default T createObject(NElementDeserializerContext context) {
-        return context.defaultToObject(context.element(),context.to());
+    default NElement toElement(NElementSerializerContext<T> context) {
+        return context.defaultCreateElement(context.instance(),context.instanceType());
+    }
+
+    @Override
+    default T toObject(NElementDeserializerContext context) {
+        return context.defaultToObject(context.element(),context.instanceType());
     }
 }
