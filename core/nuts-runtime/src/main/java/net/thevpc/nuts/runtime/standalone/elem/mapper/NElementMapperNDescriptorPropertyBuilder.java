@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.artifact.NDescriptorPropertyBuilder;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorPropertyBuilder;
 
@@ -24,8 +25,8 @@ public class NElementMapperNDescriptorPropertyBuilder implements NElementMapper<
     }
 
     @Override
-    public NDescriptorPropertyBuilder createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        DefaultNDescriptorPropertyBuilder builder = context.defaultToObject(o, DefaultNDescriptorPropertyBuilder.class);
+    public NDescriptorPropertyBuilder createObject(NElementDeserializerContext context) {
+        DefaultNDescriptorPropertyBuilder builder = context.defaultToObject(context.element(), DefaultNDescriptorPropertyBuilder.class);
         return new DefaultNDescriptorPropertyBuilder(builder);
     }
 

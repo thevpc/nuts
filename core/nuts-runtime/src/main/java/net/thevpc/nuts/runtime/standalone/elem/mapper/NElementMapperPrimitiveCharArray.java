@@ -21,9 +21,10 @@ public class NElementMapperPrimitiveCharArray implements NElementMapper<char[]> 
     }
 
     @Override
-    public char[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NArrayElement earr = o.asArray().get();
-        String s = (String) context.toObject(o, String.class);
+    public char[] createObject(NElementDeserializerContext context) {
+        NElement element = context.element();
+        NArrayElement earr = element.asArray().get();
+        String s = (String) context.toObject(element, String.class);
         return s.toCharArray();
     }
 }

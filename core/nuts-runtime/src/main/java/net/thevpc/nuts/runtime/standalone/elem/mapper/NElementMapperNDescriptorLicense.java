@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorLicenseBuilder;
 import net.thevpc.nuts.artifact.NDescriptorLicense;
 import net.thevpc.nuts.elem.NElement;
@@ -24,8 +25,8 @@ public class NElementMapperNDescriptorLicense implements NElementMapper<NDescrip
     }
 
     @Override
-    public NDescriptorLicense createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        DefaultNDescriptorLicenseBuilder builder = (DefaultNDescriptorLicenseBuilder) context.defaultToObject(o, DefaultNDescriptorLicenseBuilder.class);
+    public NDescriptorLicense createObject(NElementDeserializerContext context) {
+        DefaultNDescriptorLicenseBuilder builder = (DefaultNDescriptorLicenseBuilder) context.defaultToObject(context.element(), DefaultNDescriptorLicenseBuilder.class);
         return new DefaultNDescriptorLicenseBuilder(builder).build();
     }
 

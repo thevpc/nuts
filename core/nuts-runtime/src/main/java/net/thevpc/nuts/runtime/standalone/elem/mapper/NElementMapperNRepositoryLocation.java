@@ -18,8 +18,9 @@ public class NElementMapperNRepositoryLocation implements NElementMapper<NReposi
     }
 
     @Override
-    public NRepositoryLocation createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        return NRepositoryLocation.of(o.asStringValue().get());
+    public NRepositoryLocation createObject(NElementDeserializerContext context) {
+        NElement element = context.element();
+        return NRepositoryLocation.of(element.asStringValue().get());
     }
 
 }

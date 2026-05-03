@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reflect.NReflectProperty;
 import net.thevpc.nuts.reflect.NReflectType;
-import net.thevpc.nuts.runtime.standalone.reflect.ReflectUtils;
+import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
 
@@ -49,10 +49,12 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
     }
 
     @Override
-    public Object createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
+    public Object createObject(NElementDeserializerContext context) {
+        Type typeOfResult = context.to();
+        NElement element = context.element();
 //        NSession session = context.getSession();
-        Class c = ReflectUtils.getRawClass(typeOfResult).get();
-        switch (o.type()) {
+        Class c = NReflectUtils.getRawClass(typeOfResult).get();
+        switch (element.type()) {
             case NULL: {
                 return null;
             }
@@ -66,84 +68,84 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
             case BLOCK_STRING:
             {
                 if (c.isAssignableFrom(String.class)) {
-                    return o.asStringValue().orNull();
+                    return element.asStringValue().orNull();
                 }
                 break;
             }
             case BOOLEAN: {
                 if (c.isAssignableFrom(Boolean.class)) {
-                    return o.asLiteral().asBoolean();
+                    return element.asLiteral().asBoolean();
                 }
                 break;
             }
             case DOUBLE: {
                 if (c.isAssignableFrom(Double.class)) {
-                    return o.asLiteral().asDouble();
+                    return element.asLiteral().asDouble();
                 }
                 break;
             }
             case FLOAT: {
                 if (c.isAssignableFrom(Float.class)) {
-                    return o.asLiteral().asFloat();
+                    return element.asLiteral().asFloat();
                 }
                 break;
             }
             case BYTE: {
                 if (c.isAssignableFrom(Byte.class)) {
-                    return o.asLiteral().asByte();
+                    return element.asLiteral().asByte();
                 }
                 break;
             }
             case BIG_DECIMAL: {
                 if (c.isAssignableFrom(BigDecimal.class)) {
-                    return o.asLiteral().asNumber();
+                    return element.asLiteral().asNumber();
                 }
                 break;
             }
             case BIG_INT: {
                 if (c.isAssignableFrom(BigInteger.class)) {
-                    return o.asLiteral().asNumber();
+                    return element.asLiteral().asNumber();
                 }
                 break;
             }
             case LONG: {
                 if (c.isAssignableFrom(Long.class)) {
-                    return o.asLiteral().asLong();
+                    return element.asLiteral().asLong();
                 }
                 break;
             }
             case SHORT: {
                 if (c.isAssignableFrom(Short.class)) {
-                    return o.asLiteral().asShort();
+                    return element.asLiteral().asShort();
                 }
                 break;
             }
             case INT: {
                 if (c.isAssignableFrom(Integer.class)) {
-                    return o.asLiteral().asInt();
+                    return element.asLiteral().asInt();
                 }
                 break;
             }
             case INSTANT: {
                 if (c.isAssignableFrom(Instant.class)) {
-                    return o.asLiteral().asInstant();
+                    return element.asLiteral().asInstant();
                 }
                 break;
             }
             case ARRAY: {
                 if (c.isAssignableFrom(List.class)) {
-                    return context.toObject(o,List.class);
+                    return context.toObject(element,List.class);
                 }
                 break;
             }
             case OBJECT: {
                 if (c.equals(Object.class)) {
-                    return context.toObject(o,Map.class);
+                    return context.toObject(element,Map.class);
                 }
                 break;
             }
             case CUSTOM:{
-                return c.cast(o.asCustom().get().value());
+                return c.cast(element.asCustom().get().value());
             }
         }
         int mod = c.getModifiers();
@@ -152,7 +154,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
         }
         NReflectType m = context.getTypesRepository().getType(typeOfResult);
         Object instance = m.newInstance();
-        NObjectElement eobj = o.asObject().get();
+        NObjectElement eobj = element.asObject().get();
 //        NElements prv = NElements;
         for (NReflectProperty property : m.getProperties()) {
             if (property.isWrite()) {

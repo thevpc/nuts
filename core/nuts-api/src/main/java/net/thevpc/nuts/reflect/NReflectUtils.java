@@ -4,10 +4,7 @@ import net.thevpc.nuts.log.NLogUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.WildcardType;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -88,19 +85,19 @@ public class NReflectUtils {
      *   Factory f = getDefaultValue(Factory.class);  // returns result of Factory.create()
      * </pre>
      *
-     * @param <T> the type to resolve the default for
+     * @param <T>  the type to resolve the default for
      * @param type the class to check for a default value; may be null
      * @return the resolved default value, or a Java primitive default if no annotation present,
-     *         or {@code null} if type is null or no {@code @DefaultsTo} annotation is found
+     * or {@code null} if type is null or no {@code @DefaultsTo} annotation is found
      * @throws NoSuchElementException if {@code @DefaultsTo} annotation is present but:
-     *         <ul>
-     *           <li>For enum: the specified constant name does not exist</li>
-     *           <li>For class: the specified field or method is not found</li>
-     *           <li>For method: it has parameters (only no-arg methods are supported)</li>
-     *           <li>For field/method: invocation or access throws an exception</li>
-     *         </ul>
+     *                                <ul>
+     *                                  <li>For enum: the specified constant name does not exist</li>
+     *                                  <li>For class: the specified field or method is not found</li>
+     *                                  <li>For method: it has parameters (only no-arg methods are supported)</li>
+     *                                  <li>For field/method: invocation or access throws an exception</li>
+     *                                </ul>
      * @see NDefaultsTo
-     * @see #getJavaDefaultValue(Class)
+     * @see #getJavaDefaultValue(Type)
      */
     @SuppressWarnings("unchecked")
     public static <T> T getDefaultValue(Class<T> type) {
@@ -137,7 +134,7 @@ public class NReflectUtils {
                     if (resolved == null) {
                         try {
                             java.lang.reflect.Method method = type.getMethod(valueName);
-                            if (java.lang.reflect.Modifier.isStatic(method.getModifiers()) && method.getParameterCount()==0) {
+                            if (java.lang.reflect.Modifier.isStatic(method.getModifiers()) && method.getParameterCount() == 0) {
                                 resolved = method.invoke(null);
                             }
                         } catch (NoSuchMethodException ignored) {
@@ -187,7 +184,7 @@ public class NReflectUtils {
      *   isValidIdentifier("2ndVariable", null)          // false (starts with digit)
      * </pre>
      *
-     * @param anyType the string to validate as an identifier; may be null
+     * @param anyType        the string to validate as an identifier; may be null
      * @param extraWordChars additional characters to permit in the identifier, or null
      *                       for strict Java identifier rules only
      * @return {@code true} if the string is a valid identifier, {@code false} otherwise
@@ -249,7 +246,7 @@ public class NReflectUtils {
      * Boxed types checked: {@code Boolean}, {@code Byte}, {@code Short}, {@code Integer},
      * {@code Long}, {@code Character}, {@code Float}, {@code Double}, and optionally {@code Void}.
      *
-     * @param anyType the class to check; may be null
+     * @param anyType     the class to check; may be null
      * @param includeVoid if {@code true}, {@code void} and {@code Void.class} are considered primitive/boxed;
      *                    if {@code false}, they are not
      * @return {@code true} if the type is a primitive or boxed type, {@code false} otherwise
@@ -300,31 +297,33 @@ public class NReflectUtils {
      * <strong>Note:</strong> This method returns defaults for primitive types only, not for boxed wrapper types.
      * To check if a type is primitive or boxed, use {@link #isPrimitiveOrBoxed(Class)}.
      *
-     * @param anyType the class to get the default value for; may not be null
+     * @param anyType the type to get the default value for; may not be null
      * @return the default value for the type, or {@code null} if the type is not primitive
      * @throws NullPointerException if {@code anyType} is null
      */
-    public static Object getJavaDefaultValue(Class<?> anyType) {
+    public static Object getJavaDefaultValue(Type anyType) {
         NAssert.requireNamedNonNull(anyType, "type");
-        switch (anyType.getName()) {
-            case "boolean":
-                return false;
-            case "byte":
-                return (byte) 0;
-            case "short":
-                return (short) 0;
-            case "int":
-                return 0;
-            case "long":
-                return 0L;
-            case "char":
-                return '\0';
-            case "float":
-                return 0.0f;
-            case "double":
-                return 0.0;
-            case "void":
-                return null;
+        if (anyType instanceof Class) {
+            switch (((Class) anyType).getName()) {
+                case "boolean":
+                    return false;
+                case "byte":
+                    return (byte) 0;
+                case "short":
+                    return (short) 0;
+                case "int":
+                    return 0;
+                case "long":
+                    return 0L;
+                case "char":
+                    return '\0';
+                case "float":
+                    return 0.0f;
+                case "double":
+                    return 0.0;
+                case "void":
+                    return null;
+            }
         }
         return null;
     }
@@ -357,7 +356,7 @@ public class NReflectUtils {
      *
      * @param anyType the primitive class to box; may be null
      * @return an {@code NOptional} containing the boxed class if input is a primitive,
-     *         or an error if input is null, already boxed, or not a recognized type
+     * or an error if input is null, already boxed, or not a recognized type
      * @see #toPrimitiveType(Class)
      */
     public static NOptional<Class<?>> toBoxedType(Class<?> anyType) {
@@ -415,7 +414,7 @@ public class NReflectUtils {
      *
      * @param anyType the boxed class to unbox; may be null
      * @return an {@code NOptional} containing the primitive class if input is a boxed type,
-     *         or an error if input is null, already primitive, or not a recognized boxed type
+     * or an error if input is null, already primitive, or not a recognized boxed type
      * @see #toBoxedType(Class)
      */
     public static NOptional<Class<?>> toPrimitiveType(Class<?> anyType) {
@@ -473,12 +472,12 @@ public class NReflectUtils {
      *
      * @param clazz the class to analyze; may be null
      * @return a set of all superclasses and interfaces in the hierarchy,
-     *         excluding {@code Object.class}; empty set if input is null
+     * excluding {@code Object.class}; empty set if input is null
      * @see #findClassHierarchy(Class, Class)
      */
     public static Set<Class<?>> findAllSuperClassesAndInterfaces(Class<?> clazz) {
-        if(clazz==null){
-            return  Collections.emptySet();
+        if (clazz == null) {
+            return Collections.emptySet();
         }
         Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
         Set<Class<?>> nextLevel = new LinkedHashSet<Class<?>>();
@@ -520,7 +519,7 @@ public class NReflectUtils {
      *
      * @param classes the classes to find a common ancestor for; may be null or contain nulls
      * @return a class that is a superclass or interface of all inputs,
-     *         or {@code Object.class} as a fallback
+     * or {@code Object.class} as a fallback
      * @throws IndexOutOfBoundsException if no common ancestors are found and the list is empty
      * @see #commonAncestors(Class[])
      */
@@ -553,7 +552,7 @@ public class NReflectUtils {
      *
      * @param classes the classes to find common ancestors for; may be null or contain nulls
      * @return a list of all classes that are superclasses or interfaces of all inputs;
-     *         at minimum contains {@code Object.class}
+     * at minimum contains {@code Object.class}
      * @see #commonAncestor(Class[])
      * @see #findAllSuperClassesAndInterfaces(Class)
      */
@@ -591,8 +590,8 @@ public class NReflectUtils {
      * <p>
      * This is a convenience wrapper around {@link #loadServices(Class, Consumer, Class[])}.
      *
-     * @param <T> the service type
-     * @param type the service interface or class to load implementations for; may not be null
+     * @param <T>     the service type
+     * @param type    the service interface or class to load implementations for; may not be null
      * @param sources additional classes whose class loaders to search, or null
      * @return a list of all discovered service instances; empty if none found
      * @throws NullPointerException if {@code type} is null
@@ -630,10 +629,10 @@ public class NReflectUtils {
      *   }, DatabaseDriver.class);
      * </pre>
      *
-     * @param <T> the service type
-     * @param type the service interface or class to load implementations for; may not be null
+     * @param <T>      the service type
+     * @param type     the service interface or class to load implementations for; may not be null
      * @param consumer callback invoked for each discovered service instance; may not be null
-     * @param sources additional classes whose class loaders to search, or null/empty
+     * @param sources  additional classes whose class loaders to search, or null/empty
      * @throws NullPointerException if {@code type} or {@code consumer} is null
      * @see #listServices(Class, Class[])
      * @see ServiceLoader#load(Class, ClassLoader)
@@ -710,8 +709,8 @@ public class NReflectUtils {
      * @see #findTypeNameHierarchy(NTypeName, NTypeName, NTypeNameDomain)
      */
     public static List<Class> findClassHierarchy(Class clazz, Class baseType) {
-        if(clazz==null){
-            return  Collections.emptyList();
+        if (clazz == null) {
+            return Collections.emptyList();
         }
         HashSet<Class> seen = new HashSet<Class>();
         Queue<Class> queue = new LinkedList<Class>();
@@ -758,11 +757,11 @@ public class NReflectUtils {
      *   // Results depend on domain's type resolution and hierarchy rules
      * </pre>
      *
-     * @param clazz the type name to analyze; may be null
+     * @param clazz    the type name to analyze; may be null
      * @param baseType optional filter—only ancestors assignable from this type are included, or null
-     * @param domain the type name domain defining assignability and hierarchy rules; may not be null
+     * @param domain   the type name domain defining assignability and hierarchy rules; may not be null
      * @return an array of type names in the hierarchy, sorted by hierarchy comparator;
-     *         empty array if input is null
+     * empty array if input is null
      * @see #findClassHierarchy(Class, Class)
      */
     public static List<NTypeName> findTypeNameHierarchy(NTypeName clazz, NTypeName baseType, NTypeNameDomain domain) {
@@ -818,13 +817,13 @@ public class NReflectUtils {
      *   // Returns: I (their most specific common ancestor)
      * </pre>
      *
-     * @param <A> type parameter for first type name
-     * @param <B> type parameter for second type name
-     * @param a the first type name; may be null
-     * @param b the second type name; may be null
+     * @param <A>    type parameter for first type name
+     * @param <B>    type parameter for second type name
+     * @param a      the first type name; may be null
+     * @param b      the second type name; may be null
      * @param domain the type name domain defining assignability and hierarchy rules; may not be null
      * @return the most specific type name that both inputs inherit from or implement,
-     *         or Object if no better common ancestor exists
+     * or Object if no better common ancestor exists
      * @see #findTypeNameHierarchy(NTypeName, NTypeName, NTypeNameDomain)
      */
     public static <A, B> NTypeName<?> lowestCommonAncestor(NTypeName<A> a, NTypeName<B> b, NTypeNameDomain domain) {
@@ -970,31 +969,32 @@ public class NReflectUtils {
         }
     }
 
-    public static NOptional<Class<?>> getClassFromType(Type type) {
+    public static NOptional<Class<?>> getRawClass(Type type) {
         if (type instanceof Class<?>) {
             return NOptional.of((Class<?>) type);
         }
-
         if (type instanceof ParameterizedType) {
-            // getRawType() is almost always a Class
-            return getClassFromType(((ParameterizedType) type).getRawType());
+            return getRawClass(((ParameterizedType) type).getRawType());
         }
-
         if (type instanceof GenericArrayType) {
-            return getClassFromType(((GenericArrayType) type).getGenericComponentType())
-                    .map(cc -> java.lang.reflect.Array.newInstance(cc, 0).getClass());
+            return getRawClass(((GenericArrayType) type).getGenericComponentType())
+                    .map(cc -> Array.newInstance(cc, 0).getClass());
         }
-
         if (type instanceof WildcardType) {
-            // Example: ? extends Number -> treat as Number
-            Type[] upperBounds = ((WildcardType) type).getUpperBounds();
-            if (upperBounds.length > 0) {
-                return getClassFromType(upperBounds[0]);
+            Type[] upper = ((WildcardType) type).getUpperBounds();
+            if (upper.length > 0) {
+                return getRawClass(upper[0]);
             }
         }
-        return NOptional.ofNamedEmpty(NMsg.ofC("class from %s",type));
+        if (type instanceof TypeVariable) {
+            Type[] bounds = ((TypeVariable<?>) type).getBounds();
+            if (bounds.length > 0) {
+                return getRawClass(bounds[0]);
+            }
+            return NOptional.of(Object.class);
+        }
+        return NOptional.ofNamedEmpty(NMsg.ofC("class from %s", type));
     }
-
 
 
 }

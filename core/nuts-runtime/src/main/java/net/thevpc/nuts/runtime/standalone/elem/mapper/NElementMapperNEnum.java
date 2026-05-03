@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.runtime.standalone.reflect.ReflectUtils;
+import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.util.NEnum;
 
 import java.lang.reflect.Type;
@@ -13,9 +14,9 @@ public class NElementMapperNEnum implements NElementMapper<NEnum> {
     }
 
     @Override
-    public NEnum createObject(NElement json, Type typeOfResult, NElementFactoryContext context) {
-        Class cc = ReflectUtils.getRawClass(typeOfResult).get();
-        return (NEnum) NEnum.parse(cc,json.asStringValue().get()).get();
+    public NEnum createObject(NElementDeserializerContext context) {
+        Class cc = NReflectUtils.getRawClass(context.to()).get();
+        return (NEnum) NEnum.parse(cc, context.element().asStringValue().get()).get();
     }
 
     public NElement createElement(NEnum src, Type typeOfSrc, NElementFactoryContext context) {

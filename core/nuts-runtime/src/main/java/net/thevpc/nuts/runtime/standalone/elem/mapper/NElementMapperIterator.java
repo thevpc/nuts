@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNArrayElement;
 
@@ -33,8 +34,8 @@ public class NElementMapperIterator implements NElementMapper<Iterator> {
     }
 
     @Override
-    public Iterator createObject(NElement o, Type to, NElementFactoryContext context) {
-        return o.asArray().get().children().stream().map(x -> context.toObject(x, Object.class)).collect(
+    public Iterator createObject(NElementDeserializerContext context) {
+        return context.element().asArray().get().children().stream().map(x -> context.toObject(x, Object.class)).collect(
                 Collectors.toList()).iterator();
     }
 

@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.elem.*;
 
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNArrayElement;
+import net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementDeserializerContextImpl;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.DefaultElementMapperStore;
 
 import java.lang.reflect.Array;
@@ -51,17 +52,17 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
 
     protected Object createObject(NElement o, Type to, NElementFactoryContext context, boolean defaultOnly) {
         if (o == null || o.type() == NElementType.NULL) {
-            return DefaultElementMapperStore.F_NULL.createObject(o, to, context);
+            return DefaultElementMapperStore.F_NULL.createObject(NElementDeserializerContextImpl.of(o, to, context));
         }
         if (to == null) {
             NElementDeserializer f = context.getDeserializer(o, defaultOnly);
             if (f == null) {
                 throw new NUnsupportedEnumException(o.type());
             }
-            return f.createObject(o, to, context);
+            return f.createObject(NElementDeserializerContextImpl.of(o, to, context));
         }
         NElementDeserializer f = context.getDeserializer(to, defaultOnly);
-        return f.createObject(o, to, context);
+        return f.createObject(NElementDeserializerContextImpl.of(o, to, context));
     }
 
     @Override

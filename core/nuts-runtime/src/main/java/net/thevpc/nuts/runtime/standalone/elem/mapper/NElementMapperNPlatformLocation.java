@@ -19,8 +19,8 @@ public class NElementMapperNPlatformLocation implements NElementMapper<NExecutio
     }
 
     @Override
-    public NExecutionEngineLocation createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NObjectElement obj = o.asObject().get();
+    public NExecutionEngineLocation createObject(NElementDeserializerContext context) {
+        NObjectElement obj = context.element().asObject().get();
         NId id = context.toObject(obj.get("id").orElse(NElement.ofString("")), NId.class);
         String product = context.toObject(obj.get("product").orElse(NElement.ofString("")), String.class);
         String vendor = context.toObject(obj.get("vendor").orElse(NElement.ofString("")), String.class);

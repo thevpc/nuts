@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
@@ -23,8 +24,8 @@ public class NElementMapperNDefinition implements NElementMapper<NDefinition> {
     }
 
     @Override
-    public NDefinition createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        DefaultNDefinitionBuilder d = context.defaultToObject(o, DefaultNDefinitionBuilder.class);
+    public NDefinition createObject(NElementDeserializerContext context) {
+        DefaultNDefinitionBuilder d = context.defaultToObject(context.element(), DefaultNDefinitionBuilder.class);
         //pass the session the instance
         return d.build();
     }

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.text.NObjectWriter;
 
@@ -31,8 +32,8 @@ public class NElementMapperNId implements NElementMapper<NId> {
     }
 
     @Override
-    public NId createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        return NId.get(o.asPrimitive().flatMap(NElement::asStringValue).get()).get();
+    public NId createObject(NElementDeserializerContext context) {
+        return NId.get(context.element().asPrimitive().flatMap(NElement::asStringValue).get()).get();
     }
 
 }

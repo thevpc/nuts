@@ -221,7 +221,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
     }
 
     @Override
-    public NElement createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        return createElement(o, typeOfResult, context);
+    public NElement createObject(NElementDeserializerContext context) {
+        return createElement(context.element(), context.to(), context);
     }
 }

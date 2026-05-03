@@ -14,9 +14,11 @@ public class NElementMapperArray implements NElementMapper<Object> {
     }
 
     @Override
-    public Object createObject(NElement json, Type typeOfResult, NElementFactoryContext context) {
-        if(json instanceof NListContainerElement) {
-            NListContainerElement e = (NListContainerElement) json;
+    public Object createObject(NElementDeserializerContext context) {
+        NElement element = context.element();
+        Type typeOfResult = context.to();
+        if(element instanceof NListContainerElement) {
+            NListContainerElement e = (NListContainerElement) element;
             if (typeOfResult == null) {
                 typeOfResult = Object[].class;
             }

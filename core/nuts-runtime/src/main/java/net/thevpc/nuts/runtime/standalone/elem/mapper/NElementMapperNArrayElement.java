@@ -10,11 +10,11 @@ public class NElementMapperNArrayElement extends NElementMapperNElement {
     }
 
     @Override
-    public NArrayElement createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        o = super.createObject(o, typeOfResult, context);
-        if (o.type() == NElementType.ARRAY) {
-            return o.asArray().get();
+    public NArrayElement createObject(NElementDeserializerContext context) {
+        NElement element = super.createObject(context);
+        if (element.type() == NElementType.ARRAY) {
+            return element.asArray().get();
         }
-        return NElement.ofArrayBuilder().add(o).build();
+        return NElement.ofArrayBuilder().add(element).build();
     }
 }

@@ -2,19 +2,26 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper.builder;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementDeserializerBuilderFactoryContext;
+import net.thevpc.nuts.elem.NElementDeserializerInstanceContext;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.NElementFactoryContextAdapter;
 
 import java.lang.reflect.Type;
 
-class NElementDeserializerBuilderFactoryContextImpl<T> extends NElementFactoryContextAdapter implements NElementDeserializerBuilderFactoryContext<T> {
+class NElementDeserializerInstanceContextImpl<T> extends NElementFactoryContextAdapter implements NElementDeserializerInstanceContext<T> {
+    private final T finalInstance;
     private final NElement element;
     private final Type to;
 
-    public NElementDeserializerBuilderFactoryContextImpl(NElement element, Type to, NElementFactoryContext context) {
+    public NElementDeserializerInstanceContextImpl(T finalInstance, NElement element, Type to, NElementFactoryContext context) {
         super(context);
+        this.finalInstance = finalInstance;
         this.element = element;
         this.to = to;
+    }
+
+    @Override
+    public T instance() {
+        return finalInstance;
     }
 
     @Override

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NDependencyBuilder;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.text.NDependencyWriter;
 import net.thevpc.nuts.runtime.standalone.DefaultNDependencyBuilder;
 import net.thevpc.nuts.elem.NElement;
@@ -53,11 +54,12 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
     }
 
     @Override
-    public NDependency createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        if (o.type().isAnyString()) {
-            return NDependency.get(o.asStringValue().get()).get();
+    public NDependency createObject(NElementDeserializerContext context) {
+        NElement element = context.element();
+        if (element.type().isAnyString()) {
+            return NDependency.get(element.asStringValue().get()).get();
         }
-        NDependencyBuilder builder = context.defaultToObject(o, DefaultNDependencyBuilder.class);
+        NDependencyBuilder builder = context.defaultToObject(element, DefaultNDependencyBuilder.class);
         return NDependencyBuilder.of().copyFrom(builder).build();
     }
 

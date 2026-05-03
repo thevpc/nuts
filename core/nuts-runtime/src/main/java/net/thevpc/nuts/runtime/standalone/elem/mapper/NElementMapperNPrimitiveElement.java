@@ -20,10 +20,10 @@ public class NElementMapperNPrimitiveElement implements NElementMapper<NPrimitiv
     }
 
     @Override
-    public NPrimitiveElement createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        if (o.type().isAnyPrimitive()) {
-            return o.asPrimitive().get();
+    public NPrimitiveElement createObject(NElementDeserializerContext context) {
+        if (context.element().type().isAnyPrimitive()) {
+            return context.element().asPrimitive().get();
         }
-        return NElement.ofString(o.toString());
+        return NElement.ofString(context.element().toString());
     }
 }

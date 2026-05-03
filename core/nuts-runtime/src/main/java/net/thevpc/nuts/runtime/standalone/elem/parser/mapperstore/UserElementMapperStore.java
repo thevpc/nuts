@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore;
 
+import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.NElementMapper;
 import net.thevpc.nuts.runtime.standalone.util.collections.NClassMapImpl;
 import net.thevpc.nuts.util.NIllegalArgumentException;
@@ -8,7 +9,6 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.builder.DefaultNElementDeserializerBuilder;
-import net.thevpc.nuts.runtime.standalone.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.reflect.NClassMap;
@@ -459,7 +459,7 @@ public class UserElementMapperStore implements NElementMapperStore {
         if (type == null) {
             return DefaultElementMapperStore.F_NULL;
         }
-        Class cls = ReflectUtils.getRawClass(type).get();
+        Class cls = NReflectUtils.getRawClass(type).get();
         if (NSession.class.isAssignableFrom(cls)) {
             throw new NIllegalArgumentException(NMsg.ofC(
                     "%s is not serializable", type
@@ -636,7 +636,7 @@ public class UserElementMapperStore implements NElementMapperStore {
         if (type == null) {
             return DefaultElementMapperStore.F_NULL;
         }
-        Class cls = ReflectUtils.getRawClass(type).get();
+        Class cls = NReflectUtils.getRawClass(type).get();
         if (NSession.class.isAssignableFrom(cls)) {
             throw new NIllegalArgumentException(NMsg.ofC(
                     "%s is not serializable", type
@@ -810,7 +810,7 @@ public class UserElementMapperStore implements NElementMapperStore {
         if (type == null) {
             return DefaultElementMapperStore.F_NULL;
         }
-        Class cls = ReflectUtils.getRawClass(type).get();
+        Class cls = NReflectUtils.getRawClass(type).get();
         if (NSession.class.isAssignableFrom(cls)) {
             throw new NIllegalArgumentException(NMsg.ofC(
                     "%s is not serializable", type

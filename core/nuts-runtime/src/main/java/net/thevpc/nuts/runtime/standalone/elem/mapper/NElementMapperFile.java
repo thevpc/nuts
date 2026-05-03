@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
@@ -28,7 +29,7 @@ public class NElementMapperFile implements NElementMapper<File> {
     }
 
     @Override
-    public File createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        return new File(o.asStringValue().get());
+    public File createObject(NElementDeserializerContext context) {
+        return new File(context.element().asStringValue().get());
     }
 }

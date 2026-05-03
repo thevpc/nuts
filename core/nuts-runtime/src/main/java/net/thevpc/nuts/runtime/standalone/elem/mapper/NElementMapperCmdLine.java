@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 
 import java.lang.reflect.Type;
@@ -19,8 +20,8 @@ public class NElementMapperCmdLine implements NElementMapper<NCmdLine> {
     }
 
     @Override
-    public NCmdLine createObject(NElement o, Type to, NElementFactoryContext context) {
-        String[] i = context.defaultToObject(o, String[].class);
+    public NCmdLine createObject(NElementDeserializerContext context) {
+        String[] i = context.defaultToObject(context.element(), String[].class);
         return NCmdLine.of(i);
     }
 }

@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.reflect;
 import net.thevpc.nuts.reflect.NReflectProperty;
 import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;
 import net.thevpc.nuts.reflect.NReflectType;
+import net.thevpc.nuts.reflect.NReflectUtils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
@@ -63,7 +64,7 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
             synchronized (this){
                 if(!cleanInstanceValueLoaded) {
                     if (cleanInstance == null) {
-                        this.cleanInstanceValue = ReflectUtils.getDefaultValue(propertyType.getJavaType());
+                        this.cleanInstanceValue = NReflectUtils.getJavaDefaultValue(propertyType.getJavaType());
                     } else {
                         if (isRead()) {
                             try {

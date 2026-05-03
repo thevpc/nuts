@@ -10,11 +10,11 @@ public class NElementMapperNObjectElement extends NElementMapperNElement {
     }
 
     @Override
-    public NObjectElement createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        o = super.createObject(o, typeOfResult, context);
-        if (o.isAnyObject()) {
-            return o.asObject().get();
+    public NObjectElement createObject(NElementDeserializerContext context) {
+        NElement element = super.createObject(context);
+        if (element.isAnyObject()) {
+            return element.asObject().get();
         }
-        return NElement.ofObjectBuilder().set("value", o).build();
+        return NElement.ofObjectBuilder().set("value", element).build();
     }
 }

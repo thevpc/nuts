@@ -25,8 +25,10 @@ public class NElementMapperNFilter implements NElementMapper<NFilter> {
     }
 
     @Override
-    public NFilter createObject(NElement o, Type to, NElementFactoryContext context) {
-        String s = o.asStringValue().orNull();
+    public NFilter createObject(NElementDeserializerContext context) {
+        NElement element = context.element();
+        Type to = context.to();
+        String s = element.asStringValue().orNull();
         if(s==null || s.trim().isEmpty()){
             s="true";
         }

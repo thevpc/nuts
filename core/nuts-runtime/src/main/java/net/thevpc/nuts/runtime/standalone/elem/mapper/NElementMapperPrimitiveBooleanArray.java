@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NArrayElement;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 
@@ -23,8 +24,9 @@ public class NElementMapperPrimitiveBooleanArray implements NElementMapper<boole
     }
 
     @Override
-    public boolean[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NArrayElement earr = o.asArray().get();
+    public boolean[] createObject(NElementDeserializerContext context) {
+        NElement element = context.element();
+        NArrayElement earr = element.asArray().get();
         boolean[] arr = new boolean[earr.size()];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = (boolean) context.toObject(earr.get(i).get(), boolean.class);

@@ -2,16 +2,16 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper.builder;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementDeserializerBuilderFieldContext;
+import net.thevpc.nuts.elem.NElementDeserializerFieldContext;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.NElementFactoryContextAdapter;
 
-class NElementDeserializerBuilderFieldContextImpl<T> extends NElementFactoryContextAdapter implements NElementDeserializerBuilderFieldContext<T> {
+class NElementDeserializerFieldContextImpl<T> extends NElementFactoryContextAdapter implements NElementDeserializerFieldContext<T> {
     private final T instance;
     private final NElement arg;
     private final NElement element;
     private final Class<T> to;
 
-    public NElementDeserializerBuilderFieldContextImpl(T instance, NElement arg, NElement element, Class<T> to, NElementFactoryContext context) {
+    public NElementDeserializerFieldContextImpl(T instance, NElement arg, NElement element, Class<T> to, NElementFactoryContext context) {
         super(context);
         this.instance = instance;
         this.arg = arg;

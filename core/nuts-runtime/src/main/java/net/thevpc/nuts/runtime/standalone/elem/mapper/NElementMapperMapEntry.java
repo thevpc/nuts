@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 
 import java.lang.reflect.ParameterizedType;
@@ -29,17 +30,19 @@ public class NElementMapperMapEntry implements NElementMapper<Map.Entry> {
     }
 
     @Override
-    public Map.Entry createObject(NElement o, Type to, NElementFactoryContext context) {
+    public Map.Entry createObject(NElementDeserializerContext context) {
+        Type to = context.to();
+        NElement element = context.element();
         if (to instanceof ParameterizedType) {
             Type[] kvt = ((ParameterizedType) to).getActualTypeArguments();
             return new AbstractMap.SimpleEntry(
-                    context.toObject(o.asObject().get().get("key").orNull(), kvt[0]),
-                    context.toObject(o.asObject().get().get("value").orNull(), kvt[0])
+                    context.toObject(element.asObject().get().get("key").orNull(), kvt[0]),
+                    context.toObject(element.asObject().get().get("value").orNull(), kvt[0])
             );
         }
         return new AbstractMap.SimpleEntry(
-                context.toObject(o.asObject().get().get("key").orNull(), Object.class),
-                context.toObject(o.asObject().get().get("value").orNull(), Object.class)
+                context.toObject(element.asObject().get().get("key").orNull(), Object.class),
+                context.toObject(element.asObject().get().get("value").orNull(), Object.class)
         );
     }
 

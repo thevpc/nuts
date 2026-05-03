@@ -72,7 +72,9 @@ public class NElementMapperMap implements NElementMapper<Map> {
     }
 
     @Override
-    public Map createObject(NElement o, Type to, NElementFactoryContext context) {
+    public Map createObject(NElementDeserializerContext context) {
+        Type to = context.to();
+        NElement element = context.element();
         Class cls = Map.class;
         Type elemType1 = null;//Object.class;
         Type elemType2 = null;//Object.class;
@@ -91,17 +93,17 @@ public class NElementMapperMap implements NElementMapper<Map> {
         switch (cls.getName()) {
             case "java.util.Map":
             case "java.util.LinkedHashMap": {
-                return fillObject(o, new LinkedHashMap(o.asObject().get().size()), elemType1, elemType2, to, context);
+                return fillObject(element, new LinkedHashMap(element.asObject().get().size()), elemType1, elemType2, to, context);
             }
             case "java.util.HashMap": {
-                return fillObject(o, new HashMap(o.asObject().get().size()), elemType1, elemType2, to, context);
+                return fillObject(element, new HashMap(element.asObject().get().size()), elemType1, elemType2, to, context);
             }
             case "java.util.SortedMap":
             case "java.util.NavigableMap": {
-                return fillObject(o, new TreeMap(), elemType1, elemType2, to, context);
+                return fillObject(element, new TreeMap(), elemType1, elemType2, to, context);
             }
             default: {
-                return fillObject(o, (Map) context.getTypesRepository().getType(to).newInstance(), elemType1, elemType2, to, context);
+                return fillObject(element, (Map) context.getTypesRepository().getType(to).newInstance(), elemType1, elemType2, to, context);
             }
         }
     }

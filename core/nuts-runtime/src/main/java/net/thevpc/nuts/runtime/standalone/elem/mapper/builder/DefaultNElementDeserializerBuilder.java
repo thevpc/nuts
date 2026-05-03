@@ -19,12 +19,12 @@ public class DefaultNElementDeserializerBuilder<T> implements NElementDeserializ
     boolean built = false;
     boolean wrapCollections = true;
     boolean containerIsCollection = false;
-    List<NElementDeserializerBuilderFieldConfigurer<T>> onUnsupportedBody = new ArrayList<>();
-    List<NElementDeserializerBuilderFieldConfigurer<T>> onUnsupportedArg = new ArrayList<>();
-    List<NElementDeserializerBuilderInitializer<T>> postProcess = new ArrayList<>();
-    NElementDeserializerBuilderInstanceFactory<T> onNewInstance;
+    List<NElementDeserializerFieldConfigurer<T>> onUnsupportedBody = new ArrayList<>();
+    List<NElementDeserializerFieldConfigurer<T>> onUnsupportedArg = new ArrayList<>();
+    List<NElementDeserializerInitializer<T>> postProcess = new ArrayList<>();
+    NElementDeserializerInstanceFactory<T> onNewInstance;
     Map<Type, Object> defaultValueByType = new HashMap<>();
-    Map<String, FieldConfig<T>> preConfiguredFields = new HashMap<>();
+    Map<String, NElementDeserializerField<T>> preConfiguredFields = new HashMap<>();
 
     public DefaultNElementDeserializerBuilder(NReflectRepository javaWord, Type type) {
         this.type = javaWord.getType(type);
@@ -49,9 +49,9 @@ public class DefaultNElementDeserializerBuilder<T> implements NElementDeserializ
     }
 
     @Override
-    public FieldConfig<T> field(String name) {
+    public NElementDeserializerField<T> field(String name) {
         return preConfiguredFields.computeIfAbsent(name,
-                k -> new NElementMapperBuilderFieldImpl<>(name, this));
+                k -> new NElementDeserializerBuilderNElementDeserializerFieldImpl<>(name, this));
     }
 
     @Override
@@ -114,7 +114,7 @@ public class DefaultNElementDeserializerBuilder<T> implements NElementDeserializ
         return setTypeDefaultValue(Boolean.class, false);
     }
 
-    public NElementDeserializerBuilder<T> setInstanceFactory(NElementDeserializerBuilderInstanceFactory<T> instanceFactory) {
+    public NElementDeserializerBuilder<T> setInstanceFactory(NElementDeserializerInstanceFactory<T> instanceFactory) {
         this.onNewInstance = instanceFactory;
         return this;
     }
@@ -125,7 +125,7 @@ public class DefaultNElementDeserializerBuilder<T> implements NElementDeserializ
     }
 
     @Override
-    public NElementDeserializerBuilder<T> onUnsupportedChild(NElementDeserializerBuilderFieldConfigurer<T> a) {
+    public NElementDeserializerBuilder<T> onUnsupportedChild(NElementDeserializerFieldConfigurer<T> a) {
         if (a != null) {
             onUnsupportedBody.add(a);
         }
@@ -133,7 +133,7 @@ public class DefaultNElementDeserializerBuilder<T> implements NElementDeserializ
     }
 
     @Override
-    public NElementDeserializerBuilder<T> onUnsupportedParam(NElementDeserializerBuilderFieldConfigurer<T> a) {
+    public NElementDeserializerBuilder<T> onUnsupportedParam(NElementDeserializerFieldConfigurer<T> a) {
         if (a != null) {
             onUnsupportedArg.add(a);
         }
@@ -141,7 +141,7 @@ public class DefaultNElementDeserializerBuilder<T> implements NElementDeserializ
     }
 
     @Override
-    public NElementDeserializerBuilder<T> onInitializeInstance(NElementDeserializerBuilderInitializer<T> a) {
+    public NElementDeserializerBuilder<T> onInitializeInstance(NElementDeserializerInitializer<T> a) {
         if (a != null) {
             postProcess.add(a);
         }

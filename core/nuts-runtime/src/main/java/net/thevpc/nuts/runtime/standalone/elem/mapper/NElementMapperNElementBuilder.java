@@ -115,7 +115,9 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
     }
 
     @Override
-    public NElementBuilder createObject(NElement src, Type typeOfResult, NElementFactoryContext context) {
-        return createElement(src.builder(), typeOfResult, context).builder();
+    public NElementBuilder createObject(NElementDeserializerContext context) {
+        NElement element = context.element();
+        Type typeOfResult = context.to();
+        return createElement(element.builder(), typeOfResult, context).builder();
     }
 }

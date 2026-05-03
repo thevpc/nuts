@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.artifact.NArtifactCall;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.reflect.NReflectRepository;
@@ -27,8 +28,8 @@ public class NElementMapperNArtifactCall implements NElementMapper<NArtifactCall
     }
 
     @Override
-    public NArtifactCall createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NObjectElement object = o.asObject().get();
+    public NArtifactCall createObject(NElementDeserializerContext context) {
+        NObjectElement object = context.element().asObject().get();
         NId id = (NId) context.toObject(object.get("id").orNull(), NId.class);
         String[] arguments = (String[]) context.toObject(object.get("arguments").orNull(), String[].class);
         Type mapType = NReflectRepository.of().getParametrizedType(

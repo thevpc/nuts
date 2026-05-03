@@ -41,6 +41,7 @@ import java.util.function.Supplier;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.NElementMapper;
+import net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementDeserializerContextImpl;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
@@ -111,17 +112,19 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
     }
 
     @Override
-    public Node createObject(NElement elem, Type typeOfResult, NElementFactoryContext context) {
-        return runWithDoc(context, () -> createObject0(elem, typeOfResult, context), null);
+    public Node createObject(NElementDeserializerContext context) {
+        return runWithDoc(context, () -> createObject0(context), null);
     }
 
-    protected Node createObject0(NElement elem, Type typeOfResult, NElementFactoryContext context) {
+    protected Node createObject0(NElementDeserializerContext context) {
+        NElement element = context.element();
+        Type to = context.to();
         if (context.getProperties().get(Document.class.getName()) == null || !(context.getProperties().get(Document.class.getName()) instanceof Stack)) {
             Stack<Document> docs = new Stack<>();
             context.getProperties().put(Document.class.getName(), docs);
             try {
                 docs.push(XmlUtils.createDocument());
-                return createObject(elem, typeOfResult, context);
+                return createObject(context);
             } finally {
                 docs.pop();
             }
@@ -130,7 +133,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             if (docs.isEmpty()) {
                 try {
                     docs.push(XmlUtils.createDocument());
-                    return createObject(elem, typeOfResult, context);
+                    return createObject(context);
                 } finally {
                     docs.pop();
                 }
@@ -139,7 +142,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             }
         }
         Document doc = ((Stack<Document>) context.getProperties().get(Document.class.getName())).peek();
-        switch (elem.type()) {
+        switch (element.type()) {
             case NULL: {
                 Element e = doc.createElement(TAG_NULL);
                 return e;
@@ -154,7 +157,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             case BLOCK_STRING:
             {
                 Element e = doc.createElement(TAG_STRING);
-                final String s = elem.asStringValue().get();
+                final String s = element.asStringValue().get();
                 if (isComplexString(s)) {
                     e.setTextContent(s);
                 } else {
@@ -174,49 +177,49 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
 //            }
             case BOOLEAN: {
                 return doc.createElement(
-                        elem.asBooleanValue().get() ? TAG_TRUE : TAG_FALSE
+                        element.asBooleanValue().get() ? TAG_TRUE : TAG_FALSE
                 );
             }
             case BYTE: {
                 Element e = doc.createElement(TAG_BYTE);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asByteValue().get()));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(element.asByteValue().get()));
                 return e;
             }
             case SHORT: {
                 Element e = doc.createElement(TAG_SHORT);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asShortValue().get()));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(element.asShortValue().get()));
                 return e;
             }
             case INT: {
                 Element e = doc.createElement(TAG_INT);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asIntValue().get()));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(element.asIntValue().get()));
                 return e;
             }
             case LONG: {
                 Element e = doc.createElement(TAG_LONG);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asLongValue().get()));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(element.asLongValue().get()));
                 return e;
             }
             case FLOAT: {
                 Element e = doc.createElement(TAG_FLOAT);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asFloatValue().get()));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(element.asFloatValue().get()));
                 return e;
             }
             case DOUBLE: {
                 Element e = doc.createElement(TAG_DOUBLE);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asDoubleValue().get()));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(element.asDoubleValue().get()));
                 return e;
             }
             case INSTANT: {
                 Element e = doc.createElement(TAG_INSTANT);
-                e.setAttribute(ATTRIBUTE_VALUE, elem.asInstantValue().get().toString());
+                e.setAttribute(ATTRIBUTE_VALUE, element.asInstantValue().get().toString());
                 return e;
             }
             case ARRAY: {
                 Element e = doc.createElement(TAG_ARRAY);
                 int count = 0;
-                for (NElement attribute : elem.asArray().get().children()) {
-                    Node c = createObject(attribute, Element.class, context);
+                for (NElement attribute : element.asArray().get().children()) {
+                    Node c = createObject(NElementDeserializerContextImpl.of(attribute, Element.class, context));
                     if (c != null) {
                         e.appendChild(c);
                         count++;
@@ -226,7 +229,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             }
             case OBJECT: {
                 Element obj = doc.createElement(TAG_OBJECT);
-                for (NElement nn : elem.asObject().get().children()) {
+                for (NElement nn : element.asObject().get().children()) {
                     if(nn instanceof NPairElement){
                         NPairElement ne = (NPairElement) nn;
                         final NElementType kt = ne.key().type();
@@ -234,10 +237,10 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                                 || (kt.isAnyString() && isComplexString(ne.key().asStringValue().get()));
                         if (complexKey) {
                             Element entry = doc.createElement(TAG_ENTRY);
-                            Element ek = (Element) createObject(ne.key(), NElement.class, context);
+                            Element ek = (Element) createObject(NElementDeserializerContextImpl.of(ne.key(), NElement.class, context));
                             ek.setAttribute(ATTRIBUTE_ENTRY_KEY, null);
                             entry.appendChild(ek);
-                            Element ev = (Element) createObject(ne.value(), NElement.class, context);
+                            Element ev = (Element) createObject(NElementDeserializerContextImpl.of(ne.value(), NElement.class, context));
                             ev.setAttribute(ATTRIBUTE_ENTRY_VALUE, null);
                             entry.appendChild(ev);
                             obj.appendChild(entry);
@@ -252,7 +255,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                             switch (ne.value().type()) {
                                 case ARRAY:
                                 case OBJECT: {
-                                    Element ev = (Element) createObject(ne.value(), NElement.class, context);
+                                    Element ev = (Element) createObject(NElementDeserializerContextImpl.of(ne.value(), NElement.class, context));
                                     ev.setAttribute(ATTRIBUTE_ENTRY_VALUE, null);
                                     entryElem.appendChild(ev);
                                     obj.appendChild(entryElem);
@@ -285,7 +288,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                             }
                         }
                     }else{
-                        Node c = createObject(nn, Element.class, context);
+                        Node c = createObject(NElementDeserializerContextImpl.of(nn, Element.class, context));
                         if (c != null) {
                             obj.appendChild(c);
                         }
@@ -294,7 +297,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                 return obj;
             }
             default: {
-                throw new IllegalArgumentException("Unsupported create Object for element type " + elem.type());
+                throw new IllegalArgumentException("Unsupported create Object for element type " + element.type());
             }
         }
     }

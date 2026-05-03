@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.util.NUnsupportedEnumException;
 
@@ -20,16 +21,17 @@ public class NElementMapperInstant implements NElementMapper<Instant> {
     }
 
     @Override
-    public Instant createObject(NElement o, Type to, NElementFactoryContext context) {
-        switch (o.type()) {
+    public Instant createObject(NElementDeserializerContext context) {
+        NElement element = context.element();
+        switch (element.type()) {
             case INSTANT: {
-                return o.asLiteral().asInstant().get();
+                return element.asLiteral().asInstant().get();
             }
             case INT: {
-                return Instant.ofEpochMilli(o.asLiteral().asInt().get());
+                return Instant.ofEpochMilli(element.asLiteral().asInt().get());
             }
             case LONG: {
-                return Instant.ofEpochMilli(o.asLiteral().asLong().get());
+                return Instant.ofEpochMilli(element.asLiteral().asLong().get());
             }
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
@@ -40,9 +42,9 @@ public class NElementMapperInstant implements NElementMapper<Instant> {
             case LINE_STRING:
             case BLOCK_STRING:
             {
-                return Instant.parse(o.asStringValue().get());
+                return Instant.parse(element.asStringValue().get());
             }
         }
-        throw new NUnsupportedEnumException(o.type());
+        throw new NUnsupportedEnumException(element.type());
     }
 }

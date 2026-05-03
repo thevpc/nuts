@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.format.xml;
 
 import java.lang.reflect.Type;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -60,11 +61,11 @@ public class NElementFactoryXmlDocument implements NElementMapper {
     }
 
     @Override
-    public Object createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
+    public Object createObject(NElementDeserializerContext context) {
         Document doc = XmlUtils.createDocument();
         Node source = NElementFactoryXmlElement.runWithDoc(
                 context,
-                () -> (Node) context.toObject(o, Element.class),
+                () -> (Node) context.toObject(context.element(), Element.class),
                 doc);
         doc.insertBefore(source,null);
 //        doc.adoptNode(source);

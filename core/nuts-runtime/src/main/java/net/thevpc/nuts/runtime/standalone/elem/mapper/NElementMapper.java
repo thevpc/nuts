@@ -42,8 +42,12 @@ public interface NElementMapper<T> extends NElementSimplifier<T>, NElementSerial
         return context.defaultCreateElement(src,typeOfSrc);
     }
 
-    default T createObject(NElement o, Type typeOfResult, NElementFactoryContext context){
-        return context.defaultToObject(o,typeOfResult);
-    }
+//    default T createObject(NElement element, Type typeOfResult, NElementFactoryContext context){
+//        return context.defaultToObject(element,typeOfResult);
+//    }
 
+    @Override
+    default T createObject(NElementDeserializerContext context) {
+        return context.defaultToObject(context.element(),context.to());
+    }
 }

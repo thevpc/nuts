@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.artifact.NIdLocation;
 
@@ -20,8 +21,8 @@ public class NElementMapperNIdLocation implements NElementMapper<NIdLocation> {
     }
 
     @Override
-    public NIdLocation createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        Map builder = context.defaultToObject(o, Map.class);
+    public NIdLocation createObject(NElementDeserializerContext context) {
+        Map builder = context.defaultToObject(context.element(), Map.class);
         return new NIdLocation(
                 (String) builder.get("url"),
                 (String) builder.get("region"),

@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
+import net.thevpc.nuts.reflect.NReflectUtils;
 
 import java.lang.reflect.Type;
 
@@ -18,31 +20,9 @@ public class NElementMapperNull implements NElementMapper<Object> {
     }
 
     @Override
-    public Object createObject(NElement o, Type to, NElementFactoryContext context) {
-        if (to instanceof Class) {
-            Class c = (Class) to;
-            if (c.isPrimitive()) {
-                switch (c.getName()) {
-                    case "boolean":
-                        return false;
-                    case "byte":
-                        return (byte) 0;
-                    case "short":
-                        return (short) 0;
-                    case "int":
-                        return 0;
-                    case "char":
-                        return (char) 0;
-                    case "long":
-                        return (long) 0;
-                    case "float":
-                        return (float) 0;
-                    case "double":
-                        return (double) 0;
-                }
-            }
-        }
-        return null;
+    public Object createObject(NElementDeserializerContext context) {
+        Type to = context.to();
+        return to==null?null:NReflectUtils.getJavaDefaultValue(to);
     }
 
 }

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper.builder;
 
 import net.thevpc.nuts.elem.NElementDeserializerBuilder;
+import net.thevpc.nuts.elem.NElementDeserializerField;
 import net.thevpc.nuts.reflect.NReflectProperty;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -8,9 +9,8 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Function;
 
-public class NElementMapperBuilderFieldImpl<T> implements NElementDeserializerBuilder.FieldConfig<T> {
+public class NElementDeserializerBuilderNElementDeserializerFieldImpl<T> implements NElementDeserializerField<T> {
     DefaultNElementDeserializerBuilder<T> parent;
     String uniformName;
     String name;
@@ -25,12 +25,12 @@ public class NElementMapperBuilderFieldImpl<T> implements NElementDeserializerBu
     Type typeOverride;
     Set<String> aliases;
 
-    public NElementMapperBuilderFieldImpl(String name, DefaultNElementDeserializerBuilder<T> parent) {
+    public NElementDeserializerBuilderNElementDeserializerFieldImpl(String name, DefaultNElementDeserializerBuilder<T> parent) {
         this.name = name;
         this.parent = parent;
     }
 
-    public NElementMapperBuilderFieldImpl(NElementMapperBuilderFieldImpl other) {
+    public NElementDeserializerBuilderNElementDeserializerFieldImpl(NElementDeserializerBuilderNElementDeserializerFieldImpl other) {
         this.name = other.name;
         this.parent = other.parent;
         this.uniformName = other.uniformName;
@@ -46,8 +46,8 @@ public class NElementMapperBuilderFieldImpl<T> implements NElementDeserializerBu
         this.aliases = other.aliases == null ? null : new HashSet<>(other.aliases);
     }
 
-    public NElementMapperBuilderFieldImpl<T> copy() {
-        return new NElementMapperBuilderFieldImpl<>(this);
+    public NElementDeserializerBuilderNElementDeserializerFieldImpl<T> copy() {
+        return new NElementDeserializerBuilderNElementDeserializerFieldImpl<>(this);
     }
 
     public boolean isIgnored() {
@@ -55,7 +55,7 @@ public class NElementMapperBuilderFieldImpl<T> implements NElementDeserializerBu
     }
 
     @Override
-    public NElementDeserializerBuilder.FieldConfig<T> setAlias(String... aliases) {
+    public NElementDeserializerField<T> setAlias(String... aliases) {
         this.aliases = new HashSet<>();
         if (aliases != null) {
             for (String alias : aliases) {
@@ -69,19 +69,19 @@ public class NElementMapperBuilderFieldImpl<T> implements NElementDeserializerBu
     }
 
     @Override
-    public NElementDeserializerBuilder.FieldConfig<T> setType(Type type) {
+    public NElementDeserializerField<T> setType(Type type) {
         typeOverride = type;
         return this;
     }
 
     @Override
-    public NElementDeserializerBuilder.FieldConfig<T> ignore() {
+    public NElementDeserializerField<T> ignore() {
         this.ignored = true;
         return this;
     }
 
     @Override
-    public NElementDeserializerBuilder.FieldConfig<T> setBooleanDefaultTrue() {
+    public NElementDeserializerField<T> setBooleanDefaultTrue() {
         if (isBooleanType()) {
             setDefaultValue(Boolean.TRUE);
             return this;
@@ -91,7 +91,7 @@ public class NElementMapperBuilderFieldImpl<T> implements NElementDeserializerBu
     }
 
     @Override
-    public NElementDeserializerBuilder.FieldConfig<T> setBooleanDefaultFalse() {
+    public NElementDeserializerField<T> setBooleanDefaultFalse() {
         if (isBooleanType()) {
             setDefaultValue(Boolean.FALSE);
             return this;
@@ -101,7 +101,7 @@ public class NElementMapperBuilderFieldImpl<T> implements NElementDeserializerBu
     }
 
     @Override
-    public NElementDeserializerBuilder.FieldConfig<T> setDefaultValue(Object valueWhenMissing) {
+    public NElementDeserializerField<T> setDefaultValue(Object valueWhenMissing) {
         this.useDefaultWhenMissingValue = true;
         this.valueWhenMissing = valueWhenMissing;
         return this;
@@ -145,13 +145,13 @@ public class NElementMapperBuilderFieldImpl<T> implements NElementDeserializerBu
     }
 
     @Override
-    public NElementDeserializerBuilder.FieldConfig<T> setWrapCollections(Boolean value) {
+    public NElementDeserializerField<T> setWrapCollections(Boolean value) {
         this.wrapCollections = value;
         return this;
     }
 
     @Override
-    public NElementDeserializerBuilder.FieldConfig<T> setContainerIsCollection(Boolean value) {
+    public NElementDeserializerField<T> setContainerIsCollection(Boolean value) {
         this.containerIsCollection = value;
         return this;
     }
@@ -172,13 +172,13 @@ public class NElementMapperBuilderFieldImpl<T> implements NElementDeserializerBu
     }
 
     @Override
-    public NElementDeserializerBuilder.FieldConfig<T> setParam(boolean param) {
+    public NElementDeserializerField<T> setParam(boolean param) {
         this.arg = param;
         return this;
     }
 
     @Override
-    public NElementDeserializerBuilder.FieldConfig<T> setChild(boolean child) {
+    public NElementDeserializerField<T> setChild(boolean child) {
         this.body = child;
         return this;
     }

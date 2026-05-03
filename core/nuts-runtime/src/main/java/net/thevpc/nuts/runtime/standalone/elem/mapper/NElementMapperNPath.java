@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.io.NPath;
 
@@ -19,8 +20,8 @@ public class NElementMapperNPath implements NElementMapper<NPath> {
     }
 
     @Override
-    public NPath createObject(NElement o, Type to, NElementFactoryContext context) {
-        String i = context.defaultToObject(o, String.class);
+    public NPath createObject(NElementDeserializerContext context) {
+        String i = context.defaultToObject(context.element(), String.class);
         return NPath.of(i);
     }
 }

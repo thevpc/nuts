@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NArrayElement;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 
@@ -23,8 +24,8 @@ public class NElementMapperPrimitiveDoubleArray implements NElementMapper<double
     }
 
     @Override
-    public double[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NArrayElement earr = o.asArray().get();
+    public double[] createObject(NElementDeserializerContext context) {
+        NArrayElement earr = context.element().asArray().get();
         double[] arr = new double[earr.size()];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = (double) context.toObject(earr.get(i).get(), double.class);

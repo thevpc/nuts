@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.text.NObjectWriter;
 
@@ -28,8 +29,8 @@ public class NElementMapperNVersion implements NElementMapper<NVersion> {
     }
 
     @Override
-    public NVersion createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        return NVersion.get(o.asStringValue().get()).get();
+    public NVersion createObject(NElementDeserializerContext context) {
+        return NVersion.get(context.element().asStringValue().get()).get();
     }
 
 }

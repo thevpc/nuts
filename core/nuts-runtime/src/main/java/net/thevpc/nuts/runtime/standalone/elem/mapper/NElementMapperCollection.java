@@ -1,9 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.reflect.NReflectType;
-import net.thevpc.nuts.runtime.standalone.reflect.ReflectUtils;
+import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNArrayElement;
 
 import java.lang.reflect.ParameterizedType;
@@ -40,11 +41,13 @@ public class NElementMapperCollection implements NElementMapper {
     }
 
     @Override
-    public Collection createObject(NElement o, Type to, NElementFactoryContext context) {
+    public Collection createObject(NElementDeserializerContext context) {
+        Type to = context.to();
+        NElement element = context.element();
         if(to==null){
             to=ArrayList.class;
         }
-        Class cls = ReflectUtils.getRawClass(to).get();
+        Class cls = NReflectUtils.getRawClass(to).get();
         Type elemType = Object.class;
         if (to instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) to;
@@ -54,35 +57,35 @@ public class NElementMapperCollection implements NElementMapper {
             case "java.util.Collection":
             case "java.util.List":
             case "java.util.ArrayList": {
-                return fillObject(o, new ArrayList(o.asArray().get().size()), elemType, to, context);
+                return fillObject(element, new ArrayList(element.asArray().get().size()), elemType, to, context);
             }
             case "java.util.Set":
             case "java.util.LinkedHashset": {
-                return fillObject(o, new LinkedHashSet(), elemType, to, context);
+                return fillObject(element, new LinkedHashSet(), elemType, to, context);
             }
             case "java.util.Hashset": {
-                return fillObject(o, new HashSet(), elemType, to, context);
+                return fillObject(element, new HashSet(), elemType, to, context);
             }
             case "java.util.SortedSet":
             case "java.util.NavigableSet":
             case "java.util.TreeSet": {
-                return fillObject(o, new TreeSet(), elemType, to, context);
+                return fillObject(element, new TreeSet(), elemType, to, context);
             }
             case "java.util.Queue": {
-                return fillObject(o, new LinkedList(), elemType, to, context);
+                return fillObject(element, new LinkedList(), elemType, to, context);
             }
             case "java.util.BlockingQueue": {
-                return fillObject(o, new LinkedBlockingQueue(), elemType, to, context);
+                return fillObject(element, new LinkedBlockingQueue(), elemType, to, context);
             }
             case "java.util.TransferQueue": {
-                return fillObject(o, new LinkedTransferQueue(), elemType, to, context);
+                return fillObject(element, new LinkedTransferQueue(), elemType, to, context);
             }
             case "java.util.Deque": {
-                return fillObject(o, new ArrayList(), elemType, to, context);
+                return fillObject(element, new ArrayList(), elemType, to, context);
             }
             default: {
                 NReflectType m = context.getTypesRepository().getType(to);
-                return fillObject(o, (Collection) m.newInstance(), elemType, to, context);
+                return fillObject(element, (Collection) m.newInstance(), elemType, to, context);
             }
         }
     }

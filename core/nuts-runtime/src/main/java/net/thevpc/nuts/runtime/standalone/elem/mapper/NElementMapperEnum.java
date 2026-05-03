@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.runtime.standalone.reflect.ReflectUtils;
+import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.util.NUnsupportedEnumException;
 
@@ -27,13 +27,15 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
     }
 
     @Override
-    public Enum createObject(NElement o, Type to, NElementFactoryContext context) {
-        switch (o.type()) {
+    public Enum createObject(NElementDeserializerContext context) {
+        NElement element = context.element();
+        Type to = context.to();
+        switch (element.type()) {
             case BYTE:
             case SHORT:
             case INT:
             case LONG: {
-                return (Enum) ((Class) to).getEnumConstants()[o.asLiteral().asInt().get()];
+                return (Enum) ((Class) to).getEnumConstants()[element.asLiteral().asInt().get()];
             }
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
@@ -46,8 +48,8 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
             case CHAR:
             case NAME:
             {
-                Class cc = ReflectUtils.getRawClass(to).get();
-                String name = o.asStringValue().get();
+                Class cc = NReflectUtils.getRawClass(to).get();
+                String name = element.asStringValue().get();
                 if (NEnum.class.isAssignableFrom(cc)) {
                     return (Enum) NEnum.parse(cc, name).get();
                 }
@@ -63,7 +65,7 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
                 }
             }
         }
-        throw new NUnsupportedEnumException(o.type());
+        throw new NUnsupportedEnumException(element.type());
     }
 
     private static Map<Class, LenientParser> cache = new HashMap<>();

@@ -17,7 +17,7 @@ public class NElementMapperString implements NElementMapper<String> {
     }
 
     @Override
-    public String createObject(NElement o, Type to, NElementFactoryContext context) {
-        return o.asStringValue().get();
+    public String createObject(NElementDeserializerContext context) {
+        return context.element().asStringValue().get();
     }
 }

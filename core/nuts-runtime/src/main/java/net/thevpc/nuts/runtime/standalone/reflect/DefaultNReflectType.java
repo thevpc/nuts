@@ -172,7 +172,7 @@ public class DefaultNReflectType implements NReflectType {
         if (javaType instanceof Class<?>) {
             return NOptional.of((Class) javaType);
         } else {
-            return (NOptional) ReflectUtils.getRawClass(javaType);
+            return NReflectUtils.getRawClass(javaType);
         }
     }
 
@@ -183,7 +183,7 @@ public class DefaultNReflectType implements NReflectType {
             if (javaType instanceof Class<?>) {
                 c2 = (Class) javaType;
             } else {
-                c2 = ReflectUtils.getRawClass(javaType).orNull();
+                c2 = NReflectUtils.getRawClass(javaType).orNull();
             }
             if (c2 != null) {
                 if (c2.isInterface()) {
@@ -314,7 +314,7 @@ public class DefaultNReflectType implements NReflectType {
                     } catch (Exception ex) {
                         //ignore any error...
                     }
-                    cleanInstanceCreated=true;
+                    cleanInstanceCreated = true;
                 }
             }
         }
@@ -323,7 +323,7 @@ public class DefaultNReflectType implements NReflectType {
 
     private void build() {
         if (propertiesDeclaredMap == null) {
-            Supplier<Object> cleanInstance = ()->_cleanInstance();
+            Supplier<Object> cleanInstance = () -> _cleanInstance();
             LinkedHashMap<String, IndexedItem<NReflectMethod>> declaredMethods = new LinkedHashMap<>();
             LinkedHashMap<String, IndexedItem<NReflectMethod>> allMethods = new LinkedHashMap<>();
 
@@ -695,7 +695,7 @@ public class DefaultNReflectType implements NReflectType {
         if (clazz instanceof Class) {
             declaredFields = ((Class) clazz).getDeclaredFields();
         } else if (clazz instanceof ParameterizedType) {
-            Class c2 = ReflectUtils.getRawClass(clazz).orNull();
+            Class c2 = NReflectUtils.getRawClass(clazz).orNull();
             if (c2 != null) {
                 return c2.getDeclaredFields();
             }
@@ -711,7 +711,7 @@ public class DefaultNReflectType implements NReflectType {
         if (clazz instanceof Class) {
             declaredMethods = ((Class) clazz).getDeclaredMethods();
         } else if (clazz instanceof ParameterizedType) {
-            Class c2 = ReflectUtils.getRawClass(clazz).orNull();
+            Class c2 = NReflectUtils.getRawClass(clazz).orNull();
             if (c2 != null) {
                 return c2.getDeclaredMethods();
             }
@@ -991,7 +991,7 @@ public class DefaultNReflectType implements NReflectType {
             }
             if (someUpdates) {
                 DefaultNReflectType ownerType = (DefaultNReflectType) getOwnerType();
-                Type c2 = ReflectUtils.getRawClass(javaType).orNull();
+                Type c2 = NReflectUtils.getRawClass(javaType).orNull();
                 if (c2 == null) {
                     c2 = javaType;
                 }
@@ -1044,7 +1044,7 @@ public class DefaultNReflectType implements NReflectType {
 
     @Override
     public boolean isDefaultValue(Object value) {
-        return ReflectUtils.isDefaultValue(javaType, value);
+        return Objects.equals(NReflectUtils.getJavaDefaultValue(javaType), value);
     }
 
     @Override

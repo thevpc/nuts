@@ -12,9 +12,9 @@ import java.util.function.Predicate;
 
 class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
     private DefaultNElementDeserializerBuilder<T> builder;
-    NElementDeserializerBuilderInstanceFactory<T> onNewInstance;
+    NElementDeserializerInstanceFactory<T> onNewInstance;
     NReflectType type;
-    List<NElementDeserializerBuilderInitializer<T>> postProcess = new ArrayList<>();
+    List<NElementDeserializerInitializer<T>> postProcess = new ArrayList<>();
 
 
     Function<String, String> fieldNameNormalizer;
@@ -24,8 +24,8 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
     //        boolean built = false;
 //        boolean wrapCollections = true;
 //        boolean containerIsCollection = false;
-    List<NElementDeserializerBuilderFieldConfigurer<T>> onUnsupportedBody = new ArrayList<>();
-    List<NElementDeserializerBuilderFieldConfigurer<T>> onUnsupportedArg = new ArrayList<>();
+    List<NElementDeserializerFieldConfigurer<T>> onUnsupportedBody = new ArrayList<>();
+    List<NElementDeserializerFieldConfigurer<T>> onUnsupportedArg = new ArrayList<>();
 //        Map<Type, Object> defaultValueByType = new HashMap<>();
 
     public NElementMapperFromBuilder(DefaultNElementDeserializerBuilder<T> builder) {
@@ -41,12 +41,14 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
     }
 
     @Override
-    public T createObject(NElement element, Type to, NElementFactoryContext context) {
+    public T createObject(NElementDeserializerContext context) {
+        NElement element = context.element();
+        Type to = context.to();
         NListContainerElement container = element.toListContainer().get();
         List<NElement> args = container.isParametrized() ? container.asParametrizedContainer().get().params().orNull() : null;
         T instance = null;
         if (onNewInstance != null) {
-            instance = onNewInstance.newInstance(new NElementDeserializerBuilderFactoryContextImpl<>(element, to, context));
+            instance = onNewInstance.newInstance(context);
         }
         if (instance == null) {
             Type rtype = type.getJavaType();
@@ -66,19 +68,19 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
         }
         NReflectType effectiveType=type.getRepository().getType(instance.getClass());
         //now that we have the instance lets compute
-        Map<String, NElementMapperBuilderFieldImpl<T>> allFields = new HashMap<>();
-        Map<String, NElementMapperBuilderFieldImpl<T>> argFields = new HashMap<>();
-        Map<String, NElementMapperBuilderFieldImpl<T>> bodyFields = new HashMap<>();
+        Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> allFields = new HashMap<>();
+        Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> argFields = new HashMap<>();
+        Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> bodyFields = new HashMap<>();
 
         for (NReflectProperty property : effectiveType.getProperties()) {
             if (!allFields.containsKey(property.getName())) {
-                NElementMapperBuilderFieldImpl<T> o = (NElementMapperBuilderFieldImpl<T>) builder.preConfiguredFields.get(property.getName());
+                NElementDeserializerBuilderNElementDeserializerFieldImpl<T> o = (NElementDeserializerBuilderNElementDeserializerFieldImpl<T>) builder.preConfiguredFields.get(property.getName());
                 if(o!=null){
                     o=o.copy();
                 }else{
-                    o=new NElementMapperBuilderFieldImpl<>(property.getName(),builder);
+                    o=new NElementDeserializerBuilderNElementDeserializerFieldImpl<>(property.getName(),builder);
                 }
-                NElementMapperBuilderFieldImpl<T> f = o;
+                NElementDeserializerBuilderNElementDeserializerFieldImpl<T> f = o;
                 if(o.isIgnored()){
                     continue;
                 }
@@ -134,23 +136,23 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
             }
         }
         T finalInstance = instance;
-        NElementDeserializerBuilderInstanceContext<T> cc = new NElementDeserializerBuilderInstanceContextImpl<T>(finalInstance, element, to, context);
-        for (NElementDeserializerBuilderInitializer<T> process : postProcess) {
+        NElementDeserializerInstanceContext<T> cc = new NElementDeserializerInstanceContextImpl<T>(finalInstance, element, to, context);
+        for (NElementDeserializerInitializer<T> process : postProcess) {
             process.initializeInstance(cc);
         }
         return (T) instance;
     }
 
     private void processField(NElement arg, boolean isArg, T instance, NElement element, Class<T> to, NElementFactoryContext context,
-                              Map<String, NElementMapperBuilderFieldImpl<T>> argFields,
-                              Map<String, NElementMapperBuilderFieldImpl<T>> bodyFields
+                              Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> argFields,
+                              Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> bodyFields
     ) {
-        Map<String, NElementMapperBuilderFieldImpl<T>> argFields2 = isArg ? argFields : bodyFields;
+        Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> argFields2 = isArg ? argFields : bodyFields;
         if (arg.isSimplePair()) {
             NPairElement pair = arg.asPair().get();
             NElement key = pair.key();
             String expectedName = uniformName(key.asStringValue().get());
-            NElementMapperBuilderFieldImpl<T> tField = argFields2.get(expectedName);
+            NElementDeserializerBuilderNElementDeserializerFieldImpl<T> tField = argFields2.get(expectedName);
             if (tField != null) {
                 NElement value = pair.value();
                 if (tField.isCollectionType() && tField.isWrapCollections()) {
@@ -175,7 +177,7 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                 }
                 Class<?> jt;
                 if(tField.typeOverride!=null) {
-                    jt = (Class<?>) NReflectUtils.getClassFromType(tField.typeOverride).orNull();
+                    jt = (Class<?>) NReflectUtils.getRawClass(tField.typeOverride).orNull();
                     if(jt==null){
                         jt = (Class<?>) tField.field.getPropertyType().getJavaType();
                     }
@@ -192,7 +194,7 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
             }
         } else if (arg.isAnyString()) {
             String expectedName = uniformName(arg.asStringValue().get());
-            NElementMapperBuilderFieldImpl<T> tField = argFields2.get(expectedName);
+            NElementDeserializerBuilderNElementDeserializerFieldImpl<T> tField = argFields2.get(expectedName);
             boolean found = false;
             if (tField != null) {
                 if (tField.isUseDefaultWhenMissingValue()) {
@@ -212,9 +214,9 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
     private void onBodyNotSupported(T instance, NElement arg, boolean isArg, NElement element, Class<T> to, NElementFactoryContext context) {
         boolean found = false;
         if (!found) {
-            List<NElementDeserializerBuilderFieldConfigurer<T>> list = isArg ? onUnsupportedArg : onUnsupportedBody;
-            NElementDeserializerBuilderFieldContext<T> cc = new NElementDeserializerBuilderFieldContextImpl<T>(instance, arg, element, to, context);
-            for (NElementDeserializerBuilderFieldConfigurer<T> tOnUnsupported : list) {
+            List<NElementDeserializerFieldConfigurer<T>> list = isArg ? onUnsupportedArg : onUnsupportedBody;
+            NElementDeserializerFieldContext<T> cc = new NElementDeserializerFieldContextImpl<T>(instance, arg, element, to, context);
+            for (NElementDeserializerFieldConfigurer<T> tOnUnsupported : list) {
 
                 if (tOnUnsupported.prepareField(cc)) {
                     found = true;

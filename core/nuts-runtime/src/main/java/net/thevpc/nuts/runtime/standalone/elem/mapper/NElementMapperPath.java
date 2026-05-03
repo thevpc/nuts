@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementDeserializerContext;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
@@ -27,7 +28,7 @@ public class NElementMapperPath implements NElementMapper<Path> {
     }
 
     @Override
-    public Path createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        return Paths.get(o.asStringValue().get());
+    public Path createObject(NElementDeserializerContext context) {
+        return Paths.get(context.element().asStringValue().get());
     }
 }
