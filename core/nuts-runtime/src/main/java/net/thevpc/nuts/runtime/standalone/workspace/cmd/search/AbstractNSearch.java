@@ -32,8 +32,7 @@ import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NStoreKey;
-import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NErr;
 import net.thevpc.nuts.io.NOut;
@@ -950,7 +949,8 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NSearch run() {
         if (describe) {
-            NOut.println(getResultQueryPlan());
+            NElementWriter.ofTson().setFormatter(NElementFormatterStyle.PRETTY).writeln(getResultQueryPlan());
+//            NOut.println(getResultQueryPlan().format(NContentType.JSON, NElementFormatter.ofPretty()));
             return this;
         }
         NIterator<Object> it = runIterator();

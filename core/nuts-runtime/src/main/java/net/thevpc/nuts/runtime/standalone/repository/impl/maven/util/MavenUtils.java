@@ -718,7 +718,11 @@ public class MavenUtils {
             if(!NBlankable.isBlank(options.getSourceLocation())){
                 String n = options.getSourceLocation().toString();
                 if(!NBlankable.isBlank(n)){
-                    if(!"maven".equals(n) && !"maven@maven".equals(n)){
+                    if(
+                            !"maven".equals(n)
+                            && !"maven@maven".equals(n)
+                            && !n.endsWith("=maven@maven")
+                    ){
                         return false;
                     }
                 }

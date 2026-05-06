@@ -355,7 +355,7 @@ public class DefaultNWorkspaceConfigModel {
         for (NRepositorySpecTemplateResolverComponent provider : NExtensions.of()
                 .createAll(NRepositorySpecTemplateResolverComponent.class)) {
             for (NRepositorySpec d : provider.getTemplateRepositoryDefinitions()) {
-                all.add(d);
+                all.add(d.copy());
             }
         }
         Collections.sort(all, REPOSITORY_ORDER_COMPARATOR);

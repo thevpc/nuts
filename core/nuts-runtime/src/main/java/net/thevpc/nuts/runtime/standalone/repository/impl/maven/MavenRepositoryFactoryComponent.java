@@ -40,6 +40,7 @@ import net.thevpc.nuts.util.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/15/17.
@@ -126,7 +127,7 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
 
     @Override
     public List<NRepositorySpec> getTemplateRepositoryDefinitions() {
-        return Collections.unmodifiableList(templates);
+        return Collections.unmodifiableList(templates.stream().map(x->x.copy()).collect(Collectors.toList()));
     }
 
     @Override
