@@ -25,8 +25,8 @@ public class NWebRequestImpl implements NWebRequest {
     private Map<String, List<String>> parameters;
     private NInputSource requestBody;
     private boolean oneWay;
-    private Integer readTimeout;
-    private Integer connectTimeout;
+    private NDuration readTimeout;
+    private NDuration connectTimeout;
     private final List<NWebRequestBody> parts = new ArrayList<>();
     private final DefaultNWebCli cli;
     private Map<String, Object> formData;
@@ -818,36 +818,24 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public Integer getReadTimeout() {
+    public NDuration getReadTimeout() {
         return readTimeout;
     }
 
     @Override
-    public NWebRequest setReadTimeout(Integer readTimeout) {
+    public NWebRequest setReadTimeout(NDuration readTimeout) {
         this.readTimeout = readTimeout;
         return this;
     }
 
     @Override
-    public NWebRequest setReadTimeout(NDuration duration) {
-        this.readTimeout = duration == null ? null : (int) duration.toMillis();
-        return this;
-    }
-
-    @Override
-    public Integer getConnectTimeout() {
+    public NDuration getConnectTimeout() {
         return connectTimeout;
     }
 
     @Override
-    public NWebRequest setConnectTimeout(Integer connectTimeout) {
-        this.connectTimeout = connectTimeout;
-        return this;
-    }
-
-    @Override
     public NWebRequest setConnectTimeout(NDuration duration) {
-        this.connectTimeout = duration == null ? null : (int) duration.toMillis();
+        this.connectTimeout = duration;
         return this;
     }
 

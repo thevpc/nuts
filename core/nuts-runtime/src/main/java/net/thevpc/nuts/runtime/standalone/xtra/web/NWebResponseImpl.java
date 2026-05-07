@@ -19,12 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class NWebResponseImpl implements NWebResponse {
-    private NHttpCode httpCode;
-    private NMsg msg;
-    private DefaultNWebHeaders headers = new DefaultNWebHeaders();
-    private NOnceValue<NInputSource> content;
+    private final NHttpCode httpCode;
+    private final NMsg msg;
+    private final DefaultNWebHeaders headers = new DefaultNWebHeaders();
+    private final NOnceValue<NInputSource> content;
     private NMsgCode msgCode;
 
     public NWebResponseImpl(NHttpCode code, NMsg msg, Map<String, List<String>> headers, Supplier<NInputSource> content) {
@@ -154,8 +155,8 @@ public class NWebResponseImpl implements NWebResponse {
         return content1.readBytes();
     }
 
-    public NWebCookie[] getCookies() {
-        return getHeaders("Set-Cookie").stream().map(DefaultNWebCookie::new).toArray(NWebCookie[]::new);
+    public List<NWebCookie> getCookies() {
+        return getHeaders("Set-Cookie").stream().map(DefaultNWebCookie::new).collect(Collectors.toList());
     }
 
     @Override
@@ -178,6 +179,22 @@ public class NWebResponseImpl implements NWebResponse {
             throw new NWebResponseException(msg, msgCode, httpCode);
         }
         return this;
+    }
+
+    public boolean isClientError() {
+        int code = httpCode.getCode();
+
+        return code >= 400 && code < 500;
+    }
+
+    public boolean isServerError() {
+        int code = httpCode.getCode();
+        return code >= 500;
+    }
+
+    public boolean isRedirect() {
+        int code = httpCode.getCode();
+        return code >= 300 && code < 400;
     }
 
     public NMsgCode getMsgCode() {

@@ -12,6 +12,7 @@ import net.thevpc.nuts.net.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
 
@@ -26,54 +27,55 @@ import java.net.URLConnection;
 import java.nio.channels.InterruptedByTimeoutException;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @NComponentScope(NScopeType.PROTOTYPE)
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNWebCli implements NWebCli {
 
     public static URLConnection prepareGlobalConnection(URLConnection c) {
-        int connectionTimout = getGlobalConnectionTimeoutOrDefault();
-        int readTimout = getGlobalReadConnectionTimeoutOrDefault();
-        c.setConnectTimeout(Math.max(connectionTimout, 0));
-        c.setReadTimeout(Math.max(readTimout, 0));
+        NDuration connectionTimeout = getGlobalConnectionTimeoutOrDefault();
+        NDuration readTimeout = getGlobalReadConnectionTimeoutOrDefault();
+        c.setConnectTimeout(connectionTimeout == null ? 0 : asMs(connectionTimeout.toMillis()));
+        c.setReadTimeout(readTimeout == null ? 0 : asMs(readTimeout.toMillis()));
         return c;
     }
 
-    public static int getGlobalConnectionTimeoutOrDefault() {
-        Integer v = getGlobalConnectionTimeout();
+    public static NDuration getGlobalConnectionTimeoutOrDefault() {
+        NDuration v = getGlobalConnectionTimeout();
         if (v == null) {
-            return 30000;
+            return NDuration.ofSeconds(30);
         }
         return v;
     }
 
-    public static Integer getGlobalReadConnectionTimeoutOrDefault() {
-        Integer v = getGlobalReadTimeout();
+    public static NDuration getGlobalReadConnectionTimeoutOrDefault() {
+        NDuration v = getGlobalReadTimeout();
         if (v == null) {
 //            return getGlobalConnectionTimeoutOrDefault();
-            return 30000;
+            return NDuration.ofSeconds(30);
         }
         return v;
     }
 
-    public static Integer getGlobalConnectionTimeout() {
+    public static NDuration getGlobalConnectionTimeout() {
         return NWorkspace.of().getBootOptions()
-                .getCustomOptionArg("---connection-timeout").flatMap(y -> y.getValue().asInt())
+                .getCustomOptionArg("---connection-timeout").flatMap(y -> NDuration.parse(y.stringValue()))
                 .orElse(null);
     }
 
-    public static Integer getGlobalReadTimeout() {
+    public static NDuration getGlobalReadTimeout() {
         return NWorkspace.of().getBootOptions()
-                .getCustomOptionArg("---connection-read-timeout").flatMap(y -> y.getValue().asInt())
+                .getCustomOptionArg("---connection-read-timeout").flatMap(y -> NDuration.parse(y.stringValue()))
                 .orElse(null);
     }
 
     public static NBootLog log;
     private String prefix;
     private Function<NWebResponse, NWebResponse> responsePostProcessor;
-    private Integer readTimeout;
-    private Integer connectTimeout;
-    private DefaultNWebHeaders headers = new DefaultNWebHeaders();
+    private NDuration readTimeout;
+    private NDuration connectTimeout;
+    private final DefaultNWebHeaders headers = new DefaultNWebHeaders();
 
     public DefaultNWebCli() {
         headers.addHeader("User-Agent", "nwebcli/" + NWorkspace.of().getRuntimeId().getVersion(), DefaultNWebHeaders.Mode.ALWAYS);
@@ -87,9 +89,9 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public NWebCookie[] getCookies() {
+    public List<NWebCookie> getCookies() {
         List<String> li = headers.getOrEmpty("Cookie");
-        return li.stream().map(x -> new DefaultNWebCookie(x)).toArray(NWebCookie[]::new);
+        return li.stream().map(x -> new DefaultNWebCookie(x)).collect(Collectors.toList());
     }
 
     @Override
@@ -187,7 +189,7 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public NWebCli addCookies(NWebCookie[] cookies) {
+    public NWebCli addCookies(NWebCookie... cookies) {
         if (cookies != null) {
             for (NWebCookie cookie : cookies) {
                 addCookie(cookie);
@@ -219,103 +221,98 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public NWebRequest req() {
-        return new NWebRequestImpl(this, NHttpMethod.GET);
-    }
-
-    @Override
     public NWebRequest req(NHttpMethod method) {
         return new NWebRequestImpl(this, method);
     }
 
     @Override
     public NWebRequest GET() {
-        return req().GET();
+        return req(NHttpMethod.GET);
     }
 
     @Override
     public NWebRequest POST() {
-        return req().POST();
+        return req(NHttpMethod.POST);
     }
 
     @Override
     public NWebRequest PUT() {
-        return req().PUT();
+        return req(NHttpMethod.PUT);
     }
 
     @Override
     public NWebRequest DELETE() {
-        return req().DELETE();
+        return req(NHttpMethod.DELETE);
     }
 
     @Override
     public NWebRequest PATCH() {
-        return req().PATCH();
+        return req(NHttpMethod.PATCH);
     }
 
     @Override
     public NWebRequest OPTIONS() {
-        return req().OPTIONS();
+        return req(NHttpMethod.OPTIONS).OPTIONS();
     }
 
     @Override
     public NWebRequest HEAD() {
-        return req().HEAD();
+        return req(NHttpMethod.HEAD).HEAD();
     }
 
     @Override
     public NWebRequest CONNECT() {
-        return req().CONNECT();
+        return req(NHttpMethod.CONNECT).CONNECT();
     }
 
     @Override
     public NWebRequest TRACE() {
-        return req().TRACE();
+        return req(NHttpMethod.TRACE).TRACE();
     }
 
     @Override
     public NWebRequest GET(String path) {
-        return req().GET(path);
+        return req(NHttpMethod.GET).GET(path);
     }
 
     @Override
     public NWebRequest POST(String path) {
-        return req().POST(path);
+        return req(NHttpMethod.POST).POST(path);
     }
 
     @Override
     public NWebRequest PUT(String path) {
-        return req().PUT(path);
+        return req(NHttpMethod.PUT).PUT(path);
     }
 
     @Override
     public NWebRequest DELETE(String path) {
-        return req().DELETE(path);
+        return req(NHttpMethod.DELETE).DELETE(path);
     }
 
     @Override
     public NWebRequest PATCH(String path) {
-        return req().PATCH(path);
+        return req(NHttpMethod.PATCH).PATCH(path);
     }
 
     @Override
     public NWebRequest OPTIONS(String path) {
-        return req().OPTIONS(path);
+        return req(NHttpMethod.OPTIONS).OPTIONS(path);
     }
 
     @Override
     public NWebRequest HEAD(String path) {
-        return req().HEAD(path);
+        return req(NHttpMethod.HEAD).HEAD(path);
     }
 
     @Override
     public NWebRequest CONNECT(String path) {
-        return req().CONNECT(path);
+        return req(NHttpMethod.CONNECT).CONNECT(path);
     }
 
     @Override
     public NWebRequest TRACE(String path) {
-        return req().TRACE(path);
+        return req(NHttpMethod.TRACE).TRACE(path);
     }
 
     public String formatURL(NWebRequest r, boolean safe) {
@@ -386,7 +383,7 @@ public class DefaultNWebCli implements NWebCli {
             try {
                 uc = (HttpURLConnection) h.openConnection();
 
-                Integer readTimeout1 = r.getReadTimeout();
+                NDuration readTimeout1 = r.getReadTimeout();
                 if (readTimeout1 == null) {
                     readTimeout1 = getReadTimeout();
                 }
@@ -394,10 +391,12 @@ public class DefaultNWebCli implements NWebCli {
                     readTimeout1 = getGlobalReadConnectionTimeoutOrDefault();
                 }
                 if (readTimeout1 != null) {
-                    uc.setReadTimeout(Math.max(readTimeout1, 0));
+                    uc.setReadTimeout(
+                            asMs(readTimeout1.toMillis())
+                    );
                 }
 
-                Integer connectTimeout1 = r.getConnectTimeout();
+                NDuration connectTimeout1 = r.getConnectTimeout();
                 if (connectTimeout1 == null) {
                     connectTimeout1 = getConnectTimeout();
                 }
@@ -405,7 +404,9 @@ public class DefaultNWebCli implements NWebCli {
                     connectTimeout1 = getGlobalConnectionTimeoutOrDefault();
                 }
                 if (connectTimeout1 != null) {
-                    uc.setConnectTimeout(Math.max(connectTimeout1, 0));
+                    uc.setConnectTimeout(
+                            asMs(connectTimeout1.toMillis())
+                    );
                 }
                 DefaultNWebHeaders headers = new DefaultNWebHeaders();
 
@@ -459,8 +460,8 @@ public class DefaultNWebCli implements NWebCli {
                 }
 
                 String rm = NStringUtils.trim(uc.getResponseMessage());
-                if(rCode!=null && !rCode.isOk() && rm.isEmpty()){
-                    rm="Error "+rCode;
+                if (rCode != null && !rCode.isOk() && rm.isEmpty()) {
+                    rm = "Error " + rCode;
                 }
                 NWebResponse httpResponse = new NWebResponseImpl(
                         rCode,
@@ -483,6 +484,7 @@ public class DefaultNWebCli implements NWebCli {
                                                 }
                                             }
                                     ).createInputSource();
+
                                 } catch (IOException e) {
                                     throw new NIOException(e);
                                 }
@@ -502,7 +504,7 @@ public class DefaultNWebCli implements NWebCli {
                         httpResponse = newResp;
                     }
                 }
-                addCookies(httpResponse.getCookies());
+                addCookies(httpResponse.getCookies().toArray(new NWebCookie[0]));
                 return httpResponse;
             } finally {
                 if (r.isOneWay()) {
@@ -517,14 +519,22 @@ public class DefaultNWebCli implements NWebCli {
                 }
             }
         } catch (SocketTimeoutException ex) {
-            throw new UncheckedIOException("timed out loading " + spec + " (" + ex.getMessage() + ")", ex);
+            throw new NIOException(NMsg.ofC("timed out loading %s (%s)",spec,ex), ex);
         } catch (InterruptedByTimeoutException | InterruptedIOException ex) {
-            throw new UncheckedIOException("interrupt loading " + spec + " (" + ex.getMessage() + ")", ex);
-        } catch (UncheckedIOException ex) {
-            throw new UncheckedIOException(new IOException("error loading " + spec + " (" + ex.getMessage() + ")"));
-        } catch (IOException ex) {
-            throw new UncheckedIOException("error loading " + spec + " (" + ex.getMessage() + ")", ex);
+            throw new NIOException(NMsg.ofC("interrupt out loading %s (%s)",spec,ex), ex);
+        } catch (UncheckedIOException | IOException ex) {
+            throw new NIOException(NMsg.ofC("error loading %s (%s)",spec,ex), ex);
         }
+    }
+
+    private static int asMs(long a){
+        if(a<0){
+            return 0;
+        }
+        if(a>Integer.MAX_VALUE){
+            return Integer.MAX_VALUE;
+        }
+        return (int)a;
     }
 
     private void _writeHeader(HttpURLConnection uc, String name, List<String> values) {
@@ -539,7 +549,7 @@ public class DefaultNWebCli implements NWebCli {
         //
         switch (name.toUpperCase()) {
             case "COOKIE": {
-                uc.setRequestProperty(name, String.join(" ; ", values));
+                uc.setRequestProperty(name, String.join("; ", values));
                 return;
             }
         }
@@ -550,23 +560,23 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public Integer getReadTimeout() {
+    public NDuration getReadTimeout() {
         return readTimeout;
     }
 
     @Override
-    public NWebCli setReadTimeout(Integer readTimeout) {
+    public NWebCli setReadTimeout(NDuration readTimeout) {
         this.readTimeout = readTimeout;
         return this;
     }
 
     @Override
-    public Integer getConnectTimeout() {
+    public NDuration getConnectTimeout() {
         return connectTimeout;
     }
 
     @Override
-    public NWebCli setConnectTimeout(Integer connectTimeout) {
+    public NWebCli setConnectTimeout(NDuration connectTimeout) {
         this.connectTimeout = connectTimeout;
         return this;
     }
