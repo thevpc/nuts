@@ -5,6 +5,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NCliInfo;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;
@@ -114,8 +115,8 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
             String s = null;
             try {
                 NWebCli cli = NWebCli.of();
-                cli.setConnectTimeout(500);
-                cli.setReadTimeout(500);
+                cli.setConnectTimeout(NDuration.ofMillis(500));
+                cli.setReadTimeout(NDuration.ofMillis(500));
                 s = NStringUtils.trim(cli.GET("https://raw.githubusercontent.com/thevpc/nuts/master/.endpoint")
                         .run().getContent().readString());
             } catch (Exception ex) {

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NElementWriter;
@@ -24,8 +25,8 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
         validateRequest(ri);
         try {
             NWebCli cli = NWebCli.of();
-            cli.setConnectTimeout(500);
-            cli.setReadTimeout(500);
+            cli.setConnectTimeout(NDuration.ofMillis(500));
+            cli.setReadTimeout(NDuration.ofMillis(500));
             NWebRequest post = cli.POST(ri.server + url)
                     .setContentType("application/json; charset=UTF-8")
                     .setHeader("Accept", "*/*");
