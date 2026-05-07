@@ -268,3 +268,4 @@ core/nuts-app-full/target
 /local-test-commands.md
 /nuts-release-tool.tson.local
 /nuts-release-tool.local.tson
+.aider*
