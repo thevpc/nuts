@@ -42,13 +42,16 @@ public interface NWebResponse {
 
     byte[] getContentAsBytes();
 
-    NWebCookie[] getCookies();
+    List<NWebCookie> getCookies();
 
     boolean isError();
 
     boolean isOk();
 
     NWebResponse failFast();
+    boolean isClientError();
+    boolean isServerError();
+    boolean isRedirect();
 
     String getContentType();
 

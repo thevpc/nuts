@@ -147,15 +147,11 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest setContentType(String contentType);
 
-    Integer getReadTimeout();
-
-    NWebRequest setReadTimeout(Integer readTimeout);
+    NDuration getReadTimeout();
 
     NWebRequest setReadTimeout(NDuration readTimeout);
 
-    Integer getConnectTimeout();
-
-    NWebRequest setConnectTimeout(Integer connectTimeout);
+    NDuration getConnectTimeout();
 
     NWebRequest setConnectTimeout(NDuration duration);
 

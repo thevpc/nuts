@@ -106,7 +106,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         NDescriptorWriter.of().print(desc, new OutputStreamWriter(descStream));
         NWebCli nWebCli = NWebCli.of();
-        nWebCli.req().POST()
+        nWebCli.POST()
                 .setUrl(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart()))
                 .addPart("descriptor-hash", NDigest.of().sha1().setSource(desc).computeString())
                 .addPart("content-hash", NDigestUtils.evalSHA1Hex(content))
@@ -178,7 +178,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             String js = ((NExprIdFilter) filter).toExpr();
             if (js != null) {
                 NWebCli nWebCli = NWebCli.of();
-                ret = nWebCli.req().POST()
+                ret = nWebCli.POST()
                         .setUrl(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
                         .addPart("root", "/")
                         .doWith(r->prepareNWebRequest(r,ulp))
@@ -190,7 +190,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             }
         } else {
             NWebCli nWebCli = NWebCli.of();
-            ret = nWebCli.req().POST()
+            ret = nWebCli.POST()
                     .setUrl(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
                     .addPart("root", "/")
                     .doWith(r->prepareNWebRequest(r,ulp))

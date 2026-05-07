@@ -393,7 +393,7 @@ public class URLPath implements NPathSPI {
         }
         if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
             NWebCli best = NExtensions.of().createSupported(NWebCli.class, url).get();
-            return best.req().GET().setUrl(url.toString()).run().getContent().getInputStream();
+            return best.GET().setUrl(url.toString()).run().getContent().getInputStream();
         }
         try {
             return DefaultNWebCli.prepareGlobalOpenStream(url);

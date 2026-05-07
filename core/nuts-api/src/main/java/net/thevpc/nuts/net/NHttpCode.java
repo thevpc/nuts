@@ -3,9 +3,10 @@ package net.thevpc.nuts.net;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NHttpCode {
-    private static final Map<Integer, NHttpCode> cache = new HashMap<>();
+    private static final Map<Integer, NHttpCode> cache = new ConcurrentHashMap<>();
     public static final NHttpCode OK = of(200);
     public static final NHttpCode CREATED = of(201);
     public static final NHttpCode ACCEPTED = of(202);
@@ -18,7 +19,7 @@ public class NHttpCode {
     public static final NHttpCode FORBIDDEN = of(403);
     public static final NHttpCode NOT_FOUND = of(404);
     public static final NHttpCode METHOD_NOT_ALLOWED = of(405);
-    public static final NHttpCode METHOD_NOT_ACCEPTABLE = of(406);
+    public static final NHttpCode NOT_ACCEPTABLE = of(406);
     public static final NHttpCode PROXY_AUTHENTICATION_REQUIRED = of(407);
     public static final NHttpCode REQUEST_TIMEOUT = of(408);
     public static final NHttpCode CONFLICT = of(409);
@@ -45,7 +46,7 @@ public class NHttpCode {
     }
 
     public boolean isOk() {
-        return code == OK.code || (code >= 200 && code < 300);
+        return (code >= 200 && code < 300);
     }
 
     public boolean isClientError() {

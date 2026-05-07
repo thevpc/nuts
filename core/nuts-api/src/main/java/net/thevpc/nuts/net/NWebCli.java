@@ -2,6 +2,7 @@ package net.thevpc.nuts.net;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.time.NDuration;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ public interface NWebCli extends NComponent {
 
     NWebRequest req(NHttpMethod method);
 
-    NWebCookie[] getCookies();
+    List<NWebCookie> getCookies();
 
     NWebCli setHeader(String name, String value);
 
@@ -49,11 +50,9 @@ public interface NWebCli extends NComponent {
 
     NWebCli removeCookie(String cookieName);
 
-    NWebCli addCookies(NWebCookie[] cookies);
+    NWebCli addCookies(NWebCookie... cookies);
 
     NWebCli addCookie(NWebCookie cookie);
-
-    NWebRequest req();
 
     NWebRequest GET();
 
@@ -91,11 +90,11 @@ public interface NWebCli extends NComponent {
 
     NWebRequest TRACE(String path);
 
-    Integer getReadTimeout();
+    NDuration getReadTimeout();
 
-    NWebCli setReadTimeout(Integer readTimeout);
+    NWebCli setReadTimeout(NDuration readTimeout);
 
-    Integer getConnectTimeout();
+    NDuration getConnectTimeout();
 
-    NWebCli setConnectTimeout(Integer connectTimeout);
+    NWebCli setConnectTimeout(NDuration connectTimeout);
 }
