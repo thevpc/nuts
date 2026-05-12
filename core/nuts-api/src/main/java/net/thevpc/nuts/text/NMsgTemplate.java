@@ -1,5 +1,6 @@
 package net.thevpc.nuts.text;
 
+import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;
@@ -12,8 +13,8 @@ import java.util.List;
 import java.util.Set;
 
 public class NMsgTemplate {
-    private String message;
-    private NTextFormatType format;
+    private final String message;
+    private final NTextFormatType format;
 
     public static NMsgTemplate ofC(String message) {
         return of(message, NTextFormatType.CFORMAT);
@@ -27,21 +28,26 @@ public class NMsgTemplate {
         return of(message, NTextFormatType.VFORMAT);
     }
 
+    public static NMsgTemplate ofM(String message) {
+        return of(message, NTextFormatType.MFORMAT);
+    }
+
     public static NMsgTemplate of(String message, NTextFormatType format) {
         return new NMsgTemplate(message, format);
     }
 
     public NMsgTemplate(String message, NTextFormatType format) {
-        NAssert.requireNamedNonNull(message,"message");
-        NAssert.requireNamedNonNull(format,"format");
+        NAssert.requireNamedNonNull(message, "message");
+        NAssert.requireNamedNonNull(format, "format");
         switch (format) {
             case CFORMAT:
             case JFORMAT:
-            case VFORMAT: {
+            case VFORMAT:
+            case MFORMAT: {
                 break;
             }
             default: {
-                throw new IllegalArgumentException("invalid format. only Cformat, JFormat and VFormat are allowed");
+                throw new IllegalArgumentException("invalid format. only Cformat, JFormat, VFormat and MFormat are allowed");
             }
         }
         this.message = message;
@@ -98,15 +104,15 @@ public class NMsgTemplate {
                                 }
                                 c = (char) i;
                                 if (c == '\\') {
-                                    i=r.read();
-                                    if(i<0){
+                                    i = r.read();
+                                    if (i < 0) {
                                         break;
-                                    }else{
-                                        n.append(c=(char) i);
+                                    } else {
+                                        n.append(c = (char) i);
                                     }
                                 } else if (c == '}') {
                                     break;
-                                }else{
+                                } else {
                                     n.append(c);
                                 }
                             }
@@ -120,8 +126,8 @@ public class NMsgTemplate {
                             } else {
                                 nsIntString = ns.substring(0, sep).trim();
                             }
-                            if(nsIntString.isEmpty()){
-                                nsIntString=String.valueOf(currentIndex);
+                            if (nsIntString.isEmpty()) {
+                                nsIntString = String.valueOf(currentIndex);
                             }
                             NLiteral lit = NLiteral.of(nsIntString);
                             if (lit.asInt().isPresent()) {
@@ -148,82 +154,29 @@ public class NMsgTemplate {
                     break;
                 }
                 case VFORMAT: {
-                    StringReader r = new StringReader(message);
-                    while (true) {
-                        int i = r.read();
-                        if (i < 0) {
-                            break;
-                        }
-                        char c = (char) i;
-                        if (c == '$') {
-                            i = r.read();
-                            if (i < 0) {
-                                if (paramSet.add("")) {
-                                    params.add("");
-                                }
-                            } else {
-                                c = (char) i;
-                                if (c == '{') {
-                                    StringBuilder n = new StringBuilder();
-                                    while (true) {
-                                        i = r.read();
-                                        if (i < 0) {
-                                            break;
-                                        }
-                                        c = (char) i;
-                                        if (c != '}') {
-                                            n.append(c);
-                                        } else {
-                                            break;
-                                        }
-                                    }
-                                    String ns = n.toString();
-                                    if (paramSet.add(ns)) {
-                                        params.add(ns);
-                                    }
-                                } else {
-                                    StringBuilder n = new StringBuilder();
-                                    boolean start=true;
-                                    while (true) {
-                                        r.mark(1);
-                                        i = r.read();
-                                        if (i < 0) {
-                                            break;
-                                        }
-                                        c = (char) i;
-                                        if(start){
-                                            if (NStringUtils.isValidVarStart(c)) {
-                                                n.append(c);
-                                                start=false;
-                                            } else {
-                                                r.reset();
-                                                break;
-                                            }
-                                        }else {
-                                            if (NStringUtils.isValidVarPart(c)) {
-                                                n.append(c);
-                                            } else {
-                                                r.reset();
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    String ns = n.toString();
-                                    if (paramSet.add(ns)) {
-                                        params.add(ns);
-                                    }
-                                }
+                    NStringUtils.parseDollarPlaceHolder(message).forEach(s -> {
+                        if (s.ttype == NToken.TT_DOLLAR || s.ttype == NToken.TT_DOLLAR_BRACE) {
+                            String ns = s.sval;
+                            if (paramSet.add(ns)) {
+                                params.add(ns);
                             }
-                        } else if (c == '\\') {
-                            r.read();
-                        } else {
-                            //ignore
                         }
-                    }
+                    });
+                    break;
+                }
+                case MFORMAT: {
+                    NStringUtils.parseMoustachePlaceHolder(message).forEach(s -> {
+                        if (s.ttype == NToken.TT_MOUSTACHE_START) {
+                            String ns = s.sval;
+                            if (paramSet.add(ns)) {
+                                params.add(ns);
+                            }
+                        }
+                    });
                     break;
                 }
                 default: {
-                    throw new IllegalArgumentException("invalid format. only Cformat, JFormat and VFormat are allowed");
+                    throw new IllegalArgumentException("invalid format. only Cformat, JFormat, VFormat and MFormat are allowed");
                 }
             }
             return params.toArray(new String[0]);
@@ -244,11 +197,14 @@ public class NMsgTemplate {
             case VFORMAT: {
                 return NMsg.ofV(message, params);
             }
+            case MFORMAT: {
+                return NMsg.ofM(message, params);
+            }
             case JFORMAT: {
                 return NMsg.ofJ(message, params);
             }
             default: {
-                throw new IllegalArgumentException("invalid format. only Cformat, JFormat and VFormat are allowed");
+                throw new IllegalArgumentException("invalid format. only Cformat, JFormat, VFormat, and MFormat are allowed");
             }
         }
     }

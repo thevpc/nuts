@@ -48,9 +48,13 @@ public enum NTextFormatType implements NEnum {
      */
     JFORMAT,
     /**
-     * with var place holders
+     * with var placeholders
      */
     VFORMAT,
+    /**
+     * with moustache var placeholders
+     */
+    MFORMAT,
     /**
      * plain text
      */

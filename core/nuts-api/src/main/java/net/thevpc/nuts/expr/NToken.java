@@ -95,6 +95,7 @@ public class NToken {
     public static final int TT_DOLLAR = -85;
     public static final int TT_DOLLAR_BRACE = -86;
     public static final int TT_VAR = -87;
+    public static final int TT_MOUSTACHE_START = -88;
 
     public static final int TT_DEFAULT = Integer.MIN_VALUE;
 
@@ -267,6 +268,8 @@ public class NToken {
                 return "TT_DOLLAR";
             case TT_DOLLAR_BRACE:
                 return "DOLLAR_BRACE";
+            case TT_MOUSTACHE_START:
+                return "MOUSTACHE_START";
             case TT_VAR:
                 return "VAR";
             case TT_COMMENTS:

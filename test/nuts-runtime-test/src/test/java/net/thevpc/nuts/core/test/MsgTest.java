@@ -1,5 +1,6 @@
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.Nuts;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -37,7 +39,7 @@ public class MsgTest {
 
         template = NMsgTemplate.ofJ("a {} {0}");
         paramNames = template.getParamNames();
-        Assertions.assertEquals(Arrays.asList("0"), Arrays.asList(paramNames));
+        Assertions.assertEquals(Collections.singletonList("0"), Arrays.asList(paramNames));
 
         template = NMsgTemplate.ofJ("a {} {}");
         paramNames = template.getParamNames();
@@ -119,14 +121,38 @@ public class MsgTest {
     @Test
     public void test09() {
         Nuts.require("--color");
-        NOut.println(NMsg.ofV("##:12:$v##", NMaps.of("v",":")));
+        NOut.println(NMsg.ofV("##:12:$v##", NMaps.of("v", ":")));
     }
 
     @Test
     public void test10() {
         Nuts.require("--color");
-        NOut.println(NMsg.ofV("##:red:$v##", NMaps.of("v","this is red")));
-        NOut.println(NMsg.ofV("##:MediumVioletRed:$v##", NMaps.of("v","this is MediumVioletRed")));
-        NOut.println(NMsg.ofV("```SandyBrown $v```", NMaps.of("v","this is SandyBrown")));
+        NOut.println(NMsg.ofV("##:red:$v##", NMaps.of("v", "this is red")));
+        NOut.println(NMsg.ofV("##:MediumVioletRed:$v##", NMaps.of("v", "this is MediumVioletRed")));
+        NOut.println(NMsg.ofV("```SandyBrown $v```", NMaps.of("v", "this is SandyBrown")));
+    }
+
+    @Test
+    public void test11() {
+        Nuts.require("--color");
+        NOut.println(NMsg.ofM("##:red:{{v}}##", NMaps.of("v", "this is red")));
+    }
+
+    @Test
+    public void test12() {
+        List<NToken> list1 = NStringUtils.parseMoustachePlaceHolder("{{v}}{{v}").collect(Collectors.toList());
+        TestUtils.println(NMsg.ofM("{{v}}{{v}", NMaps.of("v", "this is red")));
+    }
+
+    @Test
+    public void test13() {
+        List<NToken> list2 = NStringUtils.parseDollarPlaceHolder("${v}${v").collect(Collectors.toList());
+        TestUtils.println(NMsg.ofV("${v}${v", NMaps.of("v", "this is red")));
+    }
+
+    @Test
+    public void test14() {
+        List<NToken> list2 = NStringUtils.parseMoustachePlaceHolder("jdbc:postgresql://localhost:5432/{{database}}").collect(Collectors.toList());
+        Assertions.assertEquals(2, list2.size());
     }
 }

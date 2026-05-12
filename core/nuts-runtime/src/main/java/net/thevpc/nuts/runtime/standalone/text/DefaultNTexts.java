@@ -366,6 +366,9 @@ public class DefaultNTexts implements NTexts {
             case VFORMAT: {
                 return new NMsgVFormatHelper(m, this).format();
             }
+            case MFORMAT: {
+                return new NMsgMFormatHelper(m, this).format();
+            }
             case PLAIN: {
                 return this.ofPlain((String) msg);
             }

@@ -1,0 +1,70 @@
+package net.thevpc.nuts.runtime.standalone.text;
+
+import net.thevpc.nuts.expr.NToken;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NStringUtils;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+public class NMsgMFormatHelper extends AbstractNMsgFormatHelper {
+
+    private Function<String, NText> mapper = null;
+
+    public NMsgMFormatHelper(NMsg m, NTexts txt) {
+        super(m, txt);
+        Object param = params == null ? (Collections.emptyMap()) : params[0];
+        if (param instanceof Map) {
+            mapper = x -> {
+                Object u = ((Map<String, ?>) param).get(x);
+                if (u == null) {
+                    return null;
+                }
+                return txt.of(u);
+            };
+        } else {
+            Function<String, ?> f = (Function<String, ?>) param;
+            mapper = x -> {
+                Object u = f.apply(x);
+                if (u == null) {
+                    Function<String, ?> h = m.getPlaceholders();
+                    Object v = h.apply(x);
+                    if(v!=null){
+                        u=v;
+                    }
+                }
+                u=resolvePlaceholder(u);
+                return txt.of(u);
+            };
+        }
+    }
+
+
+    protected NText formatPlain(String ss) {
+        if (ss == null) {
+            return txt.of("");
+        }
+        List<NText> dd = NStringUtils.parseMoustachePlaceHolder(ss)
+                .map(t -> {
+                    switch (t.ttype) {
+                        case NToken.TT_MOUSTACHE_START:{
+                            NText x = mapper.apply(t.sval);
+                            if (x == null) {
+                                throw new IllegalArgumentException("msg var not found " + t.sval);
+                            }
+                            return x;
+                        }
+                    }
+                    return txt.ofPlain(t.sval);
+                }).collect(Collectors.toList());
+        NTextBuilder sb = NTextBuilder.of();
+        sb.appendAll(dd);
+        return sb.build();
+    }
+}

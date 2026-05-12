@@ -37,6 +37,7 @@ public class NWebRequestImpl implements NWebRequest {
         NONE,
         BODY,
         FORM_DATA,
+        MULTIPART,
         URLENCODED,
     }
 
@@ -58,6 +59,12 @@ public class NWebRequestImpl implements NWebRequest {
             }
             case BODY: {
                 //body=null;
+                formData = null;
+                urlEncoded = null;
+                break;
+            }
+            case MULTIPART: {
+                requestBody = null;
                 formData = null;
                 urlEncoded = null;
                 break;
@@ -561,40 +568,62 @@ public class NWebRequestImpl implements NWebRequest {
                 }
                 return NInputSource.of(sb.toString().getBytes());
             }
-            case FORM_DATA: {
+            case FORM_DATA:
+            case MULTIPART: {
                 //setContentTypeFormUrlEncoded();
                 SimpleWriter sw = new SimpleWriter(NIO.of().ofTempOutputStream());
-                if (formData != null && !formData.isEmpty()) {
-                    String boundary = "-------------------------------" + UUID.randomUUID();
-                    setContentType("multipart/form-data; boundary=" + boundary);
-                    try {
-                        sw.println(boundary);
-                        for (Map.Entry<String, Object> e : formData.entrySet()) {
-                            if (e.getValue() instanceof String) {
-                                sw.println("Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral());
-                                sw.println();
-                                sw.println(e.getValue().toString());
-
-                            } else if (e.getValue() instanceof NInputContentProvider) {
-                                NInputContentProvider npath = (NInputContentProvider) e.getValue();
-                                sw.println("Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral()
-                                        + " ; filename=" + NLiteral.of(npath.getName()).toStringLiteral());
-                                sw.println(("Content-Type: " + NStringUtils.firstNonBlank(npath.getContentType(), "application/octet-stream")));
-                                sw.println();
-                                if (npath instanceof NPath) {
-                                    ((NPath) npath).copyToOutputStream(sw.tos);
-                                } else {
-                                    try (InputStream tis = npath.getInputStream()) {
-                                        NIOUtils.copy(tis, sw.tos);
+                String boundary = "-------------------------------" + UUID.randomUUID();
+                setContentType("multipart/form-data; boundary=" + boundary);
+                try {
+                    if (mode == Mode.FORM_DATA) {
+                        if (formData != null && !formData.isEmpty()) {
+                            for (Map.Entry<String, Object> e : formData.entrySet()) {
+                                sw.println("--" + boundary);
+                                if (e.getValue() instanceof String) {
+                                    sw.println("Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral());
+                                    sw.println();
+                                    sw.println(e.getValue().toString());
+                                } else if (e.getValue() instanceof NInputContentProvider) {
+                                    NInputContentProvider npath = (NInputContentProvider) e.getValue();
+                                    sw.println("Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral()
+                                            + "; filename=" + NLiteral.of(npath.getName()).toStringLiteral());
+                                    sw.println(("Content-Type: " + NStringUtils.firstNonBlank(npath.getContentType(), "application/octet-stream")));
+                                    sw.println();
+                                    if (npath instanceof NPath) {
+                                        ((NPath) npath).copyToOutputStream(sw.tos);
+                                    } else {
+                                        try (InputStream tis = npath.getInputStream()) {
+                                            NIOUtils.copy(tis, sw.tos);
+                                        }
                                     }
                                 }
+                                sw.println();
                             }
-                            sw.println();
-                            sw.println(boundary);
                         }
-                    } catch (IOException ex) {
-                        throw new NIOException(ex);
+                    } else {
+                        if (parts != null && !parts.isEmpty()) {
+                            for (NWebRequestBody part : parts) {
+                                sw.println("--" + boundary);
+                                sw.println("Content-Disposition: " + part.getContentDisposition());
+                                if (!NBlankable.isBlank(part.getContentType())) {
+                                    sw.println("Content-Type: " + part.getContentType());
+                                }
+                                sw.println();
+                                if (part.getBody() != null) {
+                                    try (InputStream tis = part.getBody().getInputStream()) {
+                                        NIOUtils.copy(tis, sw.tos);
+                                    }
+                                } else if (part.getStringValue() != null) {
+                                    sw.println(part.getStringValue());
+                                }
+                                sw.println();
+                            }
+                        }
                     }
+                    sw.println("--" + boundary + "--");
+                    sw.tos.close();
+                } catch (IOException ex) {
+                    throw new NIOException(ex);
                 }
                 return sw.tos;
             }
@@ -847,6 +876,7 @@ public class NWebRequestImpl implements NWebRequest {
     @Override
     public NWebRequest addPart(NWebRequestBody body) {
         parts.add(body);
+        setMode(Mode.MULTIPART);
         return this;
     }
 

@@ -77,6 +77,15 @@ public class JLogProgressHandler implements NProgressHandler {
                     messageFormat=NMsgTemplate.ofV(message);
                     break;
                 }
+                case MFORMAT:{
+                    String message = messageFormat.getMessage();
+                    if (!message.endsWith(" ")) {
+                        message += " ";
+                    }
+                    message += "{{message}}";
+                    messageFormat=NMsgTemplate.ofM(message);
+                    break;
+                }
                 case CFORMAT:{
                     String message = messageFormat.getMessage();
                     if (!message.endsWith(" ")) {

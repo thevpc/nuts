@@ -826,6 +826,108 @@ public class NStringUtils {
 
     }
 
+
+    /**
+     * text replacing all $abc and ${abc} vars
+     *
+     * @param text   text to parse
+     * @param mapper mapper function. when returns null, no replacement is performed
+     * @return text replacing all $abc and ${abc} vars
+     */
+    public static String replaceMoustachePlaceHolder(String text, Function<String, String> mapper) {
+        if (mapper == null) {
+            return "";
+        }
+        return parseMoustachePlaceHolder(text)
+                .map(t -> {
+                    switch (t.ttype) {
+                        case NToken.TT_MOUSTACHE_START:{
+                            String x = mapper.apply(t.sval);
+                            if (x == null) {
+                                return t.image;
+                            }
+                            return x;
+                        }
+                    }
+                    return t.sval;
+                }).collect(Collectors.joining());
+    }
+
+    public static Stream<NToken> parseMoustachePlaceHolder(String text) {
+        final String TT_DEFAULT_STR = NToken.typeString(NToken.TT_DEFAULT);
+        final String TT_DOLLAR_BRACE_STR = NToken.typeString(NToken.TT_MOUSTACHE_START);
+        return iterToStream(new Iterator<NToken>() {
+            final char[] t = (text == null ? new char[0] : text.toCharArray());
+            int p = 0;
+            final int length = t.length;
+            final StringBuilder sb = new StringBuilder(length);
+            final StringBuilder n = new StringBuilder(length);
+            final StringBuilder ni = new StringBuilder(length);
+            final List<NToken> buffer = new ArrayList<>(2);
+
+            private boolean ready() {
+                return !buffer.isEmpty();
+            }
+
+            @Override
+            public boolean hasNext() {
+                if (ready()) {
+                    return true;
+                }
+                while (p < length) {
+                    fillOnce();
+                    if (ready()) {
+                        return true;
+                    }
+                }
+                if (sb.length() > 0) {
+                    buffer.add(NToken.of(NToken.TT_DEFAULT, sb.toString(), 0, 0, sb.toString(), TT_DEFAULT_STR));
+                    sb.setLength(0);
+                }
+                return ready();
+            }
+
+            private void fillOnce() {
+                char c = t[p];
+                if (c == '{' && p + 1 < length && t[p + 1] == '{') {
+                    p += 2;
+                    n.setLength(0);
+                    ni.setLength(0);
+                    ni.append(c).append('{');
+                    while (p < length) {
+                        c = t[p];
+                        if (c == '}' && p+1<t.length && t[p+1]=='}') {
+                            ni.append(c);
+                            p++;
+                            ni.append(c);
+                            break;
+                        } else {
+                            ni.append(c);
+                            n.append(c);
+                            p++;
+                        }
+                    }
+                    if (sb.length() > 0) {
+                        buffer.add(NToken.of(NToken.TT_DEFAULT, sb.toString(), 0, 0, sb.toString(), TT_DEFAULT_STR));
+                        sb.setLength(0);
+                    }
+                    buffer.add(NToken.of(NToken.TT_MOUSTACHE_START, n.toString(), 0, 0, ni.toString(), TT_DOLLAR_BRACE_STR));
+                } else {
+                    sb.append(c);
+                }
+                p++;
+            }
+
+            @Override
+            public NToken next() {
+                NAssert.requireNamedTrue(ready(), "token ready");
+                return buffer.remove(0);
+            }
+        });
+
+    }
+
+
     public static boolean isValidVarPart(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
     }

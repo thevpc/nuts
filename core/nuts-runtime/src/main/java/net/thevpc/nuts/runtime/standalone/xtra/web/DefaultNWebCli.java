@@ -422,8 +422,8 @@ public class DefaultNWebCli implements NWebCli {
                 uc.setRequestMethod(method.toString());
                 uc.setUseCaches(false);
 
-                long bodyLength = requestBody == null ? -1 : requestBody.getContentLength();
-                boolean someBody = requestBody != null && bodyLength > 0;
+                long bodyLength = requestBody == null || requestBody.isKnownContentLength() ? -1 : requestBody.getContentLength();
+                boolean someBody = requestBody != null;
 
                 uc.setDoInput(!r.isOneWay());
                 uc.setDoOutput(someBody);
@@ -434,7 +434,9 @@ public class DefaultNWebCli implements NWebCli {
 
                 try {
                     if (someBody) {
-                        uc.setRequestProperty("Content-Length", String.valueOf(bodyLength));
+                        if (requestBody.isKnownContentLength()) {
+                            uc.setFixedLengthStreamingMode(bodyLength);
+                        }
                         NCp.of().from(requestBody).to(uc.getOutputStream()).run();
                     }
                     rCode = NHttpCode.of(uc.getResponseCode());

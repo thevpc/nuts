@@ -222,6 +222,21 @@ public class NMsg implements NBlankable, NElementSimple {
         return of(NTextFormatType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, null, null);
     }
 
+    public static NMsg ofM(String message, NMsgParam... params) {
+        if (params == null || params.length == 0) {
+            return ofM(message, s -> null);
+        }
+        return ofM(message, new MapAsSupplier2(params));
+    }
+
+    public static NMsg ofM(String message, Map<String, ?> vars) {
+        return of(NTextFormatType.MFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, null, null);
+    }
+
+    public static NMsg ofM(String message, Function<String, ?> vars) {
+        return of(NTextFormatType.MFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, null, null);
+    }
+
     public static NMsg ofJ(String message, NMsgParam... params) {
         if (params == null) {
             return ofJ(message, new Object[]{null});
@@ -457,6 +472,9 @@ public class NMsg implements NBlankable, NElementSimple {
                 case VFORMAT: {
                     return formatAsV();
                 }
+                case MFORMAT: {
+                    return formatAsM();
+                }
                 case NTF: {
                     if (plain) {
                         if (message instanceof NText) {
@@ -484,6 +502,25 @@ public class NMsg implements NBlankable, NElementSimple {
 
     private String formatAsV() {
         return NStringUtils.replaceDollarPlaceHolder((String) message,
+                s -> {
+                    Object param = params[0];
+                    Function<String, ?> m = null;
+                    if (param instanceof Map) {
+                        m = x -> ((Map<String, ?>) param).get(x);
+                    } else {
+                        m = (Function<String, ?>) param;
+                    }
+                    Object v = m.apply(s);
+                    if (v != null) {
+                        return String.valueOf(v);
+                    }
+                    return null;// return default
+                }
+        );
+    }
+
+    private String formatAsM() {
+        return NStringUtils.replaceMoustachePlaceHolder((String) message,
                 s -> {
                     Object param = params[0];
                     Function<String, ?> m = null;
