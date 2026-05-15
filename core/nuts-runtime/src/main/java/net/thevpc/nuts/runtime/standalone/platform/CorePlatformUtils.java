@@ -178,7 +178,7 @@ public class CorePlatformUtils {
                 osVersion.append(
                         NExec.of().system()
                                 .setCommand("uname", "-r")
-                                .setSleepMillis(50)
+                                .sleepMillis(50)
                                 .getGrabbedAllString()
                 );
             } catch (Exception e) {

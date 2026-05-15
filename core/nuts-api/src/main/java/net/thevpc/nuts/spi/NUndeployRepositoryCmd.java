@@ -33,7 +33,7 @@ import net.thevpc.nuts.artifact.NId;
  * @app.category SPI Base
  * @since 0.5.4
  */
-public interface NRepositoryUndeployCmd extends NRepositoryCmd {
+public interface NUndeployRepositoryCmd extends NRepositoryCmd {
 
 
 //    /**
@@ -50,21 +50,21 @@ public interface NRepositoryUndeployCmd extends NRepositoryCmd {
      * @return {@code this} instance
      */
     @Override
-    NRepositoryUndeployCmd run();
+    NUndeployRepositoryCmd run();
 
     NId getId();
 
-    NRepositoryUndeployCmd setId(NId id);
+    NUndeployRepositoryCmd setId(NId id);
 
     String getRepository();
 
-    NRepositoryUndeployCmd setRepository(String repository);
+    NUndeployRepositoryCmd setRepository(String repository);
 
     boolean isTransitive();
 
-    NRepositoryUndeployCmd setTransitive(boolean transitive);
+    NUndeployRepositoryCmd setTransitive(boolean transitive);
 
     boolean isOffline();
 
-    NRepositoryUndeployCmd setOffline(boolean offline);
+    NUndeployRepositoryCmd setOffline(boolean offline);
 }

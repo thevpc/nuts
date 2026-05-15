@@ -65,12 +65,12 @@ public class DefaultNCustomCommand implements NCustomCmd {
             return NExec.of()
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
-                    .setDirectory(options.getDirectory())
+                    .directory(options.getDirectory())
                     .failFast()
                     .setEnv(options.getEnv())
                     .setExecutionType(options.getExecutionType())
                     .run()
-                    .getResultCode();
+                    .exitCode();
 
             //load all needed dependencies!
 //        return ((DefaultNWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());
@@ -84,12 +84,12 @@ public class DefaultNCustomCommand implements NCustomCmd {
             return NExec.of()
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
-                    .setDirectory(options.getDirectory())
+                    .directory(options.getDirectory())
                     .failFast()
                     .setEnv(options.getEnv())
                     .setExecutionType(options.getExecutionType())
                     .run()
-                    .getResultCode();
+                    .exitCode();
 
             //load all needed dependencies!
 //        return ((DefaultNWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());

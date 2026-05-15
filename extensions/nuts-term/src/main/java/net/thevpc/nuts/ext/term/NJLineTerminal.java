@@ -36,11 +36,8 @@ import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.io.NAnsiTermHelper;
-import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
@@ -289,17 +286,16 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     @Override
     public String readLine(NPrintStream out, NMsg message) {
         prepare();
-//        if (out == null) {
-//            out = getOut();
-//        }
-//        if (out == null) {
-//            out = NIO.of().stdout();
-//        }
         String readLine = null;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        NPrintStream m = NPrintStream.of(bos,NTerminalMode.FORMATTED,NTerminalMode.ANSI);
+        m.print(NText.of(message).toString());
+        m.flush();
+
         try {
-            readLine = reader.readLine(NText.of(message).toString());
+            readLine = reader.readLine(bos.toString());
         } catch (UserInterruptException e) {
-            throw new NJLineInterruptException();
+            throw new NCancelException();
         }
         try {
             reader.getHistory().save();
@@ -322,16 +318,19 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
 
     @Override
     public InputStream getIn() {
+        prepare();
         return in;
     }
 
     @Override
     public NPrintStream getOut() {
+        prepare();
         return out;
     }
 
     @Override
     public NPrintStream getErr() {
+        prepare();
         return err;
     }
 
@@ -373,6 +372,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
 
     @Override
     public Object run(NTerminalCmd command, NPrintStream printStream) {
+        prepare();
         switch (command.getName()) {
             case NTerminalCmd.Ids.GET_CURSOR: {
                 org.jline.terminal.Cursor c = terminal.getCursorPosition(new IntConsumer() {

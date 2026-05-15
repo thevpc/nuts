@@ -177,7 +177,7 @@ public class ExecTest {
                 .setErr(NExecOutput.ofGrabMem())
                 .setOut(NExecOutput.ofGrabMem())
                 .run();
-        System.out.println(e.getResultCode());
+        System.out.println(e.exitCode());
         System.out.println("============= OUT");
         System.out.println(e.getGrabbedOutString());
         System.out.println("============= ERR");

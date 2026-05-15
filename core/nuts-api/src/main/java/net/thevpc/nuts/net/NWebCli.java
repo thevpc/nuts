@@ -92,9 +92,11 @@ public interface NWebCli extends NComponent {
 
     NDuration getReadTimeout();
 
-    NWebCli setReadTimeout(NDuration readTimeout);
+    NWebCli timeout(NDuration timeout);
+
+    NWebCli readTimeout(NDuration readTimeout);
 
     NDuration getConnectTimeout();
 
-    NWebCli setConnectTimeout(NDuration connectTimeout);
+    NWebCli connectTimeout(NDuration connectTimeout);
 }

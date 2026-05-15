@@ -25,10 +25,10 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
         validateRequest(ri);
         try {
             NWebCli cli = NWebCli.of();
-            cli.setConnectTimeout(NDuration.ofMillis(500));
-            cli.setReadTimeout(NDuration.ofMillis(500));
+            cli.connectTimeout(NDuration.ofMillis(500));
+            cli.readTimeout(NDuration.ofMillis(500));
             NWebRequest post = cli.POST(ri.server + url)
-                    .setContentType("application/json; charset=UTF-8")
+                    .contentType("application/json; charset=UTF-8")
                     .setHeader("Accept", "*/*");
             String loc = NSession.of().getLocale().orDefault();
             if (loc == null) {
@@ -36,7 +36,7 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
             }
             post.setHeader("Accept-Language", loc);
             String out = NElementWriter.ofJson().formatPlain(ri.q);
-            post.setRequestBody(out.getBytes());
+            post.requestBody(out.getBytes());
             return post.run().getContentAs(resultType, NContentType.JSON);
         } catch (NException ex) {
             throw ex;

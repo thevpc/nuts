@@ -33,7 +33,7 @@ import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNFetchContentRepositoryCmd;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNRepositoryUndeployCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNUndeployRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.text.NMsg;
@@ -44,7 +44,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.NDeployRepositoryCmd;
 import net.thevpc.nuts.spi.NRepositorySPI;
-import net.thevpc.nuts.spi.NRepositoryUndeployCmd;
+import net.thevpc.nuts.spi.NUndeployRepositoryCmd;
 import net.thevpc.nuts.log.NLog;
 
 import java.io.*;
@@ -299,7 +299,7 @@ public class NRepositoryFolderHelper {
             @Override
             public void undeploy(NId id) throws NExecutionException {
                 if (repo == null) {
-                    NRepositoryFolderHelper.this.undeploy(new DefaultNRepositoryUndeployCmd()
+                    NRepositoryFolderHelper.this.undeploy(new DefaultNUndeployRepositoryCmd()
                             .setFetchMode(NFetchMode.LOCAL)
                             .setId(id));
                 } else {
@@ -503,7 +503,7 @@ public class NRepositoryFolderHelper {
         });
     }
 
-    public boolean undeploy(NRepositoryUndeployCmd command) {
+    public boolean undeploy(NUndeployRepositoryCmd command) {
         if (!isWriteEnabled()) {
             return false;
         }

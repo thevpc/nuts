@@ -98,7 +98,7 @@ public interface NRepositorySPI {
      *
      * @return undeploy command
      */
-    NRepositoryUndeployCmd undeploy();
+    NUndeployRepositoryCmd undeploy();
 
     /**
      * create push command

@@ -27,7 +27,11 @@ class NJLineCompleter implements Completer {
             if (line.words().size() > 0) {
                 cmdLine.setCommandName(line.words().get(0));
             }
-            List<NArgCandidate> nArgCandidates = autoCompleteResolver.resolveCandidates(cmdLine, line.wordIndex());
+            List<NArgCandidate> nArgCandidates = autoCompleteResolver.resolveCandidates(cmdLine, new NCmdLineAutoCompleteResolver.Pos(
+                    line.wordIndex(),
+                    line.wordCursor(),
+                    line.cursor()
+            ));
             if (nArgCandidates != null) {
                 for (NArgCandidate cmdCandidate : nArgCandidates) {
                     if (cmdCandidate != null) {

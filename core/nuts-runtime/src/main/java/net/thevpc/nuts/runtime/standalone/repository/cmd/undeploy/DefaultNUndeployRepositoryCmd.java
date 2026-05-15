@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.spi.NRepositoryUndeployCmd;
+import net.thevpc.nuts.spi.NUndeployRepositoryCmd;
 import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
@@ -25,23 +25,23 @@ import net.thevpc.nuts.util.NStringUtils;
  *
  * @author thevpc %category SPI Base
  */
-public class DefaultNRepositoryUndeployCmd extends AbstractNRepositoryUndeployCmd {
+public class DefaultNUndeployRepositoryCmd extends AbstractNUndeployRepositoryCmd {
 
 
-    public DefaultNRepositoryUndeployCmd(NRepository repo) {
+    public DefaultNUndeployRepositoryCmd(NRepository repo) {
         super(repo);
     }
 
-    public DefaultNRepositoryUndeployCmd() {
+    public DefaultNUndeployRepositoryCmd() {
         super(null);
     }
 
     protected NLog _LOG() {
-        return NLog.of(DefaultNRepositoryUndeployCmd.class);
+        return NLog.of(DefaultNUndeployRepositoryCmd.class);
     }
 
     @Override
-    public NRepositoryUndeployCmd run() {
+    public NUndeployRepositoryCmd run() {
         NSession session = getRepo().getWorkspace().currentSession();
         NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.UNDEPLOY, "undeploy");
         try {

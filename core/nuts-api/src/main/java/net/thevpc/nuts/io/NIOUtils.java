@@ -51,7 +51,7 @@ public class NIOUtils {
         return newNames;
     }
 
-    public static String toRelativePath(String child, String parent) {
+    public static String stripParent(String child, String parent) {
         if (child.startsWith(parent)) {
             child = child.substring(parent.length());
             if (child.startsWith("/") || child.startsWith("\\")) {
@@ -63,6 +63,46 @@ public class NIOUtils {
             return child;
         }
         return null;
+    }
+    public static String relativize(String first, String second) {
+        if (first == null || second == null) return null;
+        if (first.equals(second)) return "";
+
+        // Normalize separators and split into segments
+        String[] startParts = first.split("[/\\\\]+");
+        String[] targetParts = second.split("[/\\\\]+");
+
+        // 1. Find common prefix length
+        int commonIndex = 0;
+        while (commonIndex < startParts.length && commonIndex < targetParts.length
+                && startParts[commonIndex].equals(targetParts[commonIndex])) {
+            commonIndex++;
+        }
+
+        StringBuilder result = new StringBuilder();
+
+        // 2. For every segment remaining in 'first', we must go "up" (..)
+        // We skip empty strings caused by leading slashes
+        for (int i = commonIndex; i < startParts.length; i++) {
+            if (!startParts[i].isEmpty()) {
+                result.append("..");
+                result.append("/");
+            }
+        }
+
+        // 3. For every segment remaining in 'second', we go "down"
+        for (int i = commonIndex; i < targetParts.length; i++) {
+            if (!targetParts[i].isEmpty()) {
+                result.append(targetParts[i]);
+                if (i < targetParts.length - 1) {
+                    result.append("/");
+                }
+            }
+        }
+
+        String path = result.toString();
+        // Clean up trailing slash if present
+        return (path.endsWith("/") && path.length() > 1) ? path.substring(0, path.length() - 1) : path;
     }
 
     public static boolean isValidFileNameChar(char c) {

@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.*;
@@ -791,13 +790,6 @@ public class NPathFromSPI extends NPathBase {
         return digest;
     }
 
-    @Override
-    public boolean isEqOrDeepChildOf(NPath other) {
-        if (other == null) {
-            return false;
-        }
-        return !toRelative(other).isPresent();
-    }
 
     @Override
     public NPathType type() {
@@ -805,21 +797,36 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public NOptional<String> toRelative(NPath parentPath) {
-        NOptional<String> r = base.toRelative(this, unwrapPath(parentPath));
+    public NOptional<String> stripParent(NPath parentPath) {
+        NOptional<String> r = base.stripParent(this, unwrapPath(parentPath));
         if (r != null) {
             return r;
         }
         //default impl
         String child = getLocation();
         String parent = parentPath.getLocation();
-        return NOptional.ofNamed(NIOUtils.toRelativePath(child, parent), "relative path");
+        return NOptional.ofNamed(NIOUtils.stripParent(child, parent), "relative path");
+    }
+
+    @Override
+    public NOptional<String> relativize(NPath parentPath) {
+        NOptional<String> r = base.relativize(this, unwrapPath(parentPath));
+        if (r != null) {
+            return r;
+        }
+        //default impl
+        String child = getLocation();
+        String parent = parentPath.getLocation();
+        return NOptional.ofNamed(NIOUtils.relativize(child, parent), "relative path");
     }
 
 
     @Override
     public boolean startsWith(NPath other) {
-        return toRelative(unwrapPath(other)).orNull() != null;
+        if (other == null) {
+            return false;
+        }
+        return stripParent(unwrapPath(other)).orNull() != null;
     }
 
     @Override
@@ -837,7 +844,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public boolean startsWith(String other) {
-        return toRelative(NPath.of(other)).orNull() != null;
+        return stripParent(NPath.of(other)).orNull() != null;
     }
 
     @Override

@@ -24,7 +24,7 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
 
     public void flushTransientLine(){
         NSystemTerminalBaseImpl terminal = (NSystemTerminalBaseImpl) base.getTerminal();
-        if(terminal.isLastWasProgress()){
+        if(terminal!=null && terminal.isLastWasProgress()){
             support.flush();
             support.pushNode(NText.ofCommand(NTerminalCmd.CLEAR_LINE));
             support.pushNode(NText.ofCommand(NTerminalCmd.MOVE_LINE_START));

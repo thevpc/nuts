@@ -123,6 +123,43 @@ public class DefaultNIORPI implements NIORPI {
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported mode %s", expectedMode));
     }
+    @Override
+    public NPrintStream ofPrintStream(OutputStream out, NTerminalMode expectedMode, NTerminalMode baseMode) {
+        if (out == null) {
+            return null;
+        }
+        boolean baseAnsi=baseMode==NTerminalMode.ANSI;
+        if (expectedMode == null) {
+            expectedMode = baseAnsi?NTerminalMode.FORMATTED : NTerminalMode.FILTERED;
+        }
+        if (out instanceof NPrintStreamAdapter) {
+            return ((NPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(expectedMode);
+        }
+        switch (expectedMode) {
+            case DEFAULT:
+            case ANSI:
+            case INHERITED: {
+                return new NPrintStreamRaw(out, expectedMode,
+                        null, null,
+                        new NPrintStreamBase.Bindings(), null
+                );
+            }
+            case FILTERED:
+            case FORMATTED: {
+                if(baseAnsi){
+                    return new NPrintStreamRaw(out, NTerminalMode.ANSI,
+                            null, null,
+                            new NPrintStreamBase.Bindings(), null
+                    ).setTerminalMode(expectedMode);
+                }
+                return new NPrintStreamRaw(out, NTerminalMode.INHERITED,
+                        null, null,
+                        new NPrintStreamBase.Bindings(), null
+                ).setTerminalMode(expectedMode);
+            }
+        }
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported mode %s", expectedMode));
+    }
 
     @Override
     public NPrintStream ofPrintStream(OutputStream out) {
@@ -139,7 +176,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NPrintStream ofPrintStream(OutputStream out, NTerminalMode mode) {
-        return ofPrintStream(out, mode, null);
+        return ofPrintStream(out, mode, (NSystemTerminalBase) null);
     }
 
     public NPrintStream ofPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal) {

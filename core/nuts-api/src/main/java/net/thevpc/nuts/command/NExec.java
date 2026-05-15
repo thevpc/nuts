@@ -367,7 +367,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param value env value
      * @return {@code this} instance
      */
-    NExec setEnv(String key, String value);
+    NExec env(String key, String value);
 
     /**
      * clear env
@@ -389,7 +389,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param directory execution directory
      * @return {@code this} instance
      */
-    NExec setDirectory(NPath directory);
+    NExec directory(NPath directory);
 
     /**
      * return new command input stream (standard input source)
@@ -646,7 +646,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return result value
      */
-    int getResultCode();
+    int exitCode();
 
     /**
      * return executable information
@@ -714,7 +714,11 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param sleepMillis post-execution wait duration in milliseconds
      * @return this instance for fluent API usage
      */
-    NExec setSleepMillis(long sleepMillis);
+    NExec sleepMillis(long sleepMillis);
+
+    NExec maxLines(int maxLines);
+
+    NExec maxBytes(int maxBytes);
 
     /**
      * Returns the connection string representing the target host for execution.

@@ -72,7 +72,11 @@ public interface NPathSPI {
     /// ////////////////////////////////////////////////
     /// DEFAULT IMPLEMENTATIONS
 
-    default NOptional<String> toRelative(NPath basePath, NPath parentPath) {
+    default NOptional<String> stripParent(NPath basePath, NPath parentPath) {
+        return null;
+    }
+
+    default NOptional<String> relativize(NPath basePath, NPath parentPath) {
         return null;
     }
 

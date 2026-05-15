@@ -290,6 +290,7 @@ public class DefaultNBootModel implements NBootModel {
             syst = (NSystemTerminal) terminal;
         } else {
             try {
+                terminal.getOut();
                 syst = new DefaultSystemTerminal(terminal);
                 //NSessionUtils.setSession(syst, session);
             } catch (Exception ex) {

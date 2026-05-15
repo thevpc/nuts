@@ -107,7 +107,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         NDescriptorWriter.of().print(desc, new OutputStreamWriter(descStream));
         NWebCli nWebCli = NWebCli.of();
         nWebCli.POST()
-                .setUrl(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart()))
+                .uri(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart()))
                 .addPart("descriptor-hash", NDigest.of().sha1().setSource(desc).computeString())
                 .addPart("content-hash", NDigestUtils.evalSHA1Hex(content))
                 .addPart("force", NDigestUtils.evalSHA1Hex(content))
@@ -179,7 +179,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             if (js != null) {
                 NWebCli nWebCli = NWebCli.of();
                 ret = nWebCli.POST()
-                        .setUrl(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
+                        .uri(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
                         .addPart("root", "/")
                         .doWith(r->prepareNWebRequest(r,ulp))
                         .addPart("js").setFileName("search.js").setBody(
@@ -191,7 +191,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         } else {
             NWebCli nWebCli = NWebCli.of();
             ret = nWebCli.POST()
-                    .setUrl(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
+                    .uri(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
                     .addPart("root", "/")
                     .doWith(r->prepareNWebRequest(r,ulp))
                     .addPart("pattern", ("*"))

@@ -3,6 +3,9 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.io.NErr;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.io.NSystemTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.log.NLogSPI;
@@ -94,7 +97,22 @@ public class NLogConsoleHandler implements NLogSPI {
     }
 
     private void log0(Rec rec) {
-        synchronized (NSession.of().err()) {
+        NPrintStream err = NSession.of().err();
+        if(err ==null){
+            err= NTerminal.ofSystem().err();
+        }
+        if(err ==null){
+            NDuration duration = rec.msg.getDuration();
+            NErr.println(NMsg.ofC("%s [%-6s] [%-7s] %s%s", rec.instant, rec.msg.getLevel(), rec.msg.getIntent(), rec.msg,
+                    duration==null || duration.isZero() ? ""
+                            : NMsg.ofC(" (duration: %s)", duration)
+            ));
+            if (rec.msg.getThrowable() != null) {
+                NErr.println(NStringUtils.stacktrace(rec.msg.getThrowable()));
+            }
+            return;
+        }
+        synchronized (err) {
             NDuration duration = rec.msg.getDuration();
             NErr.println(NMsg.ofC("%s [%-6s] [%-7s] %s%s", rec.instant, rec.msg.getLevel(), rec.msg.getIntent(), rec.msg,
                     duration==null || duration.isZero() ? ""

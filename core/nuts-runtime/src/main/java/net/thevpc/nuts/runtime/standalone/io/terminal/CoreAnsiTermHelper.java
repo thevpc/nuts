@@ -87,7 +87,7 @@ public class CoreAnsiTermHelper {
                         .system()
                         .addCommand(cmd)
                         .failFast()
-                        .setSleepMillis(500)
+                        .sleepMillis(500)
                         .getGrabbedOutOnlyString()
                         .trim()
                 ;

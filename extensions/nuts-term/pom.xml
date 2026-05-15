@@ -54,7 +54,8 @@
 
     <dependencies>
         <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>0.8.9</version></dependency>
-        <dependency><groupId>org.jline</groupId><artifactId>jline</artifactId><version>3.20.0</version></dependency>
+<!--        <dependency><groupId>org.jline</groupId><artifactId>jline</artifactId><version>4.1.0</version></dependency>-->
+        <dependency><groupId>org.jline</groupId><artifactId>jline</artifactId><version>3.30.13</version></dependency>
         <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>5.8.2</version><scope>test</scope></dependency>
     </dependencies>
     <distributionManagement>

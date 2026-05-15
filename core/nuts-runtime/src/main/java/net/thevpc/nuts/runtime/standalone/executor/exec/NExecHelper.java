@@ -50,8 +50,8 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                 .addExecutorOptions(optionsAndArgs.getOptions())
                 .setRunAs(runAs)
                 .setEnv(env)
-                .setDirectory(directory == null ? null : NPath.of(directory))
-                .setSleepMillis((int) sleep)
+                .directory(directory == null ? null : NPath.of(directory))
+                .sleepMillis((int) sleep)
                 .setFailFast(failFast);
         pb.setIn(CoreIOUtils.validateIn(in));
         pb.setOut(CoreIOUtils.validateOut(out));
@@ -115,13 +115,13 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         if (out != null) {
             out.flush();
         }
-        return pb.getResultCode();
+        return pb.exitCode();
     }
 
     public Future<Integer> execAsync() {
         if (out != null) {
             out.run(NTerminalCmd.MOVE_LINE_START);
         }
-        return NConcurrent.of().executorService().submit(() -> pb.getResultCode());
+        return NConcurrent.of().executorService().submit(() -> pb.exitCode());
     }
 }

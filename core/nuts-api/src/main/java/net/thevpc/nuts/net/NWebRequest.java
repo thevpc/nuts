@@ -15,15 +15,15 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest setOneWay(boolean oneWay);
 
-    String getUrl();
+    String getUri();
 
-    NWebRequest setUrl(String url, Object... vars);
+    NWebRequest uri(String url, Object... vars);
 
-    NWebRequest setUrl(String url);
+    NWebRequest uri(String url);
 
     NHttpMethod getMethod();
 
-    NWebRequest setMethod(NHttpMethod method);
+    NWebRequest method(NHttpMethod method);
 
     NWebRequest GET();
 
@@ -89,6 +89,15 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest setJsonFileParameters(NPath path);
 
+    /**
+     * equivalent to set header, to match JDK's method
+     *
+     * @param name  name
+     * @param value value
+     * @return this instance
+     */
+    NWebRequest header(String name, String value);
+
     NWebRequest addHeader(String name, String value);
 
     NWebRequest setHeader(String name, String value);
@@ -99,27 +108,29 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest doWith(Consumer<NWebRequest> any);
 
+    NWebRequest parameter(String name, String value);
+
     NWebRequest addParameter(String name, String value);
 
     NWebRequest setParameter(String name, String value);
 
     NInputSource getRequestBody();
 
-    NWebRequest setJsonRequestBody(Object body);
+    NWebRequest jsonRequestBody(Object body);
 
-    NWebRequest setRequestBody(String body);
+    NWebRequest requestBody(String body);
 
-    NWebRequest setRequestBody(byte[] body);
+    NWebRequest requestBody(byte[] body);
 
-    NWebRequest setRequestBody(NInputSource body);
+    NWebRequest requestBody(NInputSource body);
 
-    NWebRequest setContentLanguage(String contentLanguage);
+    NWebRequest contentLanguage(String contentLanguage);
 
-    NWebRequest setAuthorizationBearer(String authorizationBearer);
+    NWebRequest authorizationBearer(String authorizationBearer);
 
-    NWebRequest setAuthorizationBasic(String username, String password);
+    NWebRequest authorizationBasic(String username, String password);
 
-    NWebRequest setAuthorization(String authorization);
+    NWebRequest authorization(String authorization);
 
     String getAuthorization();
 
@@ -139,21 +150,23 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest addFormData(String key, String value);
 
-    NWebRequest setFormUrlEncoded(Map<String, String> m);
+    NWebRequest formUrlEncoded(Map<String, String> m);
 
     String getContentType();
 
-    NWebRequest setContentTypeFormUrlEncoded();
+    NWebRequest contentTypeFormUrlEncoded();
 
-    NWebRequest setContentType(String contentType);
+    NWebRequest contentType(String contentType);
 
     NDuration getReadTimeout();
 
-    NWebRequest setReadTimeout(NDuration readTimeout);
+    NWebRequest timeout(NDuration readTimeout);
+
+    NWebRequest readTimeout(NDuration readTimeout);
 
     NDuration getConnectTimeout();
 
-    NWebRequest setConnectTimeout(NDuration duration);
+    NWebRequest connectTimeout(NDuration duration);
 
     List<NWebRequestBody> getParts();
 

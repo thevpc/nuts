@@ -44,7 +44,7 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNFetchDesc
 import net.thevpc.nuts.runtime.standalone.repository.cmd.push.DefaultNPushRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.search.DefaultNSearchRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.search.DefaultNSearchVersionsRepositoryCmd;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNRepositoryUndeployCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNUndeployRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUpdateRepositoryStatsCmd;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryConfigModel;
 import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
@@ -173,8 +173,8 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     @Override
-    public NRepositoryUndeployCmd undeploy() {
-        return new DefaultNRepositoryUndeployCmd(this);
+    public NUndeployRepositoryCmd undeploy() {
+        return new DefaultNUndeployRepositoryCmd(this);
     }
 
     protected String getIdComponentExtension(String packaging) {

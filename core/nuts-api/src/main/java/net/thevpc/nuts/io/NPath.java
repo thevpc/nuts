@@ -681,7 +681,48 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     NPath toAbsolute(NPath basePath);
 
-    NOptional<String> toRelative(NPath basePath);
+    /**
+     * Returns the portion of this path that follows the specified {@code parent}.
+     * <p>
+     * This is a <b>strict containment</b> operation. It acts like a prefix-stripper,
+     * returning the "tail" of the path if, and only if, this path is a child or
+     * descendant of the given {@code parent}.
+     * </p>
+     * * <p>Example:
+     * <ul>
+     * <li>{@code "/a/b/c".stripParent("/a")} returns {@code "b/c"}</li>
+     * <li>{@code "/a/b/c".stripParent("/d")} returns {@code empty()}</li>
+     * </ul>
+     * </p>
+     *
+     * @param parent the potential base path to be stripped from the start of this path
+     * @return an {@link NOptional} containing the sub-path string, or empty if this
+     * path is not a descendant of the specified parent.
+     */
+    NOptional<String> stripParent(NPath parent);
+
+    /**
+     * Calculates a relative path from the specified {@code origin} to this path.
+     * <p>
+     * This is a <b>navigational</b> operation. It determines the "directions"
+     * required to reach this path if you are currently standing at the {@code origin}.
+     * Unlike {@link #stripParent(NPath)}, this method can return paths containing
+     * {@code ".."} to navigate up the hierarchy.
+     * </p>
+     * * <p>Example:
+     * <ul>
+     * <li>{@code "/a/c".relativize("/a/b")} returns {@code "../c"}</li>
+     * <li>{@code "/a/b/c".relativize("/a/b/c")} returns {@code ""}</li>
+     * </ul>
+     * </p>
+     *
+     * @param origin the starting point from which the relative path should be calculated
+     * @return an {@link NOptional} containing the string representing the route
+     * from the origin to this path.
+     * @throws IllegalArgumentException if the paths cannot be relativized against
+     * each other (e.g., different protocols or roots).
+     */
+    NOptional<String> relativize(NPath origin);
 
     String owner();
 
@@ -810,8 +851,6 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
     void setDeleteOnDispose(boolean deleteOnDispose);
 
     boolean isDeleteOnDispose();
-
-    boolean isEqOrDeepChildOf(NPath other);
 
     boolean startsWith(NPath other);
 

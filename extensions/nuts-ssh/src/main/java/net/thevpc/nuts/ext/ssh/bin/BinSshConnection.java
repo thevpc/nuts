@@ -89,7 +89,7 @@ public class BinSshConnection extends SshConnectionBase {
                 .setErr(NExecOutput.ofStream(err))
                 .setIn(NExecInput.ofStream(in))
                 .run()
-                .getResultCode();
+                .exitCode();
     }
 
 

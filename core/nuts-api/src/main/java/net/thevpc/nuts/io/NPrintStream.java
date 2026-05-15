@@ -73,6 +73,17 @@ public interface NPrintStream extends NOutputTarget, AutoCloseable {
         return NIORPI.of().ofPrintStream(out, mode, terminal);
     }
 
+    /**
+     * create print stream that supports the given {@code mode}. If the given
+     * @param out base output stream
+     * @param mode expected mode of the new NPrintStream
+     * @param baseMode of the base output stream
+     * @return new NPrintStream
+     */
+    static NPrintStream of(OutputStream out, NTerminalMode mode, NTerminalMode baseMode) {
+        return NIORPI.of().ofPrintStream(out, mode, baseMode);
+    }
+
     static NPrintStream of(OutputStream out, NTerminalMode mode) {
         return NIORPI.of().ofPrintStream(out, mode);
     }

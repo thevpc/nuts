@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
@@ -235,7 +234,7 @@ public class DirectoryScanner {
                 for (int i = t.length - 1; i >= 0; i--) {
                     stack.push(t[i]);
                 }
-                if (w.matchesSubPath(pop.toRelative(root).orNull())) {
+                if (w.matchesSubPath(pop.stripParent(root).orNull())) {
                     return pop;
                 }
             }

@@ -34,7 +34,7 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
         }
         return getExecCommand().copy().clearCommand().configure(false, args)
                 .failFast().run()
-                .getResultCode();
+                .exitCode();
     }
 
     @Override

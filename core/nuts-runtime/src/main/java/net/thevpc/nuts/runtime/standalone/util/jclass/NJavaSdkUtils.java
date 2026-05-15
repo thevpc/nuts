@@ -615,7 +615,7 @@ public class NJavaSdkUtils {
                         .system()
                         .addCommand(javaExePath.toString(), "-version")
                         .grabAll().failFast().run();
-                cmdRresult = cmd.getResultCode();
+                cmdRresult = cmd.exitCode();
                 cmdOutputString = cmd.getGrabbedOutString();
                 if (!cmdOutputString.isEmpty()) {
                     break;

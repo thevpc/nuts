@@ -28,6 +28,8 @@ public class NExecOutput {
     private NPath path;
     private NPathOption[] options;
     private NInputSource result;
+    private final long maxLines;
+    private final long maxBytes;
 
 
     /**
@@ -36,7 +38,7 @@ public class NExecOutput {
      * @return a NExecOutput configured to discard output
      */
     public static NExecOutput ofNull() {
-        return new NExecOutput(NRedirectType.NULL, null, null, null);
+        return new NExecOutput(NRedirectType.NULL, null, null, null, -1, -1);
     }
 
     /**
@@ -47,7 +49,11 @@ public class NExecOutput {
      * @return a NExecOutput configured to capture output in memory
      */
     public static NExecOutput ofGrabMem() {
-        return new NExecOutput(NRedirectType.GRAB_STREAM, null, null, null);
+        return new NExecOutput(NRedirectType.GRAB_STREAM, null, null, null, -1, -1);
+    }
+
+    public static NExecOutput ofGrabMem(int maxBytes, int maxLines) {
+        return new NExecOutput(NRedirectType.GRAB_STREAM, null, null, null, maxBytes, maxLines);
     }
 
     /**
@@ -58,7 +64,7 @@ public class NExecOutput {
      * @return a NExecOutput configured to capture output to a temporary file
      */
     public static NExecOutput ofGrabFile() {
-        return new NExecOutput(NRedirectType.GRAB_FILE, null, null, null);
+        return new NExecOutput(NRedirectType.GRAB_FILE, null, null, null, -1, -1);
     }
 
     /**
@@ -69,7 +75,7 @@ public class NExecOutput {
      * @return a NExecOutput configured to inherit output
      */
     public static NExecOutput ofInherit() {
-        return new NExecOutput(NRedirectType.INHERIT, null, null, null);
+        return new NExecOutput(NRedirectType.INHERIT, null, null, null, -1, -1);
     }
 
 
@@ -79,7 +85,7 @@ public class NExecOutput {
      * @return a NExecOutput configured to use default redirection
      */
     public static NExecOutput ofRedirect() {
-        return new NExecOutput(NRedirectType.REDIRECT, null, null, null);
+        return new NExecOutput(NRedirectType.REDIRECT, null, null, null, -1, -1);
     }
 
     /**
@@ -103,7 +109,7 @@ public class NExecOutput {
      * @return a NExecOutput configured to write output to the given stream
      */
     public static NExecOutput ofStream(OutputStream stream) {
-        return stream == null ? ofInherit() : new NExecOutput(NRedirectType.STREAM, stream, null, null);
+        return stream == null ? ofInherit() : new NExecOutput(NRedirectType.STREAM, stream, null, null, -1, -1);
     }
 
     /**
@@ -112,30 +118,30 @@ public class NExecOutput {
      * @return a NExecOutput configured to pipe output
      */
     public static NExecOutput ofPipe() {
-        return new NExecOutput(NRedirectType.PIPE, null, null, null);
+        return new NExecOutput(NRedirectType.PIPE, null, null, null, -1, -1);
     }
 
 
     /**
      * Redirects command output to the specified file path.
      *
-     * @param path the target file path
+     * @param path    the target file path
      * @param options optional path options (e.g., append)
      * @return a NExecOutput configured to write output to the file
      */
     public static NExecOutput ofPath(NPath path, NPathOption... options) {
-        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, options);
+        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, options, -1, -1);
     }
 
     /**
      * Redirects command output to the specified file path with optional append mode.
      *
-     * @param path the target file path
+     * @param path   the target file path
      * @param append if true, output is appended; otherwise, it overwrites the file
      * @return a NExecOutput configured to write output to the file
      */
     public static NExecOutput ofPath(NPath path, boolean append) {
-        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, append ? null : new NPathOption[]{NPathOption.APPEND});
+        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, append ? null : new NPathOption[]{NPathOption.APPEND}, -1, -1);
     }
 
     /**
@@ -145,14 +151,24 @@ public class NExecOutput {
      * @return a NExecOutput configured to write output to the file
      */
     public static NExecOutput ofPath(NPath path) {
-        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, null);
+        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, null, -1, -1);
     }
 
-    private NExecOutput(NRedirectType type, OutputStream stream, NPath path, NPathOption[] options) {
+    private NExecOutput(NRedirectType type, OutputStream stream, NPath path, NPathOption[] options, long maxBytes, long maxLines) {
         this.type = type;
         this.stream = stream;
         this.path = path;
         this.options = options == null ? new NPathOption[0] : options;
+        this.maxLines = maxLines;
+        this.maxBytes = maxBytes;
+    }
+
+    public long getMaxLines() {
+        return maxLines;
+    }
+
+    public long getMaxBytes() {
+        return maxBytes;
     }
 
     public NRedirectType getType() {

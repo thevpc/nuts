@@ -92,7 +92,7 @@ public class DefaultNPs implements NPs {
                 return NExec.ofSystem("kill", "-9", processId)
                         .at(connectionString)
                         .setFailFast(isFailFast())
-                        .getResultCode() == 0;
+                        .exitCode() == 0;
             }
             case WINDOWS: {
                 if(NBlankable.isBlank(connectionString)) {
@@ -101,14 +101,14 @@ public class DefaultNPs implements NPs {
                         return NExec.ofSystem(taskkill, "/PID", processId, "/F")
                                 .at(connectionString)
                                 .setFailFast(isFailFast())
-                                .getResultCode() == 0;
+                                .exitCode() == 0;
                     }
                     throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NEnv.of().getOsFamily().id()));
                 }else{
                     return NExec.ofSystem("taskkill", "/PID", processId, "/F")
                             .at(connectionString)
                             .setFailFast(isFailFast())
-                            .getResultCode() == 0;
+                            .exitCode() == 0;
                 }
             }
         }
@@ -276,8 +276,8 @@ public class DefaultNPs implements NPs {
                     .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))
                     .grabAll()
                     .setFailFast(isFailFast());
-            b.getResultCode();
-            if (b.getResultCode() == 0) {
+            b.exitCode();
+            if (b.exitCode() == 0) {
                 String out = b.getGrabbedOutString();
                 String[] split = out.split("\n");
                 return Arrays.asList(split).iterator();

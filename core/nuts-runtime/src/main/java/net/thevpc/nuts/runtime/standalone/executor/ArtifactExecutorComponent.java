@@ -74,10 +74,10 @@ public class ArtifactExecutorComponent implements NExecutorComponent {
         return NExec.of()
                 .addCommand(app)
                 .setEnv(executionContext.getEnv())
-                .setDirectory(executionContext.getDirectory())
+                .directory(executionContext.getDirectory())
                 .failFast()
                 .setExecutionType(executionContext.getExecutionType())
-                .run().getResultCode();
+                .run().exitCode();
     }
 
 }

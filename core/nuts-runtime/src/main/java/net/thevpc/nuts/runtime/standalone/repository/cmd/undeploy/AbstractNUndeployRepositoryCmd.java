@@ -9,20 +9,20 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCmdBase;
-import net.thevpc.nuts.spi.NRepositoryUndeployCmd;
+import net.thevpc.nuts.spi.NUndeployRepositoryCmd;
 
 /**
  *
  * @author thevpc
  */
-public abstract class AbstractNRepositoryUndeployCmd extends NRepositoryCmdBase<NRepositoryUndeployCmd> implements NRepositoryUndeployCmd {
+public abstract class AbstractNUndeployRepositoryCmd extends NRepositoryCmdBase<NUndeployRepositoryCmd> implements NUndeployRepositoryCmd {
 
     private NId id;
     private String repository;
     private boolean offline = false;
     private boolean transitive = true;
 
-    public AbstractNRepositoryUndeployCmd(NRepository repo) {
+    public AbstractNUndeployRepositoryCmd(NRepository repo) {
         super(repo, "undeploy");
     }
 
@@ -40,7 +40,7 @@ public abstract class AbstractNRepositoryUndeployCmd extends NRepositoryCmdBase<
     }
 
     @Override
-    public NRepositoryUndeployCmd setId(NId id) {
+    public NUndeployRepositoryCmd setId(NId id) {
         this.id = id;
         return this;
     }
@@ -51,7 +51,7 @@ public abstract class AbstractNRepositoryUndeployCmd extends NRepositoryCmdBase<
     }
 
     @Override
-    public NRepositoryUndeployCmd setRepository(String repository) {
+    public NUndeployRepositoryCmd setRepository(String repository) {
         this.repository = repository;
         return this;
     }
@@ -62,7 +62,7 @@ public abstract class AbstractNRepositoryUndeployCmd extends NRepositoryCmdBase<
 //    }
 
     @Override
-    public NRepositoryUndeployCmd setOffline(boolean offline) {
+    public NUndeployRepositoryCmd setOffline(boolean offline) {
         this.offline = offline;
         return this;
     }
@@ -73,7 +73,7 @@ public abstract class AbstractNRepositoryUndeployCmd extends NRepositoryCmdBase<
     }
 
     @Override
-    public NRepositoryUndeployCmd setTransitive(boolean transitive) {
+    public NUndeployRepositoryCmd setTransitive(boolean transitive) {
         this.transitive = transitive;
         return this;
     }

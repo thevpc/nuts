@@ -52,7 +52,7 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUp
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NDeployRepositoryCmd;
 import net.thevpc.nuts.spi.NPushRepositoryCmd;
-import net.thevpc.nuts.spi.NRepositoryUndeployCmd;
+import net.thevpc.nuts.spi.NUndeployRepositoryCmd;
 import net.thevpc.nuts.spi.NUpdateRepositoryStatsCmd;
 import net.thevpc.nuts.util.*;
 
@@ -113,7 +113,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     }
 
     @Override
-    public final void undeployImpl(NRepositoryUndeployCmd options) {
+    public final void undeployImpl(NUndeployRepositoryCmd options) {
         lib.undeploy(options);
     }
 

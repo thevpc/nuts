@@ -115,8 +115,8 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
             String s = null;
             try {
                 NWebCli cli = NWebCli.of();
-                cli.setConnectTimeout(NDuration.ofMillis(500));
-                cli.setReadTimeout(NDuration.ofMillis(500));
+                cli.connectTimeout(NDuration.ofMillis(500));
+                cli.readTimeout(NDuration.ofMillis(500));
                 s = NStringUtils.trim(cli.GET("https://raw.githubusercontent.com/thevpc/nuts/master/.endpoint")
                         .run().getContent().readString());
             } catch (Exception ex) {

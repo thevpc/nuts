@@ -47,6 +47,8 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     protected boolean failFast;
     protected Boolean bot;
     private long sleepMillis = 1000;
+    private int maxLines = -1;
+    private int maxBytes = -1;
     private NConnectionString connectionString;
     private boolean rawCommand;
 
@@ -62,6 +64,18 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     @Override
     public NExec setBot(Boolean bot) {
         this.bot = bot;
+        return this;
+    }
+
+    @Override
+    public NExec maxLines(int maxLines) {
+        this.maxLines = maxLines;
+        return this;
+    }
+
+    @Override
+    public NExec maxBytes(int maxBytes) {
+        this.maxBytes = maxBytes;
         return this;
     }
 
@@ -255,14 +269,14 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     public NExec addEnv(Map<String, String> env) {
         if (env != null) {
             for (Map.Entry<String, String> entry : env.entrySet()) {
-                setEnv(entry.getKey(), entry.getValue());
+                env(entry.getKey(), entry.getValue());
             }
         }
         return this;
     }
 
     @Override
-    public NExec setEnv(String key, String value) {
+    public NExec env(String key, String value) {
         if (value == null) {
             if (env != null) {
                 env.remove(key);
@@ -288,7 +302,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExec setDirectory(NPath directory) {
+    public NExec directory(NPath directory) {
         this.directory = directory;
         return this;
     }
@@ -327,7 +341,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     @Override
     public NExec grabOut() {
         // DO NOT CALL setOut :: setOut(new SPrintStream());
-        this.out = NExecOutput.ofGrabMem();
+        this.out = NExecOutput.ofGrabMem(maxBytes,maxLines);
         return this;
     }
 
@@ -343,7 +357,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
 
     @Override
     public NExec grabErr() {
-        setErr(NExecOutput.ofGrabMem());
+        setErr(NExecOutput.ofGrabMem(maxBytes,maxLines));
         return this;
     }
 
@@ -510,7 +524,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
         addCommand(other.getCommand());
         addEnv(other.getEnv());
         addExecutorOptions(other.getExecutorOptions());
-        setDirectory(other.getDirectory());
+        directory(other.getDirectory());
         setIn(other.getIn());
         setOut(other.getOut());
         setErr(other.getErr());
@@ -530,7 +544,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public int getResultCode() {
+    public int exitCode() {
         if (!executed) {
 //            try {
             run();
@@ -562,7 +576,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
         return sleepMillis;
     }
 
-    public NExec setSleepMillis(long sleepMillis) {
+    public NExec sleepMillis(long sleepMillis) {
         this.sleepMillis = sleepMillis;
         return this;
     }

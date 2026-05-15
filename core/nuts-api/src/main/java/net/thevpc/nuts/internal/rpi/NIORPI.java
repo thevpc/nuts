@@ -45,6 +45,8 @@ public interface NIORPI extends NComponent {
      */
     NPrintStream ofPrintStream(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal);
 
+    NPrintStream ofPrintStream(OutputStream out, NTerminalMode expectedMode, NTerminalMode baseMode);
+
     NPrintStream ofPrintStream(OutputStream out, NTerminalMode mode);
 
     NPrintStream ofPrintStream(OutputStream out);

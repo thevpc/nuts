@@ -107,7 +107,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
 
     @Override
     public int execute() {
-        return resolveExecHelper().run().getResultCode();
+        return resolveExecHelper().run().exitCode();
     }
 
     @Override

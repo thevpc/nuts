@@ -75,7 +75,7 @@ public class MvnClient {
                             id.toString(),
                             repoURL == null ? "" : repoURL
                     ).run();
-            return (b.getResultCode() == 0);
+            return (b.exitCode() == 0);
         } catch (Exception ex) {
             LOG().log(NMsg.ofJ("failed to invoke {0} : {1}", NET_VPC_APP_NUTS_MVN, ex).asFinestFail(ex));
             return false;

@@ -98,7 +98,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
                     //                        .setExecutorOptions("--show-command")
                     .grabAll()
                     .run();
-            int r = exec.getResultCode();
+            int r = exec.exitCode();
             if (r == 0) {
                 return new NCommandConfig()
                         .setFactoryId(getFactoryId())
@@ -116,7 +116,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
         if (listCommand.length > 0) {
             NExec b = NExec.of().addCommand(listCommand)
                     .grabAll();
-            int r = b.getResultCode();
+            int r = b.exitCode();
             if (r == 0) {
                 for (String s : b.getGrabbedOutString().split("\n")) {
                     s = s.trim();

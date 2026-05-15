@@ -316,7 +316,7 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     public String formatURL(NWebRequest r, boolean safe) {
-        String p = r.getUrl();
+        String p = r.getUri();
         StringBuilder u = new StringBuilder();
         if (prefix == null || p.startsWith("http:") || p.startsWith("https:")) {
             u.append(p);
@@ -521,22 +521,22 @@ public class DefaultNWebCli implements NWebCli {
                 }
             }
         } catch (SocketTimeoutException ex) {
-            throw new NIOException(NMsg.ofC("timed out loading %s (%s)",spec,ex), ex);
+            throw new NIOException(NMsg.ofC("timed out loading %s (%s)", spec, ex), ex);
         } catch (InterruptedByTimeoutException | InterruptedIOException ex) {
-            throw new NIOException(NMsg.ofC("interrupt out loading %s (%s)",spec,ex), ex);
+            throw new NIOException(NMsg.ofC("interrupt out loading %s (%s)", spec, ex), ex);
         } catch (UncheckedIOException | IOException ex) {
-            throw new NIOException(NMsg.ofC("error loading %s (%s)",spec,ex), ex);
+            throw new NIOException(NMsg.ofC("error loading %s (%s)", spec, ex), ex);
         }
     }
 
-    private static int asMs(long a){
-        if(a<0){
+    private static int asMs(long a) {
+        if (a < 0) {
             return 0;
         }
-        if(a>Integer.MAX_VALUE){
+        if (a > Integer.MAX_VALUE) {
             return Integer.MAX_VALUE;
         }
-        return (int)a;
+        return (int) a;
     }
 
     private void _writeHeader(HttpURLConnection uc, String name, List<String> values) {
@@ -567,7 +567,7 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public NWebCli setReadTimeout(NDuration readTimeout) {
+    public NWebCli readTimeout(NDuration readTimeout) {
         this.readTimeout = readTimeout;
         return this;
     }
@@ -578,8 +578,15 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public NWebCli setConnectTimeout(NDuration connectTimeout) {
+    public NWebCli connectTimeout(NDuration connectTimeout) {
         this.connectTimeout = connectTimeout;
+        return this;
+    }
+
+    @Override
+    public NWebCli timeout(NDuration timeout) {
+        this.readTimeout = timeout;
+        this.connectTimeout = timeout;
         return this;
     }
 

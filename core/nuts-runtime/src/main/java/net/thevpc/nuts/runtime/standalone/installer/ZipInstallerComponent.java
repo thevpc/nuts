@@ -32,8 +32,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.core.NStoreKey;
-import net.thevpc.nuts.platform.NStoreScope;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.UnzipOptions;
@@ -94,8 +92,8 @@ public class ZipInstallerComponent implements NInstallerComponent {
                     .addCommand(executionContext.getExecutorOptions())
                     .addExecutorOptions(executionContext.getExecutorOptions())
                     .setEnv(executionContext.getEnv())
-                    .setDirectory(installFolder)
-                    .getResultCode();
+                    .directory(installFolder)
+                    .exitCode();
         }
     }
 

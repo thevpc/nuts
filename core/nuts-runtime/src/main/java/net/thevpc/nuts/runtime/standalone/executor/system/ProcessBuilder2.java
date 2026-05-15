@@ -32,6 +32,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
+import net.thevpc.nuts.runtime.standalone.io.outputstream.BoundedOutputStream;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.*;
@@ -55,14 +56,14 @@ public class ProcessBuilder2 {
     private boolean failFast;
     private long sleepMillis = 1000;
 
-    private NExecInput2 in = new NExecInput2(NExecInput.ofInherit());
-    private NExecOutput2 out = new NExecOutput2(NExecOutput.ofInherit());
-    private NExecOutput2 err = new NExecOutput2(NExecOutput.ofInherit());
+    private final NExecInput2 in = new NExecInput2(NExecInput.ofInherit());
+    private final NExecOutput2 out = new NExecOutput2(NExecOutput.ofInherit());
+    private final NExecOutput2 err = new NExecOutput2(NExecOutput.ofInherit());
 
     /// /////////////////// EXEC VARS
 
-    private ProcessBuilder base = new ProcessBuilder();
-    private List<PipeRunnable> pipesList = new ArrayList<>();
+    private final ProcessBuilder base = new ProcessBuilder();
+    private final List<PipeRunnable> pipesList = new ArrayList<>();
     private ExecutorService pipes = null;
     private int result;
     private Process proc;
@@ -304,7 +305,10 @@ public class ProcessBuilder2 {
             }
             case GRAB_STREAM: {
                 base.redirectOutput(ProcessBuilder.Redirect.PIPE);
-                out.tempStream = new ByteArrayOutputStream();
+                out.tempStream =
+                        (out.base.getMaxBytes() > 0 || out.base.getMaxLines() > 0) ?
+                                new BoundedOutputStream((int) out.base.getMaxBytes(), (int) out.base.getMaxLines()) :
+                        new ByteArrayOutputStream();
                 break;
             }
             case GRAB_FILE: {
@@ -351,7 +355,10 @@ public class ProcessBuilder2 {
             }
             case GRAB_STREAM: {
                 base.redirectError(ProcessBuilder.Redirect.PIPE);
-                err.tempStream = new ByteArrayOutputStream();
+                err.tempStream =
+                        (err.base.getMaxBytes() > 0 || err.base.getMaxLines() > 0) ?
+                                new BoundedOutputStream((int) err.base.getMaxBytes(), (int) err.base.getMaxLines()) :
+                                new ByteArrayOutputStream();
                 break;
             }
             case GRAB_FILE: {
@@ -414,7 +421,7 @@ public class ProcessBuilder2 {
         }
         long ppid = getProcessId();
         String procString = NPath.of(command.get(0)).getName()
-                + "-" + (ppid < 0 ? ("unknown-pid" + String.valueOf(-ppid)) : String.valueOf(ppid));
+                + "-" + (ppid < 0 ? ("unknown-pid" + -ppid) : String.valueOf(ppid));
         String cmdStr = String.join(" ", command);
         switch (in.base.getType()) {
             case NULL: {

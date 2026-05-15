@@ -339,8 +339,13 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public NOptional<String> toRelative(NPath basePath) {
-        return base.toRelative(basePath);
+    public NOptional<String> stripParent(NPath basePath) {
+        return base.stripParent(basePath);
+    }
+
+    @Override
+    public NOptional<String> relativize(NPath basePath) {
+        return base.relativize(basePath);
     }
 
     @Override
@@ -452,14 +457,6 @@ public class NCompressedPathBase extends NPathBase {
     @Override
     public String toString() {
         return String.valueOf(compressedForm);
-    }
-
-    @Override
-    public boolean isEqOrDeepChildOf(NPath other) {
-        if (other == null) {
-            return false;
-        }
-        return base.isEqOrDeepChildOf(unwrapPath(other));
     }
 
     @Override

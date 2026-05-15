@@ -51,7 +51,7 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.AbstractNFetchDes
 import net.thevpc.nuts.runtime.standalone.repository.cmd.push.AbstractNPushRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.search.AbstractNSearchRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.search.AbstractNSearchVersionsRepositoryCmd;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.AbstractNRepositoryUndeployCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.AbstractNUndeployRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUpdateRepositoryStatsCmd;
 import net.thevpc.nuts.runtime.standalone.repository.impl.AbstractNRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt0;
@@ -597,10 +597,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     @Override
-    public NRepositoryUndeployCmd undeploy() {
-        return new AbstractNRepositoryUndeployCmd(this) {
+    public NUndeployRepositoryCmd undeploy() {
+        return new AbstractNUndeployRepositoryCmd(this) {
             @Override
-            public NRepositoryUndeployCmd run() {
+            public NUndeployRepositoryCmd run() {
                 invalidateInstallationDigest();
                 boolean succeeded = false;
                 try {
