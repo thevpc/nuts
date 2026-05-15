@@ -72,7 +72,7 @@ public class CoreAnsiTermHelper {
             try {
                 String s = NExec.of()
                         .system()
-                        .setIn(NExecInput.ofNull())
+                        .in(NExecInput.ofNull())
                         .addCommand(cmd)
                         .failFast()
                         .getGrabbedOutOnlyString()

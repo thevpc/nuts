@@ -93,9 +93,9 @@ public class BinSshFileOutputStreamSftp extends OutputStream {
             }
             sftp.addCommand("-b", batchFile.toString(),
                             cbuilder.setQueryMap(null).setPort(null).setPath(null).build().toString())
-                    .setIn(NExecInput.ofNull())
-                    .setOut(NExecOutput.ofNull())
-                    .setErr(NExecOutput.ofNull())
+                    .in(NExecInput.ofNull())
+                    .out(NExecOutput.ofNull())
+                    .err(NExecOutput.ofNull())
                     .failFast()
                     .run();
         } finally {

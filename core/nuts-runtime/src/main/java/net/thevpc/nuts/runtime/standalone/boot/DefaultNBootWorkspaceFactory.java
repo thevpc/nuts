@@ -85,7 +85,7 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
             NApp.of().setId(workspace.getApiId());
             NLog.of(NBootWorkspaceImpl.class).log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2)).asConfig().withIntent(NMsgIntent.SUCCESS));
             NExec execCmd = NExec.of()
-                    .setExecutionType(info2.getExecutionType().orNull())
+                    .executionType(info2.getExecutionType().orNull())
                     .setRunAs(info2.getRunAs().orNull())
                     .failFast();
             List<String> executorOptions = info2.getExecutorOptions().orNull();

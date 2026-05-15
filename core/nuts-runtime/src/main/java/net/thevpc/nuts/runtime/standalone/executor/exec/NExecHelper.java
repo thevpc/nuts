@@ -52,10 +52,10 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                 .setEnv(env)
                 .directory(directory == null ? null : NPath.of(directory))
                 .sleepMillis((int) sleep)
-                .setFailFast(failFast);
-        pb.setIn(CoreIOUtils.validateIn(in));
-        pb.setOut(CoreIOUtils.validateOut(out));
-        pb.setErr(CoreIOUtils.validateErr(err));
+                .failFast(failFast);
+        pb.in(CoreIOUtils.validateIn(in));
+        pb.out(CoreIOUtils.validateOut(out));
+        pb.err(CoreIOUtils.validateErr(err));
 
         NLog _LL = NLog.of(NWorkspaceUtils.class);
         NCmdLine commandOut = NCmdLine.of(pb.getCommand());

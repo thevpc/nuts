@@ -86,7 +86,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                                         )
                         );
                 NExec cmd = NExec.of()
-                        .setCommandDefinition(def2.build())
+                        .commandDefinition(def2.build())
                         .addCommand("--nuts-exec-mode=" + mode);
                 if (mode.equals("install")) {
                     cmd.addExecutorOptions("--nuts-auto-install=false");
@@ -94,7 +94,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                     cmd.addExecutorOptions("--nuts-auto-install=false");
                 }
                 cmd.addCommand(executionContext.getArguments())
-                        .setExecutionType(NWorkspace.of().getBootOptions().getExecutionType().orNull())
+                        .executionType(NWorkspace.of().getBootOptions().getExecutionType().orNull())
                         .failFast()
                         .run();
             }
@@ -115,10 +115,10 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                 }
                 eargs.addAll(executionContext.getArguments());
                 NExec.of()
-                        .setCommandDefinition(def2.build())
+                        .commandDefinition(def2.build())
                         .addCommand(eargs)
-                        .setExecutionType(NWorkspace.of().getBootOptions().getExecutionType().orNull())
-                        .setExecutionType(
+                        .executionType(NWorkspace.of().getBootOptions().getExecutionType().orNull())
+                        .executionType(
                                 NConstants.Ids.NSH.equals(def2.getId().getShortName()) ?
                                         NExecutionType.EMBEDDED : NExecutionType.SPAWN
                         )

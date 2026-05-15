@@ -148,7 +148,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *                 is not zero
      * @return {@code this} instance
      */
-    NExec setFailFast(boolean failFast);
+    NExec failFast(boolean failFast);
 
     /**
      * equivalent to <code>failFast(true)</code>
@@ -166,7 +166,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param bot {@code true} to enable bot mode, {@code false} to disable
      * @return this instance for fluent API usage
      */
-    NExec setBot(Boolean bot);
+    NExec bot(Boolean bot);
 
     /**
      * Returns whether "bot mode" is enabled for this command.
@@ -208,7 +208,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param definition definition for the executable
      * @return {@code this} instance
      */
-    NExec setCommandDefinition(NDefinition definition);
+    NExec commandDefinition(NDefinition definition);
 
     /**
      * Returns the artifact definition associated with this command.
@@ -404,7 +404,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param in standard input source
      * @return {@code this} instance
      */
-    NExec setIn(NExecInput in);
+    NExec in(NExecInput in);
 
     /**
      * return new command output stream (standard output destination)
@@ -419,7 +419,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param out standard output destination
      * @return {@code this} instance
      */
-    NExec setOut(NExecOutput out);
+    NExec out(NExecOutput out);
 
     /**
      * grub output stream while redirecting error stream to the grabbed output
@@ -512,7 +512,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param err standard error destination
      * @return {@code this} instance
      */
-    NExec setErr(NExecOutput err);
+    NExec err(NExecOutput err);
 
     /**
      * return execution type
@@ -527,7 +527,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param executionType execution type
      * @return {@code this} instance
      */
-    NExec setExecutionType(NExecutionType executionType);
+    NExec executionType(NExecutionType executionType);
 
     /**
      * Configures the command to be executed as a system command.
@@ -600,7 +600,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param dry {@code true} to enable dry-run mode, {@code false} otherwise
      * @return this instance for fluent API usage
      */
-    NExec setDry(Boolean dry);
+    NExec dry(Boolean dry);
 
     /**
      * Configures the command to execute with elevated privileges using sudo.
@@ -789,6 +789,6 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @return this instance for fluent API usage
      * @since 0.8.9
      */
-    NExec setRawCommand(boolean rawCommand);
+    NExec rawCommand(boolean rawCommand);
 
 }

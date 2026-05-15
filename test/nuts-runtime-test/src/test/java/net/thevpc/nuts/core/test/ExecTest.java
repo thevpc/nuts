@@ -173,9 +173,9 @@ public class ExecTest {
     private void runUsingNuts(String... args) {
         NOut.println("================= runUsingNuts");
         NExec e = NExec.of(args)
-                .setIn(NExecInput.ofNull())
-                .setErr(NExecOutput.ofGrabMem())
-                .setOut(NExecOutput.ofGrabMem())
+                .in(NExecInput.ofNull())
+                .err(NExecOutput.ofGrabMem())
+                .out(NExecOutput.ofGrabMem())
                 .run();
         System.out.println(e.exitCode());
         System.out.println("============= OUT");

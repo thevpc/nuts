@@ -91,7 +91,7 @@ public class DefaultNPs implements NPs {
             case UNIX: {
                 return NExec.ofSystem("kill", "-9", processId)
                         .at(connectionString)
-                        .setFailFast(isFailFast())
+                        .failFast(isFailFast())
                         .exitCode() == 0;
             }
             case WINDOWS: {
@@ -100,14 +100,14 @@ public class DefaultNPs implements NPs {
                     if (taskkill != null) {
                         return NExec.ofSystem(taskkill, "/PID", processId, "/F")
                                 .at(connectionString)
-                                .setFailFast(isFailFast())
+                                .failFast(isFailFast())
                                 .exitCode() == 0;
                     }
                     throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NEnv.of().getOsFamily().id()));
                 }else{
                     return NExec.ofSystem("taskkill", "/PID", processId, "/F")
                             .at(connectionString)
-                            .setFailFast(isFailFast())
+                            .failFast(isFailFast())
                             .exitCode() == 0;
                 }
             }
@@ -200,11 +200,11 @@ public class DefaultNPs implements NPs {
         switch (cmdOsFamily) {
             case LINUX: {
                 NExec u = NExec.of()
-                        .setIn(NExecInput.ofNull())
+                        .in(NExecInput.ofNull())
                         .at(connectionString)
                         .addCommand("ps", "-eo", "user,pid,%cpu,%mem,vsz,rss,tty,stat,lstart,time,command")
                         .grabErr()
-                        .setFailFast(isFailFast())
+                        .failFast(isFailFast())
                         .grabOut();
                 String grabbedOutString = u.getGrabbedOutString();
                 return new LinuxPsParser().parse(new StringReader(grabbedOutString));
@@ -212,11 +212,11 @@ public class DefaultNPs implements NPs {
             case UNIX:
             case MACOS: {
                 NExec u = NExec.of()
-                        .setIn(NExecInput.ofNull())
+                        .in(NExecInput.ofNull())
                         .at(connectionString)
                         .addCommand("ps", "aux")
                         .grabErr()
-                        .setFailFast(isFailFast())
+                        .failFast(isFailFast())
                         .grabOut();
                 return new UnixPsParser().parse(new StringReader(u.getGrabbedOutString()));
             }
@@ -275,7 +275,7 @@ public class DefaultNPs implements NPs {
                     .addCommand(cmd)
                     .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))
                     .grabAll()
-                    .setFailFast(isFailFast());
+                    .failFast(isFailFast());
             b.exitCode();
             if (b.exitCode() == 0) {
                 String out = b.getGrabbedOutString();

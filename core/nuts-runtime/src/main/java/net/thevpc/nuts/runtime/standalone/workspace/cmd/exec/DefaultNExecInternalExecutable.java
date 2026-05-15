@@ -48,7 +48,7 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
                 .copy()
                 .clearCommand().configure(false, args)
                 .failFast()
-                .setDry(true)
+                .dry(true)
                 .run();
 
     }
