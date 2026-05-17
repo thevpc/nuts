@@ -487,9 +487,9 @@ public class DefaultNExec extends AbstractNExec {
                     ts.remove(0);
                     NDefinition def2 = NSearch.of()
                             .addId(id)
-                            .latest()
+                            .latest(true)
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                            .failFast()
+                            .failFast(true)
                             .getResultDefinitions()
                             .findFirst().get();
                     return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2, id,
@@ -539,7 +539,7 @@ public class DefaultNExec extends AbstractNExec {
                 }
                 NCustomCmd customCmd = NWorkspace.of().findCommand(goodKw);
                 if (customCmd != null) {
-                    NCmdExecOptions o = new NCmdExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
+                    NCmdExecOptions o = new NCmdExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).failFast(failFast)
                             .setExecutionType(executionType).setEnv(env);
                     return new DefaultNAliasExecutable(customCmd, o, args, this);
                 } else {
@@ -652,7 +652,7 @@ public class DefaultNExec extends AbstractNExec {
         }
         NTerminal.of().printProgress(NMsg.ofC("start searching for %s", nid));
         NId ff = NSearch.of(nid)
-                .setDependencyFilter(NDependencyFilters.of().byRunnable()).setLatest(true).setFailFast(false)
+                .setDependencyFilter(NDependencyFilters.of().byRunnable()).latest(true).failFast(false)
                 .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
                 .getResultDefinitions().stream()
                 .sorted(Comparator.comparing(x -> !x.getInstallInformation().get().isDefaultVersion())) // default first
@@ -677,8 +677,8 @@ public class DefaultNExec extends AbstractNExec {
                 ff = NSearch.of(nid)
                         .setFetchStrategy(NFetchStrategy.OFFLINE)
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                        .setFailFast(false)
-                        .setLatest(true)
+                        .failFast(false)
+                        .latest(true)
                         .getResultIds().findFirst().orElse(null);
                 if (ff == null && NSession.of().getFetchStrategy().orElse(NFetchStrategy.ONLINE) != NFetchStrategy.OFFLINE) {
                     if (traceSession.isPlainTrace()) {
@@ -692,8 +692,8 @@ public class DefaultNExec extends AbstractNExec {
                     ff = NSearch.of(nid)
                             .setFetchStrategy(NFetchStrategy.ONLINE)
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                            .setFailFast(false)
-                            .setLatest(true)
+                            .failFast(false)
+                            .latest(true)
                             .getResultIds().findFirst().orElse(null);
                 }
             }
@@ -714,7 +714,7 @@ public class DefaultNExec extends AbstractNExec {
         NDefinition def = null;
         try {
             def = NFetch.of(goodId)
-                    .failFast()
+                    .failFast(true)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
                     .getResultDefinition();
@@ -723,7 +723,7 @@ public class DefaultNExec extends AbstractNExec {
         }
         if (def == null) {
             def = NFetch.of(goodId)
-                    .failFast()
+                    .failFast(true)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .getResultDefinition();
         }
@@ -809,8 +809,8 @@ public class DefaultNExec extends AbstractNExec {
                     }
                     if (eid.getGroupId() != null) {
                         //nutsDefinition
-                        NStream<NDefinition> q = NSearch.of().addId(eid).setLatest(true)
-                                .setDistinct(true)
+                        NStream<NDefinition> q = NSearch.of().addId(eid).latest(true)
+                                .distinct(true)
                                 .getResultDefinitions();
                         NDefinition[] availableExecutors = q.stream().limit(2).toArray(NDefinition[]::new);
                         if (availableExecutors.length > 1) {
@@ -849,8 +849,8 @@ public class DefaultNExec extends AbstractNExec {
                     .setWorkspaceOptions(workspaceOptions)
                     .setEnv(env)
                     .setDirectory(dir)
-                    .setFailFast(failFast)
-                    .setTemporary(temporary)
+                    .failFast(failFast)
+                    .temporary(temporary)
                     .setExecutionType(executionType)
                     .setRunAs(runAs)
                     .setCommandName(commandName)

@@ -170,7 +170,7 @@ public class DefaultNInstall extends AbstractNInstall {
         InstallIdList list = new InstallIdList();
         for (Map.Entry<NId, InstallFlags> idAndStrategy : ids.entrySet()) {
             if (!list.isVisited(idAndStrategy.getKey())) {
-                List<NId> allIds = NSearch.of().addId(idAndStrategy.getKey()).setLatest(true).getResultIds().toList();
+                List<NId> allIds = NSearch.of().addId(idAndStrategy.getKey()).latest(true).getResultIds().toList();
                 if (allIds.isEmpty()) {
                     throw new NArtifactNotFoundException(idAndStrategy.getKey().getLongId());
                 }
@@ -185,7 +185,7 @@ public class DefaultNInstall extends AbstractNInstall {
             list.emptyCommand = false;
             for (NId sid : NExtensions.of().getCompanionIds()) {
                 if (!list.isVisited(sid)) {
-                    List<NId> allIds = NSearch.of().addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().toList();
+                    List<NId> allIds = NSearch.of().addId(sid).latest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().toList();
                     if (allIds.isEmpty()) {
                         throw new NArtifactNotFoundException(sid.getLongId());
                     }
