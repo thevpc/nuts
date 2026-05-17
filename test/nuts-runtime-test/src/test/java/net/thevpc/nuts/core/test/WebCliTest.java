@@ -16,7 +16,7 @@ public class WebCliTest {
         NWebCli.of()
                 .GET("http://localhost:8080/p/image.png")
                 .authorizationBasic("taha","taha")
-                .run().failFast(true);
+                .run().ifErrorThrow();
     }
 
 }

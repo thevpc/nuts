@@ -48,14 +48,17 @@ public interface NWebResponse {
 
     boolean isOk();
 
-    NWebResponse failFast(boolean failFast);
+    NWebResponse ifErrorThrow();
+
     boolean isClientError();
+
     boolean isServerError();
+
     boolean isRedirect();
 
     String getContentType();
 
     NMsgCode getMsgCode();
 
-    NWebResponse setMsgCode(NMsgCode msgCode) ;
+    NWebResponse setMsgCode(NMsgCode msgCode);
 }
