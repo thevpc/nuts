@@ -36,6 +36,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NConnectionStringAware;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.Collection;
 import java.util.List;
@@ -148,14 +149,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *                 is not zero
      * @return {@code this} instance
      */
-    NExec setFailFast(boolean failFast);
-
-    /**
-     * equivalent to <code>failFast(true)</code>
-     *
-     * @return {@code this} instance
-     */
-    NExec failFast();
+    NExec failFast(boolean failFast);
 
     /**
      * Enables or disables "bot mode" for this command.
@@ -166,7 +160,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param bot {@code true} to enable bot mode, {@code false} to disable
      * @return this instance for fluent API usage
      */
-    NExec setBot(Boolean bot);
+    NExec bot(Boolean bot);
 
     /**
      * Returns whether "bot mode" is enabled for this command.
@@ -230,6 +224,17 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
     NExec addCommand(String... command);
 
     /**
+     * Appends one or more arguments to the command to be executed.
+     * These arguments are added to the existing command line and will be passed
+     * to the underlying process or embedded executor as-is.
+     * equivalent to <code>addCommand(command)</code>
+     *
+     * @param command one or more command arguments to append
+     * @return this instance for fluent API usage
+     */
+    NExec command(String... command);
+
+    /**
      * Appends a path to the command to be executed.
      * The path is converted to a string representation and added to the command line.
      * This is useful for passing executable files or file arguments.
@@ -240,12 +245,32 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
     NExec addCommand(NPath path);
 
     /**
+     * Appends a path to the command to be executed.
+     * The path is converted to a string representation and added to the command line.
+     * This is useful for passing executable files or file arguments.
+     * equivalent to <code>addCommand(path)</code>
+     *
+     * @param path the path to append to the command
+     * @return this instance for fluent API usage
+     */
+    NExec command(NPath path);
+
+    /**
      * append command arguments
      *
      * @param command command
      * @return {@code this} instance
      */
     NExec addCommand(Collection<String> command);
+
+
+    /**
+     * append command arguments
+     * equivalent to <code>addCommand(command)</code>
+     * @param command command
+     * @return {@code this} instance
+     */
+    NExec command(Collection<String> command);
 
     /**
      * clear command
@@ -404,7 +429,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param in standard input source
      * @return {@code this} instance
      */
-    NExec setIn(NExecInput in);
+    NExec in(NExecInput in);
 
     /**
      * return new command output stream (standard output destination)
@@ -419,7 +444,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param out standard output destination
      * @return {@code this} instance
      */
-    NExec setOut(NExecOutput out);
+    NExec out(NExecOutput out);
 
     /**
      * grub output stream while redirecting error stream to the grabbed output
@@ -512,7 +537,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param err standard error destination
      * @return {@code this} instance
      */
-    NExec setErr(NExecOutput err);
+    NExec err(NExecOutput err);
 
     /**
      * return execution type
@@ -527,7 +552,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param executionType execution type
      * @return {@code this} instance
      */
-    NExec setExecutionType(NExecutionType executionType);
+    NExec executionType(NExecutionType executionType);
 
     /**
      * Configures the command to be executed as a system command.
@@ -536,6 +561,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return this instance for fluent API usage
      */
+    @NSetter
     NExec system();
 
     /**
@@ -545,6 +571,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return this instance for fluent API usage
      */
+    @NSetter
     NExec embedded();
 
     /**
@@ -554,6 +581,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return this instance for fluent API usage
      */
+    @NSetter
     NExec spawn();
 
     /**
@@ -563,6 +591,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return this instance for fluent API usage
      */
+    @NSetter
     NExec open();
 
     /**
@@ -582,7 +611,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param runAs user context to apply to command execution
      * @return this instance for fluent API usage
      */
-    NExec setRunAs(NRunAs runAs);
+    NExec runAs(NRunAs runAs);
 
     /**
      * Returns whether the command is in "dry-run" mode.
@@ -600,7 +629,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param dry {@code true} to enable dry-run mode, {@code false} otherwise
      * @return this instance for fluent API usage
      */
-    NExec setDry(Boolean dry);
+    NExec dry(Boolean dry);
 
     /**
      * Configures the command to execute with elevated privileges using sudo.
@@ -608,6 +637,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return this instance for fluent API usage
      */
+    @NSetter
     NExec sudo();
 
     /**
@@ -616,6 +646,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return this instance for fluent API usage
      */
+    @NSetter
     NExec root();
 
     /**
@@ -736,7 +767,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param connectionString target host connection string
      * @return this instance for fluent API usage
      */
-    NExec setConnectionString(String connectionString);
+    NExec connectionString(String connectionString);
 
     /**
      * Shortcut to set the connection string for execution.
@@ -761,7 +792,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param connectionString target host connection object
      * @return this instance for fluent API usage
      */
-    NExec setConnectionString(NConnectionString connectionString);
+    NExec connectionString(NConnectionString connectionString);
 
     /**
      * Redirects the standard error stream to the standard output stream.
@@ -789,6 +820,6 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @return this instance for fluent API usage
      * @since 0.8.9
      */
-    NExec setRawCommand(boolean rawCommand);
+    NExec rawCommand(boolean rawCommand);
 
 }
