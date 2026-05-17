@@ -75,8 +75,8 @@ public class ArtifactExecutorComponent implements NExecutorComponent {
                 .addCommand(app)
                 .setEnv(executionContext.getEnv())
                 .directory(executionContext.getDirectory())
-                .failFast()
-                .setExecutionType(executionContext.getExecutionType())
+                .failFast(true)
+                .executionType(executionContext.getExecutionType())
                 .run().exitCode();
     }
 

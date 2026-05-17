@@ -914,14 +914,11 @@ public class ProcessBuilder2 {
         return failFast;
     }
 
-    public ProcessBuilder2 setFailFast(boolean failFast) {
+    public ProcessBuilder2 failFast(boolean failFast) {
         this.failFast = failFast;
         return this;
     }
 
-    public ProcessBuilder2 setFailFast() {
-        return setFailFast(true);
-    }
 
     @Override
     public String toString() {

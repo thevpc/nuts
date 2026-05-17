@@ -73,7 +73,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 .setEnv(env)
                 .setDirectory(directory == null ? null : directory.toFile())
                 .setSleepMillis(sleep)
-                .setFailFast(failFast);
+                .failFast(failFast);
         pb.setIn(CoreIOUtils.validateIn(in));
         pb.setOut(CoreIOUtils.validateOut(out));
         pb.setErr(CoreIOUtils.validateErr(err));
