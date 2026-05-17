@@ -97,7 +97,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                     .copyFrom(executionContext)
                     .setDefinition(d.build())
                     .setExecutorOptions(z)
-                    .failFast()
+                    .failFast(true)
                     .temporary()
                     .build();
             return cc.exec(executionContext2);
@@ -126,7 +126,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                     .copyFrom(executionContext)
                     .setDefinition(d.build())
                     .setExecutorOptions(z)
-                    .failFast()
+                    .failFast(true)
                     .temporary()
                     .build();
             return cc.exec(executionContext2);

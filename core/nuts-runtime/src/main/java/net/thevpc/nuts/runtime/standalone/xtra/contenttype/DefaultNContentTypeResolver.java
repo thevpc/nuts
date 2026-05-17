@@ -139,7 +139,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                     try {
                         String c = NExec.of("file", "--mime-type", file.toString())
                                 .system()
-                                .failFast()
+                                .failFast(true)
                                 .getGrabbedOutString();
                         if (c != null) {
                             int i = c.lastIndexOf(':');
@@ -155,7 +155,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                     try {
                         String c = NExec.of("xdg-mime", "query", "filetype", file.toString())
                                 .system()
-                                .failFast()
+                                .failFast(true)
                                 .getGrabbedOutString();
                         if (c != null) {
                             int i = c.indexOf(':');

@@ -75,9 +75,9 @@ public class InstallIdCacheItem {
     public NDefinition getDefinition() {
         if (definition == null) {
             definition = NSearch.of(id)
-                    .failFast()
+                    .failFast(true)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .latest()
+                    .latest(true)
                     .getResultDefinitions()
                     .findFirst().get();
 
@@ -96,18 +96,18 @@ public class InstallIdCacheItem {
             definition =NSession.of().copy()
                     .setCached(false) // disable cache
                     .callWith(()-> NSearch.of(id)
-                            .failFast()
+                            .failFast(true)
                             .setRepositoryFilter(NRepositoryFilters.of().installedRepo().neg())
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                            .latest()
+                            .latest(true)
                             .getResultDefinitions()
                             .findFirst().get());
 
         }else {
             definition = NSearch.of(id)
-                    .failFast()
+                    .failFast(true)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .latest()
+                    .latest(true)
                     .getResultDefinitions()
                     .findFirst().get();
         }

@@ -48,7 +48,7 @@ public interface NWebResponse {
 
     boolean isOk();
 
-    NWebResponse failFast();
+    NWebResponse failFast(boolean failFast);
     boolean isClientError();
     boolean isServerError();
     boolean isRedirect();

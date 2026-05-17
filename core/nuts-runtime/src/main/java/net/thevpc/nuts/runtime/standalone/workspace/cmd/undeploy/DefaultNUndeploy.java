@@ -42,8 +42,8 @@ public class DefaultNUndeploy extends AbstractNUndeploy {
                     .setRepositoryFilter(
                             NRepositoryFilters.of().installedRepo().neg()
                     )
-                    .setDistinct(true)
-                    .failFast()
+                    .distinct(true)
+                    .failFast(true)
                     .getResultDefinitions().findFirst().get();
             NRepository repository1 = workspace
                     .getRepository(p.getRepositoryUuid()).get();

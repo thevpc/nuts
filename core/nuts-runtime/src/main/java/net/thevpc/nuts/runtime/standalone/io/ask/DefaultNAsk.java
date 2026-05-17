@@ -7,7 +7,6 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.platform.NEnv;
-import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
@@ -334,7 +333,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
         if (NApp.of().getId().orNull() != null) {
             try {
                 NDefinition def = NSearch.of().setId(NApp.of().getId().get())
-                        .setLatest(true).getResultDefinitions()
+                        .latest(true).getResultDefinitions()
                         .findFirst().orNull();
                 if (def != null) {
                     String n = def.getEffectiveDescriptor().get().getName();

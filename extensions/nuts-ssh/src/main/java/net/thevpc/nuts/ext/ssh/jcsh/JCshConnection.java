@@ -537,7 +537,7 @@ public class JCshConnection extends SshConnectionBase {
             }
             if (mkdirs) {
                 boolean off = isFailFast();
-                setFailFast(false);
+                failFast(false);
                 if (to.endsWith("/")) {
                     mkdir(to, true);
                 } else if (to.contains("/")) {
@@ -546,7 +546,7 @@ public class JCshConnection extends SshConnectionBase {
                         mkdir(p, true);
                     }
                 }
-                setFailFast(off);
+                failFast(off);
             }
             boolean ptimestamp = true;
 

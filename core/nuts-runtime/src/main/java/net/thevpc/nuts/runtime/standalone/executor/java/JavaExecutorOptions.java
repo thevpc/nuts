@@ -239,8 +239,8 @@ public final class JavaExecutorOptions {
                 nDefinitions.addAll(
                         se
                                 .setTransitive(true)
-                                .setDistinct(true)
-                                .setLatest(true)
+                                .distinct(true)
+                                .latest(true)
                                 .setInlineDependencies(true)
                                 .setDependencyFilter(dependencyFilters.byRunnable())
                                 .getResultDefinitions().toList()
@@ -623,7 +623,7 @@ public final class JavaExecutorOptions {
     }
 
     private void addNp(List<NClassLoaderNode> classPath, String value) {
-        NSearch ns = NSearch.of().setLatest(true);
+        NSearch ns = NSearch.of().latest(true);
         NRepositoryFilters nRepositoryFilters = NRepositoryFilters.of();
         for (String n : StringTokenizerUtils.splitDefault(value)) {
             if (!NBlankable.isBlank(n)) {
@@ -632,7 +632,7 @@ public final class JavaExecutorOptions {
         }
         for (NId nutsId : ns.getResultIds()) {
             NDefinition f = NSearch.of().addId(nutsId)
-                    .setLatest(true).getResultDefinitions().findFirst().get();
+                    .latest(true).getResultDefinitions().findFirst().get();
             classPath.add(NClassLoaderUtils.definitionToClassLoaderNodeSafer(f, nRepositoryFilters.installedRepo()));
         }
     }

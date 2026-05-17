@@ -187,7 +187,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                 .setDependencyFilter(getDependencyFilter())
                 .setRepositoryFilter(getRepositoryFilter())
                 .setIgnoreCurrentEnvironment(isIgnoreCurrentEnvironment())
-                .setLatest(true)
+                .latest(true)
                 ;
     }
 
@@ -254,7 +254,7 @@ public class MavenNDependencySolver implements NDependencySolver {
         return failFast;
     }
 
-    public MavenNDependencySolver setFailFast(boolean failFast) {
+    public MavenNDependencySolver failFast(boolean failFast) {
         this.failFast = failFast;
         return this;
     }

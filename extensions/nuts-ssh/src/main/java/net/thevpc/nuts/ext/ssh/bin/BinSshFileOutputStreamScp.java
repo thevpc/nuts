@@ -87,10 +87,10 @@ public class BinSshFileOutputStreamScp extends OutputStream {
             scp.addCommand("-oIdentityFile",identityFile);
         }
         scp
-                .setIn(NExecInput.ofNull())
-                .setOut(NExecOutput.ofNull())
-                .setErr(NExecOutput.ofNull())
-                .failFast()
+                .in(NExecInput.ofNull())
+                .out(NExecOutput.ofNull())
+                .err(NExecOutput.ofNull())
+                .failFast(true)
                 .run();
     }
 }

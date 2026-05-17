@@ -1374,8 +1374,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     CoreNIdUtils.checkShortId(installerId);
                     runnerFile = NSearch.of().setId(installerId)
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                            .setLatest(true)
-                            .setDistinct(true)
+                            .latest(true)
+                            .distinct(true)
                             .getResultDefinitions()
                             .findFirst().orNull();
 
@@ -1500,7 +1500,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         runWith(() -> {
             Map<NId, NDefinition> defs = new HashMap<>();
             NDependencyFilter dependencyRunFilter = NDependencyFilters.of().byRunnable();
-            NDefinition m = NFetch.of(id).setFailFast(false).setDependencyFilter(dependencyRunFilter).getResultDefinition();
+            NDefinition m = NFetch.of(id).failFast(false).setDependencyFilter(dependencyRunFilter).getResultDefinition();
             Map<String, String> a = new LinkedHashMap<>();
             a.put("configVersion", Nuts.getVersion().toString());
             a.put("id", id.getLongName());
@@ -1512,7 +1512,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (withDependencies) {
                 for (NDependency dependency : m.getDependencies().get()) {
                     if (!defs.containsKey(dependency.toId().getLongId())) {
-                        m = NFetch.of(id).setFailFast(false).setDependencyFilter(dependencyRunFilter).getResultDefinition();
+                        m = NFetch.of(id).failFast(false).setDependencyFilter(dependencyRunFilter).getResultDefinition();
                         defs.put(m.getId().getLongId(), m);
                     }
                 }

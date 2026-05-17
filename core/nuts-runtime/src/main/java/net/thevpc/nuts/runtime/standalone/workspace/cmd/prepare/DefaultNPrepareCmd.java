@@ -54,12 +54,12 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
         pushId(apiId, null);
         Set<NId> deps = new HashSet<>();
         deps.add(workspace.getRuntimeId());
-        deps.addAll(NSearch.of().addId("net.thevpc.nsh:nsh").setLatest(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
+        deps.addAll(NSearch.of().addId("net.thevpc.nsh:nsh").latest(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
 //                .setDependencies(true)
                 .getResultIds().toList());
         if(ids!=null){
             for (NId id : deps) {
-                deps.addAll(NSearch.of().addId(id).setLatest(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
+                deps.addAll(NSearch.of().addId(id).latest(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
 //                        .setDependencies(true)
                         .getResultIds().toList());
             }
@@ -72,14 +72,14 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
     }
 
     private void pushId(NId pid, NVersion apiIdVersion) {
-        NDefinition def = NSearch.of().addId(pid).setLatest(true).setTargetApiVersion(apiIdVersion).getResultDefinitions().findFirst().get();
+        NDefinition def = NSearch.of().addId(pid).latest(true).setTargetApiVersion(apiIdVersion).getResultDefinitions().findFirst().get();
         NPath apiJar = def.getContent().get();
         if (!runRemoteAsStringNoFail("ls " + remoteIdMavenJar(def.getApiId()))) {
             if (!isLocalhost()) {
                 String targetServer = getTargetServer();
                 NExec.of().addCommand("scp")
                         .addCommand(apiJar.toString()).addCommand(getValidUser() + "@" + targetServer + ":" + remoteIdMavenJar(def.getApiId()))
-                        .failFast().getGrabbedAllString();
+                        .failFast(true).getGrabbedAllString();
             } else {
                 NPath to = NPath.of(remoteIdMavenJar(def.getApiId()));
                 to.getParent().mkdirs();
@@ -157,7 +157,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
             String targetServer = getTargetServer();
             e.addCommand("ssh", remoteUser + "@" + targetServer);
         }
-        return e.addCommand(cmd).failFast().getGrabbedAllString();
+        return e.addCommand(cmd).failFast(true).getGrabbedAllString();
     }
 
 }

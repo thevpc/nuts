@@ -36,10 +36,10 @@ public class TestSpecial_ExecURLTest {
     public void testNtf2() {
         TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
-                .setConnectionString("ssh://vpc:a@192.168.1.36")
+                .connectionString("ssh://vpc:a@192.168.1.36")
                 //.addCommand("ls","-l")
                 .addCommand("nuts","info")
-                .failFast()
+                .failFast(true)
                 //.system()
                 .getGrabbedAllString();
         NOut.println(result);

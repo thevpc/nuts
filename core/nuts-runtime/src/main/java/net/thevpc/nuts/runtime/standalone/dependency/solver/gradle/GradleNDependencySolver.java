@@ -195,7 +195,7 @@ public class GradleNDependencySolver implements NDependencySolver {
                 .setDependencyFilter(getDependencyFilter())
                 .setRepositoryFilter(getRepositoryFilter())
                 .setIgnoreCurrentEnvironment(isIgnoreCurrentEnvironment())
-                .setLatest(true)
+                .latest(true)
                 ;
     }
 
@@ -262,7 +262,7 @@ public class GradleNDependencySolver implements NDependencySolver {
         return failFast;
     }
 
-    public GradleNDependencySolver setFailFast(boolean failFast) {
+    public GradleNDependencySolver failFast(boolean failFast) {
         this.failFast = failFast;
         return this;
     }

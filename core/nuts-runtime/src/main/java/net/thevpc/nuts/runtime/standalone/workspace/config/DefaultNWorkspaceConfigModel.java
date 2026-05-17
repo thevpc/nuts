@@ -1212,7 +1212,7 @@ public class DefaultNWorkspaceConfigModel {
     public NBootDef fetchBootDef(NId id, boolean content) {
         NDefinition nd = NFetch.of(id)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                .setFailFast(false).getResultDefinition();
+                .failFast(false).getResultDefinition();
         if (nd != null) {
             if (content && nd.getContent().isNotPresent()) {
                 //this is an unexpected behaviour, fail fast

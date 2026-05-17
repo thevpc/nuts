@@ -19,7 +19,7 @@ public interface NConnectionStringAware {
      * @param connectionString target host connection string
      * @return this instance for fluent API usage
      */
-    default NConnectionStringAware setConnectionString(String connectionString) {
+    default NConnectionStringAware connectionString(String connectionString) {
         throw new UnsupportedOperationException("Override in concrete interface");
     }
 
@@ -49,7 +49,7 @@ public interface NConnectionStringAware {
      * @param connectionString target host connection object
      * @return this instance for fluent API usage
      */
-    default NConnectionStringAware setConnectionString(NConnectionString connectionString) {
+    default NConnectionStringAware connectionString(NConnectionString connectionString) {
         throw new UnsupportedOperationException("Override in concrete interface");
     }
 }

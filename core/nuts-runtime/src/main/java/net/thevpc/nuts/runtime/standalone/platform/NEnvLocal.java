@@ -153,7 +153,7 @@ public class NEnvLocal extends NEnvBase {
             @Override
             public String apply(String[] cmd) {
                 return NExec.ofSystem(cmd)
-                        .failFast()
+                        .failFast(true)
                         .getGrabbedOutOnlyString();
             }
         });
@@ -165,7 +165,7 @@ public class NEnvLocal extends NEnvBase {
             @Override
             public String apply(String[] strings) {
                 return NExec.ofSystem(strings)
-                        .failFast()
+                        .failFast(true)
                         .getGrabbedOutOnlyString();
             }
         }, null);

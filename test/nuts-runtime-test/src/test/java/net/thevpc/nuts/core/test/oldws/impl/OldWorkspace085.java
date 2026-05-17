@@ -18,13 +18,13 @@ public class OldWorkspace085 extends OldWorkspace {
 
     public void upgrade() {
         NOut.println(NMsg.ofC("updating workspace %s in %s", version, ws));
-        NExec.of().setExecutionType(NExecutionType.SYSTEM)
+        NExec.of().executionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
                 .addCommand("--workspace=" + workspaceLocation)
                 .addCommand("--yes")
                 .addCommand("--verbose")
                 .addCommand("update")
-                .failFast()
+                .failFast(true)
                 .run();
     }
 
@@ -61,7 +61,7 @@ public class OldWorkspace085 extends OldWorkspace {
                 .addCommand("-!k")
                 .addCommand("--verbose")
                 .addCommand("---no-local-maven")
-                .failFast()
+                .failFast(true)
                 .run();
     }
 

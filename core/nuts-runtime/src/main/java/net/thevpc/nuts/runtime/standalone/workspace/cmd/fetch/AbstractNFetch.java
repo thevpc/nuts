@@ -20,7 +20,7 @@ public abstract class AbstractNFetch extends DefaultNQueryBaseOptions<NFetch> im
 
     public AbstractNFetch() {
         super("fetch");
-        failFast();
+        failFast(true);
     }
 
     @Override

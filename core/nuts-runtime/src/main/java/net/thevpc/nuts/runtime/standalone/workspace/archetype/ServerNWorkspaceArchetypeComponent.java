@@ -113,7 +113,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
 //        }
         if (initializeScripts || initializeLaunchers || installCompanions) {
             NId api = NFetch.of()
-                    .setId(workspace.getApiId()).setFailFast(false)
+                    .setId(workspace.getApiId()).failFast(false)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .getResultId();
             if (api != null) {

@@ -83,7 +83,7 @@ public final class NClassLoaderUtils {
             cc = NSearch.of(id)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     .setRepositoryFilter(repositoryFilter)
-                    .latest()
+                    .latest(true)
                     .getResultDefinitions()
                     .map(x->x.getContent().orNull())
                     .filter(x->x!=null)

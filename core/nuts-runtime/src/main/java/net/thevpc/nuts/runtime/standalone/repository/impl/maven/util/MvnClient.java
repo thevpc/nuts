@@ -40,7 +40,7 @@ public class MvnClient {
                             .setFetchStrategy(NFetchStrategy.ONLINE)
                             .addId(NET_VPC_APP_NUTS_MVN)
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                            .setInlineDependencies(true).setLatest(true).getResultDefinitions().findFirst().get();
+                            .setInlineDependencies(true).latest(true).getResultDefinitions().findFirst().get();
                     for (NId nutsId : NSearch.of().addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
                         NFetch.of(nutsId).setFetchStrategy(NFetchStrategy.ONLINE)
                                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
@@ -67,7 +67,7 @@ public class MvnClient {
         }
         try {
             NExec b = NExec.of()
-                    .failFast()
+                    .failFast(true)
                     .addCommand(
                             NET_VPC_APP_NUTS_MVN,
                             "--json",

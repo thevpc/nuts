@@ -76,14 +76,6 @@ public interface NPs extends NComponent, NConnectionStringAware {
      */
     boolean isFailFast();
 
-    /**
-     * update fail fast flag
-     *
-     * @param failFast value
-     * @return {@code this} instance
-     */
-    NPs setFailFast(boolean failFast);
-
     boolean isSupportedKillProcess();
 
     boolean killProcess(String processId);
@@ -96,12 +88,6 @@ public interface NPs extends NComponent, NConnectionStringAware {
      */
     NPs failFast(boolean failFast);
 
-    /**
-     * set fail fast flag
-     *
-     * @return {@code this} instance
-     */
-    NPs failFast();
 
     /**
      * update host connection string. when host is not blank, this connection
@@ -111,7 +97,7 @@ public interface NPs extends NComponent, NConnectionStringAware {
      * @return {@code this} instance
      */
     @Override
-    NPs setConnectionString(String host);
+    NPs connectionString(String host);
 
     /**
      * update host connection string. when host is not blank, this connection
@@ -121,7 +107,7 @@ public interface NPs extends NComponent, NConnectionStringAware {
      * @return {@code this} instance
      */
     @Override
-    NPs setConnectionString(NConnectionString host);
+    NPs connectionString(NConnectionString host);
 
     /**
      * update host connection string. when host is not blank, this connection

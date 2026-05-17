@@ -135,11 +135,10 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
         return (T) this;
     }
 
-    public T failFast() {
-        setFailFast(true);
+    public T failFast(boolean failFast) {
+        this.failFast = failFast;
         return (T) this;
     }
-
 //    public boolean isDependencies() {
 //        return dependencies;
 //    }
@@ -155,10 +154,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
         return failFast;
     }
 
-    public T setFailFast(boolean enable) {
-        this.failFast = enable;
-        return (T) this;
-    }
+
 
 //    public T addRepositories(Collection<String> values) {
 //        if (values != null) {
@@ -211,7 +207,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
         }
         switch (a.key()) {
             case "--failfast": {
-                return cmdLine.matcher().matchFlag((v) -> this.setFailFast(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.failFast(v.booleanValue())).anyMatch();
             }
             case "-r":
             case "--repository": {

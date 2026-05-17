@@ -174,9 +174,11 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     @Override
-    public NWebResponse failFast() {
-        if (isError()) {
-            throw new NWebResponseException(msg, msgCode, httpCode);
+    public NWebResponse failFast(boolean failFast) {
+        if(failFast) {
+            if (isError()) {
+                throw new NWebResponseException(msg, msgCode, httpCode);
+            }
         }
         return this;
     }

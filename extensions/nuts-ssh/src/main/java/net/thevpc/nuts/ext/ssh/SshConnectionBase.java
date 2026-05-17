@@ -47,15 +47,8 @@ public abstract class SshConnectionBase implements SshConnection {
         return failFast;
     }
 
-    public SshConnection failFast() {
-        return setFailFast(true);
-    }
 
-    public SshConnection sailFast(boolean failFast) {
-        return setFailFast(failFast);
-    }
-
-    public SshConnection setFailFast(boolean failFast) {
+    public SshConnection failFast(boolean failFast) {
         this.failFast = failFast;
         return this;
     }

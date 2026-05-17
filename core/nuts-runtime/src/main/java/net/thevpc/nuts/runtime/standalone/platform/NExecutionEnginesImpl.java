@@ -27,19 +27,19 @@ public class NExecutionEnginesImpl implements NExecutionEngines {
         return connectionString;
     }
 
-    public NExecutionEngines setConnectionString(String connectionString) {
+    public NExecutionEngines connectionString(String connectionString) {
         this.connectionString = NBlankable.isBlank(connectionString) ? null : NConnectionString.of(connectionString);
         return this;
     }
 
     @Override
     public NExecutionEngines at(String connectionString) {
-        return setConnectionString(connectionString);
+        return this.connectionString(connectionString);
     }
 
     @Override
     public NExecutionEngines at(NConnectionString connectionString) {
-        return setConnectionString(connectionString);
+        return connectionString(connectionString);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class NExecutionEnginesImpl implements NExecutionEngines {
     }
 
     @Override
-    public NExecutionEngines setConnectionString(NConnectionString connectionString) {
+    public NExecutionEngines connectionString(NConnectionString connectionString) {
         if (!NBlankable.isBlank(connectionString)) {
             this.connectionString = connectionString;
         } else {

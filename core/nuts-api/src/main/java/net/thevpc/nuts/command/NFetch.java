@@ -114,15 +114,6 @@ public interface NFetch extends NWorkspaceCmd {
     boolean isFailFast();
 
     /**
-     * set armed (or disarmed) fail safe mode. if true, null replaces
-     * NArtifactNotFoundException.
-     *
-     * @param enable if true, null replaces NArtifactNotFoundException.
-     * @return {@code this} instance
-     */
-    NFetch setFailFast(boolean enable);
-
-    /**
      * id to fetch
      *
      * @return id to fetch
@@ -337,7 +328,7 @@ public interface NFetch extends NWorkspaceCmd {
      */
     NFetch setDependencyFilter(String filter);
 
-    NFetch failFast();
+    NFetch failFast(boolean failFast);
 
     boolean isIgnoreCurrentEnvironment();
 

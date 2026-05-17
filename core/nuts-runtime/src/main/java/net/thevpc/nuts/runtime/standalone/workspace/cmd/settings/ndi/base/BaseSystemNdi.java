@@ -194,7 +194,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             NDefinition fetched = null;
             if (nid.getVersion().isBlank()) {
                 fetched = NSearch.of()
-                        .addId(options.getId()).setLatest(true).getResultDefinitions().findFirst().get();
+                        .addId(options.getId()).latest(true).getResultDefinitions().findFirst().get();
                 nid = fetched.getId().getShortId();
                 //nutsId=fetched.getId().getLongNameId();
             }
@@ -430,7 +430,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     private NDefinition loadIdDefinition(NId nid) {
-        return NSearch.of().addId(nid).setLatest(true).setDistinct(true).getResultDefinitions().findSingleton().get();
+        return NSearch.of().addId(nid).latest(true).distinct(true).getResultDefinitions().findSingleton().get();
     }
 
     public NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target) {
@@ -736,7 +736,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
         NDefinition appDef = NSearch.of(appId)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                .setLatest(true).setDistinct(true).getResultDefinitions()
+                .latest(true).distinct(true).getResultDefinitions()
                 .findSingleton().get();
         String descAppIcon = resolveBestIcon(appDef.getId(),appDef.getDescriptor().getIcons());
         if (descAppIcon == null) {
@@ -799,8 +799,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public Path getShortcutPath(NdiScriptOptions options) {
         NDefinition appDef = NSearch.of()
                 .addId(options.getId())
-                .setLatest(true)
-                .setDistinct(true)
+                .latest(true)
+                .distinct(true)
                 .getResultDefinitions()
                 .findSingleton().get();
 
@@ -813,8 +813,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         String apiVersion = options.getNutsApiVersion().toString();
         NAssert.requireNamedNonBlank(apiVersion, "nuts-api version to link to");
         NId apiId = NWorkspace.of().getApiId().builder().setVersion(apiVersion).build();
-        NDefinition apiDefinition = NSearch.of().addId(apiId).failFast().latest()
-                .distinct()
+        NDefinition apiDefinition = NSearch.of().addId(apiId).failFast(true).latest(true)
+                .distinct(true)
                 .getResultDefinitions()
                 .findSingleton().get();
 

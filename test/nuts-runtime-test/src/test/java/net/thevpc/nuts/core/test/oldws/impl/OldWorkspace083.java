@@ -18,13 +18,13 @@ public class OldWorkspace083 extends OldWorkspace {
 
     public void upgrade() {
         NOut.println(NMsg.ofC("updating workspace %s in %s", version, ws));
-        NExec.of().setExecutionType(NExecutionType.SYSTEM)
+        NExec.of().executionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
                 .addCommand("--workspace=" + workspaceLocation)
                 .addCommand("--yes")
                 .addCommand("--verbose")
                 .addCommand("update")
-                .failFast()
+                .failFast(true)
                 .run();
     }
 
@@ -32,7 +32,7 @@ public class OldWorkspace083 extends OldWorkspace {
     public void installWs() {
         downloadNutsJar();
         NOut.println(NMsg.ofC("booting workspace %s in %s", version, ws));
-        NExec.of().setExecutionType(NExecutionType.SYSTEM)
+        NExec.of().executionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
                 //disable creating of bashrc, etc...
                 .addCommand("--workspace=" + workspaceLocation)
@@ -48,7 +48,7 @@ public class OldWorkspace083 extends OldWorkspace {
                 .addCommand("-byZSK")
                 .addCommand("-!k")
                 .addCommand("--verbose")
-                .failFast()
+                .failFast(true)
                 .run();
     }
 

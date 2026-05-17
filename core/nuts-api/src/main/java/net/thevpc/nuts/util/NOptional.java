@@ -352,7 +352,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * Example:
      * <pre>
      *   result = loadConfig()
-     *       .failFast()  // Throw now if config load failed
+     *       .ifErrorThrow()  // Throw now if config load failed
      *       .map(cfg -> cfg.getDatabase())
      *       .map(db -> expensiveQuery(db))
      *       .orNull();
@@ -361,7 +361,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return this optional unchanged if not in error state
      * @throws RuntimeException (NErrorOptionalException) if this optional is in error state
      */
-    default NOptional<T> failFast() {
+    default NOptional<T> ifErrorThrow() {
         if (isError()) {
             get();
         }

@@ -458,7 +458,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
         NDefinition d0 = NSearch.of().addId(id)
                 .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
                 .setDependencyFilter(NDependencyFilters.of().byOptional(false))
-                .setFailFast(false)//.setDefaultVersions(true)
+                .failFast(false)//.setDefaultVersions(true)
                 .sort(DEFAULT_THEN_LATEST_VERSION_FIRST)
                 .getResultDefinitions()
                 .findFirst().orNull();
@@ -474,8 +474,8 @@ public class DefaultNUpdate extends AbstractNUpdate {
         NSearch sc = NSearch.of()
                 .setFetchStrategy(NFetchStrategy.ANYWHERE)
                 .addId(d0.getId().getShortId())
-                .setFailFast(false)
-                .setLatest(true)
+                .failFast(false)
+                .latest(true)
                 .addDefinitionFilter(NDefinitionFilters.of().byLockedIds(getLockedIds().toArray(new NId[0])))
                 .addRepositoryFilter(NRepositoryFilters.of().installedRepo().neg())
 //                .setDependencies(true)
@@ -715,13 +715,13 @@ public class DefaultNUpdate extends AbstractNUpdate {
                     newId = NSearch.of()
                             .setFetchStrategy(NFetchStrategy.ANYWHERE)
                             .setRepositoryFilter(getRepositoryFilter())
-                            .addId(NConstants.Ids.NUTS_API + "#" + v).setLatest(true).getResultIds()
+                            .addId(NConstants.Ids.NUTS_API + "#" + v).latest(true).getResultIds()
                             .findFirst().orNull();
                     NId finalNewId1 = newId;
                     newFile = newId == null ? null :
                             session.copy().setFetchStrategy(NFetchStrategy.ONLINE)
                                     .callWith(() ->
-                                            latestOnlineDependencies().setFailFast(false)
+                                            latestOnlineDependencies().failFast(false)
                                                     .setId(finalNewId1).getResultDefinition()
                                     );
                 } catch (NArtifactNotFoundException ex) {
@@ -755,7 +755,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
                             .setRuntime(true)
                             .setTargetApiVersion(bootApiVersion)
                             .addDefinitionFilter(NDefinitionFilters.of().byLockedIds(getLockedIds().toArray(new NId[0])))
-                            .setLatest(true)
+                            .latest(true)
                             .sort(LATEST_VERSION_FIRST);
                     newId = se.getResultIds()
                             .findFirst().orNull();
@@ -764,7 +764,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
 
                             session.copy().setFetchStrategy(NFetchStrategy.ONLINE)
                                     .callWith(() -> latestOnlineDependencies().setId(finalNewId)
-                                            .setFailFast(false)
+                                            .failFast(false)
                                             .getResultDefinition()
                                     );
                 } catch (NArtifactNotFoundException ex) {

@@ -153,14 +153,14 @@ public class CoreNIdUtils {
         NId foundRT = NSearch.of()
                 .setFetchStrategy(NFetchStrategy.OFFLINE)
                 .addId(NId.getRuntime("").get())
-                .setLatest(true)
+                .latest(true)
                 .setTargetApiVersion(NVersion.get(apiVersion).get())
                 .getResultIds().
                 findFirst().orNull();
         NSession session = workspace.currentSession();
         if (foundRT == null && session.getFetchStrategy().orDefault() != NFetchStrategy.OFFLINE) {
             foundRT = NSearch.of().addId(NId.getRuntime("").get())
-                    .setLatest(true)
+                    .latest(true)
                     .setTargetApiVersion(NVersion.get(apiVersion).get())
                     .getResultIds().
                     findFirst().orNull();

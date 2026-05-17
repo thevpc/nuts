@@ -94,8 +94,8 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                     cmd.addExecutorOptions("--nuts-auto-install=false");
                 }
                 cmd.addCommand(executionContext.getArguments())
-                        .setExecutionType(NWorkspace.of().getBootOptions().getExecutionType().orNull())
-                        .failFast()
+                        .executionType(NWorkspace.of().getBootOptions().getExecutionType().orNull())
+                        .failFast(true)
                         .run();
             }
         } else {
@@ -117,12 +117,12 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                 NExec.of()
                         .setCommandDefinition(def2.build())
                         .addCommand(eargs)
-                        .setExecutionType(NWorkspace.of().getBootOptions().getExecutionType().orNull())
-                        .setExecutionType(
+                        .executionType(NWorkspace.of().getBootOptions().getExecutionType().orNull())
+                        .executionType(
                                 NConstants.Ids.NSH.equals(def2.getId().getShortName()) ?
                                         NExecutionType.EMBEDDED : NExecutionType.SPAWN
                         )
-                        .failFast()
+                        .failFast(true)
                         .run();
             }
         }

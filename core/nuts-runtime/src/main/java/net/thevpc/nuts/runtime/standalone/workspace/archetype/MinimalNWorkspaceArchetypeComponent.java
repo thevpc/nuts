@@ -79,7 +79,7 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         if (initializeScripts || initializeLaunchers || installCompanions) {
             NId api = NFetch.of().setId(workspace.getApiId())
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .setFailFast(false).getResultId();
+                    .failFast(false).getResultId();
             if (api != null) {
                 NWorkspaceUtils nWorkspaceUtils = NWorkspaceUtils.of();
                 if (initializeScripts || initializeLaunchers) {

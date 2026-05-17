@@ -81,7 +81,7 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
                 }
                 NChronometer ch = NChronometer.of();
                 NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("searching dependency %s...", id).asConfig().withIntent(NMsgIntent.PROGRESS));
-                List<NDefinition> d = NSearch.of(id.toId()).latest()
+                List<NDefinition> d = NSearch.of(id.toId()).latest(true)
                         .setInlineDependencies(true)
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDefinitions().toList();

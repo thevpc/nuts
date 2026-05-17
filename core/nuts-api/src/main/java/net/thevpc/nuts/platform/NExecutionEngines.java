@@ -23,7 +23,7 @@ public interface NExecutionEngines extends NComponent, NConnectionStringAware {
      * @return this instance for fluent API usage
      */
     @Override
-    NExecutionEngines setConnectionString(String connectionString);
+    NExecutionEngines connectionString(String connectionString);
 
     /**
      * Shortcut to set the connection string for execution.
@@ -51,7 +51,7 @@ public interface NExecutionEngines extends NComponent, NConnectionStringAware {
      * @return this instance for fluent API usage
      */
     @Override
-    NExecutionEngines setConnectionString(NConnectionString connectionString);
+    NExecutionEngines connectionString(NConnectionString connectionString);
 
 
     boolean addExecutionEngine(NExecutionEngineLocation location);

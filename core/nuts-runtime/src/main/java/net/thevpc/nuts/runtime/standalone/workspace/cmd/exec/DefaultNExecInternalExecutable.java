@@ -33,7 +33,7 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
             return NExecutionException.SUCCESS;
         }
         return getExecCommand().copy().clearCommand().configure(false, args)
-                .failFast().run()
+                .failFast(true).run()
                 .exitCode();
     }
 
@@ -47,8 +47,8 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
         getExecCommand()
                 .copy()
                 .clearCommand().configure(false, args)
-                .failFast()
-                .setDry(true)
+                .failFast(true)
+                .dry(true)
                 .run();
 
     }

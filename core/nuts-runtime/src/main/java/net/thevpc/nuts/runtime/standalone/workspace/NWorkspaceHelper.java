@@ -89,9 +89,9 @@ public class NWorkspaceHelper {
                     .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
             );
             NExec execCmd = NExec.of()
-                    .setExecutionType(info2.getExecutionType().orNull())
-                    .setRunAs(info2.getRunAs().orNull())
-                    .failFast();
+                    .executionType(info2.getExecutionType().orNull())
+                    .runAs(info2.getRunAs().orNull())
+                    .failFast(true);
             List<String> executorOptions = info2.getExecutorOptions().orNull();
             if (executorOptions != null) {
                 execCmd.configure(true, executorOptions.toArray(new String[0]));

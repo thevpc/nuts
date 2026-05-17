@@ -309,5 +309,5 @@ public interface NInstall extends NWorkspaceCmd {
 
     boolean isFailFast();
 
-    NInstall setFailFast(boolean failFast);
+    NInstall failFast(boolean failFast);
 }

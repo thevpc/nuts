@@ -47,7 +47,7 @@ public class ExecTest {
 //                .setRepositoryFilter("maven-central")
 //                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
 //                .setFetchStrategy(NFetchStrategy.REMOTE)
-                .setLatest(true);
+                .latest(true);
         NOut.println(q.getResultQueryPlan());
         List<NId> nutsIds = q
                 .getResultIds()
@@ -80,7 +80,7 @@ public class ExecTest {
                             "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
 //                "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar",
                             "--version"
-                    ).grabAll().failFast().getGrabbedOutString();
+                    ).grabAll().failFast(true).getGrabbedOutString();
             TestUtils.println("Result:");
             TestUtils.println(result);
         }
@@ -119,7 +119,7 @@ public class ExecTest {
                         "https://search.maven.org/remotecontent?filepath=net/java/sezpoz/demo/app/1.6/app-1.6.jar"
 //                "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
 //                "--version"
-                ).grabAll().failFast().getGrabbedOutString();
+                ).grabAll().failFast(true).getGrabbedOutString();
         TestUtils.println("Result:");
         TestUtils.println(result);
         Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
@@ -131,7 +131,7 @@ public class ExecTest {
         String result = NExec.of()
                 //.addExecutorOption()
                 .addCommand(NConstants.Ids.NSH, "-c", "ls")
-                .grabAll().failFast().getGrabbedOutString();
+                .grabAll().failFast(true).getGrabbedOutString();
         TestUtils.println("Result:");
         TestUtils.println(result);
         Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
@@ -173,9 +173,9 @@ public class ExecTest {
     private void runUsingNuts(String... args) {
         NOut.println("================= runUsingNuts");
         NExec e = NExec.of(args)
-                .setIn(NExecInput.ofNull())
-                .setErr(NExecOutput.ofGrabMem())
-                .setOut(NExecOutput.ofGrabMem())
+                .in(NExecInput.ofNull())
+                .err(NExecOutput.ofGrabMem())
+                .out(NExecOutput.ofGrabMem())
                 .run();
         System.out.println(e.exitCode());
         System.out.println("============= OUT");

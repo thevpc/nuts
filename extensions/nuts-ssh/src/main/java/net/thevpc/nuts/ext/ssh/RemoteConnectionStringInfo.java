@@ -128,7 +128,7 @@ public class RemoteConnectionStringInfo {
         int e;
         NSession session = NSession.of();
         try (MyNExecTargetCommandContext d = new MyNExecTargetCommandContext(
-                NExec.of().setConnectionString(target).system(),
+                NExec.of().connectionString(target).system(),
                 commExec, target, cmd, out, err)) {
             e = commExec.exec(d);
         } catch (RuntimeException ex) {

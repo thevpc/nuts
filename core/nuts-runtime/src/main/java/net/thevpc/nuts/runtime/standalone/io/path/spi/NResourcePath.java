@@ -116,7 +116,7 @@ public class NResourcePath implements NPathSPI {
                 String loc = location;
                 ClassLoader resultClassLoader = NSearch.of().addIds(
                                 this.ids.toArray(new NId[0])
-                        ).setLatest(true)
+                        ).latest(true)
                         .setDependencyFilter(
                                 NDependencyFilters.of()
                                         .byRunnable()

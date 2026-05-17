@@ -39,6 +39,6 @@ import java.lang.annotation.Target;
  * @since 0.5.4
  */
 @Retention(RetentionPolicy.SOURCE)
-@Target({ElementType.METHOD, ElementType.TYPE, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.LOCAL_VARIABLE, ElementType.PACKAGE, ElementType.TYPE_PARAMETER, ElementType.TYPE_USE})
+@Target({ElementType.METHOD, ElementType.PARAMETER, ElementType.CONSTRUCTOR})
 public @interface NSetter {
 }

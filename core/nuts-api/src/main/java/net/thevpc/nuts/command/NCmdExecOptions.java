@@ -143,7 +143,7 @@ public class NCmdExecOptions implements Serializable {
      * @param failFast new value
      * @return {@code this} instance
      */
-    public NCmdExecOptions setFailFast(boolean failFast) {
+    public NCmdExecOptions failFast(boolean failFast) {
         this.failFast = failFast;
         return this;
     }

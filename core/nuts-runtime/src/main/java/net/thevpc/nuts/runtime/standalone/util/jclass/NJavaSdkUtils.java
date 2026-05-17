@@ -614,7 +614,7 @@ public class NJavaSdkUtils {
                 NExec cmd = NExec.of()
                         .system()
                         .addCommand(javaExePath.toString(), "-version")
-                        .grabAll().failFast().run();
+                        .grabAll().failFast(true).run();
                 cmdRresult = cmd.exitCode();
                 cmdOutputString = cmd.getGrabbedOutString();
                 if (!cmdOutputString.isEmpty()) {

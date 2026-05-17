@@ -8,8 +8,6 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NShellFamily;
-import net.thevpc.nuts.platform.NStoreScope;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.AbstractScriptBuilder;
@@ -117,9 +115,9 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     public String buildString() {
         try {
             //Path script = getScriptFile(name);
-            NDefinition anyIdDef = NSearch.of().addId(getAnyId()).setLatest(true)
+            NDefinition anyIdDef = NSearch.of().addId(getAnyId()).latest(true)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .setDistinct(true)
+                    .distinct(true)
                     .getResultDefinitions()
                     .findSingleton().get();
             NId anyId = anyIdDef.getId();

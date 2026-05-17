@@ -66,9 +66,9 @@ public class DefaultNCustomCommand implements NCustomCmd {
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
                     .directory(options.getDirectory())
-                    .failFast()
+                    .failFast(true)
                     .setEnv(options.getEnv())
-                    .setExecutionType(options.getExecutionType())
+                    .executionType(options.getExecutionType())
                     .run()
                     .exitCode();
 
@@ -85,9 +85,9 @@ public class DefaultNCustomCommand implements NCustomCmd {
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
                     .directory(options.getDirectory())
-                    .failFast()
+                    .failFast(true)
                     .setEnv(options.getEnv())
-                    .setExecutionType(options.getExecutionType())
+                    .executionType(options.getExecutionType())
                     .run()
                     .exitCode();
 
@@ -107,7 +107,7 @@ public class DefaultNCustomCommand implements NCustomCmd {
                 return NText.ofPlain(
                         NExec.of()
                                 .addCommand(helpCommand)
-                                .setFailFast(false)
+                                .failFast(false)
                                 .run()
                                 .getGrabbedAllString()
                 );

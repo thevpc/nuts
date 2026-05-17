@@ -96,7 +96,7 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
         return failFast;
     }
 
-    public NInstall setFailFast(boolean failFast) {
+    public NInstall failFast(boolean failFast) {
         this.failFast = failFast;
         return this;
     }

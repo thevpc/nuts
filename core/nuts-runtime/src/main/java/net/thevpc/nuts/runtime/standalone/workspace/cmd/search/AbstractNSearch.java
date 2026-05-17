@@ -35,7 +35,6 @@ import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NErr;
-import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
@@ -325,15 +324,11 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
-    public NSearch setDistinct(boolean distinct) {
+    public NSearch distinct(boolean distinct) {
         this.distinct = distinct;
         return this;
     }
 
-    @Override
-    public NSearch distinct() {
-        return setDistinct(true);
-    }
 
     @Override
     public NVersion getTargetApiVersion() {
@@ -363,14 +358,9 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
-    public NSearch setLatest(boolean enable) {
+    public NSearch latest(boolean enable) {
         this.latest = enable;
         return this;
-    }
-
-    @Override
-    public NSearch latest() {
-        return setLatest(true);
     }
 
     @Override
@@ -647,20 +637,20 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
             case "-L":
             case "--latest":
             case "--latest-versions": {
-                return cmdLine.matcher().matchFlag((v) -> this.setLatest(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.latest(v.booleanValue())).anyMatch();
             }
             case "--repo": {
                 return cmdLine.matcher().matchEntry((v) -> this.setRepositoryFilter(NRepositoryFilters.of().bySelector(NStringUtils.split(v.stringValue(), ";,|", true, true).toArray(new String[0])))).anyMatch();
             }
             case "--distinct": {
-                return cmdLine.matcher().matchFlag((v) -> this.setDistinct(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.distinct(v.booleanValue())).anyMatch();
             }
             case "--default":
             case "--default-versions": {
                 return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byDefaultVersion(v.getBooleanValue().onError(false).orElse(null)))).anyMatch();
             }
             case "--duplicates": {
-                return cmdLine.matcher().matchFlag((v) -> this.setDistinct(!v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.distinct(!v.booleanValue())).anyMatch();
             }
             case "-s":
             case "--sort": {

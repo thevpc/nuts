@@ -408,15 +408,6 @@ public interface NSearch extends NWorkspaceCmd {
     boolean isFailFast();
 
     /**
-     * set armed (or disarmed) fail safe mode. if true, null replaces
-     * NArtifactNotFoundException.
-     *
-     * @param enable if true, null replaces NArtifactNotFoundException.
-     * @return {@code this} instance
-     */
-    NSearch setFailFast(boolean enable);
-
-    /**
      * result comparator
      *
      * @return result comparator
@@ -436,9 +427,7 @@ public interface NSearch extends NWorkspaceCmd {
      * @param distinct skip duplicates
      * @return {@code this}
      */
-    NSearch setDistinct(boolean distinct);
-
-    NSearch distinct();
+    NSearch distinct(boolean distinct);
 
     /**
      * target api version
@@ -488,9 +477,7 @@ public interface NSearch extends NWorkspaceCmd {
      * @param enable enable latest artifact id filter
      * @return {@code this} instance
      */
-    NSearch setLatest(boolean enable);
-
-    NSearch latest();
+    NSearch latest(boolean enable);
 
     /**
      * create fetch command initialized with this instance options.
@@ -599,7 +586,7 @@ public interface NSearch extends NWorkspaceCmd {
      */
     NSearch setInlineDependencies(boolean enable);
 
-    NSearch failFast();
+    NSearch failFast(boolean failFast);
 
 //    /**
 //     * true if dependencies as list is activated

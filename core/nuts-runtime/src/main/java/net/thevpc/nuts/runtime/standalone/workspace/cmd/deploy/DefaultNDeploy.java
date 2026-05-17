@@ -120,7 +120,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
         }
         if (!ids.isEmpty()) {
             for (NId nutsId : NSearch.of()
-                    .addIds(ids.toArray(new NId[0])).setLatest(true).setRepositoryFilter(NRepositoryFilters.of().bySelector(fromRepository)).getResultIds()) {
+                    .addIds(ids.toArray(new NId[0])).latest(true).setRepositoryFilter(NRepositoryFilters.of().bySelector(fromRepository)).getResultIds()) {
                 NDefinition fetched = NFetch.of(nutsId)
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDefinition();

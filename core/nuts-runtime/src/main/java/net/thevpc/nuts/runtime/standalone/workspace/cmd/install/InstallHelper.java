@@ -409,7 +409,7 @@ public class InstallHelper {
             if (def.getContent().isPresent() || def.getDescriptor().isNoContent()) {
                 //should change def to reflect install location!
                 NExecutionContextBuilder cc = ws.createExecutionContext()
-                        .setDefinition(def).setArguments(args.toArray(new String[0])).failFast().setTemporary(false)
+                        .setDefinition(def).setArguments(args.toArray(new String[0])).failFast(true).temporary(false)
                         .setRunAs(NRunAs.currentUser())// install or update always uses current user
                         ;
                 NArtifactCall installer = def.getDescriptor().getInstaller();
@@ -463,7 +463,7 @@ public class InstallHelper {
                 NFetch fetch2 = NFetch.of(executionContext.getDefinition().getId())
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
-                        .failFast();
+                        .failFast(true);
                 if (def.getDependencies().isPresent()
                         && def.getDependencies().get().filter() != null
                 ) {
@@ -705,21 +705,21 @@ public class InstallHelper {
                     oldDef = NFetch.of(NId.getApi(Nuts.getVersion()).get())
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .setFetchStrategy(NFetchStrategy.ONLINE)
-                            .setFailFast(false).getResultDefinition();
+                            .failFast(false).getResultDefinition();
                     break;
                 }
                 case RUNTIME: {
                     oldDef = NFetch.of(ws.getRuntimeId())
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .setFetchStrategy(NFetchStrategy.ONLINE)
-                            .setFailFast(false).getResultDefinition();
+                            .failFast(false).getResultDefinition();
                     break;
                 }
                 default: {
                     oldDef = NSearch.of().addId(def.getId().getShortId())
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
-                            .setFailFast(false).getResultDefinitions()
+                            .failFast(false).getResultDefinitions()
                             .findFirst().orNull();
                     break;
                 }
@@ -808,8 +808,8 @@ public class InstallHelper {
                 NExecutionContext executionContext = ws.createExecutionContext()
                         .setDefinition(definition)
                         .setArguments(buildArgs(def).toArray(new String[0]))
-                        .failFast()
-                        .setTemporary(false)
+                        .failFast(true)
+                        .temporary(false)
                         .setRunAs(NRunAs.currentUser())//uninstall always uses current user
                         .build();
                 installerComponent.uninstall(executionContext, eraseFiles);

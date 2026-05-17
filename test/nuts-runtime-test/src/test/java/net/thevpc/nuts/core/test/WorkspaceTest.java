@@ -444,11 +444,11 @@ public class WorkspaceTest {
             NId nshId = null;
             try {
                 nshId = NSearch.of("nsh").setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
-                        .setDistinct(true).getResultIds()
+                        .distinct(true).getResultIds()
                         .findSingleton().get();
             } catch (Exception ex) {
                 nshId = NSearch.of("nsh").setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
-                        .setDistinct(true).getResultIds()
+                        .distinct(true).getResultIds()
                         .findSingleton().get();
             }
             Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));

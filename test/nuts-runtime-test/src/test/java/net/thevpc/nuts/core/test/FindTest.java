@@ -30,7 +30,7 @@ public class FindTest {
 
     @Test
     public void find1() throws Exception {
-        List<NId> def = NSearch.of().addId("nuts").setLatest(true).setFailFast(false)
+        List<NId> def = NSearch.of().addId("nuts").latest(true).failFast(false)
 //                .repository("maven-local")
                 .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true).and(NDefinitionFilters.of().byDefaultVersion(true)))
                 .getResultIds().toList();
@@ -41,7 +41,7 @@ public class FindTest {
     @Test()
     public void find2() {
         NStream<NId> result = NSearch.of()
-                .setLatest(true).addId(NConstants.Ids.NUTS_API).getResultIds();
+                .latest(true).addId(NConstants.Ids.NUTS_API).getResultIds();
         //There is one result because nuts id is always installed
         Assertions.assertTrue(result.count()>0);
     }
@@ -49,15 +49,15 @@ public class FindTest {
     @Test()
     public void find3() {
         NStream<NId> result = NSearch.of()
-                .setLatest(true).addId(NConstants.Ids.NUTS_API).getResultIds();
+                .latest(true).addId(NConstants.Ids.NUTS_API).getResultIds();
         Assertions.assertTrue(result.count() > 0);
     }
 
     @Test()
     public void find4() throws Exception {
 
-        List<NId> result1 = NSearch.of().setLatest(true).addId("nuts-runtime").getResultIds().toList();
-        List<NId> result2 = NSearch.of().setLatest(false).addId("nuts-runtime").getResultIds().toList();
+        List<NId> result1 = NSearch.of().latest(true).addId("nuts-runtime").getResultIds().toList();
+        List<NId> result2 = NSearch.of().latest(false).addId("nuts-runtime").getResultIds().toList();
         TestUtils.println(result1);
         TestUtils.println(result2);
         Assertions.assertTrue(result1.size() > 0);
@@ -85,15 +85,15 @@ public class FindTest {
                 .setDependencyFilter(
                         NDependencyFilters.of().byOptional(false)
                 )
-                .setInlineDependencies(true).failFast()
-                .setLatest(true).getResultDefinitions().findFirst().get();
+                .setInlineDependencies(true).failFast(true)
+                .latest(true).getResultDefinitions().findFirst().get();
         TestUtils.println(def);
     }
 
     @Test
     public void find7() throws Exception {
         NStream<NId> resultIds = NSearch.of().addId("net.thevpc.scholar.doovos.kernel:doovos-kernel-core")
-                .setLatest(true).setInlineDependencies(true).getResultIds();
+                .latest(true).setInlineDependencies(true).getResultIds();
         TestUtils.println(resultIds.toList());
     }
 

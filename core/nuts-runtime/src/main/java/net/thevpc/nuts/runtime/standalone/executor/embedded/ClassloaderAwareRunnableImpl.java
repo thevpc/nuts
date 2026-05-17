@@ -1,9 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
-import net.thevpc.nuts.app.NApp;
-import net.thevpc.nuts.app.NAppInitInfo;
-import net.thevpc.nuts.app.NApplication;
-import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionContext;
@@ -65,8 +61,8 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                 NExec.of()
                         .addCommand(appArgs)
                         .addExecutorOptions(o.getExecutorOptions().orNull())
-                        .setExecutionType(o.getExecutionType().orNull())
-                        .failFast()
+                        .executionType(o.getExecutionType().orNull())
+                        .failFast(true)
                         .run();
                 return null;
             }

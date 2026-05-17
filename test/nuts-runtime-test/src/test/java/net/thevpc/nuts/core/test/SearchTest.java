@@ -41,7 +41,7 @@ public class SearchTest {
 //                .setRepositoryFilter("maven-central")
 //                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
 //                .setFetchStrategy(NFetchStrategy.REMOTE)
-                .setLatest(true);
+                .latest(true);
         for (NDefinition d : q.getResultDefinitions().toList()) {
             NPath c = d.getContent().orNull();
             NOut.println(c);
@@ -58,7 +58,7 @@ public class SearchTest {
 //                .setRepositoryFilter("maven-central")
 //                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
 //                .setFetchStrategy(NFetchStrategy.REMOTE)
-                .setLatest(true);
+                .latest(true);
         List<NDefinition> list = q.getResultDefinitions().toList();
         for (NDefinition d : list) {
             NPath c = d.getContent().orNull();

@@ -213,7 +213,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     cmdLine.matcher().matchTrueFlag((v) -> {
                         session.setConfirm(NConfirmationMode.YES);
                         for (NId companion : NExtensions.of().getCompanionIds()) {
-                            d.idsToInstall.add(NSearch.of().addId(companion).setLatest(true).getResultIds().findFirst().get().getLongName());
+                            d.idsToInstall.add(NSearch.of().addId(companion).latest(true).getResultIds().findFirst().get().getLongName());
                             d.missingAnyArgument = false;
                         }
                     }).anyMatch();

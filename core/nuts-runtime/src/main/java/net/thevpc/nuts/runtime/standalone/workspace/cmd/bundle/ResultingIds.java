@@ -88,8 +88,8 @@ class ResultingIds {
                 return this;
             }
             List<NDefinition> list = NSearch.of(id)
-                    .setLatest(true)
-                    .setDistinct(true)
+                    .latest(true)
+                    .distinct(true)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable(false, true))
                     .setInlineDependencies(true)
                     .setIgnoreCurrentEnvironment(true)
