@@ -59,7 +59,6 @@ import org.jline.utils.AttributedStyle;
 @NComponentScope(NScopeType.PROTOTYPE)
 public class NJLineTerminal extends NSystemTerminalBaseImpl {
 
-    private static final Logger LOG = Logger.getLogger(NJLineTerminal.class.getName());
     private Terminal terminal;
     private LineReader reader;
     private NPrintStream out;
@@ -68,7 +67,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private NCmdLineAutoCompleteResolver autoCompleteResolver;
     private NCmdLineHistory commandHistory;
     private String commandHighlighter;
-    protected boolean lastWasProgress=false;
+    protected boolean lastWasProgress = false;
 
     public NJLineTerminal() {
         super();
@@ -77,7 +76,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private AttributedString toAttributedString(NText n, NTextStyles styles) {
         switch (n.type()) {
             case PLAIN: {
-                styles = NTexts.of().getTheme().toBasicStyles(styles,false);
+                styles = NTexts.of().getTheme().toBasicStyles(styles, false);
                 NTextPlain p = (NTextPlain) n;
                 if (styles.isPlain()) {
                     return new AttributedString(p.getValue());
@@ -200,14 +199,33 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         builder.streams(System.in, System.out);
         builder.system(true);
         builder.dumb(false);
-
+        ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
-            terminal = builder.build();
-        } catch (Throwable ex) {
-            //unable to create system terminal
-            //Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UncheckedIOException(new IOException("unable to create JLine system terminal: " + ex.getMessage(), ex));
+            // ServiceLoader uses Thread.currentThread().getContextClassLoader() to discover
+            // provider implementations via META-INF/services. In subprocess mode, the context
+            // classloader is AppClassLoader which does not have visibility into nuts' extension
+            // classloader (NutsURLClassLoader) where jline and its providers are loaded.
+            // We temporarily switch the context classloader to this class's classloader so that
+            // ServiceLoader can find the TerminalProvider implementations, then restore it.
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            try {
+                terminal = builder.build();
+            } catch (Throwable ex) {
+                NLog nLog = NLog.of(NJLineTerminal.class);
+                if (nLog.isLoggable(Level.FINEST)) {
+                    nLog.log(NMsg.ofC("unable to create JLine system terminal: %s", ex).asFinestFail(ex));
+                    for (String s : NStringUtils.stacktraceArray(ex)) {
+                        nLog.log(NMsg.ofC(">> %s", s));
+                    }
+                }
+                //unable to create system terminal
+                //Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
+                throw new UncheckedIOException(new IOException("unable to create JLine system terminal: " + ex.getMessage(), ex));
+            }
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
         }
+
         NSession session = NSession.of();
         reader = LineReaderBuilder.builder()
                 .completer(new NJLineCompleter(this))
@@ -215,8 +233,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                     @Override
                     public AttributedString highlight(LineReader reader, String buffer) {
                         //session is not inherited here so pass it manually
-                        return session.callWith(()->{
-                            NTexts text = NTexts.of();
+                        return session.callWith(() -> {
                             String ct = getCommandHighlighter();
                             if (NBlankable.isBlank(ct)) {
                                 ct = "system";
@@ -266,7 +283,13 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             try {
                 reader.getTerminal().close();
             } catch (IOException ex) {
-                LOG.log(Level.SEVERE, "error closing terminal", ex);
+                NLog nLog = NLog.of(NJLineTerminal.class);
+                if (nLog.isLoggable(Level.FINEST)) {
+                    nLog.log(NMsg.ofC("error closing terminal: %s", ex).asFinestFail(ex));
+                    for (String s : NStringUtils.stacktraceArray(ex)) {
+                        nLog.log(NMsg.ofC(">> %s", s));
+                    }
+                }
             }
         }
     }
@@ -288,7 +311,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         prepare();
         String readLine = null;
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        NPrintStream m = NPrintStream.of(bos,NTerminalMode.FORMATTED,NTerminalMode.ANSI);
+        NPrintStream m = NPrintStream.of(bos, NTerminalMode.FORMATTED, NTerminalMode.ANSI);
         m.print(NText.of(message).toString());
         m.flush();
 
@@ -401,7 +424,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                 String s = NAnsiTermHelper.of().command(command);
                 if (s != null) {
                     byte[] bytes = s.getBytes();
-                    printStream.writeRaw(bytes,0,bytes.length);
+                    printStream.writeRaw(bytes, 0, bytes.length);
 //                    try {
 //                        reader.getTerminal().output().write(bytes);
 //                    } catch (IOException e) {
@@ -417,7 +440,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         String s = NAnsiTermHelper.of().styled(styles);
         if (s != null) {
             byte[] bytes = s.getBytes();
-            printStream.writeRaw(bytes,0,bytes.length);
+            printStream.writeRaw(bytes, 0, bytes.length);
 //            try {
 //                reader.getTerminal().output().write(s.getBytes());
 //            } catch (IOException e) {
@@ -428,7 +451,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
 
     private static class TransparentInputStream extends FilterInputStream implements NInputStreamTransparentAdapter {
 
-        private InputStream root;
+        private final InputStream root;
 
         public TransparentInputStream(InputStream in, InputStream root) {
             super(in);
@@ -443,7 +466,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
 
     private static class TransparentPrintStream extends PrintStream implements NOutputStreamTransparentAdapter {
 
-        private OutputStream root;
+        private final OutputStream root;
 
         public TransparentPrintStream(OutputStream out, OutputStream root) {
             super(out, true);
