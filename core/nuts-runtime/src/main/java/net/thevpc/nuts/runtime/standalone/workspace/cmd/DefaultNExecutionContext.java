@@ -266,7 +266,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
         return this;
     }
 
-    public DefaultNExecutionContext setFailFast(boolean failFast) {
+    public DefaultNExecutionContext failFast(boolean failFast) {
         this.failFast = failFast;
         return this;
     }

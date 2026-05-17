@@ -278,25 +278,20 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     @Override
-    public NExecutionContextBuilder setFailFast(boolean failFast) {
+    public NExecutionContextBuilder failFast(boolean failFast) {
         this.failFast = failFast;
         return this;
     }
 
     @Override
-    public NExecutionContextBuilder setTemporary(boolean temporary) {
+    public NExecutionContextBuilder temporary(boolean temporary) {
         this.temporary = temporary;
         return this;
     }
 
     @Override
-    public NExecutionContextBuilder failFast() {
-        return setFailFast(true);
-    }
-
-    @Override
     public NExecutionContextBuilder temporary() {
-        return setTemporary(true);
+        return temporary(true);
     }
 
     @Override

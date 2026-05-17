@@ -148,11 +148,9 @@ public interface NExecutionContextBuilder {
 
     NExecutionContextBuilder setCommandName(String commandName);
 
-    NExecutionContextBuilder setFailFast(boolean failFast);
+    NExecutionContextBuilder failFast(boolean failFast);
 
-    NExecutionContextBuilder failFast();
-
-    NExecutionContextBuilder setTemporary(boolean temporary);
+    NExecutionContextBuilder temporary(boolean temporary);
 
     NExecutionContextBuilder temporary();
 
