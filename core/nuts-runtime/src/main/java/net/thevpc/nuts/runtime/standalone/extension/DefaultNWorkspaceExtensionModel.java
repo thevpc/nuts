@@ -461,7 +461,7 @@ public class DefaultNWorkspaceExtensionModel {
                     NDefinition def = NSearch.of()
                             .addId(extension).setTargetApiVersion(workspace.getApiVersion())
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                            .setLatest(true)
+                            .latest(true)
                             .getResultDefinitions().findFirst().orNull();
                     if (def == null || def.getContent().isNotPresent()) {
                         throw new NIllegalArgumentException(NMsg.ofC("extension not found: %s", extension));
@@ -497,7 +497,7 @@ public class DefaultNWorkspaceExtensionModel {
         for (NDefinition def : NSearch.of().addIds(loadedExtensionIds.toArray(new NId[0]))
                 .setTargetApiVersion(workspace.getApiVersion())
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                .setLatest(true)
+                .latest(true)
                 .getResultDefinitions().toList()) {
             loadedExtensionURLs.add(def.getContent().flatMap(NPath::toURL).orNull());
         }
@@ -574,7 +574,7 @@ public class DefaultNWorkspaceExtensionModel {
                     .addId(id)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     //
-                    .setLatest(true)
+                    .latest(true)
                     .getResultDefinitions().findFirst().get();
             ec = new ExtensionCacheNode();
             ecId = nDefinitions.getId();

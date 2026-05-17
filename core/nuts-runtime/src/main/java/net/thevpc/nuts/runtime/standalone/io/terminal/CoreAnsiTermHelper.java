@@ -72,9 +72,9 @@ public class CoreAnsiTermHelper {
             try {
                 String s = NExec.of()
                         .system()
-                        .setIn(NExecInput.ofNull())
+                        .in(NExecInput.ofNull())
                         .addCommand(cmd)
-                        .failFast()
+                        .failFast(true)
                         .getGrabbedOutOnlyString()
                         .trim();
                 if (!s.trim().isEmpty()) {
@@ -86,7 +86,7 @@ public class CoreAnsiTermHelper {
                 s = NExec.of()
                         .system()
                         .addCommand(cmd)
-                        .failFast()
+                        .failFast(true)
                         .sleepMillis(500)
                         .getGrabbedOutOnlyString()
                         .trim()
