@@ -91,11 +91,6 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExec failFast() {
-        return failFast(true);
-    }
-
-    @Override
     public List<String> getCommand() {
         return NCollections.unmodifiableList(command);
     }
@@ -140,6 +135,16 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
+    public NExec command(NPath path) {
+        return addCommand(path);
+    }
+
+    @Override
+    public NExec command(String... command) {
+        return addCommand(command);
+    }
+
+    @Override
     public NExec addCommand(String... command) {
         if (this.command == null) {
             this.command = new ArrayList<>();
@@ -167,6 +172,11 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             }
         }
         return this;
+    }
+
+    @Override
+    public NExec command(Collection<String> command) {
+        return addCommand(command);
     }
 
     @Override
@@ -322,7 +332,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
 //        return setIn(in);
 //    }
     @Override
-    public NExec setIn(NExecInput in) {
+    public NExec in(NExecInput in) {
         this.in = in == null ? NExecInput.ofInherit() : in;
         return this;
     }
@@ -333,7 +343,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExec setOut(NExecOutput out) {
+    public NExec out(NExecOutput out) {
         this.out = out == null ? NExecOutput.ofInherit() : out;
         return this;
     }
@@ -341,7 +351,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     @Override
     public NExec grabOut() {
         // DO NOT CALL setOut :: setOut(new SPrintStream());
-        this.out = NExecOutput.ofGrabMem(maxBytes,maxLines);
+        this.out = NExecOutput.ofGrabMem(maxBytes, maxLines);
         return this;
     }
 
@@ -352,12 +362,12 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
 
     @Override
     public NExec grabOutOnly() {
-        return grabOut().setErr(NExecOutput.ofNull());
+        return grabOut().err(NExecOutput.ofNull());
     }
 
     @Override
     public NExec grabErr() {
-        setErr(NExecOutput.ofGrabMem(maxBytes,maxLines));
+        err(NExecOutput.ofGrabMem(maxBytes, maxLines));
         return this;
     }
 
@@ -444,7 +454,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
 //        return setErr(err);
 //    }
     @Override
-    public NExec setErr(NExecOutput err) {
+    public NExec err(NExecOutput err) {
         this.err = err;
         return this;
     }
@@ -455,29 +465,29 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExec setExecutionType(NExecutionType executionType) {
+    public NExec executionType(NExecutionType executionType) {
         this.executionType = executionType;
         return this;
     }
 
     @Override
     public NExec system() {
-        return setExecutionType(NExecutionType.SYSTEM);
+        return executionType(NExecutionType.SYSTEM);
     }
 
     @Override
     public NExec embedded() {
-        return setExecutionType(NExecutionType.EMBEDDED);
+        return executionType(NExecutionType.EMBEDDED);
     }
 
     @Override
     public NExec spawn() {
-        return setExecutionType(NExecutionType.SPAWN);
+        return executionType(NExecutionType.SPAWN);
     }
 
     @Override
     public NExec open() {
-        return setExecutionType(NExecutionType.OPEN);
+        return executionType(NExecutionType.OPEN);
     }
 
     @Override
@@ -487,21 +497,21 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
 
     @Override
     public NExec sudo() {
-        return setRunAs(NRunAs.SUDO);
+        return runAs(NRunAs.SUDO);
     }
 
     @Override
     public NExec root() {
-        return setRunAs(NRunAs.ROOT);
+        return runAs(NRunAs.ROOT);
     }
 
     @Override
     public NExec currentUser() {
-        return setRunAs(NRunAs.CURRENT_USER);
+        return runAs(NRunAs.CURRENT_USER);
     }
 
     @Override
-    public NExec setRunAs(NRunAs runAs) {
+    public NExec runAs(NRunAs runAs) {
         this.runAs = runAs == null ? NRunAs.currentUser() : runAs;
         return this;
     }
@@ -510,7 +520,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
         return dry;
     }
 
-    public NExec setDry(Boolean dry) {
+    public NExec dry(Boolean dry) {
         this.dry = dry;
         return this;
     }
@@ -525,16 +535,16 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
         addEnv(other.getEnv());
         addExecutorOptions(other.getExecutorOptions());
         directory(other.getDirectory());
-        setIn(other.getIn());
-        setOut(other.getOut());
-        setErr(other.getErr());
-        setFailFast(other.isFailFast());
-        setExecutionType(other.getExecutionType());
-        setRunAs(other.getRunAs());
-        setConnectionString(other.getConnectionString());
-        setDry(other.getDry());
-        setBot(other.getBot());
-        setRawCommand(other.isRawCommand());
+        in(other.getIn());
+        out(other.getOut());
+        err(other.getErr());
+        failFast(other.isFailFast());
+        executionType(other.getExecutionType());
+        runAs(other.getRunAs());
+        connectionString(other.getConnectionString());
+        dry(other.getDry());
+        bot(other.getBot());
+        rawCommand(other.isRawCommand());
         return this;
     }
 
@@ -627,7 +637,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             case "-x": {
                 cmdLine.skip();
                 if (enabled) {
-                    setExecutionType(NExecutionType.SPAWN);
+                    executionType(NExecutionType.SPAWN);
                 }
                 return true;
             }
@@ -635,14 +645,14 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             case "-b": {
                 cmdLine.skip();
                 if (enabled) {
-                    setExecutionType(NExecutionType.EMBEDDED);
+                    executionType(NExecutionType.EMBEDDED);
                 }
                 return true;
             }
             case "--open-file": {
                 cmdLine.skip();
                 if (enabled) {
-                    setExecutionType(NExecutionType.OPEN);
+                    executionType(NExecutionType.OPEN);
                 }
                 return true;
             }
@@ -657,37 +667,37 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             case "--current-user": {
                 cmdLine.skip();
                 if (enabled) {
-                    setRunAs(NRunAs.currentUser());
+                    runAs(NRunAs.currentUser());
                 }
                 return true;
             }
             case "--as-root": {
                 cmdLine.skip();
                 if (enabled) {
-                    setRunAs(NRunAs.ROOT);
+                    runAs(NRunAs.ROOT);
                 }
                 return true;
             }
             case "--run-as": {
                 NArg s = cmdLine.nextEntry().get();
                 if (enabled) {
-                    setRunAs(NRunAs.user(s.getStringValue().onBlankEmpty().get()));
+                    runAs(NRunAs.user(s.getStringValue().onBlankEmpty().get()));
                 }
                 return true;
             }
             case "--sudo": {
                 cmdLine.skip();
                 if (enabled) {
-                    setRunAs(NRunAs.sudo());
+                    runAs(NRunAs.sudo());
                 }
                 return true;
             }
             case "--dry":
             case "-d": {
-                return cmdLine.matcher().matchFlag((v) -> setDry(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> dry(v.booleanValue())).anyMatch();
             }
             case "--target": {
-                return cmdLine.matcher().matchEntry((v) -> this.setConnectionString(v.stringValue())).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> this.connectionString(v.stringValue())).anyMatch();
             }
             case "--rerun": {
                 return cmdLine.matcher().matchFlag((v) -> this.multipleRuns = v.booleanValue()).anyMatch();
@@ -835,23 +845,23 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
         return connectionString;
     }
 
-    public NExec setConnectionString(String connectionString) {
+    public NExec connectionString(String connectionString) {
         this.connectionString = NBlankable.isBlank(connectionString) ? null : NConnectionString.of(connectionString);
         return this;
     }
 
     @Override
     public NExec at(String connectionString) {
-        return setConnectionString(connectionString);
+        return connectionString(connectionString);
     }
 
     @Override
     public NExec at(NConnectionString connectionString) {
-        return setConnectionString(connectionString);
+        return connectionString(connectionString);
     }
 
     @Override
-    public NExec setConnectionString(NConnectionString connectionString) {
+    public NExec connectionString(NConnectionString connectionString) {
         if (!NBlankable.isBlank(connectionString)) {
             this.connectionString = connectionString;
         } else {
@@ -862,7 +872,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
 
     @Override
     public NExec redirectErr() {
-        return setErr(NExecOutput.ofRedirect());
+        return err(NExecOutput.ofRedirect());
     }
 
     @Override
@@ -871,7 +881,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExec setRawCommand(boolean rawCommand) {
+    public NExec rawCommand(boolean rawCommand) {
         this.rawCommand = rawCommand;
         return this;
     }

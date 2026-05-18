@@ -90,8 +90,8 @@ public class NWorkspaceHelper {
             );
             NExec execCmd = NExec.of()
                     .executionType(info2.getExecutionType().orNull())
-                    .setRunAs(info2.getRunAs().orNull())
-                    .failFast();
+                    .runAs(info2.getRunAs().orNull())
+                    .failFast(true);
             List<String> executorOptions = info2.getExecutorOptions().orNull();
             if (executorOptions != null) {
                 execCmd.configure(true, executorOptions.toArray(new String[0]));
