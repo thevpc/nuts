@@ -84,10 +84,10 @@ public class BinSshConnection extends SshConnectionBase {
         }
         return NExec.ofSystem(sshCommandPrefix.toArray(new String[0]))
                 .addCommand(command)
-                .failFast(true)
-                .out(NExecOutput.ofStream(out))
-                .err(NExecOutput.ofStream(err))
-                .in(NExecInput.ofStream(in))
+                .failFast()
+                .setOut(NExecOutput.ofStream(out))
+                .setErr(NExecOutput.ofStream(err))
+                .setIn(NExecInput.ofStream(in))
                 .run()
                 .exitCode();
     }
@@ -130,10 +130,10 @@ public class BinSshConnection extends SshConnectionBase {
                 }
                 exec.addCommand("-b", batchFile.toString(),
                                 target)
-                        .in(NExecInput.ofNull())
-                        .out(NExecOutput.ofPipe())  // capture stdout
-                        .err(NExecOutput.ofNull())
-                        .failFast(true)
+                        .setIn(NExecInput.ofNull())
+                        .setOut(NExecOutput.ofPipe())  // capture stdout
+                        .setErr(NExecOutput.ofNull())
+                        .failFast()
                         .run();
 
                 batchFile.delete();
@@ -155,10 +155,10 @@ public class BinSshConnection extends SshConnectionBase {
             exec.addCommand(connectionString.builder().setPort(null).setQueryMap(null).toString());
             exec.addCommand("-"); // output to stdout
                     exec
-                    .in(NExecInput.ofNull())
-                    .out(NExecOutput.ofPipe()) // capture remote file via stdout
-                    .err(NExecOutput.ofNull())
-                    .failFast(true)
+                    .setIn(NExecInput.ofNull())
+                    .setOut(NExecOutput.ofPipe()) // capture remote file via stdout
+                    .setErr(NExecOutput.ofNull())
+                    .failFast()
                     .run();
 
             return exec.getOut().getResult().getInputStream();
