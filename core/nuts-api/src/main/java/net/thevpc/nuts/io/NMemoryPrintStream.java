@@ -37,7 +37,7 @@ public interface NMemoryPrintStream extends NPrintStream {
         return NIORPI.of().ofInMemoryPrintStream(mode);
     }
 
-    byte[] getBytes();
+    byte[] bytes();
 
     NInputSource asInputSource();
 

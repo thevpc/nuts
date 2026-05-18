@@ -115,7 +115,7 @@ public class NWorkspaceUtils {
 
 
     public NId configureFetchEnv(NId id) {
-        Map<String, String> qm = id.getProperties();
+        Map<String, String> qm = id.properties();
         if (qm.get(NConstants.IdProperties.FACE) == null
                 && qm.get(NConstants.IdProperties.ARCH) == null
                 && qm.get(NConstants.IdProperties.OS) == null
@@ -400,7 +400,7 @@ public class NWorkspaceUtils {
 
         public void fireOnInstall(NInstallEvent event) {
             u._LOG()
-                    .log(NMsg.ofJ("installed {0}", event.getDefinition().getId())
+                    .log(NMsg.ofJ("installed {0}", event.getDefinition().id())
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.ADD)
                     );
             for (NInstallListener listener : event.getWorkspace().getInstallListeners()) {
@@ -413,7 +413,7 @@ public class NWorkspaceUtils {
 
         public void fireOnRequire(NInstallEvent event) {
             u._LOG()
-                    .log(NMsg.ofJ("required {0}", event.getDefinition().getId())
+                    .log(NMsg.ofJ("required {0}", event.getDefinition().id())
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.ADD)
                     );
             for (NInstallListener listener : event.getWorkspace().getInstallListeners()) {
@@ -428,14 +428,14 @@ public class NWorkspaceUtils {
             if (u._LOG().isLoggable(Level.FINEST)) {
                 if (event.getOldValue() == null) {
                     u._LOG()
-                            .log(NMsg.ofJ("updated {0}", event.getNewValue().getId())
+                            .log(NMsg.ofJ("updated {0}", event.getNewValue().id())
                                     .withLevel(Level.FINEST).withIntent(NMsgIntent.UPDATE)
                             );
                 } else {
                     u._LOG()
                             .log(NMsg.ofJ("updated {0} (old is {1})",
-                                    event.getOldValue().getId().getLongId(),
-                                    event.getNewValue().getId().getLongId())
+                                    event.getOldValue().id().longId(),
+                                    event.getNewValue().id().longId())
                                     .withLevel(Level.FINEST).withIntent(NMsgIntent.UPDATE)
                             );
                 }
@@ -451,7 +451,7 @@ public class NWorkspaceUtils {
         public void fireOnUninstall(NInstallEvent event) {
             if (u._LOG().isLoggable(Level.FINEST)) {
                 u._LOG()
-                        .log(NMsg.ofJ("uninstalled {0}", event.getDefinition().getId())
+                        .log(NMsg.ofJ("uninstalled {0}", event.getDefinition().id())
                                 .withLevel(Level.FINEST).withIntent(NMsgIntent.REMOVE)
                         );
             }

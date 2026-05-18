@@ -41,7 +41,7 @@ public class DefaultNDigestName implements NDigestName {
 
 
     @Override
-    public String getDigestName(Object source) {
+    public String digestName(Object source) {
         if (source == null) {
             return "default";
         } else if (source instanceof String) {

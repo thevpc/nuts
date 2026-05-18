@@ -7,7 +7,6 @@ import net.thevpc.nuts.command.NCustomCmd;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceCmdFactory;
-import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -181,12 +180,12 @@ public class DefaultCustomCommandsModel {
                 return false;
             }
             if (!NIn.ask()
-                    .setDefaultValue(false)
+                    .defaultValue(false)
                     .forBoolean(NMsg.ofC("override existing command %s ?",
                             NText.ofStyled(
                                     command.getName(), NTextStyle.primary1()
                             ))
-                    ).getBooleanValue()) {
+                    ).booleanValue()) {
                 update(command);
                 return true;
             } else {
@@ -340,9 +339,9 @@ public class DefaultCustomCommandsModel {
             NId i = NId.get(a.getCommand().get(0)).orNull();
             if (i != null
                     && (forId == null
-                    || i.getShortName().equals(forId.getArtifactId())
-                    || i.getShortName().equals(forId.getShortName()))
-                    && (forOwner == null || a.getOwner() != null && a.getOwner().getShortName().equals(forOwner.getShortName()))) {
+                    || i.shortName().equals(forId.artifactId())
+                    || i.shortName().equals(forId.shortName()))
+                    && (forOwner == null || a.getOwner() != null && a.getOwner().shortName().equals(forOwner.shortName()))) {
                 return a;
             }
         }

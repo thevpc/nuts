@@ -274,7 +274,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             throw new NIOException(NMsg.ofC("nable to load and re-create repository config file %s : %s", file, e), ex);
         }
 
-        try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").getOutputStream())) {
+        try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").outputStream())) {
             o.printf("workspace.path:%s%n", workspace.getWorkspaceLocation());
             o.printf("repository.path:%s%n", file);
             o.printf("workspace.options:%s%n", workspace.getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(false)));
@@ -302,7 +302,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         NPath installFolder
                 = NPath.of(NStoreKey.ofConf(id.builder().setVersion("ANY").build())).parent();
         if (installFolder.isDirectory()) {
-            final NVersionFilter filter0 = id.getVersion().toFilter();
+            final NVersionFilter filter0 = id.version().toFilter();
             return NIteratorBuilder.of(installFolder.stream().iterator())
                     .map(NFunction.of(
                             new Function<NPath, NVersion>() {
@@ -451,7 +451,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public void saveInstalledDefaultVersion(NId id) {
-        String version = id.getVersion().getValue();
+        String version = id.version().value();
         NPath pp = NPath.of(NStoreKey.ofConf(id.builder().setVersion("ANY").build()))
                 .resolveSibling("default-version");
         if (NBlankable.isBlank(version)) {

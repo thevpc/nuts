@@ -130,9 +130,9 @@ public class NWorkspaceModel {
         this.textModel = new DefaultNTextManagerModel(workspace);
         this.apiId = NId.getApi(Nuts.getVersion()).get();
         this.runtimeId = NId.get(
-                askedRuntimeId.getGroupId(),
-                askedRuntimeId.getArtifactId(),
-                NVersion.get(askedRuntimeId.getVersion().toString()).get()).get();
+                askedRuntimeId.groupId(),
+                askedRuntimeId.artifactId(),
+                NVersion.get(askedRuntimeId.version().toString()).get()).get();
         this.logModel.init(this.bootModel.getBootEffectiveOptions(), initialBootOptions);
         this.bootModel.init();
     }

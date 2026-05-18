@@ -55,8 +55,8 @@ public class ZipInstallerComponent implements NInstallerComponent {
     public static int getScore(NScorableContext ctx) {
         NDefinition def = ctx.getCriteria(NDefinition.class);
         if (def != null) {
-            if (def.getDescriptor() != null) {
-                if ("zip".equals(def.getDescriptor().getPackaging())) {
+            if (def.descriptor() != null) {
+                if ("zip".equals(def.descriptor().getPackaging())) {
                     return NScorable.DEFAULT_SCORE;
                 }
             }
@@ -67,7 +67,7 @@ public class ZipInstallerComponent implements NInstallerComponent {
     @Override
     public void install(NExecutionContext executionContext) {
         NDefinition nutsDefinition = executionContext.getDefinition();
-        NPath installFolder = NPath.of(NStoreKey.ofBin(nutsDefinition.getId()));
+        NPath installFolder = NPath.of(NStoreKey.ofBin(nutsDefinition.id()));
         NCmdLine cmd = NCmdLine.of(executionContext.getArguments());
         UnzipOptions unzipOptions = new UnzipOptions();
         while (cmd.hasNext()) {
@@ -79,7 +79,7 @@ public class ZipInstallerComponent implements NInstallerComponent {
         }
         try {
             ZipUtils.unzip(
-                    nutsDefinition.getContent().map(Object::toString).get(),
+                    nutsDefinition.content().map(Object::toString).get(),
                     installFolder.toString(),
                     unzipOptions
             );

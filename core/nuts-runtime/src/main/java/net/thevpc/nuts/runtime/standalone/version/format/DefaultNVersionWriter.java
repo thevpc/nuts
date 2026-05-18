@@ -112,11 +112,11 @@ public class DefaultNVersionWriter extends DefaultObjectWriterBase<NVersionWrite
         }
         NWorkspace workspace = NWorkspace.of();
         props.put("nuts-api-version", workspace.getApiVersion().toString());
-        props.put("nuts-runtime-version", workspace.getRuntimeId().getVersion().toString());
+        props.put("nuts-runtime-version", workspace.getRuntimeId().version().toString());
         if (all) {
             props.put("java-version", System.getProperty("java.version"));
             NEnv environment = NEnv.of();
-            props.put("os-version", environment.getOs().getVersion().toString());
+            props.put("os-version", environment.getOs().version().toString());
         }
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

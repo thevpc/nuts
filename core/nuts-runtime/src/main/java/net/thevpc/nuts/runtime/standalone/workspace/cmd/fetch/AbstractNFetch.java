@@ -46,8 +46,8 @@ public abstract class AbstractNFetch extends DefaultNQueryBaseOptions<NFetch> im
             throw new NParseException(NMsg.ofNtf("invalid Id format to fetch : null"));
         }
         if (
-                id.getVersion().isBlank()
-                        || !id.getVersion().isSingleValue()
+                id.version().isBlank()
+                        || !id.version().isSingleValue()
         ) {
             throw new NParseException(NMsg.ofC("invalid Id format to fetch : %s", id));
         }

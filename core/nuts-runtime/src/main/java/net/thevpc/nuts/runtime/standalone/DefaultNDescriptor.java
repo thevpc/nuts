@@ -259,13 +259,13 @@ public class DefaultNDescriptor implements NDescriptor {
         if (NBlankable.isBlank(id)) {
             return false;
         }
-        if (NBlankable.isBlank(id.getGroupId())) {
+        if (NBlankable.isBlank(id.groupId())) {
             return false;
         }
-        if (NBlankable.isBlank(id.getArtifactId())) {
+        if (NBlankable.isBlank(id.artifactId())) {
             return false;
         }
-        if (NBlankable.isBlank(id.getVersion())) {
+        if (NBlankable.isBlank(id.version())) {
             return false;
         }
         return id.isLongId();

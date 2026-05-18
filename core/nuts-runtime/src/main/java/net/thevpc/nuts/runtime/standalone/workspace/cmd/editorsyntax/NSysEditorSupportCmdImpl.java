@@ -376,10 +376,10 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
 
         } else {
             if (NIn.ask()
-                    .setDefaultValue(true)
-                    .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
+                    .defaultValue(true)
+                    .rememberMeKey("NSysEditorSupportCmd.forceInstall")
                     .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
-                    .getBooleanValue()) {
+                    .booleanValue()) {
                 doForce = true;
             } else {
                 NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting is already configured in %s", styledLangId, app, local));
@@ -414,10 +414,10 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             if (!local.isRegularFile()) {
             } else {
                 if (NIn.ask()
-                        .setDefaultValue(true)
-                        .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
+                        .defaultValue(true)
+                        .rememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
-                        .getBooleanValue()) {
+                        .booleanValue()) {
                     doForce = true;
                 } else {
                     NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting is already configured in %s", styledLangId, app, local));
@@ -450,10 +450,10 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                 //
             } else {
                 if (NIn.ask()
-                        .setDefaultValue(true)
-                        .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
+                        .defaultValue(true)
+                        .rememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
-                        .getBooleanValue()) {
+                        .booleanValue()) {
                     doForce = true;
                 } else {
                     NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting is already configured in %s", styledLangId, app, local));
@@ -493,10 +493,10 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                 //
             } else {
                 if (NIn.ask()
-                        .setDefaultValue(true)
-                        .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
+                        .defaultValue(true)
+                        .rememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
-                        .getBooleanValue()) {
+                        .booleanValue()) {
                     doForce = true;
                 } else {
                     NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting is already configured in %s", styledLangId, app, local));
@@ -596,10 +596,10 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                 //
             } else {
                 if (NIn.ask()
-                        .setDefaultValue(true)
-                        .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
+                        .defaultValue(true)
+                        .rememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
-                        .getBooleanValue()) {
+                        .booleanValue()) {
                     doForce = true;
                 } else {
                     NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting is already configured in %s", styledLangId, app, local));
@@ -631,10 +631,10 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                 //
             } else {
                 if (NIn.ask()
-                        .setDefaultValue(true)
-                        .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
+                        .defaultValue(true)
+                        .rememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
-                        .getBooleanValue()) {
+                        .booleanValue()) {
                     doForce = true;
                 } else {
                     NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting is already configured in %s", styledLangId, app, local));
@@ -663,10 +663,10 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             //
         } else {
             if (NIn.ask()
-                    .setDefaultValue(true)
-                    .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
+                    .defaultValue(true)
+                    .rememberMeKey("NSysEditorSupportCmd.forceInstall")
                     .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
-                    .getBooleanValue()) {
+                    .booleanValue()) {
                 doForce = true;
             } else {
                 NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting is already configured in %s", styledLangId, app, local));

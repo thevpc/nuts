@@ -164,7 +164,7 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
                         .setPackaging("nsh")
                         .setExecutor(
                                 NArtifactCallBuilder.of()
-                                        .setId(NId.of(NConstants.Ids.NSH))
+                                        .id(NId.of(NConstants.Ids.NSH))
                                         .build()
                         )
                         .build();

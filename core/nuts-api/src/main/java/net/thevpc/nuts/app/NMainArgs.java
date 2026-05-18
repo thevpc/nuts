@@ -13,52 +13,52 @@ public class NMainArgs {
     private String[] args;
 
     public static NMainArgs of(String[] args) {
-        return new NMainArgs().setArgs(args);
+        return new NMainArgs().args(args);
     }
 
     public static NMainArgs ofHandled(String[] args) {
-        return new NMainArgs().setArgs(args).setHandleMode(NApplicationHandleMode.HANDLE);
+        return new NMainArgs().args(args).handleMode(NApplicationHandleMode.HANDLE);
     }
 
     public static NMainArgs ofPropagated(String[] args) {
-        return new NMainArgs().setArgs(args).setHandleMode(NApplicationHandleMode.PROPAGATE);
+        return new NMainArgs().args(args).handleMode(NApplicationHandleMode.PROPAGATE);
     }
 
     public static NMainArgs ofExit(String[] args) {
-        return new NMainArgs().setArgs(args).setHandleMode(NApplicationHandleMode.EXIT);
+        return new NMainArgs().args(args).handleMode(NApplicationHandleMode.EXIT);
     }
 
     public static NMainArgs of(NApplication application, String[] args) {
-        return new NMainArgs().setApplicationInstance(application).setNutsArgs(args);
+        return new NMainArgs().applicationInstance(application).setNutsArgs(args);
     }
 
     public static NMainArgs ofHandled(NApplication application, String[] args) {
-        return new NMainArgs().setApplicationInstance(application).setArgs(args).setHandleMode(NApplicationHandleMode.HANDLE);
+        return new NMainArgs().applicationInstance(application).args(args).handleMode(NApplicationHandleMode.HANDLE);
     }
 
     public static NMainArgs ofPropagated(NApplication application, String[] args) {
-        return new NMainArgs().setApplicationInstance(application).setArgs(args).setHandleMode(NApplicationHandleMode.PROPAGATE);
+        return new NMainArgs().applicationInstance(application).args(args).handleMode(NApplicationHandleMode.PROPAGATE);
     }
 
     public static NMainArgs ofExit(NApplication application, String[] args) {
-        return new NMainArgs().setArgs(args).setApplicationInstance(application).setHandleMode(NApplicationHandleMode.EXIT);
+        return new NMainArgs().args(args).applicationInstance(application).handleMode(NApplicationHandleMode.EXIT);
     }
 
 
-    public NApplicationHandleMode getHandleMode() {
+    public NApplicationHandleMode handleMode() {
         return handleMode;
     }
 
-    public NMainArgs setHandleMode(NApplicationHandleMode mode) {
+    public NMainArgs handleMode(NApplicationHandleMode mode) {
         this.handleMode = mode;
         return this;
     }
 
-    public NApplication getApplicationInstance() {
+    public NApplication applicationInstance() {
         return applicationInstance;
     }
 
-    public NMainArgs setApplicationInstance(NApplication applicationInstance) {
+    public NMainArgs applicationInstance(NApplication applicationInstance) {
         this.applicationInstance = applicationInstance;
         return this;
     }
@@ -72,12 +72,12 @@ public class NMainArgs {
         return this;
     }
 
-    public NMainArgs setNutsArgsLine(String nutsArgs) {
+    public NMainArgs nutsArgsLine(String nutsArgs) {
         this.nutsArgs = NBootCmdLine.parseDefault(nutsArgs);
         return this;
     }
 
-    public NMainArgs setNutsArgsLine(String nutsArgs, String[] extraArgs) {
+    public NMainArgs nutsArgsLine(String nutsArgs, String[] extraArgs) {
         List<String> all = new ArrayList<>();
         all.addAll(Arrays.asList(NBootCmdLine.parseDefault(nutsArgs)));
         if (extraArgs != null) {
@@ -91,11 +91,11 @@ public class NMainArgs {
         return this;
     }
 
-    public String[] getArgs() {
+    public String[] args() {
         return args;
     }
 
-    public NMainArgs setArgs(String[] args) {
+    public NMainArgs args(String[] args) {
         this.args = args;
         return this;
     }

@@ -70,18 +70,18 @@ public class DefaultNDefinitionBuilder2 {
                 this.dependency = ds.dependency;
                 this.effectiveFlags = ds.effectiveFlags;
             }else {
-                this.descriptor = new ValueSupplier<>(other.getDescriptor());
-                this.id = new ValueSupplier<>(other.getId());
-                this.repositoryUuid = new ValueSupplier<>(other.getRepositoryUuid());
-                this.repositoryName = new ValueSupplier<>(other.getRepositoryName());
+                this.descriptor = new ValueSupplier<>(other.descriptor());
+                this.id = new ValueSupplier<>(other.id());
+                this.repositoryUuid = new ValueSupplier<>(other.repositoryUuid());
+                this.repositoryName = new ValueSupplier<>(other.repositoryName());
 
-                this.content = () -> other.getContent().orNull();
-                this.installInformation = () -> other.getInstallInformation().orNull();
-                this.effectiveDescriptor = () -> other.getEffectiveDescriptor().orNull();
-                this.dependencies = () -> other.getDependencies().orNull();
-                this.apiId = () -> other.getApiId();
-                this.dependency = () -> other.getDependency();
-                this.effectiveFlags = () -> other.getEffectiveFlags().orNull();
+                this.content = () -> other.content().orNull();
+                this.installInformation = () -> other.installInformation().orNull();
+                this.effectiveDescriptor = () -> other.effectiveDescriptor().orNull();
+                this.dependencies = () -> other.dependencies().orNull();
+                this.apiId = () -> other.apiId();
+                this.dependency = () -> other.dependency();
+                this.effectiveFlags = () -> other.effectiveFlags().orNull();
             }
         }
     }

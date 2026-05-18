@@ -270,8 +270,8 @@ public final class NReservedUtils {
             boolean osOk = false;
             for (String e : oss) {
                 NId ee = NId.get(e).get();
-                if (ee.getShortName().equalsIgnoreCase(eos.id())) {
-                    if (acceptVersion(ee.getVersion(), NVersion.of(System.getProperty("os.version")))) {
+                if (ee.shortName().equalsIgnoreCase(eos.id())) {
+                    if (acceptVersion(ee.version(), NVersion.of(System.getProperty("os.version")))) {
                         osOk = true;
                     }
                     break;
@@ -303,7 +303,7 @@ public final class NReservedUtils {
     public static String toDependencyExclusionListString(List<NId> exclusions) {
         TreeSet<String> ex = new TreeSet<>();
         for (NId exclusion : exclusions) {
-            ex.add(exclusion.getShortName());
+            ex.add(exclusion.shortName());
         }
         return String.join(",", ex);
     }

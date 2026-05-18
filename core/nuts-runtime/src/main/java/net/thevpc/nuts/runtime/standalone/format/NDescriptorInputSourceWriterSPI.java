@@ -22,7 +22,7 @@ public class NDescriptorInputSourceWriterSPI implements NObjectWriterSPI {
 
     @Override
     public void print(NPrintStream out) {
-        NOptional<NMsg> m = value.getMetaData().getMessage();
+        NOptional<NMsg> m = value.metaData().message();
         if (m.isPresent()) {
             out.print(m.get());
         } else {

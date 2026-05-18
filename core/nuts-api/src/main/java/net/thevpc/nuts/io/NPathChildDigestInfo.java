@@ -1,23 +1,27 @@
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.util.NGetter;
+
 public class NPathChildDigestInfo {
     private String name;
     private byte[] digest;
 
-    public String getName() {
+    @NGetter
+    public String name() {
         return name;
     }
 
-    public NPathChildDigestInfo setName(String name) {
+    public NPathChildDigestInfo name(String name) {
         this.name = name;
         return this;
     }
 
-    public byte[] getDigest() {
+    @NGetter
+    public byte[] digest() {
         return digest;
     }
 
-    public NPathChildDigestInfo setDigest(byte[] digest) {
+    public NPathChildDigestInfo digest(byte[] digest) {
         this.digest = digest;
         return this;
     }

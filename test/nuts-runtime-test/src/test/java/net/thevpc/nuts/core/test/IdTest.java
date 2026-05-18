@@ -52,12 +52,12 @@ public class IdTest {
     public void test04() {
         String t1="net.sourceforge.cobertura:cobertura#coberturaVersion?exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage&cond-properties=a%2Cb%3Dc";
         NId s = NId.of(t1);
-        Assertions.assertEquals("net.sourceforge.cobertura",s.getGroupId());
-        Assertions.assertEquals("cobertura",s.getArtifactId());
-        Assertions.assertEquals("coberturaVersion",s.getVersion().toString());
-        Assertions.assertEquals("asm:asm,asm:asm-tree,log4j:log4j,oro:oro",s.getProperties().get("exclusions"));
-        Assertions.assertEquals(null,s.getCondition().getProperties().get("a"));
-        Assertions.assertEquals("c",s.getCondition().getProperties().get("b"));
+        Assertions.assertEquals("net.sourceforge.cobertura",s.groupId());
+        Assertions.assertEquals("cobertura",s.artifactId());
+        Assertions.assertEquals("coberturaVersion",s.version().toString());
+        Assertions.assertEquals("asm:asm,asm:asm-tree,log4j:log4j,oro:oro",s.properties().get("exclusions"));
+        Assertions.assertEquals(null,s.condition().getProperties().get("a"));
+        Assertions.assertEquals("c",s.condition().getProperties().get("b"));
         TestUtils.println(s);
     }
 
@@ -65,11 +65,11 @@ public class IdTest {
     public void test05() {
         String t1="net.sourceforge.cobertura:cobertura#${cobertura.version}?exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage&cond-properties=a%2Cb%3Dc";
         NId s = NId.of(t1);
-        Assertions.assertEquals("net.sourceforge.cobertura",s.getGroupId());
-        Assertions.assertEquals("cobertura",s.getArtifactId());
-        Assertions.assertEquals("asm:asm,asm:asm-tree,log4j:log4j,oro:oro",s.getProperties().get("exclusions"));
-        Assertions.assertEquals(null,s.getCondition().getProperties().get("a"));
-        Assertions.assertEquals("c",s.getCondition().getProperties().get("b"));
+        Assertions.assertEquals("net.sourceforge.cobertura",s.groupId());
+        Assertions.assertEquals("cobertura",s.artifactId());
+        Assertions.assertEquals("asm:asm,asm:asm-tree,log4j:log4j,oro:oro",s.properties().get("exclusions"));
+        Assertions.assertEquals(null,s.condition().getProperties().get("a"));
+        Assertions.assertEquals("c",s.condition().getProperties().get("b"));
         TestUtils.println(s);
     }
 
@@ -78,7 +78,7 @@ public class IdTest {
         NId a = NIdBuilder.of()
                 .setProperty("a", "?")
                 .build();
-        Map<String, String> p = a.getProperties();
+        Map<String, String> p = a.properties();
         TestUtils.println(a.toString());
         Assertions.assertEquals(1,p.size());
         Assertions.assertEquals("?a=%3F",a.toString());
@@ -87,75 +87,75 @@ public class IdTest {
     @Test
     public void test07() {
         NId a = NId.of("a");
-        Assertions.assertEquals(null,a.getGroupId());
-        Assertions.assertEquals("a",a.getArtifactId());
-        Assertions.assertEquals(null,a.getClassifier());
+        Assertions.assertEquals(null,a.groupId());
+        Assertions.assertEquals("a",a.artifactId());
+        Assertions.assertEquals(null,a.classifier());
     }
 
     @Test
     public void test08() {
         NId a = NId.of(":a");
-        Assertions.assertEquals(null,a.getGroupId());
-        Assertions.assertEquals("a",a.getArtifactId());
-        Assertions.assertEquals(null,a.getClassifier());
+        Assertions.assertEquals(null,a.groupId());
+        Assertions.assertEquals("a",a.artifactId());
+        Assertions.assertEquals(null,a.classifier());
     }
     @Test
     public void test09() {
         NId a = NId.of("a:");
-        Assertions.assertEquals("a",a.getGroupId());
-        Assertions.assertEquals(null,a.getArtifactId());
-        Assertions.assertEquals(null,a.getClassifier());
+        Assertions.assertEquals("a",a.groupId());
+        Assertions.assertEquals(null,a.artifactId());
+        Assertions.assertEquals(null,a.classifier());
     }
 
     @Test
     public void test10() {
         NId a = NId.of(":a:");
-        Assertions.assertEquals(null,a.getGroupId());
-        Assertions.assertEquals("a",a.getArtifactId());
-        Assertions.assertEquals(null,a.getClassifier());
+        Assertions.assertEquals(null,a.groupId());
+        Assertions.assertEquals("a",a.artifactId());
+        Assertions.assertEquals(null,a.classifier());
     }
 
     @Test
     public void test11() {
         NId a = NId.of("g:a");
-        Assertions.assertEquals("g",a.getGroupId());
-        Assertions.assertEquals("a",a.getArtifactId());
-        Assertions.assertEquals(null,a.getClassifier());
+        Assertions.assertEquals("g",a.groupId());
+        Assertions.assertEquals("a",a.artifactId());
+        Assertions.assertEquals(null,a.classifier());
     }
     @Test
     public void test12() {
         NId a = NId.of(":a:c");
-        Assertions.assertEquals(null,a.getGroupId());
-        Assertions.assertEquals("a",a.getArtifactId());
-        Assertions.assertEquals("c",a.getClassifier());
+        Assertions.assertEquals(null,a.groupId());
+        Assertions.assertEquals("a",a.artifactId());
+        Assertions.assertEquals("c",a.classifier());
     }
     @Test
     public void test13() {
         NId a = NId.of("g:a:c");
-        Assertions.assertEquals("g",a.getGroupId());
-        Assertions.assertEquals("a",a.getArtifactId());
-        Assertions.assertEquals("c",a.getClassifier());
+        Assertions.assertEquals("g",a.groupId());
+        Assertions.assertEquals("a",a.artifactId());
+        Assertions.assertEquals("c",a.classifier());
     }
     @Test
     public void test14() {
         NId a = NId.of("::c");
-        Assertions.assertEquals(null,a.getGroupId());
-        Assertions.assertEquals(null,a.getArtifactId());
-        Assertions.assertEquals("c",a.getClassifier());
+        Assertions.assertEquals(null,a.groupId());
+        Assertions.assertEquals(null,a.artifactId());
+        Assertions.assertEquals("c",a.classifier());
     }
     @Test
     public void test15() {
         NId a = NId.of(":");
-        Assertions.assertEquals(null,a.getGroupId());
-        Assertions.assertEquals(null,a.getArtifactId());
-        Assertions.assertEquals(null,a.getClassifier());
+        Assertions.assertEquals(null,a.groupId());
+        Assertions.assertEquals(null,a.artifactId());
+        Assertions.assertEquals(null,a.classifier());
     }
     @Test
     public void test16() {
         NId a = NId.of("::#2");
-        Assertions.assertEquals(null,a.getGroupId());
-        Assertions.assertEquals(null,a.getArtifactId());
-        Assertions.assertEquals(null,a.getClassifier());
-        Assertions.assertEquals("2",a.getVersion().toString());
+        Assertions.assertEquals(null,a.groupId());
+        Assertions.assertEquals(null,a.artifactId());
+        Assertions.assertEquals(null,a.classifier());
+        Assertions.assertEquals("2",a.version().toString());
     }
 }

@@ -64,7 +64,7 @@ public class DefaultNDescriptorContentParserContext implements NDescriptorConten
     public InputStream getHeadStream() {
         if (bytes == null) {
             try {
-                try (InputStream is = file.getInputStream()) {
+                try (InputStream is = file.inputStream()) {
                     bytes = NIOUtils.loadByteArray(is, 1024 * 1024 * 10, true);
                 }
             } catch (IOException e) {
@@ -72,12 +72,12 @@ public class DefaultNDescriptorContentParserContext implements NDescriptorConten
             }
         }
         return CoreIOUtils.createBytesStream(bytes, NMsg.ofC("%s", file), file.contentType(),
-                file.getCharset(), file.getMetaData().getKind().orNull());
+                file.charset(), file.metaData().kind().orNull());
     }
 
     @Override
     public InputStream getFullStream() {
-        return file.getInputStream();
+        return file.inputStream();
     }
 
     @Override

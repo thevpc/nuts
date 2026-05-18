@@ -36,5 +36,5 @@ public interface NAskFormat<T> {
 
     String format(Object value, NAsk<T> question);
 
-    List<Object> getDefaultValues(Class type, NAsk<T> question);
+    List<Object> resolveDefaultValues(Class type, NAsk<T> question);
 }

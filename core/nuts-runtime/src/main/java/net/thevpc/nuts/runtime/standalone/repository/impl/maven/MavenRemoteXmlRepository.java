@@ -65,8 +65,8 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
             return NIterator.ofEmpty();
         }
         NSession session = getWorkspace().currentSession();
-        String groupId = id.getGroupId();
-        String artifactId = id.getArtifactId();
+        String groupId = id.groupId();
+        String artifactId = id.artifactId();
         NPath metadataURL = config().getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
 
         return NIteratorBuilder.ofSupplier(
@@ -77,7 +77,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                     SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(idFilter, NMsg.ofC("repo %s",getName()));
                     try {
                         try {
-                            metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNConstants.QueryFaces.CATALOG).build(), "artifact catalog", NMsg.ofC("retrieve %s",id.getLongId()));
+                            metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNConstants.QueryFaces.CATALOG).build(), "artifact catalog", NMsg.ofC("retrieve %s",id.longId()));
                         } catch (UncheckedIOException | NIOException ex) {
                             return NIterator.ofEmpty();
                         }

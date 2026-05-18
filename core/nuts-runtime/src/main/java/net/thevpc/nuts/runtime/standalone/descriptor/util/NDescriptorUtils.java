@@ -50,9 +50,9 @@ public class NDescriptorUtils {
 
     public static NDescriptor checkDescriptor(NDescriptor nutsDescriptor) {
         NId id = nutsDescriptor.getId();
-        String groupId = id == null ? null : id.getGroupId();
-        String artifactId = id == null ? null : id.getArtifactId();
-        NVersion version = id == null ? null : id.getVersion();
+        String groupId = id == null ? null : id.groupId();
+        String artifactId = id == null ? null : id.artifactId();
+        NVersion version = id == null ? null : id.version();
         if (groupId == null || artifactId == null || NBlankable.isBlank(version)) {
             NSession session = NSession.of();
             switch (session.getConfirm().orDefault()) {
@@ -61,24 +61,24 @@ public class NDescriptorUtils {
                     if (groupId == null) {
                         groupId = NIn.ask()
                                 .forString(NMsg.ofPlain("group id"))
-                                .setDefaultValue(groupId)
-                                .setHintMessage(NBlankable.isBlank(groupId) ? null : NMsg.ofPlain(groupId))
-                                .getValue();
+                                .defaultValue(groupId)
+                                .hintMessage(NBlankable.isBlank(groupId) ? null : NMsg.ofPlain(groupId))
+                                .value();
                     }
                     if (artifactId == null) {
                         artifactId = NIn.ask()
                                 .forString(NMsg.ofPlain("artifact id"))
-                                .setDefaultValue(artifactId)
-                                .setHintMessage(NBlankable.isBlank(artifactId) ? null : NMsg.ofPlain(artifactId))
-                                .getValue();
+                                .defaultValue(artifactId)
+                                .hintMessage(NBlankable.isBlank(artifactId) ? null : NMsg.ofPlain(artifactId))
+                                .value();
                     }
                     if (NBlankable.isBlank(version)) {
-                        String ov = version == null ? null : version.getValue();
+                        String ov = version == null ? null : version.value();
                         String v = NIn.ask()
                                 .forString(NMsg.ofPlain("version"))
-                                .setDefaultValue(ov)
-                                .setHintMessage(NBlankable.isBlank(ov) ? null : NMsg.ofPlain(ov))
-                                .getValue();
+                                .defaultValue(ov)
+                                .hintMessage(NBlankable.isBlank(ov) ? null : NMsg.ofPlain(ov))
+                                .value();
                         version = NVersion.get(v).get();
                     }
                     break;
@@ -204,14 +204,14 @@ public class NDescriptorUtils {
 
     public static NId applyNutsIdProperties(NDescriptor d, NId child, Function<String, String> properties) {
         return NIdBuilder.of()
-                .setRepository(CoreNUtils.applyStringProperties(child.getRepository(), properties))
-                .setGroupId(CoreNUtils.applyStringProperties(child.getGroupId(), properties))
-                .setArtifactId(CoreNUtils.applyStringProperties(child.getArtifactId(), properties))
-                .setVersion(CoreNUtils.applyStringProperties(child.getVersion().getValue(), properties))
-                .setCondition(applyNutsConditionProperties(child.getCondition(), properties))
-                .setClassifier(CoreNUtils.applyStringProperties(child.getClassifier(), properties))
-                .setPackaging(CoreNUtils.applyStringProperties(child.getPackaging(), properties))
-                .setProperties(CoreNUtils.applyMapProperties(child.getProperties(), properties))
+                .setRepository(CoreNUtils.applyStringProperties(child.repository(), properties))
+                .setGroupId(CoreNUtils.applyStringProperties(child.groupId(), properties))
+                .setArtifactId(CoreNUtils.applyStringProperties(child.artifactId(), properties))
+                .setVersion(CoreNUtils.applyStringProperties(child.version().value(), properties))
+                .setCondition(applyNutsConditionProperties(child.condition(), properties))
+                .setClassifier(CoreNUtils.applyStringProperties(child.classifier(), properties))
+                .setPackaging(CoreNUtils.applyStringProperties(child.packaging(), properties))
+                .setProperties(CoreNUtils.applyMapProperties(child.properties(), properties))
                 .build();
     }
 
@@ -237,7 +237,7 @@ public class NDescriptorUtils {
     public static NIdBuilder applyProperties(NIdBuilder b, Function<String, String> properties) {
         b.setGroupId(CoreNUtils.applyStringProperties(b.getGroupId(), properties));
         b.setArtifactId(CoreNUtils.applyStringProperties(b.getArtifactId(), properties));
-        b.setVersion(CoreNUtils.applyStringProperties(b.getVersion().getValue(), properties));
+        b.setVersion(CoreNUtils.applyStringProperties(b.getVersion().value(), properties));
         b.setClassifier(CoreNUtils.applyStringProperties(b.getClassifier(), properties));
         b.setProperties(CoreNUtils.applyMapProperties(b.getProperties(), properties));
         return b;
@@ -248,8 +248,8 @@ public class NDescriptorUtils {
         Map<String, NDescriptorProperty> propertiesMap = NDescriptorUtils.getPropertiesMap2(b.getProperties());
         if (b.getId() != null) {
             NId id = b.getId();
-            String gid = id.getGroupId();
-            String version = id.getVersion().getValue();
+            String gid = id.groupId();
+            String version = id.version().value();
             if (gid != null && !propertiesMap.containsKey("groupId")) {
                 propertiesMap.put("groupId", DefaultNDescriptorProperty.of("groupId", gid));
             }
@@ -489,16 +489,16 @@ public class NDescriptorUtils {
             global.put(s, b.getName());
         }
         if (ii != null) {
-            if (ii.getVersion().getValue() != null) {
+            if (ii.version().value() != null) {
                 for (String s : new String[]{"project.version", "version", "pom.version"}) {
-                    global.put(s, ii.getVersion().getValue());
+                    global.put(s, ii.version().value());
                 }
             }
             for (String s : new String[]{"project.groupId", "pom.groupId"}) {
-                global.put(s, ii.getGroupId());
+                global.put(s, ii.groupId());
             }
             for (String s : new String[]{"project.artifactId", "pom.artifactId"}) {
-                global.put(s, ii.getArtifactId());
+                global.put(s, ii.artifactId());
             }
         }
         return global;
@@ -517,16 +517,16 @@ public class NDescriptorUtils {
             global.put(s, DefaultNDescriptorProperty.of(s, b.getName()));
         }
         if (ii != null) {
-            if (ii.getVersion().getValue() != null) {
+            if (ii.version().value() != null) {
                 for (String s : new String[]{"project.version", "version", "pom.version"}) {
-                    global.put(s, DefaultNDescriptorProperty.of(s, ii.getVersion().getValue()));
+                    global.put(s, DefaultNDescriptorProperty.of(s, ii.version().value()));
                 }
             }
             for (String s : new String[]{"project.groupId", "pom.groupId"}) {
-                global.put(s, DefaultNDescriptorProperty.of(s, ii.getGroupId()));
+                global.put(s, DefaultNDescriptorProperty.of(s, ii.groupId()));
             }
             for (String s : new String[]{"project.artifactId", "pom.artifactId"}) {
-                global.put(s, DefaultNDescriptorProperty.of(s, ii.getArtifactId()));
+                global.put(s, DefaultNDescriptorProperty.of(s, ii.artifactId()));
             }
         }
         return global;
@@ -655,31 +655,31 @@ public class NDescriptorUtils {
             }
             switch (s){
                 case "os.detected.name":{
-                    return NEnv.of().getOs().getArtifactId();
+                    return NEnv.of().getOs().artifactId();
                 }
                 case "os.detected.version":{
-                    return NEnv.of().getOs().getVersion().toString();
+                    return NEnv.of().getOs().version().toString();
                 }
                 case "os.detected.os.release":{
-                    return NEnv.of().getOsDist().getArtifactId();
+                    return NEnv.of().getOsDist().artifactId();
                 }
                 case "os.detected.release.version":{
-                    return NEnv.of().getOsDist().getVersion().toString();
+                    return NEnv.of().getOsDist().version().toString();
                 }
                 case "os.detected.arch":{
-                    return NEnv.of().getArch().getArtifactId();
+                    return NEnv.of().getArch().artifactId();
                 }
                 case "os.detected.classifier":{
-                    return NEnv.of().getOs().getArtifactId()+"-"+ NEnv.of().getArch().getArtifactId();
+                    return NEnv.of().getOs().artifactId()+"-"+ NEnv.of().getArch().artifactId();
                 }
                 case "os.detected.bitness":{
                     return String.valueOf(NEnv.of().getArchFamily().getBits());
                 }
                 case "os.detected.release.like":{
-                    return NEnv.of().getOsDist().getProperties().get("like");
+                    return NEnv.of().getOsDist().properties().get("like");
                 }
                 case "os.detected.release.codename":{
-                    return NEnv.of().getOsDist().getProperties().get("codename");
+                    return NEnv.of().getOsDist().properties().get("codename");
                 }
             }
             return null;

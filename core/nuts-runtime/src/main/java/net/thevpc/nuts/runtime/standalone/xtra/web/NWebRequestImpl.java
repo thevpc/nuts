@@ -601,7 +601,7 @@ public class NWebRequestImpl implements NWebRequest {
                                     if (npath instanceof NPath) {
                                         ((NPath) npath).copyToOutputStream(sw.tos);
                                     } else {
-                                        try (InputStream tis = npath.getInputStream()) {
+                                        try (InputStream tis = npath.inputStream()) {
                                             NIOUtils.copy(tis, sw.tos);
                                         }
                                     }
@@ -619,7 +619,7 @@ public class NWebRequestImpl implements NWebRequest {
                                 }
                                 sw.println();
                                 if (part.getBody() != null) {
-                                    try (InputStream tis = part.getBody().getInputStream()) {
+                                    try (InputStream tis = part.getBody().inputStream()) {
                                         NIOUtils.copy(tis, sw.tos);
                                     }
                                 } else if (part.getStringValue() != null) {

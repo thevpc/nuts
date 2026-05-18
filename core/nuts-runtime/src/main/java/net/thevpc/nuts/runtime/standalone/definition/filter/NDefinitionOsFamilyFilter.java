@@ -28,7 +28,7 @@ public class NDefinitionOsFamilyFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition def) {
-        List<NOsFamily> current = NStream.ofIterable(def.getDescriptor().getCondition().getOs()).nonBlank()
+        List<NOsFamily> current = NStream.ofIterable(def.descriptor().getCondition().getOs()).nonBlank()
                 .map(x -> NOsFamily.parse(x).orNull())
                 .nonBlank()
                 .toList();

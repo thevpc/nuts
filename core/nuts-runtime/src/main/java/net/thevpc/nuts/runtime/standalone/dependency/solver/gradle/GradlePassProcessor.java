@@ -106,7 +106,7 @@ class GradlePassProcessor {
         VersionConflict existingConflict = versionConflicts.get(groupArtifact);
         
         if (existingConflict != null) {
-            String currentVersion = currentNode.dependency.toId().getVersion().getValue();
+            String currentVersion = currentNode.dependency.toId().version().value();
             
             if (!shouldReplaceVersion(existingConflict, currentVersion, currentNode.depth)) {
                 gradleSolver.doLog("Gradle: skipping older/equal version " + currentVersion + 
@@ -160,7 +160,7 @@ class GradlePassProcessor {
             }
             
             NId id = currentNode.getEffectiveId();
-            String version = id.getVersion().getValue();
+            String version = id.version().value();
             
             // Register this version as chosen for future conflict resolution
             if (existingConflict == null) {
@@ -217,7 +217,7 @@ class GradlePassProcessor {
      */
     private String getGroupArtifact(NDependency dependency) {
         NId id = dependency.toId();
-        return id.getGroupId() + ":" + id.getArtifactId();
+        return id.groupId() + ":" + id.artifactId();
     }
 
     public NDependencies run() {

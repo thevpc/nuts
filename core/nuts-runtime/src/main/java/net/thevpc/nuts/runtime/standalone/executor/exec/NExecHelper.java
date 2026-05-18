@@ -103,7 +103,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
     public int exec() {
         NSession session = NSession.of();
         if (session.isDry()) {
-            if (out.getTerminalMode() == NTerminalMode.FORMATTED) {
+            if (out.terminalMode() == NTerminalMode.FORMATTED) {
                 out.print("[dry] ==[exec]== ");
                 out.println(NExecWriter.of().format(pb));
             } else {

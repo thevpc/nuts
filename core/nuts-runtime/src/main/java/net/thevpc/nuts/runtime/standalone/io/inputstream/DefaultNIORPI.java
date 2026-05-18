@@ -102,7 +102,7 @@ public class DefaultNIORPI implements NIORPI {
             }
         }
         if (out instanceof NPrintStreamAdapter) {
-            return ((NPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(expectedMode);
+            return ((NPrintStreamAdapter) out).basePrintStream().setTerminalMode(expectedMode);
         }
         switch (expectedMode) {
             case DEFAULT:
@@ -133,7 +133,7 @@ public class DefaultNIORPI implements NIORPI {
             expectedMode = baseAnsi?NTerminalMode.FORMATTED : NTerminalMode.FILTERED;
         }
         if (out instanceof NPrintStreamAdapter) {
-            return ((NPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(expectedMode);
+            return ((NPrintStreamAdapter) out).basePrintStream().setTerminalMode(expectedMode);
         }
         switch (expectedMode) {
             case DEFAULT:
@@ -164,7 +164,7 @@ public class DefaultNIORPI implements NIORPI {
     @Override
     public NPrintStream ofPrintStream(OutputStream out) {
         if (out instanceof NPrintStreamAdapter) {
-            return ((NPrintStreamAdapter) out).getBasePrintStream();
+            return ((NPrintStreamAdapter) out).basePrintStream();
         }
         return new NPrintStreamRaw(out, null, null, new NPrintStreamBase.Bindings(), null);
     }
@@ -187,7 +187,7 @@ public class DefaultNIORPI implements NIORPI {
             return null;
         }
         if (out instanceof NPrintStreamAdapter) {
-            return ((NPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(mode);
+            return ((NPrintStreamAdapter) out).basePrintStream().setTerminalMode(mode);
         }
         SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, terminal);
         return ofPrintStream(w, mode, terminal);
@@ -200,7 +200,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NPrintStream ofPrintStream(NPath out) {
-        return ofPrintStream(out.getOutputStream());
+        return ofPrintStream(out.outputStream());
     }
 
     @Override
@@ -261,13 +261,13 @@ public class DefaultNIORPI implements NIORPI {
                 }
 
                 @Override
-                public NContentMetadata getMetaData() {
+                public NContentMetadata metaData() {
                     return metadata;
                 }
 
                 @Override
-                public InputStream getInputStream() {
-                    return o.getInputStream();
+                public InputStream inputStream() {
+                    return o.inputStream();
                 }
             };
         }
@@ -305,13 +305,13 @@ public class DefaultNIORPI implements NIORPI {
                 }
 
                 @Override
-                public NContentMetadata getMetaData() {
+                public NContentMetadata metaData() {
                     return metadata;
                 }
 
                 @Override
-                public InputStream getInputStream() {
-                    return o.getInputStream();
+                public InputStream inputStream() {
+                    return o.inputStream();
                 }
             };
         }
@@ -358,8 +358,8 @@ public class DefaultNIORPI implements NIORPI {
             return source;
         }
         NPath tf = NPath.ofTempFile();
-        try (InputStream in = source.getInputStream()) {
-            try (OutputStream out = tf.getOutputStream()) {
+        try (InputStream in = source.inputStream()) {
+            try (OutputStream out = tf.outputStream()) {
                 NIOUtils.copy(in, out, 4096);
             }
         } catch (IOException ex) {
@@ -476,7 +476,7 @@ public class DefaultNIORPI implements NIORPI {
     public List<NExecutionEntry> parseExecutionEntries(NPath file) {
         if (file.name().toLowerCase().endsWith(".jar")) {
             try {
-                try (InputStream in = file.getInputStream()) {
+                try (InputStream in = file.inputStream()) {
                     return parseExecutionEntries(in, "jar", file.toAbsolute().normalize().toString());
                 }
             } catch (IOException ex) {
@@ -484,7 +484,7 @@ public class DefaultNIORPI implements NIORPI {
             }
         } else if (file.name().toLowerCase().endsWith(".class")) {
             try {
-                try (InputStream in = file.getInputStream()) {
+                try (InputStream in = file.inputStream()) {
                     return parseExecutionEntries(in, "class", file.toAbsolute().normalize().toString());
                 }
             } catch (IOException ex) {
@@ -581,7 +581,7 @@ public class DefaultNIORPI implements NIORPI {
         if (rootFolder == null) {
             rootFolder = NPath.of(NStoreKey.ofTemp());
         }
-        NId appId = NApp.of().getId().orElseGet(() -> NWorkspace.of().getRuntimeId());
+        NId appId = NApp.of().id().orElseGet(() -> NWorkspace.of().getRuntimeId());
         if (appId != null) {
             rootFolder = rootFolder.resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(appId));
         }
@@ -624,7 +624,7 @@ public class DefaultNIORPI implements NIORPI {
                     temp = File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().get());
                     if (temp.delete() && temp.mkdir()) {
                         return NPath.of(temp.toPath())
-                                .setUserTemporary(true);
+                                .userTemporary(true);
                     }
                 } catch (IOException ex) {
                     //
@@ -634,7 +634,7 @@ public class DefaultNIORPI implements NIORPI {
         } else {
             try {
                 return NPath.of(File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().get()).toPath())
-                        .setUserTemporary(true);
+                        .userTemporary(true);
             } catch (IOException e) {
                 throw new NIOException(e);
             }
@@ -818,13 +818,13 @@ public class DefaultNIORPI implements NIORPI {
         }
 
         @Override
-        public NContentMetadata getMetaData() {
+        public NContentMetadata metaData() {
             return metadata2;
         }
 
         @Override
-        public InputStream getInputStream() {
-            return inputStreamProvider.getInputStream();
+        public InputStream inputStream() {
+            return inputStreamProvider.inputStream();
         }
     }
 
@@ -854,12 +854,12 @@ public class DefaultNIORPI implements NIORPI {
         }
 
         @Override
-        public NContentMetadata getMetaData() {
+        public NContentMetadata metaData() {
             return metadata2;
         }
 
         @Override
-        public InputStream getInputStream() {
+        public InputStream inputStream() {
             return new ReaderInputStream(inputStreamProvider.getReader(), null);
         }
 

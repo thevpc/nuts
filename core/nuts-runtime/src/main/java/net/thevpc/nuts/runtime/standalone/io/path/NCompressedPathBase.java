@@ -130,8 +130,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public String getCharset() {
-        return base.getCharset();
+    public String charset() {
+        return base.charset();
     }
 
     @Override
@@ -211,13 +211,13 @@ public class NCompressedPathBase extends NPathBase {
     @Override
     public InputStream getInputStream(NPathOption... options) {
         return NInputSourceBuilder.of(base.getInputStream(options))
-                .setMetadata(getMetaData())
+                .setMetadata(metaData())
                 .createInputStream();
     }
 
     @Override
     public OutputStream getOutputStream(NPathOption... options) {
-        return NOutputStreamBuilder.of(base.getOutputStream(options)).setMetadata(this.getMetaData()).createOutputStream();
+        return NOutputStreamBuilder.of(base.getOutputStream(options)).setMetadata(this.metaData()).createOutputStream();
     }
 
     @Override
@@ -374,8 +374,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public NPath setPermissions(NPathPermission... permissions) {
-        base.setPermissions(permissions);
+    public NPath permissions(NPathPermission... permissions) {
+        base.permissions(permissions);
         return this;
     }
 

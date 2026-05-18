@@ -54,7 +54,7 @@ public class NDependencyDEFilter extends AbstractDependencyFilter {
                 if (!e.isEmpty()) {
                     NId de = NId.get(e).orNull();
                     if (de != null) {
-                        return NDesktopEnvironmentFamily.parse(de.getArtifactId()).orNull();
+                        return NDesktopEnvironmentFamily.parse(de.artifactId()).orNull();
                     }
                 }
                 return null;

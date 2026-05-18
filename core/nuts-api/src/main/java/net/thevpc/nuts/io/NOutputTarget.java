@@ -53,6 +53,6 @@ public interface NOutputTarget extends NContentMetadataProvider {
         return NIORPI.of().ofOutputTarget(writer, metadata);
     }
 
-    OutputStream getOutputStream();
+    OutputStream outputStream();
 
 }

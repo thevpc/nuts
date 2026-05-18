@@ -12,7 +12,7 @@ import java.io.OutputStream;
 public class NPrintStreamFormatted extends NPrintStreamRendered {
     public NPrintStreamFormatted(NPrintStreamBase base, Bindings bindings) {
         super(base, NTerminalMode.FORMATTED, bindings);
-        getMetaData().setMessage(NMsg.ofStyledPath("<formatted-stream>"));
+        metaData().message(NMsg.ofStyledPath("<formatted-stream>"));
     }
 
 
@@ -23,7 +23,7 @@ public class NPrintStreamFormatted extends NPrintStreamRendered {
                 return new NPrintStreamFiltered(base, bindings);
             }
         }
-        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", terminalMode(), other));
     }
 
     @Override
@@ -35,7 +35,7 @@ public class NPrintStreamFormatted extends NPrintStreamRendered {
     }
 
     @Override
-    public OutputStream getOutputStream() {
+    public OutputStream outputStream() {
         return asOutputStream();
     }
 }

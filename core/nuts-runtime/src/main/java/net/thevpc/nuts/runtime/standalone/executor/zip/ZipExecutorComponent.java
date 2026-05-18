@@ -64,7 +64,7 @@ public class ZipExecutorComponent implements NExecutorComponent {
     public static int getScore(NScorableContext ctx) {
         NDefinition def = ctx.getCriteria(NDefinition.class);
         if (def != null) {
-            String shortName = def.getId().getShortName();
+            String shortName = def.id().shortName();
             //for executors
             if ("net.thevpc.nuts.exec:exec-zip".equals(shortName)) {
                 return NScorable.DEFAULT_SCORE + 10;
@@ -72,7 +72,7 @@ public class ZipExecutorComponent implements NExecutorComponent {
             if ("zip".equals(shortName)) {
                 return NScorable.DEFAULT_SCORE + 10;
             }
-            switch (NStringUtils.trim(def.getDescriptor().getPackaging())) {
+            switch (NStringUtils.trim(def.descriptor().getPackaging())) {
                 case "zip": {
                     return NScorable.DEFAULT_SCORE + 10;
                 }
@@ -85,13 +85,13 @@ public class ZipExecutorComponent implements NExecutorComponent {
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
         NDefinition def = executionContext.getDefinition();
         HashMap<String, String> osEnv = new HashMap<>();
-        NArtifactCall executor = def.getDescriptor().getExecutor();
-        NAssert.requireNonNull(executor, () -> NMsg.ofC("missing executor %s", def.getId()));
+        NArtifactCall executor = def.descriptor().getExecutor();
+        NAssert.requireNonNull(executor, () -> NMsg.ofC("missing executor %s", def.id()));
         List<String> args = new ArrayList<>(executionContext.getExecutorOptions());
         args.addAll(executionContext.getArguments());
-        if (executor.getId() != null && !executor.getId().toString().equals("exec")) {
+        if (executor.id() != null && !executor.id().toString().equals("exec")) {
             // TODO: delegate to another executor!
-            throw new NIOException(NMsg.ofC("unsupported executor %s for %s", executor.getId(), def.getId()));
+            throw new NIOException(NMsg.ofC("unsupported executor %s for %s", executor.id(), def.id()));
         }
         String directory = null;
         return NExecHelper.ofDefinition(

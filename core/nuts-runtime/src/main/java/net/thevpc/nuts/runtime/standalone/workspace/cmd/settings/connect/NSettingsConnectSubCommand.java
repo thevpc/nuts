@@ -79,7 +79,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                     PipeRunnable rr = NSysExecUtils.pipe("pipe-out-socket-" + server + ":" + validPort,
                             cmd0, "connect-socket",
                             NInputSourceBuilder.of(socket.getInputStream())
-                                    .setMetadata(new DefaultNContentMetadata().setMessage(NMsg.ofC("pipe-out-socket-%s:%s", server, validPort)))
+                                    .setMetadata(new DefaultNContentMetadata().message(NMsg.ofC("pipe-out-socket-%s:%s", server, validPort)))
                                     .createNonBlockingInputStream(), NOut.asPrintStream());
                     NConcurrent.of().executorService().submit(rr);
                     PrintStream out = new PrintStream(socket.getOutputStream());

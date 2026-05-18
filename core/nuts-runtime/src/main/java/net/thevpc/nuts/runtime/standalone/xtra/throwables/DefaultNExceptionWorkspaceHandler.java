@@ -81,7 +81,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                 if (fm != null) {
                     session.out().resetLine();
                     session.eout().add(NElement.ofObjectBuilder()
-                            .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
+                            .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().id().orNull()))
                             .set("error", NText.of(fm).filteredText())
                             .build()
                     );
@@ -99,7 +99,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                 } else {
                     session.out().resetLine();
                     session.eout().add(NElement.ofObjectBuilder()
-                            .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
+                            .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().id().orNull()))
                             .set("error", m)
                             .build());
                     if (showTrace) {

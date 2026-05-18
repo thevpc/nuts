@@ -202,7 +202,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                         for (NId resultId : NSearch.of()
                                 .setDefinitionFilter(NDefinitionFilters.of().byInstalled(true)
                         ).getResultIds()) {
-                            d.idsToInstall.add(resultId.getLongName());
+                            d.idsToInstall.add(resultId.longName());
                             d.missingAnyArgument = false;
                         }
                     }).anyMatch();
@@ -213,7 +213,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     cmdLine.matcher().matchTrueFlag((v) -> {
                         session.setConfirm(NConfirmationMode.YES);
                         for (NId companion : NExtensions.of().getCompanionIds()) {
-                            d.idsToInstall.add(NSearch.of().addId(companion).latest(true).getResultIds().findFirst().get().getLongName());
+                            d.idsToInstall.add(NSearch.of().addId(companion).latest(true).getResultIds().findFirst().get().longName());
                             d.missingAnyArgument = false;
                         }
                     }).anyMatch();

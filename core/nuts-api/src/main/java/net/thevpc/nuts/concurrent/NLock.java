@@ -67,7 +67,7 @@ public interface NLock extends Lock, NDescribable {
 
     static NLock ofId(NId id) {
         if (NWorkspace.of().getBootOptions().getIsolationLevel().orNull() == NIsolationLevel.MEMORY) {
-            return of(id.getLongId());
+            return of(id.longId());
         } else {
             return ofIdPath(id, NStoreScope.WORKSPACE);
         }
@@ -79,9 +79,9 @@ public interface NLock extends Lock, NDescribable {
 
     static NLock ofIdPath(NId id, NStoreScope storeScope, String path) {
         if(NBlankable.isBlank(path)){
-            path="nuts-" + NStringUtils.firstNonBlankTrimmed(id.getFace(), "content") + ".lock";
+            path="nuts-" + NStringUtils.firstNonBlankTrimmed(id.face(), "content") + ".lock";
         }
-        return NLockBuilder.of().setSource(id.getLongId()).setResource(NPath.of(NStoreKey.ofRun(id).scope(storeScope)).resolve(path).toPath().get()).build();
+        return NLockBuilder.of().setSource(id.longId()).setResource(NPath.of(NStoreKey.ofRun(id).scope(storeScope)).resolve(path).toPath().get()).build();
     }
 
     boolean isLocked();

@@ -38,11 +38,11 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
         super(NFilterOp.CUSTOM);
         this.id = id;
         this.wildcard = containsWildcard(id.toString());
-        g = GlobUtils.ofExact(id.getGroupId());
-        n = GlobUtils.ofExact(id.getArtifactId());
-        v = id.getVersion().toFilter();
-        qm = id.getProperties();
-        for (Map.Entry<String, String> entry : id.getProperties().entrySet()) {
+        g = GlobUtils.ofExact(id.groupId());
+        n = GlobUtils.ofExact(id.artifactId());
+        v = id.version().toFilter();
+        qm = id.properties();
+        for (Map.Entry<String, String> entry : id.properties().entrySet()) {
             String key = entry.getKey();
             String val = entry.getValue();
             if (!key.contains("*")) {
@@ -65,25 +65,25 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
 
     @Override
     public boolean acceptId(NId other) {
-        if (!g.matcher(other.getGroupId()).matches()) {
+        if (!g.matcher(other.groupId()).matches()) {
             return false;
         }
-        if (!n.matcher(other.getArtifactId()).matches()) {
+        if (!n.matcher(other.artifactId()).matches()) {
             return false;
         }
-        if (!v.acceptVersion(other.getVersion())) {
+        if (!v.acceptVersion(other.version())) {
             return false;
         }
         Map<String, String> oqm = null;
         for (Predicate<Map<String, String>> pp : q) {
             if (oqm == null) {
-                oqm = other.getProperties();
+                oqm = other.properties();
             }
             if (!pp.test(oqm)) {
                 return false;
             }
         }
-        NEnvCondition condition = id.getCondition();
+        NEnvCondition condition = id.condition();
         if (condition != null && !condition.isBlank()) {
             NEnvCondition otherCondition = null;
             try {
@@ -199,13 +199,13 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
             return false;
         }
         NId nId = NId.of(id);
-        if(containsWildcardString(nId.getArtifactId())){
+        if(containsWildcardString(nId.artifactId())){
             return true;
         }
-        if(containsWildcardString(nId.getGroupId())){
+        if(containsWildcardString(nId.groupId())){
             return true;
         }
-        if(containsWildcard(nId.getVersion())){
+        if(containsWildcard(nId.version())){
             return true;
         }
         return id.indexOf('*') >= 0;

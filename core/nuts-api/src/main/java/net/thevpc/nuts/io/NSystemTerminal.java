@@ -94,5 +94,5 @@ public interface NSystemTerminal extends NSystemTerminalBase {
      */
     NSystemTerminal printProgress(float progress, NMsg message);
 
-    NSystemTerminalBase getBase();
+    NSystemTerminalBase base();
 }

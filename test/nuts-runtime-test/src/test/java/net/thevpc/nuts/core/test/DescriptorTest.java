@@ -27,11 +27,11 @@ public class DescriptorTest {
     public void testSearchDescriptor() {
         NDefinition u = NSearch.of().addId("org.springframework.boot:spring-boot-cli#2.4.1")
                 .getResultDefinitions().findFirst().get();
-        TestUtils.println(u.getDescriptor());
-        TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
-        TestUtils.println(u.getId()+":"+(u.getDescriptor().isNutsApplication() ? "app" : "non-app"));
-        Assertions.assertTrue(!u.getDescriptor().isExecutable());
-        Assertions.assertTrue(!u.getDescriptor().isNutsApplication());
+        TestUtils.println(u.descriptor());
+        TestUtils.println(u.id()+":"+(u.descriptor().isExecutable() ? "executable" : "non-executable"));
+        TestUtils.println(u.id()+":"+(u.descriptor().isNutsApplication() ? "app" : "non-app"));
+        Assertions.assertTrue(!u.descriptor().isExecutable());
+        Assertions.assertTrue(!u.descriptor().isNutsApplication());
     }
 
     @Test
@@ -39,30 +39,30 @@ public class DescriptorTest {
 
         NDefinition u = NFetch.of("org.openjfx:javafx-controls#17.0.0.1")
                 .getResultDefinition();
-        for (NDependency dependency : u.getDescriptor().getDependencies()) {
+        for (NDependency dependency : u.descriptor().getDependencies()) {
             System.out.println(dependency.toString());
         }
-        TestUtils.println(u.getDescriptor());
-        TestUtils.println(u.getEffectiveDescriptor().get());
-        TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
-        TestUtils.println(u.getId()+":"+(u.getDescriptor().isNutsApplication() ? "app" : "non-app"));
-        Assertions.assertTrue(!u.getDescriptor().isExecutable());
-        Assertions.assertTrue(!u.getDescriptor().isNutsApplication());
+        TestUtils.println(u.descriptor());
+        TestUtils.println(u.effectiveDescriptor().get());
+        TestUtils.println(u.id()+":"+(u.descriptor().isExecutable() ? "executable" : "non-executable"));
+        TestUtils.println(u.id()+":"+(u.descriptor().isNutsApplication() ? "app" : "non-app"));
+        Assertions.assertTrue(!u.descriptor().isExecutable());
+        Assertions.assertTrue(!u.descriptor().isNutsApplication());
     }
 
     @Test
     public void testSearchDescriptor3() {
         NDefinition u = NFetch.of("ch.qos.logback:logback-classic#1.2.11")
                 .getResultDefinition();
-        for (NDependency dependency : u.getDescriptor().getDependencies()) {
+        for (NDependency dependency : u.descriptor().getDependencies()) {
             System.out.println(dependency.toString());
         }
-        TestUtils.println(u.getDescriptor());
-        TestUtils.println(u.getEffectiveDescriptor().get());
-        TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
-        TestUtils.println(u.getId()+":"+(u.getDescriptor().isNutsApplication() ? "app" : "non-app"));
-        Assertions.assertTrue(!u.getDescriptor().isExecutable());
-        Assertions.assertTrue(!u.getDescriptor().isNutsApplication());
+        TestUtils.println(u.descriptor());
+        TestUtils.println(u.effectiveDescriptor().get());
+        TestUtils.println(u.id()+":"+(u.descriptor().isExecutable() ? "executable" : "non-executable"));
+        TestUtils.println(u.id()+":"+(u.descriptor().isNutsApplication() ? "app" : "non-app"));
+        Assertions.assertTrue(!u.descriptor().isExecutable());
+        Assertions.assertTrue(!u.descriptor().isNutsApplication());
     }
 
 }

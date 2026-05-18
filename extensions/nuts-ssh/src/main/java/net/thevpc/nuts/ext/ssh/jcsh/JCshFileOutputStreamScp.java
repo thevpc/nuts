@@ -1,7 +1,6 @@
 package net.thevpc.nuts.ext.ssh.jcsh;
 
 import net.thevpc.nuts.ext.ssh.SshConnection;
-import net.thevpc.nuts.ext.ssh.SshConnectionAdapter;
 import net.thevpc.nuts.ext.ssh.SshConnectionPool;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.net.NConnectionString;
@@ -20,7 +19,7 @@ public class JCshFileOutputStreamScp extends OutputStream {
         this.path = path;
         this.mkdirs = mkdirs;
         this.temp = NPath.ofTempFile();
-        this.tempOS = this.temp.getOutputStream();
+        this.tempOS = this.temp.outputStream();
     }
 
     @Override

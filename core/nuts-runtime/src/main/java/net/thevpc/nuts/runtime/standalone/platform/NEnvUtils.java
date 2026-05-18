@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.platform;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NIdBuilder;
-import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.net.NConnectionString;
@@ -134,7 +133,7 @@ public class NEnvUtils {
                 families.add(env.getShellFamily());
                 //add bash with existing rc
                 families.add(NShellFamily.WIN_CMD);
-                if (env.getOs().getVersion().compareTo("7") >= 0) {
+                if (env.getOs().version().compareTo("7") >= 0) {
                     families.add(NShellFamily.WIN_POWER_SHELL);
                 }
                 shellFamilies.addAll(families);

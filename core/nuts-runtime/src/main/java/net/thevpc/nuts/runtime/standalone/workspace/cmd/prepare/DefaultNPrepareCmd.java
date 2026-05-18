@@ -47,25 +47,25 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
         if (NBlankable.isBlank(version)) {
             apiId = apiId.builder().setVersion(version).build();
         }
-        NPath javaPath = remoteJavaCommand(apiId.getVersion());
+        NPath javaPath = remoteJavaCommand(apiId.version());
         if (javaPath == null) {
             throw new NIllegalArgumentException(NMsg.ofPlain("missing java"));
         }
         pushId(apiId, null);
         Set<NId> deps = new HashSet<>();
         deps.add(workspace.getRuntimeId());
-        deps.addAll(NSearch.of().addId("net.thevpc.nsh:nsh").latest(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
+        deps.addAll(NSearch.of().addId("net.thevpc.nsh:nsh").latest(true).setTargetApiVersion(apiId.version()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
 //                .setDependencies(true)
                 .getResultIds().toList());
         if(ids!=null){
             for (NId id : deps) {
-                deps.addAll(NSearch.of().addId(id).latest(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
+                deps.addAll(NSearch.of().addId(id).latest(true).setTargetApiVersion(apiId.version()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
 //                        .setDependencies(true)
                         .getResultIds().toList());
             }
         }
         for (NId dep : deps) {
-            pushId(dep, apiId.getVersion());
+            pushId(dep, apiId.version());
         }
         runRemoteAsString(javaPath.toString(), "-jar", remoteIdMavenJar(apiId));
         return this;
@@ -73,15 +73,15 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
 
     private void pushId(NId pid, NVersion apiIdVersion) {
         NDefinition def = NSearch.of().addId(pid).latest(true).setTargetApiVersion(apiIdVersion).getResultDefinitions().findFirst().get();
-        NPath apiJar = def.getContent().get();
-        if (!runRemoteAsStringNoFail("ls " + remoteIdMavenJar(def.getApiId()))) {
+        NPath apiJar = def.content().get();
+        if (!runRemoteAsStringNoFail("ls " + remoteIdMavenJar(def.apiId()))) {
             if (!isLocalhost()) {
                 String targetServer = getTargetServer();
                 NExec.of().addCommand("scp")
-                        .addCommand(apiJar.toString()).addCommand(getValidUser() + "@" + targetServer + ":" + remoteIdMavenJar(def.getApiId()))
+                        .addCommand(apiJar.toString()).addCommand(getValidUser() + "@" + targetServer + ":" + remoteIdMavenJar(def.apiId()))
                         .failFast(true).getGrabbedAllString();
             } else {
-                NPath to = NPath.of(remoteIdMavenJar(def.getApiId()));
+                NPath to = NPath.of(remoteIdMavenJar(def.apiId()));
                 to.parent().mkdirs();
                 apiJar.copyTo(to);
             }
@@ -89,7 +89,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
     }
 
     private String remoteIdMavenJar(NId apiId) {
-        return remoteHomeFile(".m2/repository/" + String.join("/", apiId.getGroupId().split("[.]"))) + "/" + apiId.getArtifactId() + "/" + apiId.getVersion() + "/" + apiId.getArtifactId() + "-" + apiId.getVersion() + ".jar";
+        return remoteHomeFile(".m2/repository/" + String.join("/", apiId.groupId().split("[.]"))) + "/" + apiId.artifactId() + "/" + apiId.version() + "/" + apiId.artifactId() + "-" + apiId.version() + ".jar";
     }
 
     private NPath remoteJavaCommand(NVersion apiVersion) {

@@ -74,7 +74,7 @@ public class CpTest {
 
         NCp.of().from(from).to(to)
                 .addOptions(NPathOption.LOG, NPathOption.TRACE)
-                .setProgressMonitor(new NProgressListener() {
+                .progressMonitor(new NProgressListener() {
                     @Override
                     public boolean onProgress(NProgressEvent event) {
                         TestUtils.println(event.getProgress());

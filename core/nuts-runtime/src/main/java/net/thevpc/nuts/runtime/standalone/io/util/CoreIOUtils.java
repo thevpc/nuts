@@ -373,7 +373,7 @@ public class CoreIOUtils {
                 if (cachedID != null) {
                     NPath p = urlContent.resolve(cachedID);
                     if (p.exists()) {
-                        return p.getInputStream();
+                        return p.inputStream();
                     }
                 }
             }
@@ -392,7 +392,7 @@ public class CoreIOUtils {
                     if (cachedID != null) {
                         NPath p = urlContent.resolve(cachedID);
                         if (p.exists()) {
-                            return p.getInputStream();
+                            return p.inputStream();
                         }
                     }
                 }
@@ -402,11 +402,11 @@ public class CoreIOUtils {
         final String s = UUID.randomUUID().toString();
         final NPath outPath = urlContent.resolve(s + "~");
         urlContent.mkdirs();
-        OutputStream p = outPath.getOutputStream();
+        OutputStream p = outPath.outputStream();
         long finalLastModified = lastModified;
         NIO io = NIO.of();
-        InputStream ist = NInputSourceBuilder.of(header.getInputStream())
-                .setTee(p)
+        InputStream ist = NInputSourceBuilder.of(header.inputStream())
+                .tee(p)
                 .setCloseAction(() -> {
                     if (outPath.exists()) {
                         CachedURL ccu = new CachedURL();
@@ -431,7 +431,7 @@ public class CoreIOUtils {
                 .setMetadata(new DefaultNContentMetadata(
                         path,
                         NMsg.ofNtf(NText.ofStyledPath(path)),
-                        size, header.contentType(), header.getCharset(), sourceTypeName
+                        size, header.contentType(), header.charset(), sourceTypeName
                 )).createInputStream()
                 ;
 
@@ -445,13 +445,13 @@ public class CoreIOUtils {
                 return sf;
             }
         }
-        String name = is.getMetaData().getName().orElse("no-name");
+        String name = is.metaData().name().orElse("no-name");
         Path temp = NPath.ofTempFile(name).toPath().get();
         NCp a = NCp.of().removeOptions(NPathOption.SAFE);
         if (isPath) {
             a.from(((NPath) is));
         } else {
-            a.from(is.getInputStream());
+            a.from(is.inputStream());
         }
         a.to(temp).run();
 
@@ -641,12 +641,12 @@ public class CoreIOUtils {
                 }
                 case ASK: {
                     if (NIn.ask()
-                            .setDefaultValue(true)
+                            .defaultValue(true)
                             .forBoolean(NMsg.ofC("create %s ?",
                                     NText.ofStyled(
                                             betterPath(out.toString()), NTextStyle.path()
                                     ))
-                            ).getBooleanValue()) {
+                            ).booleanValue()) {
                         out.mkParentDirs();
                         out.writeBytes(content);
 //                        if (session.isPlainTrace()) {
@@ -678,13 +678,13 @@ public class CoreIOUtils {
                 }
                 case ASK: {
                     if (NIn.ask()
-                            .setDefaultValue(true)
-                            .setRememberMeKey(rememberMeKey == null ? null : ("Override." + rememberMeKey))
+                            .defaultValue(true)
+                            .rememberMeKey(rememberMeKey == null ? null : ("Override." + rememberMeKey))
                             .forBoolean(NMsg.ofC("override %s ?",
                                     NText.ofStyled(
                                             betterPath(out.toString()), NTextStyle.path()
                                     ))
-                            ).getBooleanValue()) {
+                            ).booleanValue()) {
                         out.writeBytes(content);
 //                        if (session.isPlainTrace()) {
 //                            NOut.println(NMsg.ofC("update file %s", out));
@@ -785,15 +785,15 @@ public class CoreIOUtils {
         if (err == null) {
             err = NExecOutput.ofStream(session.err());
         }
-        if (err.getType() == NRedirectType.INHERIT) {
+        if (err.type() == NRedirectType.INHERIT) {
             if (NIO.of().isStderr(session.err())) {
                 err = NExecOutput.ofInherit();
             } else {
                 err = NExecOutput.ofStream(session.err());
             }
-        } else if (err.getType() == NRedirectType.STREAM) {
-            if (NIO.of().isStderr(err.getStream())) {
-                err = NExecOutput.ofStream(err.getStream());
+        } else if (err.type() == NRedirectType.STREAM) {
+            if (NIO.of().isStderr(err.outputStream())) {
+                err = NExecOutput.ofStream(err.outputStream());
             }
         }
         return err;
@@ -876,7 +876,7 @@ public class CoreIOUtils {
     public static DefaultNContentMetadata defaultNutsInputSourceMetadata(InputStream is) {
         NAssert.requireNamedNonNull(is);
         if (is instanceof NInputSource) {
-            return new DefaultNContentMetadata(((NInputSource) is).getMetaData());
+            return new DefaultNContentMetadata(((NInputSource) is).metaData());
         }
         return new DefaultNContentMetadata();
     }
@@ -886,15 +886,15 @@ public class CoreIOUtils {
             NSession session = NSession.of();
             in = NExecInput.ofStream(session.in());
         }
-        if (in.getType() == NRedirectType.INHERIT) {
+        if (in.type() == NRedirectType.INHERIT) {
             NSession session = NSession.of();
             if (NIO.of().isStdin(session.in())) {
                 in = NExecInput.ofInherit();
             } else {
                 in = NExecInput.ofStream(session.in());
             }
-        } else if (in.getType() == NRedirectType.STREAM) {
-            if (NIO.of().isStdin(in.getStream())) {
+        } else if (in.type() == NRedirectType.STREAM) {
+            if (NIO.of().isStdin(in.inputStream())) {
                 in = NExecInput.ofInherit();
             }
         }
@@ -906,22 +906,22 @@ public class CoreIOUtils {
         if (out == null) {
             out = NExecOutput.ofStream(session.out());
         }
-        if (out.getType() == NRedirectType.INHERIT) {
+        if (out.type() == NRedirectType.INHERIT) {
             if (NIO.of().isStdout(session.out())) {
                 out = NExecOutput.ofInherit();
             } else {
                 out = NExecOutput.ofStream(session.out());
             }
-        } else if (out.getType() == NRedirectType.STREAM) {
-            if (NIO.of().isStdout(out.getStream())) {
-                out = NExecOutput.ofStream(out.getStream());
+        } else if (out.type() == NRedirectType.STREAM) {
+            if (NIO.of().isStdout(out.outputStream())) {
+                out = NExecOutput.ofStream(out.outputStream());
             }
         }
         return out;
     }
 
     public static String metadataToString(NContentMetadata md, Object caller) {
-        NOptional<NMsg> m = md.getMessage();
+        NOptional<NMsg> m = md.message();
         if (m.isPresent()) {
             NMemoryPrintStream out = NPrintStream.ofMem(NTerminalMode.FILTERED);
             out.print(m.get());
@@ -931,7 +931,7 @@ public class CoreIOUtils {
             }
         }
 
-        NOptional<String> m2 = md.getName();
+        NOptional<String> m2 = md.name();
         if (m2.isPresent()) {
             String s = m2.get();
             if (!NBlankable.isBlank(s)) {
@@ -952,26 +952,26 @@ public class CoreIOUtils {
                 if (o instanceof NContentMetadata) {
                     md2 = (NContentMetadata) o;
                 } else if (o instanceof NContentMetadataProvider) {
-                    md2 = ((NContentMetadataProvider) o).getMetaData();
+                    md2 = ((NContentMetadataProvider) o).metaData();
                 }
                 if (md2 != null) {
                     if (md == null) {
                         md = new DefaultNContentMetadata(md2);
                     } else {
-                        if (md.getContentLength().isNotPresent()) {
-                            md.setContentLength(md2.getContentLength().orNull());
+                        if (md.contentLength().isNotPresent()) {
+                            md.contentLength(md2.contentLength().orNull());
                         }
-                        if (md.getContentType().isNotPresent()) {
-                            md.setContentType(md2.getContentType().orNull());
+                        if (md.contentType().isNotPresent()) {
+                            md.contentType(md2.contentType().orNull());
                         }
-                        if (md.getMessage().isNotPresent()) {
-                            md.setMessage(md2.getMessage().orNull());
+                        if (md.message().isNotPresent()) {
+                            md.message(md2.message().orNull());
                         }
-                        if (md.getName().isNotPresent()) {
-                            md.setName(md2.getName().orNull());
+                        if (md.name().isNotPresent()) {
+                            md.name(md2.name().orNull());
                         }
-                        if (md.getKind().isNotPresent()) {
-                            md.setKind(md2.getKind().orNull());
+                        if (md.kind().isNotPresent()) {
+                            md.kind(md2.kind().orNull());
                         }
                     }
                 }

@@ -46,7 +46,7 @@ public class NDependencyUtils {
     public static String toExclusionListString(NId[] exclusions) {
         TreeSet<String> ex = new TreeSet<>();
         for (NId exclusion : exclusions) {
-            ex.add(exclusion.getShortName());
+            ex.add(exclusion.shortName());
         }
         return String.join(",", ex);
     }

@@ -13,7 +13,7 @@ public class NanoDBNIdSerializer extends NanoDBNonNullSerializer<NId>{
 
     @Override
     public void write(NId obj, NanoDBOutputStream out) {
-        out.writeUTF(obj.getLongName());
+        out.writeUTF(obj.longName());
     }
 
     @Override

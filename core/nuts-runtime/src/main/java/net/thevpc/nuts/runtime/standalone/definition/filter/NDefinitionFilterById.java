@@ -50,7 +50,7 @@ public class NDefinitionFilterById extends AbstractDefinitionFilter {
     @Override
     public boolean acceptDefinition(NDefinition definition) {
         if (id != null) {
-            return id.acceptId(definition.getId());
+            return id.acceptId(definition.id());
         }
         return true;
     }

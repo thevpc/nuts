@@ -21,7 +21,7 @@ public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
     }
 
     @Override
-    public NSystemTerminalBase getBase() {
+    public NSystemTerminalBase base() {
         return base;
     }
 

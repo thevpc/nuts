@@ -74,11 +74,11 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
             setArtifactId(null);
             setVersion((String) null);
         } else {
-            setRepository(id.getRepository());
-            setGroupId(id.getGroupId());
-            setArtifactId(id.getArtifactId());
-            setVersion(id.getVersion());
-            this.setProperties(id.getProperties());
+            setRepository(id.repository());
+            setGroupId(id.groupId());
+            setArtifactId(id.artifactId());
+            setVersion(id.version());
+            this.setProperties(id.properties());
         }
         return this;
     }

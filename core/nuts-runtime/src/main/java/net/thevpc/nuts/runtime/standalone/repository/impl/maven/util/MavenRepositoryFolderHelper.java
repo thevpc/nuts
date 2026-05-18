@@ -85,7 +85,7 @@ public class MavenRepositoryFolderHelper {
     public NPath fetchContentImpl(NId id, Path localPath) {
         NPath cacheContent = getIdLocalFile(id);
         if (cacheContent != null && cacheContent.exists()) {
-            return cacheContent.setUserCache(true).setUserTemporary(false);
+            return cacheContent.userCache(true).userTemporary(false);
         }
         return null;
     }
@@ -99,11 +99,11 @@ public class MavenRepositoryFolderHelper {
 
     public NPath getLocalGroupAndArtifactFile(NId id) {
         CoreNIdUtils.checkShortId(id);
-        return getStoreLocation().resolve(id.getShortId().getMavenFolder());
+        return getStoreLocation().resolve(id.shortId().mavenFolder());
     }
 
     public Iterator<NId> searchVersions(NId id, final NDefinitionFilter filter, boolean deep) {
-        String singleVersion = id.getVersion().asSingleValue().orNull();
+        String singleVersion = id.version().asSingleValue().orNull();
         if (singleVersion != null) {
             NId id1 = id.builder().setVersion(singleVersion).setFaceDescriptor().build();
             NPath localFile = getIdLocalFile(id1);
@@ -153,7 +153,7 @@ public class MavenRepositoryFolderHelper {
                     .toArray(NPath[]::new);
             for (NPath versionFolder : versionFolders) {
                 NId id2 = id.builder().setVersion(versionFolder.name()).build();
-                if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
+                if (bestId == null || id2.version().compareTo(bestId.version()) > 0) {
                     bestId = id2;
                 }
             }

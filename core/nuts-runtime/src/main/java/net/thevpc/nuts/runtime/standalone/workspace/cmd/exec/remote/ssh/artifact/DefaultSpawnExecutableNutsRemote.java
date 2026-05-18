@@ -66,7 +66,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
         this.cmd = cmd;
         List<String> ecmdList = new ArrayList<>();
         if (def != null) {
-            ecmdList.add(def.getId().toString());
+            ecmdList.add(def.id().toString());
         }
         ecmdList.addAll(Arrays.asList(cmd));
         ecmd = ecmdList.toArray(new String[0]);
@@ -89,7 +89,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
 
     @Override
     public NId getId() {
-        return def.getId();
+        return def.id();
     }
 
     private AbstractSyncIProcessExecHelper resolveExecHelper() {

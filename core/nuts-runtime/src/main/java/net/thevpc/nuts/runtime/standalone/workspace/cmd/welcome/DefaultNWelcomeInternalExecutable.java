@@ -72,7 +72,7 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
             welcome.put("api-id", session.getWorkspace().getApiId().builder().setVersion("").build());
             welcome.put("api-version", session.getWorkspace().getApiVersion());
             welcome.put("runtime-id", session.getWorkspace().getRuntimeId().builder().setVersion("").build());
-            welcome.put("runtime-version", session.getWorkspace().getRuntimeId().getVersion());
+            welcome.put("runtime-version", session.getWorkspace().getRuntimeId().version());
             welcome.put("workspace", NWorkspace.of().getWorkspaceLocation());
             welcome.put("hash-name", NPath.of(session.getWorkspace().getDigestName()));
             NOut.println(welcome);

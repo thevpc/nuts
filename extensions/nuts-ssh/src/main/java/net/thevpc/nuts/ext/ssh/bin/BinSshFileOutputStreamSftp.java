@@ -26,7 +26,7 @@ public class BinSshFileOutputStreamSftp extends OutputStream {
 
         // Local temporary file
         this.temp = NPath.ofTempFile();
-        this.tempOS = this.temp.getOutputStream();
+        this.tempOS = this.temp.outputStream();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class BinSshFileOutputStreamSftp extends OutputStream {
 
     private void uploadTempFile() throws IOException {
         NPath batchFile = NPath.ofTempFile();
-        try (OutputStream os = batchFile.getOutputStream()) {
+        try (OutputStream os = batchFile.outputStream()) {
             String putCommand = "put " + temp.toString() + " " + remotePath.getPath() + "\n";
             os.write(putCommand.getBytes(StandardCharsets.UTF_8));
         }

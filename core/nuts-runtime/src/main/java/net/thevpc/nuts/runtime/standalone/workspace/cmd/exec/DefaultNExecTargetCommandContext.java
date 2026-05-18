@@ -29,13 +29,13 @@ public class DefaultNExecTargetCommandContext implements NExecTargetCommandConte
         this.execCommand = execCommand;
         this.rawCommand = execCommand.isRawCommand();
         NSession session = NSession.of();
-        switch (in.getType()) {
+        switch (in.type()) {
             case NULL: {
                 hin = new MyInHolder(NIO.ofNullRawInputStream(), false, null);
                 break;
             }
             case PATH: {
-                hin = new MyInHolder(in.getPath().getInputStream(), true, null);
+                hin = new MyInHolder(in.path().inputStream(), true, null);
                 break;
             }
             case INHERIT:
@@ -44,17 +44,17 @@ public class DefaultNExecTargetCommandContext implements NExecTargetCommandConte
                 break;
             }
             case STREAM: {
-                hin = new MyInHolder(in.getStream(), false, null);
+                hin = new MyInHolder(in.inputStream(), false, null);
                 break;
             }
         }
-        switch (out.getType()) {
+        switch (out.type()) {
             case NULL: {
                 hout = new MyOutHolder(NIO.ofNullRawOutputStream(), false, null);
                 break;
             }
             case PATH: {
-                hout = new MyOutHolder(in.getPath().getOutputStream(), true, null);
+                hout = new MyOutHolder(in.path().outputStream(), true, null);
                 break;
             }
             case INHERIT:
@@ -63,33 +63,33 @@ public class DefaultNExecTargetCommandContext implements NExecTargetCommandConte
                 break;
             }
             case STREAM: {
-                hout = new MyOutHolder(out.getStream(), false, null);
+                hout = new MyOutHolder(out.outputStream(), false, null);
                 break;
             }
             case GRAB_STREAM: {
                 ByteArrayOutputStream grabbed = new ByteArrayOutputStream();
                 hout = new MyOutHolder(grabbed, false, () -> {
-                    out.setResult(NInputSource.of(grabbed.toByteArray()));
+                    out.result(NInputSource.of(grabbed.toByteArray()));
                 });
                 break;
             }
             case GRAB_FILE: {
                 NPath temp = NPath.ofTempFile();
-                temp.setDeleteOnDispose(true);
-                temp.setUserTemporary(true);
-                hout = new MyOutHolder(temp.getOutputStream(), true, () -> {
-                    out.setResult(temp);
+                temp.deleteOnDispose(true);
+                temp.userTemporary(true);
+                hout = new MyOutHolder(temp.outputStream(), true, () -> {
+                    out.result(temp);
                 });
                 break;
             }
         }
-        switch (err.getType()) {
+        switch (err.type()) {
             case NULL: {
                 herr = new MyOutHolder(NIO.ofNullRawOutputStream(), false, null);
                 break;
             }
             case PATH: {
-                herr = new MyOutHolder(in.getPath().getOutputStream(), true, null);
+                herr = new MyOutHolder(in.path().outputStream(), true, null);
                 break;
             }
             case INHERIT:
@@ -98,22 +98,22 @@ public class DefaultNExecTargetCommandContext implements NExecTargetCommandConte
                 break;
             }
             case STREAM: {
-                herr = new MyOutHolder(err.getStream(), false, null);
+                herr = new MyOutHolder(err.outputStream(), false, null);
                 break;
             }
             case GRAB_STREAM: {
                 ByteArrayOutputStream grabbed = new ByteArrayOutputStream();
                 herr = new MyOutHolder(grabbed, false, () -> {
-                    err.setResult(NInputSource.of(grabbed.toByteArray()));
+                    err.result(NInputSource.of(grabbed.toByteArray()));
                 });
                 break;
             }
             case GRAB_FILE: {
                 NPath temp = NPath.ofTempFile();
-                temp.setDeleteOnDispose(true);
-                temp.setUserTemporary(true);
-                herr = new MyOutHolder(temp.getOutputStream(), true, () -> {
-                    err.setResult(temp);
+                temp.deleteOnDispose(true);
+                temp.userTemporary(true);
+                herr = new MyOutHolder(temp.outputStream(), true, () -> {
+                    err.result(temp);
                 });
                 break;
             }

@@ -34,12 +34,12 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
         if (!baseIdFilterHelper.accept(id)) {
             return null;
         }
-        String r = getUrl(id.getVersion());
+        String r = getUrl(id.version());
         if (r == null) {
             return null;
         }
-        int i = id.getVersion().getIntAt(0).orElse(-1);
-        int j = id.getVersion().getIntAt(1).orElse(-1);
+        int i = id.version().getIntAt(0).orElse(-1);
+        int j = id.version().getIntAt(1).orElse(-1);
         String javaVersion = "java";
         if (i <= 0) {
             //
@@ -49,7 +49,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
             javaVersion = "java#17";
         }
         return NDescriptorBuilder.of()
-                .setId(id.getLongId())
+                .setId(id.longId())
                 .setIcons(
                         "https://upload.wikimedia.org/wikipedia/commons/9/98/Apache_NetBeans_Logo.svg",
                         "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Apache_NetBeans_Logo.svg/416px-Apache_NetBeans_Logo.svg.png"
@@ -60,8 +60,8 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                                 .setPlatform(Arrays.asList(javaVersion))
                 )
                 .setInstaller(NArtifactCallBuilder.of()
-                        .setId(NId.of(NConstants.Ids.NSH))
-                        .setArguments(
+                        .id(NId.of(NConstants.Ids.NSH))
+                        .arguments(
                                 "-c", "unzip",
                                 "--skip-root",
                                 "$nutsIdContentPath",
@@ -71,8 +71,8 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                         .build()
                 )
                 .setExecutor(NArtifactCallBuilder.of()
-                        .setId(NId.of("exec"))
-                        .setArguments(
+                        .id(NId.of("exec"))
+                        .arguments(
                                 NEnv.of().getOsFamily().isWindow()
                                         ? "$nutsIdBinPath/app/bin/netbeans.exe"
                                         : "$nutsIdBinPath/app/bin/netbeans"
@@ -122,7 +122,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
         if (!baseIdFilterHelper.accept(id)) {
             return null;
         }
-        String r = getUrl(id.getVersion());
+        String r = getUrl(id.version());
         NPath localPath = NPath.of(ToolboxRepositoryModel.getIdLocalFile(id.builder().setFaceContent().build(), repository));
         NCp.of().from(NPath.of(r)).to(localPath)
                 .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();

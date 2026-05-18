@@ -100,7 +100,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
         }
         NDefinition def = ctx.getCriteria(NDefinition.class);
         if (def != null) {
-            String shortName = def.getId().getShortName();
+            String shortName = def.id().shortName();
             //for executors
             if ("net.thevpc.nuts.exec:exec-java".equals(shortName)) {
                 return NScorable.DEFAULT_SCORE + 10;
@@ -108,7 +108,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
             if ("java".equals(shortName)) {
                 return NScorable.DEFAULT_SCORE + 10;
             }
-            if ("jar".equals(def.getDescriptor().getPackaging())) {
+            if ("jar".equals(def.descriptor().getPackaging())) {
                 return NScorable.DEFAULT_SCORE + 10;
             }
         }
@@ -137,7 +137,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
         switch (options.getTerminalMode().orElse(NTerminalMode.DEFAULT)) {
             //retain filtered
             case DEFAULT:
-                options.setTerminalMode(session.getTerminal().out().getTerminalMode());
+                options.setTerminalMode(session.getTerminal().out().terminalMode());
                 //retain filtered
             case FILTERED:
                 break;
@@ -145,7 +145,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
             case INHERITED:
                 break;
             default:
-                options.setTerminalMode(session.getTerminal().out().getTerminalMode());
+                options.setTerminalMode(session.getTerminal().out().terminalMode());
                 break;
         }
         options.setExpireTime(session.getExpireTime().orNull());
@@ -190,7 +190,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
     //@Override
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
         NDefinition def = executionContext.getDefinition();
-        Path contentFile = def.getContent().flatMap(NPath::toPath).orNull();
+        Path contentFile = def.content().flatMap(NPath::toPath).orNull();
         NSession session = executionContext.getSession();
         final JavaExecutorOptions joptions = new JavaExecutorOptions(
                 def,
@@ -212,7 +212,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
                 NVersion nutsDependencyVersion = null;
                 for (NId d : CoreNUtils.resolveNutsApiIdsFromDefinition(executionContext.getDefinition())) {
-                    nutsDependencyVersion = d.getVersion();
+                    nutsDependencyVersion = d.version();
                     if (nutsDependencyVersion != null) {
                         break;
                     }
@@ -222,7 +222,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                     for (String s : joptions.getClassPathNidStrings()) {
                         NId sid = NId.get(s).orNull();
                         if (sid != null && sid.equalsShortId(NId.getApi("").orNull())) {
-                            nutsDependencyVersion = sid.getVersion();
+                            nutsDependencyVersion = sid.version();
                         } else {
                             Pattern pp = Pattern.compile(".*[/\\\\]nuts-(?<v>[0-9.]+)[.]jar");
                             Matcher mm = pp.matcher(s);
@@ -258,11 +258,11 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 }
                 List<String> extraStartWithAppArgs = new ArrayList<>();
 
-                if (def.getId().equalsShortId(session.getWorkspace().getApiId())) {
+                if (def.id().equalsShortId(session.getWorkspace().getApiId())) {
                     extraStartWithAppArgs.addAll(ncmdLine.toStringList());
                 }
                 String bootArgumentsString = NCmdLineWriter.of().setShellFamily(NShellFamily.SH).formatPlain(ncmdLine
-                        .add(executionContext.getDefinition().getId().getLongName())
+                        .add(executionContext.getDefinition().id().longName())
                 );
                 if (!NBlankable.isBlank(bootArgumentsString)) {
                     osEnv.put("NUTS_BOOT_ARGS", bootArgumentsString);
@@ -332,7 +332,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
                 if (joptions.isJar()) {
                     xargs.add(txt.ofPlain("-jar"));
-                    xargs.add(NIdWriter.of().format(def.getId()));
+                    xargs.add(NIdWriter.of().format(def.id()));
                     args.add("-jar");
                     args.add(contentFile.toString());
                 } else {
@@ -439,7 +439,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
             Throwable th = null;
             try {
                 classLoader = ((DefaultNExtensions) NExtensions.of()).getModel().getNutsURLClassLoader(
-                        def.getId().toString(),
+                        def.id().toString(),
                         null//getSession().getWorkspace().config().getBootClassLoader()
                 );
                 for (NClassLoaderNode n : joptions.getClassPathNodes()) {
@@ -447,9 +447,9 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 }
                 if (joptions.getMainClass() == null) {
                     if (joptions.isJar()) {
-                        throw new NIllegalArgumentException(NMsg.ofC("jar mode and embedded mode are exclusive for %s", def.getId()));
+                        throw new NIllegalArgumentException(NMsg.ofC("jar mode and embedded mode are exclusive for %s", def.id()));
                     } else {
-                        throw new NIllegalArgumentException(NMsg.ofC("unable resolve class name for %s", def.getId()));
+                        throw new NIllegalArgumentException(NMsg.ofC("unable resolve class name for %s", def.id()));
                     }
                 }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
@@ -460,7 +460,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 th = session.copy().callWith(() -> {
                     Throwable th2 = null;
                     try {
-                        new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions, executionContext).runAndWaitFor();
+                        new ClassloaderAwareRunnableImpl(def.id(), classLoader, cls, session, joptions, executionContext).runAndWaitFor();
                     } catch (InvocationTargetException e) {
                         th2 = e.getTargetException();
                     } catch (MalformedURLException | NoSuchMethodException | SecurityException
@@ -477,17 +477,17 @@ public class JavaExecutorComponent implements NExecutorComponent {
             }
             if (th != null) {
                 if (!(th instanceof NExecutionException)) {
-                    NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), th), NRecommendationPhase.EXEC, false);
+                    NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(def.id().toString(), th), NRecommendationPhase.EXEC, false);
                     throw new NExecutionException(
-                            NMsg.ofC("error executing %s : %s", def.getId(), th)
+                            NMsg.ofC("error executing %s : %s", def.id(), th)
                             , th);
                 }
                 NExecutionException nex = (NExecutionException) th;
                 if (nex.getExitCode() != NExecutionException.SUCCESS) {
                     if (def != null) {
-                        NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), nex), NRecommendationPhase.EXEC, false);
+                        NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(def.id().toString(), nex), NRecommendationPhase.EXEC, false);
                     }
-                    throw new NExecutionException(NMsg.ofC("error executing %s : %s", def == null ? null : def.getId(), th), th);
+                    throw new NExecutionException(NMsg.ofC("error executing %s : %s", def == null ? null : def.id(), th), th);
                 }
             }
             return NExecutionException.SUCCESS;

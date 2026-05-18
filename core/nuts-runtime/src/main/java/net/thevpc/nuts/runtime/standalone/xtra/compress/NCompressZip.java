@@ -26,9 +26,9 @@ public class NCompressZip implements NCompressPackaging {
     }
 
     public void compressPackage(NCompress compress) {
-        List<NInputSource> sources = compress.getSources();
+        List<NInputSource> sources = compress.sources();
         NAssert.requireNamedNonBlank(sources, "source");
-        NOutputTarget target = compress.getTarget();
+        NOutputTarget target = compress.target();
         NAssert.requireNamedNonBlank(target, "target");
         NChronometer chronometer = NChronometer.of();
         _LOG().log(NMsg.ofC("compress %s to %s", sources, target).asFinest().withIntent(NMsgIntent.START).withLevel(Level.FINEST).withIntent(NMsgIntent.START));
@@ -44,7 +44,7 @@ public class NCompressZip implements NCompressPackaging {
                     ((NPath) target).mkParentDirs();
                 }
                 if (tempPath == null) {
-                    fW = target.getOutputStream();
+                    fW = target.outputStream();
                 } else {
                     fW = Files.newOutputStream(tempPath);
                 }
@@ -83,14 +83,14 @@ public class NCompressZip implements NCompressPackaging {
                                 StandardCopyOption.REPLACE_EXISTING);
                     } else if (target instanceof NPath) {
                         try (InputStream ii = Files.newInputStream(tempPath)) {
-                            try (OutputStream jj = target.getOutputStream()) {
+                            try (OutputStream jj = target.outputStream()) {
                                 NIOUtils.copy(ii, jj);
                             }
                         }
                     } else {
                         NIOUtils.copy(
                                 Files.newInputStream(tempPath),
-                                target.getOutputStream()
+                                target.outputStream()
                         );
                     }
                 }
@@ -202,7 +202,7 @@ public class NCompressZip implements NCompressPackaging {
     @NScore
     public static int getScore(NScorableContext context) {
         NCompress c = context.getCriteria(NCompress.class);
-        String z = NStringUtils.trim(c.getPackaging()).toLowerCase();
+        String z = NStringUtils.trim(c.packaging()).toLowerCase();
         if (z.isEmpty()
                 || z.equals("zip")
                 || z.equals("gzip")

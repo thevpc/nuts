@@ -30,7 +30,6 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.boot.NBootDescriptor;
 import net.thevpc.nuts.artifact.NIdLocation;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.util.*;
@@ -659,11 +658,11 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
         NId id1 = getId();
         if (!NBlankable.isBlank(id1)) {
-            if (Objects.equals(id1.getShortName(), NConstants.Ids.NUTS_API)) {
+            if (Objects.equals(id1.shortName(), NConstants.Ids.NUTS_API)) {
                 idType = NIdType.API;
             }
 
-            if (Objects.equals(id1.getShortName(), NConstants.Ids.NUTS_RUNTIME)) {
+            if (Objects.equals(id1.shortName(), NConstants.Ids.NUTS_RUNTIME)) {
                 idType = NIdType.RUNTIME;
             }
         }

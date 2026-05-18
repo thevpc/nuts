@@ -155,11 +155,11 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
                     ;
         }
         NId id=(NId)aValue;
-        Map<String, String> queryMap = id.getProperties();
+        Map<String, String> queryMap = id.properties();
         String scope = queryMap.remove(NConstants.IdProperties.SCOPE);
         String optional = queryMap.remove(NConstants.IdProperties.OPTIONAL);
-        String classifier = id.getClassifier();
-        NEnvCondition condition = id.getCondition();
+        String classifier = id.classifier();
+        NEnvCondition condition = id.condition();
         String exclusions = queryMap.remove(NConstants.IdProperties.EXCLUSIONS);
         String repo = queryMap.remove(NConstants.IdProperties.REPO);
         NIdBuilder idBuilder = id.builder();
@@ -173,44 +173,44 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
         NTextBuilder sb = NTextBuilder.of();
         if (NBlankable.isBlank(classifier)) {
             if (!isOmitGroupId()) {
-                if (!NBlankable.isBlank(id.getGroupId())) {
-                    boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());
-                    boolean importedGroup = NWorkspace.of().getAllImports().contains(id.getGroupId());
+                if (!NBlankable.isBlank(id.groupId())) {
+                    boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.groupId());
+                    boolean importedGroup = NWorkspace.of().getAllImports().contains(id.groupId());
                     if (!(importedGroup && isOmitImportedGroupId())) {
                         if (importedGroup || importedGroup2) {
-                            sb.append(id.getGroupId(), NTextStyle.pale());
+                            sb.append(id.groupId(), NTextStyle.pale());
                         } else {
-                            sb.append(id.getGroupId());
+                            sb.append(id.groupId());
                         }
                         sb.append(":", NTextStyle.separator());
                     }
                 }
             }
-            sb.append(id.getArtifactId(), NTextStyle.primary1());
+            sb.append(id.artifactId(), NTextStyle.primary1());
         } else {
             if (!isOmitGroupId()) {
-                if (!NBlankable.isBlank(id.getGroupId())) {
-                    boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());
-                    boolean importedGroup = NWorkspace.of().getAllImports().contains(id.getGroupId());
+                if (!NBlankable.isBlank(id.groupId())) {
+                    boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.groupId());
+                    boolean importedGroup = NWorkspace.of().getAllImports().contains(id.groupId());
                     if (!(importedGroup && isOmitImportedGroupId())) {
                         if (importedGroup || importedGroup2) {
-                            sb.append(id.getGroupId(), NTextStyle.pale());
+                            sb.append(id.groupId(), NTextStyle.pale());
                         } else {
-                            sb.append(id.getGroupId());
+                            sb.append(id.groupId());
                         }
                     }
                 }
             }
             sb.append(":", NTextStyle.separator());
-            sb.append(id.getArtifactId(), NTextStyle.primary1());
+            sb.append(id.artifactId(), NTextStyle.primary1());
             sb.append(":", NTextStyle.separator());
-            sb.append(id.getClassifier(), NTextStyle.primary2());
+            sb.append(id.classifier(), NTextStyle.primary2());
         }
 
 
-        if (!NBlankable.isBlank(id.getVersion().getValue())) {
+        if (!NBlankable.isBlank(id.version().value())) {
             sb.append("#", NTextStyle.separator());
-            sb.append(id.getVersion());
+            sb.append(id.version());
         }
         boolean firstQ = true;
 
@@ -235,7 +235,7 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
             sb.append(_encodeKey(optional));
         }
         if (!isOmitRepository()) {
-            if (!NBlankable.isBlank(id.getRepository())) {
+            if (!NBlankable.isBlank(id.repository())) {
                 if (firstQ) {
                     sb.append("?", NTextStyle.separator());
                     firstQ = false;
@@ -243,7 +243,7 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
                     sb.append("&", NTextStyle.separator());
                 }
                 sb.append("repo", NTextStyle.keyword(2)).append("=", NTextStyle.separator());
-                sb.append(_encodeKey(id.getRepository()), NTextStyle.pale());
+                sb.append(_encodeKey(id.repository()), NTextStyle.pale());
             }
         }
         if(!isOmitCondition()) {
@@ -272,7 +272,7 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
                 sb.append(_encodeKey(exclusions), NTextStyle.warn());
             }
         }
-        if (!NBlankable.isBlank(id.getPropertiesQuery())) {
+        if (!NBlankable.isBlank(id.propertiesQuery())) {
             Set<String> otherKeys = new TreeSet<>(queryMap.keySet());
             for (String k : otherKeys) {
                 String v2 = queryMap.get(k);

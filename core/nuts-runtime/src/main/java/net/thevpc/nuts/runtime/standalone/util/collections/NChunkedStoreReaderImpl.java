@@ -63,7 +63,7 @@ public class NChunkedStoreReaderImpl<T>  {
                 return NOptional.ofEmpty();
             }
             if (reader == null) {
-                inputStream = currentChunkFile.getInputStream();
+                inputStream = currentChunkFile.inputStream();
                 reader = factory.scanner(inputStream);
             }
             T line = null;

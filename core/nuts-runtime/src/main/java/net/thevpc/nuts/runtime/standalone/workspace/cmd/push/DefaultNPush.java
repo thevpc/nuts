@@ -66,8 +66,8 @@ public class DefaultNPush extends AbstractDefaultNPush {
         NRepositoryFilter repositoryFilter = null;
         Map<NId, NDefinition> toProcess = new LinkedHashMap<>();
         for (NId id : this.getIds()) {
-            if (NStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", id.getVersion()));
+            if (NStringUtils.trim(id.version().value()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
+                throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", id.version()));
             }
             NDefinition file = NFetch.of(id)
                     .setDependencyFilter(NDependencyFilters.of().byRunnable())
@@ -86,11 +86,11 @@ public class DefaultNPush extends AbstractDefaultNPush {
                 Set<String> errors = new LinkedHashSet<>();
                 //TODO : CHECK ME, why offline?
                 boolean ok = false;
-                for (NRepository repo : wu.filterRepositoriesDeploy(file.getId(), repositoryFilter)) {
+                for (NRepository repo : wu.filterRepositoriesDeploy(file.id(), repositoryFilter)) {
                     NDescriptor descr = null;
                     NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                     try {
-                        descr = repoSPI.fetchDescriptor().setFetchMode(fetchMode).setId(file.getId()).getResult();
+                        descr = repoSPI.fetchDescriptor().setFetchMode(fetchMode).setId(file.id()).getResult();
                     } catch (Exception e) {
                         errors.add(CoreStringUtils.exceptionToString(e));
                         //
@@ -124,13 +124,13 @@ public class DefaultNPush extends AbstractDefaultNPush {
                 if (!repo.config().isEnabled()) {
                     throw new NIllegalArgumentException(NMsg.ofC("repository %s is disabled", repo.getName()));
                 }
-                NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.getDescriptor()) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
+                NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.descriptor()) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
                         ;
                 NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                 repoSPI.deploy()
                         .setId(effId)
-                        .setContent(file.getContent().orNull())
-                        .setDescriptor(file.getDescriptor())
+                        .setContent(file.content().orNull())
+                        .setDescriptor(file.descriptor())
                         //                        .setFetchMode(fetchMode)
                         //                        .setOffline(this.isOffline())
                         //                        .setTransitive(true)

@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.xtra.time;
 
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -14,7 +13,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
@@ -592,7 +590,7 @@ public class CProgressBar {
             }
             logger.log(NMsg.ofNtf(p).withLevel(armedLogLevel).withIntent(NMsgIntent.PROGRESS));
         } else {
-            NTerminalMode m = out.getTerminalMode();
+            NTerminalMode m = out.terminalMode();
             NText p = progress(percent, msg, m == NTerminalMode.FILTERED);
             if (p == null || p.isEmpty()) {
                 return;
@@ -605,7 +603,7 @@ public class CProgressBar {
         if (p == null || p.isEmpty()) {
             return;
         }
-        boolean forceNewline = out.getTerminalMode() == NTerminalMode.FILTERED;
+        boolean forceNewline = out.terminalMode() == NTerminalMode.FILTERED;
         Level armedLogLevel = options.getArmedLogLevel();
         if (options.isArmedNewline() || forceNewline) {
             out.print("\n");
@@ -621,7 +619,7 @@ public class CProgressBar {
             NSystemTerminalBase.Size size = null;
             int max=maxColumnsInOutput;
             try {
-                size = out.getTerminal().getTerminalSize();
+                size = out.terminal().getTerminalSize();
             }catch (Exception ex) {
                 // just ignore
             }

@@ -47,7 +47,7 @@ public class NDefinitionFilterByVersion extends AbstractDefinitionFilter {
     @Override
     public boolean acceptDefinition(NDefinition definition) {
         if (versionFilter != null) {
-            return versionFilter.acceptVersion(definition.getId().getVersion());
+            return versionFilter.acceptVersion(definition.id().version());
         }
         return true;
     }

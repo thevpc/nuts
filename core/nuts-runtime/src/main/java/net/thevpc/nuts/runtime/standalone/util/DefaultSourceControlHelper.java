@@ -9,7 +9,6 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NDeploy;
 import net.thevpc.nuts.command.NFetch;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.NIOException;
@@ -49,10 +48,10 @@ public class DefaultSourceControlHelper {
 
         Path file = folder.resolve(NConstants.Files.DESCRIPTOR_FILE_NAME);
         NDescriptor d = NDescriptorParser.of().parse(file).get();
-        String oldVersion = NStringUtils.trim(d.getId().getVersion().getValue());
+        String oldVersion = NStringUtils.trim(d.getId().version().value());
         if (oldVersion.endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - CoreNConstants.Versions.CHECKED_OUT_EXTENSION.length());
-            String newVersion = NVersion.get(oldVersion).get().inc().getValue();
+            String newVersion = NVersion.get(oldVersion).get().inc().value();
             NDefinition newVersionFound = null;
             try {
                 newVersionFound = NFetch.of(d.getId().builder().setVersion(newVersion).build())
@@ -88,9 +87,9 @@ public class DefaultSourceControlHelper {
         NDefinition nutToInstall = NFetch.of(id)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultDefinition();
-        if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
+        if ("zip".equals(nutToInstall.descriptor().getPackaging())) {
             try {
-                ZipUtils.unzip(nutToInstall.getContent().map(Object::toString).get(), NPath.of(folder)
+                ZipUtils.unzip(nutToInstall.content().map(Object::toString).get(), NPath.of(folder)
                         .toAbsolute().toString(), new UnzipOptions().setSkipRoot(false));
             } catch (IOException ex) {
                 throw new NIOException(ex);
@@ -98,19 +97,19 @@ public class DefaultSourceControlHelper {
 
             Path file = folder.resolve(NConstants.Files.DESCRIPTOR_FILE_NAME);
             NDescriptor d = NDescriptorParser.of().parse(file).get();
-            NVersion oldVersion = d.getId().getVersion();
+            NVersion oldVersion = d.getId().version();
             NId newId = d.getId().builder().setVersion(oldVersion + CoreNConstants.Versions.CHECKED_OUT_EXTENSION).build();
             d = d.builder().setId(newId).build();
 
             NDescriptorWriter.of().print(d, file);
 
             return new DefaultNDefinitionBuilder()
-                    .setRepositoryUuid(nutToInstall.getRepositoryUuid())
-                    .setRepositoryName(nutToInstall.getRepositoryName())
-                    .setId(newId.getLongId())
+                    .setRepositoryUuid(nutToInstall.repositoryUuid())
+                    .setRepositoryName(nutToInstall.repositoryName())
+                    .setId(newId.longId())
                     .setDescriptor(d)
-                    .setContent(NPath.of(folder).setUserCache(false).setUserTemporary(false))
-                    .setDependency(id.toDependency())
+                    .setContent(NPath.of(folder).userCache(false).userTemporary(false))
+                    .dependency(id.toDependency())
                     .build()
             ;
         } else {

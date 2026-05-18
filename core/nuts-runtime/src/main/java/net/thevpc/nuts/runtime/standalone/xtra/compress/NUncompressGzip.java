@@ -22,9 +22,9 @@ public class NUncompressGzip implements NUncompressPackaging {
     @Override
     public void visitPackage(NUncompress uncompress, NInputSource source, NUncompressVisitor visitor) {
         try {
-            String baseName = source.getMetaData().getName().orElse("no-name");
+            String baseName = source.metaData().name().orElse("no-name");
             //get the zip file content
-            InputStream _in = source.getInputStream();
+            InputStream _in = source.inputStream();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
                     String n = NPath.of(baseName).name();
@@ -78,11 +78,11 @@ public class NUncompressGzip implements NUncompressPackaging {
             Path folder = _target.toPath().get();
             NPath.of(folder).mkdirs();
 
-            String baseName = source.getMetaData().getName().orElse("no-name");
+            String baseName = source.metaData().name().orElse("no-name");
             byte[] buffer = new byte[1024];
 
             //get the zip file content
-            InputStream _in = source.getInputStream();
+            InputStream _in = source.inputStream();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
                     String n = NPath.of(baseName).name();
@@ -135,7 +135,7 @@ public class NUncompressGzip implements NUncompressPackaging {
     @NScore
     public static int getScore(NScorableContext context) {
         NUncompress c = context.getCriteria(NUncompress.class);
-        String z = NStringUtils.trim(c.getPackaging()).toLowerCase();
+        String z = NStringUtils.trim(c.packaging()).toLowerCase();
         if (
                 z.equals("gzip")
                         || z.equals("gz")

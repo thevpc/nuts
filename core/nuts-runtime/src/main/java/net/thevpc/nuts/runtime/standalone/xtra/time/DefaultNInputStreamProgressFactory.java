@@ -26,10 +26,10 @@ public class DefaultNInputStreamProgressFactory implements NProgressFactory {
         }
         if (sourceOrigin instanceof NId) {
             NId d = (NId) sourceOrigin;
-            if (NConstants.QueryFaces.CONTENT_HASH.equals(d.getFace())) {
+            if (NConstants.QueryFaces.CONTENT_HASH.equals(d.face())) {
                 return false;
             }
-            if (NConstants.QueryFaces.DESCRIPTOR_HASH.equals(d.getFace())) {
+            if (NConstants.QueryFaces.DESCRIPTOR_HASH.equals(d.face())) {
                 return false;
             }
         }

@@ -46,7 +46,7 @@ public class NReservedVersionIntervalParser {
             if (min.equals("")) {
                 dd.add(new DefaultNVersionInterval(false, false, min, null,this.versionComparator));
             } else {
-                String max = NVersion.of(min).inc(-1).getValue();
+                String max = NVersion.of(min).inc(-1).value();
                 dd.add(new DefaultNVersionInterval(true, false, min, max,this.versionComparator));
             }
         } else {

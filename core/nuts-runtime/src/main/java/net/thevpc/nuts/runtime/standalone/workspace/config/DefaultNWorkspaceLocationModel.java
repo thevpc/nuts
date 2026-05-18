@@ -225,13 +225,13 @@ public class DefaultNWorkspaceLocationModel {
 
     public NPath getDefaultIdBasedir(NId id) {
         CoreNIdUtils.checkShortId(id);
-        String groupId = id.getGroupId();
-        String artifactId = id.getArtifactId();
+        String groupId = id.groupId();
+        String artifactId = id.artifactId();
         String plainIdPath = groupId.replace('.', '/') + "/" + artifactId;
-        if (id.getVersion().isBlank()) {
+        if (id.version().isBlank()) {
             return NPath.of(plainIdPath);
         }
-        String version = id.getVersion().getValue();
+        String version = id.version().value();
 //        String a = CoreNutsUtils.trimToNullAlternative(id.getAlternative());
         String x = plainIdPath + "/" + version;
 //        if (a != null) {
@@ -245,12 +245,12 @@ public class DefaultNWorkspaceLocationModel {
         String classifier = "";
         String ext = getDefaultIdExtension(id);
         if (!ext.equals(NConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
-            String c = id.getClassifier();
+            String c = id.classifier();
             if (!NBlankable.isBlank(c)) {
                 classifier = "-" + c;
             }
         }
-        return id.getArtifactId() + "-" + id.getVersion().getValue() + classifier + ext;
+        return id.artifactId() + "-" + id.version().value() + classifier + ext;
     }
 
 
@@ -298,7 +298,7 @@ public class DefaultNWorkspaceLocationModel {
 
 
     public String getDefaultIdExtension(NId id) {
-        Map<String, String> q = id.getProperties();
+        Map<String, String> q = id.properties();
         String f = NStringUtils.trim(q.get(NConstants.IdProperties.FACE));
         switch (f) {
             case NConstants.QueryFaces.DESCRIPTOR: {

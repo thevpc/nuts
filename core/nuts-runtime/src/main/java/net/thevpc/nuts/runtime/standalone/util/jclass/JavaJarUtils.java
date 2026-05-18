@@ -103,8 +103,8 @@ public class JavaJarUtils {
                             Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode();
                             NId pluginId = parseMavenPluginElement(plugin);
                             if (
-                                    pluginId.getShortName().equals("org.apache.maven.plugins:maven-assembly-plugin")
-                                            || pluginId.getShortName().equals("org.apache.maven.plugins:maven-jar-plugin")
+                                    pluginId.shortName().equals("org.apache.maven.plugins:maven-assembly-plugin")
+                                            || pluginId.shortName().equals("org.apache.maven.plugins:maven-jar-plugin")
                             ) {
                                 String s = NStringUtils.trim(e.getTextContent());
                                 if (s.length() > 0) {
@@ -117,9 +117,9 @@ public class JavaJarUtils {
                             Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode();
                             NId pluginId = parseMavenPluginElement(plugin);
                             if (
-                                    pluginId.getArtifactId().equals("onejar-maven-plugin")
-                                            || pluginId.getShortName().equals("org.springframework.boot:spring-boot-maven-plugin")
-                                            || pluginId.getShortName().equals("org.openjfx:javafx-maven-plugin")
+                                    pluginId.artifactId().equals("onejar-maven-plugin")
+                                            || pluginId.shortName().equals("org.springframework.boot:spring-boot-maven-plugin")
+                                            || pluginId.shortName().equals("org.openjfx:javafx-maven-plugin")
                             ) {
                                 String s = NStringUtils.trim(e.getTextContent());
                                 if (s.length() > 0) {
@@ -133,7 +133,7 @@ public class JavaJarUtils {
                             //              configuration   execution       executions      plugin
                             Node plugin = e.getParentNode().getParentNode();
                             NId pluginId = parseMavenPluginElement(plugin);
-                            if (pluginId.getShortName().equals("org.springframework.boot:spring-boot-maven-plugin")) {
+                            if (pluginId.shortName().equals("org.springframework.boot:spring-boot-maven-plugin")) {
                                 String s = NStringUtils.trim(e.getTextContent());
                                 if (s.length() > 0) {
                                     s = resolveMainClassString(s, pom);
@@ -145,7 +145,7 @@ public class JavaJarUtils {
                             Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode().getParentNode().getParentNode();
                             NId pluginId = parseMavenPluginElement(plugin);
                             if (
-                                    pluginId.getShortName().equals("org.apache.maven.plugins:maven-shade-plugin")
+                                    pluginId.shortName().equals("org.apache.maven.plugins:maven-shade-plugin")
                             ) {
                                 String s = NStringUtils.trim(e.getTextContent());
                                 if (s.length() > 0) {
@@ -162,7 +162,7 @@ public class JavaJarUtils {
                 NDescriptor descriptor = NDescriptorParser.of().parse(inputStream).get();
                 NArtifactCall executor = descriptor.getExecutor();
                 if (executor != null) {
-                    List<String> arguments = executor.getArguments();
+                    List<String> arguments = executor.arguments();
                     for (int i = 0; i < arguments.size(); i++) {
                         String a = arguments.get(i);
                         if (a != null) {
@@ -270,7 +270,7 @@ public class JavaJarUtils {
     }
 
     public static NVersion parseJarClassVersion(NPath path) {
-        try (InputStream is = path.getInputStream()) {
+        try (InputStream is = path.inputStream()) {
             return parseJarClassVersion(is);
         } catch (IOException ex) {
             throw new NIOException(ex);
@@ -278,7 +278,7 @@ public class JavaJarUtils {
     }
 
     public static String parseDefaultModuleName(NPath jarStream) {
-        try (InputStream is = jarStream.getInputStream()) {
+        try (InputStream is = jarStream.inputStream()) {
             return parseDefaultModuleName(is);
         } catch (IOException ex) {
             throw new NIOException(ex);
@@ -310,7 +310,7 @@ public class JavaJarUtils {
     }
 
     public static JavaClassByteCode.ModuleInfo parseModuleInfo(NPath jar) {
-        try (InputStream is = jar.getInputStream()) {
+        try (InputStream is = jar.inputStream()) {
             return parseModuleInfo(is);
         } catch (IOException ex) {
             throw new NIOException(ex);

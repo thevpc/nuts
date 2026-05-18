@@ -126,11 +126,11 @@ public class DefaultNElementReader implements NElementReader {
     private InputStream prepareInputStream(InputStream is, Object origin) {
         if (isLogProgress() || isTraceProgress()) {
             return NInputStreamMonitor.of()
-                    .setSource(is)
-                    .setOrigin(origin)
-                    .setLogProgress(isLogProgress())
-                    .setTraceProgress(isTraceProgress())
-                    .setProgressFactory(getProgressFactory())
+                    .source(is)
+                    .origin(origin)
+                    .logProgress(isLogProgress())
+                    .traceProgress(isTraceProgress())
+                    .progressFactory(getProgressFactory())
                     .create();
         }
         return is;
@@ -139,14 +139,14 @@ public class DefaultNElementReader implements NElementReader {
     private InputStream prepareInputStream(NPath path) {
         if (isLogProgress()) {
             return NInputStreamMonitor.of()
-                    .setSource(path)
-                    .setOrigin(path)
-                    .setLogProgress(isLogProgress())
-                    .setTraceProgress(isTraceProgress())
-                    .setProgressFactory(getProgressFactory())
+                    .source(path)
+                    .origin(path)
+                    .logProgress(isLogProgress())
+                    .traceProgress(isTraceProgress())
+                    .progressFactory(getProgressFactory())
                     .create();
         }
-        return path.getInputStream();
+        return path.inputStream();
     }
 
     @Override

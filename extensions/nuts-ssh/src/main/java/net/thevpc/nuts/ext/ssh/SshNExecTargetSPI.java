@@ -47,7 +47,7 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
                 wOptions.setExpireTime(session.getExpireTime().orNull());
                 wOptions.setGui(session.isGui());
                 wOptions.setLocale(session.getLocale().orDefault());
-                wOptions.setTerminalMode(session.getTerminal().getOut().getTerminalMode());
+                wOptions.setTerminalMode(session.getTerminal().out().terminalMode());
                 wOptions.setTrace(session.isTrace());
                 wOptions.setTransitive(session.isTransitive());
                 // will be processed "in amont"
@@ -73,7 +73,7 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
                 int dependenciesCount = 0;
                 boolean requireTempRepo = false;
                 if (def != null) {
-                    for (NDependency d : def.getDependencies().get()) {
+                    for (NDependency d : def.dependencies().get()) {
                         NId id = d.toId();
                         //just ignore nuts base deps!
                         if (
@@ -85,7 +85,7 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
                         }
                     }
                     if (true) {
-                        k.copyId(def.getId(), k.getStoreLocationCacheRepoSSH(this), null);
+                        k.copyId(def.id(), k.getStoreLocationCacheRepoSSH(this), null);
                         dependenciesCount++;
                     }
                 }
@@ -124,7 +124,7 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
                 cmd.addAll(exportedExecutorOptions);
 
                 if (def != null) {
-                    cmd.add(def.getId().toString());
+                    cmd.add(def.id().toString());
                 }
                 //wil not call context.getCommand() because we already added def!
                 cmd.addAll(execCommand.getCommand());

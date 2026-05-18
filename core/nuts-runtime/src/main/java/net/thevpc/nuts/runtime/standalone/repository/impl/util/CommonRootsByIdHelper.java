@@ -57,15 +57,15 @@ public class CommonRootsByIdHelper {
     }
 
     static private boolean deepOf(NId p) {
-        String g = p.getGroupId();
-        String a = p.getArtifactId();
+        String g = p.groupId();
+        String a = p.artifactId();
         return g.contains("*")
                 || a.contains("*");
     }
 
     static private String pathOf(NId p) {
-        String a = p.getArtifactId();
-        String g = p.getGroupId();
+        String a = p.artifactId();
+        String g = p.groupId();
         if (a.equals("*")) {
             if (g.equals("*")) {
                 return "*";
@@ -108,11 +108,11 @@ public class CommonRootsByIdHelper {
     }
 
     private static NId commonRoot(NId a, NId b) {
-        if (a.getShortName().equals(b.getShortName())) {
+        if (a.shortName().equals(b.shortName())) {
             return a;
         }
-        String[] aa = a.getGroupId().split("[.]");
-        String[] bb = b.getGroupId().split("[.]");
+        String[] aa = a.groupId().split("[.]");
+        String[] bb = b.groupId().split("[.]");
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < Math.min(aa.length, bb.length); i++) {
             if (aa[i].equals(bb[i])) {
@@ -172,7 +172,7 @@ public class CommonRootsByIdHelper {
 
         NId pid= NDefinitionFilterUtils.toPatternId(filter).orNull();
         if ( pid!=null) {
-            return resolveRootId(pid.getGroupId(), pid.getArtifactId(),pid.getVersion().toString());
+            return resolveRootId(pid.groupId(), pid.artifactId(),pid.version().toString());
         }
 
         return null;

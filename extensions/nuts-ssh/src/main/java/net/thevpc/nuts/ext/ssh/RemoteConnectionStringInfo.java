@@ -78,14 +78,14 @@ public class RemoteConnectionStringInfo {
         NDefinition def = NFetch.of(id)
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultDefinition();
-        NPath apiLocalPath = def.getContent().get();
+        NPath apiLocalPath = def.content().get();
         NPath remoteJarPath = remoteRepo.resolve(id.getMavenPath("jar"));
         if (remoteJar != null) {
             remoteJar.set(remoteJarPath);
         }
         if (copy(apiLocalPath, remoteJarPath)) {
             NDescriptorWriter.of().setNtf(false).print(
-                    def.getDescriptor(), remoteRepo.resolve(id.getMavenPath("nuts")).mkParentDirs()
+                    def.descriptor(), remoteRepo.resolve(id.getMavenPath("nuts")).mkParentDirs()
             );
             return true;
         }
@@ -281,8 +281,8 @@ public class RemoteConnectionStringInfo {
             storeLocationCacheRepo = NPath.of(targetConnection.copy()
                     .setPath(storeLocationCache)
                     .toString()).resolve(NConstants.Folders.ID);
-            NId appId = NApp.of().getId().orElseGet(() -> NWorkspace.of().getApiId());
-            storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(appId.getMavenFolder()).resolve("repo");
+            NId appId = NApp.of().id().orElseGet(() -> NWorkspace.of().getApiId());
+            storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(appId.mavenFolder()).resolve("repo");
             NPath e = storeLocationCacheRepoSSH.resolve(".nuts-repository");
             if (!e.isRegularFile()) {
                 e.mkParentDirs().writeString("{}");

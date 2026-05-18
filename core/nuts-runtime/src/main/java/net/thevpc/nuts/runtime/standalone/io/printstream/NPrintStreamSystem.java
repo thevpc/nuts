@@ -27,7 +27,7 @@ public class NPrintStreamSystem extends NPrintStreamBase {
                                  NTerminalMode mode, Bindings bindings, NSystemTerminalBase term) {
         super(autoFlush == null || autoFlush.booleanValue(), mode/*resolveMode(out,ansi, workspace)*/, bindings, term);
         //Do not use NTexts, not yet initialized!
-        getMetaData().setMessage(NMsg.ofStyledPath("<system-stream>"));
+        metaData().message(NMsg.ofStyledPath("<system-stream>"));
         this.out = out;
         this.base = base;
     }
@@ -39,7 +39,7 @@ public class NPrintStreamSystem extends NPrintStreamBase {
     public NPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, Bindings bindings, NSystemTerminalBase term) {
         super(true, resolveMode(out, ansi), bindings, term);
         //Do not use NTexts, not yet initialized!
-        getMetaData().setMessage(NMsg.ofStyledPath("<system-stream>"));
+        metaData().message(NMsg.ofStyledPath("<system-stream>"));
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;
@@ -105,7 +105,7 @@ public class NPrintStreamSystem extends NPrintStreamBase {
 
     @Override
     public void close() {
-        if (getTerminalMode() == NTerminalMode.ANSI) {
+        if (terminalMode() == NTerminalMode.ANSI) {
             print("\033[0m".getBytes());
             flush();
         }
@@ -159,7 +159,7 @@ public class NPrintStreamSystem extends NPrintStreamBase {
                 return new NPrintStreamFiltered(this, bindings);
             }
         }
-        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", terminalMode(), other));
     }
 
     @Override
@@ -173,7 +173,7 @@ public class NPrintStreamSystem extends NPrintStreamBase {
     }
 
     @Override
-    public OutputStream getOutputStream() {
+    public OutputStream outputStream() {
         return out;
     }
 }

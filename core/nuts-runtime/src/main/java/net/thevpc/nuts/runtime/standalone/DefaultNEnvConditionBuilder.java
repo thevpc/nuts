@@ -404,7 +404,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
             if(!NBlankable.isBlank(s)) {
                 NId nv = NId.of(s);
                 //NId ov = am.get(nv.getShortName());
-                am.put(nv.getShortName(), nv);
+                am.put(nv.shortName(), nv);
             }
         }
         LinkedHashMap<String, NId> bm=new LinkedHashMap<>();
@@ -412,7 +412,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
             if(!NBlankable.isBlank(s)) {
                 NId nv = NId.of(s);
                 //NId ov = am.get(nv.getShortName());
-                bm.put(nv.getShortName(), nv);
+                bm.put(nv.shortName(), nv);
             }
         }
         if(am.isEmpty()) {

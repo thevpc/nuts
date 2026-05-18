@@ -118,9 +118,9 @@ public class CoreFilterUtils {
             (List<NExtensionInformation> base) {
         LinkedHashMap<String, NExtensionInformation> valid = new LinkedHashMap<>();
         for (NExtensionInformation n : base) {
-            NExtensionInformation old = valid.get(n.getId().getShortName());
-            if (old == null || old.getId().getVersion().compareTo(n.getId().getVersion()) < 0) {
-                valid.put(n.getId().getShortName(), n);
+            NExtensionInformation old = valid.get(n.getId().shortName());
+            if (old == null || old.getId().version().compareTo(n.getId().version()) < 0) {
+                valid.put(n.getId().shortName(), n);
             }
         }
         return new ArrayList<>(valid.values());
@@ -129,9 +129,9 @@ public class CoreFilterUtils {
     public static List<NId> filterNutsIdByLatestVersion(List<NId> base) {
         LinkedHashMap<String, NId> valid = new LinkedHashMap<>();
         for (NId n : base) {
-            NId old = valid.get(n.getShortName());
-            if (old == null || old.getVersion().compareTo(n.getVersion()) < 0) {
-                valid.put(n.getShortName(), n);
+            NId old = valid.get(n.shortName());
+            if (old == null || old.version().compareTo(n.version()) < 0) {
+                valid.put(n.shortName(), n);
             }
         }
         return new ArrayList<>(valid.values());
@@ -150,7 +150,7 @@ public class CoreFilterUtils {
             return _v == _v2;
         }
         if (_v.equalsShortId(_v2)) {
-            if (_v.getVersion().toFilter().acceptVersion(_v2.getVersion())) {
+            if (_v.version().toFilter().acceptVersion(_v2.version())) {
                 return true;
             }
         }
@@ -347,12 +347,12 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NId idCond = NId.get(cond).get();
-                NArchFamily w = NArchFamily.parse(idCond.getArtifactId()).orNull();
+                NArchFamily w = NArchFamily.parse(idCond.artifactId()).orNull();
                 if (w != null) {
                     idCond = idCond.builder().setArtifactId(w.id()).build();
                 }
                 if (idCond.equalsShortId(currentId)) {
-                    if (idCond.getVersion().toFilter().acceptVersion(currentId.getVersion())) {
+                    if (idCond.version().toFilter().acceptVersion(currentId.version())) {
                         return true;
                     }
                 }
@@ -374,7 +374,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NId condId = NId.get(cond).get();
-                NOsFamily w = NOsFamily.parse(condId.getArtifactId()).orNull();
+                NOsFamily w = NOsFamily.parse(condId.artifactId()).orNull();
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
                 }
@@ -450,7 +450,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NId condId = NId.get(cond).get();
-                NExecutionEngineFamily w = NExecutionEngineFamily.parse(condId.getArtifactId()).orNull();
+                NExecutionEngineFamily w = NExecutionEngineFamily.parse(condId.artifactId()).orNull();
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
                 }
@@ -482,7 +482,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NId condId = NId.get(cond).get();
-                NDesktopEnvironmentFamily w = NDesktopEnvironmentFamily.parse(condId.getArtifactId()).orNull();
+                NDesktopEnvironmentFamily w = NDesktopEnvironmentFamily.parse(condId.artifactId()).orNull();
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
                 }
@@ -535,10 +535,10 @@ public class CoreFilterUtils {
         if (id == null) {
             return false;
         }
-        if (pattern.getVersion().isBlank()) {
-            return pattern.getShortName().equals(id.getShortName());
+        if (pattern.version().isBlank()) {
+            return pattern.shortName().equals(id.shortName());
         }
-        return pattern.getLongName().equals(id.getLongName());
+        return pattern.longName().equals(id.longName());
     }
 
     public static boolean acceptClassifier(NIdLocation location, String classifier) {

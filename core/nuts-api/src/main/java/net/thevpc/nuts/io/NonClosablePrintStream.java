@@ -24,7 +24,7 @@ public class NonClosablePrintStream extends PrintStream implements OutputStreamD
     }
 
     @Override
-    public OutputStream getDelegateOutputStream() {
+    public OutputStream delegateOutputStream() {
         return delegated;
     }
 

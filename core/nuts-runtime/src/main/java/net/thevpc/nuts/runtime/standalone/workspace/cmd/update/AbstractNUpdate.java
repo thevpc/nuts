@@ -212,7 +212,7 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
         }
 
         for (NId id : ids) {
-            if (id.getShortName().equals(NConstants.Ids.NUTS_API)) {
+            if (id.shortName().equals(NConstants.Ids.NUTS_API)) {
                 return true;
             }
         }
@@ -241,7 +241,7 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
             return true;
         }
         for (NId id : ids) {
-            if (id.getShortName().equals(NWorkspace.of().getRuntimeId().getShortName())) {
+            if (id.shortName().equals(NWorkspace.of().getRuntimeId().shortName())) {
                 return true;
             }
 

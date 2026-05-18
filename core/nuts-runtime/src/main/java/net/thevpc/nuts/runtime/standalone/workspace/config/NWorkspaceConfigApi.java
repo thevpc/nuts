@@ -10,9 +10,9 @@ public class NWorkspaceConfigApi extends NConfigItem implements Cloneable{
     private NVersion apiVersion = null;
     /**
      * boot package Id in long format (as defined in
-     * {@link NId#getLongName()})
+     * {@link NId#longName()})
      *
-     * @see NId#getLongId()
+     * @see NId#longId()
      */
     private NId runtimeId = null;
 

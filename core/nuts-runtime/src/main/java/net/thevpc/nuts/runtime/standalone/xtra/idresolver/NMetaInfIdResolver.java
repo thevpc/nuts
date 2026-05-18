@@ -52,7 +52,7 @@ public class NMetaInfIdResolver {
                 try (InputStream is = url.getInputStream()) {
                     NDescriptor d = NDescriptorParser.of().parse(is).get();
                     NId id = d.getId();
-                    if (id != null && id.getVersion() != null && !id.getVersion().isBlank()) {
+                    if (id != null && id.version() != null && !id.version().isBlank()) {
                         all.add(id);
                     }
                 } catch (Exception ex) {
@@ -78,7 +78,7 @@ public class NMetaInfIdResolver {
                     String version = prop.getProperty("id");
                     if (!NBlankable.isBlank(version)) {
                         NId id = NId.get(version).orNull();
-                        if (id != null && id.getVersion() != null && !id.getVersion().isBlank()) {
+                        if (id != null && id.version() != null && !id.version().isBlank()) {
                             all.add(id);
                         }
                     }

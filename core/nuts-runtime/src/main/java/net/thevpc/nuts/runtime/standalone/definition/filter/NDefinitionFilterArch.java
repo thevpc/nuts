@@ -52,7 +52,7 @@ public class NDefinitionFilterArch extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition definition) {
-        return CoreFilterUtils.matchesArch(arch, definition.getDescriptor().getCondition().getArch());
+        return CoreFilterUtils.matchesArch(arch, definition.descriptor().getCondition().getArch());
     }
 
     /**

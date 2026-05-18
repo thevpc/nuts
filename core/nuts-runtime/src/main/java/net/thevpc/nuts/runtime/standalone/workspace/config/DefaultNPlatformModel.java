@@ -62,7 +62,7 @@ public class DefaultNPlatformModel {
                 if (NSession.of().isPlainTrace()) {
                     NOut.println(NMsg.ofC("%s %s %s %s (%s) %s at %s",
                             NText.ofStyledSuccess("install"),
-                            location.getId().getShortName(),
+                            location.getId().shortName(),
                             location.getVendor(),
                             location.getProduct(),
                             location.getVariant(),
@@ -126,7 +126,7 @@ public class DefaultNPlatformModel {
         if (location == null) {
             return NOptional.ofNamedEmpty(NMsg.ofC("platform %s", location));
         }
-        String type = location.getId().getArtifactId();
+        String type = location.getId().artifactId();
         NExecutionEngineFamily ftype = NExecutionEngineFamily.parse(type).orElse(NExecutionEngineFamily.JAVA);
         List<NExecutionEngineLocation> list = getPlatforms().get(ftype);
         if (list != null) {
@@ -225,8 +225,8 @@ public class DefaultNPlatformModel {
             NVersion v1 = NVersion.get(best.getVersion()).get();
             NVersion v2 = NVersion.get(a[i].getVersion()).get();
             if (executionEngineType == NExecutionEngineFamily.JAVA) {
-                double d1 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersion(v1.getValue()));
-                double d2 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersion(v2.getValue()));
+                double d1 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersion(v1.value()));
+                double d2 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersion(v2.value()));
                 if (d1 == d2) {
                     //1.8u100 vs 1.8u101, select 1.8u101
                     if (v1.compareTo(v2) < 0) {

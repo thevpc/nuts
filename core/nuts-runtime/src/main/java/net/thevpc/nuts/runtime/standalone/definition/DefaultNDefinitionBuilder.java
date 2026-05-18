@@ -72,18 +72,18 @@ public class DefaultNDefinitionBuilder implements NDefinitionBuilder {
 
     public DefaultNDefinitionBuilder(NDefinition other) {
         if (other != null) {
-            this.descriptor = other.getDescriptor();
-            this.id = other.getId();
-            this.repositoryUuid = other.getRepositoryUuid();
-            this.repositoryName = other.getRepositoryName();
+            this.descriptor = other.descriptor();
+            this.id = other.id();
+            this.repositoryUuid = other.repositoryUuid();
+            this.repositoryName = other.repositoryName();
 
-            this.content = other.getContent().orNull();
-            this.installInformation = other.getInstallInformation().orNull();
-            this.effectiveDescriptor = other.getEffectiveDescriptor().orNull();
-            this.dependencies = other.getDependencies().orNull();
-            this.apiId = other.getApiId();
-            this.dependency = other.getDependency();
-            this.effectiveFlags = other.getEffectiveFlags().orNull();
+            this.content = other.content().orNull();
+            this.installInformation = other.installInformation().orNull();
+            this.effectiveDescriptor = other.effectiveDescriptor().orNull();
+            this.dependencies = other.dependencies().orNull();
+            this.apiId = other.apiId();
+            this.dependency = other.dependency();
+            this.effectiveFlags = other.effectiveFlags().orNull();
         }
     }
 
@@ -110,7 +110,7 @@ public class DefaultNDefinitionBuilder implements NDefinitionBuilder {
     }
 
     @Override
-    public NDefinitionBuilder setDependency(NDependency dependency) {
+    public NDefinitionBuilder dependency(NDependency dependency) {
         this.dependency = dependency;
         return this;
     }

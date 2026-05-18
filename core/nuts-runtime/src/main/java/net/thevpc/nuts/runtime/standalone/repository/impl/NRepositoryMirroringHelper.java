@@ -173,7 +173,7 @@ public class NRepositoryMirroringHelper {
         NDescriptor desc = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of().toRepositorySPI(repo).fetchDescriptor().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
         NPath local = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of().toRepositorySPI(repo).fetchContent().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
         if (local == null) {
-            throw new NArtifactNotFoundException(id.getLongId());
+            throw new NArtifactNotFoundException(id.longId());
         }
         if (!repo.config().isSupportedMirroring()) {
             throw new NPushException(id, NMsg.ofC("unable to push %s. no repository found.", id == null ? "<null>" : id));
@@ -239,7 +239,7 @@ public class NRepositoryMirroringHelper {
                         NId id2 = dws.resolveEffectiveId(nutsDescriptor).builder().setFaceDescriptor().build();
                         NPath localNutFile = cache.getLongIdLocalFile(id2);
                         NDescriptorWriter.of().print(nutsDescriptor, localNutFile);
-                        if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
+                        if (bestId == null || id2.version().compareTo(bestId.version()) > 0) {
                             bestId = id2;
                         }
                     }

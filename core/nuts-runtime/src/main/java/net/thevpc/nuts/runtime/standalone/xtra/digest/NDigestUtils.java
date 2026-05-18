@@ -91,7 +91,7 @@ public class NDigestUtils {
 
     public static String evalSHA1Hex(NPath file) {
         try {
-            try (InputStream is = file.getInputStream()) {
+            try (InputStream is = file.inputStream()) {
                 return evalSHA1Hex(is, true);
             }
         } catch (IOException e) {

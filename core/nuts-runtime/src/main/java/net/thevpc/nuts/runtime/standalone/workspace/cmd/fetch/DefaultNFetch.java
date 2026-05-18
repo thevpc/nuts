@@ -48,16 +48,16 @@ public class DefaultNFetch extends AbstractNFetch {
     public NPath getResultContent() {
         try {
             NDefinition def = fetchDefinition(getId());
-            if (def.getDescriptor().isNoContent()) {
+            if (def.descriptor().isNoContent()) {
                 return null;
             }
-            if (!def.getContent().isPresent()) {
+            if (!def.content().isPresent()) {
                 if (!isFailFast()) {
                     return null;
                 }
                 throw new NArtifactNotFoundException(getId(), NMsg.ofC("missing content for %s", getId()));
             }
-            return def.getContent().get();
+            return def.content().get();
         } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -73,7 +73,7 @@ public class DefaultNFetch extends AbstractNFetch {
 //            if (isEffective()) {
 //                return NWorkspaceExt.of().resolveEffectiveId(def.getEffectiveDescriptor().get());
 //            }
-            return def.getId();
+            return def.id();
         } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -85,8 +85,8 @@ public class DefaultNFetch extends AbstractNFetch {
     @Override
     public String getResultContentHash() {
         try {
-            Path f = getResultDefinition().getContent().flatMap(NPath::toPath).get();
-            return NDigest.of().setSource(f).computeString();
+            Path f = getResultDefinition().content().flatMap(NPath::toPath).get();
+            return NDigest.of().source(f).computeString();
         } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -98,7 +98,7 @@ public class DefaultNFetch extends AbstractNFetch {
     @Override
     public String getResultDescriptorHash() {
         try {
-            return NDigest.of().setSource(getResultDescriptor()).computeString();
+            return NDigest.of().source(getResultDescriptor()).computeString();
         } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -126,7 +126,7 @@ public class DefaultNFetch extends AbstractNFetch {
 //            if (isEffective()) {
 //                return def.getEffectiveDescriptor().get();
 //            }
-            return def.getDescriptor();
+            return def.descriptor();
         } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -139,7 +139,7 @@ public class DefaultNFetch extends AbstractNFetch {
     public NDescriptor getResultEffectiveDescriptor() {
         try {
             NDefinition def = fetchDefinition(getId());
-            return def.getEffectiveDescriptor().get();
+            return def.effectiveDescriptor().get();
         } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -162,7 +162,7 @@ public class DefaultNFetch extends AbstractNFetch {
     public NPath getResultPath() {
         try {
             NDefinition def = fetchDefinition(getId());
-            return def.getContent().orNull();
+            return def.content().orNull();
         } catch (NArtifactNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -192,13 +192,13 @@ public class DefaultNFetch extends AbstractNFetch {
         if (NDependencyScope.parse(id.toDependency().getScope()).orNull() == NDependencyScope.SYSTEM) {
             // TODO, fix me
             //just ignore or should we still support it?
-            throw new NArtifactNotFoundException(id.getLongId());
+            throw new NArtifactNotFoundException(id.longId());
         }
         NWorkspaceExt dws = NWorkspaceExt.of();
         NFetchStrategy nutsFetchModes = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
         NRepositoryFilter repositoryFilter = this.getRepositoryFilter();
-        if (!NBlankable.isBlank(id.getRepository())) {
-            NRepositoryFilter repositoryFilter2 = NRepositoryFilters.of().byName(id.getRepository());
+        if (!NBlankable.isBlank(id.repository())) {
+            NRepositoryFilter repositoryFilter2 = NRepositoryFilters.of().byName(id.repository());
             repositoryFilter = repositoryFilter2.and(repositoryFilter);
         }
         NRepositoryAndFetchModeTracker descTracker = new NRepositoryAndFetchModeTracker(
@@ -223,9 +223,9 @@ public class DefaultNFetch extends AbstractNFetch {
                     descTracker.addFailure(location);
                 } catch (Exception ex) {
                     //ignore
-                    _LOG().log(NMsg.ofC("unexpected error while fetching descriptor for %s : %s", id.getLongId(),ex).asError(ex));
+                    _LOG().log(NMsg.ofC("unexpected error while fetching descriptor for %s : %s", id.longId(),ex).asError(ex));
                     if (_LOG().isLoggable(Level.FINEST)) {
-                        NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NMsgIntent.FAIL, "fetch def", startTime);
+                        NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.longId(), NMsgIntent.FAIL, "fetch def", startTime);
                     }
                     descTracker.addFailure(location);
                 }
@@ -240,16 +240,16 @@ public class DefaultNFetch extends AbstractNFetch {
             }
         } catch (NArtifactNotFoundException ex) {
             reasons.add(ex);
-            NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NMsgIntent.FAIL, "fetch definition", startTime);
+            NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.longId(), NMsgIntent.FAIL, "fetch definition", startTime);
             throw ex;
         } catch (RuntimeException ex) {
-            NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NMsgIntent.FAIL, "[unexpected] fetch definition", startTime);
+            NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.longId(), NMsgIntent.FAIL, "[unexpected] fetch definition", startTime);
             throw ex;
         }
         if (foundDefinitionBuilder != null) {
             return foundDefinitionBuilder.build();
         }
-        throw new NArtifactNotFoundException(id.getLongId());
+        throw new NArtifactNotFoundException(id.longId());
     }
 
     protected DefaultNDefinitionBuilder2 fetchDescriptorAsDefinition(NId id, NFetchStrategy nutsFetchModes, NFetchMode mode, NRepository repo) {
@@ -292,11 +292,11 @@ public class DefaultNFetch extends AbstractNFetch {
                 newIdBuilder.setRepository(repo.getName());
             }
             //inherit classifier from requested parse
-            String classifier = id.getClassifier();
+            String classifier = id.classifier();
             if (!NBlankable.isBlank(classifier)) {
                 newIdBuilder.setClassifier(classifier);
             }
-            Map<String, String> q = id.getProperties();
+            Map<String, String> q = id.properties();
             if (!NDependencyScopes.isDefaultScope(q.get(NConstants.IdProperties.SCOPE))) {
                 newIdBuilder.setProperty(NConstants.IdProperties.SCOPE, q.get(NConstants.IdProperties.SCOPE));
             }
@@ -308,18 +308,18 @@ public class DefaultNFetch extends AbstractNFetch {
             NId apiId0 = null;
             NId apiId = null;
 
-            if (getId().getShortName().equals(NConstants.Ids.NUTS_API)) {
+            if (getId().shortName().equals(NConstants.Ids.NUTS_API)) {
                 //
             } else {
                 apiId = null;
                 for (NDependency dependency : descriptor.getDependencies()) {
-                    if (dependency.toId().getShortName().equals(NConstants.Ids.NUTS_API)
+                    if (dependency.toId().shortName().equals(NConstants.Ids.NUTS_API)
                             && NDependencyScopes.isCompileScope(dependency.getScope())) {
-                        apiId0 = dependency.toId().getLongId();
+                        apiId0 = dependency.toId().longId();
                     }
                 }
                 if (apiId0 != null) {
-                    if (getId().getShortName().equals(NConstants.Ids.NUTS_RUNTIME)) {
+                    if (getId().shortName().equals(NConstants.Ids.NUTS_RUNTIME)) {
                         apiId = apiId0;
                     } else if (descriptor.getIdType() == NIdType.RUNTIME) {
                         apiId = apiId0;
@@ -332,7 +332,7 @@ public class DefaultNFetch extends AbstractNFetch {
             }
 
             DefaultNDefinitionBuilder2 result = new DefaultNDefinitionBuilder2()
-                    .setId(new ValueSupplier<>(newId.getLongId()))
+                    .setId(new ValueSupplier<>(newId.longId()))
                     .setDependency(new ValueSupplier<>(id.toDependency()))
                     .setRepositoryUuid(new ValueSupplier<>(repo.getUuid()))
                     .setRepositoryName(new ValueSupplier<>(repo.getName()))
@@ -534,7 +534,7 @@ public class DefaultNFetch extends AbstractNFetch {
                     }
                 }
                 if (!contentSuccessful /*&& includedRemote*/) {
-                    NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NMsgIntent.FAIL,
+                    NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.longId(), NMsgIntent.FAIL,
                             "fetched descriptor but failed to fetch artifact binaries", startTime);
                 }
             }

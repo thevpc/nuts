@@ -168,7 +168,7 @@ public class GradleNDependencySolver implements NDependencySolver {
     public NDependencySolver addRootDefinition0(NDependency dependency, NDefinition def) {
         if (dependency == null) {
             if (def != null) {
-                dependency = def.getId().toDependency();
+                dependency = def.id().toDependency();
             } else {
                 NAssert.requireNamedNonNull(dependency, "dependency");
             }

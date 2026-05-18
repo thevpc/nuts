@@ -20,10 +20,10 @@ public class InstallIdCacheItem {
     public NInstallStatus currentInstallStatus;
 
     public static NId normalizeId(NDependency id) {
-        return id.toId().getLongId();
+        return id.toId().longId();
     }
     public static NId normalizeId(NId id) {
-        return id.getLongId();
+        return id.longId();
     }
 
     public InstallIdCacheItem(NId id) {
@@ -34,7 +34,7 @@ public class InstallIdCacheItem {
 
     public List<NDependency> getDependencies() {
         if (dependencies == null) {
-            return getDefinition().getDependencies().get().transitive().toList();
+            return getDefinition().dependencies().get().transitive().toList();
         }
         return dependencies;
     }
@@ -60,14 +60,14 @@ public class InstallIdCacheItem {
 
     public NDescriptor getEffectiveDescriptor() {
         if (effectiveDescriptor == null) {
-            effectiveDescriptor = getDefinition().getEffectiveDescriptor().get();
+            effectiveDescriptor = getDefinition().effectiveDescriptor().get();
         }
         return effectiveDescriptor;
     }
 
     public NPath getContent() {
-        if (!getDefinition().getDescriptor().isNoContent()) {
-            return getDefinition().getContent().get();
+        if (!getDefinition().descriptor().isNoContent()) {
+            return getDefinition().content().get();
         }
         return null;
     }

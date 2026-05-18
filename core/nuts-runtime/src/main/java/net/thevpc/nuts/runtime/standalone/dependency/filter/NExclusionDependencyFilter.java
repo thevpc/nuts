@@ -33,9 +33,9 @@ public class NExclusionDependencyFilter extends AbstractDependencyFilter{
         for (NId exclusion : exclusions) {
             NId nutsId = dependency.toId();
             if (
-                    GlobUtils.ofExact(exclusion.getGroupId()).matcher(NStringUtils.trim(nutsId.getGroupId())).matches()
-                    && GlobUtils.ofExact(exclusion.getArtifactId()).matcher(NStringUtils.trim(nutsId.getArtifactId())).matches()
-                    && exclusion.getVersion().toFilter().acceptVersion(nutsId.getVersion())) {
+                    GlobUtils.ofExact(exclusion.groupId()).matcher(NStringUtils.trim(nutsId.groupId())).matches()
+                    && GlobUtils.ofExact(exclusion.artifactId()).matcher(NStringUtils.trim(nutsId.artifactId())).matches()
+                    && exclusion.version().toFilter().acceptVersion(nutsId.version())) {
                 return false;
             }
         }
@@ -86,7 +86,7 @@ public class NExclusionDependencyFilter extends AbstractDependencyFilter{
     @Override
     public String toString() {
         return base + (exclusions == null ? "" : (" excludes " + Arrays.stream(exclusions)
-                .map(x -> x.getLongName())
+                .map(x -> x.longName())
                 .collect(Collectors.joining(","))));
     }
 

@@ -52,7 +52,7 @@ public class NDefinitionFilterPlatform extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition descriptor) {
-        return CoreFilterUtils.matchesPlatform(platform, descriptor.getDescriptor().getCondition().getPlatform());
+        return CoreFilterUtils.matchesPlatform(platform, descriptor.descriptor().getCondition().getPlatform());
     }
 
     /**

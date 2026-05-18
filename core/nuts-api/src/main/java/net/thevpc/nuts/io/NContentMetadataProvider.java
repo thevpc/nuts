@@ -9,5 +9,5 @@ package net.thevpc.nuts.io;
  * @author thevpc
  */
 public interface NContentMetadataProvider {
-    NContentMetadata getMetaData();
+    NContentMetadata metaData();
 }

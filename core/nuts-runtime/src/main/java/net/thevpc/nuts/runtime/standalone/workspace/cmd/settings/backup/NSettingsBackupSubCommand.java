@@ -16,7 +16,6 @@ import net.thevpc.nuts.elem.NObjectElement;
 
 
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.text.NMsg;
@@ -146,7 +145,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 NUncompress.of()
                         .from(NPath.of(file))
                         .to(NPath.of(platformHomeFolder))
-                        .setSkipRoot(true).run();
+                        .skipRoot(true).run();
                 if (session.isPlainTrace()) {
                     NOut.println(NMsg.ofC("restore %s to %s", file, platformHomeFolder));
                 }

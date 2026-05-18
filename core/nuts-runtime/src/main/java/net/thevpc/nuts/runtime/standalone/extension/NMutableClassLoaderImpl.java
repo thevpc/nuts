@@ -105,20 +105,20 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
             if (NBlankable.isBlank(id)) {
                 continue;
             }
-            if (isLoadedDependency(id.getId())) {
-                NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("dependency already loaded %s...", id.getId()).asFineAlert());
+            if (isLoadedDependency(id.id())) {
+                NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("dependency already loaded %s...", id.id()).asFineAlert());
                 continue;
             }
-            URL u = id.getContent().map(x -> x.toURL().orNull()).orNull();
+            URL u = id.content().map(x -> x.toURL().orNull()).orNull();
             if (u == null) {
-                throw new NIllegalArgumentException(NMsg.ofC("unable to load %s", id.getId()).asError());
+                throw new NIllegalArgumentException(NMsg.ofC("unable to load %s", id.id()).asError());
             }
             urls.add(u);
-            NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("loaded dependency %s...", id.getId()).asFineAlert());
+            NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("loaded dependency %s...", id.id()).asFineAlert());
             ok.add(id);
         }
         for (NDefinition d : ok) {
-            dependenciesByShortId.put(d.getId().getShortName(), d);
+            dependenciesByShortId.put(d.id().shortName(), d);
             dependencies.add(d);
         }
         for (URL a : urls) {
@@ -128,7 +128,7 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
     }
 
     public boolean isLoadedDependency(NId id) {
-        if (dependenciesByShortId.containsKey(id.getShortName())) {
+        if (dependenciesByShortId.containsKey(id.shortName())) {
             return true;
         }
 //        if (dependencies.stream().anyMatch(x -> x.getId().equalsShortId(id))) {
@@ -136,22 +136,22 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
 //        }
 
         // try current class loader
-        URL s = getResource("META-INF/maven/" + id.getGroupId() + "/" + id.getArtifactId() + "/pom.properties");
+        URL s = getResource("META-INF/maven/" + id.groupId() + "/" + id.artifactId() + "/pom.properties");
         if (s != null) {
             return true;
         }
-        s = getResource("META-INF/maven/" + id.getGroupId() + "/" + id.getArtifactId() + "/pom.xml");
+        s = getResource("META-INF/maven/" + id.groupId() + "/" + id.artifactId() + "/pom.xml");
         if (s != null) {
             return true;
         }
-        s = getResource("META-INF/nuts/" + id.getGroupId() + "/" + id.getArtifactId() + "/nuts.nuts");
+        s = getResource("META-INF/nuts/" + id.groupId() + "/" + id.artifactId() + "/nuts.nuts");
         return s != null;
     }
 
 
     @Override
     public String toString() {
-        return "NMutableClassLoader" + dependencies.stream().map(x -> x.getId().toString()).collect(Collectors.toList());
+        return "NMutableClassLoader" + dependencies.stream().map(x -> x.id().toString()).collect(Collectors.toList());
     }
 
 

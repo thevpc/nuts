@@ -84,13 +84,13 @@ public class AnyNixNdi extends BaseSystemNdi {
                             factory.ofStyled("why", NTextStyle.warn()),
                             factory.ofStyled("cancel!", NTextStyle.comments())
                     ))
-                    .setHintMessage(NMsg.ofPlain("you must enter your confirmation"))
-                    .setParser(new NAskParser<Boolean>() {
+                    .hintMessage(NMsg.ofPlain("you must enter your confirmation"))
+                    .sparser(new NAskParser<Boolean>() {
                         @Override
                         public Boolean parse(NAskParseContext<Boolean> context) {
                             Object response=context.response();
                             NAsk<Boolean> question=context.question();
-                            Boolean defaultValue=question.getDefaultValue();
+                            Boolean defaultValue=question.defaultValue();
                             if (response instanceof Boolean) {
                                 return (Boolean) response;
                             }
@@ -120,7 +120,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                             }
                         }
                     })
-                    .getValue();
+                    .value();
 
         }
     }

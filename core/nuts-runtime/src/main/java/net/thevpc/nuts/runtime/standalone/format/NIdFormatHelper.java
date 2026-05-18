@@ -118,7 +118,7 @@ public class NIdFormatHelper {
     private NIdFormatHelper(NId id, NDescriptor desc, NDefinition def, NDependency dep, NWorkspace workspace) {
         if (id == null) {
             if (def != null) {
-                id = def.getId();
+                id = def.id();
             } else if (desc != null) {
                 id = desc.getId();
             } else if (dep != null) {
@@ -127,7 +127,7 @@ public class NIdFormatHelper {
         }
         if (desc == null) {
             if (def != null) {
-                desc = def.getDescriptor();
+                desc = def.descriptor();
             }
         }
         this.workspace = workspace;
@@ -336,14 +336,14 @@ public class NIdFormatHelper {
                 return getFormattedStatusString();
             }
             case FILE: {
-                if (def != null && def.getContent().isPresent()) {
-                    return text.of(def.getContent().orNull());
+                if (def != null && def.content().isPresent()) {
+                    return text.of(def.content().orNull());
                 }
                 return text.ofStyled("missing-path", NTextStyle.error());
             }
             case FILE_NAME: {
-                if (def != null && def.getContent().isPresent()) {
-                    return text.ofPlain(def.getContent().get().name());
+                if (def != null && def.content().isPresent()) {
+                    return text.ofPlain(def.content().get().name());
                 }
                 return text.ofStyled("missing-file-name", NTextStyle.error());
             }
@@ -396,39 +396,39 @@ public class NIdFormatHelper {
                 return text.ofStyled("missing-desktop-environment", NTextStyle.error());
             }
             case INSTALL_DATE: {
-                if (def != null && def.getInstallInformation().isPresent()) {
-                    return stringValue(def.getInstallInformation().get().getCreatedInstant());
+                if (def != null && def.installInformation().isPresent()) {
+                    return stringValue(def.installInformation().get().getCreatedInstant());
                 }
                 return text.ofStyled("<null>", NTextStyle.pale());
             }
             case REPOSITORY: {
                 String rname = null;
                 if (def != null) {
-                    if (def.getRepositoryName() != null) {
-                        rname = def.getRepositoryName();
+                    if (def.repositoryName() != null) {
+                        rname = def.repositoryName();
                     }
-                    if (def.getRepositoryUuid() != null) {
+                    if (def.repositoryUuid() != null) {
                         NRepository r = workspace
-                                .findRepositoryById(def.getRepositoryUuid()).orNull();
+                                .findRepositoryById(def.repositoryUuid()).orNull();
                         if (r != null) {
                             rname = r.getName();
                         }
                     }
                 }
                 if (rname == null && id != null) {
-                    rname = id.getRepository();
+                    rname = id.repository();
                 }
                 return stringValue(rname);
             }
             case REPOSITORY_ID: {
                 String ruuid = null;
                 if (def != null) {
-                    if (def.getRepositoryUuid() != null) {
-                        ruuid = def.getRepositoryUuid();
+                    if (def.repositoryUuid() != null) {
+                        ruuid = def.repositoryUuid();
                     }
                 }
                 if (ruuid == null && id != null) {
-                    String p = id.getRepository();
+                    String p = id.repository();
                     NRepository r = workspace
                             .findRepositoryByName(p).orNull();
                     if (r != null) {
@@ -438,57 +438,57 @@ public class NIdFormatHelper {
                 return stringValue(ruuid);
             }
             case INSTALL_USER: {
-                if (def != null && def.getInstallInformation().isPresent()) {
-                    return stringValue(def.getInstallInformation().get().getInstallUser());
+                if (def != null && def.installInformation().isPresent()) {
+                    return stringValue(def.installInformation().get().getInstallUser());
                 }
                 return text.ofStyled("nobody", NTextStyle.error());
             }
             case CACHE_FOLDER: {
                 if (def != null) {
-                    return stringValue(NPath.of(NStoreKey.ofCache(def.getId())));
+                    return stringValue(NPath.of(NStoreKey.ofCache(def.id())));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case CONF_FOLDER: {
                 if (def != null) {
-                    return stringValue(NPath.of(NStoreKey.ofConf(def.getId())));
+                    return stringValue(NPath.of(NStoreKey.ofConf(def.id())));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case LIB_FOLDER: {
                 if (def != null) {
-                    return stringValue(NPath.of(NStoreKey.ofLib(def.getId())));
+                    return stringValue(NPath.of(NStoreKey.ofLib(def.id())));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case LOG_FOLDER: {
                 if (def != null) {
-                    return stringValue(NPath.of(NStoreKey.ofLog(def.getId())));
+                    return stringValue(NPath.of(NStoreKey.ofLog(def.id())));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case TEMP_FOLDER: {
                 if (def != null) {
-                    return stringValue(NPath.of(NStoreKey.ofTemp(def.getId())));
+                    return stringValue(NPath.of(NStoreKey.ofTemp(def.id())));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case VAR_LOCATION: {
                 if (def != null) {
-                    return stringValue(NPath.of(NStoreKey.ofVar(def.getId())));
+                    return stringValue(NPath.of(NStoreKey.ofVar(def.id())));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case BIN_FOLDER: {
                 if (def != null) {
-                    return stringValue(NPath.of(NStoreKey.ofBin(def.getId())));
+                    return stringValue(NPath.of(NStoreKey.ofBin(def.id())));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case EXEC_ENTRY: {
-                if (def != null && def.getContent().isPresent()) {
+                if (def != null && def.content().isPresent()) {
                     List<NText> results = new ArrayList<>();
-                    for (NExecutionEntry entry : NExecutionEntry.parse(def.getContent().get())) {
+                    for (NExecutionEntry entry : NExecutionEntry.parse(def.content().get())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
                             results.add(text.ofPlain(entry.getName()));
@@ -507,21 +507,21 @@ public class NIdFormatHelper {
                 return text.ofStyled("<missing-class>", NTextStyle.error());
             }
             case INSTALL_FOLDER: {
-                if (def != null && def.getInstallInformation().isPresent()) {
-                    return stringValue(def.getInstallInformation().get().getInstallFolder());
+                if (def != null && def.installInformation().isPresent()) {
+                    return stringValue(def.installInformation().get().getInstallFolder());
                 }
                 return text.ofStyled("<null>", NTextStyle.pale());
             }
             case LONG_STATUS: {
                 List<NText> all = new ArrayList<>();
-                if (def != null && def.getDescriptor().getIdType() != null) {
-                    switch (def.getDescriptor().getIdType()) {
+                if (def != null && def.descriptor().getIdType() != null) {
+                    switch (def.descriptor().getIdType()) {
                         case REGULAR: {
-                            all.add(text.ofPlain(def.getDescriptor().getIdType().id()));
+                            all.add(text.ofPlain(def.descriptor().getIdType().id()));
                             break;
                         }
                         default: {
-                            all.add(text.ofStyled(def.getDescriptor().getIdType().id(), NTextStyle.primary1()));
+                            all.add(text.ofStyled(def.descriptor().getIdType().id(), NTextStyle.primary1()));
                             break;
                         }
                     }
@@ -587,11 +587,11 @@ public class NIdFormatHelper {
             }
 
             if (def != null) {
-                this.executable = def.getDescriptor().isExecutable();
-                this.executableApp = def.getDescriptor().isNutsApplication();
+                this.executable = def.descriptor().isExecutable();
+                this.executableApp = def.descriptor().isNutsApplication();
             } else if (this.defFetched != null) {
-                this.executable = this.defFetched.getDescriptor().isExecutable();
-                this.executableApp = this.defFetched.getDescriptor().isNutsApplication();
+                this.executable = this.defFetched.descriptor().isExecutable();
+                this.executableApp = this.defFetched.descriptor().isNutsApplication();
             } else if (desc != null) {
                 this.executable = desc.isExecutable();
                 this.executableApp = desc.isNutsApplication();
@@ -602,7 +602,7 @@ public class NIdFormatHelper {
                     : this.fetched ? 'f' : 'r';
 //            this.status_obs=(this.installStatus.isInstalled()?'O':'U');
             if (def != null) {
-                switch (def.getDescriptor().getIdType()) {
+                switch (def.descriptor().getIdType()) {
                     case API: {
                         this.status_e = 'a';
                         break;

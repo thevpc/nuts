@@ -30,6 +30,8 @@ import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.time.NProgressListener;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.File;
 import java.io.InputStream;
@@ -52,7 +54,8 @@ public interface NInputStreamMonitor extends NComponent {
      *
      * @return action name
      */
-    NMsg getName();
+    @NGetter
+    NMsg name();
 
     /**
      * update action name
@@ -60,14 +63,15 @@ public interface NInputStreamMonitor extends NComponent {
      * @param name action name
      * @return {@code this} instance
      */
-    NInputStreamMonitor setName(NMsg name);
+    NInputStreamMonitor name(NMsg name);
 
     /**
      * return source origin
      *
      * @return source origin
      */
-    Object getOrigin();
+    @NGetter
+    Object origin();
 
     /**
      * update action source origin
@@ -75,14 +79,15 @@ public interface NInputStreamMonitor extends NComponent {
      * @param origin source origin
      * @return {@code this} instance
      */
-    NInputStreamMonitor setOrigin(Object origin);
+    NInputStreamMonitor origin(Object origin);
 
     /**
      * return operation length
      *
      * @return {@code this} instance
      */
-    long getLength();
+    @NGetter
+    long length();
 
     /**
      * update operation length
@@ -90,17 +95,10 @@ public interface NInputStreamMonitor extends NComponent {
      * @param len operation length
      * @return {@code this} instance
      */
-    NInputStreamMonitor setLength(long len);
+    @NSetter
+    NInputStreamMonitor length(long len);
 
-    NInputStreamMonitor setSource(NPath inputSource);
-
-    /**
-     * update operation source
-     *
-     * @param path operation source
-     * @return {@code this} instance
-     */
-    NInputStreamMonitor setSource(Path path);
+    NInputStreamMonitor source(NPath inputSource);
 
     /**
      * update operation source
@@ -108,7 +106,7 @@ public interface NInputStreamMonitor extends NComponent {
      * @param path operation source
      * @return {@code this} instance
      */
-    NInputStreamMonitor setSource(File path);
+    NInputStreamMonitor source(Path path);
 
     /**
      * update operation source
@@ -116,9 +114,17 @@ public interface NInputStreamMonitor extends NComponent {
      * @param path operation source
      * @return {@code this} instance
      */
-    NInputStreamMonitor setSource(InputStream path);
+    NInputStreamMonitor source(File path);
 
-    NInputStreamMonitor setSource(NInputSource source);
+    /**
+     * update operation source
+     *
+     * @param path operation source
+     * @return {@code this} instance
+     */
+    NInputStreamMonitor source(InputStream path);
+
+    NInputStreamMonitor source(NInputSource source);
 
     /**
      * Create monitored input stream
@@ -127,11 +133,14 @@ public interface NInputStreamMonitor extends NComponent {
      */
     InputStream create();
 
-    String getSourceTypeName();
+    @NGetter
+    String sourceTypeName();
 
-    NInputSource getSource();
+    @NGetter
+    NInputSource source();
 
-    NInputStreamMonitor setSourceTypeName(String sourceType);
+    @NSetter
+    NInputStreamMonitor sourceTypeName(String sourceType);
 
 
     /**
@@ -148,7 +157,8 @@ public interface NInputStreamMonitor extends NComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NInputStreamMonitor setLogProgress(boolean value);
+    @NSetter
+    NInputStreamMonitor logProgress(boolean value);
 
     /**
      * return true if trace progress on terminal
@@ -164,7 +174,8 @@ public interface NInputStreamMonitor extends NComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NInputStreamMonitor setTraceProgress(boolean value);
+    @NSetter
+    NInputStreamMonitor traceProgress(boolean value);
 
     /**
      * return progress factory responsible of creating progress monitor
@@ -172,7 +183,8 @@ public interface NInputStreamMonitor extends NComponent {
      * @return progress factory responsible of creating progress monitor
      * @since 0.5.8
      */
-    NProgressFactory getProgressFactory();
+    @NGetter
+    NProgressFactory progressFactory();
 
     /**
      * set progress factory responsible of creating progress monitor
@@ -181,7 +193,8 @@ public interface NInputStreamMonitor extends NComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NInputStreamMonitor setProgressFactory(NProgressFactory value);
+    @NSetter
+    NInputStreamMonitor progressFactory(NProgressFactory value);
 
     /**
      * set progress monitor. Will create a singleton progress monitor factory
@@ -190,5 +203,5 @@ public interface NInputStreamMonitor extends NComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NInputStreamMonitor setProgressMonitor(NProgressListener value);
+    NInputStreamMonitor progressMonitor(NProgressListener value);
 }

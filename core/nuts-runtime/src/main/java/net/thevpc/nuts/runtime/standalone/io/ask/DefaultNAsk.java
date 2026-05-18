@@ -45,11 +45,11 @@ public class DefaultNAsk<T> implements NAsk<T> {
         this.out = out;
     }
 
-    public String getRememberMeKey() {
+    public String rememberMeKey() {
         return rememberMeKey;
     }
 
-    public NAsk<T> setRememberMeKey(String rememberMeKey) {
+    public NAsk<T> rememberMeKey(String rememberMeKey) {
         this.rememberMeKey = rememberMeKey;
         return this;
     }
@@ -102,22 +102,22 @@ public class DefaultNAsk<T> implements NAsk<T> {
         }
         boolean gui = session.isGui() && NEnv.of().isGraphicalDesktopEnvironment();
 
-        NMsg message = this.getMessage();
+        NMsg message = this.message();
 //        if (message.endsWith("\n")) {
 //            message = message.substring(0, message.length() - 1);
 //        }
         boolean extraInfo = false;
-        NAskParser<T> p = this.getParser();
+        NAskParser<T> p = this.parser();
         if (p == null) {
-            p = new DefaultNResponseParser<>(session, this.getValueType());
+            p = new DefaultNResponseParser<>(session, this.valueType());
         }
-        NAskFormat<T> ff = this.getFormat();
+        NAskFormat<T> ff = this.format();
         if (ff == null) {
             ff = new DefaultNAskFormat<>();
         }
-        List<Object> _acceptedValues = this.getAcceptedValues();
+        List<Object> _acceptedValues = this.acceptedValues();
         if (_acceptedValues == null) {
-            _acceptedValues = ff.getDefaultValues(this.getValueType(), this);
+            _acceptedValues = ff.resolveDefaultValues(this.valueType(), this);
         }
         if (_acceptedValues == null) {
             _acceptedValues = new ArrayList<>();
@@ -135,18 +135,18 @@ public class DefaultNAsk<T> implements NAsk<T> {
             }
             out.print(message);
             boolean first = true;
-            if (this.getDefaultValue() != null) {
+            if (this.defaultValue() != null) {
                 if (first) {
                     first = false;
                     out.print(" (");
                 } else {
                     out.print(", ");
                 }
-                out.print(NMsg.ofC("default is %s", NText.ofStyled(ff.format(this.getDefaultValue(), this), NTextStyle.primary1())));
+                out.print(NMsg.ofC("default is %s", NText.ofStyled(ff.format(this.defaultValue(), this), NTextStyle.primary1())));
             }
-            if (getHintMessage() != null) {
+            if (hintMessage() != null) {
                 out.print(" (");
-                out.print(getHintMessage());
+                out.print(hintMessage());
                 out.print(")");
             } else {
                 if (!_acceptedValues.isEmpty()) {
@@ -329,16 +329,16 @@ public class DefaultNAsk<T> implements NAsk<T> {
     private CoreNUtilGui.GuiResult showGuiInput(String str, boolean pwd, boolean rememberMe) {
         NSession session = NSession.of();
         String ft = NText.of(str).filteredText();
-        NMsg title = NMsg.ofC("Nuts Package Manager - %s", session.getWorkspace().getApiId().getVersion());
-        if (NApp.of().getId().orNull() != null) {
+        NMsg title = NMsg.ofC("Nuts Package Manager - %s", session.getWorkspace().getApiId().version());
+        if (NApp.of().id().orNull() != null) {
             try {
-                NDefinition def = NSearch.of().setId(NApp.of().getId().get())
+                NDefinition def = NSearch.of().setId(NApp.of().id().get())
                         .latest(true).getResultDefinitions()
                         .findFirst().orNull();
                 if (def != null) {
-                    String n = def.getEffectiveDescriptor().get().getName();
+                    String n = def.effectiveDescriptor().get().getName();
                     if (!NBlankable.isBlank(n)) {
-                        title = NMsg.ofC("%s - %s", n, def.getEffectiveDescriptor().get().getId().getVersion());
+                        title = NMsg.ofC("%s - %s", n, def.effectiveDescriptor().get().getId().version());
                     }
                 }
             } catch (Exception ex) {
@@ -370,137 +370,137 @@ public class DefaultNAsk<T> implements NAsk<T> {
 
     @Override
     public NAsk<Boolean> forBoolean(NMsg msg) {
-        return ((NAsk<Boolean>) this).setValueType(Boolean.class).setMessage(msg);
+        return ((NAsk<Boolean>) this).valueType(Boolean.class).message(msg);
     }
 
     @Override
     public NAsk<char[]> forPassword(NMsg msg) {
         this.password = true;
-        return ((NAsk<char[]>) this).setValueType(char[].class).setMessage(msg);
+        return ((NAsk<char[]>) this).valueType(char[].class).message(msg);
     }
 
     @Override
     public NAsk<String> forString(NMsg msg) {
-        return ((NAsk<String>) this).setValueType(String.class).setMessage(msg);
+        return ((NAsk<String>) this).valueType(String.class).message(msg);
     }
 
     @Override
     public NAsk<Integer> forInt(NMsg msg) {
-        return ((NAsk<Integer>) this).setValueType(Integer.class).setMessage(msg);
+        return ((NAsk<Integer>) this).valueType(Integer.class).message(msg);
     }
 
     @Override
     public NAsk<Long> forLong(NMsg msg) {
-        return ((NAsk<Long>) this).setValueType(Long.class).setMessage(msg);
+        return ((NAsk<Long>) this).valueType(Long.class).message(msg);
     }
 
     @Override
     public NAsk<Float> forFloat(NMsg msg) {
-        return ((NAsk<Float>) this).setValueType(Float.class).setMessage(msg);
+        return ((NAsk<Float>) this).valueType(Float.class).message(msg);
     }
 
     @Override
     public NAsk<Double> forDouble(NMsg msg) {
-        return ((NAsk<Double>) this).setValueType(Double.class).setMessage(msg);
+        return ((NAsk<Double>) this).valueType(Double.class).message(msg);
     }
 
     @Override
     public <K extends Enum> NAsk<K> forEnum(Class<K> enumType, NMsg msg) {
         K[] values = enumType.getEnumConstants();
-        return ((NAsk<K>) this).setValueType(enumType)
-                .setMessage(msg)
-                .setAcceptedValues(Arrays.asList((Object[]) values));
+        return ((NAsk<K>) this).valueType(enumType)
+                .message(msg)
+                .acceptedValues(Arrays.asList((Object[]) values));
     }
 
     @Override
-    public NMsg getHintMessage() {
+    public NMsg hintMessage() {
         return hintMessage;
     }
 
     @Override
-    public NMsg getMessage() {
+    public NMsg message() {
         return message;
     }
 
     @Override
-    public NMsg getCancelMessage() {
+    public NMsg cancelMessage() {
         return cancelMessage;
     }
 
     @Override
-    public NAsk<T> setMessage(NMsg message) {
+    public NAsk<T> message(NMsg message) {
         this.message = message;
         return this;
     }
 
     @Override
-    public NAsk<T> setHintMessage(NMsg message) {
+    public NAsk<T> hintMessage(NMsg message) {
         this.hintMessage = message;
         return this;
     }
 
     @Override
-    public List<Object> getAcceptedValues() {
+    public List<Object> acceptedValues() {
         return acceptedValues;
     }
 
     @Override
-    public NAsk<T> setAcceptedValues(List<Object> acceptedValues) {
+    public NAsk<T> acceptedValues(List<Object> acceptedValues) {
         this.acceptedValues = acceptedValues;
         return this;
     }
 
     @Override
-    public T getDefaultValue() {
+    public T defaultValue() {
         return defaultValue;
     }
 
     @Override
-    public NAsk<T> setDefaultValue(T defaultValue) {
+    public NAsk<T> defaultValue(T defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }
 
     @Override
-    public Class<T> getValueType() {
+    public Class<T> valueType() {
         return valueType;
     }
 
     @Override
-    public NAsk<T> setValueType(Class<T> valueType) {
+    public NAsk<T> valueType(Class<T> valueType) {
         this.valueType = valueType;
         return this;
     }
 
     @Override
-    public NAskFormat<T> getFormat() {
+    public NAskFormat<T> format() {
         return format;
     }
 
     @Override
-    public NAsk<T> setFormat(NAskFormat<T> parser) {
+    public NAsk<T> format(NAskFormat<T> parser) {
         this.format = parser;
         return this;
     }
 
     @Override
-    public NAskParser<T> getParser() {
+    public NAskParser<T> parser() {
         return parser;
     }
 
     @Override
-    public NAsk<T> setParser(NAskParser<T> parser) {
+    public NAsk<T> sparser(NAskParser<T> parser) {
         this.parser = parser;
         return this;
     }
 
     @Override
-    public NAskValidator<T> getValidator() {
+    public NAskValidator<T> validator() {
         return this.validator;
     }
 
     @Override
-    public NAsk<T> setValidator(NAskValidator<T> validator) {
+    public NAsk<T> validator(NAskValidator<T> validator) {
         this.validator = validator;
         return this;
     }
@@ -513,12 +513,12 @@ public class DefaultNAsk<T> implements NAsk<T> {
     }
 
     @Override
-    public Boolean getBooleanValue() {
-        return (Boolean) getValue();
+    public Boolean booleanValue() {
+        return (Boolean) value();
     }
 
     @Override
-    public T getValue() {
+    public T value() {
         if (!executed) {
             run();
         }
@@ -540,7 +540,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
     }
 
     @Override
-    public NAsk<T> setCancelMessage(NMsg message) {
+    public NAsk<T> cancelMessage(NMsg message) {
         this.cancelMessage = message;
         return this;
     }
@@ -561,7 +561,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
     }
 
     private boolean isBooleanType() {
-        return (this.getValueType().equals(Boolean.class) || this.getValueType().equals(Boolean.TYPE));
+        return (this.valueType().equals(Boolean.class) || this.valueType().equals(Boolean.TYPE));
     }
 
 

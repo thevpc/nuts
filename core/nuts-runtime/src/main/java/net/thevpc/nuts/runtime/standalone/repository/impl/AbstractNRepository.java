@@ -247,11 +247,11 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     public String getIdFilename(NId id, String ext) {
         String classifier = "";
         if (!ext.equals(NConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
-            String c = id.getClassifier();
+            String c = id.classifier();
             if (!NBlankable.isBlank(c)) {
                 classifier = "-" + c;
             }
         }
-        return id.getArtifactId() + "-" + id.getVersion().getValue() + classifier + ext;
+        return id.artifactId() + "-" + id.version().value() + classifier + ext;
     }
 }

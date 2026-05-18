@@ -91,7 +91,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
         if (NBlankable.isBlank(groups)) {
             return true;
         }
-        return GlobUtils.ofExact(groups).matcher(id.getGroupId()).matches();
+        return GlobUtils.ofExact(groups).matcher(id.groupId()).matches();
     }
 
     @Override
@@ -136,7 +136,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
         NId a = null;
         while (allVersions.hasNext()) {
             NId next = allVersions.next();
-            if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
+            if (a == null || next.version().compareTo(a.version()) > 0) {
                 a = next;
             }
         }

@@ -210,7 +210,7 @@ public class CommonRootsByPathHelper {
         }
         NId pid= NDefinitionFilterUtils.toPatternId(filter).orNull();
         if ( pid!=null) {
-            return resolveRootId(pid.getGroupId(), pid.getArtifactId(),pid.getVersion().toString());
+            return resolveRootId(pid.groupId(), pid.artifactId(),pid.version().toString());
         }
         return null;
     }

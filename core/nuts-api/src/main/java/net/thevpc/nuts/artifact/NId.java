@@ -30,6 +30,7 @@ import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.internal.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.LinkedHashSet;
@@ -202,42 +203,46 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return id face selector
      */
-    String getFace();
+    @NGetter
+    String face();
 
     /**
      * os supported by the artifact
      *
      * @return os supported by the artifact
      */
-    NEnvCondition getCondition();
+    @NGetter
+    NEnvCondition condition();
 
     /**
      * properties in the url query form
      *
      * @return properties in the url query form.
      */
-    String getPropertiesQuery();
+    @NGetter
+    String propertiesQuery();
 
     /**
      * properties as map.
      *
      * @return properties as map.
      */
-    Map<String, String> getProperties();
+    @NGetter
+    Map<String, String> properties();
 
     /**
      * artifact repository (usually repository name or id)
      *
      * @return artifact repository (usually repository name or id)
      */
-    String getRepository();
+    String repository();
 
     /**
      * artifact group which identifies uniquely projects and group of projects.
      *
      * @return artifact group which identifies uniquely projects and group of projects.
      */
-    String getGroupId();
+    String groupId();
 
     /**
      * return a string representation of this id. All of group, name, version,
@@ -246,7 +251,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return string representation of this id
      */
-    String getFullName();
+    String fullName();
 
     /**
      * return a string concatenation of group, name and version,
@@ -255,7 +260,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return group id, artifact id and version only Id instance
      */
-    String getLongName();
+    String longName();
 
     /**
      * returns a string concatenation of group and name (':' separated) ignoring
@@ -265,7 +270,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return group id and artifact id
      */
-    String getShortName();
+    String shortName();
 
     /**
      * return a new instance of NutsId defining only group and name ignoring
@@ -273,7 +278,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return group and name only Id instance
      */
-    NId getShortId();
+    NId shortId();
 
     NId getSharedId();
 
@@ -283,35 +288,35 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return group, name and version only Id instance
      */
-    NId getLongId();
+    NId longId();
 
     /**
      * return name part of this id
      *
      * @return return name part of this id
      */
-    String getArtifactId();
+    String artifactId();
 
     /**
      * tag used to distinguish between different artifacts that were built from the same source code
      *
      * @return tag used to distinguish between different artifacts that were built from the same source code
      */
-    String getClassifier();
+    String classifier();
 
     /**
      * package packaging type
      *
      * @return packaging
      */
-    String getPackaging();
+    String packaging();
 
     /**
      * artifact version (never null)
      *
      * @return artifact version (never null)
      */
-    NVersion getVersion();
+    NVersion version();
 
     /**
      * create a builder (mutable id) based on this id
@@ -356,7 +361,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return maven path
      */
-    String getMavenFolder();
+    String mavenFolder();
 
     String getMavenFileName(String extension);
 

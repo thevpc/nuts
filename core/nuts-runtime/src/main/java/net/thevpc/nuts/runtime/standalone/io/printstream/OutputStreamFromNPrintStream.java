@@ -13,7 +13,7 @@ public class OutputStreamFromNPrintStream extends OutputStream implements NPrint
         this.base = base;
     }
 
-    public NPrintStream getBasePrintStream() {
+    public NPrintStream basePrintStream() {
         return base;
     }
 

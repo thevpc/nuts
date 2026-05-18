@@ -83,7 +83,7 @@ public class NWorkspaceHelper {
     public static void runBootCommand(NWorkspace workspace) {
         workspace.runWith(() -> {
             NBootOptions info2 = new DefaultNBootOptionsBuilder(((NWorkspaceExt)workspace).getCallerBootOptionsInfo()).build();
-            NApp.of().setId(workspace.getApiId());
+            NApp.of().id(workspace.getApiId());
             NLog LOG = NLog.of(NBootWorkspaceImpl.class);
             LOG.log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2))
                     .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
@@ -118,11 +118,11 @@ public class NWorkspaceHelper {
                     boolean inherited = NWorkspace.of().getBootOptions().getInherited().orElse(false);
                     NApp nApp = NApp.of();
                     // Resolve the application class name (explicit or fallback)
-                    String appClassName = nApp.getSourceType() == null ? null : nApp.getSourceType().getName();
+                    String appClassName = nApp.sourceType() == null ? null : nApp.sourceType().getName();
                     if (appClassName == null) {
-                        appClassName = nApp.getSource() == null ? null : nApp.getSource().getClass().getName();
+                        appClassName = nApp.source() == null ? null : nApp.source().getClass().getName();
                     }
-                    NId appId = nApp.getId().orNull();
+                    NId appId = nApp.id().orNull();
                     NLog.of(NApplications.class)
                             .log(
                                     NMsg.ofC(
@@ -130,28 +130,28 @@ public class NWorkspaceHelper {
                                             inherited ? ("(" + NI18n.of("inherited") + ")") : "",
                                             appId == null ? ("<" + NI18n.of("unresolved-id") + ">") : appId,
                                             appClassName,
-                                            nApp.getCmdLine()
+                                            nApp.cmdLine()
                                     ).asFine().withIntent(NMsgIntent.START)
                             );
                     try {
-                        switch (nApp.getMode()) {
+                        switch (nApp.mode()) {
                             //both RUN and AUTO_COMPLETE execute the run branch. Later
                             //session.isExecMode()
                             case RUN:
                             case AUTO_COMPLETE: {
-                                nApp.getApplication().run();
+                                nApp.application().run();
                                 return;
                             }
                             case INSTALL: {
-                                nApp.getApplication().onInstallApplication();
+                                nApp.application().onInstallApplication();
                                 return;
                             }
                             case UPDATE: {
-                                nApp.getApplication().onUpdateApplication();
+                                nApp.application().onUpdateApplication();
                                 return;
                             }
                             case UNINSTALL: {
-                                nApp.getApplication().onUninstallApplication();
+                                nApp.application().onUninstallApplication();
                                 return;
                             }
                         }
@@ -161,7 +161,7 @@ public class NWorkspaceHelper {
                         }
                         throw e;
                     }
-                    throw new NExecutionException(NMsg.ofC(NI18n.of("unsupported execution mode %s"), nApp.getMode()), NExecutionException.ERROR_255);
+                    throw new NExecutionException(NMsg.ofC(NI18n.of("unsupported execution mode %s"), nApp.mode()), NExecutionException.ERROR_255);
                 }), handleMode
         );
     }

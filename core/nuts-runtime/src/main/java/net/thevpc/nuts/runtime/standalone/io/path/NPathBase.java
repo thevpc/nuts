@@ -32,12 +32,12 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
-    public InputStream getInputStream() {
+    public InputStream inputStream() {
         return getInputStream(new NPathOption[0]);
     }
 
     @Override
-    public OutputStream getOutputStream() {
+    public OutputStream outputStream() {
         return getOutputStream(new NPathOption[0]);
     }
 
@@ -46,8 +46,8 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         if (other instanceof NPathBase) {
             omd.copyFrom(((NPathBase) other).omd);
         } else {
-            omd.copyFrom(other.getMetaData());
-            omd.copyFrom(other.getMetaData());
+            omd.copyFrom(other.metaData());
+            omd.copyFrom(other.metaData());
         }
         return this;
     }
@@ -90,7 +90,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public PrintStream getPrintStream() {
-        OutputStream out = getOutputStream();
+        OutputStream out = outputStream();
         if (out instanceof PrintStream) {
             return (PrintStream) out;
         }
@@ -131,7 +131,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public void copyToOutputStream(OutputStream other, NPathOption... options) {
-        try (InputStream reader = getInputStream()) {
+        try (InputStream reader = inputStream()) {
             byte[] buffer = new byte[BUFFER_SIZE];
             int count;
             while ((count = reader.read(buffer)) > 0) {
@@ -144,7 +144,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public void copyFromInputStream(InputStream other, NPathOption... options) {
-        try (OutputStream out = getOutputStream()) {
+        try (OutputStream out = outputStream()) {
             byte[] buffer = new byte[BUFFER_SIZE];
             int count;
             while ((count = other.read(buffer)) > 0) {
@@ -157,7 +157,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public void copyFromInputStreamProvider(NInputStreamProvider other, NPathOption... options) {
-        try (InputStream in = other.getInputStream()) {
+        try (InputStream in = other.inputStream()) {
             try (OutputStream out = getOutputStream(options)) {
                 byte[] buffer = new byte[BUFFER_SIZE];
                 int count;
@@ -226,7 +226,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
-    public NPath setUserCache(boolean userCache) {
+    public NPath userCache(boolean userCache) {
         this.omd.setUserCache(userCache);
         return this;
     }
@@ -237,7 +237,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
-    public NPath setUserTemporary(boolean temporary) {
+    public NPath userTemporary(boolean temporary) {
         this.omd.setUserTemporary(temporary);
         return this;
     }
@@ -492,7 +492,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
-    public NContentMetadata getMetaData() {
+    public NContentMetadata metaData() {
         return omd.getMetaData();
     }
 
@@ -548,7 +548,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
-    public void setDeleteOnDispose(boolean deleteOnDispose) {
+    public void deleteOnDispose(boolean deleteOnDispose) {
         this.deleteOnDispose = deleteOnDispose;
     }
 
@@ -575,7 +575,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
                 return new byte[0];
             case DIRECTORY: {
                 NDigest d = NDigest.of();
-                d.setAlgorithm(algo);
+                d.algorithm(algo);
                 d.addSource(type().name().getBytes());
                 for (NPath nPath : list()) {
                     d.addSource(nPath.name().getBytes());
@@ -584,14 +584,14 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
             }
             case FILE: {
                 NDigest d = NDigest.of();
-                d.setAlgorithm(algo);
+                d.algorithm(algo);
                 d.addSource(type().name().getBytes());
                 d.addSource(this);
                 return d.computeBytes();
             }
             default:{
                 NDigest d = NDigest.of();
-                d.setAlgorithm(algo);
+                d.algorithm(algo);
                 d.addSource(type().name().getBytes());
                 return d.computeBytes();
             }

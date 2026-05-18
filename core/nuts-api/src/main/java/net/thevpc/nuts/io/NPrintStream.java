@@ -184,7 +184,7 @@ public interface NPrintStream extends NOutputTarget, AutoCloseable {
 
     NPrintStream print(CharSequence csq, int start, int end);
 
-    NTerminalMode getTerminalMode();
+    NTerminalMode terminalMode();
 
     boolean isAutoFlash();
 
@@ -206,7 +206,7 @@ public interface NPrintStream extends NOutputTarget, AutoCloseable {
 
     boolean isNtf();
 
-    NSystemTerminalBase getTerminal();
+    NSystemTerminalBase terminal();
 
     NPrintStream printProgressLine(NText b);
 

@@ -1,11 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.text.theme;
 
 
-import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.platform.NStoreScope;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
@@ -33,7 +30,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
     public NTextFormatPropertiesTheme(String name, ClassLoader cls, NWorkspace workspace) {
         this.workspace = workspace;
         if (name.indexOf('/') >= 0 || name.indexOf('\\') >= 0) {
-            try (InputStream is = NPath.of(name).getInputStream()) {
+            try (InputStream is = NPath.of(name).inputStream()) {
                 props.load(is);
             } catch (IOException e) {
                 throw new NIllegalArgumentException(NMsg.ofC("invalid theme: %s", name), e);
@@ -61,7 +58,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
             } else {
                 NPath themeFile = NPath.of(NStoreKey.ofShared(NWorkspace.of().getRuntimeId()).conf()).resolve("themes").resolve(name);
                 if (themeFile.isRegularFile()) {
-                    try (InputStream inStream = themeFile.getInputStream()) {
+                    try (InputStream inStream = themeFile.inputStream()) {
                         props.load(inStream);
                     } catch (IOException e) {
                         throw new NIllegalArgumentException(NMsg.ofC("invalid theme: %s", name), e);

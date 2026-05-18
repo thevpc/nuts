@@ -56,7 +56,7 @@ public interface NDigest extends NComponent {
      * @param input source stream to  hash
      * @return {@code this} instance
      */
-    NDigest setSource(InputStream input);
+    NDigest source(InputStream input);
 
     /**
      * file to  hash
@@ -64,7 +64,7 @@ public interface NDigest extends NComponent {
      * @param file source file to  hash
      * @return {@code this} instance
      */
-    NDigest setSource(File file);
+    NDigest source(File file);
 
     /**
      * file to  hash
@@ -72,7 +72,7 @@ public interface NDigest extends NComponent {
      * @param path source path to  hash
      * @return {@code this} instance
      */
-    NDigest setSource(Path path);
+    NDigest source(Path path);
 
     /**
      * file to  hash
@@ -80,9 +80,9 @@ public interface NDigest extends NComponent {
      * @param path source path to  hash
      * @return {@code this} instance
      */
-    NDigest setSource(NPath path);
+    NDigest source(NPath path);
 
-    NDigest setSource(URL path);
+    NDigest source(URL path);
 
     /**
      * file to  hash
@@ -91,15 +91,15 @@ public interface NDigest extends NComponent {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NDigest setSource(byte[] path);
+    NDigest source(byte[] path);
 
     /**
-     * source stream to  hash
-     *
+     * source stream to hash
+     * equivalent to addSource
      * @param descriptor source descriptor to  hash
      * @return {@code this} instance
      */
-    NDigest setSource(NDescriptor descriptor);
+    NDigest source(NDescriptor descriptor);
 
     NDigest addSource(InputStream source);
 
@@ -174,19 +174,9 @@ public interface NDigest extends NComponent {
     /**
      * @return selected algorithm. default is 'SHA1'
      */
-    String getAlgorithm();
+    String algorithm();
 
-    /**
-     * select hash algorithm.
-     *
-     * @param algorithm hash algorithm. may be any algorithm supported by
-     *                  {@link MessageDigest#getInstance(String)}
-     *                  including 'MD5' and 'SHA1'
-     * @return {@code this} instance
-     */
-    NDigest setAlgorithm(String algorithm);
+    NDigest source(NInputSource source);
 
-    NDigest setSource(NInputSource source);
-
-    List<NInputSource> getSource();
+    List<NInputSource> source();
 }

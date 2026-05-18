@@ -79,7 +79,7 @@ public interface NRepositoryModel extends NComponent {
         NId a = null;
         while (allVersions != null && allVersions.hasNext()) {
             NId next = allVersions.next();
-            if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
+            if (a == null || next.version().compareTo(a.version()) > 0) {
                 a = next;
             }
         }

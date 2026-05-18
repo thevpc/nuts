@@ -191,7 +191,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         String dotFilesUrl = NStringUtils.pjoin("/", baseUrl, CoreNConstants.Files.DOT_FILES);
         NSession session = NSession.of();
         NVersion versionString = NVersion.get("0.5.5").get();
-        try (InputStream foldersFileStream = NInputStreamMonitor.of().setSource(NPath.of(dotFilesUrl)).create()) {
+        try (InputStream foldersFileStream = NInputStreamMonitor.of().source(NPath.of(dotFilesUrl)).create()) {
             session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", NCoreLogUtils.forProgress(NPath.of(baseUrl))));
             dotFilesContent=NIOUtils.loadString(foldersFileStream, false);
         } catch (IOException | NIOException | UncheckedIOException e) {
@@ -263,7 +263,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                 String[] dotFoldersContent = null;
                 String dotFolderUrl = NStringUtils.pjoin("/", baseUrl, CoreNConstants.Files.DOT_FOLDERS);
                 c = NChronometer.of();
-                try (InputStream stream = NInputStreamMonitor.of().setSource(NPath.of(dotFolderUrl))
+                try (InputStream stream = NInputStreamMonitor.of().source(NPath.of(dotFolderUrl))
                         .create()) {
                     dotFoldersContent = StringTokenizerUtils.splitNewLine(NIOUtils.loadString(stream, true))
                             .stream().map(x -> x.trim()).filter(x -> !x.isEmpty()).toArray(String[]::new);

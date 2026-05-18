@@ -24,7 +24,7 @@ public class NPlainPrintStream implements NPrintStream {
     }
 
     @Override
-    public OutputStream getOutputStream() {
+    public OutputStream outputStream() {
         return new OutputStream() {
             @Override
             public void write(int b)  {
@@ -34,7 +34,7 @@ public class NPlainPrintStream implements NPrintStream {
     }
 
     @Override
-    public NContentMetadata getMetaData() {
+    public NContentMetadata metaData() {
         return md;
     }
 
@@ -255,7 +255,7 @@ public class NPlainPrintStream implements NPrintStream {
     }
 
     @Override
-    public NTerminalMode getTerminalMode() {
+    public NTerminalMode terminalMode() {
         return NTerminalMode.INHERITED;
     }
 
@@ -315,7 +315,7 @@ public class NPlainPrintStream implements NPrintStream {
     }
 
     @Override
-    public NSystemTerminalBase getTerminal() {
+    public NSystemTerminalBase terminal() {
         throw new UnsupportedOperationException();
     }
 

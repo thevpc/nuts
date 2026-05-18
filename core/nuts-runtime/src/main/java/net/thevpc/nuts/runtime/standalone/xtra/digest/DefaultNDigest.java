@@ -78,54 +78,54 @@ public class DefaultNDigest implements NDigest {
     }
 
     @Override
-    public NDigest setSource(NInputSource source) {
-        setSource0(source);
+    public NDigest source(NInputSource source) {
+        addSource0(source);
         return this;
     }
 
-    public List<NInputSource> getSource() {
+    public List<NInputSource> source() {
         return sources;
     }
 
     @Override
-    public NDigest setSource(InputStream source) {
-        this.setSource0((source == null ? null : NInputSource.of(source)));
+    public NDigest source(InputStream source) {
+        this.addSource0((source == null ? null : NInputSource.of(source)));
         return this;
     }
 
     @Override
-    public NDigest setSource(File source) {
-        this.setSource0((source == null ? null : NPath.of(source)));
+    public NDigest source(File source) {
+        this.addSource0((source == null ? null : NPath.of(source)));
         return this;
     }
 
     @Override
-    public NDigest setSource(Path source) {
-        this.setSource0(source == null ? null : NPath.of(source));
+    public NDigest source(Path source) {
+        this.addSource0(source == null ? null : NPath.of(source));
         return this;
     }
 
     @Override
-    public NDigest setSource(URL url) {
+    public NDigest source(URL url) {
         this.setSource0(url == null ? null : NPath.of(url));
         return this;
     }
 
     @Override
-    public NDigest setSource(NPath source) {
-        this.setSource0(source);
+    public NDigest source(NPath source) {
+        this.addSource0(source);
         return this;
     }
 
     @Override
-    public NDigest setSource(byte[] source) {
-        this.setSource0(source == null ? null : NInputSource.of(source));
+    public NDigest source(byte[] source) {
+        this.addSource0(source == null ? null : NInputSource.of(source));
         return this;
     }
 
     @Override
-    public NDigest setSource(NDescriptor source) {
-        this.setSource0(source == null ? null : new NDescriptorInputSource(source));
+    public NDigest source(NDescriptor source) {
+        this.addSource(source == null ? null : new NDescriptorInputSource(source));
         return this;
     }
 
@@ -221,7 +221,7 @@ public class DefaultNDigest implements NDigest {
                 @Override
                 public NTreeVisitResult visitFile(NPath file) {
                     incrementalUpdateFileDigestInputStream(new ByteArrayInputStream(file.name().getBytes(StandardCharsets.UTF_8)), md, file.name());
-                    try (InputStream is = file.getInputStream()) {
+                    try (InputStream is = file.inputStream()) {
                         incrementalUpdateFileDigestInputStream(is, md, file.name());
                     } catch (IOException ex) {
                         throw new NIOException(ex);
@@ -240,7 +240,7 @@ public class DefaultNDigest implements NDigest {
             i.binary = true;
             return i;
         } else if (file.isFile()) {
-            try (InputStream is = file.getInputStream()) {
+            try (InputStream is = file.inputStream()) {
                 return incrementalUpdateFileDigestInputStream(is, md, file.name());
             } catch (IOException ex) {
                 throw new NIOException(ex);
@@ -254,7 +254,7 @@ public class DefaultNDigest implements NDigest {
             NPath file = (NPath) source;
             return incrementalUpdateFileDigestPath(file, md);
         }
-        try (InputStream is = source.getInputStream()) {
+        try (InputStream is = source.inputStream()) {
             return incrementalUpdateFileDigestInputStream(is, md, "binary");
         } catch (IOException ex) {
             throw new NIOException(ex);
@@ -295,31 +295,21 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public NDigest md5() {
-        return setAlgorithm("MD5");
+        return algorithm("MD5");
     }
 
     @Override
     public NDigest sha1() {
-        return setAlgorithm("SHA1");
+        return algorithm("SHA1");
     }
 
     @Override
     public NDigest sha256() {
-        return setAlgorithm("SHA256");
+        return algorithm("SHA256");
     }
 
     @Override
     public NDigest algorithm(String algorithm) {
-        return setAlgorithm(algorithm);
-    }
-
-    @Override
-    public String getAlgorithm() {
-        return algorithm;
-    }
-
-    @Override
-    public NDigest setAlgorithm(String algorithm) {
         if (NBlankable.isBlank(algorithm)) {
             algorithm = null;
         }
@@ -331,6 +321,12 @@ public class DefaultNDigest implements NDigest {
         }
         return this;
     }
+
+    @Override
+    public String algorithm() {
+        return algorithm;
+    }
+
 
     protected String getValidAlgo() {
         if (algorithm == null) {
@@ -354,7 +350,7 @@ public class DefaultNDigest implements NDigest {
         }
 
         @Override
-        public InputStream getInputStream() {
+        public InputStream inputStream() {
             return new ByteArrayInputStream(getBytes());
         }
 
@@ -371,7 +367,7 @@ public class DefaultNDigest implements NDigest {
         }
 
         @Override
-        public NContentMetadata getMetaData() {
+        public NContentMetadata metaData() {
             NId id = source.getId();
             NText str;
             if (id != null) {
@@ -390,7 +386,7 @@ public class DefaultNDigest implements NDigest {
         @Override
         public String toString() {
             NMemoryPrintStream out = NPrintStream.ofMem(NTerminalMode.FILTERED);
-            NOptional<NMsg> m = getMetaData().getMessage();
+            NOptional<NMsg> m = metaData().message();
             if (m.isPresent()) {
                 out.print(m.get());
             } else {

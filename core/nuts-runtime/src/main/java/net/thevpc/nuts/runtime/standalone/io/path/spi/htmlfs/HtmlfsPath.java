@@ -64,7 +64,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     @Override
     public NStream<NPath> list(NPath basePath) {
-        try (InputStream q = ref.getInputStream()) {
+        try (InputStream q = ref.inputStream()) {
             return NStream.ofStream(parseHtml(q).stream().map(
                     x -> {
                         if (x.endsWith("/")) {
@@ -184,7 +184,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
 
     public List<String> parseHtml(InputStream html) {
-        byte[] bytes = NCp.of().from(html).getByteArrayResult();
+        byte[] bytes = NCp.of().from(html).byteArrayResult();
         return NScorable.<NScoredCallable<List<String>>>query()
                 .withName(NMsg.ofC("html parser"))
                 .fromStream(Arrays.stream(PARSERS)

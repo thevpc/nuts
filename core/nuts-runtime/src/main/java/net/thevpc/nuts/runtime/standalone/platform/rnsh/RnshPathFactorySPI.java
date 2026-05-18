@@ -102,8 +102,8 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
             return nPathChildStringDigestInfos
                     .stream().map(x ->
                             new NPathChildDigestInfo()
-                                    .setName(x.getName())
-                                    .setDigest(NHex.toBytes(x.getDigest()))
+                                    .name(x.name())
+                                    .digest(NHex.toBytes(x.digest()))
                     )
                     .collect(Collectors.toList());
         }
@@ -180,7 +180,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
 
         @Override
         public InputStream getInputStream(NPath basePath, NPathOption... options) {
-            return client.getFile(remotePath).getInputStream();
+            return client.getFile(remotePath).inputStream();
         }
 
         @Override
@@ -201,12 +201,12 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
                     }
 
                     @Override
-                    public String getCharset() {
+                    public String charset() {
                         return null;
                     }
 
                     @Override
-                    public InputStream getInputStream() {
+                    public InputStream inputStream() {
                         return inputStream;
                     }
                 }, remotePath);

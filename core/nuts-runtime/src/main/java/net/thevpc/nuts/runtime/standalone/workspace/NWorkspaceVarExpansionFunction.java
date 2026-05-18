@@ -6,10 +6,8 @@ import net.thevpc.nuts.core.NConstants;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NInfoCmd;
-import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.text.NText;
@@ -79,27 +77,27 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
             case "nuts.api.id":
                 return str(NWorkspace.of().getApiId());
             case "nuts.api.version":
-                return NWorkspace.of().getApiId().getVersion().toString();
+                return NWorkspace.of().getApiId().version().toString();
             case "nuts.runtime.id":
                 return str(NWorkspace.of().getRuntimeId());
             case "nuts.runtime.artifact":
             case "nuts.runtime.artifactId":
                 return str(NWorkspace.of().getRuntimeId());
             case "nuts.runtime.version":
-                return str(NWorkspace.of().getRuntimeId().getVersion());
+                return str(NWorkspace.of().getRuntimeId().version());
             case "nuts.workspace-boot.version":
                 return str(Nuts.getVersion());
             case "nuts.workspace-boot.id":
                 return str(NId.getApi(Nuts.getVersion()).orNull());
             case "nuts.workspace-runtime.version": {
                 String rt = NWorkspace.of().getBootOptions().getRuntimeId().map(this::str).orNull();
-                return rt == null ? str(NWorkspace.of().getRuntimeId().getVersion()) : rt.contains("#")
+                return rt == null ? str(NWorkspace.of().getRuntimeId().version()) : rt.contains("#")
                         ? rt.substring(rt.indexOf("#") + 1)
                         : rt;
             }
             case "nuts.workspace-runtime.id": {
                 String rt = NWorkspace.of().getBootOptions().getRuntimeId().map(this::str).orNull();
-                return rt == null ? str(NWorkspace.of().getRuntimeId().getVersion()) : rt.contains("#")
+                return rt == null ? str(NWorkspace.of().getRuntimeId().version()) : rt.contains("#")
                         ? rt
                         : (NConstants.Ids.NUTS_RUNTIME + "#" + rt);
             }

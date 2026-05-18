@@ -172,8 +172,8 @@ public class NJavaSdkUtils {
             k.jfx = k.moduleName != null && k.moduleName.startsWith("javafx");
 
         } else {
-            k.jfx = k.id.getArtifactId().startsWith("javafx") &&
-                    k.id.getGroupId().startsWith("org.openjfx");
+            k.jfx = k.id.artifactId().startsWith("javafx") &&
+                    k.id.groupId().startsWith("org.openjfx");
         }
         list.add(k);
         for (NClassLoaderNode d : n.getDependencies()) {
@@ -183,7 +183,7 @@ public class NJavaSdkUtils {
 
     public static boolean isJava(NId id) {
         if (id != null) {
-            return NExecutionEngineFamily.JAVA == NExecutionEngineFamily.parse(id.getArtifactId()).orNull();
+            return NExecutionEngineFamily.JAVA == NExecutionEngineFamily.parse(id.artifactId()).orNull();
         }
         return false;
     }
@@ -298,8 +298,8 @@ public class NJavaSdkUtils {
         }
         boolean searchSystemInstallations = ifNotFoundSearchLocally && NIn.ask().forBoolean(
                         NMsg.ofC("No Java %s found. will search for system installed locations. Would you want me to?", javaVersion)
-                ).setDefaultValue(true)
-                .getBooleanValue();
+                ).defaultValue(true)
+                .booleanValue();
         NExecutionEngineLocation[] searchedJdkLocations = new NExecutionEngineLocation[0];
         if (searchSystemInstallations) {
             searchedJdkLocations = searchJdkLocations();
@@ -312,8 +312,8 @@ public class NJavaSdkUtils {
                 for (NExecutionEngineLocation selected : sorted) {
                     if (NIn.ask().forBoolean(
                                     NMsg.ofC("Found in your system this %s installation : %s (located at %s). Would you like to auto-configure and use it?", javaVersion, selected.getName(), selected.getPath())
-                            ).setDefaultValue(true)
-                            .getBooleanValue()) {
+                            ).defaultValue(true)
+                            .booleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
                         NWorkspace.of().saveConfig();
                         return NOptional.of(selected);
@@ -323,8 +323,8 @@ public class NJavaSdkUtils {
         }
         boolean searchRemoteInstallations = ifNotFoundSearchRemotely && NSession.of().getFetchStrategy().orElse(NFetchStrategy.ONLINE).accept(NFetchMode.REMOTE) && NIn.ask().forBoolean(
                         NMsg.ofC("No Java %s found. will download one and install it. Would you want me to?", javaVersion)
-                ).setDefaultValue(true)
-                .getBooleanValue();
+                ).defaultValue(true)
+                .booleanValue();
 
         if (searchRemoteInstallations) {
             // [4] look if remotely this version could be installed (1.8 after confirmation)
@@ -337,8 +337,8 @@ public class NJavaSdkUtils {
                 for (NExecutionEngineLocation selected : sorted) {
                     if (NIn.ask().forBoolean(
                                     NMsg.ofC("Found in your system this %s installation : %s (located at %s). Would you like to auto-configure and use it?", javaVersion, selected.getName(), selected.getPath())
-                            ).setDefaultValue(true)
-                            .getBooleanValue()) {
+                            ).defaultValue(true)
+                            .booleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
                         NWorkspace.of().saveConfig();
                         return NOptional.of(selected);
@@ -360,8 +360,8 @@ public class NJavaSdkUtils {
                 for (NExecutionEngineLocation selected : sorted) {
                     if (NIn.ask().forBoolean(
                                     NMsg.ofC("Found this registered installation : %s. Would you like to use it instead of %s?", selected.getName(), javaVersion)
-                            ).setDefaultValue(true)
-                            .getBooleanValue()) {
+                            ).defaultValue(true)
+                            .booleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
                         NWorkspace.of().saveConfig();
                         return NOptional.of(selected);
@@ -380,8 +380,8 @@ public class NJavaSdkUtils {
                 for (NExecutionEngineLocation selected : sorted) {
                     if (NIn.ask().forBoolean(
                                     NMsg.ofC("Found this system installation : %s (located at %s). Would you like to auto-configure and use it?", selected.getName(), selected.getPath())
-                            ).setDefaultValue(true)
-                            .getBooleanValue()) {
+                            ).defaultValue(true)
+                            .booleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
                         NWorkspace.of().saveConfig();
                         return NOptional.of(selected);
@@ -402,8 +402,8 @@ public class NJavaSdkUtils {
                 for (NExecutionEngineLocation selected : sorted) {
                     if (NIn.ask().forBoolean(
                                     NMsg.ofC("Found this installation : %s (located at %s). Would you like to auto-configure and use it?", selected.getName(), selected.getPath())
-                            ).setDefaultValue(true)
-                            .getBooleanValue()) {
+                            ).defaultValue(true)
+                            .booleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
                         NWorkspace.of().saveConfig();
                         return NOptional.of(selected);

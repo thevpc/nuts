@@ -108,7 +108,7 @@ public class BinSshConnection extends SshConnectionBase {
 
                 // We rely on:   get <remote> -
                 // The '-' writes file contents to stdout.
-                try (OutputStream os = batchFile.getOutputStream()) {
+                try (OutputStream os = batchFile.outputStream()) {
                     String getCommand = "get " + escapeRemotePath(from) + " -\n";
                     os.write(getCommand.getBytes(StandardCharsets.UTF_8));
                 }
@@ -138,7 +138,7 @@ public class BinSshConnection extends SshConnectionBase {
 
                 batchFile.delete();
 
-                return exec.getOut().getResult().getInputStream();
+                return exec.getOut().result().inputStream();
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
@@ -161,7 +161,7 @@ public class BinSshConnection extends SshConnectionBase {
                     .failFast(true)
                     .run();
 
-            return exec.getOut().getResult().getInputStream();
+            return exec.getOut().result().inputStream();
         }
     }
 

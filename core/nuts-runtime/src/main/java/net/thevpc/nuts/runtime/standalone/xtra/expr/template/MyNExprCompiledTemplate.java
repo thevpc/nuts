@@ -72,7 +72,7 @@ class MyNExprCompiledTemplate implements NExprCompiledTemplate {
 
     @Override
     public void run(NOutputTarget target, NExprContext context) {
-        try (OutputStream w = target.getOutputStream()) {
+        try (OutputStream w = target.outputStream()) {
             run(w, context);
         } catch (IOException e) {
             throw new NIOException(e);

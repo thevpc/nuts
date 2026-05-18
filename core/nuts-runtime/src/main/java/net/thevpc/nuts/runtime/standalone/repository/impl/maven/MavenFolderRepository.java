@@ -155,7 +155,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
             //should be already downloaded to m2 folder
             NPath content = getMavenLocalFolderContent(id);
             if (content != null && content.exists()) {
-                return content.setUserCache(true).setUserTemporary(false);
+                return content.userCache(true).userTemporary(false);
             }
         }
         return null;
@@ -163,7 +163,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
 
 
     public String getIdExtension(NId id) {
-        Map<String, String> q = id.getProperties();
+        Map<String, String> q = id.properties();
         String f = NStringUtils.trim(q.get(NConstants.IdProperties.FACE));
         switch (f) {
             case NConstants.QueryFaces.DESCRIPTOR: {
@@ -203,7 +203,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
             NId idDesc = id.builder().setFaceDescriptor().build();
             try {
                 stream = getStream(idDesc, "artifact descriptor", "retrieve");
-                name = NInputSource.of(stream).getMetaData().getName().orElse("no-name");
+                name = NInputSource.of(stream).metaData().name().orElse("no-name");
                 bytes = NIOUtils.loadByteArray(stream, true);
                 nutsDescriptor = MavenUtils.of().parsePomXmlAndResolveParents(
                         CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml")

@@ -20,7 +20,7 @@ public class NContentMetadataProviderWriterSPI implements NObjectWriterSPI {
 
     @Override
     public String getName() {
-        String name = p.getMetaData().getName().orNull();
+        String name = p.metaData().name().orNull();
         if (!NBlankable.isBlank(defaultMsg)) {
             name = defaultMsg.toString();
         }
@@ -35,7 +35,7 @@ public class NContentMetadataProviderWriterSPI implements NObjectWriterSPI {
 
     @Override
     public void print(NPrintStream out) {
-        NOptional<NMsg> m = p.getMetaData().getMessage();
+        NOptional<NMsg> m = p.metaData().message();
         if (m.isPresent()) {
             out.print(m.get());
         } else {

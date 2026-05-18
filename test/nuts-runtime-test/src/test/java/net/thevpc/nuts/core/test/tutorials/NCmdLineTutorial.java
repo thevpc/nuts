@@ -50,7 +50,7 @@ public class NCmdLineTutorial {
     }
 
     public static void cmdLineHelpExample2() {
-        NCmdLine cmdLine = NApp.of().getCmdLine();
+        NCmdLine cmdLine = NApp.of().cmdLine();
         NBooleanRef boolOption = NRef.ofBoolean(false);
         NRef<String> stringOption = NRef.ofNull();
         List<String> nonOptions = new ArrayList<>();
@@ -92,7 +92,7 @@ public class NCmdLineTutorial {
     }
 
     public static void cmdLineHelpExample3() {
-        NCmdLine cmdLine = NApp.of().getCmdLine();
+        NCmdLine cmdLine = NApp.of().cmdLine();
         NBooleanRef boolOption = NRef.ofBoolean(false);
         NRef<String> stringOption = NRef.ofNull();
         List<String> nonOptions = new ArrayList<>();
@@ -120,7 +120,7 @@ public class NCmdLineTutorial {
     }
 
     public static void cmdLineHelpExample4() {
-        NCmdLine cmdLine = NApp.of().getCmdLine();
+        NCmdLine cmdLine = NApp.of().cmdLine();
         NBooleanRef boolOption = NRef.ofBoolean(false);
         NRef<String> stringOption = NRef.ofNull();
         List<String> nonOptions = new ArrayList<>();

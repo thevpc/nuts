@@ -18,7 +18,7 @@ public class SingleBaseIdFilterHelper {
             this.baseIdString = "";
             this.expectedPathName = Collections.emptyList();
         } else {
-            this.baseId = NId.of(baseId).getShortId();
+            this.baseId = NId.of(baseId).shortId();
             this.baseIdString = this.baseId.toString();
             this.expectedPathName = NPath.of(this.baseId.getMavenPath("")).names();
         }
@@ -27,7 +27,7 @@ public class SingleBaseIdFilterHelper {
 
     public boolean accept(NId id, NPath[] basePaths) {
         if(id!=null) {
-            if (!baseId.equals(id.getShortId())) {
+            if (!baseId.equals(id.shortId())) {
                 return false;
             }
         }
@@ -66,6 +66,6 @@ public class SingleBaseIdFilterHelper {
     }
 
     public boolean accept(NId id) {
-        return baseId.getShortName().equals(id.getShortName());
+        return baseId.shortName().equals(id.shortName());
     }
 }

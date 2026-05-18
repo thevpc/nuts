@@ -21,15 +21,15 @@ public class NDefinitionExecExtensionFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition other) {
-        if(other.getDescriptor().getIdType()!= NIdType.EXTENSION){
+        if(other.descriptor().getIdType()!= NIdType.EXTENSION){
             return false;
         }
-        for (NDependency dependency : other.getDescriptor().getDependencies()) {
-            if(dependency.toId().getShortName().equals(this.apiId.getShortName())){
+        for (NDependency dependency : other.descriptor().getDependencies()) {
+            if(dependency.toId().shortName().equals(this.apiId.shortName())){
                 if(apiId==null){
                     return true;
                 }
-                if(apiId.getVersion().equals(dependency.toId().getVersion())){
+                if(apiId.version().equals(dependency.toId().version())){
                     return true;
                 }
                 return false;
@@ -48,7 +48,7 @@ public class NDefinitionExecExtensionFilter extends AbstractDefinitionFilter {
         if(apiId==null){
             return "extension";
         }
-        return "extension("+ apiId.getVersion()+")";
+        return "extension("+ apiId.version()+")";
     }
 
 }

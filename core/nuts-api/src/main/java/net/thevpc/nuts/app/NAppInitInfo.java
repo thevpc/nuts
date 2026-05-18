@@ -1,6 +1,7 @@
 package net.thevpc.nuts.app;
 
 import net.thevpc.nuts.time.NClock;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NUtils;
 
 import java.util.Arrays;
@@ -42,7 +43,8 @@ public class NAppInitInfo {
      *
      * @return An array of strings representing the command-line arguments
      */
-    public String[] getArgs() {
+    @NGetter
+    public String[] args() {
         return Arrays.copyOf(args, args.length);
     }
 
@@ -52,25 +54,30 @@ public class NAppInitInfo {
      *
      * @return The application's main class, represented as a {@code Class<?>} object.
      */
-    public Class<?> getSourceType() {
+    @NGetter
+    public Class<?> sourceType() {
         return sourceType;
     }
 
 
-    public NClock getStartTime() {
+    @NGetter
+    public NClock startTime() {
         return startTime;
     }
 
 
-    public NAppStoreLocationResolver getStoreLocationSupplier() {
+    @NGetter
+    public NAppStoreLocationResolver storeLocationSupplier() {
         return storeLocationSupplier;
     }
 
-    public NApplication getApplication() {
+    @NGetter
+    public NApplication application() {
         return appInstance;
     }
 
-    public Object getSource() {
+    @NGetter
+    public Object source() {
         return source;
     }
 }

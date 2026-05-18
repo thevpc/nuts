@@ -76,13 +76,13 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
         NWorkspaceUtils.of().checkReadOnly();
         if (runnerId == null) {
             NDefinition definition = executionContext.getDefinition();
-            NDescriptor descriptor = definition.getDescriptor();
+            NDescriptor descriptor = definition.descriptor();
             if (descriptor.isNutsApplication()) {
                 DefaultNDefinitionBuilder2 def2 = new DefaultNDefinitionBuilder2(definition)
                         .setInstallInformation(
-                                ()->new DefaultNInstallInfo(definition.getInstallInformation().get())
+                                ()->new DefaultNInstallInfo(definition.installInformation().get())
                                         .setInstallStatus(
-                                                definition.getInstallInformation().get().getInstallStatus().withInstalled(true)
+                                                definition.installInformation().get().getInstallStatus().withInstalled(true)
                                         )
                         );
                 NExec cmd = NExec.of()
@@ -100,13 +100,13 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
             }
         } else {
             NDefinition definition = runnerId;
-            NDescriptor descriptor = definition.getDescriptor();
+            NDescriptor descriptor = definition.descriptor();
             if (descriptor.isNutsApplication()) {
                 NDefinitionBuilder def2 = definition.builder()
                         .setInstallInformation(
-                                new DefaultNInstallInfo(definition.getInstallInformation().get())
+                                new DefaultNInstallInfo(definition.installInformation().get())
                                         .setInstallStatus(
-                                                definition.getInstallInformation().get().getInstallStatus().withInstalled(true)
+                                                definition.installInformation().get().getInstallStatus().withInstalled(true)
                                         )
                         );
                 List<String> eargs = new ArrayList<>();
@@ -119,7 +119,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                         .addCommand(eargs)
                         .executionType(NWorkspace.of().getBootOptions().getExecutionType().orNull())
                         .executionType(
-                                NConstants.Ids.NSH.equals(def2.getId().getShortName()) ?
+                                NConstants.Ids.NSH.equals(def2.getId().shortName()) ?
                                         NExecutionType.EMBEDDED : NExecutionType.SPAWN
                         )
                         .failFast(true)

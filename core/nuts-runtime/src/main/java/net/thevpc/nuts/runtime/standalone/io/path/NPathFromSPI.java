@@ -71,7 +71,7 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public String getCharset() {
+    public String charset() {
         return base.getCharset(this);
     }
 
@@ -227,7 +227,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NPath writeBytes(byte[] bytes, NPathOption... options) {
-        try (OutputStream os = getOutputStream()) {
+        try (OutputStream os = outputStream()) {
             os.write(bytes);
         } catch (IOException ex) {
             throw new NIOException(NMsg.ofC("unable to write to %s", this));
@@ -285,14 +285,14 @@ public class NPathFromSPI extends NPathBase {
     @Override
     public InputStream getInputStream(NPathOption... options) {
         return NInputSourceBuilder.of(base.getInputStream(this, options))
-                .setMetadata(getMetaData())
+                .setMetadata(metaData())
                 .createInputStream();
     }
 
     @Override
     public OutputStream getOutputStream(NPathOption... options) {
         return NOutputStreamBuilder.of(base.getOutputStream(this, options))
-                .setMetadata(this.getMetaData())
+                .setMetadata(this.metaData())
                 .createOutputStream()
                 ;
     }
@@ -540,7 +540,7 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public NPath setPermissions(NPathPermission... permissions) {
+    public NPath permissions(NPathPermission... permissions) {
         base.setPermissions(this, permissions);
         return this;
     }
@@ -606,7 +606,7 @@ public class NPathFromSPI extends NPathBase {
         if (infos != null) {
             return infos;
         }
-        return list().stream().map(x -> new NPathChildDigestInfo().setName(x.name()).setDigest(x.getDigest(algo))).collect(Collectors.toList());
+        return list().stream().map(x -> new NPathChildDigestInfo().name(x.name()).digest(x.getDigest(algo))).collect(Collectors.toList());
     }
 
     @Override
@@ -620,11 +620,11 @@ public class NPathFromSPI extends NPathBase {
         if (infos != null) {
             return infos.stream().map(x ->
                     new NPathChildStringDigestInfo()
-                            .setName(x.getName())
-                            .setDigest(NHex.fromBytes(x.getDigest()))
+                            .name(x.name())
+                            .digest(NHex.fromBytes(x.digest()))
             ).collect(Collectors.toList());
         }
-        return list().stream().map(x -> new NPathChildStringDigestInfo().setName(x.name()).setDigest(
+        return list().stream().map(x -> new NPathChildStringDigestInfo().name(x.name()).digest(
                 NHex.fromBytes(x.getDigest())
         )).collect(Collectors.toList());
     }

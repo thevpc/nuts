@@ -40,64 +40,64 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
     }
     
     @Override
-    public NMsg getName() {
+    public NMsg name() {
         return sourceName;
     }
 
     @Override
-    public NInputStreamMonitor setName(NMsg name) {
+    public NInputStreamMonitor name(NMsg name) {
         this.sourceName = name;
         return this;
     }
 
     @Override
-    public Object getOrigin() {
+    public Object origin() {
         return sourceOrigin;
     }
 
     @Override
-    public NInputStreamMonitor setOrigin(Object origin) {
+    public NInputStreamMonitor origin(Object origin) {
         this.sourceOrigin = origin;
         return this;
     }
 
     @Override
-    public long getLength() {
+    public long length() {
         return length;
     }
 
     @Override
-    public NInputStreamMonitor setLength(long len) {
+    public NInputStreamMonitor length(long len) {
         this.length = len;
         return this;
     }
 
     @Override
-    public NInputStreamMonitor setSource(NInputSource source) {
+    public NInputStreamMonitor source(NInputSource source) {
         this.source = source;
         return this;
     }
 
     @Override
-    public NInputStreamMonitor setSource(NPath inputSource) {
+    public NInputStreamMonitor source(NPath inputSource) {
         this.source = inputSource;
         return this;
     }
 
     @Override
-    public NInputStreamMonitor setSource(Path path) {
+    public NInputStreamMonitor source(Path path) {
         this.source = path == null ? null : NPath.of(path);
         return this;
     }
 
     @Override
-    public NInputStreamMonitor setSource(File path) {
+    public NInputStreamMonitor source(File path) {
         this.source = path == null ? null : NPath.of(path);
         return this;
     }
 
     @Override
-    public NInputStreamMonitor setSource(InputStream path) {
+    public NInputStreamMonitor source(InputStream path) {
         this.source = path == null ? null : NInputSource.of(path);
         return this;
     }
@@ -110,12 +110,12 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
             sourceName = NMsg.ofNtf(NText.of(source));
         }
         if (sourceName == null) {
-            sourceName = NMsg.ofNtf(NText.of(source.getMetaData().getName()));
+            sourceName = NMsg.ofNtf(NText.of(source.metaData().name()));
         }
         NProgressListener monitor = NProgressUtils.createProgressMonitor(NProgressUtils.MonitorType.STREAM, source, sourceOrigin, NWorkspace.of()
                 , isLogProgress()
                 , isTraceProgress()
-                , getProgressFactory());
+                , progressFactory());
         boolean verboseMode
                 = CoreNUtils.isCustomFalse("---monitor-start");
         long size = -1;
@@ -123,7 +123,7 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
             if (verboseMode && monitor != null) {
                 monitor.onProgress(NProgressEvent.ofStart(source, sourceName, size));
             }
-            size = source.getMetaData().getContentLength().orElse(-1L);
+            size = source.metaData().contentLength().orElse(-1L);
         } catch (UncheckedIOException | NIOException e) {
             if (verboseMode && monitor != null) {
                 monitor.onProgress(NProgressEvent.ofComplete(source, sourceName, 0, 0,
@@ -132,26 +132,26 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
             throw e;
         }
         if (size < 0) {
-            size = getLength();
+            size = length();
         }
         if (monitor == null) {
-            return source.getInputStream();
+            return source.inputStream();
         }
-        InputStream openedStream = source.getInputStream();
+        InputStream openedStream = source.inputStream();
         if (!verboseMode) {
             monitor.onProgress(NProgressEvent.ofStart(source, sourceName, size));
         }
-        String sourceTypeName = getSourceTypeName();
+        String sourceTypeName = sourceTypeName();
         if (sourceTypeName == null) {
-            sourceTypeName = source.getMetaData().getKind().orElse("nuts-Path");
+            sourceTypeName = source.metaData().kind().orElse("nuts-Path");
         }
 
         InputStream z = NInputSourceBuilder.of(openedStream)
-                .setSource(source)
-                .setMonitoringListener(new SilentStartNProgressListenerAdapter(monitor, sourceName))
+                .source(source)
+                .monitoringListener(new SilentStartNProgressListenerAdapter(monitor, sourceName))
                 .createInputStream()
                 ;
-        ((NContentMetadataProvider)z).getMetaData().setKind(sourceTypeName);
+        ((NContentMetadataProvider)z).metaData().kind(sourceTypeName);
         return z;
 //        return (InputStream) NIO.of().ofInputSource(
 //                NProgressUtils.ofMonitored(openedStream, source, sourceName, size, new SilentStartNProgressListenerAdapter(monitor, sourceName), session),
@@ -161,17 +161,17 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
     }
 
     @Override
-    public NInputSource getSource() {
+    public NInputSource source() {
         return source;
     }
 
     @Override
-    public String getSourceTypeName() {
+    public String sourceTypeName() {
         return sourceTypeName;
     }
 
     @Override
-    public NInputStreamMonitor setSourceTypeName(String sourceType) {
+    public NInputStreamMonitor sourceTypeName(String sourceType) {
         this.sourceTypeName = sourceType;
         return this;
     }
@@ -200,12 +200,12 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
      * @since 0.5.8
      */
     @Override
-    public NInputStreamMonitor setLogProgress(boolean value) {
+    public NInputStreamMonitor logProgress(boolean value) {
         this.logProgress = value;
         return this;
     }
 
-    public NInputStreamMonitor setTraceProgress(boolean value) {
+    public NInputStreamMonitor traceProgress(boolean value) {
         this.traceProgress = value;
         return this;
     }
@@ -217,7 +217,7 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
      * @since 0.5.8
      */
     @Override
-    public NProgressFactory getProgressFactory() {
+    public NProgressFactory progressFactory() {
         return progressFactory;
     }
 
@@ -229,7 +229,7 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
      * @since 0.5.8
      */
     @Override
-    public NInputStreamMonitor setProgressFactory(NProgressFactory value) {
+    public NInputStreamMonitor progressFactory(NProgressFactory value) {
         this.progressFactory = value;
         return this;
     }
@@ -242,7 +242,7 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
      * @since 0.5.8
      */
     @Override
-    public NInputStreamMonitor setProgressMonitor(NProgressListener value) {
+    public NInputStreamMonitor progressMonitor(NProgressListener value) {
         this.progressFactory = value == null ? null : new SingletonNInputStreamProgressFactory(value);
         return this;
     }

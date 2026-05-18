@@ -398,7 +398,7 @@ public class URLPath implements NPathSPI {
         }
         if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
             NWebCli best = NExtensions.of().createSupported(NWebCli.class, url).get();
-            return best.GET().uri(url.toString()).run().getContent().getInputStream();
+            return best.GET().uri(url.toString()).run().getContent().inputStream();
         }
         try {
             return DefaultNWebCli.prepareGlobalOpenStream(url);
@@ -546,7 +546,7 @@ public class URLPath implements NPathSPI {
     public void setPermissions(NPath basePath, NPathPermission... permissions) {
         NPath f = asFilePath(basePath);
         if (f != null) {
-            f.setPermissions(permissions);
+            f.permissions(permissions);
         }
     }
 

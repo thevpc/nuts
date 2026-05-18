@@ -60,7 +60,7 @@ public interface NCompress extends NComponent {
      * @param value  value
      * @return {@code this} instance
      */
-    NCompress setFormatOption(String option, Object value);
+    NCompress formatOption(String option, Object value);
 
     /**
      * return format option
@@ -68,14 +68,14 @@ public interface NCompress extends NComponent {
      * @param option option name
      * @return option value
      */
-    Object getFormatOption(String option);
+    Object formatOption(String option);
 
     /**
      * format
      *
      * @return format
      */
-    String getPackaging();
+    String packaging();
 
     /**
      * update packaging
@@ -83,14 +83,14 @@ public interface NCompress extends NComponent {
      * @param packaging packaging
      * @return {@code this} instance
      */
-    NCompress setPackaging(String packaging);
+    NCompress packaging(String packaging);
 
     /**
      * sources to compress
      *
      * @return sources to compress
      */
-    List<NInputSource> getSources();
+    List<NInputSource> sources();
 
     NCompress addSource(NInputSource source);
 
@@ -144,7 +144,7 @@ public interface NCompress extends NComponent {
      *
      * @return target to compress to
      */
-    NOutputTarget getTarget();
+    NOutputTarget target();
 
     /**
      * update target
@@ -152,7 +152,7 @@ public interface NCompress extends NComponent {
      * @param target target
      * @return {@code this} instance
      */
-    NCompress setTarget(OutputStream target);
+    NCompress target(OutputStream target);
 
     /**
      * update target
@@ -160,17 +160,9 @@ public interface NCompress extends NComponent {
      * @param target target
      * @return {@code this} instance
      */
-    NCompress setTarget(Path target);
+    NCompress target(Path target);
 
-    NCompress setTarget(NOutputTarget target);
-
-    /**
-     * update target
-     *
-     * @param target target
-     * @return {@code this} instance
-     */
-    NCompress setTarget(File target);
+    NCompress target(NOutputTarget target);
 
     /**
      * update target
@@ -178,7 +170,7 @@ public interface NCompress extends NComponent {
      * @param target target
      * @return {@code this} instance
      */
-    NCompress setTarget(String target);
+    NCompress target(File target);
 
     /**
      * update target
@@ -186,7 +178,15 @@ public interface NCompress extends NComponent {
      * @param target target
      * @return {@code this} instance
      */
-    NCompress setTarget(NPath target);
+    NCompress target(String target);
+
+    /**
+     * update target
+     *
+     * @param target target
+     * @return {@code this} instance
+     */
+    NCompress target(NPath target);
 
     /**
      * update target
@@ -241,7 +241,7 @@ public interface NCompress extends NComponent {
      * @return progress factory responsible of creating progress monitor
      * @since 0.5.8
      */
-    NProgressFactory getProgressFactory();
+    NProgressFactory progressFactory();
 
     /**
      * set progress factory responsible of creating progress monitor
@@ -250,7 +250,7 @@ public interface NCompress extends NComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NCompress setProgressFactory(NProgressFactory value);
+    NCompress progressFactory(NProgressFactory value);
 
     /**
      * set progress monitor. Will create a singleton progress monitor factory
@@ -259,7 +259,7 @@ public interface NCompress extends NComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NCompress setProgressMonitor(NProgressListener value);
+    NCompress progressMonitor(NProgressListener value);
 
     /**
      * return true if safe copy flag is armed
@@ -274,7 +274,7 @@ public interface NCompress extends NComponent {
      * @param value safe value
      * @return {@code this} instance
      */
-    NCompress setSafe(boolean value);
+    NCompress safe(boolean value);
 
     /**
      * return true if skip root flag is armed.
@@ -291,13 +291,13 @@ public interface NCompress extends NComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NCompress setSkipRoot(boolean value);
+    NCompress skipRoot(boolean value);
 
-    NCompress addOptions(NPathOption... pathOptions);
+    NCompress options(NPathOption... pathOptions);
 
     NCompress removeOptions(NPathOption... pathOptions);
 
     NCompress clearOptions();
 
-    Set<NPathOption> getOptions();
+    Set<NPathOption> options();
 }

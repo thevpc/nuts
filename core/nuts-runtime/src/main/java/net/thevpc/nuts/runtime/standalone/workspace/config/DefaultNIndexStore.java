@@ -70,14 +70,14 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                             + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s"
                                     + "&os=%s&osdist=%s&arch=%s&face=%s&"/*alternative=%s*/,
                             getRepository().getUuid(),
-                            NStringUtils.trim(id.getArtifactId()), NStringUtils.trim(id.getRepository()), NStringUtils.trim(id.getGroupId()),
-                            NStringUtils.trim(String.join(",",id.getCondition().getOs())),
-                            NStringUtils.trim(String.join(",",id.getCondition().getOsDist())),
-                            NStringUtils.trim(String.join(",",id.getCondition().getArch())), NStringUtils.trim(id.getFace())
+                            NStringUtils.trim(id.artifactId()), NStringUtils.trim(id.repository()), NStringUtils.trim(id.groupId()),
+                            NStringUtils.trim(String.join(",",id.condition().getOs())),
+                            NStringUtils.trim(String.join(",",id.condition().getOsDist())),
+                            NStringUtils.trim(String.join(",",id.condition().getArch())), NStringUtils.trim(id.face())
 //                , NutsUtilStrings.trim(id.getAlternative())
                     );
                     try {
-                        Map[] array = NElementReader.ofJson().read(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
+                        Map[] array = NElementReader.ofJson().read(new InputStreamReader(NPath.of(uu).inputStream()), Map[].class);
                         return Arrays.stream(array)
                                 .map(s -> NId.get(s.get("stringId").toString()).get())
                                 .collect(Collectors.toList()).iterator();
@@ -104,7 +104,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                     }
                     String uu = getIndexURL().resolve(NConstants.Folders.ID) + "?repositoryUuid=" + getRepository().getUuid();
                     try {
-                        Map[] array = NElementReader.ofJson().read(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
+                        Map[] array = NElementReader.ofJson().read(new InputStreamReader(NPath.of(uu).inputStream()), Map[].class);
                         return Arrays.stream(array)
                                 .map(s -> NId.get(s.get("stringId").toString()).get())
                                 .filter(new NDefinitionFilterToNIdPredicate2(filter))
@@ -135,15 +135,15 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
         String uu = getIndexURL().resolve( NConstants.Folders.ID).resolve("delete")
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
-                NStringUtils.trim(id.getArtifactId()), NStringUtils.trim(id.getRepository()), NStringUtils.trim(id.getGroupId()), NStringUtils.trim(id.getVersion().toString()),
-                NStringUtils.trim(String.join(",",id.getCondition().getOs())),
-                NStringUtils.trim(String.join(",",id.getCondition().getOsDist())),
-                NStringUtils.trim(String.join(",",id.getCondition().getArch())),
-                NStringUtils.trim(id.getFace())
+                NStringUtils.trim(id.artifactId()), NStringUtils.trim(id.repository()), NStringUtils.trim(id.groupId()), NStringUtils.trim(id.version().toString()),
+                NStringUtils.trim(String.join(",",id.condition().getOs())),
+                NStringUtils.trim(String.join(",",id.condition().getOsDist())),
+                NStringUtils.trim(String.join(",",id.condition().getArch())),
+                NStringUtils.trim(id.face())
 //                ,NutsUtilStrings.trim(id.getAlternative())
         );
         try {
-            NPath.of(uu).getInputStream();
+            NPath.of(uu).inputStream();
         } catch (UncheckedIOException | NIOException e) {
             setInaccessible();
             //
@@ -159,15 +159,15 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
         String uu = getIndexURL().resolve(NConstants.Folders.ID).resolve("addData")
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
-                NStringUtils.trim(id.getArtifactId()), NStringUtils.trim(id.getRepository()), NStringUtils.trim(id.getGroupId()), NStringUtils.trim(id.getVersion().toString()),
-                NStringUtils.trim(String.join(",",id.getCondition().getOs())),
-                NStringUtils.trim(String.join(",",id.getCondition().getOsDist())),
-                NStringUtils.trim(String.join(",",id.getCondition().getArch())),
-                NStringUtils.trim(id.getFace())
+                NStringUtils.trim(id.artifactId()), NStringUtils.trim(id.repository()), NStringUtils.trim(id.groupId()), NStringUtils.trim(id.version().toString()),
+                NStringUtils.trim(String.join(",",id.condition().getOs())),
+                NStringUtils.trim(String.join(",",id.condition().getOsDist())),
+                NStringUtils.trim(String.join(",",id.condition().getArch())),
+                NStringUtils.trim(id.face())
 //                ,NutsUtilStrings.trim(id.getAlternative())
         );
         try {
-            NPath.of(uu).getInputStream();
+            NPath.of(uu).inputStream();
         } catch (UncheckedIOException | NIOException e) {
             setInaccessible();
             //
@@ -181,7 +181,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                 + CoreIOUtils.urlEncodeString(NWorkspace.of().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
-            NPath.of(uu).getInputStream();
+            NPath.of(uu).inputStream();
         } catch (UncheckedIOException | NIOException e) {
             throw new NUnsupportedOperationException(NMsg.ofC("unable to subscribe for repository%s", getRepository().getName()), e);
         }
@@ -194,7 +194,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                 + CoreIOUtils.urlEncodeString(NWorkspace.of().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
-            NPath.of(uu).getInputStream();
+            NPath.of(uu).inputStream();
         } catch (UncheckedIOException | NIOException e) {
             throw new NUnsupportedOperationException(NMsg.ofC("unable to unsubscribe for repository %s", getRepository().getName()), e);
         }
@@ -207,7 +207,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                 + CoreIOUtils.urlEncodeString(NWorkspace.of().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
-            return new Scanner(NPath.of(uu).getInputStream()).nextBoolean();
+            return new Scanner(NPath.of(uu).inputStream()).nextBoolean();
         } catch (UncheckedIOException | NIOException e) {
             return false;
         }

@@ -15,15 +15,15 @@ public class FetchTest {
         NDefinition resultDefinition = NFetch.of("org.springframework.boot:spring-boot#2.4.1")
                 .getResultDefinition();
         TestUtils.println("-----------------");
-        for (NDependency dependency : resultDefinition.getDescriptor().getDependencies()) {
+        for (NDependency dependency : resultDefinition.descriptor().getDependencies()) {
             TestUtils.println(dependency);
         }
         TestUtils.println("-----------------");
-        for (NDependency dependency : resultDefinition.getDependencies().get()) {
+        for (NDependency dependency : resultDefinition.dependencies().get()) {
             TestUtils.println(dependency);
         }
         TestUtils.println("-----------------");
-        show(resultDefinition.getDependencies().get().transitiveNodes().toArray(NDependencyTreeNode[]::new), "");
+        show(resultDefinition.dependencies().get().transitiveNodes().toArray(NDependencyTreeNode[]::new), "");
     }
 
     // disable test because, for some reason it fails on Gitlab CI with

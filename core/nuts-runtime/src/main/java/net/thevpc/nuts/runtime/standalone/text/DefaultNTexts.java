@@ -92,8 +92,8 @@ public class DefaultNTexts implements NTexts {
         registerTextMapper(NMsg.class, (o, t) -> _NMsg_toString((NMsg) o));
         registerTextMapper(NText.class, (o, t) -> (NText) o);
         registerTextMapper(InputStream.class, (o, t) -> {
-            NContentMetadata metaData = NInputSource.of((InputStream) o).getMetaData();
-            return t.ofStyled(metaData.getName().orElse(o.toString()), NTextStyle.path());
+            NContentMetadata metaData = NInputSource.of((InputStream) o).metaData();
+            return t.ofStyled(metaData.name().orElse(o.toString()), NTextStyle.path());
         });
         registerTextMapper(OutputStream.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
         registerTextMapper(NPrintStream.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));

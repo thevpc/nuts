@@ -22,7 +22,7 @@ public class NPrintStreamRaw extends NPrintStreamBase {
 
     protected NPrintStreamRaw(OutputStream out, PrintStream base, Boolean autoFlush, NTerminalMode mode, NWorkspace workspace, Bindings bindings, NSystemTerminalBase term) {
         super(autoFlush == null || autoFlush, mode, bindings, term);
-        getMetaData().setMessage(NMsg.ofNtf(NText.ofStyledPath("<raw-stream>")));
+        metaData().message(NMsg.ofNtf(NText.ofStyledPath("<raw-stream>")));
         this.out = out;
         this.base = base;
     }
@@ -36,7 +36,7 @@ public class NPrintStreamRaw extends NPrintStreamBase {
                            Bindings bindings,
                            NSystemTerminalBase term) {
         super(true, mode == null ? NTerminalMode.INHERITED : mode, bindings, term);
-        getMetaData().setMessage(NMsg.ofNtf(NText.ofStyledPath("<raw-stream>")));
+        metaData().message(NMsg.ofNtf(NText.ofStyledPath("<raw-stream>")));
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;
@@ -95,7 +95,7 @@ public class NPrintStreamRaw extends NPrintStreamBase {
 
     @Override
     public void close() {
-        if (getTerminalMode() == NTerminalMode.ANSI) {
+        if (terminalMode() == NTerminalMode.ANSI) {
             print("\033[0m".getBytes());
             flush();
         }
@@ -143,17 +143,17 @@ public class NPrintStreamRaw extends NPrintStreamBase {
                 return new NPrintStreamFiltered(this, bindings);
             }
             case ANSI: {
-                if(this.getTerminalMode()==NTerminalMode.INHERITED){
+                if(this.terminalMode()==NTerminalMode.INHERITED){
                     return this;
                 }
                 break;
             }
         }
-        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", terminalMode(), other));
     }
 
     @Override
-    public OutputStream getOutputStream() {
+    public OutputStream outputStream() {
         return asOutputStream();
     }
 

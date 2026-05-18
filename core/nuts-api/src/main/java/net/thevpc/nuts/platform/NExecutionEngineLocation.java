@@ -68,8 +68,8 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
      */
     public NExecutionEngineLocation(NId id, String vendor, String product, String variant, String name, String path, String version, String packaging, int priority) {
         this.id = id;
-        this.executionEngineFamily = (id == null || NBlankable.isBlank(id.getArtifactId())) ? NExecutionEngineFamily.JAVA :
-                NExecutionEngineFamily.parse(id.getArtifactId()).orElse(NExecutionEngineFamily.UNKNOWN);
+        this.executionEngineFamily = (id == null || NBlankable.isBlank(id.artifactId())) ? NExecutionEngineFamily.JAVA :
+                NExecutionEngineFamily.parse(id.artifactId()).orElse(NExecutionEngineFamily.UNKNOWN);
         this.product = product;
         this.variant = variant;
         this.vendor = vendor;

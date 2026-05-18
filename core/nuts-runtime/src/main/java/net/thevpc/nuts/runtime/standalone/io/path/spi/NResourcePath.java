@@ -257,7 +257,7 @@ public class NResourcePath implements NPathSPI {
     public String getCharset(NPath basePath) {
         NPath up = toURLPath();
         if (up != null) {
-            return up.getCharset();
+            return up.charset();
         }
         return null;
     }
@@ -273,7 +273,7 @@ public class NResourcePath implements NPathSPI {
         if (up == null) {
             throw new NIOException(NMsg.ofC("unable to resolve input stream %s", toString()));
         }
-        return up.getInputStream();
+        return up.inputStream();
     }
 
     @Override
@@ -282,7 +282,7 @@ public class NResourcePath implements NPathSPI {
         if (up == null) {
             throw new NIOException(NMsg.ofC("unable to resolve output stream %s", toString()));
         }
-        return up.getOutputStream();
+        return up.outputStream();
     }
 
 
@@ -566,7 +566,7 @@ public class NResourcePath implements NPathSPI {
         @Override
         public NText toCompressedString(NPath base) {
             return rebuildURL2(NPathParts.compressPath(location),
-                    ids.stream().map(x -> NId.get(x.getArtifactId()).get()).toArray(NId[]::new)
+                    ids.stream().map(x -> NId.get(x.artifactId()).get()).toArray(NId[]::new)
             );
         }
     }

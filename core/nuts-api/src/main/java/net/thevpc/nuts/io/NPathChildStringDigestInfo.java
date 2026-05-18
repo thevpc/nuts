@@ -4,20 +4,20 @@ public class NPathChildStringDigestInfo {
     private String name;
     private String digest;
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public NPathChildStringDigestInfo setName(String name) {
+    public NPathChildStringDigestInfo name(String name) {
         this.name = name;
         return this;
     }
 
-    public String getDigest() {
+    public String digest() {
         return digest;
     }
 
-    public NPathChildStringDigestInfo setDigest(String digest) {
+    public NPathChildStringDigestInfo digest(String digest) {
         this.digest = digest;
         return this;
     }

@@ -85,7 +85,7 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      *
      * @return string representation of the version (never null)
      */
-    String getValue();
+    String value();
 
     /**
      * compare this version to the other version

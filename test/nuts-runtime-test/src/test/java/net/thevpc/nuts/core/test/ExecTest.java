@@ -199,9 +199,9 @@ public class ExecTest {
         }
         System.out.println(e.getResult());
         System.out.println("============= OUT");
-        System.out.println(e.getOut().getResult().readString());
+        System.out.println(e.getOut().result().readString());
         System.out.println("============= ERR");
-        System.out.println(e.getErr().getResult().readString());
+        System.out.println(e.getErr().result().readString());
     }
 
     @Test

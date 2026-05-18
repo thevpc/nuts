@@ -41,7 +41,7 @@ public abstract class AbstractNDeploy extends NWorkspaceCmdBase<NDeploy> impleme
         NId id;
 
         public Result(NId nid, String repository, NText source) {
-            this.id = nid.getLongId();
+            this.id = nid.longId();
             this.source = source;
             this.repository = repository;
         }

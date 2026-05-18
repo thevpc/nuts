@@ -59,20 +59,20 @@ public final class NWorkspaceConfigBoot502 implements Serializable {
 
     /**
      * boot package Id in long format (as defined in
-     * {@link NId#getLongName()})
+     * {@link NId#longName()})
      *
-     * @see NId#getLongId()
+     * @see NId#longId()
      */
     private NId bootRuntime = null;
 
     /**
      * ';' separated list of package Ids in long format (as defined in
-     * {@link NId#getLongName()}) that defines ALL dependencies needed (no
+     * {@link NId#longName()}) that defines ALL dependencies needed (no
      * further dependency computation should be performed) to load and execute a
      * valid implementation of nuts-api. These packages should be accessible
      * from {@link NWorkspaceConfigBoot#getBootRepositories()}
      *
-     * @see NId#getLongId()
+     * @see NId#longId()
      */
     private String bootRuntimeDependencies = null;
     private String bootRepositories = null;

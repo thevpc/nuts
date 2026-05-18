@@ -106,9 +106,9 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     ) throws NExecutionException {
         boolean jdk=false;
         NWorkspace workspace = session.getWorkspace();
-        NId id = nutMainFile.getId();
-        Path installerFile = nutMainFile.getContent().flatMap(NPath::toPath).orNull();
-        NPath storeFolder = nutMainFile.getInstallInformation().get().getInstallFolder();
+        NId id = nutMainFile.id();
+        Path installerFile = nutMainFile.content().flatMap(NPath::toPath).orNull();
+        NPath storeFolder = nutMainFile.installInformation().get().getInstallFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
         NPath nutsJarFile = NFetch.ofNutsApi()
@@ -118,7 +118,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             map.put("nuts.jar", nutsJarFile.normalize().toString());
         }
         map.put("nuts.artifact", id.toString());
-        map.put("nuts.file", nutMainFile.getContent().flatMap(NPath::toPath).map(Object::toString).orNull());
+        map.put("nuts.file", nutMainFile.content().flatMap(NPath::toPath).map(Object::toString).orNull());
         String defaultJavaCommand = NJavaSdkUtils.of().resolveJavaCommandByVersion("", false,jdk,true,true).orNull();
         if (defaultJavaCommand == null) {
             throw new NExecutionException(NMsg.ofPlain("no java version was found"), NExecutionException.ERROR_1);
@@ -170,8 +170,8 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     nDefinition = NFetch.ofNutsApp()
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .getResultDefinition();
-                    if (nDefinition.getContent().isPresent()) {
-                        return ("<::expand::> " + apply("java") + " -jar " + nDefinition.getContent());
+                    if (nDefinition.content().isPresent()) {
+                        return ("<::expand::> " + apply("java") + " -jar " + nDefinition.content());
                     }
                     return null;
                 }
@@ -220,7 +220,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     public int exec() {
         NSession session = NSession.of();
         if (session.isDry()) {
-            if (trace.getTerminalMode() == NTerminalMode.FORMATTED) {
+            if (trace.terminalMode() == NTerminalMode.FORMATTED) {
                 trace.print("[dry] ==[exec]== ");
                 trace.println(pb.getFormattedCommandString());
             } else {
@@ -270,7 +270,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         } finally {
             if (err != null) {
                 if (definition != null) {
-                    NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(definition.getId().toString(), err), NRecommendationPhase.EXEC, false);
+                    NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(definition.id().toString(), err), NRecommendationPhase.EXEC, false);
                 }
             }
         }

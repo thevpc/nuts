@@ -4,7 +4,6 @@ package net.thevpc.nuts.runtime.standalone.executor;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.core.NStoreKey;
-import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
@@ -15,12 +14,12 @@ import java.util.Map;
 public class NExecutionContextUtils {
     public static Map<String, String> defaultEnv(NDefinition definition) {
         Map<String, String> m = new HashMap<>();
-        m.put("NUTS_ID", definition.getId().toString());
-        m.put("NUTS_ARTIFACT_ID", definition.getId().getArtifactId());
-        m.put("NUTS_GROUP_ID", definition.getId().getGroupId());
-        m.put("NUTS_VERSION", definition.getId().getVersion().toString());
+        m.put("NUTS_ID", definition.id().toString());
+        m.put("NUTS_ARTIFACT_ID", definition.id().artifactId());
+        m.put("NUTS_GROUP_ID", definition.id().groupId());
+        m.put("NUTS_VERSION", definition.id().version().toString());
         for (NStoreType type : NStoreType.values()) {
-            NPath v = NPath.of(NStoreKey.of(definition.getId()).type(type));
+            NPath v = NPath.of(NStoreKey.of(definition.id()).type(type));
             m.put("NUTS_ID_" + type.name(), v.toString());
         }
         return m;
@@ -31,38 +30,38 @@ public class NExecutionContextUtils {
         public String get(String key, NDefinition definition) {
             switch (key) {
                 case "NUTS_ID": {
-                    return (definition.getId().toString());
+                    return (definition.id().toString());
                 }
                 case "NUTS_ID_BIN": {
-                    NPath v = NPath.of(NStoreKey.ofBin(definition.getId()));
+                    NPath v = NPath.of(NStoreKey.ofBin(definition.id()));
                     return (v.toString());
                 }
                 case "NUTS_ID_CONF": {
-                    NPath v = NPath.of(NStoreKey.ofConf(definition.getId()));
+                    NPath v = NPath.of(NStoreKey.ofConf(definition.id()));
                     return (v.toString());
                 }
                 case "NUTS_ID_LOG": {
-                    NPath v = NPath.of(NStoreKey.ofLog(definition.getId()));
+                    NPath v = NPath.of(NStoreKey.ofLog(definition.id()));
                     return (v.toString());
                 }
                 case "NUTS_ID_CACHE": {
-                    NPath v = NPath.of(NStoreKey.ofCache(definition.getId()));
+                    NPath v = NPath.of(NStoreKey.ofCache(definition.id()));
                     return (v.toString());
                 }
                 case "NUTS_ID_LIB": {
-                    NPath v = NPath.of(NStoreKey.ofLib(definition.getId()));
+                    NPath v = NPath.of(NStoreKey.ofLib(definition.id()));
                     return (v.toString());
                 }
                 case "NUTS_ID_RUN": {
-                    NPath v = NPath.of(NStoreKey.ofRun(definition.getId()));
+                    NPath v = NPath.of(NStoreKey.ofRun(definition.id()));
                     return (v.toString());
                 }
                 case "NUTS_ID_TEMP": {
-                    NPath v = NPath.of(NStoreKey.ofTemp(definition.getId()));
+                    NPath v = NPath.of(NStoreKey.ofTemp(definition.id()));
                     return (v.toString());
                 }
                 case "NUTS_ID_VAR": {
-                    NPath v = NPath.of(NStoreKey.ofVar(definition.getId()));
+                    NPath v = NPath.of(NStoreKey.ofVar(definition.id()));
                     return (v.toString());
                 }
             }

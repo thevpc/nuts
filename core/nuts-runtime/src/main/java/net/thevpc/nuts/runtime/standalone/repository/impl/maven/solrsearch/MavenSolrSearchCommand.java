@@ -52,8 +52,8 @@ public class MavenSolrSearchCommand {
                 NPath solrSearchUrl = getSolrSearchUrl();
                 for (NId baseId : baseIds) {
                     MavenSolrSearchRequest r = new MavenSolrSearchRequest(
-                            baseId.getGroupId(),
-                            baseId.getArtifactId()
+                            baseId.groupId(),
+                            baseId.artifactId()
                     );
                     Iterator<NId> ii = this.search(r, solrSearchUrl, filter);
                     if (ii != null) {

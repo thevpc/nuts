@@ -46,10 +46,10 @@ public class DefaultNUndeploy extends AbstractNUndeploy {
                     .failFast(true)
                     .getResultDefinitions().findFirst().get();
             NRepository repository1 = workspace
-                    .getRepository(p.getRepositoryUuid()).get();
+                    .getRepository(p.repositoryUuid()).get();
             NRepositorySPI repoSPI = nWorkspaceUtils.toRepositorySPI(repository1);
             repoSPI.undeploy()
-                    .setId(p.getId())
+                    .setId(p.id())
                     //                    .setFetchMode(NutsFetchMode.LOCAL)
                     .run();
             addResult(id);

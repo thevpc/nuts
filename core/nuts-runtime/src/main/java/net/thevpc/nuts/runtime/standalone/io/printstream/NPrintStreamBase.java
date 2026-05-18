@@ -60,7 +60,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
         return nStringWriter;
     }
 
-    public NContentMetadata getMetaData() {
+    public NContentMetadata metaData() {
         return md;
     }
 
@@ -415,7 +415,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
     }
 
     @Override
-    public NTerminalMode getTerminalMode() {
+    public NTerminalMode terminalMode() {
         return mode;
     }
 
@@ -426,7 +426,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
 
     @Override
     public NPrintStream setTerminalMode(NTerminalMode other) {
-        if (other == null || other == this.getTerminalMode()) {
+        if (other == null || other == this.terminalMode()) {
             return this;
         }
         NPrintStreamBase o = bindings.get(other);
@@ -462,7 +462,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
 
     @Override
     public boolean isNtf() {
-        switch (getTerminalMode()) {
+        switch (terminalMode()) {
             case FORMATTED:
             case FILTERED: {
                 return true;
@@ -471,7 +471,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
         return false;
     }
 
-    public NSystemTerminalBase getTerminal() {
+    public NSystemTerminalBase terminal() {
         return term;
     }
 

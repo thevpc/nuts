@@ -57,23 +57,23 @@ public class NDefinitionHelper {
         }
 
         @Override
-        public NId getId() {
+        public NId id() {
             return id;
         }
 
         @Override
-        public NDescriptor getDescriptor() {
+        public NDescriptor descriptor() {
             return descriptor;
         }
 
         @Override
-        public NOptional<NDescriptor> getEffectiveDescriptor() {
-            return NOptional.of(getDescriptor());
+        public NOptional<NDescriptor> effectiveDescriptor() {
+            return NOptional.of(descriptor());
         }
 
         @Override
-        public NOptional<Set<NDescriptorFlag>> getEffectiveFlags() {
-            return getEffectiveDescriptor().map(x -> x.getFlags());
+        public NOptional<Set<NDescriptorFlag>> effectiveFlags() {
+            return effectiveDescriptor().map(x -> x.getFlags());
         }
     }
 
@@ -92,7 +92,7 @@ public class NDefinitionHelper {
         }
 
         @Override
-        public NId getId() {
+        public NId id() {
             return id;
         }
     }
@@ -109,7 +109,7 @@ public class NDefinitionHelper {
         }
 
         @Override
-        public NDescriptor getDescriptor() {
+        public NDescriptor descriptor() {
             return descriptor.get();
         }
 
@@ -119,7 +119,7 @@ public class NDefinitionHelper {
         }
 
         @Override
-        public NId getId() {
+        public NId id() {
             return id;
         }
     }
@@ -136,7 +136,7 @@ public class NDefinitionHelper {
         }
 
         @Override
-        public NId getId() {
+        public NId id() {
             return id;
         }
 

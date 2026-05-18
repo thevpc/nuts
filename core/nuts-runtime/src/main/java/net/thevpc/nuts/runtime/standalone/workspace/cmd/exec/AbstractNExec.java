@@ -382,7 +382,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     @Override
     public String getGrabbedOutOnlyString() {
         if (!executed) {
-            if (out.getType() != NRedirectType.GRAB_STREAM) {
+            if (out.type() != NRedirectType.GRAB_STREAM) {
                 grabOutOnly();
             }
         }
@@ -397,7 +397,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     @Override
     public byte[] getGrabbedOutBytes() {
         if (!executed) {
-            if (out.getType() != NRedirectType.GRAB_STREAM) {
+            if (out.type() != NRedirectType.GRAB_STREAM) {
                 grabOut();
             }
             run();
@@ -405,20 +405,20 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
         if (getOut() == null) {
             throw new NIllegalArgumentException(NMsg.ofPlain("no buffer was configured; should call grabOut"));
         }
-        if (getOut().getResultSource().isNotPresent()) {
-            if (getOut().getType() == NRedirectType.GRAB_FILE || getOut().getType() == NRedirectType.GRAB_STREAM) {
+        if (getOut().resultSource().isNotPresent()) {
+            if (getOut().type() == NRedirectType.GRAB_FILE || getOut().type() == NRedirectType.GRAB_STREAM) {
                 if (getResultException().isPresent()) {
                     throw getResultException().get();
                 }
             }
         }
-        return getOut().getResultBytes();
+        return getOut().resultBytes();
     }
 
     @Override
     public byte[] getGrabbedErrBytes() {
         if (!executed) {
-            if (err.getType() != NRedirectType.GRAB_STREAM) {
+            if (err.type() != NRedirectType.GRAB_STREAM) {
                 grabErr();
             }
             run();
@@ -426,17 +426,17 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
         if (getErr() == null) {
             throw new NIllegalArgumentException(NMsg.ofPlain("no buffer was configured; should call grabErr"));
         }
-        if (getErr().getType() == NRedirectType.REDIRECT) {
+        if (getErr().type() == NRedirectType.REDIRECT) {
             return getGrabbedOutBytes();
         }
-        if (getErr().getResultSource().isNotPresent()) {
-            if (getErr().getType() == NRedirectType.GRAB_FILE || getErr().getType() == NRedirectType.GRAB_STREAM) {
+        if (getErr().resultSource().isNotPresent()) {
+            if (getErr().type() == NRedirectType.GRAB_FILE || getErr().type() == NRedirectType.GRAB_STREAM) {
                 if (getResultException().isPresent()) {
                     throw getResultException().get();
                 }
             }
         }
-        return getErr().getResultBytes();
+        return getErr().resultBytes();
     }
 
     @Override
@@ -592,23 +592,23 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     protected String getExtraErrorMessage() {
-        if (getErr().getType() == NRedirectType.REDIRECT) {
-            if (getOut().getType() == NRedirectType.GRAB_FILE
-                    || getOut().getType() == NRedirectType.GRAB_STREAM) {
-                if (getOut() != null && getOut().getResultSource().isPresent()) {
+        if (getErr().type() == NRedirectType.REDIRECT) {
+            if (getOut().type() == NRedirectType.GRAB_FILE
+                    || getOut().type() == NRedirectType.GRAB_STREAM) {
+                if (getOut() != null && getOut().resultSource().isPresent()) {
                     return getGrabbedOutString();
                 }
             }
         } else {
-            if (getErr().getType() == NRedirectType.GRAB_FILE
-                    || getErr().getType() == NRedirectType.GRAB_STREAM) {
-                if (getErr() != null && getErr().getResultSource().isPresent()) {
+            if (getErr().type() == NRedirectType.GRAB_FILE
+                    || getErr().type() == NRedirectType.GRAB_STREAM) {
+                if (getErr() != null && getErr().resultSource().isPresent()) {
                     return getGrabbedErrString();
                 }
             }
-            if (getOut().getType() == NRedirectType.GRAB_FILE
-                    || getOut().getType() == NRedirectType.GRAB_STREAM) {
-                if (getOut() != null && getOut().getResultSource().isPresent()) {
+            if (getOut().type() == NRedirectType.GRAB_FILE
+                    || getOut().type() == NRedirectType.GRAB_STREAM) {
+                if (getOut() != null && getOut().resultSource().isPresent()) {
                     return getGrabbedOutString();
                 }
             }
@@ -771,7 +771,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             if (sb.length() > 0) {
                 sb.append(" ");
             }
-            sb.append(NStringUtils.formatStringLiteral(d.getId().toString()));
+            sb.append(NStringUtils.formatStringLiteral(d.id().toString()));
         }
         for (int i = 0; i < command.size(); i++) {
             String s = command.get(i);
@@ -789,14 +789,14 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             }
             sb.append(NStringUtils.formatStringLiteral(s));
         }
-        switch (getOut().getType()) {
+        switch (getOut().type()) {
             case PATH: {
-                if (Arrays.stream(getOut().getOptions()).anyMatch(x -> x == NPathOption.APPEND)) {
+                if (Arrays.stream(getOut().options()).anyMatch(x -> x == NPathOption.APPEND)) {
                     sb.append(" >> ");
                 } else {
                     sb.append(" > ");
                 }
-                sb.append(getOut().getPath());
+                sb.append(getOut().path());
                 break;
             }
             case NULL: {
@@ -804,14 +804,14 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
                 break;
             }
         }
-        switch (getErr().getType()) {
+        switch (getErr().type()) {
             case PATH: {
-                if (Arrays.stream(getOut().getOptions()).anyMatch(x -> x == NPathOption.APPEND)) {
+                if (Arrays.stream(getOut().options()).anyMatch(x -> x == NPathOption.APPEND)) {
                     sb.append(" 2>> ");
                 } else {
                     sb.append(" 2> ");
                 }
-                sb.append(getOut().getPath());
+                sb.append(getOut().path());
                 break;
             }
             case REDIRECT: {
@@ -823,10 +823,10 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
                 break;
             }
         }
-        switch (getIn().getType()) {
+        switch (getIn().type()) {
             case PATH: {
                 sb.append(" < ");
-                sb.append(getOut().getPath());
+                sb.append(getOut().path());
                 break;
             }
             case NULL: {

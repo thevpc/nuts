@@ -59,7 +59,7 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
     public NId parseId(NPath pathname, NPath rootPath, NDefinitionFilter filter, NRepository repository) {
         NDescriptor t = null;
         try {
-            t = parseDescriptor(pathname, NInputStreamMonitor.of().setSource(pathname).create(),
+            t = parseDescriptor(pathname, NInputStreamMonitor.of().source(pathname).create(),
                     NFetchMode.LOCAL, repository, rootPath);
         } catch (Exception ex) {
             NLog.of(NIdPathIteratorBase.class)

@@ -84,45 +84,45 @@ public class DefaultNInputSourceBuilder implements NInputSourceBuilder {
     }
 
     @Override
-    public Object getSource() {
+    public Object source() {
         return source;
     }
 
     @Override
-    public NInputSourceBuilder setSource(Object source) {
+    public NInputSourceBuilder source(Object source) {
         this.source = source;
         return this;
     }
 
     @Override
-    public NMsg getSourceName() {
+    public NMsg sourceName() {
         return sourceName;
     }
 
     @Override
-    public NInputSourceBuilder setSourceName(NMsg sourceName) {
+    public NInputSourceBuilder sourceName(NMsg sourceName) {
         this.sourceName = sourceName;
         return this;
     }
 
     @Override
-    public Long getExpectedLength() {
+    public Long expectedLength() {
         return expectedLength;
     }
 
     @Override
-    public NInputSourceBuilder setExpectedLength(Long expectedLength) {
+    public NInputSourceBuilder expectedLength(Long expectedLength) {
         this.expectedLength = expectedLength;
         return this;
     }
 
     @Override
-    public NProgressListener getMonitoringListener() {
+    public NProgressListener monitoringListener() {
         return monitoringListener;
     }
 
     @Override
-    public NInputSourceBuilder setMonitoringListener(NProgressListener monitoringListener) {
+    public NInputSourceBuilder monitoringListener(NProgressListener monitoringListener) {
         this.monitoringListener = monitoringListener;
         return this;
     }
@@ -133,18 +133,18 @@ public class DefaultNInputSourceBuilder implements NInputSourceBuilder {
     }
 
     @Override
-    public NInputSourceBuilder setNonBlocking(boolean nonBlocking) {
+    public NInputSourceBuilder nonBlocking(boolean nonBlocking) {
         this.nonBlocking = nonBlocking;
         return this;
     }
 
     @Override
-    public OutputStream getTee() {
+    public OutputStream tee() {
         return tee;
     }
 
     @Override
-    public NInputSourceBuilder setTee(OutputStream tee) {
+    public NInputSourceBuilder tee(OutputStream tee) {
         this.tee = tee;
         return this;
     }

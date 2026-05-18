@@ -45,40 +45,40 @@ public class DefaultNPathInfo implements NPathInfo {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public Instant getLastAccessInstant() {
+    public Instant lastAccessInstant() {
         return lastAccess;
     }
 
-    public String getGroup() {
+    public String group() {
         return group;
     }
 
     @Override
-    public String getPath() {
+    public String path() {
         return path;
     }
 
     @Override
-    public NPathType getType() {
+    public NPathType type() {
         return type;
     }
 
     @Override
-    public NPathType getTargetType() {
+    public NPathType targetType() {
         return targetType;
     }
 
     @Override
-    public String getTargetPath() {
+    public String targetPath() {
         return targetPath;
     }
 
     @Override
-    public long getContentLength() {
+    public long contentLength() {
         return size;
     }
 
@@ -88,22 +88,22 @@ public class DefaultNPathInfo implements NPathInfo {
     }
 
     @Override
-    public Instant getLastModifiedInstant() {
+    public Instant lastModifiedInstant() {
         return lastModified;
     }
 
     @Override
-    public Instant getCreationInstant() {
+    public Instant creationInstant() {
         return creationTime;
     }
 
     @Override
-    public Set<NPathPermission> getPermissions() {
+    public Set<NPathPermission> permissions() {
         return permissions;
     }
 
     @Override
-    public String getOwner() {
+    public String owner() {
         return owner;
     }
 

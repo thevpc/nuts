@@ -34,7 +34,7 @@ public class NVersionIdFilter extends AbstractIdFilter implements NIdFilter, NSi
         if (filter == null) {
             return true;
         }
-        return filter.acceptVersion(other.getVersion());
+        return filter.acceptVersion(other.version());
     }
 
     @Override

@@ -206,7 +206,7 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
     public NDefinitionFilter byCompanion(NVersion targetApiVersion) {
         return new NDefinitionExecCompanionFilter(
                 targetApiVersion == null ? null : NId.get(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build(),
-                NExtensions.of().getCompanionIds().stream().map(NId::getShortName).toArray(String[]::new)
+                NExtensions.of().getCompanionIds().stream().map(NId::shortName).toArray(String[]::new)
         );
     }
 

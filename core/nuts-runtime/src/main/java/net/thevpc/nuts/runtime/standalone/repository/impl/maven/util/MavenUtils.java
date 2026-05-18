@@ -511,9 +511,9 @@ public class MavenUtils {
         try {
             NSession session = NSession.of();
             session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "parse", NCoreLogUtils.forProgress(path)));
-            try (InputStream is = path.getInputStream()) {
+            try (InputStream is = path.inputStream()) {
                 NDescriptor nutsDescriptor = parsePomXmlAndResolveParents(is, fetchMode, path.toString(), repository);
-                if (nutsDescriptor.getId().getArtifactId() == null) {
+                if (nutsDescriptor.getId().artifactId() == null) {
                     //why name is null ? should check out!
                     if (LOG().isLoggable(Level.FINE)) {
                         LOG()
@@ -563,23 +563,23 @@ public class MavenUtils {
                     }
                 }
                 if (parentId != null) {
-                    properties.put("parent.groupId", parentId.getGroupId());
-                    properties.put("parent.artifactId", parentId.getArtifactId());
-                    properties.put("parent.version", parentId.getVersion().getValue());
+                    properties.put("parent.groupId", parentId.groupId());
+                    properties.put("parent.artifactId", parentId.artifactId());
+                    properties.put("parent.version", parentId.version().value());
 
-                    properties.put("project.parent.groupId", parentId.getGroupId());
-                    properties.put("project.parent.artifactId", parentId.getArtifactId());
-                    properties.put("project.parent.version", parentId.getVersion().getValue());
+                    properties.put("project.parent.groupId", parentId.groupId());
+                    properties.put("project.parent.artifactId", parentId.artifactId());
+                    properties.put("project.parent.version", parentId.version().value());
                     nutsDescriptor = NDescriptorUtils.applyProperties(nutsDescriptor.builder(), properties).build();
                 }
                 NId thisId = nutsDescriptor.getId();
                 if (!CoreNUtils.isEffectiveId(thisId)) {
                     if (parentId != null) {
-                        if (NBlankable.isBlank(thisId.getGroupId())) {
-                            thisId = thisId.builder().setGroupId(parentId.getGroupId()).build();
+                        if (NBlankable.isBlank(thisId.groupId())) {
+                            thisId = thisId.builder().setGroupId(parentId.groupId()).build();
                         }
-                        if (NBlankable.isBlank(thisId.getVersion().getValue())) {
-                            thisId = thisId.builder().setVersion(parentId.getVersion().getValue()).build();
+                        if (NBlankable.isBlank(thisId.version().value())) {
+                            thisId = thisId.builder().setVersion(parentId.version().value()).build();
                         }
                     }
                     HashMap<NId, NDescriptor> cache = new HashMap<>();
@@ -601,7 +601,7 @@ public class MavenUtils {
                                 throw new NArtifactNotFoundException(nutsDescriptor.getId(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.getId(), pid, ex));
                             }
                         }
-                        done.add(pid.getShortName());
+                        done.add(pid.shortName());
                         if (CoreNUtils.containsVars(thisId)) {
                             thisId = NDescriptorUtils.applyProperties(thisId.builder(), new MapToFunction<>(
                                     NDescriptorUtils.getPropertiesMap(d.getProperties())
@@ -610,7 +610,7 @@ public class MavenUtils {
                             break;
                         }
                         for (NId nutsId : d.getParents()) {
-                            if (!done.contains(nutsId.getShortName())) {
+                            if (!done.contains(nutsId.shortName())) {
                                 todo.push(nutsId);
                             }
                         }
@@ -626,13 +626,13 @@ public class MavenUtils {
                                     .flatMap(NLiteral::asString).get())
                             .build();
                 }
-                properties.put("pom.groupId", thisId.getGroupId());
-                properties.put("pom.version", thisId.getVersion().getValue());
-                properties.put("pom.artifactId", thisId.getArtifactId());
-                properties.put("project.groupId", thisId.getGroupId());
-                properties.put("project.artifactId", thisId.getArtifactId());
-                properties.put("project.version", thisId.getVersion().getValue());
-                properties.put("version", thisId.getVersion().getValue());
+                properties.put("pom.groupId", thisId.groupId());
+                properties.put("pom.version", thisId.version().value());
+                properties.put("pom.artifactId", thisId.artifactId());
+                properties.put("project.groupId", thisId.groupId());
+                properties.put("project.artifactId", thisId.artifactId());
+                properties.put("project.version", thisId.version().value());
+                properties.put("version", thisId.version().value());
                 nutsDescriptor = NDescriptorUtils.applyProperties(
                         nutsDescriptor/*.setProperties(properties, true)*/.builder(), properties
                 ).build();

@@ -18,7 +18,7 @@ public class MultiBaseIdFilterHelper {
         if (baseIds != null) {
             for (String baseId : baseIds) {
                 if (NBlankable.isBlank(baseId)) {
-                    NId longId = NId.of(baseId).getLongId();
+                    NId longId = NId.of(baseId).longId();
                     ids.add(longId);
                     idstr.add(longId.toString());
                     names.add(NPath.of(longId.getMavenPath("")).names());

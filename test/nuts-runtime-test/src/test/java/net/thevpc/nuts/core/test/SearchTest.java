@@ -43,7 +43,7 @@ public class SearchTest {
 //                .setFetchStrategy(NFetchStrategy.REMOTE)
                 .latest(true);
         for (NDefinition d : q.getResultDefinitions().toList()) {
-            NPath c = d.getContent().orNull();
+            NPath c = d.content().orNull();
             NOut.println(c);
         }
 
@@ -61,8 +61,8 @@ public class SearchTest {
                 .latest(true);
         List<NDefinition> list = q.getResultDefinitions().toList();
         for (NDefinition d : list) {
-            NPath c = d.getContent().orNull();
-            for (NDependency nDependency : d.getDependencies().get().toList()) {
+            NPath c = d.content().orNull();
+            for (NDependency nDependency : d.dependencies().get().toList()) {
                 NOut.println(nDependency);
             }
         }
@@ -94,7 +94,7 @@ public class SearchTest {
         NOut.println(q.getResultQueryPlan());
         NChronometer cr = NChronometer.of();
         for (NDefinition d : q.getResultDefinitions().toList()) {
-            NPath c = d.getContent().orNull();
+            NPath c = d.content().orNull();
                 NOut.println(c);
 //            for (NDependency nDependency : d.getDependencies().get().toList()) {
 //                NOut.println(nDependency);

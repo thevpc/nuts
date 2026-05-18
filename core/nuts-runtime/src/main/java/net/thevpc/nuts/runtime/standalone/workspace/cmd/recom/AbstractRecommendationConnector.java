@@ -35,7 +35,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         validateRequest(ri);
         NId id = NId.get(ri.q.getId()).onBlankEmpty().get();
         String name = phase.name().toLowerCase() + (failure ? "-failure" : "") + "-recommendations.json";
-        String url = "/repo/" + id.getMavenFolder() + '/' + name;
+        String url = "/repo/" + id.mavenFolder() + '/' + name;
         return post(url, ri, Map.class);
     }
 

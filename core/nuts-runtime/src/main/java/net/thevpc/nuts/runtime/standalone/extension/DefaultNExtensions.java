@@ -192,16 +192,16 @@ public class DefaultNExtensions implements NExtensions {
         if (classLoader == null) {
             classLoader = Thread.currentThread().getContextClassLoader();
         }
-        URL pomXml = classLoader.getResource("META-INF/maven/" + id.getGroupId() + "/" + id.getArtifactId() + "/pom.xml");
+        URL pomXml = classLoader.getResource("META-INF/maven/" + id.groupId() + "/" + id.artifactId() + "/pom.xml");
         if (pomXml != null) {
             NDescriptor e = NDescriptorParser.of()
                     .setDescriptorStyle(NDescriptorStyle.MAVEN)
                     .parse(pomXml).orNull();
             if (e != null) {
                 if (e.getId() != null) {
-                    NVersion v = e.getId().getVersion();
+                    NVersion v = e.getId().version();
                     if (v != null) {
-                        NVersion v2 = id.getVersion();
+                        NVersion v2 = id.version();
                         if (v2 != null && !v2.isBlank()) {
                             return v2.equals(v);
                         }
@@ -212,16 +212,16 @@ public class DefaultNExtensions implements NExtensions {
         }
 
         URL nuts = classLoader.getResource("META-INF/nuts/"
-                + id.getShortId().getMavenFolder() + "/nuts.json");
+                + id.shortId().mavenFolder() + "/nuts.json");
         if (nuts != null) {
             NDescriptor e = NDescriptorParser.of()
                     .setDescriptorStyle(NDescriptorStyle.NUTS)
                     .parse(nuts).orNull();
             if (e != null) {
                 if (e.getId() != null) {
-                    NVersion v = e.getId().getVersion();
+                    NVersion v = e.getId().version();
                     if (v != null) {
-                        NVersion v2 = id.getVersion();
+                        NVersion v2 = id.version();
                         if (v2 != null && !v2.isBlank()) {
                             return v2.equals(v);
                         }

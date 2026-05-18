@@ -69,7 +69,7 @@ public class DefaultNFetchDescriptorRepositoryCmd extends AbstractNFetchDescript
 //        NutsWorkspace ws = getRepo().getWorkspace();
         CoreNIdUtils.checkLongId(id);
         NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.FETCH_DESC, "fetch-descriptor");
-        Map<String, String> queryMap = id.getProperties();
+        Map<String, String> queryMap = id.properties();
         queryMap.remove(NConstants.IdProperties.OPTIONAL);
         queryMap.remove(NConstants.IdProperties.SCOPE);
         queryMap.put(NConstants.IdProperties.FACE, NConstants.QueryFaces.DESCRIPTOR);
@@ -78,13 +78,13 @@ public class DefaultNFetchDescriptorRepositoryCmd extends AbstractNFetchDescript
         xrepo.checkAllowedFetch(id);
         long startTime = System.currentTimeMillis();
         try {
-            String versionString = id.getVersion().getValue();
+            String versionString = id.version().value();
             NDescriptor d = null;
             NVersion nutsVersion = NVersion.get(versionString).orElse(NVersion.BLANK);
             if (nutsVersion.isBlank() || nutsVersion.isRelease() || nutsVersion.isLatest()) {
                 NId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), null, getFetchMode());
                 if (a == null) {
-                    throw new NArtifactNotFoundException(id.getLongId());
+                    throw new NArtifactNotFoundException(id.longId());
                 }
                 a = a.builder().setFaceDescriptor().build();
                 d = xrepo.fetchDescriptorImpl(a, getFetchMode());
@@ -94,23 +94,23 @@ public class DefaultNFetchDescriptorRepositoryCmd extends AbstractNFetchDescript
                     d = xrepo.fetchDescriptorImpl(id, getFetchMode());
                 } else {
                     NDefinitionFilters dd = NDefinitionFilters.of();
-                    NDefinitionFilter filter=dd.byEnv(id.getProperties()).and(dd.byName(id.getFullName()));
+                    NDefinitionFilter filter=dd.byEnv(id.properties()).and(dd.byName(id.fullName()));
                     NId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), filter, getFetchMode());
                     if (a == null) {
-                        throw new NArtifactNotFoundException(id.getLongId());
+                        throw new NArtifactNotFoundException(id.longId());
                     }
                     a = a.builder().setFaceDescriptor().build();
                     d = xrepo.fetchDescriptorImpl(a, getFetchMode());
                 }
             }
             if (d == null) {
-                throw new NArtifactNotFoundException(id.getLongId());
+                throw new NArtifactNotFoundException(id.longId());
             }
-            NLogUtils.traceMessage(_LOG(), Level.FINER, getRepo().getName(), getFetchMode(), id.getLongId(), NMsgIntent.SUCCESS, "fetch descriptor", startTime, null);
+            NLogUtils.traceMessage(_LOG(), Level.FINER, getRepo().getName(), getFetchMode(), id.longId(), NMsgIntent.SUCCESS, "fetch descriptor", startTime, null);
             result = d;
         } catch (Exception ex) {
             if (!CoreNUtils.isUnsupportedFetchModeException(ex)) {
-                NLogUtils.traceMessage(_LOG(), Level.FINEST, getRepo().getName(), getFetchMode(), id.getLongId(), NMsgIntent.FAIL, "fetch descriptor", startTime, CoreStringUtils.exceptionToMessage(ex));
+                NLogUtils.traceMessage(_LOG(), Level.FINEST, getRepo().getName(), getFetchMode(), id.longId(), NMsgIntent.FAIL, "fetch descriptor", startTime, CoreStringUtils.exceptionToMessage(ex));
             }
             throw ex;
         }

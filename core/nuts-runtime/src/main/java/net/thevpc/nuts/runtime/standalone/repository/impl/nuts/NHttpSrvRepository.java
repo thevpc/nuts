@@ -108,7 +108,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         NWebCli nWebCli = NWebCli.of();
         nWebCli.POST()
                 .uri(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart()))
-                .addPart("descriptor-hash", NDigest.of().sha1().setSource(desc).computeString())
+                .addPart("descriptor-hash", NDigest.of().sha1().source(desc).computeString())
                 .addPart("content-hash", NDigestUtils.evalSHA1Hex(content))
                 .addPart("force", NDigestUtils.evalSHA1Hex(content))
                 .addPart().setName("descriptor").setFileName("Project.nuts").setBody(
@@ -124,8 +124,8 @@ public class NHttpSrvRepository extends NCachedRepository {
             throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
         boolean transitive = session.isTransitive();
-        session.getTerminal().printProgress(NMsg.ofC("loading descriptor for %s", id.getLongId()));
-        try (InputStream stream = NPath.of(getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).getInputStream()) {
+        session.getTerminal().printProgress(NMsg.ofC("loading descriptor for %s", id.longId()));
+        try (InputStream stream = NPath.of(getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).inputStream()) {
             NDescriptor descriptor = NDescriptorParser.of().parse(stream).get();
             if (descriptor != null) {
                 String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
@@ -148,14 +148,14 @@ public class NHttpSrvRepository extends NCachedRepository {
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         try {
-            session.getTerminal().printProgress(NMsg.ofC("search version for %s", id.getLongId()));
-            ret = NPath.of(getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).getInputStream();
+            session.getTerminal().printProgress(NMsg.ofC("search version for %s", id.longId()));
+            ret = NPath.of(getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).inputStream();
         } catch (UncheckedIOException | NIOException e) {
             return NIterator.ofEmpty();
         }
         NIterator<NId> it = new NamedNIdFromStreamIterator(ret);
         NDefinitionFilter filter2 = NDefinitionFilters.of().nonnull(idFilter).and(
-                NDefinitionFilters.of().byName(id.getShortName())
+                NDefinitionFilters.of().byName(id.shortName())
         );
         if (filter2 != null) {
             it = NIteratorBuilder.of(it).filter(NDefinitionFilterUtils.toIdPredicate(filter2)).iterator();
@@ -185,7 +185,7 @@ public class NHttpSrvRepository extends NCachedRepository {
                         .addPart("js").setFileName("search.js").setBody(
                                 NInputSource.of(js.getBytes())).end()
                         .run()
-                        .getContent().getInputStream();
+                        .getContent().inputStream();
                 return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(NDefinitionFilterUtils.toIdPredicate(filter)).iterator();
             }
         } else {
@@ -197,7 +197,7 @@ public class NHttpSrvRepository extends NCachedRepository {
                     .addPart("pattern", ("*"))
                     .addPart("transitive", String.valueOf(transitive))
                     .run()
-                    .getContent().getInputStream();
+                    .getContent().inputStream();
         }
         if (filter == null) {
             return new NamedNIdFromStreamIterator(ret);
@@ -242,7 +242,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
             String lhash = NDigestUtils.evalSHA1Hex(localPath);
             if (rhash.equalsIgnoreCase(lhash)) {
-                return localPath.setUserCache(false);
+                return localPath.userCache(false);
             }
         } catch (UncheckedIOException | NIOException ex) {
             throw new NArtifactNotFoundException(id, ex);
@@ -254,7 +254,7 @@ public class NHttpSrvRepository extends NCachedRepository {
     private String httpGetString(String url) {
         LOG().log(NMsg.ofJ("get URL{0}", url)
                 .withLevel(Level.FINEST).withIntent(NMsgIntent.START));
-        return NIOUtils.loadString(NPath.of(url).getInputStream(), true);
+        return NIOUtils.loadString(NPath.of(url).inputStream(), true);
     }
 
     @Override

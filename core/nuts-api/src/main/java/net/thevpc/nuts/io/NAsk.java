@@ -126,11 +126,11 @@ public interface NAsk<T> extends NCmdLineConfigurable {
     <K extends Enum> NAsk<K> forEnum(Class<K> enumType, NMsg msg);
 
 
-    NMsg getHintMessage();
+    NMsg hintMessage();
 
-    NAsk<T> setHintMessage(NMsg message);
+    NAsk<T> hintMessage(NMsg message);
 
-    NMsg getMessage();
+    NMsg message();
 
     /**
      * set message
@@ -139,35 +139,35 @@ public interface NAsk<T> extends NCmdLineConfigurable {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NAsk<T> setMessage(NMsg message);
+    NAsk<T> message(NMsg message);
 
-    NMsg getCancelMessage();
+    NMsg cancelMessage();
 
-    NAsk<T> setCancelMessage(NMsg message);
+    NAsk<T> cancelMessage(NMsg message);
 
-    List<Object> getAcceptedValues();
+    List<Object> acceptedValues();
 
-    NAsk<T> setAcceptedValues(List<Object> acceptedValues);
+    NAsk<T> acceptedValues(List<Object> acceptedValues);
 
-    T getDefaultValue();
+    T defaultValue();
 
-    NAsk<T> setDefaultValue(T defaultValue);
+    NAsk<T> defaultValue(T defaultValue);
 
-    Class<T> getValueType();
+    Class<T> valueType();
 
-    NAsk<T> setValueType(Class<T> valueType);
+    NAsk<T> valueType(Class<T> valueType);
 
-    NAskFormat<T> getFormat();
+    NAskFormat<T> format();
 
-    NAsk<T> setFormat(NAskFormat<T> format);
+    NAsk<T> format(NAskFormat<T> format);
 
-    NAskParser<T> getParser();
+    NAskParser<T> parser();
 
-    NAsk<T> setParser(NAskParser<T> parser);
+    NAsk<T> sparser(NAskParser<T> parser);
 
-    NAskValidator<T> getValidator();
+    NAskValidator<T> validator();
 
-    NAsk<T> setValidator(NAskValidator<T> validator);
+    NAsk<T> validator(NAskValidator<T> validator);
 
     NAsk<T> run();
 
@@ -177,9 +177,9 @@ public interface NAsk<T> extends NCmdLineConfigurable {
      *
      * @return true or false or null
      */
-    Boolean getBooleanValue();
+    Boolean booleanValue();
 
-    T getValue();
+    T value();
 
     /**
      * configure the current command with the given arguments. This is an
@@ -192,7 +192,7 @@ public interface NAsk<T> extends NCmdLineConfigurable {
     @Override
     NAsk<T> configure(boolean skipUnsupported, String... args);
 
-    String getRememberMeKey();
+    String rememberMeKey();
 
-    NAsk<T> setRememberMeKey(String rememberMeKey);
+    NAsk<T> rememberMeKey(String rememberMeKey);
 }

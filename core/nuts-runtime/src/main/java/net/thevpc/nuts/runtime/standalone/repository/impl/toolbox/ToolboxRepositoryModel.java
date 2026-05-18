@@ -46,14 +46,14 @@ public class ToolboxRepositoryModel implements NRepositoryModel {
     }
 
     private ToolboxRepoHelper findByShortId(NId id) {
-        NId shortId = id.getShortId();
-        ToolboxRepoHelper old = mapByShortId.get(id.getShortName());
+        NId shortId = id.shortId();
+        ToolboxRepoHelper old = mapByShortId.get(id.shortName());
         if (old != null) {
             return old;
         }
         for (ToolboxRepoHelper h : map) {
             if (h.acceptId(shortId)) {
-                mapByShortId.put(id.getShortName(), h);
+                mapByShortId.put(id.shortName(), h);
                 return h;
             }
         }

@@ -79,7 +79,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
     }
 
     public String getIdExtension(NId id) {
-        Map<String, String> q = id.getProperties();
+        Map<String, String> q = id.properties();
         String f = NStringUtils.trim(q.get(NConstants.IdProperties.FACE));
         switch (f) {
             case NConstants.QueryFaces.DESCRIPTOR: {
@@ -120,7 +120,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                 try {
                     stream = getStream(idDesc, "artifact descriptor", "retrieve");
                     bytes = NIOUtils.loadByteArray(stream, true);
-                    name = NInputSource.of(stream).getMetaData().getName().orElse("no-name");
+                    name = NInputSource.of(stream).metaData().name().orElse("no-name");
                     nutsDescriptor = NDescriptorParser.of()
                             .setDescriptorStyle(NDescriptorStyle.NUTS)
                             .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "application/json", StandardCharsets.UTF_8.name(), "nuts.json")).get();
@@ -163,9 +163,9 @@ public class NFolderRepository extends NFolderRepositoryBase {
                 byte[] bytes = null;
                 String name = null;
                 try {
-                    stream = openStream(id, pomURL, id, "artifact descriptor", NMsg.ofC("retrieve %s",id.getLongId()));
+                    stream = openStream(id, pomURL, id, "artifact descriptor", NMsg.ofC("retrieve %s",id.longId()));
                     bytes = NIOUtils.loadByteArray(stream, true);
-                    name = NInputSource.of(stream).getMetaData().getName().orElse("no-name");
+                    name = NInputSource.of(stream).metaData().name().orElse("no-name");
                     nutsDescriptor = NDescriptorParser.of()
                             .setDescriptorStyle(NDescriptorStyle.NUTS)
                             .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml")).get();

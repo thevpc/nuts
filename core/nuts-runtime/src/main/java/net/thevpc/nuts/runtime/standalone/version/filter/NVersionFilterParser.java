@@ -37,7 +37,7 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
         }
         NVersion e = NVersion.get(s).orNull();
         if (e != null) {
-            switch (e.getValue()) {
+            switch (e.value()) {
                 case "true":
                 case "false":
                     return null;

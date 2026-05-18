@@ -52,7 +52,7 @@ public class NDefinitionFilterDesktopEnvironment extends AbstractDefinitionFilte
 
     @Override
     public boolean acceptDefinition(NDefinition descriptor) {
-        return CoreFilterUtils.matchesDesktopEnvironment(desktopEnvironment, descriptor.getDescriptor().getCondition().getDesktopEnvironment());
+        return CoreFilterUtils.matchesDesktopEnvironment(desktopEnvironment, descriptor.descriptor().getCondition().getDesktopEnvironment());
     }
 
     /**

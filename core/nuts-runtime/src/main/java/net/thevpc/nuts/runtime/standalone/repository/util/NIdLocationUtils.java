@@ -17,7 +17,7 @@ import java.util.List;
 public class NIdLocationUtils {
     public static NPath fetch(NId id, List<NIdLocation> locations, AbstractNRepository repository) {
         for (NIdLocation location : locations) {
-            if (CoreFilterUtils.acceptClassifier(location, id.getClassifier())) {
+            if (CoreFilterUtils.acceptClassifier(location, id.classifier())) {
                 try {
                     NPath locationPath = NPath.of(location.getUrl());
                     if(locationPath.isLocal()){

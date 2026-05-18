@@ -800,7 +800,7 @@ public abstract class SshConnectionBase implements SshConnection {
                         if (!NBlankable.isBlank(line)) {
                             NPathInfo nPathInfo = parseStatLine(line);
                             if(nPathInfo.isSymbolicLink()){
-                                lazy.put(nPathInfo.getPath(), nPathInfo);
+                                lazy.put(nPathInfo.path(), nPathInfo);
                             }else {
                                 found.add(nPathInfo);
                             }
@@ -818,11 +818,11 @@ public abstract class SshConnectionBase implements SshConnection {
                             for (String line : NStringUtils.splitLines(stat.outString())) {
                                 if (!NBlankable.isBlank(line)) {
                                     NPathInfo nPathInfo = parseStatLine(line);
-                                    NPathInfo o = lazy.get(nPathInfo.getPath());
+                                    NPathInfo o = lazy.get(nPathInfo.path());
                                     found.add(
                                             new  DefaultNPathInfo(
-                                                    o.getName(),
-                                                    o.getPath(), o.getType(), nPathInfo.getType(), o.getTargetPath(), o.getContentLength(), o.isSymbolicLink(), o.getLastModifiedInstant(), o.getLastAccessInstant(), o.getCreationInstant(), o.getPermissions(), o.getOwner(), o.getGroup()
+                                                    o.name(),
+                                                    o.path(), o.type(), nPathInfo.type(), o.targetPath(), o.contentLength(), o.isSymbolicLink(), o.lastModifiedInstant(), o.lastAccessInstant(), o.creationInstant(), o.permissions(), o.owner(), o.group()
                                             )
                                     );
                                 }
@@ -1056,8 +1056,8 @@ public abstract class SshConnectionBase implements SshConnection {
                     if(o.isSymbolicLink()){
                         NPathInfo line2 = parseStatLine(lines.get(1));
                         return new  DefaultNPathInfo(
-                                o.getName(),
-                                o.getPath(), o.getType(), line2.getTargetType(), o.getTargetPath(), o.getContentLength(), o.isSymbolicLink(), o.getLastModifiedInstant(), o.getCreationInstant(), o.getLastAccessInstant(), o.getPermissions(), o.getOwner(), o.getGroup()
+                                o.name(),
+                                o.path(), o.type(), line2.targetType(), o.targetPath(), o.contentLength(), o.isSymbolicLink(), o.lastModifiedInstant(), o.creationInstant(), o.lastAccessInstant(), o.permissions(), o.owner(), o.group()
                         );
                     }
                     return o;

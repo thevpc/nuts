@@ -86,7 +86,7 @@ public class VersionTest {
 
     @Test
     public void test9() {
-        String value = NVersion.BLANK.inc(-1).getValue();
+        String value = NVersion.BLANK.inc(-1).value();
         TestUtils.println(value);
         Assertions.assertEquals("1", value);
     }
@@ -305,8 +305,8 @@ public class VersionTest {
 
     @Test
     public void test25() {
-        Assertions.assertEquals("1.0.0", NVersion.of("1.0.0-beta").toCanonical().getValue());
-        Assertions.assertEquals("1.2.3", NVersion.of("1.2.3.SNAPSHOT").toCanonical().getValue());
+        Assertions.assertEquals("1.0.0", NVersion.of("1.0.0-beta").toCanonical().value());
+        Assertions.assertEquals("1.2.3", NVersion.of("1.2.3.SNAPSHOT").toCanonical().value());
     }
 
     @Test

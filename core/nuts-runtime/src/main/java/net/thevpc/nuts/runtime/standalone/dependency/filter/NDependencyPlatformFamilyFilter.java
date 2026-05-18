@@ -34,7 +34,7 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
         this.accepted = EnumSet.noneOf(NExecutionEngineFamily.class);
         for (NId e : NId.getList(accepted).get()) {
             if (!e.isBlank()) {
-                this.accepted.add(NExecutionEngineFamily.parse(e.getArtifactId()).orNull());
+                this.accepted.add(NExecutionEngineFamily.parse(e.artifactId()).orNull());
             }
         }
     }

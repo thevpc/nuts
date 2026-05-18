@@ -22,7 +22,7 @@ public class NDependencyInfo {
     }
 
     public static NId normalizedId(NId id) {
-        return id.getShortId();
+        return id.shortId();
     }
 
     public static NId normalizedId(NDependency id) {

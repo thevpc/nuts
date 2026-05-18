@@ -98,7 +98,7 @@ public class NWebResponseImpl implements NWebResponse {
         if (content1 == null) {
             return null;
         }
-        try (InputStream in = content1.getInputStream()) {
+        try (InputStream in = content1.inputStream()) {
             return NElementReader.ofJson().read(in, clz);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
@@ -114,7 +114,7 @@ public class NWebResponseImpl implements NWebResponse {
         if (content1 == null) {
             return null;
         }
-        try (InputStream in = content1.getInputStream()) {
+        try (InputStream in = content1.inputStream()) {
             return NElementReader.ofJson().read(in, clz);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

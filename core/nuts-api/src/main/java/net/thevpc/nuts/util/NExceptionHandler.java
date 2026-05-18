@@ -247,7 +247,7 @@ public class NExceptionHandler {
                     } else {
                         if (messageFormatted != null) {
                             session.eout().add(NElement.ofObjectBuilder()
-                                    .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().get()))
+                                    .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().id().get()))
                                     .set("error", NText.of(messageFormatted).filteredText())
                                     .build()
                             );
@@ -264,7 +264,7 @@ public class NExceptionHandler {
                             sessionOut.flush();
                         } else {
                             session.eout().add(NElement.ofObjectBuilder()
-                                    .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().get()))
+                                    .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().id().get()))
                                     .set("error", messageString)
                                     .build());
                             if (stacktrace) {

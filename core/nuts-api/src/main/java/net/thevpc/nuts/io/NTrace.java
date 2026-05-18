@@ -225,7 +225,7 @@ public class NTrace {
     }
 
     public static NTerminalMode getTerminalMode() {
-        return out().getTerminalMode();
+        return out().terminalMode();
     }
 
     public static boolean isAutoFlash() {
@@ -257,7 +257,7 @@ public class NTrace {
     }
 
     public static NSystemTerminalBase terminal() {
-        return out().getTerminal();
+        return out().terminal();
     }
 
     public static NPrintStream out() {

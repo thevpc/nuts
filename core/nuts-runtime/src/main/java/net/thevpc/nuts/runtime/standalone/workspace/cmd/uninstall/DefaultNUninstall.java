@@ -58,15 +58,15 @@ public class DefaultNUninstall extends AbstractNUninstall {
                     .getResultDefinitions()
                     .distinct()
                     .toList();
-            resultDefinitions.removeIf(it -> !it.getInstallInformation().get().isInstalledOrRequired());
+            resultDefinitions.removeIf(it -> !it.installInformation().get().isInstalledOrRequired());
             if (resultDefinitions.isEmpty()) {
                 throw new NIllegalArgumentException(NMsg.ofC("not installed : %s", id));
             }
             for (NDefinition resultDefinition : resultDefinitions) {
-                InstallIdInfo uu = list.addAsUninstalled(resultDefinition.getId(), new InstallFlags());
-                uu.cacheItem = h.getCache(resultDefinition.getId());
+                InstallIdInfo uu = list.addAsUninstalled(resultDefinition.id(), new InstallFlags());
+                uu.cacheItem = h.getCache(resultDefinition.id());
                 uu.cacheItem.revalidate(resultDefinition);
-                installed.add(resultDefinition.getId());
+                installed.add(resultDefinition.id());
                 infos.add(uu);
             }
         }
@@ -74,13 +74,13 @@ public class DefaultNUninstall extends AbstractNUninstall {
         printList(mout, "installed", "uninstalled", installed);
         mout.println("should we proceed uninstalling ?");
         NMsg cancelMessage = NMsg.ofC("uninstall cancelled : %s", installed.stream()
-                .map(NId::getFullName)
+                .map(NId::fullName)
                 .collect(Collectors.joining(", ")));
         if (!installed.isEmpty() && !NIn.ask()
                 .forBoolean(NMsg.ofNtf(mout.toString()))
-                .setDefaultValue(true)
-                .setCancelMessage(cancelMessage)
-                .getBooleanValue()) {
+                .defaultValue(true)
+                .cancelMessage(cancelMessage)
+                .booleanValue()) {
             throw new NCancelException(cancelMessage);
         }
         for (InstallIdInfo def : infos) {

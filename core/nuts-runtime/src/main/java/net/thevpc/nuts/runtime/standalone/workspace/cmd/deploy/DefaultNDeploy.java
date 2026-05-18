@@ -124,8 +124,8 @@ public class DefaultNDeploy extends AbstractNDeploy {
                 NDefinition fetched = NFetch.of(nutsId)
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDefinition();
-                if (fetched.getContent().isPresent()) {
-                    runDeployFile(fetched.getContent().get(), fetched.getDescriptor(), null);
+                if (fetched.content().isPresent()) {
+                    runDeployFile(fetched.content().get(), fetched.descriptor(), null);
                 }
             }
         }
@@ -174,7 +174,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
             }
             String name = NWorkspace.of().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
             tempFile = NPath.ofTempFile(name).toPath().get();
-            NCp.of().from(contentSource.getInputStream()).to(tempFile).addOptions(NPathOption.SAFE).run();
+            NCp.of().from(contentSource.inputStream()).to(tempFile).addOptions(NPathOption.SAFE).run();
             contentFile2 = tempFile;
 
             Path contentFile0 = contentFile2;
@@ -227,8 +227,8 @@ public class DefaultNDeploy extends AbstractNDeploy {
                 }
                 //remove workspace
                 descriptor = descriptor.builder().setId(descriptor.getId().builder().setRepository(null).build()).build();
-                if (NStringUtils.trim(descriptor.getId().getVersion().getValue()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                    throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", descriptor.getId().getVersion()));
+                if (NStringUtils.trim(descriptor.getId().version().value()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
+                    throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", descriptor.getId().version()));
                 }
 
                 NId effId = dws.resolveEffectiveId(descriptor);
@@ -292,7 +292,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
         NDescriptor mdescriptor = null;
         if (descriptor instanceof NDescriptor) {
             mdescriptor = (NDescriptor) descriptor;
-            if (descSHA1 != null && !NDigest.of().sha1().setSource(mdescriptor).computeString().equalsIgnoreCase(descSHA1)) {
+            if (descSHA1 != null && !NDigest.of().sha1().source(mdescriptor).computeString().equalsIgnoreCase(descSHA1)) {
                 throw new NIllegalArgumentException(NMsg.ofPlain("invalid content Hash"));
             }
             return mdescriptor;
@@ -303,15 +303,15 @@ public class DefaultNDeploy extends AbstractNDeploy {
                 NInputSource d = NInputSource.ofMultiRead(nutsStreamOrPath);
                 try {
                     if (descSHA1 != null) {
-                        try (InputStream is = d.getInputStream()) {
-                            if (!NDigest.of().sha1().setSource(is).computeString().equalsIgnoreCase(descSHA1)) {
+                        try (InputStream is = d.inputStream()) {
+                            if (!NDigest.of().sha1().source(is).computeString().equalsIgnoreCase(descSHA1)) {
                                 throw new NIllegalArgumentException(NMsg.ofPlain("invalid content Hash"));
                             }
                         } catch (IOException ex) {
                             throw new NIOException(ex);
                         }
                     }
-                    try (InputStream is = d.getInputStream()) {
+                    try (InputStream is = d.inputStream()) {
                         return NDescriptorParser.of().parse(is).get();
                     } catch (IOException ex) {
                         throw new NIOException(ex);

@@ -102,9 +102,9 @@ public class NArtifactNotFoundException extends NException {
     private static NMsg prepareMessage(NId id, NIdInvalidDependency[] dependencies, NIdInvalidLocation[] locations, Throwable cause) {
         String dependenciesToString = dependenciesToString(dependencies);
         if(cause==null){
-            return NMsg.ofC("artifact not found %s%s", (id == null ? "<null>" : id.getLongId()), dependenciesToString);
+            return NMsg.ofC("artifact not found %s%s", (id == null ? "<null>" : id.longId()), dependenciesToString);
         }
-        return NMsg.ofC("artifact not found %s : %s%s", (id == null ? "<null>" : id.getLongId()), NExceptions.getErrorMessage(cause), dependenciesToString);
+        return NMsg.ofC("artifact not found %s : %s%s", (id == null ? "<null>" : id.longId()), NExceptions.getErrorMessage(cause), dependenciesToString);
     }
 
     private static NMsg prepareMessage(NId id, NMsg message, Throwable cause) {
@@ -112,9 +112,9 @@ public class NArtifactNotFoundException extends NException {
             return message;
         }
         if(cause==null){
-            return NMsg.ofC("artifact not found %s", (id == null ? "<null>" : id.getLongId()));
+            return NMsg.ofC("artifact not found %s", (id == null ? "<null>" : id.longId()));
         }
-        return NMsg.ofC("artifact not found %s : %s", (id == null ? "<null>" : id.getLongId()), NExceptions.getErrorMessage(cause));
+        return NMsg.ofC("artifact not found %s : %s", (id == null ? "<null>" : id.longId()), NExceptions.getErrorMessage(cause));
     }
 
     /**

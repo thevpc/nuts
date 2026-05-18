@@ -18,13 +18,13 @@ public class NSessionUtils {
     public static NSession configureCopyOfSession(NSession session, NExecInput in, NExecOutput out, NExecOutput err) {
         boolean copied = false;
         if (out != null) {
-            switch (out.getType()) {
+            switch (out.type()) {
                 case NULL: {
                     if (!copied) {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setOut(NPrintStream.NULL);
+                    session.getTerminal().out(NPrintStream.NULL);
                     break;
                 }
                 case PATH: {
@@ -32,8 +32,8 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setOut(NPrintStream.of(out.getPath().getOutputStream(
-                            out.getOptions()
+                    session.getTerminal().out(NPrintStream.of(out.path().getOutputStream(
+                            out.options()
                     )));
                     break;
                 }
@@ -42,7 +42,7 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setOut(NPrintStream.of(out.getStream()));
+                    session.getTerminal().out(NPrintStream.of(out.outputStream()));
                     break;
                 }
                 case GRAB_STREAM: {
@@ -51,8 +51,8 @@ public class NSessionUtils {
                         session = session.copy();
                     }
                     NMemoryPrintStream ps = NMemoryPrintStream.of();
-                    out.setResult(ps.asInputSource());
-                    session.getTerminal().setOut(ps);
+                    out.result(ps.asInputSource());
+                    session.getTerminal().out(ps);
                     break;
                 }
                 case GRAB_FILE: {
@@ -61,8 +61,8 @@ public class NSessionUtils {
                         session = session.copy();
                     }
                     NPath nPath = NPath.ofTempFile("grabbed-file");
-                    session.getTerminal().setOut(NPrintStream.of(nPath));
-                    out.setResult(nPath.setUserTemporary(true));
+                    session.getTerminal().out(NPrintStream.of(nPath));
+                    out.result(nPath.userTemporary(true));
                     break;
                 }
                 case PIPE:
@@ -76,13 +76,13 @@ public class NSessionUtils {
             }
         }
         if (err != null) {
-            switch (err.getType()) {
+            switch (err.type()) {
                 case NULL: {
                     if (!copied) {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setErr(NPrintStream.NULL);
+                    session.getTerminal().err(NPrintStream.NULL);
                     break;
                 }
                 case PATH: {
@@ -90,8 +90,8 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setErr(NPrintStream.of(err.getPath().getOutputStream(
-                            err.getOptions()
+                    session.getTerminal().err(NPrintStream.of(err.path().getOutputStream(
+                            err.options()
                     )));
                     break;
                 }
@@ -100,7 +100,7 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setErr(NPrintStream.of(err.getStream()));
+                    session.getTerminal().err(NPrintStream.of(err.outputStream()));
                     break;
                 }
                 case GRAB_STREAM: {
@@ -108,7 +108,7 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setErr(NMemoryPrintStream.of());
+                    session.getTerminal().err(NMemoryPrintStream.of());
                     break;
                 }
                 case GRAB_FILE: {
@@ -117,8 +117,8 @@ public class NSessionUtils {
                         session = session.copy();
                     }
                     NPath nPath = NPath.ofTempFile("grabbed-file");
-                    session.getTerminal().setErr(NPrintStream.of(nPath));
-                    err.setResult(nPath.setUserTemporary(true));
+                    session.getTerminal().err(NPrintStream.of(nPath));
+                    err.result(nPath.userTemporary(true));
                     break;
                 }
                 case PIPE:
@@ -131,19 +131,19 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setErr(session.getTerminal().getOut());
+                    session.getTerminal().err(session.getTerminal().out());
                     break;
                 }
             }
         }
         if (in != null) {
-            switch (in.getType()) {
+            switch (in.type()) {
                 case NULL: {
                     if (!copied) {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setIn(NIO.ofNullRawInputStream());
+                    session.getTerminal().in(NIO.ofNullRawInputStream());
                     break;
                 }
                 case PATH: {
@@ -151,7 +151,7 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setIn(in.getPath().getInputStream(in.getOptions()));
+                    session.getTerminal().in(in.path().getInputStream(in.options()));
                     break;
                 }
                 case STREAM: {
@@ -159,7 +159,7 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setIn(in.getStream());
+                    session.getTerminal().in(in.inputStream());
                     break;
                 }
                 case GRAB_STREAM:

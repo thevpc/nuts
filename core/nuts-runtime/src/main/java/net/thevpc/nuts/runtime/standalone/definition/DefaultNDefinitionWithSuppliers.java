@@ -81,17 +81,17 @@ public class DefaultNDefinitionWithSuppliers implements NDefinition {
         this.effectiveFlags = NOnceValue.ofSupplier(effectiveFlags);
     }
 
-    public NDependency getDependency() {
+    public NDependency dependency() {
         return dependency.get();
     }
 
     @Override
-    public String getRepositoryUuid() {
+    public String repositoryUuid() {
         return repositoryUuid.get();
     }
 
     @Override
-    public String getRepositoryName() {
+    public String repositoryName() {
         return repositoryName.get();
     }
 
@@ -101,7 +101,7 @@ public class DefaultNDefinitionWithSuppliers implements NDefinition {
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id.get();
     }
 
@@ -110,7 +110,7 @@ public class DefaultNDefinitionWithSuppliers implements NDefinition {
         return c != null && c.isUserTemporary();
     }
 
-    public NDescriptor getDescriptor() {
+    public NDescriptor descriptor() {
         return descriptor.get();
     }
 
@@ -124,28 +124,28 @@ public class DefaultNDefinitionWithSuppliers implements NDefinition {
 
 
     @Override
-    public NOptional<NPath> getContent() {
-        return NOptional.of(content.get(), () -> NMsg.ofC("content not found for id %s", getId()));
+    public NOptional<NPath> content() {
+        return NOptional.of(content.get(), () -> NMsg.ofC("content not found for id %s", id()));
     }
 
     @Override
-    public NOptional<NDescriptor> getEffectiveDescriptor() {
-        return NOptional.of(effectiveDescriptor.get(), () -> NMsg.ofC("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.", getId()));
+    public NOptional<NDescriptor> effectiveDescriptor() {
+        return NOptional.of(effectiveDescriptor.get(), () -> NMsg.ofC("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.", id()));
     }
 
     @Override
-    public NOptional<NInstallInformation> getInstallInformation() {
-        return NOptional.of(installInformation.get(), () -> NMsg.ofC("unable to get install information for id %s.", getId()));
+    public NOptional<NInstallInformation> installInformation() {
+        return NOptional.of(installInformation.get(), () -> NMsg.ofC("unable to get install information for id %s.", id()));
     }
 
     @Override
-    public NOptional<NDependencies> getDependencies() {
-        return NOptional.of(dependencies.get(), () -> NMsg.ofC("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.", getId()));
+    public NOptional<NDependencies> dependencies() {
+        return NOptional.of(dependencies.get(), () -> NMsg.ofC("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.", id()));
     }
 
     @Override
-    public NOptional<Set<NDescriptorFlag>> getEffectiveFlags() {
-        return NOptional.of(effectiveFlags.get(), () -> NMsg.ofC("unable to get effectiveFlags for id %s.", getId()));
+    public NOptional<Set<NDescriptorFlag>> effectiveFlags() {
+        return NOptional.of(effectiveFlags.get(), () -> NMsg.ofC("unable to get effectiveFlags for id %s.", id()));
     }
 
     @Override
@@ -156,8 +156,8 @@ public class DefaultNDefinitionWithSuppliers implements NDefinition {
         if (!(n2 instanceof DefaultNDefinitionWithSuppliers)) {
             return -1;
         }
-        NId o1 = getId();
-        NId o2 = n2.getId();
+        NId o1 = id();
+        NId o2 = n2.id();
         if (o1 == null || o2 == null) {
             if (o1 == o2) {
                 return 0;
@@ -197,7 +197,7 @@ public class DefaultNDefinitionWithSuppliers implements NDefinition {
 
 
     @Override
-    public NId getApiId() {
+    public NId apiId() {
         return apiId.get();
     }
 

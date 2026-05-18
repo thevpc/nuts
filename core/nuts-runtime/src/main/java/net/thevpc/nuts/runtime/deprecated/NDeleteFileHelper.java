@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.deprecated;
 import net.thevpc.nuts.core.*;
 
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.text.NContentType;
@@ -137,7 +136,7 @@ public class NDeleteFileHelper {
                             .forString(
                                     NMsg.ofC(
                                             "do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory
-                                    )).getValue();
+                                    )).value();
                 } else {
                     if (bOptions.getBot().orElse(false)) {
                         if (bOptions.getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES) {

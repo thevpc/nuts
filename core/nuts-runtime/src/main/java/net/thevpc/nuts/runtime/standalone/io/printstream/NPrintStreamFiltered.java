@@ -12,7 +12,7 @@ public class NPrintStreamFiltered extends NPrintStreamRendered {
     public NPrintStreamFiltered(NPrintStreamBase base, Bindings bindings) {
         super(base, NTerminalMode.FILTERED,
                 bindings);
-        getMetaData().setMessage(NMsg.ofStyledPath( "<filtered-stream>"));
+        metaData().message(NMsg.ofStyledPath( "<filtered-stream>"));
     }
 
 
@@ -23,7 +23,7 @@ public class NPrintStreamFiltered extends NPrintStreamRendered {
                 return new NPrintStreamFormatted(base, bindings);
             }
         }
-        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", terminalMode(), other));
     }
 
     @Override
@@ -33,7 +33,7 @@ public class NPrintStreamFiltered extends NPrintStreamRendered {
     }
 
     @Override
-    public OutputStream getOutputStream() {
+    public OutputStream outputStream() {
         return asOutputStream();
     }
 }

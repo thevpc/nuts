@@ -66,22 +66,22 @@ public final class JavaExecutorOptions {
     public JavaExecutorOptions(NDefinition def, boolean tempId, List<String> args,
                                List<String> executorOptions, NPath dir) {
         showCommand = CoreNUtils.isShowCommand();
-        NId id = def.getId();
+        NId id = def.id();
         NDescriptor descriptor = null;
         if (tempId) {
-            descriptor = def.getDescriptor();
+            descriptor = def.descriptor();
 //            if (!CoreNutsUtils.isEffectiveId(id)) {
 //                throw new NutsException(session, NMsg.ofC("id should be effective : %s", id));
 //            }
             id = descriptor.getId();
         } else {
-            descriptor = def.getEffectiveDescriptor().orElseGet(() -> NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(),
+            descriptor = def.effectiveDescriptor().orElseGet(() -> NWorkspace.of().resolveEffectiveDescriptor(def.descriptor(),
                     new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(false)));
             if (!CoreNUtils.isEffectiveId(id)) {
                 id = descriptor.getId();
             }
         }
-        Path path = def.getContent().flatMap(NPath::toPath).orNull();
+        Path path = def.content().flatMap(NPath::toPath).orNull();
         this.dir = dir;
         this.execArgs = executorOptions;
 //        List<String> classPath0 = new ArrayList<>();
@@ -273,8 +273,8 @@ public final class JavaExecutorOptions {
                 NRepositoryFilters nRepositoryFilters = NRepositoryFilters.of();
                 for (NDefinition nDefinition : nDefinitions) {
                     NClassLoaderNode nn = null;
-                    if (nDefinition.getContent().isPresent()) {
-                        if (id.getLongName().equals(nDefinition.getId().getLongName())) {
+                    if (nDefinition.content().isPresent()) {
+                        if (id.longName().equals(nDefinition.id().longName())) {
                             baseDetected = true;
                             if (!isExcludeBase()) {
                                 nn = (NClassLoaderUtils.definitionToClassLoaderNodeSafer(nDefinition,
@@ -344,9 +344,9 @@ public final class JavaExecutorOptions {
                             NId b1 = a1.id;
                             NId b2 = a2.id;
                             // give precedence to classifiers
-                            String c1 = b1.getClassifier();
-                            String c2 = b2.getClassifier();
-                            if (b1.builder().setClassifier(null).build().getShortName().equals(b2.builder().setClassifier(null).build().getShortName())) {
+                            String c1 = b1.classifier();
+                            String c2 = b2.classifier();
+                            if (b1.builder().setClassifier(null).build().shortName().equals(b2.builder().setClassifier(null).build().shortName())) {
                                 if (NBlankable.isBlank(c1)) {
                                     return 1;
                                 }
@@ -417,7 +417,7 @@ public final class JavaExecutorOptions {
 
                         mainClass = NIn.ask()
                                 .forString(NMsg.ofNtf(msgString))
-                                .setValidator((value, question) -> {
+                                .validator((value, question) -> {
                                     Integer anyInt = NLiteral.of(value).asInt().orNull();
                                     if (anyInt != null) {
                                         int i = anyInt;
@@ -432,7 +432,7 @@ public final class JavaExecutorOptions {
                                         }
                                     }
                                     throw new NValidationException();
-                                }).getValue();
+                                }).value();
                         break;
                     }
                 }
@@ -647,9 +647,9 @@ public final class JavaExecutorOptions {
             }
         }
         if (explicitJavaVersion == null) {
-            explicitJavaVersion = def.getDescriptor().getCondition().getPlatform().stream().map(x -> NId.get(x).get())
-                    .filter(x -> x.getShortName().equals("java"))
-                    .map(NId::getVersion)
+            explicitJavaVersion = def.descriptor().getCondition().getPlatform().stream().map(x -> NId.get(x).get())
+                    .filter(x -> x.shortName().equals("java"))
+                    .map(NId::version)
                     .min(Comparator.naturalOrder())
                     .orElse(null);
         }

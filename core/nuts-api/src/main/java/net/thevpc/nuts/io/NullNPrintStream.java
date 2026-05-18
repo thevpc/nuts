@@ -39,7 +39,7 @@ public class NullNPrintStream implements NPrintStream {
     }
 
     @Override
-    public OutputStream getOutputStream() {
+    public OutputStream outputStream() {
         return NullOutputStream.INSTANCE;
     }
 
@@ -49,7 +49,7 @@ public class NullNPrintStream implements NPrintStream {
 
 
     @Override
-    public NContentMetadata getMetaData() {
+    public NContentMetadata metaData() {
         return md;
     }
 
@@ -229,7 +229,7 @@ public class NullNPrintStream implements NPrintStream {
     }
 
     @Override
-    public NTerminalMode getTerminalMode() {
+    public NTerminalMode terminalMode() {
         return NTerminalMode.INHERITED;
     }
 
@@ -269,7 +269,7 @@ public class NullNPrintStream implements NPrintStream {
     }
 
     @Override
-    public NSystemTerminalBase getTerminal() {
+    public NSystemTerminalBase terminal() {
         throw new UnsupportedOperationException();
     }
 

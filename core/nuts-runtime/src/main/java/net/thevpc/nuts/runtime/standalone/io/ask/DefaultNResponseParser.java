@@ -24,7 +24,7 @@ public class DefaultNResponseParser<T> implements NAskParser<T> {
     public T parse(NAskParseContext<T> context) {
         Object response=context.response();
         NAsk<T> question=context.question();
-        T defaultValue=question.getDefaultValue();
+        T defaultValue=question.defaultValue();
         if (response == null || ((response instanceof String) && response.toString().length() == 0)) {
             response = defaultValue;
         }

@@ -47,7 +47,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
         if (!acceptId(id)) {
             return null;
         }
-        String r = getUrl(id.getVersion(), ".zip");
+        String r = getUrl(id.version(), ".zip");
         URL url = null;
         boolean found = false;
         try {
@@ -67,8 +67,8 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
         }
         if (found) {
             // http://tomcat.apache.org/whichversion.html
-            int i = id.getVersion().getIntAt(0).orElse(-1);
-            int j = id.getVersion().getIntAt(1).orElse(-1);
+            int i = id.version().getIntAt(0).orElse(-1);
+            int j = id.version().getIntAt(1).orElse(-1);
             String javaVersion = "";
             if (i <= 0) {
                 //
@@ -95,17 +95,17 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
             }
 
             return NDescriptorBuilder.of()
-                    .setId(id.getLongId())
+                    .setId(id.longId())
                     .setPackaging("zip")
                     .setIcons(
                             "https://upload.wikimedia.org/wikipedia/commons/f/fe/Apache_Tomcat_logo.svg",
                             "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Apache_Tomcat_logo.svg/595px-Apache_Tomcat_logo.svg.png"
                     )
                     .setInstaller(NArtifactCallBuilder.of()
-                            .setId(NId.of(NConstants.Ids.NSH))
-                            .setArguments("$nutsIdInstallScriptPath")
-                            .setScriptName("install-catalina.nsh")
-                            .setScriptContent(
+                            .id(NId.of(NConstants.Ids.NSH))
+                            .arguments("$nutsIdInstallScriptPath")
+                            .scriptName("install-catalina.nsh")
+                            .scriptContent(
                                     "unzip --skip-root \"$nutsIdContentPath\" \"$nutsIdBinPath/app\" \n" +
                                             (NEnv.of().getOsFamily().isPosix() ?
                                                     "chmod a+x $nutsIdBinPath/app/*.sh \n" : "")
@@ -113,8 +113,8 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                             .build()
                     )
                     .setExecutor(NArtifactCallBuilder.of()
-                            .setId(NId.of("exec"))
-                            .setArguments(
+                            .id(NId.of("exec"))
+                            .arguments(
                                     NEnv.of().getOsFamily().isWindow()
                                             ? "$nutsIdBinPath/app/bin/catalina.bat"
                                             : "$nutsIdBinPath/app/bin/catalina.sh"
@@ -213,7 +213,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
         if (!baseIdFilterHelper.accept(id)) {
             return null;
         }
-        String r = getUrl(id.getVersion(), ".zip");
+        String r = getUrl(id.version(), ".zip");
         NPath localPath = NPath.of(ToolboxRepositoryModel.getIdLocalFile(id.builder().setFaceContent().build(), repository));
         NCp.of().from(NPath.of(r)).to(localPath)
                 .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();

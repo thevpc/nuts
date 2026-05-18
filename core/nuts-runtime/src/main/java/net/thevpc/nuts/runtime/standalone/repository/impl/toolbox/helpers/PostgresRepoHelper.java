@@ -47,7 +47,7 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
 //            return null;
 //        }
         if (!baseIdFilterHelper.accept(id)) {
-            String r = getUrl(id.getVersion());
+            String r = getUrl(id.version());
             boolean found = false;
             URL url = null;
             try {
@@ -66,7 +66,7 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
             }
             if (found) {
                 return NDescriptorBuilder.of()
-                        .setId(id.getLongId())
+                        .setId(id.longId())
                         .setPackaging("tar.gz")
                         .setDescription("Postgresql Official Tar Gz Source")
                         .setProperty("dynamic-descriptor", "true")
@@ -137,9 +137,9 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
         if (!baseIdFilterHelper.accept(id)) {
             return null;
         }
-        String r = getUrl(id.getVersion());
+        String r = getUrl(id.version());
         //localPath = getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session);
-        NPath localPath = NApp.of().getCacheFolder().resolve("postgresql-" + id.getVersion().getValue() + ".tar.gz");
+        NPath localPath = NApp.of().cacheFolder().resolve("postgresql-" + id.version().value() + ".tar.gz");
         NCp.of().from(NPath.of(r)).to(localPath)
                 .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
         return localPath;

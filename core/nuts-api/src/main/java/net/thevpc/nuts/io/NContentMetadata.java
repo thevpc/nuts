@@ -13,29 +13,29 @@ import net.thevpc.nuts.util.NOptional;
  * @author thevpc
  */
 public interface NContentMetadata extends NBlankable {
-    NOptional<Long> getContentLength();
+    NOptional<Long> contentLength();
 
-    NOptional<NMsg> getMessage();
-
-
-    NOptional<String> getCharset();
-
-    NOptional<String> getContentType();
-
-    NOptional<String> getName();
-
-    NOptional<String> getKind();
-
-    NContentMetadata setKind(String userKind);
-
-    NContentMetadata setName(String name);
-
-    NContentMetadata setCharset(String name);
-
-    NContentMetadata setMessage(NMsg message);
+    NOptional<NMsg> message();
 
 
-    NContentMetadata setContentType(String contentType);
+    NOptional<String> charset();
 
-    NContentMetadata setContentLength(Long contentLength);
+    NOptional<String> contentType();
+
+    NOptional<String> name();
+
+    NOptional<String> kind();
+
+    NContentMetadata kind(String userKind);
+
+    NContentMetadata name(String name);
+
+    NContentMetadata charset(String name);
+
+    NContentMetadata message(NMsg message);
+
+
+    NContentMetadata contentType(String contentType);
+
+    NContentMetadata contentLength(Long contentLength);
 }

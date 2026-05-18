@@ -67,7 +67,7 @@ public class ArtifactExecutorComponent implements NExecutorComponent {
 
         List<String> app = new ArrayList<>();
         app.add(id.toString());
-        app.add(nutMainFile.getContent().map(Object::toString).get());
+        app.add(nutMainFile.content().map(Object::toString).get());
         app.addAll(appArgs);
 
 //        File directory = NutsBlankable.isBlank(dir) ? null : new File(executionContext.getWorkspace().io().expandPath(dir));

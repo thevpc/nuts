@@ -54,14 +54,14 @@ public final class NClassLoaderUtils {
 
     public static NClassLoaderNode definitionToClassLoaderNode(NDefinition def, NRepositoryFilter repositoryFilter) {
 //        def.getDependencies().get();
-        def.getContent().get();
-        def.getContent().flatMap(NPath::toURL).get();
+        def.content().get();
+        def.content().flatMap(NPath::toURL).get();
         return new NDefaultClassLoaderNode(
-                def.getId(),
-                def.getContent().flatMap(NPath::toURL).orNull(),
+                def.id(),
+                def.content().flatMap(NPath::toURL).orNull(),
                 true,
                 true,
-                def.getDependencies().get().transitiveWithSource().stream().map(x -> toClassLoaderNodeWithOptional(x, false, repositoryFilter))
+                def.dependencies().get().transitiveWithSource().stream().map(x -> toClassLoaderNodeWithOptional(x, false, repositoryFilter))
                         .filter(Objects::nonNull)
                         .toArray(NClassLoaderNode[]::new)
         );
@@ -85,7 +85,7 @@ public final class NClassLoaderUtils {
                     .setRepositoryFilter(repositoryFilter)
                     .latest(true)
                     .getResultDefinitions()
-                    .map(x->x.getContent().orNull())
+                    .map(x->x.content().orNull())
                     .filter(x->x!=null)
                     .findFirst().orNull();
             if(cc==null){
@@ -108,7 +108,7 @@ public final class NClassLoaderUtils {
         if (optional) {
             return null;
         }
-        throw new NArtifactNotFoundException(id.getLongId());
+        throw new NArtifactNotFoundException(id.longId());
     }
 
     private static NClassLoaderNode toClassLoaderNodeWithOptional(NDependencyTreeNode d, boolean isOptional, boolean withChildren, NRepositoryFilter repositoryFilter) {
@@ -147,7 +147,7 @@ public final class NClassLoaderUtils {
         if (isOptional) {
             return null;
         }
-        throw new NArtifactNotFoundException(d.getDependency().toId().getLongId());
+        throw new NArtifactNotFoundException(d.getDependency().toId().longId());
     }
 
     public static URL[] resolveClasspathURLs(ClassLoader contextClassLoader) {

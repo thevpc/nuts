@@ -53,7 +53,7 @@ public interface NUncompress extends NComponent {
      *
      * @return format
      */
-    String getPackaging();
+    String packaging();
 
     /**
      * update packaging
@@ -61,7 +61,7 @@ public interface NUncompress extends NComponent {
      * @param packaging packaging
      * @return {@code this} instance
      */
-    NUncompress setPackaging(String packaging);
+    NUncompress packaging(String packaging);
 
     /**
      * update format option
@@ -70,7 +70,7 @@ public interface NUncompress extends NComponent {
      * @param value  value
      * @return {@code this} instance
      */
-    NUncompress setFormatOption(String option, Object value);
+    NUncompress formatOption(String option, Object value);
 
     /**
      * return format option
@@ -78,26 +78,18 @@ public interface NUncompress extends NComponent {
      * @param option option name
      * @return option value
      */
-    Object getFormatOption(String option);
+    Object formatOption(String option);
 
     /**
      * source to uncompress
      *
      * @return source to uncompress
      */
-    NInputSource getSource();
+    NInputSource source();
 
-    NUncompress setSource(NInputSource source);
+    NUncompress source(NInputSource source);
 
-    NUncompress setTarget(NOutputTarget target);
-
-    /**
-     * update source to uncompress from
-     *
-     * @param source source to uncompress from
-     * @return {@code this} instance
-     */
-    NUncompress setSource(InputStream source);
+    NUncompress target(NOutputTarget target);
 
     /**
      * update source to uncompress from
@@ -105,7 +97,7 @@ public interface NUncompress extends NComponent {
      * @param source source to uncompress from
      * @return {@code this} instance
      */
-    NUncompress setSource(NPath source);
+    NUncompress source(InputStream source);
 
     /**
      * update source to uncompress from
@@ -113,7 +105,7 @@ public interface NUncompress extends NComponent {
      * @param source source to uncompress from
      * @return {@code this} instance
      */
-    NUncompress setSource(File source);
+    NUncompress source(NPath source);
 
     /**
      * update source to uncompress from
@@ -121,7 +113,7 @@ public interface NUncompress extends NComponent {
      * @param source source to uncompress from
      * @return {@code this} instance
      */
-    NUncompress setSource(Path source);
+    NUncompress source(File source);
 
     /**
      * update source to uncompress from
@@ -129,7 +121,15 @@ public interface NUncompress extends NComponent {
      * @param source source to uncompress from
      * @return {@code this} instance
      */
-    NUncompress setSource(URL source);
+    NUncompress source(Path source);
+
+    /**
+     * update source to uncompress from
+     *
+     * @param source source to uncompress from
+     * @return {@code this} instance
+     */
+    NUncompress source(URL source);
 
     /**
      * update source to uncompress from
@@ -178,7 +178,7 @@ public interface NUncompress extends NComponent {
      * @param target target
      * @return {@code this} instance
      */
-    NUncompress setTarget(Path target);
+    NUncompress target(Path target);
 
     /**
      * update target
@@ -186,9 +186,9 @@ public interface NUncompress extends NComponent {
      * @param target target
      * @return {@code this} instance
      */
-    NUncompress setTarget(File target);
+    NUncompress target(File target);
 
-    NUncompress setTarget(NPath target);
+    NUncompress target(NPath target);
 
     /**
      * update target
@@ -238,7 +238,7 @@ public interface NUncompress extends NComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NUncompress setSkipRoot(boolean value);
+    NUncompress skipRoot(boolean value);
 
     /**
      * return progress factory responsible of creating progress monitor
@@ -246,7 +246,7 @@ public interface NUncompress extends NComponent {
      * @return progress factory responsible of creating progress monitor
      * @since 0.5.8
      */
-    NProgressFactory getProgressFactory();
+    NProgressFactory progressFactory();
 
     /**
      * set progress factory responsible of creating progress monitor
@@ -255,16 +255,7 @@ public interface NUncompress extends NComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NUncompress setProgressFactory(NProgressFactory value);
-
-    /**
-     * set progress monitor. Will create a singleton progress monitor factory
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NUncompress setProgressMonitor(NProgressListener value);
+    NUncompress progressFactory(NProgressFactory value);
 
     /**
      * set progress monitor. Will create a singleton progress monitor factory
@@ -288,8 +279,9 @@ public interface NUncompress extends NComponent {
      * @param value value
      * @return {@code this} instance
      */
-    NUncompress setSafe(boolean value);
+    NUncompress safe(boolean value);
 
+    NUncompress options(NPathOption... pathOptions);
     NUncompress addOptions(NPathOption... pathOptions);
 
     NUncompress removeOptions(NPathOption... pathOptions);

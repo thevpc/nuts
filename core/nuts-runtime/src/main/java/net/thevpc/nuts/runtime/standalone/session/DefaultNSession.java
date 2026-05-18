@@ -164,8 +164,8 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
      */
     @Override
     public final NSession configure(boolean skipUnsupported, String... args) {
-        NId appId = NApp.of().getId().orNull();
-        String appName = appId == null ? "app" : appId.getArtifactId();
+        NId appId = NApp.of().id().orNull();
+        String appName = appId == null ? "app" : appId.artifactId();
         return NCmdLineConfigurable.configure(this, skipUnsupported, args, appName);
     }
 
@@ -405,8 +405,8 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                                 v = NTerminalMode.INHERITED;
                             }
                         }
-                        getTerminal().setOut(getTerminal().out().setTerminalMode(v));
-                        getTerminal().setErr(getTerminal().err().setTerminalMode(v));
+                        getTerminal().out(getTerminal().out().setTerminalMode(v));
+                        getTerminal().err(getTerminal().err().setTerminalMode(v));
                     }
                     return true;
                 }
@@ -416,8 +416,8 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     if (active) {
                         setBot(a.getBooleanValue().get());
                         if (isBot()) {
-                            getTerminal().setOut(getTerminal().out().setTerminalMode(NTerminalMode.FILTERED));
-                            getTerminal().setErr(getTerminal().err().setTerminalMode(NTerminalMode.FILTERED));
+                            getTerminal().out(getTerminal().out().setTerminalMode(NTerminalMode.FILTERED));
+                            getTerminal().err(getTerminal().err().setTerminalMode(NTerminalMode.FILTERED));
                             //setProgressOptions("none");
                             //setConfirm(NConfirmationMode.ERROR);
                             //setTrace(false);
@@ -586,7 +586,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 }
                 case "--skip-event": {
                     boolean enabled = a.isUncommented();
-                    switch (NApp.of().getMode()) {
+                    switch (NApp.of().mode()) {
                         case INSTALL:
                         case UNINSTALL:
                         case UPDATE: {
@@ -603,7 +603,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     cmdLine.skip();
                     if (enabled) {
                         if (cmdLine.isExecMode()) {
-                            out().println(NId.getForClass(getClass()).get().getVersion());
+                            out().println(NId.getForClass(getClass()).get().version());
                             cmdLine.skipAll();
                         }
                         throw new NExecutionException(NMsg.ofPlain("version"), NExecutionException.SUCCESS);
@@ -1192,7 +1192,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
         this.terminal = terminal;
         if (terminal != null) {
             AbstractNTerminal a = (AbstractNTerminal) terminal;
-            NPrintStream o = a.getOut();
+            NPrintStream o = a.out();
         }
 //        this.out0 = (terminal.fout());
 //        this.err0 = (terminal.ferr());
@@ -1282,7 +1282,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
         }
         //TODO, should we cache this?
         return callWith(() -> {
-            NTerminalMode terminalMode = out().getTerminalMode();
+            NTerminalMode terminalMode = out().terminalMode();
             return ProgressOptions.of().getEnabled().orElse(
                     terminalMode != NTerminalMode.FILTERED
             );
@@ -1426,11 +1426,11 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 boolean becomesBot = options.getBot().orElse(false);
                 this.setBot(becomesBot);
                 if (/*!wasBot && */becomesBot) {
-                    if (getTerminal().out().getTerminalMode() != NTerminalMode.FILTERED) {
-                        getTerminal().setOut(getTerminal().out().setTerminalMode(NTerminalMode.FILTERED));
+                    if (getTerminal().out().terminalMode() != NTerminalMode.FILTERED) {
+                        getTerminal().out(getTerminal().out().setTerminalMode(NTerminalMode.FILTERED));
                     }
-                    if (getTerminal().err().getTerminalMode() != NTerminalMode.FILTERED) {
-                        getTerminal().setErr(getTerminal().err().setTerminalMode(NTerminalMode.FILTERED));
+                    if (getTerminal().err().terminalMode() != NTerminalMode.FILTERED) {
+                        getTerminal().err(getTerminal().err().setTerminalMode(NTerminalMode.FILTERED));
                     }
                 }
             }
@@ -1438,8 +1438,8 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 this.setTransitive(options.getTransitive().orNull());
             }
             if (options.getTerminalMode().isPresent() && NTerminalMode.DEFAULT != options.getTerminalMode().orNull()) {
-                getTerminal().setOut(
-                        getTerminal().getOut().setTerminalMode(options.getTerminalMode().orNull())
+                getTerminal().out(
+                        getTerminal().out().setTerminalMode(options.getTerminalMode().orNull())
                 );
             }
             if (options.getExecutionType().isPresent()) {

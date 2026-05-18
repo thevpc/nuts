@@ -1,7 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.io.NTempOutputStream;
-import net.thevpc.nuts.runtime.standalone.io.inputstream.NTempOutputStreamImpl;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
@@ -11,12 +9,8 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public abstract class AbstractNInputSource implements NInputSource {
 
@@ -25,17 +19,17 @@ public abstract class AbstractNInputSource implements NInputSource {
 
     @Override
     public String name() {
-        return getMetaData().getName().orNull();
+        return metaData().name().orNull();
     }
 
     @Override
     public String contentType() {
-        return getMetaData().getContentType().orNull();
+        return metaData().contentType().orNull();
     }
 
     @Override
-    public String getCharset() {
-        return getMetaData().getCharset().orNull();
+    public String charset() {
+        return metaData().charset().orNull();
     }
 
 
@@ -56,7 +50,7 @@ public abstract class AbstractNInputSource implements NInputSource {
 
     @Override
     public byte[] readBytes() {
-        try (InputStream in = getInputStream()) {
+        try (InputStream in = inputStream()) {
             return NIOUtils.readBytes(in);
         } catch (IOException e) {
             throw new NIOException(e);
@@ -142,7 +136,7 @@ public abstract class AbstractNInputSource implements NInputSource {
     @Override
     public Reader getReader(Charset cs) {
         CharsetDecoder decoder = nonNullCharset(cs).newDecoder();
-        Reader reader = new InputStreamReader(getInputStream(), decoder);
+        Reader reader = new InputStreamReader(inputStream(), decoder);
         return new BufferedReader(reader);
     }
 
@@ -170,7 +164,7 @@ public abstract class AbstractNInputSource implements NInputSource {
 
     @Override
     public byte[] getDigest(String algo) {
-        try (InputStream input = getInputStream()) {
+        try (InputStream input = inputStream()) {
             return CoreIOUtils.getDigest(input, algo);
         } catch (IOException e) {
             throw new NIOException(e);

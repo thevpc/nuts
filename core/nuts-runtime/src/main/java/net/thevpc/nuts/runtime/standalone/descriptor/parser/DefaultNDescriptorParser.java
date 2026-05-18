@@ -66,7 +66,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
         try {
             boolean startParsing = false;
             try {
-                try (InputStream is = path.getInputStream()) {
+                try (InputStream is = path.inputStream()) {
                     startParsing = true;
                     NDescriptorStyle defaultDescriptorStyle = null;
                     String canonicalPathName = path.name().toLowerCase();
@@ -312,8 +312,8 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                                     //.setCondition()
                                     .setExecutor(
                                             new DefaultNArtifactCallBuilder()
-                                                    .setId(NId.get("java").get())
-                                                    .setArguments(NBlankable.isBlank(mainClass) ? null : new String[]{"--main-class=", mainClass})
+                                                    .id(NId.get("java").get())
+                                                    .arguments(NBlankable.isBlank(mainClass) ? null : new String[]{"--main-class=", mainClass})
                                                     .build()
                                     )
                                     .setDependencies(new ArrayList<>(deps))

@@ -101,17 +101,17 @@ public class DefaultNSearch extends AbstractNSearch {
                         NId nutsIdNonLatest = nutsId1;
                         boolean latestVersion = false;
                         boolean releaseVersion = false;
-                        if (nutsIdNonLatest.getVersion().isLatest()) {
+                        if (nutsIdNonLatest.version().isLatest()) {
                             latestVersion = true;
                             nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
-                        } else if (nutsIdNonLatest.getVersion().isRelease()) {
+                        } else if (nutsIdNonLatest.version().isRelease()) {
                             releaseVersion = true;
                             nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
                         }
                         NDefinitionFilters dd = NDefinitionFilters.of();
                         NDefinitionFilter filter = (
-                                dd.byName(nutsIdNonLatest.getFullName())
-                                        .and(dd.byEnv(nutsIdNonLatest.getProperties()))
+                                dd.byName(nutsIdNonLatest.fullName())
+                                        .and(dd.byEnv(nutsIdNonLatest.properties()))
                                         .and(search.getDefinitionFilter())
                         );
 
@@ -127,7 +127,7 @@ public class DefaultNSearch extends AbstractNSearch {
                                 if (repoAndMode.getFetchMode() == fm) {
                                     consideredRepos.add(repoAndMode.getRepository());
                                     NRepositorySPI repoSPI = wu.toRepositorySPI(repoAndMode.getRepository());
-                                    if (nutsIdNonLatest.getGroupId() != null) {
+                                    if (nutsIdNonLatest.groupId() != null) {
                                         NIterator<NId> baseIter = repoSPI.searchVersions().setId(nutsIdNonLatest).setFilter(filter)
                                                 .setFetchMode(repoAndMode.getFetchMode())
                                                 .getResult();
@@ -225,7 +225,7 @@ public class DefaultNSearch extends AbstractNSearch {
                                                     return null;
                                                 }
                                                 return NIteratorBuilder.of(
-                                                        de.getDependencies().get().transitiveWithSource().iterator()
+                                                        de.dependencies().get().transitiveWithSource().iterator()
                                                 ).build();
                                             })
                                     .withDescription(NDescribables.ofDesc("getDependencies"))
@@ -247,7 +247,7 @@ public class DefaultNSearch extends AbstractNSearch {
         } else if (!latest && distinct) {
             r = NIteratorBuilder.of(baseIterator).distinct(
                     NFunction.of(
-                                    (NId nutsId) -> nutsId.getLongId()
+                                    (NId nutsId) -> nutsId.longId()
                                             .toString())
                             .withDescription(NDescribables.ofDesc("getLongId"))
             ).iterator();
@@ -256,9 +256,9 @@ public class DefaultNSearch extends AbstractNSearch {
                         Map<String, NId> visited = new LinkedHashMap<>();
                         while (baseIterator.hasNext()) {
                             NId nutsId = baseIterator.next();
-                            String k = nutsId.getShortName();
+                            String k = nutsId.shortName();
                             NId old = visited.get(k);
-                            if (old == null || old.getVersion().isBlank() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
+                            if (old == null || old.version().isBlank() || old.version().compareTo(nutsId.version()) < 0) {
                                 visited.put(k, nutsId);
                             }
                         }
@@ -274,12 +274,12 @@ public class DefaultNSearch extends AbstractNSearch {
                                 Map<String, List<NId>> visited = new LinkedHashMap<>();
                                 while (baseIterator.hasNext()) {
                                     NId nutsId = baseIterator.next();
-                                    String k = nutsId.getShortName();
+                                    String k = nutsId.shortName();
                                     List<NId> oldList = visited.get(k);
                                     NId old = oldList == null ? null : oldList.get(0);
-                                    if (old == null || old.getVersion().isBlank() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
+                                    if (old == null || old.version().isBlank() || old.version().compareTo(nutsId.version()) < 0) {
                                         visited.put(k, new ArrayList<>(Arrays.asList(nutsId)));
-                                    } else if (old.getVersion().compareTo(nutsId.getVersion()) == 0) {
+                                    } else if (old.version().compareTo(nutsId.version()) == 0) {
                                         oldList.add(nutsId);
                                     }
                                 }

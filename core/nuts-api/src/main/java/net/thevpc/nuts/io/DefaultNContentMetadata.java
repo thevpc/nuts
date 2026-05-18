@@ -26,12 +26,12 @@ public class DefaultNContentMetadata implements NContentMetadata {
 
     public DefaultNContentMetadata(NContentMetadata other) {
         if (other != null) {
-            this.contentLength = () -> other.getContentLength().orNull();
-            this.name = () -> other.getName().orNull();
-            this.message = () -> other.getMessage().orNull();
-            this.kind = () -> other.getKind().orNull();
-            this.contentType = () -> other.getContentType().orNull();
-            this.charset = () -> other.getCharset().orNull();
+            this.contentLength = () -> other.contentLength().orNull();
+            this.name = () -> other.name().orNull();
+            this.message = () -> other.message().orNull();
+            this.kind = () -> other.kind().orNull();
+            this.contentType = () -> other.contentType().orNull();
+            this.charset = () -> other.charset().orNull();
         } else {
             this.contentLength = null;
             this.name = null;
@@ -95,59 +95,59 @@ public class DefaultNContentMetadata implements NContentMetadata {
     }
 
     @Override
-    public NOptional<Long> getContentLength() {
+    public NOptional<Long> contentLength() {
         return NOptional.ofNamed(contentLength == null ? null : contentLength.get(), "contentLength");
     }
 
     @Override
-    public NOptional<String> getContentType() {
+    public NOptional<String> contentType() {
         return NOptional.ofNamed(contentType == null ? null : contentType.get(), "contentType");
     }
 
     @Override
-    public NOptional<String> getName() {
+    public NOptional<String> name() {
         return NOptional.ofNamed(name == null ? null : name.get(), "name");
     }
 
-    public NOptional<String> getKind() {
+    public NOptional<String> kind() {
         return NOptional.ofNamed(kind == null ? null : kind.get(), "kind");
     }
 
-    public NOptional<NMsg> getMessage() {
+    public NOptional<NMsg> message() {
         return NOptional.ofNamed(message == null ? null : message.get(), "message");
     }
 
     @Override
-    public NOptional<String> getCharset() {
+    public NOptional<String> charset() {
         return NOptional.ofNamed(charset == null ? null : charset.get(), "encoding");
     }
 
-    public NContentMetadata setKind(String kind) {
+    public NContentMetadata kind(String kind) {
         this.kind = () -> kind;
         return this;
     }
 
-    public NContentMetadata setContentLength(Long contentLength) {
+    public NContentMetadata contentLength(Long contentLength) {
         this.contentLength = () -> contentLength;
         return this;
     }
 
-    public NContentMetadata setMessage(NMsg message) {
+    public NContentMetadata message(NMsg message) {
         this.message = () -> message;
         return this;
     }
 
-    public DefaultNContentMetadata setContentType(String contentType) {
+    public DefaultNContentMetadata contentType(String contentType) {
         this.contentType = () -> contentType;
         return this;
     }
 
-    public DefaultNContentMetadata setName(String name) {
+    public DefaultNContentMetadata name(String name) {
         this.name = () -> name;
         return this;
     }
 
-    public DefaultNContentMetadata setCharset(String charset) {
+    public DefaultNContentMetadata charset(String charset) {
         this.charset = () -> charset;
         return this;
     }

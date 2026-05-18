@@ -71,9 +71,9 @@ public class ExtraApiUtils {
         for (URL url : urls) {
             NId[] nutsBootIds = NReservedMavenUtils.resolveJarIds(url);
             for (NId i : nutsBootIds) {
-                if (NBlankable.isBlank(id.getGroupId()) || i.getGroupId().equals(id.getGroupId())) {
-                    if (NBlankable.isBlank(id.getArtifactId()) || i.getArtifactId().equals(id.getArtifactId())) {
-                        if (NBlankable.isBlank(id.getVersion()) || i.getVersion().equals(id.getVersion())) {
+                if (NBlankable.isBlank(id.groupId()) || i.groupId().equals(id.groupId())) {
+                    if (NBlankable.isBlank(id.artifactId()) || i.artifactId().equals(id.artifactId())) {
+                        if (NBlankable.isBlank(id.version()) || i.version().equals(id.version())) {
                             return url;
                         }
                     }
@@ -200,7 +200,7 @@ public class ExtraApiUtils {
             }
             return;
         } else {
-            String shortName = node.getId().getShortName();
+            String shortName = node.getId().shortName();
             if (!visitedIds.contains(shortName)) {
                 visitedIds.add(shortName);
                 if (!node.isIncludedInClasspath()) {

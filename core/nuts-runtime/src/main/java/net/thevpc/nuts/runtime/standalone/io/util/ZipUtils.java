@@ -306,7 +306,7 @@ public class ZipUtils {
 //        }
 //    }
     public static boolean visitZipStream(NPath zipFile, InputStreamVisitor visitor) {
-        try (InputStream is = zipFile.getInputStream()) {
+        try (InputStream is = zipFile.inputStream()) {
             return visitZipStream(is, visitor);
         } catch (IOException ex) {
             throw new NIOException(ex);

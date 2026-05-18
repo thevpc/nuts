@@ -56,19 +56,19 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
     }
 
     public DefaultNArtifactCall(NArtifactCall other) {
-        this.id = other.getId();
-        this.arguments = NReservedLangUtils.nonNullList(other.getArguments());
-        this.scriptName = NStringUtils.trimToNull(other.getScriptName());
-        this.scriptContent = NStringUtils.trimToNull(other.getScriptContent());
+        this.id = other.id();
+        this.arguments = NReservedLangUtils.nonNullList(other.arguments());
+        this.scriptName = NStringUtils.trimToNull(other.scriptName());
+        this.scriptContent = NStringUtils.trimToNull(other.scriptContent());
     }
 
     @Override
-    public String getScriptName() {
+    public String scriptName() {
         return scriptName;
     }
 
     @Override
-    public String getScriptContent() {
+    public String scriptContent() {
         return scriptContent;
     }
 
@@ -104,11 +104,11 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
         this.scriptContent = scriptContent;
     }
 
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
-    public List<String> getArguments() {
+    public List<String> arguments() {
         return NReservedLangUtils.unmodifiableList(arguments);
     }
 

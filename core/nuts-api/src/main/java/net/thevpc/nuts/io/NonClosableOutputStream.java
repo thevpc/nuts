@@ -11,7 +11,7 @@ public class NonClosableOutputStream extends OutputStream implements OutputStrea
     }
 
     @Override
-    public OutputStream getDelegateOutputStream() {
+    public OutputStream delegateOutputStream() {
         return out;
     }
 

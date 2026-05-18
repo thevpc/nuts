@@ -283,7 +283,7 @@ public final class DefaultNWorkspaceCurrentConfig {
     }
 
     public NVersion getApiVersion() {
-        return getApiId().getVersion();
+        return getApiId().version();
     }
 
     public NId getApiId() {

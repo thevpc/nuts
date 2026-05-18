@@ -130,10 +130,10 @@ public abstract class AbstractNDeployRepositoryCmd extends NRepositoryCmdBase<ND
         CoreNIdUtils.checkLongId(getId());
         NAssert.requireNamedNonNull(this.getContent(), "content");
         NAssert.requireNamedNonNull(this.getDescriptor(), "descriptor");
-        if (this.getId().getVersion().isRelease()
-                || this.getId().getVersion().isLatest()
+        if (this.getId().version().isRelease()
+                || this.getId().version().isLatest()
         ) {
-            throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", this.getId().getVersion()));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", this.getId().version()));
         }
     }
 

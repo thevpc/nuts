@@ -398,16 +398,16 @@ public class RnshHttpClient {
         }
         RnshHttpClient.ExecResult is = ensureConnected()
                 .exec(command, NInputSource.of(new ByteArrayInputStream(out.toByteArray()),
-                                new DefaultNContentMetadata().setName("in").setContentType("octet-stream")
+                                new DefaultNContentMetadata().name("in").contentType("octet-stream")
                         )
                 );
 
-        try (InputStream ins = is.getOut().getInputStream()) {
+        try (InputStream ins = is.getOut().inputStream()) {
             NIOUtils.copy(ins, out0);
         } catch (IOException e) {
             throw new NIOException(e);
         }
-        try (InputStream ins = is.getErr().getInputStream()) {
+        try (InputStream ins = is.getErr().inputStream()) {
             NIOUtils.copy(ins, err);
         } catch (IOException e) {
             throw new NIOException(e);
@@ -584,8 +584,8 @@ public class RnshHttpClient {
         }
         return Arrays.stream(res).map(x ->
                 new NPathChildStringDigestInfo()
-                        .setName((String) x.get("name"))
-                        .setDigest((String) x.get("digest"))
+                        .name((String) x.get("name"))
+                        .digest((String) x.get("digest"))
         ).collect(Collectors.toList());
     }
 

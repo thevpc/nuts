@@ -29,7 +29,7 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
 
     @Override
     public NCmdLineAutoCompleteResolver getAutoCompleteResolver() {
-        NSystemTerminalBase p = getBase();
+        NSystemTerminalBase p = base();
         if (p != null) {
             return p.getAutoCompleteResolver();
         }
@@ -37,12 +37,12 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     public boolean isAutoCompleteSupported() {
-        return getBase().isAutoCompleteSupported();
+        return base().isAutoCompleteSupported();
     }
 
     @Override
     public NSystemTerminalBase setCommandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
-        NSystemTerminalBase p = getBase();
+        NSystemTerminalBase p = base();
         if (p != null) {
             p.setCommandAutoCompleteResolver(autoCompleteResolver);
         }
@@ -51,28 +51,28 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
 
     @Override
     public NSystemTerminalBase setCommandHistory(NCmdLineHistory history) {
-        getBase().setCommandHistory(history);
+        base().setCommandHistory(history);
         return this;
     }
 
     @Override
     public NCmdLineHistory getCommandHistory() {
-        return getBase().getCommandHistory();
+        return base().getCommandHistory();
     }
 
     @Override
     public String readLine(NMsg message) {
-        NSystemTerminalBase p = getBase();
+        NSystemTerminalBase p = base();
         if (p instanceof NSystemTerminal) {
             return ((NSystemTerminal) p).readLine(message);
         } else {
-            return getBase().readLine(out(), message);
+            return base().readLine(out(), message);
         }
     }
 
     @Override
     public char[] readPassword(NMsg message) {
-        NSystemTerminalBase p = getBase();
+        NSystemTerminalBase p = base();
         if (p instanceof NSystemTerminal) {
             return ((NSystemTerminal) p).readPassword(message);
         } else {
@@ -101,8 +101,8 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     public NSystemTerminal printProgress(float progress, NMsg message) {
         NSession session= NSession.of();
         if (session.isProgress()) {
-            if (getBase() instanceof NSystemTerminal) {
-                ((NSystemTerminal) getBase()).printProgress(progress, message);
+            if (base() instanceof NSystemTerminal) {
+                ((NSystemTerminal) base()).printProgress(progress, message);
             } else {
                 getProgressBar().printProgress(
                         Float.isNaN(progress) ? -1
@@ -123,40 +123,40 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
 
     @Override
     public String readLine(NPrintStream out, NMsg message) {
-        return getBase().readLine(out, message);
+        return base().readLine(out, message);
     }
 
     @Override
     public char[] readPassword(NPrintStream out, NMsg message) {
-        return getBase().readPassword(out, message);
+        return base().readPassword(out, message);
     }
 
     @Override
     public InputStream getIn() {
-        return getBase().getIn();
+        return base().getIn();
     }
 
     @Override
     public boolean isLastWasProgress() {
-        return ((NSystemTerminalBaseImpl)getBase()).isLastWasProgress();
+        return ((NSystemTerminalBaseImpl) base()).isLastWasProgress();
     }
 
     @Override
     public void setLastWasProgress(boolean lastWasProgress) {
-        ((NSystemTerminalBaseImpl)getBase()).setLastWasProgress(lastWasProgress);
+        ((NSystemTerminalBaseImpl) base()).setLastWasProgress(lastWasProgress);
     }
 
     @Override
     public NPrintStream getOut() {
-        return getBase().getOut();
+        return base().getOut();
     }
 
     @Override
     public NPrintStream getErr() {
-        return getBase().getErr();
+        return base().getErr();
     }
 
-    public abstract NSystemTerminalBase getBase();
+    public abstract NSystemTerminalBase base();
 
     @Override
     public String getCommandHighlighter() {
@@ -171,11 +171,11 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
 
     @Override
     public Object run(NTerminalCmd command, NPrintStream printStream) {
-        return getBase().run(command, printStream);
+        return base().run(command, printStream);
     }
 
     @Override
     public void setStyles(NTextStyles styles, NPrintStream printStream) {
-        getBase().setStyles(styles, printStream);
+        base().setStyles(styles, printStream);
     }
 }

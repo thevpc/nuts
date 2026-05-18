@@ -99,7 +99,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                         System.setProperty("nuts.boot.args",
                                 NCmdLineWriter.of().setShellFamily(NShellFamily.SH).formatPlain(bootOptions
                                         .toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))
-                                        .add(id.getLongName()))
+                                        .add(id.longName()))
                         );
                         System.setProperty("nuts.args","");
                         mainMethod[0] = cls.getMethod("main", String[].class);

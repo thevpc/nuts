@@ -201,12 +201,12 @@ public class DefaultNExec extends AbstractNExec {
                         String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
                         return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec,
                                 getCommandDefinition(),
-                                getCommandDefinition().getId().toString(),
+                                getCommandDefinition().id().toString(),
                                 NCmdLine.of(ts).toString(),
                                 ts, getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
                     } else {
                         String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
-                        return ws_execDef(getCommandDefinition(), getCommandDefinition().getId().getLongName(), ts, getExecutorOptions(), workspaceOptions, env, directory, failFast,
+                        return ws_execDef(getCommandDefinition(), getCommandDefinition().id().longName(), ts, getExecutorOptions(), workspaceOptions, env, directory, failFast,
                                 executionType, runAs);
                     }
                 } else {
@@ -422,10 +422,10 @@ public class DefaultNExec extends AbstractNExec {
                             NId _id = descriptor.getId();
 
                             NDefinitionBuilder nutToRun = new DefaultNDefinitionBuilder()
-                                    .setId(_id.getLongId())
-                                    .setDependency(_id.toDependency())
+                                    .setId(_id.longId())
+                                    .dependency(_id.toDependency())
                                     .setDescriptor(descriptor)
-                                    .setContent(NPath.of(c.getContentFile()).setUserCache(false).setUserTemporary(!c.getTemps().isEmpty()))
+                                    .setContent(NPath.of(c.getContentFile()).userCache(false).userTemporary(!c.getTemps().isEmpty()))
                                     .setInstallInformation(DefaultNInstallInfo.notInstalled(_id));
 
                             NDependencySolver resolver = NDependencySolver.of();
@@ -500,7 +500,7 @@ public class DefaultNExec extends AbstractNExec {
                     if (idToExec != null) {
                         return ws_execId(idToExec, cmdName, args, executorOptions, workspaceOptions, executionType, runAs);
                     } else {
-                        throw new NArtifactNotFoundException(goodId.getLongId());
+                        throw new NArtifactNotFoundException(goodId.longId());
                     }
                 }
             }
@@ -628,7 +628,7 @@ public class DefaultNExec extends AbstractNExec {
         if (nid == null) {
             return null;
         }
-        switch (NStringUtils.firstNonNull(nid.getShortName(), "")) {
+        switch (NStringUtils.firstNonNull(nid.shortName(), "")) {
             case NConstants.Ids.NUTS_APP_ARTIFACT_ID: {
                 nid = nid.builder().setGroupId(NConstants.Ids.NUTS_GROUP_ID).build();
                 break;
@@ -647,7 +647,7 @@ public class DefaultNExec extends AbstractNExec {
                 throw new NArtifactNotFoundException(nid, NMsg.ofC("%s is not executable", nid));
             }
         }
-        if (NConstants.Ids.NUTS_APP_ARTIFACT_ID.equals(nid.getShortName())) {
+        if (NConstants.Ids.NUTS_APP_ARTIFACT_ID.equals(nid.shortName())) {
             nid = nid.builder().setGroupId(NConstants.Ids.NUTS_GROUP_ID).build();
         }
         NTerminal.of().printProgress(NMsg.ofC("start searching for %s", nid));
@@ -655,8 +655,8 @@ public class DefaultNExec extends AbstractNExec {
                 .setDependencyFilter(NDependencyFilters.of().byRunnable()).latest(true).failFast(false)
                 .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
                 .getResultDefinitions().stream()
-                .sorted(Comparator.comparing(x -> !x.getInstallInformation().get().isDefaultVersion())) // default first
-                .map(NDefinition::getId).findFirst().orElse(null);
+                .sorted(Comparator.comparing(x -> !x.installInformation().get().isDefaultVersion())) // default first
+                .map(NDefinition::id).findFirst().orElse(null);
         if (ff == null) {
             if (!forceInstalled) {
                 if (ignoreIfUserCommand) {
@@ -785,8 +785,8 @@ public class DefaultNExec extends AbstractNExec {
         //TODO ! one of the sessions needs to be removed!
         NSession session = NSession.of();
         NSecurityManager.of().checkAllowed(NConstants.Permissions.EXEC, commandName);
-        if (def != null && def.getContent().isPresent()) {
-            NDescriptor descriptor = def.getDescriptor();
+        if (def != null && def.content().isPresent()) {
+            NDescriptor descriptor = def.descriptor();
             if (!descriptor.isExecutable()) {
 //                session.getTerminal().getErr().println(nutToRun.getId()+" is not executable... will perform extra checks.");
 //                throw new NutsNotExecutableException(descriptor.getId());
@@ -797,17 +797,17 @@ public class DefaultNExec extends AbstractNExec {
             List<String> executorArgs = new ArrayList<>();
 
             if (executorCall != null) {
-                NId eid = executorCall.getId();
+                NId eid = executorCall.id();
                 if (eid != null) {
                     //process special executors
-                    if (eid.getGroupId() == null) {
-                        if (eid.getArtifactId().equals("nuts")) {
+                    if (eid.groupId() == null) {
+                        if (eid.artifactId().equals("nuts")) {
                             eid = eid.builder().setGroupId("net.thevpc.nuts").build();
-                        } else if (eid.getArtifactId().equals("nsh")) {
+                        } else if (eid.artifactId().equals("nsh")) {
                             eid = eid.builder().setGroupId("net.thevpc.nsh").build();
                         }
                     }
-                    if (eid.getGroupId() != null) {
+                    if (eid.groupId() != null) {
                         //nutsDefinition
                         NStream<NDefinition> q = NSearch.of().addId(eid).latest(true)
                                 .distinct(true)
@@ -816,7 +816,7 @@ public class DefaultNExec extends AbstractNExec {
                         if (availableExecutors.length > 1) {
                             throw new NTooManyElementsException(NMsg.ofC("too many results for executor %s", eid));
                         } else if (availableExecutors.length == 1) {
-                            execComponent = new ArtifactExecutorComponent(availableExecutors[0].getId());
+                            execComponent = new ArtifactExecutorComponent(availableExecutors[0].id());
                         } else {
                             // availableExecutors.length=0;
                             throw new NArtifactNotFoundException(eid, NMsg.ofC("executor not found %s", eid));
@@ -828,7 +828,7 @@ public class DefaultNExec extends AbstractNExec {
                 execComponent = NExtensions.of().createSupported(NExecutorComponent.class, def).get();
             }
             if (executorCall != null) {
-                for (String argument : executorCall.getArguments()) {
+                for (String argument : executorCall.arguments()) {
                     executorArgs.add(StringPlaceHolderParser.replaceDollarPlaceHolders(argument,
                             def, NExecutionContextUtils.DEFINITION_PLACEHOLDER
                     ));
@@ -862,7 +862,7 @@ public class DefaultNExec extends AbstractNExec {
                     .build();
             return new NExecutorComponentAndContext(execComponent, executionContext);
         }
-        throw new NArtifactNotFoundException(def == null ? null : def.getId().getLongId());
+        throw new NArtifactNotFoundException(def == null ? null : def.id().longId());
     }
 
     enum CmdKind {
@@ -954,7 +954,7 @@ public class DefaultNExec extends AbstractNExec {
                         String artifactId = d.getDigest();
                         c.setDescriptor(new DefaultNDescriptorBuilder()
                                 .setId("temp:" + artifactId + "#1.0")
-                                .setPackaging(NIOUtils.getFileExtension(contentFile.getMetaData().getName().orElse("")))
+                                .setPackaging(NIOUtils.getFileExtension(contentFile.metaData().name().orElse("")))
                                 .build());
                     }
                 }

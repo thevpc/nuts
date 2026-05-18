@@ -1,7 +1,10 @@
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.util.NGetter;
+
 import java.io.*;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -17,10 +20,10 @@ import java.util.Objects;
  * </ul>
  */
 public class NExecInput {
-    private NRedirectType type;
-    private InputStream stream;
-    private NPath path;
-    private NPathOption[] options;
+    private final NRedirectType type;
+    private final InputStream stream;
+    private final NPath path;
+    private final NPathOption[] options;
 
     public static NExecInput ofNull() {
         return new NExecInput(NRedirectType.NULL, null, null, null);
@@ -71,20 +74,22 @@ public class NExecInput {
         this.options = options == null ? new NPathOption[0] : Arrays.stream(options).filter(Objects::nonNull).toArray(NPathOption[]::new);
     }
 
-    public NRedirectType getType() {
+    @NGetter
+
+    public NRedirectType type() {
         return type;
     }
 
-    public InputStream getStream() {
+    public InputStream inputStream() {
         return stream;
     }
 
-    public NPath getPath() {
+    public NPath path() {
         return path;
     }
 
-    public NPathOption[] getOptions() {
-        return options;
+    public List<NPathOption> options() {
+        return Arrays.asList(options);
     }
 
     @Override

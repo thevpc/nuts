@@ -29,7 +29,7 @@ public class MvnClient {
     }
 
     public boolean get(NId id, String repoURL) {
-        if (id.getShortName().equals(NET_VPC_APP_NUTS_MVN)) {
+        if (id.shortName().equals(NET_VPC_APP_NUTS_MVN)) {
             return false;
         }
         switch (status) {
@@ -41,7 +41,7 @@ public class MvnClient {
                             .addId(NET_VPC_APP_NUTS_MVN)
                             .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .setInlineDependencies(true).latest(true).getResultDefinitions().findFirst().get();
-                    for (NId nutsId : NSearch.of().addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
+                    for (NId nutsId : NSearch.of().addId(ff.id()).setInlineDependencies(true).getResultIds()) {
                         NFetch.of(nutsId).setFetchStrategy(NFetchStrategy.ONLINE)
                                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
                                 .getResultDefinition();

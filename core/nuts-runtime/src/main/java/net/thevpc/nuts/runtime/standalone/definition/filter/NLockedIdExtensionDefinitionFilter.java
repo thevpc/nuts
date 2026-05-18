@@ -30,8 +30,8 @@ public class NLockedIdExtensionDefinitionFilter extends AbstractDefinitionFilter
 
     public boolean acceptId(NId id) {
         for (NId nutsId : lockedIds) {
-            if (nutsId.getShortId().equalsShortId(id.getShortId())) {
-                return (id.getVersion().toFilter().acceptVersion(nutsId.getVersion()));
+            if (nutsId.shortId().equalsShortId(id.shortId())) {
+                return (id.version().toFilter().acceptVersion(nutsId.version()));
             }
         }
         return true;
@@ -39,10 +39,10 @@ public class NLockedIdExtensionDefinitionFilter extends AbstractDefinitionFilter
 
     @Override
     public boolean acceptDefinition(NDefinition other) {
-        if (!acceptId(other.getId())) {
+        if (!acceptId(other.id())) {
             return false;
         }
-        for (NDependency dependency : other.getDescriptor().getDependencies()) {
+        for (NDependency dependency : other.descriptor().getDependencies()) {
             if (!acceptId(dependency.toId())) {
                 return false;
             }
@@ -57,7 +57,7 @@ public class NLockedIdExtensionDefinitionFilter extends AbstractDefinitionFilter
 
     @Override
     public String toString() {
-        return "LockedIds(" + Arrays.stream(lockedIds).map(NId::getLongName).collect(Collectors.joining(",")) + ")";
+        return "LockedIds(" + Arrays.stream(lockedIds).map(NId::longName).collect(Collectors.joining(",")) + ")";
     }
 
     public NLockedIdExtensionDefinitionFilter addAll(NId[] others) {

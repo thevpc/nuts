@@ -27,7 +27,6 @@ package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.text.NI18n;
-import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
@@ -184,7 +183,7 @@ public class DefaultNVersion implements NVersion {
     }
 
     @Override
-    public String getValue() {
+    public String value() {
         return expression;
     }
 
@@ -409,12 +408,12 @@ public class DefaultNVersion implements NVersion {
 
     @Override
     public NVersion inc(int index, long amount) {
-        return new DefaultNVersion(incVersion(getValue(), index, amount));
+        return new DefaultNVersion(incVersion(value(), index, amount));
     }
 
     @Override
     public NVersion inc(int index, BigInteger amount) {
-        return new DefaultNVersion(incVersion(getValue(), index, amount));
+        return new DefaultNVersion(incVersion(value(), index, amount));
     }
 
     public int partCount() {
@@ -576,7 +575,7 @@ public class DefaultNVersion implements NVersion {
 
     private VersionParts getParts() {
         if (parts == null) {
-            parts = splitVersionParts2(getValue());
+            parts = splitVersionParts2(value());
         }
         return parts;
     }

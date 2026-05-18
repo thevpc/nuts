@@ -138,7 +138,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
         String mainClassString = null;
         if (metainf.isSet()) {
             if (metainf.get().getExecutor() != null) {
-                List<String> args = metainf.get().getExecutor().getArguments();
+                List<String> args = metainf.get().getExecutor().arguments();
                 for (int i = 0; i < args.size(); i++) {
                     String arg = args.get(i);
                     if (arg.startsWith("--main-class=")) {
@@ -159,8 +159,8 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
             if (!NBlankable.isBlank(mainClassString)) {
                 return baseNutsDescriptor.builder().setExecutor(
                         new DefaultNArtifactCallBuilder()
-                                .setId(JAVA)
-                                .setArguments("--main-class=", mainClassString)
+                                .id(JAVA)
+                                .arguments("--main-class=", mainClassString)
                                 .build()
                 ).build();
             }

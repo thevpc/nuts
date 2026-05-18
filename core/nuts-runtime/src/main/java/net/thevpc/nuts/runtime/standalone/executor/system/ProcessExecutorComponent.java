@@ -61,7 +61,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
 
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
         NDefinition nutMainFile = executionContext.getDefinition();
-        NPath storeFolder = nutMainFile.getInstallInformation().get().getInstallFolder();
+        NPath storeFolder = nutMainFile.installInformation().get().getInstallFolder();
         List<String> execArgs = executionContext.getExecutorOptions();
         List<String> appArgs = executionContext.getArguments();
 

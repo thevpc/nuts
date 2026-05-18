@@ -14,7 +14,7 @@ public class DefaultSystemTerminal extends AbstractSystemTerminalAdapter {
     }
 
     @Override
-    public NSystemTerminalBase getBase() {
+    public NSystemTerminalBase base() {
         return base;
     }
 

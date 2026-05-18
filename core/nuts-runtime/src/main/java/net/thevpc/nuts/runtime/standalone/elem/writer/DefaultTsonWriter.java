@@ -409,7 +409,7 @@ public class DefaultTsonWriter {
     private void writeBinaryStream(NBinaryStreamElement a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
         writeBoundedString("^" + a.blocIdentifier() + "[", 1, a.affixes());
-        try (InputStream reader = a.value().getInputStream()) {
+        try (InputStream reader = a.value().inputStream()) {
             try (OutputStream out = asBinaryOutputStream(a.blocIdentifier())) {
                 byte[] b = new byte[1024];
                 int c;

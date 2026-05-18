@@ -159,7 +159,7 @@ public final class NReservedMavenUtils {
     }
 
     public static String getFileName(NId id, String ext) {
-        return id.getArtifactId() + "-" + id.getVersion() + "." + ext;
+        return id.artifactId() + "-" + id.version() + "." + ext;
     }
 
 //    public static String toMavenPath(NId nutsId) {
@@ -527,7 +527,7 @@ public final class NReservedMavenUtils {
                                         if (bestVersion == null || bestVersion.compareTo(p) < 0) {
                                             //we will ignore artifact classifier to simplify search
                                             Path jarPath = file.toPath().resolve(
-                                                    getFileName(NId.get(zId.getGroupId(), zId.getArtifactId(), p).get(), "jar")
+                                                    getFileName(NId.get(zId.groupId(), zId.artifactId(), p).get(), "jar")
                                             );
                                             if (Files.isRegularFile(jarPath)) {
                                                 bestVersion = p;
@@ -915,13 +915,13 @@ public final class NReservedMavenUtils {
                             NId nId = NId.get(id).orNull();
                             switch (propName) {
                                 case "groupId":
-                                    propValue = nId.getGroupId();
+                                    propValue = nId.groupId();
                                     break;
                                 case "artifactId":
-                                    propValue = nId.getArtifactId();
+                                    propValue = nId.artifactId();
                                     break;
                                 case "version":
-                                    propValue = nId.getVersion().toString();
+                                    propValue = nId.version().toString();
                                     break;
                             }
                         }

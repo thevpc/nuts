@@ -15,15 +15,15 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
     protected NPrintStreamBase base;
 
     public NPrintStreamRendered(NPrintStreamBase base, NTerminalMode mode, Bindings bindings) {
-        super(true, mode, bindings, base.getTerminal());
+        super(true, mode, bindings, base.terminal());
         this.base = base;
-        this.support = new FormatOutputStreamSupport(base, base.getTerminal(),
+        this.support = new FormatOutputStreamSupport(base, base.terminal(),
                 (mode != NTerminalMode.ANSI && mode != NTerminalMode.FORMATTED)
         );
     }
 
     public void flushTransientLine(){
-        NSystemTerminalBaseImpl terminal = (NSystemTerminalBaseImpl) base.getTerminal();
+        NSystemTerminalBaseImpl terminal = (NSystemTerminalBaseImpl) base.terminal();
         if(terminal!=null && terminal.isLastWasProgress()){
             support.flush();
             support.pushNode(NText.ofCommand(NTerminalCmd.CLEAR_LINE));
@@ -82,7 +82,7 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
 
     @Override
     public NPrintStream printProgressLine(NText b) {
-        NSystemTerminalBaseImpl terminal = (NSystemTerminalBaseImpl) base.getTerminal();
+        NSystemTerminalBaseImpl terminal = (NSystemTerminalBaseImpl) base.terminal();
         if(!terminal.isLastWasProgress()) {
             terminal.setLastWasProgress(true);
             support.flush();
@@ -175,7 +175,7 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
                 return new NPrintStreamFiltered(base, bindings);
             }
         }
-        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", terminalMode(), other));
     }
 
 }

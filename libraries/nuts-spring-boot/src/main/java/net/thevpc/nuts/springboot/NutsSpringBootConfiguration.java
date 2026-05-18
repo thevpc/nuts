@@ -180,7 +180,7 @@ public class NutsSpringBootConfiguration {
         // prepare app early
         NApp.builder(applicationArguments.getSourceArgs())
                 .instance(nutsApplication(workspace, applicationArguments))
-                .setNutsArgs(resolveNutsArgs())
+                .nutsArgs(resolveNutsArgs())
                 .propagateErrors().prepare();
         return workspace;
     }

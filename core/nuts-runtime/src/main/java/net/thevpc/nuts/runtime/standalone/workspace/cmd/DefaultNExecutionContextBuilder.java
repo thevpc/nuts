@@ -90,7 +90,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.failFast = failFast;
         this.temporary = temporary;
         this.executionType = executionType;
-        this.executorDescriptor = definition.getDescriptor().getExecutor();
+        this.executorDescriptor = definition.descriptor().getExecutor();
         this.in = in;
         this.out = out;
         this.err = err;

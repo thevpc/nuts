@@ -1,27 +1,16 @@
 package net.thevpc.nuts.app;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.NBootArguments;
 import net.thevpc.nuts.boot.internal.cmdline.NBootCmdLine;
-import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.time.NClock;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NExceptions;
-import net.thevpc.nuts.util.NUtils;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Builder used to configure and execute a Nuts {@link NApplication}.
@@ -139,11 +128,11 @@ public class NAppBuilder {
         return this;
     }
 
-    public NApplicationHandleMode getHandleMode() {
+    public NApplicationHandleMode handleMode() {
         return handleMode;
     }
 
-    public NAppBuilder setHandleMode(NApplicationHandleMode mode) {
+    public NAppBuilder handleMode(NApplicationHandleMode mode) {
         this.handleMode = mode;
         return this;
     }
@@ -193,7 +182,7 @@ public class NAppBuilder {
     /**
      * Sets Nuts bootstrap/WS args explicitly.
      */
-    public NAppBuilder setNutsArgs(String... nutsArgs) {
+    public NAppBuilder nutsArgs(String... nutsArgs) {
         this.nutsArgs = nutsArgs;
         return this;
     }
@@ -201,7 +190,7 @@ public class NAppBuilder {
     /**
      * Parses a Nuts argument line into structured args.
      */
-    public NAppBuilder setNutsArgsLine(String nutsArgs) {
+    public NAppBuilder nutsArgsLine(String nutsArgs) {
         this.nutsArgs = NBootCmdLine.parseDefault(nutsArgs);
         return this;
     }
@@ -211,7 +200,7 @@ public class NAppBuilder {
      * Note: Logic seems incorrect—currently re-adds the parsed items instead
      * of merging `extraArgs`. Might be a bug.
      */
-    public NAppBuilder setNutsArgsLine(String nutsArgs, String[] extraArgs) {
+    public NAppBuilder nutsArgsLine(String nutsArgs, String[] extraArgs) {
         List<String> all = new ArrayList<>();
         all.addAll(Arrays.asList(NBootCmdLine.parseDefault(nutsArgs)));
         if (extraArgs != null) {
@@ -225,7 +214,7 @@ public class NAppBuilder {
         return this;
     }
 
-    public String[] getArgs() {
+    public String[] args() {
         return args;
     }
 
@@ -262,9 +251,9 @@ public class NAppBuilder {
      * applies error-handling strategy, and executes the application lifecycle.
      */
     public void run() {
-        NApplicationHandleMode.runHandled(this::prepare, getHandleMode());
+        NApplicationHandleMode.runHandled(this::prepare, handleMode());
         if(preparedWorkspace!=null) {
-            preparedWorkspace.runApplication(this.getHandleMode());
+            preparedWorkspace.runApplication(this.handleMode());
         }
     }
 

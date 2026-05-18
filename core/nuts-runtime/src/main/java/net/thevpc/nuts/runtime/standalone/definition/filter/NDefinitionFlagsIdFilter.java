@@ -35,14 +35,14 @@ public class NDefinitionFlagsIdFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition other) {
-        Set<NDescriptorFlag> available = other.getDescriptor().getFlags();
+        Set<NDescriptorFlag> available = other.descriptor().getFlags();
         if (effectiveFlag) {
             for (NDescriptorFlag flag : this.flags) {
                 if (!available.contains(flag)) {
                     return false;
                 }
             }
-            Set<NDescriptorFlag> af = other.getEffectiveFlags().get();
+            Set<NDescriptorFlag> af = other.effectiveFlags().get();
             for (NDescriptorFlag flag : this.flags) {
                 if (!af.contains(flag)) {
                     return false;

@@ -39,12 +39,12 @@ public class ArtifactsIndexDB {
     private static NanoDBTableDefinition<NId> def(String name, NanoDB db) {
         return new NanoDBTableDefinition<NId>(
                 name, NId.class, db.getSerializers().of(NId.class, false),
-                new NanoDBDefaultIndexDefinition<>("id", String.class, false, x -> x.getLongId()
-                        .builder().setRepository(x.getRepository()).build().toString()
+                new NanoDBDefaultIndexDefinition<>("id", String.class, false, x -> x.longId()
+                        .builder().setRepository(x.repository()).build().toString()
                 ),
-                new NanoDBDefaultIndexDefinition<>("groupId", String.class, false, NId::getGroupId),
-                new NanoDBDefaultIndexDefinition<>("artifactId", String.class, false, NId::getArtifactId),
-                new NanoDBDefaultIndexDefinition<>("repository", String.class, false, NId::getRepository)
+                new NanoDBDefaultIndexDefinition<>("groupId", String.class, false, NId::groupId),
+                new NanoDBDefaultIndexDefinition<>("artifactId", String.class, false, NId::artifactId),
+                new NanoDBDefaultIndexDefinition<>("repository", String.class, false, NId::repository)
         );
     }
 
@@ -71,8 +71,8 @@ public class ArtifactsIndexDB {
 
     public boolean contains(NId id) {
         return table.findByIndex("id",
-                id.getLongId()
-                        .builder().setRepository(id.getRepository())
+                id.longId()
+                        .builder().setRepository(id.repository())
                         .build().toDependency()
         ).findAny().orNull() != null;
     }

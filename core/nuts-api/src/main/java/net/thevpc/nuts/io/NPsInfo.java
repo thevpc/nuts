@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.util.NGetter;
+
 import java.time.Instant;
 import java.util.Set;
 
@@ -39,7 +41,8 @@ public interface NPsInfo {
      *
      * @return Process Id in string representation
      */
-    String getPid();
+    @NGetter
+    String pid();
 
     /**
      * Process Name.
@@ -47,48 +50,63 @@ public interface NPsInfo {
      *
      * @return Process Name or Java Class Name for Java Processes
      */
-    String getName();
+    @NGetter
+    String name();
 
-    NpsStatus getStatus();
+    @NGetter
+    NpsStatus status();
 
-    NpsType getType();
+    @NGetter
+    NpsType type();
 
-    Set<String> getStatusFlags();
+    @NGetter
+    Set<String> statusFlags();
 
     /**
      * Process Title / Window Title if available
      *
      * @return Process Title / Window Title if available
      */
-    String getTitle();
+    @NGetter
+    String title();
 
     /**
      * Process command line
      *
      * @return Process command line
      */
-    String getCmdLine();
+    @NGetter
+    String cmdLine();
 
     /**
      * Process parsed command line (when applicable)
      *
      * @return parsed Process command line
      */
-    String[] getCmdLineArgs();
+    @NGetter
+    String[] cmdLineArgs();
 
-    String getUser();
+    @NGetter
+    String user();
 
-    double getPercentCpu();
+    @NGetter
+    double percentCpu();
 
-    double getPercentMem();
+    @NGetter
+    double percentMem();
 
-    long getVirtualMemorySize();
+    @NGetter
+    long virtualMemorySize();
 
-    long getResidentSetSize();
+    @NGetter
+    long residentSetSize();
 
-    String getTerminal();
+    @NGetter
+    String terminal();
 
-    Instant getStartTime();
+    @NGetter
+    Instant startTime();
 
-    long getTime();
+    @NGetter
+    long time();
 }

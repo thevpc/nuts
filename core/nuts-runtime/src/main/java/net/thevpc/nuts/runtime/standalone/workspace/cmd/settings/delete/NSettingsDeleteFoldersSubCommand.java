@@ -14,7 +14,6 @@ import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepository;
@@ -48,8 +47,8 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                         , s));
                 if (force
                         || NIn.ask()
-                        .forBoolean(NMsg.ofPlain("force delete?")).setDefaultValue(false)
-                        .getBooleanValue()) {
+                        .forBoolean(NMsg.ofPlain("force delete?")).defaultValue(false)
+                        .booleanValue()) {
                     s.delete();
                 }
             }
@@ -107,8 +106,8 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
                         || NIn.ask()
-                        .forBoolean(NMsg.ofPlain("force delete?")).setDefaultValue(false)
-                        .getBooleanValue()) {
+                        .forBoolean(NMsg.ofPlain("force delete?")).defaultValue(false)
+                        .booleanValue()) {
                     sstoreLocation.delete();
                 }
             }
@@ -129,8 +128,8 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
                         || NIn.ask()
-                        .forBoolean(NMsg.ofPlain("Force Delete?")).setDefaultValue(false)
-                        .getBooleanValue()) {
+                        .forBoolean(NMsg.ofPlain("Force Delete?")).defaultValue(false)
+                        .booleanValue()) {
                     sstoreLocation.delete();
                 }
             }

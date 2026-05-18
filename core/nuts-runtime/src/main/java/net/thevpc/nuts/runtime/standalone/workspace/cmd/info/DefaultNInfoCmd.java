@@ -336,7 +336,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("nuts-api-version", () -> NWorkspace.of().getApiVersion());
         props.put("nuts-api-id", () -> NWorkspace.of().getApiId());
         props.put("nuts-runtime-id", () -> NWorkspace.of().getRuntimeId());
-        props.put("nuts-app-id", () -> NApp.of().getId().orNull());
+        props.put("nuts-app-id", () -> NApp.of().id().orNull());
 
         props.put("nuts-runtime-classpath",
                 () -> {
@@ -544,7 +544,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
 //        NutsIdFormat idFormat = ws.id().formatter();
         props.put("nuts-api-id", session.getWorkspace().getApiId());
         props.put("nuts-runtime-id", session.getWorkspace().getRuntimeId());
-        props.put("nuts-app-id", NApp.of().getId().orNull());
+        props.put("nuts-app-id", NApp.of().id().orNull());
         List<URL> cl = workspace.getBootClassWorldURLs();
         List<NPath> runtimeClassPath = new ArrayList<>();
         if (cl != null) {

@@ -25,7 +25,7 @@ public class BinSshFileOutputStreamScp extends OutputStream {
 
         // Create local temporary file
         this.temp = NPath.ofTempFile();
-        this.tempOS = this.temp.getOutputStream();
+        this.tempOS = this.temp.outputStream();
     }
 
     @Override

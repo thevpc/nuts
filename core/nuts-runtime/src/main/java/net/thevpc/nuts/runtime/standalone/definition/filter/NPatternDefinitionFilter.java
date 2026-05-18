@@ -53,11 +53,11 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
                 }
                 default: {
                     this.wildcard = containsWildcad(sid);
-                    g = GlobUtils.ofExact(id.getGroupId());
-                    n = GlobUtils.ofExact(id.getArtifactId());
-                    v = id.getVersion().toFilter();
-                    qm = id.getProperties();
-                    for (Map.Entry<String, String> entry : id.getProperties().entrySet()) {
+                    g = GlobUtils.ofExact(id.groupId());
+                    n = GlobUtils.ofExact(id.artifactId());
+                    v = id.version().toFilter();
+                    qm = id.properties();
+                    for (Map.Entry<String, String> entry : id.properties().entrySet()) {
                         String key = entry.getKey();
                         String val = entry.getValue();
                         if (!key.contains("*")) {
@@ -86,26 +86,26 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
         if (any) {
             return true;
         }
-        NId other = def.getId();
-        if (!g.matcher(other.getGroupId()).matches()) {
+        NId other = def.id();
+        if (!g.matcher(other.groupId()).matches()) {
             return false;
         }
-        if (!n.matcher(other.getArtifactId()).matches()) {
+        if (!n.matcher(other.artifactId()).matches()) {
             return false;
         }
-        if (!v.acceptVersion(other.getVersion())) {
+        if (!v.acceptVersion(other.version())) {
             return false;
         }
         Map<String, String> oqm = null;
         for (Predicate<Map<String, String>> pp : q) {
             if (oqm == null) {
-                oqm = other.getProperties();
+                oqm = other.properties();
             }
             if (!pp.test(oqm)) {
                 return false;
             }
         }
-        NEnvCondition condition = this.id.getCondition();
+        NEnvCondition condition = this.id.condition();
         if (condition != null && !condition.isBlank()) {
             NEnvCondition otherCondition = null;
             try {

@@ -119,15 +119,15 @@ public class NameBuilder {
                 char cc = charArray[i];
                 switch (cc) {
                     case 'v': {
-                        h.append(id.getVersion().toString());
+                        h.append(id.version().toString());
                         break;
                     }
                     case 'g': {
-                        h.append(id.getGroupId());
+                        h.append(id.groupId());
                         break;
                     }
                     case 'n': {
-                        h.append(id.getArtifactId());
+                        h.append(id.artifactId());
                         break;
                     }
                     case 'N': {
@@ -137,7 +137,7 @@ public class NameBuilder {
                         }
                         str = str.trim();
                         if (str.isEmpty()) {
-                            str = id.getArtifactId();
+                            str = id.artifactId();
                         }
                         h.append(str);
                         break;
@@ -149,7 +149,7 @@ public class NameBuilder {
                         break;
                     }
                     case 'a': {
-                        h.appendValid(CoreStringUtils.joinAndTrimToNull(id.getCondition().getArch()));
+                        h.appendValid(CoreStringUtils.joinAndTrimToNull(id.condition().getArch()));
                         break;
                     }
                     case 's': {
@@ -169,7 +169,7 @@ public class NameBuilder {
             }
         }
         if (h.isEmpty()) {
-            h.appendValid(id.getArtifactId());
+            h.appendValid(id.artifactId());
         }
         return h.toString();
     }

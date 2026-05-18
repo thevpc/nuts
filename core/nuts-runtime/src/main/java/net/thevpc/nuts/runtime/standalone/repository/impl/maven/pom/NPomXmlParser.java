@@ -686,7 +686,7 @@ public class NPomXmlParser {
 
     public NPom parse(NPath file, PomDomVisitor visitor) {
         try {
-            try (InputStream is = file.getInputStream()) {
+            try (InputStream is = file.inputStream()) {
                 return parse(is, visitor);
             }
         } catch (IOException ex) {
@@ -1066,10 +1066,10 @@ public class NPomXmlParser {
                             NId id = NId.get(a).orNull();
                             if (id != null) {
                                 if (!NBlankable.isBlank(os)) {
-                                    osMap.put(id.getShortName(), os);
+                                    osMap.put(id.shortName(), os);
                                 }
                                 if (!NBlankable.isBlank(arch)) {
-                                    archMap.put(id.getShortName(), arch);
+                                    archMap.put(id.shortName(), arch);
                                 }
                             }
                         }
@@ -1079,11 +1079,11 @@ public class NPomXmlParser {
         }
 
         public String getOs(NId id) {
-            return osMap.get(id.getShortName());
+            return osMap.get(id.shortName());
         }
 
         public String getArch(NId id) {
-            return archMap.get(id.getShortName());
+            return archMap.get(id.shortName());
         }
     }
 

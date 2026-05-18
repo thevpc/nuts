@@ -194,7 +194,7 @@ public class NErr {
     }
 
     public static NTerminalMode getTerminalMode(){
-        return err().getTerminalMode();
+        return err().terminalMode();
     }
 
     public static boolean isAutoFlash(){
@@ -226,7 +226,7 @@ public class NErr {
     }
 
     public static NSystemTerminalBase terminal(){
-        return err().getTerminal();
+        return err().terminal();
     }
 
     private static NPrintStream err() {

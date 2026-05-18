@@ -451,7 +451,7 @@ public class WorkspaceTest {
                         .distinct(true).getResultIds()
                         .findSingleton().get();
             }
-            Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
+            Assertions.assertTrue(nshId.version().value().startsWith(TestUtils.NUTS_VERSION + "."));
         }
         NPath c = NPath.of(NStoreKey.ofConf());
         TestUtils.println(c);

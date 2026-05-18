@@ -99,7 +99,7 @@ public class NDefinitionIdFilter extends AbstractIdFilter implements NIdFilter, 
         }
 
         @Override
-        public NId getId() {
+        public NId id() {
             return id;
         }
 

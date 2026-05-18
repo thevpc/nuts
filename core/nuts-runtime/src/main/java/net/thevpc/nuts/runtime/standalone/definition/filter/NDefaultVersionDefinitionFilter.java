@@ -32,7 +32,7 @@ public class NDefaultVersionDefinitionFilter extends AbstractDefinitionFilter im
         if (defaultVersion == null) {
             return true;
         }
-        return NWorkspaceExt.of().getInstalledRepository().isDefaultVersion(definition.getId()) == defaultVersion;
+        return NWorkspaceExt.of().getInstalledRepository().isDefaultVersion(definition.id()) == defaultVersion;
     }
 
     @Override

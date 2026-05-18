@@ -185,7 +185,7 @@ public abstract class NEnvBase implements NEnv {
         Set<NId> desktopEnvironments = getDesktopEnvironments();
         LinkedHashSet<NDesktopEnvironmentFamily> all = new LinkedHashSet<>();
         for (NId desktopEnvironment : desktopEnvironments) {
-            all.add(NDesktopEnvironmentFamily.parse(desktopEnvironment.getShortName()).orNull());
+            all.add(NDesktopEnvironmentFamily.parse(desktopEnvironment.shortName()).orNull());
         }
         return new LinkedHashSet<>(all);
     }

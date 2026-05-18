@@ -147,13 +147,13 @@ public class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
 
 
     public String getDefaultIdBasedir(NId id) {
-        String groupId = id.getGroupId();
-        String artifactId = id.getArtifactId();
+        String groupId = id.groupId();
+        String artifactId = id.artifactId();
         String plainIdPath = groupId.replace('.', '/') + "/" + artifactId;
-        if (id.getVersion().isBlank()) {
+        if (id.version().isBlank()) {
             return plainIdPath;
         }
-        String version = id.getVersion().getValue();
+        String version = id.version().value();
 //        String a = CoreNutsUtils.trimToNullAlternative(id.getAlternative());
         String x = plainIdPath + "/" + version;
 //        if (a != null) {

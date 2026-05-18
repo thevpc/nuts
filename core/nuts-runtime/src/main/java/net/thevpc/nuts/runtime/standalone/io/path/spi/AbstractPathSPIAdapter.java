@@ -119,7 +119,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     public String getCharset(NPath basePath) {
-        return ref.getCharset();
+        return ref.charset();
     }
 
     @Override
@@ -200,7 +200,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
     @Override
     public void setPermissions(NPath basePath, NPathPermission... permissions) {
-        ref.setPermissions(permissions);
+        ref.permissions(permissions);
     }
 
     @Override

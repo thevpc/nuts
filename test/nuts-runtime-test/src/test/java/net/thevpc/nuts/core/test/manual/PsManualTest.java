@@ -56,9 +56,9 @@ public class PsManualTest {
 //        Double d=NOptional.of(a).then(x->x.b).then(x->x.c).then(x->x.x).orNull();
 
         List<NPsInfo> nPsInfos = NPs.of().getResultList().toList();
-        List<NPsInfo> notepads = nPsInfos.stream().filter(x -> Objects.equals(x.getName(), "notepad.exe")).collect(Collectors.toList());
+        List<NPsInfo> notepads = nPsInfos.stream().filter(x -> Objects.equals(x.name(), "notepad.exe")).collect(Collectors.toList());
         for (NPsInfo notepad : notepads) {
-            NPs.of().killProcess(notepad.getPid());
+            NPs.of().killProcess(notepad.pid());
         }
         String str = NElementWriter.ofJson().formatPlain(nPsInfos);
         NElement parsed = NElementReader.ofJson().read(str);

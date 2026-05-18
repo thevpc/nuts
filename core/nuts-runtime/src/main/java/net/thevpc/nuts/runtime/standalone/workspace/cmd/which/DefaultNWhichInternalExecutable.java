@@ -114,7 +114,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                             if (p.getId() == null) {
                                 NId nid = NId.get(arg).get();
                                 if (nid != null) {
-                                    throw new NArtifactNotFoundException(nid.getLongId());
+                                    throw new NArtifactNotFoundException(nid.longId());
                                 } else {
                                     throw new NArtifactNotFoundException(null, NMsg.ofC("artifact not found %s", (arg == null ? "<null>" : arg)));
                                 }

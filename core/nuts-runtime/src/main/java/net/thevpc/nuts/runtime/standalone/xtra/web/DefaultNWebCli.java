@@ -78,7 +78,7 @@ public class DefaultNWebCli implements NWebCli {
     private final DefaultNWebHeaders headers = new DefaultNWebHeaders();
 
     public DefaultNWebCli() {
-        headers.addHeader("User-Agent", "nwebcli/" + NWorkspace.of().getRuntimeId().getVersion(), DefaultNWebHeaders.Mode.ALWAYS);
+        headers.addHeader("User-Agent", "nwebcli/" + NWorkspace.of().getRuntimeId().version(), DefaultNWebHeaders.Mode.ALWAYS);
     }
 
     public static InputStream prepareGlobalOpenStream(URL url) throws IOException {
@@ -494,7 +494,7 @@ public class DefaultNWebCli implements NWebCli {
 //                    bytes = NIO.of().ofInputSource(byteArrayResult);
                                 long contentLength = finalUc.getContentLengthLong();
                                 if (contentLength >= 0) {
-                                    bytes.getMetaData().setContentLength(contentLength);
+                                    bytes.metaData().contentLength(contentLength);
                                 }
                             }
                             return bytes;

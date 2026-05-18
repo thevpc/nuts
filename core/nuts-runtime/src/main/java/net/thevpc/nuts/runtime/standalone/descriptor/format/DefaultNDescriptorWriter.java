@@ -83,18 +83,18 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
         // Standard JAR manifest attributes
         NId id = desc.getId();
         if (id != null) {
-            if (id.getVersion() != null && !id.getVersion().isBlank()) {
-                writer.writeAttribute("Implementation-Version", id.getVersion().getValue());
+            if (id.version() != null && !id.version().isBlank()) {
+                writer.writeAttribute("Implementation-Version", id.version().value());
             }
-            if (!NBlankable.isBlank(id.getGroupId())) {
-                writer.writeAttribute("Implementation-Vendor-Id", id.getGroupId());
+            if (!NBlankable.isBlank(id.groupId())) {
+                writer.writeAttribute("Implementation-Vendor-Id", id.groupId());
             }
-            if (!NBlankable.isBlank(id.getArtifactId())) {
-                writer.writeAttribute("Implementation-Title", id.getArtifactId());
+            if (!NBlankable.isBlank(id.artifactId())) {
+                writer.writeAttribute("Implementation-Title", id.artifactId());
                 // Also write as Automatic-Module-Name
-                String moduleName = !NBlankable.isBlank(id.getGroupId())
-                    ? id.getGroupId() + "." + id.getArtifactId()
-                    : id.getArtifactId();
+                String moduleName = !NBlankable.isBlank(id.groupId())
+                    ? id.groupId() + "." + id.artifactId()
+                    : id.artifactId();
                 writer.writeAttribute("Automatic-Module-Name", moduleName);
             }
         }
@@ -184,13 +184,13 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
         }
 
         net.thevpc.nuts.artifact.NArtifactCall executor = desc.getExecutor();
-        if (executor.getArguments() == null || executor.getArguments().isEmpty()) {
+        if (executor.arguments() == null || executor.arguments().isEmpty()) {
             return null;
         }
 
         // Arguments are stored as two separate elements: "--main-class=" and the class name
         // --main-class= followed by the actual class name
-        java.util.List<String> args = executor.getArguments();
+        java.util.List<String> args = executor.arguments();
         for (int i = 0; i < args.size() - 1; i++) {
             String arg = args.get(i);
             if ("--main-class=".equals(arg)) {

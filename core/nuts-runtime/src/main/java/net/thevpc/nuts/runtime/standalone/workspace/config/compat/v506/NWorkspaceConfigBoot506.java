@@ -56,20 +56,20 @@ public final class NWorkspaceConfigBoot506 extends NConfigItem {
 
     /**
      * boot package Id in long format (as defined in
-     * {@link NId#getLongName()})
+     * {@link NId#longName()})
      *
-     * @see NId#getLongId()
+     * @see NId#longId()
      */
     private NId runtimeId = null;
 
     /**
      * ';' separated list of package Ids in long format (as defined in
-     * {@link NId#getLongName()}) that defines ALL dependencies needed (no
+     * {@link NId#longName()}) that defines ALL dependencies needed (no
      * further dependency computation should be performed) to load and execute a
      * valid implementation of nuts-api. These packages should be accessible
      * from {@link NWorkspaceConfigBoot#getBootRepositories()}
      *
-     * @see NId#getLongId()
+     * @see NId#longId()
      */
     private String runtimeDependencies = null;
     private String bootRepositories = null;
@@ -90,13 +90,13 @@ public final class NWorkspaceConfigBoot506 extends NConfigItem {
     private List<NId> extensions;
     /**
      * ';' separated list of package Ids in long format (as defined in
-     * {@link NId#getLongName()}) that defines ALL dependencies needed (no
+     * {@link NId#longName()}) that defines ALL dependencies needed (no
      * further dependency computation should be performed) to load and execute a
      * valid extensions. These packages should be either cached in boot cache
      * folder or accessible from
      * {@link NWorkspaceConfigBoot#getBootRepositories()}
      *
-     * @see NId#getLongId()
+     * @see NId#longId()
      */
     private String extensionDependencies = null;
     private List<NCommandFactoryConfig> commandFactories;

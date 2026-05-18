@@ -2,8 +2,11 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Represents an output stream, file, or buffer for capturing the
@@ -19,8 +22,8 @@ import java.io.OutputStream;
  *     <li>{@link NRedirectType#NULL} - discard output</li>
  * </ul>
  *
- * <p>Grab modes allow retrieving captured output via {@link #getResultBytes()} or
- * {@link #getResultString()}.
+ * <p>Grab modes allow retrieving captured output via {@link #resultBytes()} or
+ * {@link #resultString()}.
  */
 public class NExecOutput {
     private NRedirectType type;
@@ -44,7 +47,7 @@ public class NExecOutput {
     /**
      * Captures the command output into memory.
      * <p>
-     * The result can be read later via {@link #getResultBytes()} or {@link #getResultString()}.
+     * The result can be read later via {@link #resultBytes()} or {@link #resultString()}.
      *
      * @return a NExecOutput configured to capture output in memory
      */
@@ -158,25 +161,25 @@ public class NExecOutput {
         this.type = type;
         this.stream = stream;
         this.path = path;
-        this.options = options == null ? new NPathOption[0] : options;
+        this.options = options == null ? new NPathOption[0] : Arrays.copyOf(options, options.length);
         this.maxLines = maxLines;
         this.maxBytes = maxBytes;
     }
 
-    public long getMaxLines() {
+    public long maxLines() {
         return maxLines;
     }
 
-    public long getMaxBytes() {
+    public long maxBytes() {
         return maxBytes;
     }
 
-    public NRedirectType getType() {
+    public NRedirectType type() {
         return type;
     }
 
-    public NOptional<NInputSource> getResultSource() {
-        switch (getType()) {
+    public NOptional<NInputSource> resultSource() {
+        switch (type()) {
             case GRAB_STREAM:
             case GRAB_FILE: {
                 if (result != null) {
@@ -188,10 +191,10 @@ public class NExecOutput {
         return NOptional.ofEmpty(() -> NMsg.ofPlain("no buffer was configured; should call setGrabOutString"));
     }
 
-    public byte[] getResultBytes() {
+    public byte[] resultBytes() {
         NInputSource s = null;
         try {
-            s = getResultSource().get();
+            s = resultSource().get();
             return s.readBytes();
         } finally {
             if (s != null) {
@@ -200,47 +203,50 @@ public class NExecOutput {
         }
     }
 
-    public String getResultString() {
-        return new String(getResultBytes());
+    public String resultString() {
+        return new String(resultBytes());
     }
 
-    public OutputStream getStream() {
+    public OutputStream outputStream() {
         return stream;
     }
 
-    public NPath getPath() {
+    public NPath path() {
         return path;
     }
 
-    public NPathOption[] getOptions() {
-        return options;
+    public List<NPathOption> options() {
+        return Arrays.asList(options);
     }
 
-    public NExecOutput setType(NRedirectType type) {
+    public NExecOutput type(NRedirectType type) {
         this.type = type;
         return this;
     }
 
-    public NExecOutput setStream(OutputStream stream) {
+    @NSetter
+    public NExecOutput outputStream(OutputStream stream) {
         this.stream = stream;
         return this;
     }
 
-    public NExecOutput setPath(NPath path) {
+    @NSetter
+    public NExecOutput path(NPath path) {
         this.path = path;
         return this;
     }
 
-    public NExecOutput setOptions(NPathOption[] options) {
-        this.options = options;
+    public NExecOutput options(NPathOption[] options) {
+        this.options = options == null ? new NPathOption[0] : Arrays.copyOf(options, options.length);
         return this;
     }
 
-    public NInputSource getResult() {
+    public NInputSource result() {
         return result;
     }
 
-    public NExecOutput setResult(NInputSource result) {
+    @NSetter
+    public NExecOutput result(NInputSource result) {
         this.result = result;
         return this;
     }

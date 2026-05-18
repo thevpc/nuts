@@ -18,7 +18,7 @@ public class NutsAPIDefinitionFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition definition) {
-        for (NDependency dependency : definition.getDescriptor().getDependencies()) {
+        for (NDependency dependency : definition.descriptor().getDependencies()) {
             if (dependency.getShortName().equals(NConstants.Ids.NUTS_API)) {
                 if (apiVersion.toFilter().acceptVersion(dependency.getVersion())) {
                     return true;
@@ -28,9 +28,9 @@ public class NutsAPIDefinitionFilter extends AbstractDefinitionFilter {
             }
         }
         // check now all transitive
-        List<NDependency> allDeps = NFetch.of(definition.getId())
+        List<NDependency> allDeps = NFetch.of(definition.id())
                 .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                .getResultDefinition().getDependencies().get()
+                .getResultDefinition().dependencies().get()
                 .transitive().toList();
         for (NDependency dependency : allDeps) {
             if (dependency.getShortName().equals(NConstants.Ids.NUTS_API)) {

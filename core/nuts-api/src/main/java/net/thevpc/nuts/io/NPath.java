@@ -424,11 +424,11 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     boolean isUserCache();
 
-    NPath setUserCache(boolean userCache);
+    NPath userCache(boolean userCache);
 
     boolean isUserTemporary();
 
-    NPath setUserTemporary(boolean temporary);
+    NPath userTemporary(boolean temporary);
 
     NPath resolveSibling(NPathRenameOptions renameOptions);
 
@@ -730,7 +730,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     Set<NPathPermission> permissions();
 
-    NPath setPermissions(NPathPermission... permissions);
+    NPath permissions(NPathPermission... permissions);
 
     NPath addPermissions(NPathPermission... permissions);
 
@@ -848,7 +848,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     NPath copy();
 
-    void setDeleteOnDispose(boolean deleteOnDispose);
+    void deleteOnDispose(boolean deleteOnDispose);
 
     boolean isDeleteOnDispose();
 

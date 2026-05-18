@@ -120,7 +120,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                     .distinct(true)
                     .getResultDefinitions()
                     .findSingleton().get();
-            NId anyId = anyIdDef.getId();
+            NId anyId = anyIdDef.id();
             StringWriter bos = new StringWriter();
             try (BufferedWriter w = new BufferedWriter(bos)) {
                 NdiUtils.generateScript("/net/thevpc/nuts/runtime/settings/" + sndi.getTemplateName(templateName, getShellFamily()),
@@ -133,7 +133,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                 }
                                 switch (s) {
                                     case "NUTS_ID":
-                                        return anyId.getLongName();
+                                        return anyId.longName();
                                     case "GENERATOR": {
 //                                        NutsId appId = getSession().getAppId();
 //                                        if(appId!=null){
@@ -141,7 +141,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
 //                                        }
 //                                        appId=getSession().getWorkspace().getRuntimeId();
 //                                        return appId.getLongName();
-                                        return NWorkspace.of().getRuntimeId().getLongName();
+                                        return NWorkspace.of().getRuntimeId().longName();
                                     }
                                     case "SCRIPT_NUTS":
                                         return sndi.getNutsStart(options).path().toString();

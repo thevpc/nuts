@@ -371,7 +371,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<NDependencies> getResultDependencies() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .map(NFunction.of((NDefinition x) -> x.getDependencies().get())
+                .map(NFunction.of((NDefinition x) -> x.dependencies().get())
                         .withDescription(NDescribables.ofDesc("getDependencies")))
         );
     }
@@ -393,7 +393,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
 
     @Override
     public NStream<NDescriptor> getResultDescriptors() {
-        return getResultDefinitions().map(NDefinition::getDescriptor);
+        return getResultDefinitions().map(NDefinition::descriptor);
     }
 
     @Override
@@ -412,8 +412,8 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
         NId[] allIds = new NId[nDefinitions.size()];
         for (int i = 0; i < allURLs.length; i++) {
             NDefinition d = nDefinitions.get(i);
-            allURLs[i] = d.getContent().flatMap(NPath::toURL).orNull();
-            allIds[i] = d.getId();
+            allURLs[i] = d.content().flatMap(NPath::toURL).orNull();
+            allIds[i] = d.id();
         }
         DefaultNClassLoader cl = ((DefaultNExtensions) NExtensions.of())
                 .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID(), parent);
@@ -425,7 +425,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
 
     @Override
     public String getResultNutsPath() {
-        return getResultIds().toList().stream().map(NId::getLongName).collect(Collectors.joining(";"));
+        return getResultIds().toList().stream().map(NId::longName).collect(Collectors.joining(";"));
     }
 
     @Override
@@ -434,11 +434,11 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
         NIterator<NDefinition> it = getResultDefinitionIteratorBase();
         while (it.hasNext()) {
             NDefinition nDefinition = it.next();
-            if (nDefinition.getContent().isPresent()) {
+            if (nDefinition.content().isPresent()) {
                 if (sb.length() > 0) {
                     sb.append(File.pathSeparator);
                 }
-                sb.append(nDefinition.getContent().orNull());
+                sb.append(nDefinition.content().orNull());
             }
         }
         return sb.toString();
@@ -448,7 +448,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     public NStream<String> getResultPaths() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
                 .map(
-                        NFunction.of((NDefinition x) -> x.getContent().map(Object::toString).orNull())
+                        NFunction.of((NDefinition x) -> x.content().map(Object::toString).orNull())
                                 .withDescription(NDescribables.ofDesc("getPath"))
                 )
                 .notBlank()
@@ -458,7 +458,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultPathNames() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .map(NFunction.of((NDefinition x) -> x.getContent().map(NPath::name).orNull())
+                .map(NFunction.of((NDefinition x) -> x.content().map(NPath::name).orNull())
                         .withDescription(NDescribables.ofDesc("getName")))
                 .notBlank());
     }
@@ -466,21 +466,21 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<Instant> getResultInstallDates() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .map(NFunction.of((NDefinition x) -> x.getInstallInformation().map(NInstallInformation::getCreatedInstant).orNull()).withDescription(NDescribables.ofDesc("getCreatedInstant")))
+                .map(NFunction.of((NDefinition x) -> x.installInformation().map(NInstallInformation::getCreatedInstant).orNull()).withDescription(NDescribables.ofDesc("getCreatedInstant")))
                 .notNull());
     }
 
     @Override
     public NStream<String> getResultInstallUsers() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .map(NFunction.of((NDefinition x) -> x.getInstallInformation().map(NInstallInformation::getInstallUser).orNull()).withDescription(NDescribables.ofDesc("getInstallUser")))
+                .map(NFunction.of((NDefinition x) -> x.installInformation().map(NInstallInformation::getInstallUser).orNull()).withDescription(NDescribables.ofDesc("getInstallUser")))
                 .notBlank());
     }
 
     @Override
     public NStream<NPath> getResultInstallFolders() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .map(NFunction.of((NDefinition x) -> x.getInstallInformation().map(NInstallInformation::getInstallFolder).orNull())
+                .map(NFunction.of((NDefinition x) -> x.installInformation().map(NInstallInformation::getInstallFolder).orNull())
                         .withDescription(NDescribables.ofDesc("getInstallFolder"))
                 )
                 .notNull());
@@ -489,7 +489,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<NPath> getResultStoreLocations(NStoreType storeType) {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .map(NFunction.of((NDefinition x) -> NPath.of(NStoreKey.of(x.getId()).type(storeType)))
+                .map(NFunction.of((NDefinition x) -> NPath.of(NStoreKey.of(x.id()).type(storeType)))
                         .withDescription(NDescribables.ofDesc("getStoreLocation(" + storeType.id() + ")"))
                 )
                 .notNull());
@@ -511,7 +511,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultNames() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getName()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getName()))
                         .withDescription(NDescribables.ofDesc("getDescriptorName"))
                 )
                 .notBlank());
@@ -520,7 +520,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultOs() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getOs()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getCondition().getOs()))
                         .withDescription(NDescribables.ofDesc("getOs")))
                 .notBlank()
                 .distinct()
@@ -533,7 +533,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
         return postProcessResult(defIter
                 .mapMulti(
                         NFunction.of(
-                                (NDefinition x) -> x.getContent().map(NExecutionEntry::parse).orElse(Collections.emptyList())
+                                (NDefinition x) -> x.content().map(NExecutionEntry::parse).orElse(Collections.emptyList())
                         ).withDescription(NDescribables.ofDesc("getFile"))
                 ));
     }
@@ -541,7 +541,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultOsDist() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getOsDist()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getCondition().getOsDist()))
                         .withDescription(NDescribables.ofDesc("getOsDist"))
                 )
                 .notBlank()
@@ -552,7 +552,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultPackaging() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getPackaging()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getPackaging()))
                         .withDescription(NDescribables.ofDesc("getPackaging"))
                 )
                 .notBlank()
@@ -563,7 +563,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultPlatform() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getPlatform()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getCondition().getPlatform()))
                         .withDescription(NDescribables.ofDesc("getPlatform"))
                 )
                 .notBlank()
@@ -574,7 +574,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultProfile() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getProfiles()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getCondition().getProfiles()))
                         .withDescription(NDescribables.ofDesc("getProfile"))
                 )
                 .notBlank()
@@ -585,7 +585,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultDesktopEnvironment() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getDesktopEnvironment()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getCondition().getDesktopEnvironment()))
                         .withDescription(NDescribables.ofDesc("getDesktopEnvironment"))
                 )
                 .notBlank()
@@ -596,7 +596,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultArch() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getArch()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getCondition().getArch()))
                         .withDescription(NDescribables.ofDesc("getArch"))
                 )
                 .notBlank());
@@ -783,7 +783,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
                 case YAML:
                 case TREE: {
                     return (NIterator) NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                            .flatMap(NFunction.of((NDefinition x) -> x.getDependencies().get().transitiveNodes().iterator())
+                            .flatMap(NFunction.of((NDefinition x) -> x.dependencies().get().transitiveNodes().iterator())
                                     .withDescription(NDescribables.ofDesc("getDependencies"))
                             )
                             .map(NFunction.of((NDependencyTreeNode x) -> dependenciesToElement(x))
@@ -1033,7 +1033,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
 
     private NDefinition loadedIdToDefinition(NId next) {
         NFetch fetch = toFetch();
-        NEnvCondition condition = next.getCondition();
+        NEnvCondition condition = next.condition();
         NDependency dep = next.toDependency();
         NDefinition d = null;
         try {
@@ -1045,7 +1045,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
         }
         if (d == null) {
             if (isFailFast()) {
-                throw new NArtifactNotFoundException(next.getLongId());
+                throw new NArtifactNotFoundException(next.longId());
             }
             return d;
         }

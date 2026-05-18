@@ -79,13 +79,13 @@ public class DefaultNIdBuilder implements NIdBuilder {
         if (id == null) {
             clear();
         } else {
-            setCondition(id.getCondition());
-            setGroupId(id.getGroupId());
-            setArtifactId(id.getArtifactId());
-            setVersion(id.getVersion());
-            setClassifier(id.getClassifier());
-            setCondition(id.getCondition());
-            setPropertiesQuery(id.getPropertiesQuery());
+            setCondition(id.condition());
+            setGroupId(id.groupId());
+            setArtifactId(id.artifactId());
+            setVersion(id.version());
+            setClassifier(id.classifier());
+            setCondition(id.condition());
+            setPropertiesQuery(id.propertiesQuery());
         }
         return this;
     }
@@ -329,7 +329,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
 
     @Override
     public String getFullName() {
-        return build().getFullName();
+        return build().fullName();
     }
 
     @Override
@@ -408,8 +408,8 @@ public class DefaultNIdBuilder implements NIdBuilder {
         if (other == null) {
             return false;
         }
-        return NStringUtils.trim(groupId).equals(NStringUtils.trim(other.getArtifactId()))
-                && NStringUtils.trim(artifactId).equals(NStringUtils.trim(other.getGroupId()));
+        return NStringUtils.trim(groupId).equals(NStringUtils.trim(other.artifactId()))
+                && NStringUtils.trim(artifactId).equals(NStringUtils.trim(other.groupId()));
     }
 
     @Override
@@ -417,11 +417,11 @@ public class DefaultNIdBuilder implements NIdBuilder {
         if (other == null) {
             return false;
         }
-        return NStringUtils.trim(artifactId).equals(NStringUtils.trim(other.getArtifactId()))
-                && NStringUtils.trim(groupId).equals(NStringUtils.trim(other.getGroupId()))
+        return NStringUtils.trim(artifactId).equals(NStringUtils.trim(other.artifactId()))
+                && NStringUtils.trim(groupId).equals(NStringUtils.trim(other.groupId()))
                 && Objects.equals((version == null || version.isBlank()) ? null : version,
-                (other.getVersion() == null || other.getVersion().isBlank()) ? null : other.getVersion())
-                && Objects.equals(getClassifier(), other.getClassifier())
+                (other.version() == null || other.version().isBlank()) ? null : other.version())
+                && Objects.equals(getClassifier(), other.classifier())
                 ;
     }
 
@@ -438,12 +438,12 @@ public class DefaultNIdBuilder implements NIdBuilder {
 
     @Override
     public NId getShortId() {
-        return build().getShortId();
+        return build().shortId();
     }
 
     @Override
     public NId getLongId() {
-        return build().getLongId();
+        return build().longId();
     }
 
     @Override

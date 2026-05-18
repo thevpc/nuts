@@ -3,7 +3,6 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.descriptor.parser.DefaultNDescriptorParser;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder;
@@ -43,8 +42,8 @@ public class ManifestFormatterTest {
                 .setIcons("classpath:/icons/app.png")
                 .setExecutor(
                         new DefaultNArtifactCallBuilder()
-                                .setId(NId.get("java").get())
-                                .setArguments(new String[]{"--main-class=", "com.example.Main"})
+                                .id(NId.get("java").get())
+                                .arguments(new String[]{"--main-class=", "com.example.Main"})
                                 .build()
                 )
                 .build();
@@ -162,8 +161,8 @@ public class ManifestFormatterTest {
                 .setIcons("classpath:/test.png")
                 .setExecutor(
                         new DefaultNArtifactCallBuilder()
-                                .setId(NId.get("java").get())
-                                .setArguments(new String[]{"--main-class=", "com.roundtrip.TestMain"})
+                                .id(NId.get("java").get())
+                                .arguments(new String[]{"--main-class=", "com.roundtrip.TestMain"})
                                 .build()
                 )
                 .build();
@@ -217,10 +216,10 @@ public class ManifestFormatterTest {
 
         // Verify Main-Class was preserved
         Assertions.assertNotNull(parsed.getExecutor(), "Executor missing in parsed descriptor");
-        Assertions.assertNotNull(parsed.getExecutor().getArguments(), "Executor arguments missing in parsed descriptor");
+        Assertions.assertNotNull(parsed.getExecutor().arguments(), "Executor arguments missing in parsed descriptor");
 
         boolean foundMainClass = false;
-        java.util.List<String> args = parsed.getExecutor().getArguments();
+        java.util.List<String> args = parsed.getExecutor().arguments();
         for (int i = 0; i < args.size() - 1; i++) {
             if ("--main-class=".equals(args.get(i))) {
                 String mainClass = args.get(i + 1);
@@ -507,8 +506,8 @@ public class ManifestFormatterTest {
                 .setId(NIdBuilder.of("org.test", "mainclass1").setVersion("1.0").build())
                 .setExecutor(
                     new DefaultNArtifactCallBuilder()
-                        .setId(NId.get("java").get())
-                        .setArguments(new String[]{"--main-class=com.example.ConcatenatedMain"})
+                        .id(NId.get("java").get())
+                        .arguments(new String[]{"--main-class=com.example.ConcatenatedMain"})
                         .build()
                 )
                 .build();

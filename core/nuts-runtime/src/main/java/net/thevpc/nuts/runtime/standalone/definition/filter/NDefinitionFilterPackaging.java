@@ -52,7 +52,7 @@ public class NDefinitionFilterPackaging extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition descriptor) {
-        return CoreFilterUtils.matchesPackaging(packaging, descriptor.getDescriptor());
+        return CoreFilterUtils.matchesPackaging(packaging, descriptor.descriptor());
     }
 
     /**

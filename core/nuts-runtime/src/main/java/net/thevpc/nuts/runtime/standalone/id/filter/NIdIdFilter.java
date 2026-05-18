@@ -38,12 +38,12 @@ public class NIdIdFilter extends AbstractIdFilter implements NIdFilter, NSimplif
         if(LOG==null){
             LOG= NLog.of(NIdIdFilter.class);
         }
-        if(id.getShortName().equals(filter.getShortName())){
-            if (!filter.getVersion().toFilter().acceptVersion(id.getVersion())) {
+        if(id.shortName().equals(filter.shortName())){
+            if (!filter.version().toFilter().acceptVersion(id.version())) {
                 return false;
             }
-            Map<String, String> e = filter.getProperties();
-            Map<String, String> m = id.getProperties();
+            Map<String, String> e = filter.properties();
+            Map<String, String> m = id.properties();
             for (Map.Entry<String, String> v : e.entrySet()) {
                 if(!Objects.equals(
                         v.getValue(),m.get(v.getKey())

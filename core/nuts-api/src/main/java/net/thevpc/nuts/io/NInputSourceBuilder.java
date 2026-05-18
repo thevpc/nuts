@@ -3,6 +3,8 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,29 +33,31 @@ public interface NInputSourceBuilder {
 
     NInputSourceBuilder setMetadata(NContentMetadata metadata);
 
-    Object getSource();
+    @NGetter
+    Object source();
 
-    NInputSourceBuilder setSource(Object source);
+    @NSetter
+    NInputSourceBuilder source(Object source);
 
-    NMsg getSourceName();
+    NMsg sourceName();
 
-    NInputSourceBuilder setSourceName(NMsg sourceName);
+    NInputSourceBuilder sourceName(NMsg sourceName);
 
-    Long getExpectedLength();
+    Long expectedLength();
 
-    NInputSourceBuilder setExpectedLength(Long expectedLength);
+    NInputSourceBuilder expectedLength(Long expectedLength);
 
-    NProgressListener getMonitoringListener();
+    NProgressListener monitoringListener();
 
-    NInputSourceBuilder setMonitoringListener(NProgressListener monitoringListener);
+    NInputSourceBuilder monitoringListener(NProgressListener monitoringListener);
 
     boolean isNonBlocking();
 
-    NInputSourceBuilder setNonBlocking(boolean nonBlocking);
+    NInputSourceBuilder nonBlocking(boolean nonBlocking);
 
-    OutputStream getTee();
+    OutputStream tee();
 
-    NInputSourceBuilder setTee(OutputStream tee);
+    NInputSourceBuilder tee(OutputStream tee);
 
     NNonBlockingInputStream createNonBlockingInputStream();
 

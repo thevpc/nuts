@@ -88,17 +88,11 @@ public interface NTerminal {
      */
     char[] readPassword(NPrintStream out, NMsg prompt);
 
-    InputStream getIn();
+    void in(InputStream in);
 
-    void setIn(InputStream in);
+    void out(NPrintStream out);
 
-    NPrintStream getOut();
-
-    void setOut(NPrintStream out);
-
-    NPrintStream getErr();
-
-    void setErr(NPrintStream out);
+    void err(NPrintStream out);
 
     //    NutsSystemTerminalBase geTerminalBase();
 //

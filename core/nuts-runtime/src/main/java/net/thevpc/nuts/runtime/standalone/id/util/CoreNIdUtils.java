@@ -39,7 +39,7 @@ public class CoreNIdUtils {
     public static NId generateIdFromFileName(NPath path) {
         NDigest nDigest = NDigest.of();
         String id0 = CoreNIdUtils.resolveValidIdStringFromFileName(path.name());
-        nDigest.setSource(path);
+        nDigest.source(path);
         return NId.get("temp.url:" + id0 + "-" + nDigest.computeString() + "#1.0").get();
     }
 
@@ -78,13 +78,13 @@ public class CoreNIdUtils {
 
     public static void checkLongId(NId id) {
         checkShortId(id);
-        NAssert.requireNamedNonBlank(id.getVersion(), () -> NMsg.ofC("version for %s", id));
+        NAssert.requireNamedNonBlank(id.version(), () -> NMsg.ofC("version for %s", id));
     }
 
     public static void checkShortId(NId id) {
         NAssert.requireNamedNonBlank(id, "id");
-        NAssert.requireNonBlank(id.getGroupId(), () -> NMsg.ofC("missing groupId for %s", id));
-        NAssert.requireNonBlank(id.getArtifactId(), () -> NMsg.ofC("missing artifactId for %s", id));
+        NAssert.requireNonBlank(id.groupId(), () -> NMsg.ofC("missing groupId for %s", id));
+        NAssert.requireNonBlank(id.artifactId(), () -> NMsg.ofC("missing artifactId for %s", id));
     }
 
     public static boolean isValidEffectiveId(NId id) {
@@ -105,7 +105,7 @@ public class CoreNIdUtils {
     }
 
     public static NId createContentFaceId(NId id, NDescriptor desc) {
-        Map<String, String> q = id.getProperties();
+        Map<String, String> q = id.properties();
         q.put(NConstants.IdProperties.PACKAGING, NStringUtils.trim(desc.getPackaging()));
         q.put(NConstants.IdProperties.FACE, NConstants.QueryFaces.CONTENT);
         return id.builder().setProperties(q).build();
@@ -171,17 +171,17 @@ public class CoreNIdUtils {
 
 
     public static String getNutsApiVersion(NExecutionContext executionContext) {
-        NDescriptor descriptor = executionContext.getDefinition().getDescriptor();
+        NDescriptor descriptor = executionContext.getDefinition().descriptor();
         if (descriptor.isNutsApplication()) {
             for (NDependency dependency : descriptor.getDependencies()) {
-                if (dependency.toId().getShortName().equals(NConstants.Ids.NUTS_API)) {
-                    return dependency.toId().getVersion().getValue();
+                if (dependency.toId().shortName().equals(NConstants.Ids.NUTS_API)) {
+                    return dependency.toId().version().value();
                 }
             }
         }
-        for (NDependency dependency : executionContext.getDefinition().getDependencies().get()) {
-            if (dependency.toId().getShortName().equals(NConstants.Ids.NUTS_API)) {
-                return dependency.toId().getVersion().getValue();
+        for (NDependency dependency : executionContext.getDefinition().dependencies().get()) {
+            if (dependency.toId().shortName().equals(NConstants.Ids.NUTS_API)) {
+                return dependency.toId().version().value();
             }
         }
         return null;

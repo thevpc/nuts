@@ -47,16 +47,16 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
      *
      * @return artifact id
      */
-    NId getId();
+    NId id();
 
     /**
      * return artifact descriptor
      *
      * @return artifact descriptor
      */
-    NDescriptor getDescriptor();
+    NDescriptor descriptor();
 
-    NOptional<Set<NDescriptorFlag>> getEffectiveFlags();
+    NOptional<Set<NDescriptorFlag>> effectiveFlags();
 
     /**
      * return artifact content file path.
@@ -64,7 +64,7 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
      * @return artifact content file info
      * @throws NElementNotFoundException if the property is not requested
      */
-    NOptional<NPath> getContent();
+    NOptional<NPath> content();
 
     /**
      * return artifact install information.
@@ -72,7 +72,7 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
      * @return artifact install information
      * @throws NElementNotFoundException if the property is not requested
      */
-    NOptional<NInstallInformation> getInstallInformation();
+    NOptional<NInstallInformation> installInformation();
 
     /**
      * return artifact effective descriptor.
@@ -80,7 +80,7 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
      * @return artifact effective descriptor
      * @throws NElementNotFoundException if the property is not requested
      */
-    NOptional<NDescriptor> getEffectiveDescriptor();
+    NOptional<NDescriptor> effectiveDescriptor();
 
     /**
      * return all or some of the transitive dependencies of the current Nuts as List
@@ -91,7 +91,7 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
      * result of the search command.
      * @throws NElementNotFoundException if the property is not requested
      */
-    NOptional<NDependencies> getDependencies();
+    NOptional<NDependencies> dependencies();
 
     /**
      * return target api id (included in dependency) for the current id.
@@ -100,7 +100,7 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
      *
      * @return target (included in dependency) api id for the current id
      */
-    NId getApiId();
+    NId apiId();
 
     /**
      * Compares this object with the specified definition for order.
@@ -118,19 +118,19 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
      *
      * @return id of the repository providing this id.
      */
-    String getRepositoryUuid();
+    String repositoryUuid();
 
     /**
      * the current id as a dependency that holds information about conditions, scope and optionality
      * @return the current id as a dependency that holds information about conditions, scope and optionality
      */
-    NDependency getDependency();
+    NDependency dependency();
     /**
      * name of the repository providing this id.
      *
      * @return name of the repository providing this id.
      */
-    String getRepositoryName();
+    String repositoryName();
 
     NDefinitionBuilder builder();
 

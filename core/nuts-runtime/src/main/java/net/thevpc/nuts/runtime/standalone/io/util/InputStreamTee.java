@@ -36,7 +36,7 @@ public class InputStreamTee extends InputStream implements NInterruptible<InputS
     }
 
     @Override
-    public NContentMetadata getMetaData() {
+    public NContentMetadata metaData() {
         return metadata;
     }
 

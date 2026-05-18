@@ -95,7 +95,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     @Override
     public boolean isDefaultVersion(NId id) {
         String v = getDefaultVersion(id);
-        return v.equals(id.getVersion().toString());
+        return v.equals(id.version().toString());
     }
 
     @Override
@@ -127,7 +127,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     @Override
     public String getDefaultVersion(NId id) {
-        NId baseVersion = id.getShortId();
+        NId baseVersion = id.shortId();
         synchronized (cachedDefaultVersions) {
             String p = cachedDefaultVersions.get(baseVersion);
             if (p != null) {
@@ -143,9 +143,9 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     @Override
     public void setDefaultVersion(NId id) {
-        NId baseVersion = id.getShortId();
+        NId baseVersion = id.shortId();
         _wstore().saveInstalledDefaultVersion(id);
-        String version = id.getVersion().getValue();
+        String version = id.version().value();
         synchronized (cachedDefaultVersions) {
             cachedDefaultVersions.put(baseVersion, version);
         }
@@ -173,7 +173,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         InstallInfoConfig ii = _wstore().loadInstallInfoConfig(id);
         try {
             invalidateInstallationDigest();
-            String repository = id.getRepository();
+            String repository = id.repository();
             NRepository r = workspace.getRepository(repository).orNull();
             if (ii == null) {
                 ii = new InstallInfoConfig();
@@ -209,11 +209,11 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     public NInstallInformation install(NDefinition def) {
         boolean succeeded = false;
         try {
-            NInstallInformation a = updateInstallInformation(def.getId(), def, null, true, null);
+            NInstallInformation a = updateInstallInformation(def.id(), def, null, true, null);
             succeeded = true;
             return a;
         } finally {
-            addLog(NInstallLogAction.INSTALL, def.getId(), null, null, succeeded);
+            addLog(NInstallLogAction.INSTALL, def.id(), null, null, succeeded);
         }
     }
 
@@ -221,19 +221,19 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     public void uninstall(NDefinition def) {
         boolean succeeded = false;
         NWorkspaceUtils.of().checkReadOnly();
-        NId id = def.getId();
+        NId id = def.id();
         NInstallStatus installStatus = getInstallStatus(id);
         if (!installStatus.isInstalled()) {
             throw new NNotInstalledException(id);
         }
         try {
-            String pck = def.getDescriptor().getPackaging();
+            String pck = def.descriptor().getPackaging();
             undeploy().setId(id.builder().setPackaging(NBlankable.isBlank(pck) ? "jar" : pck).build())
                     //.setFetchMode(NutsFetchMode.LOCAL)
                     .run();
             _wstore().deleteInstallInfoConfig(id);
             String v = getDefaultVersion(id);
-            if (v != null && v.equals(id.getVersion().getValue())) {
+            if (v != null && v.equals(id.version().value())) {
                 Iterator<NId> versions = searchVersions().setId(id).setFilter(NDefinitionFilters.of().byInstalled(true)) //search only in installed, ignore deployed!
                         .setFetchMode(NFetchMode.LOCAL)
                         .getResult();
@@ -256,8 +256,8 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     @Override
     public NInstallInformation require(NDefinition def, NId[] forIds, NDependencyScope scope) {
         boolean succeeded = false;
-        NId requiredId = def.getId();
-        NInstallInformation nInstallInformation = updateInstallInformation(def.getId(), def, null, null, true);
+        NId requiredId = def.id();
+        NInstallInformation nInstallInformation = updateInstallInformation(def.id(), def, null, null, true);
         if (forIds != null) {
             for (NId requestorId : forIds) {
                 if (requestorId != null) {
@@ -419,12 +419,12 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     @Override
     public NInstallInformation deploy(NDefinition def) {
         this.deploy()
-                .setId(def.getId())
-                .setContent(def.getContent().orNull())
+                .setId(def.id())
+                .setContent(def.content().orNull())
                 //.setFetchMode(NutsFetchMode.LOCAL)
-                .setDescriptor(def.getDescriptor())
+                .setDescriptor(def.descriptor())
                 .run();
-        return getInstallInformation(def.getId());
+        return getInstallInformation(def.id());
     }
 
     private NInstallInformation updateInstallInformation(NId id1, NDefinition def, Boolean deployed, Boolean install, Boolean require) {
@@ -682,7 +682,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNSearchVersionsRepositoryCmd(this) {
             @Override
             public NSearchVersionsRepositoryCmd run() {
-                final NVersionFilter filter0 = getId().getVersion().toFilter();
+                final NVersionFilter filter0 = getId().version().toFilter();
                 SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("<installed>"));
                 result = NStream.ofIterator(_wstore().searchInstalledVersions(getId()))
                         .map(NFunction.of(vv -> {

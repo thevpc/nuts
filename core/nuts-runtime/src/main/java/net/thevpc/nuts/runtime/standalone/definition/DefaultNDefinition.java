@@ -94,18 +94,18 @@ public class DefaultNDefinition implements NDefinition{
 
     public DefaultNDefinition(NDefinition other) {
         if (other != null) {
-            this.descriptor = other.getDescriptor();
-            this.id = other.getId();
-            this.repositoryUuid = other.getRepositoryUuid();
-            this.repositoryName = other.getRepositoryName();
+            this.descriptor = other.descriptor();
+            this.id = other.id();
+            this.repositoryUuid = other.repositoryUuid();
+            this.repositoryName = other.repositoryName();
 
-            this.content = other.getContent().orNull();
-            this.installInformation = other.getInstallInformation().orNull();
-            this.effectiveDescriptor = other.getEffectiveDescriptor().orNull();
-            this.dependencies = other.getDependencies().orNull();
-            this.apiId = other.getApiId();
-            this.dependency = other.getDependency();
-            this.effectiveFlags = other.getEffectiveFlags().orNull();
+            this.content = other.content().orNull();
+            this.installInformation = other.installInformation().orNull();
+            this.effectiveDescriptor = other.effectiveDescriptor().orNull();
+            this.dependencies = other.dependencies().orNull();
+            this.apiId = other.apiId();
+            this.dependency = other.dependency();
+            this.effectiveFlags = other.effectiveFlags().orNull();
         } else {
             this.descriptor = null;
             this.id = null;
@@ -121,17 +121,17 @@ public class DefaultNDefinition implements NDefinition{
         }
     }
 
-    public NDependency getDependency() {
+    public NDependency dependency() {
         return dependency;
     }
 
     @Override
-    public String getRepositoryUuid() {
+    public String repositoryUuid() {
         return repositoryUuid;
     }
 
     @Override
-    public String getRepositoryName() {
+    public String repositoryName() {
         return repositoryName;
     }
 
@@ -141,7 +141,7 @@ public class DefaultNDefinition implements NDefinition{
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
@@ -149,7 +149,7 @@ public class DefaultNDefinition implements NDefinition{
         return content != null && content.isUserTemporary();
     }
 
-    public NDescriptor getDescriptor() {
+    public NDescriptor descriptor() {
         return descriptor;
     }
 
@@ -163,28 +163,28 @@ public class DefaultNDefinition implements NDefinition{
 
 
     @Override
-    public NOptional<NPath> getContent() {
-        return NOptional.of(content, () -> NMsg.ofC("content not found for id %s", getId()));
+    public NOptional<NPath> content() {
+        return NOptional.of(content, () -> NMsg.ofC("content not found for id %s", id()));
     }
 
     @Override
-    public NOptional<NDescriptor> getEffectiveDescriptor() {
-        return NOptional.of(effectiveDescriptor, () -> NMsg.ofC("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.", getId()));
+    public NOptional<NDescriptor> effectiveDescriptor() {
+        return NOptional.of(effectiveDescriptor, () -> NMsg.ofC("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.", id()));
     }
 
     @Override
-    public NOptional<NInstallInformation> getInstallInformation() {
-        return NOptional.of(installInformation, () -> NMsg.ofC("unable to get install information for id %s.", getId()));
+    public NOptional<NInstallInformation> installInformation() {
+        return NOptional.of(installInformation, () -> NMsg.ofC("unable to get install information for id %s.", id()));
     }
 
     @Override
-    public NOptional<NDependencies> getDependencies() {
-        return NOptional.of(dependencies, () -> NMsg.ofC("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.", getId()));
+    public NOptional<NDependencies> dependencies() {
+        return NOptional.of(dependencies, () -> NMsg.ofC("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.", id()));
     }
 
     @Override
-    public NOptional<Set<NDescriptorFlag>> getEffectiveFlags() {
-        return NOptional.of(effectiveFlags, () -> NMsg.ofC("unable to get effectiveFlags", getId()));
+    public NOptional<Set<NDescriptorFlag>> effectiveFlags() {
+        return NOptional.of(effectiveFlags, () -> NMsg.ofC("unable to get effectiveFlags", id()));
     }
 
     @Override
@@ -195,8 +195,8 @@ public class DefaultNDefinition implements NDefinition{
         if (!(n2 instanceof DefaultNDefinition)) {
             return -1;
         }
-        NId o1 = getId();
-        NId o2 = n2.getId();
+        NId o1 = id();
+        NId o2 = n2.id();
         if (o1 == null || o2 == null) {
             if (o1 == o2) {
                 return 0;
@@ -236,7 +236,7 @@ public class DefaultNDefinition implements NDefinition{
 
 
     @Override
-    public NId getApiId() {
+    public NId apiId() {
         return apiId;
     }
 

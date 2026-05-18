@@ -50,9 +50,9 @@ public interface NApp extends NComponent {
      */
     void prepare(NAppInitInfo appInitInfo);
 
-    NApplication getApplication();
+    NApplication application();
 
-    Object getSource();
+    Object source();
 
     /**
      * Creates and returns a copy of this {@code NApp} instance.
@@ -76,7 +76,7 @@ public interface NApp extends NComponent {
      * @return an {@code NOptional} containing the {@code NId} associated with this application,
      *         or an empty {@code NOptional} if no identifier is set.
      */
-    NOptional<NId> getId();
+    NOptional<NId> id();
 
     /**
      * Retrieves the current execution mode of the application.
@@ -84,14 +84,14 @@ public interface NApp extends NComponent {
      * @return the {@code NApplicationMode} representing the current mode
      *         in which the application is running
      */
-    NApplicationMode getMode();
+    NApplicationMode mode();
 
 
     /**
      * detected bundle name
      * @return detected bundle name
      */
-    String getBundleName();
+    String bundleName();
 
     /**
      * Retrieves the list of arguments associated with the current execution mode
@@ -101,7 +101,7 @@ public interface NApp extends NComponent {
      *         current application mode, or an empty list if no mode arguments
      *         are set.
      */
-    List<String> getModeArguments();
+    List<String> modeArguments();
 
     /**
      * Retrieves the {@code NCmdLineAutoComplete} instance associated with the application.
@@ -110,7 +110,7 @@ public interface NApp extends NComponent {
      *
      * @return an instance of {@code NCmdLineAutoComplete} providing command line auto-completion features
      */
-    NCmdLineAutoComplete getAutoComplete();
+    NCmdLineAutoComplete autoComplete();
 
     /**
      * Retrieves the detailed help text associated with this application, providing
@@ -119,7 +119,7 @@ public interface NApp extends NComponent {
      * @return an {@code NOptional<NText>} containing the help text if available,
      *         or an empty {@code NOptional} if no help text is defined.
      */
-    NOptional<NText> getHelpText();
+    NOptional<NText> helpText();
 
     /**
      * Displays detailed help information about the application.
@@ -133,63 +133,63 @@ public interface NApp extends NComponent {
      *
      * @return a {@code Class<?>} representing the main application class, or {@code null} if It's not defined.
      */
-    Class<?> getSourceType();
+    Class<?> sourceType();
 
     /**
      * Retrieves the path to the binary folder associated with this application.
      *
      * @return an {@code NPath} representing the location of the binary folder.
      */
-    NPath getBinFolder();
+    NPath binFolder();
 
     /**
      * Retrieves the path to the configuration folder associated with this application.
      *
      * @return an {@code NPath} representing the location of the configuration folder.
      */
-    NPath getConfFolder();
+    NPath confFolder();
 
     /**
      * Retrieves the path to the log folder associated with this application.
      *
      * @return an {@code NPath} representing the location of the log folder.
      */
-    NPath getLogFolder();
+    NPath logFolder();
 
     /**
      * Retrieves the path to the temporary folder associated with this application.
      *
      * @return an {@code NPath} representing the location of the temporary folder.
      */
-    NPath getTempFolder();
+    NPath tempFolder();
 
     /**
      * Retrieves the path to the variable folder associated with this application.
      *
      * @return an {@code NPath} representing the location of the variable folder.
      */
-    NPath getVarFolder();
+    NPath varFolder();
 
     /**
      * Retrieves the path to the library folder associated with this application.
      *
      * @return an {@code NPath} representing the location of the library folder.
      */
-    NPath getLibFolder();
+    NPath libFolder();
 
     /**
      * Retrieves the path to the run folder associated with this application.
      *
      * @return an {@code NPath} representing the location of the run folder.
      */
-    NPath getRunFolder();
+    NPath runFolder();
 
     /**
      * Retrieves the path to the cache folder associated with this application.
      *
      * @return an {@code NPath} representing the location of the cache folder.
      */
-    NPath getCacheFolder();
+    NPath cacheFolder();
 
     /**
      * Retrieves the path to a specific version folder associated with the application.
@@ -207,49 +207,49 @@ public interface NApp extends NComponent {
      *
      * @return an {@code NPath} representing the location of the shared applications folder.
      */
-    NPath getSharedAppsFolder();
+    NPath sharedAppsFolder();
 
     /**
      * Retrieves the path to the shared configuration folder associated with this application.
      *
      * @return an {@code NPath} representing the location of the shared configuration folder.
      */
-    NPath getSharedConfFolder();
+    NPath sharedConfFolder();
 
     /**
      * Retrieves the path to the shared log folder associated with this application.
      *
      * @return an {@code NPath} representing the location of the shared log folder.
      */
-    NPath getSharedLogFolder();
+    NPath sharedLogFolder();
 
     /**
      * Retrieves the path to the shared temporary folder associated with this application.
      *
      * @return an {@code NPath} representing the location of the shared temporary folder.
      */
-    NPath getSharedTempFolder();
+    NPath sharedTempFolder();
 
     /**
      * Retrieves the path to the shared variable folder associated with this application.
      *
      * @return an {@code NPath} representing the location of the shared variable folder.
      */
-    NPath getSharedVarFolder();
+    NPath sharedVarFolder();
 
     /**
      * Retrieves the path to the shared library folder associated with this application.
      *
      * @return an {@code NPath} representing the location of the shared library folder.
      */
-    NPath getSharedLibFolder();
+    NPath sharedLibFolder();
 
     /**
      * Retrieves the path to the shared run folder associated with this application.
      *
      * @return an {@code NPath} representing the location of the shared run folder.
      */
-    NPath getSharedRunFolder();
+    NPath sharedRunFolder();
 
     /**
      * Retrieves the path to the shared folder associated with the specified {@code location}.
@@ -268,21 +268,21 @@ public interface NApp extends NComponent {
      *
      * @return an NOptional containing the NVersion instance if available, or an empty NOptional if no version is found.
      */
-    NOptional<NVersion> getVersion();
+    NOptional<NVersion> version();
 
     /**
      * Retrieves a list of arguments as strings.
      *
      * @return a List of String objects representing the arguments
      */
-    List<String> getArguments();
+    List<String> arguments();
 
     /**
      * Retrieves the start time of the clock.
      *
      * @return an NClock object representing the start time.
      */
-    NClock getStartTime();
+    NClock startTime();
 
     /**
      * Retrieves the previous version of the current entity or state, if available.
@@ -290,14 +290,14 @@ public interface NApp extends NComponent {
      * @return an {@code NOptional} containing the previous {@code NVersion} if it exists,
      *         or an empty {@code NOptional} if no previous version is available.
      */
-    NOptional<NVersion> getPreviousVersion();
+    NOptional<NVersion> previousVersion();
 
     /**
      * Retrieves the command line object associated with the current instance.
      *
      * @return an NCmdLine object representing the command line arguments and options.
      */
-    NCmdLine getCmdLine();
+    NCmdLine cmdLine();
 
     /**
      * Processes the command line arguments using the provided command line runner.
@@ -327,7 +327,7 @@ public interface NApp extends NComponent {
      *
      * @return an instance of NAppStoreLocationResolver that handles store location resolution.
      */
-    NAppStoreLocationResolver getStoreLocationResolver();
+    NAppStoreLocationResolver storeLocationResolver();
 
     /**
      * Sets the folder for the given location type.
@@ -353,7 +353,7 @@ public interface NApp extends NComponent {
      * @param appId the ID to be set for the application
      * @return the updated instance of NApp
      */
-    NApp setId(NId appId);
+    NApp id(NId appId);
 
     /**
      * Sets the list of arguments for the application.
@@ -361,7 +361,7 @@ public interface NApp extends NComponent {
      * @param args the list of arguments to be set
      * @return the instance of the NApp with the updated arguments
      */
-    NApp setArguments(List<String> args);
+    NApp arguments(List<String> args);
 
     /**
      * Sets the arguments for the application.
@@ -369,7 +369,7 @@ public interface NApp extends NComponent {
      * @param args the array of arguments to be passed to the application
      * @return the current instance of NApp with the updated arguments
      */
-    NApp setArguments(String[] args);
+    NApp arguments(String[] args);
 
     /**
      * Sets the start time for the application.
@@ -377,7 +377,7 @@ public interface NApp extends NComponent {
      * @param startTime an instance of NClock representing the desired start time
      * @return the current NApp instance with the updated start time
      */
-    NApp setStartTime(NClock startTime);
+    NApp startTime(NClock startTime);
 
 
 }

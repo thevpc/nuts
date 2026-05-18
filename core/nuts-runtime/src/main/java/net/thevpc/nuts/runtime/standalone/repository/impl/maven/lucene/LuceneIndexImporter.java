@@ -25,7 +25,7 @@ public class LuceneIndexImporter {
         String tempFolder = NPath.ofTempFolder("lucene-repository").toString();
         NUncompress.of().from(NPath.of(tempGzFile)).to(
                 NPath.of(tempFolder)
-        ).setPackaging("gz").run();
+        ).packaging("gz").run();
         try {
             long[] ref=new long[1];
             Files.list(Paths.get(tempFolder)).forEach(

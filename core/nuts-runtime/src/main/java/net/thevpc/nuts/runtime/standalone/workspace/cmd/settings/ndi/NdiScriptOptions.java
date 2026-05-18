@@ -136,7 +136,7 @@ public class NdiScriptOptions implements Cloneable {
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
                 NDefinition apiDef = NSearch.of()
                         .addId(nid).setDependencyFilter(NDependencyFilters.of().byRunnable()).latest(true).getResultDefinitions().findFirst().get();
-                nutsApiJarPath = apiDef.getContent().orNull();
+                nutsApiJarPath = apiDef.content().orNull();
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
                 nutsApiJarPath = NPath.of(bootConfig.getStoreLocation(nid, NStoreType.LIB));
@@ -151,7 +151,7 @@ public class NdiScriptOptions implements Cloneable {
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
                 NDefinition appDef = NSearch.of()
                         .addId(nid).setDependencyFilter(NDependencyFilters.of().byRunnable()).latest(true).getResultDefinitions().findFirst().get();
-                nutsAppJarPath = appDef.getContent().get();
+                nutsAppJarPath = appDef.content().get();
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
                 nutsAppJarPath = NPath.of(bootConfig.getStoreLocation(nid, NStoreType.LIB));
@@ -188,7 +188,7 @@ public class NdiScriptOptions implements Cloneable {
         apiId = NSearch.of().addId(apiId).latest(true).failFast(true)
                 .distinct(true)
                 .getResultDefinitions()
-                .findSingleton().get().getId();
+                .findSingleton().get().id();
         if (getLauncher().getSwitchWorkspaceLocation() != null) {
             bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
             return NPath.of(bootConfig.getStoreLocation(apiId, NStoreType.BIN));
@@ -253,7 +253,7 @@ public class NdiScriptOptions implements Cloneable {
     }
 
     public NVersion getNutsApiVersion() {
-        return resolveNutsApiId().getVersion();
+        return resolveNutsApiId().version();
     }
 
     public Path getWorkspaceLocation() {

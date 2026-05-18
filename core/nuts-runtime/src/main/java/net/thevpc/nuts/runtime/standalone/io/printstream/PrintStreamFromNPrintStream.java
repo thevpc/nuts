@@ -10,7 +10,7 @@ public class PrintStreamFromNPrintStream extends PrintStream implements NPrintSt
 
     public PrintStreamFromNPrintStream(OutputStreamFromNPrintStream out) {
         super(out);
-        this.base = out.getBasePrintStream();
+        this.base = out.basePrintStream();
     }
 
     public PrintStreamFromNPrintStream(NPrintStream out) {
@@ -19,7 +19,7 @@ public class PrintStreamFromNPrintStream extends PrintStream implements NPrintSt
     }
 
     @Override
-    public NPrintStream getBasePrintStream() {
+    public NPrintStream basePrintStream() {
         return base;
     }
 }

@@ -40,7 +40,7 @@ public class NUncompressZip implements NUncompressPackaging {
             Path folder = _target.toPath().get();
             NPath.of(folder).mkdirs();
             byte[] buffer = new byte[10 * 4 * 1024];
-            InputStream _in = source.getInputStream();
+            InputStream _in = source.inputStream();
             try {
                 try (ZipInputStream zis = new ZipInputStream(_in)) {
                     //get the zipped file list entry
@@ -96,7 +96,7 @@ public class NUncompressZip implements NUncompressPackaging {
     public void visitPackage(NUncompress uncompress, NInputSource source, NUncompressVisitor visitor) {
         try {
             //get the zip file content
-            InputStream _in = source.getInputStream();
+            InputStream _in = source.inputStream();
             try {
                 try (ZipInputStream zis = new ZipInputStream(_in)) {
                     //get the zipped file list entry
@@ -179,7 +179,7 @@ public class NUncompressZip implements NUncompressPackaging {
     @NScore(fixed = NScorable.DEFAULT_SCORE)
     public static int getScore(NScorableContext context) {
         NUncompress c = context.getCriteria(NUncompress.class);
-        String z = NStringUtils.trim(c.getPackaging()).toLowerCase();
+        String z = NStringUtils.trim(c.packaging()).toLowerCase();
         if (z.isEmpty()
                 || z.equals("zip")
                 || z.equals("jar")

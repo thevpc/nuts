@@ -618,7 +618,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             }
         }
         data.justInstalledArchetype = initializeWorkspace(effectiveBootOptions.getArchetype().orNull());
-        NVersion nutsVersion = getRuntimeId().getVersion();
+        NVersion nutsVersion = getRuntimeId().version();
         if (wsModel.LOG.isLoggable(Level.CONFIG)) {
             wsModel.LOG
                     .log(NMsg.ofJ("nuts workspace v{0} created.", nutsVersion)
@@ -858,7 +858,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             wsModel.LOG.log(mread.withMsgC("   java-library-path              : %s", System.getProperty("java.library.path")));
             wsModel.LOG.log(mread.withMsgC("   os-name                        : %s", System.getProperty("os.name")));
             wsModel.LOG.log(mread.withMsgC("   os-family                      : %s", senvs.getOsFamily()));
-            wsModel.LOG.log(mread.withMsgC("   os-dist                        : %s", senvs.getOsDist().getArtifactId()));
+            wsModel.LOG.log(mread.withMsgC("   os-dist                        : %s", senvs.getOsDist().artifactId()));
             wsModel.LOG.log(mread.withMsgC("   os-arch                        : %s", System.getProperty("os.arch")));
             wsModel.LOG.log(mread.withMsgC("   os-shell                       : %s", senvs.getShellFamily()));
             wsModel.LOG.log(mread.withMsgC("   os-shells                      : %s", text.ofBuilder().appendJoined(",", senvs.getShellFamilies())));
@@ -874,7 +874,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             wsModel.LOG.log(mread.withMsgC("   os-desktop-integration         : %s", senvs.getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP)));
             wsModel.LOG.log(mread.withMsgC("   os-menu-integration            : %s", senvs.getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU)));
             wsModel.LOG.log(mread.withMsgC("   os-shortcut-integration        : %s", senvs.getDesktopIntegrationSupport(NDesktopIntegrationItem.USER)));
-            wsModel.LOG.log(mread.withMsgC("   os-version                     : %s", senvs.getOsDist().getVersion()));
+            wsModel.LOG.log(mread.withMsgC("   os-version                     : %s", senvs.getOsDist().version()));
             wsModel.LOG.log(mread.withMsgC("   os-username                    : %s", System.getProperty("user.name")));
             wsModel.LOG.log(mread.withMsgC("   os-user-dir                    : %s", NPath.of(System.getProperty("user.dir"))));
             wsModel.LOG.log(mread.withMsgC("   os-user-home                   : %s", NPath.of(System.getProperty("user.home"))));
@@ -1009,7 +1009,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     || NBlankable.isBlank(d.getOptional())) {
                 NDependency standardDependencyOk = null;
                 for (NDependency standardDependency : effStandardDeps) {
-                    if (standardDependency.getShortName().equals(d.toId().getShortName())) {
+                    if (standardDependency.getShortName().equals(d.toId().shortName())) {
                         standardDependencyOk = standardDependency;
                         break;
                     }
@@ -1098,10 +1098,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     private NId resolveApiId(NId id, Set<NId> visited) {
-        if (visited.contains(id.getLongId())) {
+        if (visited.contains(id.longId())) {
             return null;
         }
-        visited.add(id.getLongId());
+        visited.add(id.longId());
         if (NId.getApi("").get().equalsShortId(id)) {
             return id;
         }
@@ -1118,7 +1118,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
 
     public String resolveCommandName(NId id) {
-        String nn = id.getArtifactId();
+        String nn = id.artifactId();
         NWorkspace aliases = this;
         NCustomCmd c = aliases.findCommand(nn);
         if (c != null) {
@@ -1128,7 +1128,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         } else {
             return nn;
         }
-        nn = id.getArtifactId() + "-" + id.getVersion();
+        nn = id.artifactId() + "-" + id.version();
         c = aliases.findCommand(nn);
         if (c != null) {
             if (CoreFilterUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
@@ -1137,7 +1137,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         } else {
             return nn;
         }
-        nn = id.getGroupId() + "." + id.getArtifactId() + "-" + id.getVersion();
+        nn = id.groupId() + "." + id.artifactId() + "-" + id.version();
         c = aliases.findCommand(nn);
         if (c != null) {
             if (CoreFilterUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
@@ -1241,7 +1241,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         return callWith(() -> {
             NId nutsId = NId.getForClass(clazz).orNull();
             if (nutsId != null) {
-                NPath urlPath = NPath.of("classpath:/" + nutsId.getShortId().getMavenFolder() + ".ntf", clazz == null ? null : clazz.getClassLoader());
+                NPath urlPath = NPath.of("classpath:/" + nutsId.shortId().mavenFolder() + ".ntf", clazz == null ? null : clazz.getClassLoader());
                 NTexts txt = NTexts.of();
                 NText n = txt.parser().parse(urlPath);
                 n = txt.transform(n, new NTextTransformConfig()
@@ -1280,9 +1280,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             throw new NArtifactNotFoundException(null);
         }
         NId thisId = descriptor.getId();
-        String a = thisId.getArtifactId();
-        String g = thisId.getGroupId();
-        String v = thisId.getVersion().getValue();
+        String a = thisId.artifactId();
+        String g = thisId.groupId();
+        String v = thisId.version().value();
         if ((NBlankable.isBlank(g)) || (NBlankable.isBlank(v))) {
             List<NId> parents = descriptor.getParents();
             for (NId parent : parents) {
@@ -1290,10 +1290,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         .setDependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultId();
                 if (NBlankable.isBlank(g)) {
-                    g = p.getGroupId();
+                    g = p.groupId();
                 }
                 if (NBlankable.isBlank(v)) {
-                    v = p.getVersion().getValue();
+                    v = p.version().value();
                 }
                 if (!NBlankable.isBlank(g) && !NBlankable.isBlank(v)) {
                     break;
@@ -1307,7 +1307,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
         if (CoreStringUtils.containsVars(g) || CoreStringUtils.containsVars(v) || CoreStringUtils.containsVars(a)) {
             Map<String, String> p = NDescriptorUtils.getPropertiesMap(descriptor.getProperties());
-            NId bestId = NIdBuilder.of(g, thisId.getArtifactId()).setVersion(v).build();
+            NId bestId = NIdBuilder.of(g, thisId.artifactId()).setVersion(v).build();
             bestId = NDescriptorUtils.applyProperties(bestId.builder(), new MapToFunction(p)).build();
             if (CoreNUtils.isEffectiveId(bestId)) {
                 return bestId;
@@ -1329,7 +1329,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             throw new NArtifactNotFoundException(bestId,
                     NMsg.ofC("unable to fetchEffective for %s. best Result is %s", bestId, bestId), null);
         }
-        NId bestId = NIdBuilder.of(g, thisId.getArtifactId()).setVersion(v).build();
+        NId bestId = NIdBuilder.of(g, thisId.artifactId()).setVersion(v).build();
         if (!CoreNUtils.isEffectiveId(bestId)) {
             throw new NArtifactNotFoundException(bestId,
                     NMsg.ofC("unable to fetchEffective for %s. best Result is %s", thisId, bestId), null);
@@ -1340,14 +1340,14 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     @Override
     public NIdType resolveNutsIdType(NId id) {
         NIdType idType = NIdType.REGULAR;
-        String shortName = id.getShortName();
+        String shortName = id.shortName();
         if (shortName.equals(NConstants.Ids.NUTS_API)) {
             idType = NIdType.API;
         } else if (shortName.equals(NConstants.Ids.NUTS_RUNTIME)) {
             idType = NIdType.RUNTIME;
         } else {
             for (NId companionTool : wsModel.extensions.getCompanionIds()) {
-                if (companionTool.getShortName().equals(shortName)) {
+                if (companionTool.shortName().equals(shortName)) {
                     idType = NIdType.COMPANION;
                 }
             }
@@ -1357,16 +1357,16 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public NInstallerComponent getInstaller(NDefinition nutToInstall) {
-        if (nutToInstall != null && nutToInstall.getContent().isPresent()) {
-            NDescriptor descriptor = nutToInstall.getDescriptor();
+        if (nutToInstall != null && nutToInstall.content().isPresent()) {
+            NDescriptor descriptor = nutToInstall.descriptor();
             NArtifactCall installerDescriptor = descriptor.getInstaller();
             NDefinition runnerFile = null;
             if (installerDescriptor != null) {
-                NId installerId = installerDescriptor.getId();
+                NId installerId = installerDescriptor.id();
                 if (installerId != null) {
                     // nsh is the only installer that does not need to have groupId!
-                    if (NBlankable.isBlank(installerId.getGroupId())
-                            && "nsh".equals(installerId.getArtifactId())
+                    if (NBlankable.isBlank(installerId.groupId())
+                            && "nsh".equals(installerId.artifactId())
                     ) {
                         installerId = installerId.builder().setGroupId("net.thevpc.nsh").build();
                     }
@@ -1429,7 +1429,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             cacheId = "eff-nuts.cache";
         }
         if (cacheId != null) {
-            if (!descriptor.getId().getVersion().isBlank() && descriptor.getId().getVersion().isSingleValue()
+            if (!descriptor.getId().version().isBlank() && descriptor.getId().version().isSingleValue()
                     && descriptor.getId().toString().indexOf('$') < 0) {
                 try {
                     NDescriptor d = store().loadLocationKey(NStoreKey.ofCacheFaced(descriptor.getId(), null, cacheId), NDescriptor.class);
@@ -1482,7 +1482,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             wsModel.LOG.log(NMsg.ofJ("error: %s", ex).asError(ex));
             return NInstallStatus.NONE;
         }
-        return getInstalledRepository().getInstallStatus(nutToInstall.getId());
+        return getInstalledRepository().getInstallStatus(nutToInstall.id());
     }
 
     @Override
@@ -1503,24 +1503,24 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             NDefinition m = NFetch.of(id).failFast(false).setDependencyFilter(dependencyRunFilter).getResultDefinition();
             Map<String, String> a = new LinkedHashMap<>();
             a.put("configVersion", Nuts.getVersion().toString());
-            a.put("id", id.getLongName());
-            a.put("dependencies", m.getDependencies().get().transitive()
+            a.put("id", id.longName());
+            a.put("dependencies", m.dependencies().get().transitive()
                     .map(NDependency::getLongName)
                     .withDescription(NDescribables.ofDesc("getLongName"))
                     .collect(Collectors.joining(";")));
-            defs.put(m.getId().getLongId(), m);
+            defs.put(m.id().longId(), m);
             if (withDependencies) {
-                for (NDependency dependency : m.getDependencies().get()) {
-                    if (!defs.containsKey(dependency.toId().getLongId())) {
+                for (NDependency dependency : m.dependencies().get()) {
+                    if (!defs.containsKey(dependency.toId().longId())) {
                         m = NFetch.of(id).failFast(false).setDependencyFilter(dependencyRunFilter).getResultDefinition();
-                        defs.put(m.getId().getLongId(), m);
+                        defs.put(m.id().longId(), m);
                     }
                 }
             }
             for (NDefinition def : defs.values()) {
                 NPath bootstrapFolder = getLocationModel().getStoreLocation(NStoreScope.WORKSPACE, NStoreType.LIB).resolve(NConstants.Folders.ID);
-                NId id2 = def.getId();
-                NCp.of().from(def.getContent().get())
+                NId id2 = def.id();
+                NCp.of().from(def.content().get())
                         .to(bootstrapFolder.resolve(this.getDefaultIdBasedir(id2))
                                 .resolve(this.getDefaultIdFilename(id2.builder().setFaceContent().setPackaging("jar").build()))
                         ).run();
@@ -1530,9 +1530,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
                 Map<String, String> pr = new LinkedHashMap<>();
                 pr.put("file.updated.date", Instant.now().toString());
-                pr.put("project.id", def.getId().getShortId().toString());
-                pr.put("project.name", def.getId().getShortId().toString());
-                pr.put("project.version", def.getId().getVersion().toString());
+                pr.put("project.id", def.id().shortId().toString());
+                pr.put("project.name", def.id().shortId().toString());
+                pr.put("project.version", def.id().version().toString());
                 pr.put("repositories", "~/.m2/repository"
                         + ";" + NRepositorySelectorHelper.createRepositoryOptions(NRepositoryUtils.createRepositoryLocation("vpc-public-maven").get(), true).getSourceLocation()
                         + ";" + NRepositorySelectorHelper.createRepositoryOptions(NRepositoryUtils.createRepositoryLocation("maven-central").get(), true).getSourceLocation()
@@ -1540,22 +1540,22 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 );
                 pr.put("project.dependencies.compile",
                         String.join(";",
-                                def.getDependencies().get().transitive()
+                                def.dependencies().get().transitive()
                                         .filter(
                                                 NPredicate.of(
                                                         x -> !x.isOptional()
                                                                 && dependencyRunFilter
-                                                                .acceptDependency(x, def.getId())
+                                                                .acceptDependency(x, def.id())
                                                         , NElement.ofName("optionalAndRunnable")
                                                 )
                                         )
-                                        .map(x -> x.toId().getLongName())
+                                        .map(x -> x.toId().longName())
                                         .withDescription(NDescribables.ofDesc("toId.getLongName"))
                                         .toList()
                         )
                 );
 
-                try (Writer writer = bootstrapFolder.resolve(this.getDefaultIdBasedir(def.getId().getLongId()))
+                try (Writer writer = bootstrapFolder.resolve(this.getDefaultIdBasedir(def.id().longId()))
                         .resolve("nuts.properties").getWriter()
                 ) {
                     NPropsTransformer.storeProperties(pr, writer, false);
@@ -1589,7 +1589,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public String getDigestName() {
         if (wsModel.hashName == null) {
             runWith(() -> {
-                wsModel.hashName = NDigestName.of().getDigestName(this);
+                wsModel.hashName = NDigestName.of().digestName(this);
             });
         }
         return wsModel.hashName;
@@ -1612,7 +1612,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public NId getAppId() {
-        return NId.get(wsModel.apiId.getGroupId(), NConstants.Ids.NUTS_APP_ARTIFACT_ID, Nuts.getBootVersion()).get();
+        return NId.get(wsModel.apiId.groupId(), NConstants.Ids.NUTS_APP_ARTIFACT_ID, Nuts.getBootVersion()).get();
     }
 
     @Override

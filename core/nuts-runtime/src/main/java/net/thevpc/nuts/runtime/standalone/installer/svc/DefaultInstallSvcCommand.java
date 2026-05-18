@@ -478,7 +478,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        file(file).setPermissions(NPathPermission.CAN_EXECUTE);
+        file(file).permissions(NPathPermission.CAN_EXECUTE);
     }
 
     private String getInstallDir() {

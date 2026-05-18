@@ -46,7 +46,7 @@ class GradleDependencyTreeNodeBuild {
         this.parent = parent;
         this.depth = depth;
         this.def = def;
-        this.id = def != null ? def.getId() : dependency.toId();
+        this.id = def != null ? def.id() : dependency.toId();
         this.provided = (dependency.isProvided()) || (parent != null && parent.provided);
         this.optional = (dependency.isOptional()) || (parent != null && parent.optional);
     }
@@ -72,16 +72,16 @@ class GradleDependencyTreeNodeBuild {
                     throw new NIllegalArgumentException(NMsg.ofC(NI18n.of("missing non optional dependency %s"), dependency));
                 }
             }
-            this.id = def.getId();
+            this.id = def.id();
             effDependency = dependency;
             if (parent == null) {
                 effDependency = dependency.builder()
-                        .setVersion(def.getId().getVersion())
+                        .setVersion(def.id().version())
                         .build();
             } else {
                 effDependency = dependency.builder()
                         .setScope(gradleSolver.combineScopes(parent.effDependency.getScope(), dependency.getScope()))
-                        .setVersion(def.getId().getVersion())
+                        .setVersion(def.id().version())
                         .setProperty("provided-by", parent.id.toString())
                         .build();
             }
@@ -137,15 +137,15 @@ class GradleDependencyTreeNodeBuild {
 
     NDescriptor getEffectiveDescriptor() {
         if (effDescriptor == null && def != null) {
-            effDescriptor = def.getEffectiveDescriptor().orNull();
+            effDescriptor = def.effectiveDescriptor().orNull();
             if (effDescriptor == null) {
-                effDescriptor = NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(),
+                effDescriptor = NWorkspace.of().resolveEffectiveDescriptor(def.descriptor(),
                         new NDescriptorEffectiveConfig()
                                 .setIgnoreCurrentEnvironment(gradleSolver.isIgnoreCurrentEnvironment())
                 );
                 if (effDescriptor == null) {
                     throw new NIllegalArgumentException(
-                            NMsg.ofC(NI18n.of("expected an effective definition for %s"), def.getId()));
+                            NMsg.ofC(NI18n.of("expected an effective definition for %s"), def.id()));
                 }
             }
         }

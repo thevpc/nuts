@@ -9,6 +9,6 @@ public interface NDigestName extends NComponent {
     }
 
 
-    String getDigestName(Object source);
+    String digestName(Object source);
 
 }

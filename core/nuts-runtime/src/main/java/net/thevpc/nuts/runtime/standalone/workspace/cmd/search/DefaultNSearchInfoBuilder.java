@@ -32,7 +32,7 @@ public class DefaultNSearchInfoBuilder {
         for (String o : someIds) {
             if(NBlankable.isBlank(o)) {
                 NId c = NId.of(o);
-                if(c.getShortName().equals(id.getShortName())) {
+                if(c.shortName().equals(id.shortName())) {
                     return true;
                 }
             }
@@ -40,7 +40,7 @@ public class DefaultNSearchInfoBuilder {
         for (String o : someIds) {
             if(NBlankable.isBlank(o)) {
                 NId c = NId.of(o);
-                if(NBlankable.isBlank(c.getGroupId()) && c.getArtifactId().equals(id.getArtifactId())) {
+                if(NBlankable.isBlank(c.groupId()) && c.artifactId().equals(id.artifactId())) {
                     return true;
                 }
             }
@@ -139,13 +139,13 @@ public class DefaultNSearchInfoBuilder {
     private NId[] expandRegularIdPossibilities(String id) {
         NId nutsId = NId.get(id).get();
         Set<NId> nutsId2 = new LinkedHashSet<>();
-        if (NBlankable.isBlank(nutsId.getGroupId())) {
-            if (nutsId.getArtifactId().equals("nuts")) {
+        if (NBlankable.isBlank(nutsId.groupId())) {
+            if (nutsId.artifactId().equals("nuts")) {
                 nutsId2.add(nutsId.builder().setGroupId("net.thevpc.nuts").build());
             } else {
                 //check if It's already installed
                 List<NId> installedIds = Collections.emptyList();
-                if (!nutsId.getArtifactId().contains("*")) {
+                if (!nutsId.artifactId().contains("*")) {
                     NRepositorySPI repoSPI = NWorkspaceUtils.of()
                             .toRepositorySPI(NWorkspaceExt.of().getInstalledRepository());
                     NIterator<NId> it = repoSPI.search().setFetchMode(NFetchMode.LOCAL).setFilter(NDefinitionFilters.of().byName(
@@ -157,7 +157,7 @@ public class DefaultNSearchInfoBuilder {
                     nutsId2.addAll(installedIds);
                 } else {
                     for (String aImport : NWorkspace.of().getAllImports()) {
-                        nutsId2.add(nutsId.builder().setGroupId(aImport + "." + nutsId.getArtifactId()).build());
+                        nutsId2.add(nutsId.builder().setGroupId(aImport + "." + nutsId.artifactId()).build());
                         nutsId2.add(nutsId.builder().setGroupId(aImport).build());
                     }
                 }
