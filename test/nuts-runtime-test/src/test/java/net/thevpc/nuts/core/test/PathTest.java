@@ -289,7 +289,7 @@ public class PathTest {
     public void testGenericFile() {
         NScoredCallable<NPathSPI> p = new GenericFilePath.GenericPathFactory().createPath("C:", null, null);
         NPathFromSPI u = new NPathFromSPI(p.call());
-        NPath root = u.getRoot();
+        NPath root = u.root();
         System.out.println(root);
     }
 
@@ -297,7 +297,7 @@ public class PathTest {
     public void testGenericFile2() {
         NScoredCallable<NPathSPI> p = new GenericFilePath.GenericPathFactory().createPath("/C:", null, null);
         NPathFromSPI u = new NPathFromSPI(p.call());
-        NPath root = u.getRoot();
+        NPath root = u.root();
         System.out.println(root);
     }
 

@@ -64,7 +64,7 @@ public class MavenSettingsRepository extends NRepositoryList {
 
     private MavenFolderRepository createChild(NRepositorySpec options0, String type, String id, String url) {
         NPath p = NPath.of(url);
-        String pr = NStringUtils.trim(p.getProtocol());
+        String pr = NStringUtils.trim(p.protocol());
         MavenFolderRepository mavenChild = null;
         NRepositorySpec options = new NRepositorySpec();
         options.setName(id);

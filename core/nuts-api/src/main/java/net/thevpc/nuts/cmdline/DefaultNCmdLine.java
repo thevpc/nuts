@@ -1088,7 +1088,7 @@ public class DefaultNCmdLine implements NCmdLine {
             for (String arg : parsed) {
                 if (arg.length() > 3 && arg.startsWith("--@")) {
                     NPath nPath = NPath.of(arg.substring(3));
-                    NPath parent = path.getParent();
+                    NPath parent = path.parent();
                     all.addAll(loadArgs(nPath, parent == null ? currentDir : parent, visited));
                 } else {
                     all.add(arg);

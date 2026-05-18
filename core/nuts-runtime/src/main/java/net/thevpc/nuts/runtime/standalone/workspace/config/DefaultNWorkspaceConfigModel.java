@@ -660,10 +660,10 @@ public class DefaultNWorkspaceConfigModel {
     private List<NId> findOlderNutsApiIds() {
         NId apiId = workspace.getApiId();
         NPath path = NPath.of(NStoreKey.ofConf(apiId))
-                .getParent();
+                .parent();
         List<NId> olderIds = path.stream().filter(NPath::isDirectory)
                 .withDescription(NDescribables.ofDesc("isDirectory"))
-                .map(x -> NVersion.get(x.getName()).get())
+                .map(x -> NVersion.get(x.name()).get())
                 .withDescription(NDescribables.ofDesc("toVersion"))
                 .filter(x -> x.compareTo(apiId.getVersion()) < 0)
                 .withDescription(NDescribables.ofDesc("older"))

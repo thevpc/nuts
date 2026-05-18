@@ -35,9 +35,9 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
         try {
             loadedType = Class.forName(className, false, loader);
         } catch (NoClassDefFoundError e) {
-            NLog.of(NTypeLoaderImpl.class).log(NMsg.ofC("unable to load %s : %s", className, e).asFinestFail());
+            NLog.of(NTypeLoaderImpl.class).log(NMsg.ofC("unable to load %s : %s", className, e).asFinestAlert());
         } catch (Exception e) {
-            NLog.of(NTypeLoaderImpl.class).log(NMsg.ofC("unable to load %s : %s", className, e).asFinestFail());
+            NLog.of(NTypeLoaderImpl.class).log(NMsg.ofC("unable to load %s : %s", className, e).asFinestAlert());
         } finally {
             checked = true;
         }
@@ -73,11 +73,11 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
             }catch (Exception ex){
                 NLog.of(NTypeLoaderImpl.class).log(NMsg.ofC("unable to find %s.%s(%s) : %s", className, name,
                         Arrays.stream(parameterTypes).map(p->p.getSimpleName()).collect(Collectors.joining(",")),
-                        ex).asFinestFail());
+                        ex).asFinestAlert());
             }
             return null;
         }).withMessage(()->NMsg.ofC("missing method find %s.%s(%s) : %s", className, name,
-                Arrays.stream(parameterTypes).map(p->p.getSimpleName()).collect(Collectors.joining(","))));
+                Arrays.stream(parameterTypes).map(p->p.getSimpleName()).collect(Collectors.joining(","))).asFineAlert());
     }
 
     @Override
@@ -87,10 +87,10 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
                 return c.getDeclaredField(name);
             }catch (Exception ex){
                 NLog.of(NTypeLoaderImpl.class).log(NMsg.ofC("unable to find %s.%s : %s", className, name,
-                        ex).asFinestFail(ex));
+                        ex).asFinestAlert(ex));
             }
             return null;
-        }).withMessage(()->NMsg.ofC("missing method find %s.%s : %s", className, name));
+        }).withMessage(()->NMsg.ofC("missing method find %s.%s : %s", className, name).asFineAlert());
     }
 
     public String getClassName() {
@@ -104,19 +104,19 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
             try {
                 c = x.getDeclaredConstructor();
             }catch (Exception ex){
-                return NOptional.ofNamedEmpty(NMsg.ofC("constructor() for %s",className));
+                return NOptional.ofNamedEmpty(NMsg.ofC("constructor() for %s",className).asFineAlert());
             }
             try {
                 if(!Modifier.isPublic(c.getModifiers())) {
                     c.setAccessible(true);
                 }
             }catch (Exception ex){
-                return NOptional.ofNamedEmpty(NMsg.ofC("constructor() is not public and could not set accessible for %s",className));
+                return NOptional.ofNamedEmpty(NMsg.ofC("constructor() is not public and could not set accessible for %s",className).asFineAlert());
             }
             try {
                 return c.newInstance();
             }catch (Exception ex){
-                return NOptional.ofNamedError(NMsg.ofC("constructor() failed for %s",className));
+                return NOptional.ofNamedError(NMsg.ofC("constructor() call failed for %s",className).asFineAlert());
             }
         });
     }

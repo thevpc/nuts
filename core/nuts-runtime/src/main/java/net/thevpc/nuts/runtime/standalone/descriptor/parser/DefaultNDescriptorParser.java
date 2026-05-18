@@ -69,7 +69,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                 try (InputStream is = path.getInputStream()) {
                     startParsing = true;
                     NDescriptorStyle defaultDescriptorStyle = null;
-                    String canonicalPathName = path.getName().toLowerCase();
+                    String canonicalPathName = path.name().toLowerCase();
                     switch (canonicalPathName) {
                         case "pom.xml": {
                             defaultDescriptorStyle = NDescriptorStyle.MAVEN;

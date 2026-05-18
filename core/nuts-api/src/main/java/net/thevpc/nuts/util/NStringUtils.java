@@ -841,7 +841,7 @@ public class NStringUtils {
         return parseMoustachePlaceHolder(text)
                 .map(t -> {
                     switch (t.ttype) {
-                        case NToken.TT_MOUSTACHE_START:{
+                        case NToken.TT_MOUSTACHE_START: {
                             String x = mapper.apply(t.sval);
                             if (x == null) {
                                 return t.image;
@@ -896,7 +896,7 @@ public class NStringUtils {
                     ni.append(c).append('{');
                     while (p < length) {
                         c = t[p];
-                        if (c == '}' && p+1<t.length && t[p+1]=='}') {
+                        if (c == '}' && p + 1 < t.length && t[p + 1] == '}') {
                             ni.append(c);
                             p++;
                             ni.append(c);
@@ -927,6 +927,18 @@ public class NStringUtils {
 
     }
 
+
+    public static boolean isValidVar(String c) {
+        if (c == null || c.isEmpty()) return false;
+        char[] charArray = c.toCharArray();
+        if (!isValidVarPart(charArray[0])) return false;
+        for (int i = 0; i < charArray.length; i++) {
+            if (!isValidVarPart(charArray[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static boolean isValidVarPart(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';

@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.contenttype;
 
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.core.NWorkspace;
@@ -82,7 +81,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             }
 
             if (contentType == null) {
-                String name = path.getName();
+                String name = path.name();
                 try {
                     contentType = URLConnection.guessContentTypeFromName(name);
                 } catch (Exception e) {

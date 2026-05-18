@@ -21,7 +21,7 @@ public class MultiBaseIdFilterHelper {
                     NId longId = NId.of(baseId).getLongId();
                     ids.add(longId);
                     idstr.add(longId.toString());
-                    names.add(NPath.of(longId.getMavenPath("")).getNames());
+                    names.add(NPath.of(longId.getMavenPath("")).names());
                 }
             }
         }
@@ -70,7 +70,7 @@ public class MultiBaseIdFilterHelper {
     }
 
     private boolean isAcceptableBasePath(NPath basePath) {
-        List<String> names = basePath.getNames();
+        List<String> names = basePath.names();
         List<List<String>> expectedNames2 = getExpectedPathNames();
         if (expectedNames2.isEmpty()) {
             return true;

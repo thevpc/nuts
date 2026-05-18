@@ -37,6 +37,11 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
+    public boolean isHidden(NPath basePath) {
+        return false;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(PROTOCOL, super.hashCode());
     }
@@ -116,7 +121,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     @Override
     public NPathType getType(NPath basePath) {
-        if (NBlankable.isBlank(basePath.getLocation()) || basePath.getLocation().endsWith("/")
+        if (NBlankable.isBlank(basePath.location()) || basePath.location().endsWith("/")
                 || this.url.endsWith("/")
         ) {
             return NPathType.DIRECTORY;
@@ -144,7 +149,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     @Override
     public NPath getParent(NPath basePath) {
-        NPath p = ref.getParent();
+        NPath p = ref.parent();
         if (p == null) {
             return null;
         }
@@ -174,7 +179,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return NPath.of(PREFIX + ref.getRoot());
+        return NPath.of(PREFIX + ref.root());
     }
 
 

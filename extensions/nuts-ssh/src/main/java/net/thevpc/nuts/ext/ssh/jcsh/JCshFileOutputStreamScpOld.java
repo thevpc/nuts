@@ -113,7 +113,7 @@ public class JCshFileOutputStreamScpOld extends OutputStream {
 
         // send "C0644 filesize filename", where filename should not include '/'
         command = "C0644 " + filesize + " ";
-        command += NPath.of(to).getName();
+        command += NPath.of(to).name();
 
         command += "\n";
         out.write(command.getBytes());

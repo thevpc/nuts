@@ -44,6 +44,10 @@ public class InvalidFilePath implements NPathSPI {
         }
         return pa.get(pa.size() - 1);
     }
+    @Override
+    public boolean isHidden(NPath basePath) {
+        return false;
+    }
 
     @Override
     public NPathType getType(NPath basePath) {
@@ -374,9 +378,9 @@ public class InvalidFilePath implements NPathSPI {
         if(isRoot(basePath)){
             return basePath;
         }
-        NPath r = basePath.getParent();
+        NPath r = basePath.parent();
         if(r!=null) {
-            return r.getRoot();
+            return r.root();
         }
         return null;
     }

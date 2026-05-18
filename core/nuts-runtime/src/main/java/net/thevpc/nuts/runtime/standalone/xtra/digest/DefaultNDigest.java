@@ -220,9 +220,9 @@ public class DefaultNDigest implements NDigest {
             file.walkDfs(new NTreeVisitor<NPath>() {
                 @Override
                 public NTreeVisitResult visitFile(NPath file) {
-                    incrementalUpdateFileDigestInputStream(new ByteArrayInputStream(file.getName().getBytes(StandardCharsets.UTF_8)), md, file.getName());
+                    incrementalUpdateFileDigestInputStream(new ByteArrayInputStream(file.name().getBytes(StandardCharsets.UTF_8)), md, file.name());
                     try (InputStream is = file.getInputStream()) {
-                        incrementalUpdateFileDigestInputStream(is, md, file.getName());
+                        incrementalUpdateFileDigestInputStream(is, md, file.name());
                     } catch (IOException ex) {
                         throw new NIOException(ex);
                     }
@@ -231,17 +231,17 @@ public class DefaultNDigest implements NDigest {
 
                 @Override
                 public NTreeVisitResult preVisitDirectory(NPath dir) {
-                    incrementalUpdateFileDigestInputStream(new ByteArrayInputStream(dir.getName().getBytes(StandardCharsets.UTF_8)), md, dir.getName() + "/");
+                    incrementalUpdateFileDigestInputStream(new ByteArrayInputStream(dir.name().getBytes(StandardCharsets.UTF_8)), md, dir.name() + "/");
                     return NTreeVisitResult.CONTINUE;
                 }
             }, NPathOption.SORTED);
             BytesAndName i = new BytesAndName();
-            i.names.add(file.getName() + "/");
+            i.names.add(file.name() + "/");
             i.binary = true;
             return i;
         } else if (file.isFile()) {
             try (InputStream is = file.getInputStream()) {
-                return incrementalUpdateFileDigestInputStream(is, md, file.getName());
+                return incrementalUpdateFileDigestInputStream(is, md, file.name());
             } catch (IOException ex) {
                 throw new NIOException(ex);
             }
@@ -364,7 +364,7 @@ public class DefaultNDigest implements NDigest {
         }
 
         @Override
-        public long getContentLength() {
+        public long contentLength() {
             return NDescriptorWriter.of()
                     .setNtf(false)
                     .format(source).filteredText().getBytes().length;

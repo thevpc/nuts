@@ -82,7 +82,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
                         .failFast(true).getGrabbedAllString();
             } else {
                 NPath to = NPath.of(remoteIdMavenJar(def.getApiId()));
-                to.getParent().mkdirs();
+                to.parent().mkdirs();
                 apiJar.copyTo(to);
             }
         }

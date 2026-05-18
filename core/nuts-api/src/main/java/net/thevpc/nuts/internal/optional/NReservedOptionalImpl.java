@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneable {
     private ExceptionFactory exceptionFactory;
-    private Supplier<NMsg> message;
+    private final Supplier<NMsg> message;
 
     public NReservedOptionalImpl(Supplier<NMsg> message) {
         if (message == null) {
@@ -41,6 +41,16 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NStream<T> stream() {
         return NStream.ofOptional(this);
+    }
+
+    @Override
+    public boolean orTrue() {
+        return ((NOptional<Boolean>) this).orElse(true);
+    }
+
+    @Override
+    public boolean orFalse() {
+        return ((NOptional<Boolean>) this).orElse(false);
     }
 
     public T get() {
@@ -220,7 +230,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
 
     @Override
     public NOptional<T> filter(Predicate<T> predicate) {
-        return filter(predicate, (Supplier<NMsg>) null);
+        return filter(predicate, null);
     }
 
     @Override

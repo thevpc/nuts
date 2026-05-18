@@ -47,6 +47,16 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
+    public boolean isHidden() {
+        return base.isHidden();
+    }
+
+    @Override
+    public boolean isSymlink() {
+        return base.isSymlink();
+    }
+
+    @Override
     public NPathSPI spi() {
         return ((NPathSPIAware)base).spi();
     }
@@ -115,8 +125,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public String getContentType() {
-        return base.getContentType();
+    public String contentType() {
+        return base.contentType();
     }
 
     @Override
@@ -125,13 +135,13 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public String getName() {
-        return base.getName();
+    public String name() {
+        return base.name();
     }
 
     @Override
-    public String getLocation() {
-        return base.getLocation();
+    public String location() {
+        return base.location();
     }
 
     @Override
@@ -168,8 +178,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public String getProtocol() {
-        return base.getProtocol();
+    public String protocol() {
+        return base.protocol();
     }
 
     @Override
@@ -286,28 +296,28 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public long getContentLength() {
-        return base.getContentLength();
+    public long contentLength() {
+        return base.contentLength();
     }
 
     @Override
-    public Instant getLastModifiedInstant() {
-        return base.getLastModifiedInstant();
+    public Instant lastModifiedInstant() {
+        return base.lastModifiedInstant();
     }
 
     @Override
-    public Instant getLastAccessInstant() {
-        return base.getLastAccessInstant();
+    public Instant lastAccessInstant() {
+        return base.lastAccessInstant();
     }
 
     @Override
-    public Instant getCreationInstant() {
-        return base.getCreationInstant();
+    public Instant creationInstant() {
+        return base.creationInstant();
     }
 
     @Override
-    public NPath getParent() {
-        return base.getParent();
+    public NPath parent() {
+        return base.parent();
     }
 
     @Override
@@ -359,8 +369,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public Set<NPathPermission> getPermissions() {
-        return base.getPermissions();
+    public Set<NPathPermission> permissions() {
+        return base.permissions();
     }
 
     @Override
@@ -387,8 +397,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public int getNameCount() {
-        return base.getNameCount();
+    public int nameCount() {
+        return base.nameCount();
     }
 
     @Override
@@ -412,13 +422,13 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public String getName(int index) {
-        return base.getName(index);
+    public String nameAt(int index) {
+        return base.nameAt(index);
     }
 
     @Override
-    public List<String> getNames() {
-        return base.getNames();
+    public List<String> names() {
+        return base.names();
     }
 
     @Override
@@ -432,8 +442,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public NPath getRoot() {
-        return base.getRoot();
+    public NPath root() {
+        return base.root();
     }
 
     @Override
@@ -506,8 +516,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public NPathInfo getInfo() {
-        return getBase().getInfo();
+    public NPathInfo info() {
+        return getBase().info();
     }
 
     @Override

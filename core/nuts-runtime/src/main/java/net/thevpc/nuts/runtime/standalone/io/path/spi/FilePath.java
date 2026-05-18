@@ -61,6 +61,15 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
+    public boolean isHidden(NPath basePath) {
+        try {
+            return Files.isHidden(value);
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    @Override
     public NObjectWriterSPI formatter(NPath basePath) {
         return new MyPathFormat(this);
     }

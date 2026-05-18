@@ -420,7 +420,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return content type if explicitly defined (from HTTP headers for
      * instance) or probe for content type.
      */
-    String getContentType();
+    String contentType();
 
     boolean isUserCache();
 
@@ -461,9 +461,9 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     NPathNameParts nameParts(NPathExtensionType type);
 
-    String getName();
+    String name();
 
-    String getLocation();
+    String location();
 
     NPath resolve(String other);
 
@@ -542,7 +542,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      *
      * @return path protocol or null if undefined
      */
-    String getProtocol();
+    String protocol();
 
     NPath toCompressedForm();
 
@@ -661,15 +661,15 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     boolean exists();
 
-    long getContentLength();
+    long contentLength();
 
-    Instant getLastModifiedInstant();
+    Instant lastModifiedInstant();
 
-    Instant getLastAccessInstant();
+    Instant lastAccessInstant();
 
-    Instant getCreationInstant();
+    Instant creationInstant();
 
-    NPath getParent();
+    NPath parent();
 
     boolean isAbsolute();
 
@@ -728,7 +728,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     String group();
 
-    Set<NPathPermission> getPermissions();
+    Set<NPathPermission> permissions();
 
     NPath setPermissions(NPathPermission... permissions);
 
@@ -803,9 +803,9 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     NPath subpath(int beginIndex, int endIndex);
 
-    String getName(int index);
+    String nameAt(int index);
 
-    List<String> getNames();
+    List<String> names();
 
     void moveTo(NPath other, NPathOption... options);
 
@@ -831,7 +831,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     void copyToWriter(Writer other, Charset cs, NPathOption... options);
 
-    NPath getRoot();
+    NPath root();
 
     NPath walkDfs(NTreeVisitor<NPath> visitor, NPathOption... options);
 
@@ -856,7 +856,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
     boolean startsWith(String other);
 
-    int getNameCount();
+    int nameCount();
 
     int compareTo(NPath other);
 
@@ -872,5 +872,9 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      *
      * @since 0.8.9
      */
-    NPathInfo getInfo();
+    NPathInfo info();
+
+    boolean isHidden();
+
+    boolean isSymlink();
 }

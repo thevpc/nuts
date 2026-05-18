@@ -34,7 +34,7 @@ class ReaderInputSource extends AbstractNInputSource {
     }
 
     @Override
-    public long getContentLength() {
+    public long contentLength() {
         return -1;
     }
 

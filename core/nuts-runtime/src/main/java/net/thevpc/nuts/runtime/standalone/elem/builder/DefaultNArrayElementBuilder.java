@@ -97,17 +97,41 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NArrayElementBuilder setParamAt(int index, boolean value) {
+    public NArrayElementBuilder setParamAt(int index, Long value) {
+        this.params = CoreNElementUtils.setAt(index,NElement.ofLong(value) , this.params);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder setParamAt(int index, Short value) {
+        this.params = CoreNElementUtils.setAt(index,NElement.ofShort(value) , this.params);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder setParamAt(int index, Character value) {
+        this.params = CoreNElementUtils.setAt(index,NElement.ofChar(value) , this.params);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder setParamAt(int index, Byte value) {
+        this.params = CoreNElementUtils.setAt(index,NElement.ofByte(value) , this.params);
+        return this;
+    }
+
+    @Override
+    public NArrayElementBuilder setParamAt(int index, Boolean value) {
         return setParamAt(index, NElement.ofBoolean(value));
     }
 
     @Override
-    public NArrayElementBuilder setParamAt(int index, int value) {
+    public NArrayElementBuilder setParamAt(int index, Integer value) {
         return setParamAt(index, NElement.ofInt(value));
     }
 
     @Override
-    public NArrayElementBuilder setParamAt(int index, double value) {
+    public NArrayElementBuilder setParamAt(int index, Double value) {
         return setParamAt(index, NElement.ofDouble(value));
     }
 
@@ -225,17 +249,17 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NArrayElementBuilder set(String name, boolean value) {
+    public NArrayElementBuilder set(String name, Boolean value) {
         return set(CoreNElementUtils.pair(name, value));
     }
 
     @Override
-    public NArrayElementBuilder set(String name, int value) {
+    public NArrayElementBuilder set(String name, Integer value) {
         return set(CoreNElementUtils.pair(name, value));
     }
 
     @Override
-    public NArrayElementBuilder set(String name, double value) {
+    public NArrayElementBuilder set(String name, Double value) {
         return set(CoreNElementUtils.pair(name, value));
     }
 
@@ -306,17 +330,37 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NArrayElementBuilder set(NElement name, boolean value) {
+    public NArrayElementBuilder set(NElement name, Boolean value) {
         return set(name, NElement.ofBoolean(value));
     }
 
     @Override
-    public NArrayElementBuilder set(NElement name, int value) {
+    public NArrayElementBuilder set(NElement name, Byte value) {
+        return set(name, NElement.ofByte(value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(NElement name, Short value) {
+        return set(name, NElement.ofShort(value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(NElement name, Character value) {
+        return set(name, NElement.ofChar(value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(NElement name, Long value) {
+        return set(name, NElement.ofLong(value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(NElement name, Integer value) {
         return set(name, NElement.ofInt(value));
     }
 
     @Override
-    public NArrayElementBuilder set(NElement name, double value) {
+    public NArrayElementBuilder set(NElement name, Double value) {
         return set(name, NElement.ofDouble(value));
     }
 
@@ -362,17 +406,42 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NArrayElementBuilder add(String name, boolean value) {
+    public NArrayElementBuilder add(String name, Boolean value) {
         return add(NElement.ofNameOrString(name), NElement.ofBoolean(value));
     }
 
     @Override
-    public NArrayElementBuilder add(String name, int value) {
+    public NArrayElementBuilder add(String name, Byte value) {
+        return add(NElement.ofNameOrString(name), NElement.ofByte(value));
+    }
+
+    @Override
+    public NArrayElementBuilder add(String name, Short value) {
+        return add(NElement.ofNameOrString(name), NElement.ofShort(value));
+    }
+
+    @Override
+    public NArrayElementBuilder add(String name, Long value) {
+        return add(NElement.ofNameOrString(name), NElement.ofLong(value));
+    }
+
+    @Override
+    public NArrayElementBuilder add(String name, Float value) {
+        return add(NElement.ofNameOrString(name), NElement.ofFloat(value));
+    }
+
+    @Override
+    public NArrayElementBuilder add(String name, Character value) {
+        return add(NElement.ofNameOrString(name), NElement.ofChar(value));
+    }
+
+    @Override
+    public NArrayElementBuilder add(String name, Integer value) {
         return add(NElement.ofNameOrString(name), NElement.ofInt(value));
     }
 
     @Override
-    public NArrayElementBuilder add(String name, double value) {
+    public NArrayElementBuilder add(String name, Double value) {
         return add(NElement.ofNameOrString(name), NElement.ofDouble(value));
     }
 
@@ -475,32 +544,32 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NArrayElementBuilder add(long value) {
+    public NArrayElementBuilder add(Long value) {
         return add(NElement.ofLong(value));
     }
 
     @Override
-    public NArrayElementBuilder add(double value) {
+    public NArrayElementBuilder add(Double value) {
         return add(NElement.ofDouble(value));
     }
 
     @Override
-    public NArrayElementBuilder add(float value) {
+    public NArrayElementBuilder add(Float value) {
         return add(NElement.ofFloat(value));
     }
 
     @Override
-    public NArrayElementBuilder add(byte value) {
+    public NArrayElementBuilder add(Byte value) {
         return add(NElement.ofByte(value));
     }
 
     @Override
-    public NArrayElementBuilder add(boolean value) {
+    public NArrayElementBuilder add(Boolean value) {
         return add(NElement.ofBoolean(value));
     }
 
     @Override
-    public NArrayElementBuilder add(char value) {
+    public NArrayElementBuilder add(Character value) {
         return add(NElement.ofString(String.valueOf(value)));
     }
 

@@ -49,7 +49,7 @@ public class NChunkedStoreImpl<T> implements NChunkedStore<T> {
             } else {
                 ptr = new NChunkedStoreUtils.PointerInfo(0, -1);
                 try (NStream<NPath> stream = folder.stream()) {
-                    stream.filter(x -> x.getName().endsWith(NChunkedStoreUtils.CHUNK_EXT) || x.getName().equals(NChunkedStoreUtils.READ_PTR_FILE_NAME) || x.getName().equals(NChunkedStoreUtils.WRITE_PTR_FILE_NAME))
+                    stream.filter(x -> x.name().endsWith(NChunkedStoreUtils.CHUNK_EXT) || x.name().equals(NChunkedStoreUtils.READ_PTR_FILE_NAME) || x.name().equals(NChunkedStoreUtils.WRITE_PTR_FILE_NAME))
                             .forEach(NPath::delete);
                 }
             }

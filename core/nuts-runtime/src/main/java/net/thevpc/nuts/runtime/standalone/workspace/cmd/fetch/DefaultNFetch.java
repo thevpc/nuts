@@ -15,7 +15,6 @@ import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
-import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.util.ValueSupplier;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
@@ -615,7 +614,7 @@ public class DefaultNFetch extends AbstractNFetch {
             if (jar == null) {
                 //do nothing
             } else {
-                if (jar.getName().toLowerCase().endsWith(".jar") && jar.isRegularFile()) {
+                if (jar.name().toLowerCase().endsWith(".jar") && jar.isRegularFile()) {
                     try {
                         List<NExecutionEntry> t = NExecutionEntry.parse(jar);
                         if (t.size() > 0) {

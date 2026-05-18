@@ -129,8 +129,8 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                             "Log"
 
                     ).build());
-            if (basePath.getName().equals("*")) {
-                list.add(new NIdPathIterator(this, repoRoot, basePath.getParent(), filter, repoIter, Integer.MAX_VALUE, "core", null, true));
+            if (basePath.name().equals("*")) {
+                list.add(new NIdPathIterator(this, repoRoot, basePath.parent(), filter, repoIter, Integer.MAX_VALUE, "core", null, true));
             } else {
                 list.add(new NIdPathIterator(this, repoRoot, basePath, filter, repoIter, 2, "core", null, true));
             }
@@ -181,7 +181,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
             }
         } else {
             String tempFile = NPath
-                    .ofTempRepositoryFile(p.getName(), this).toString();
+                    .ofTempRepositoryFile(p.name(), this).toString();
             try {
                 NCp.of()
                         .from(getStream(id, "artifact binaries", "retrieve")).to(NPath.of(tempFile)).setValidator(new NCpValidator() {
@@ -213,10 +213,10 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                                 foldersFileUrl.stream()
                                         .filter(NPath::isDirectory).withDescription(NDescribables.ofDesc("isDirectory"))
                                         .map(versionFolder -> {
-                                            String versionName = versionFolder.getName();
+                                            String versionName = versionFolder.name();
                                             NId expectedId = NIdBuilder.of(groupId, artifactId).setVersion(versionName).build();
                                             if (isValidArtifactVersionFolder(expectedId, versionFolder)) {
-                                                final NId nutsId = id.builder().setVersion(versionFolder.getName()).build();
+                                                final NId nutsId = id.builder().setVersion(versionFolder.name()).build();
                                                 if (safeFilter.acceptDefinition(NDefinitionHelper.ofIdAndLazyDescriptor(
                                                         nutsId,
                                                         () -> fetchDescriptor().setFetchMode(fetchMode).setId(nutsId).getResult(),

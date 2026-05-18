@@ -458,7 +458,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultPathNames() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .map(NFunction.of((NDefinition x) -> x.getContent().map(NPath::getName).orNull())
+                .map(NFunction.of((NDefinition x) -> x.getContent().map(NPath::name).orNull())
                         .withDescription(NDescribables.ofDesc("getName")))
                 .notBlank());
     }

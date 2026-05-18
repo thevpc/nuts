@@ -38,11 +38,11 @@ public class RollingFileService {
             df.append('0');
         }
         doubleFormat = new DecimalFormat(df.toString());
-        this.folder = folder.toAbsolute().getParent();
+        this.folder = folder.toAbsolute().parent();
         if (this.folder == null) {
             this.folder = NPath.ofUserDirectory();
         }
-        this.fileName = folder.getName();
+        this.fileName = folder.name();
         if (this.fileName.indexOf('#') < 0) {
             String b = folder.nameParts().getBaseName();
             String e = folder.nameParts().getExtension();
@@ -160,7 +160,7 @@ public class RollingFileService {
     }
 
     private NOptional<PathAndNbr> toPathAndNbr(NPath x) {
-        Matcher matcher = p.matcher(x.getName());
+        Matcher matcher = p.matcher(x.name());
         if (matcher.matches()) {
             String n = matcher.group("n");
             String t = matcher.group("t");

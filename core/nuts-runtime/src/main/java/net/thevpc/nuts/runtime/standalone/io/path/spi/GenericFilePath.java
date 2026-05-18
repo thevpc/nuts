@@ -58,6 +58,11 @@ public class GenericFilePath implements NPathSPI {
     }
 
     @Override
+    public boolean isHidden(NPath basePath) {
+        return basePath.name().startsWith(".");
+    }
+
+    @Override
     public String getProtocol(NPath basePath) {
         return "";
     }

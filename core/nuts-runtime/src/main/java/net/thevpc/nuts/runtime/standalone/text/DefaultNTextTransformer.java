@@ -234,7 +234,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                         //do not continue
                         return txts.transform(n, config.copy()
                                 .setProcessIncludes(true)
-                                .setCurrentDir(newP.getParent())
+                                .setCurrentDir(newP.parent())
                                 .setImportClassLoader(config.getImportClassLoader())
                         );
                     }

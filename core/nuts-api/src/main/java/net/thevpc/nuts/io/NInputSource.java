@@ -32,7 +32,6 @@ import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.util.List;
 
 /**
  * I/O input stream base.
@@ -58,6 +57,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     static NInputSource of(byte[] bytes) {
         return bytes == null ? null : NIORPI.of().ofInputSource(bytes);
     }
+
     static NInputSource ofEmpty() {
         return NIORPI.of().ofEmptyInputSource();
     }
@@ -93,7 +93,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
 
     static NInputSource of(NInputStreamProvider other, NContentMetadata metadata) {
         return other == null ? null :
-                (other instanceof NInputSource && metadata == null) ? (NInputSource)other :
+                (other instanceof NInputSource && metadata == null) ? (NInputSource) other :
                         NIORPI.of().ofInputSource(other, metadata);
     }
 
@@ -103,7 +103,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
 
     static NInputSource of(NReaderProvider other, NContentMetadata metadata) {
         return other == null ? null :
-                (other instanceof NInputSource && metadata == null) ? (NInputSource)other :
+                (other instanceof NInputSource && metadata == null) ? (NInputSource) other :
                         NIORPI.of().ofInputSource(other, metadata);
     }
 
@@ -121,11 +121,15 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
 
     boolean isKnownContentLength();
 
-    long getContentLength();
+    long contentLength();
 
     NStream<String> lines(Charset cs);
 
     NStream<String> lines();
+
+    NStream<String> lines(Long from, Long to);
+
+    NStream<String> lines(Long from, Long to, Charset cs);
 
     NStream<String> reversedLines(Charset cs);
 
@@ -140,13 +144,13 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
 
     BufferedReader getBufferedReader(Charset cs);
 
-    List<String> head(int count, Charset cs);
+    NStream<String> head(long count, Charset cs);
 
-    List<String> head(int count);
+    NStream<String> head(long count);
 
-    List<String> tail(int count, Charset cs);
+    NStream<String> tail(long count, Charset cs);
 
-    List<String> tail(int count);
+    NStream<String> tail(long count);
 
 
     default void dispose() {

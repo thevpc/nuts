@@ -40,6 +40,11 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
+    public boolean isHidden(NPath basePath) {
+        return false;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(PROTOCOL, super.hashCode());
     }
@@ -122,7 +127,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     @Override
     public String getContentType(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.getContentType();
+        return p == null ? null : p.contentType();
     }
 
     @Override
@@ -142,19 +147,19 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     @Override
     public Instant getLastModifiedInstant(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.getLastModifiedInstant();
+        return p == null ? null : p.lastModifiedInstant();
     }
 
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.getLastAccessInstant();
+        return p == null ? null : p.lastAccessInstant();
     }
 
     @Override
     public Instant getCreationInstant(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.getCreationInstant();
+        return p == null ? null : p.creationInstant();
     }
 
     @Override
@@ -162,7 +167,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         if (isRoot(basePath)) {
             return null;
         }
-        NPath p = ref.getParent();
+        NPath p = ref.parent();
         if (p == null) {
             return null;
         }
@@ -210,7 +215,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return NPath.of(PREFIX + ref.getRoot());
+        return NPath.of(PREFIX + ref.root());
     }
 
     @Override

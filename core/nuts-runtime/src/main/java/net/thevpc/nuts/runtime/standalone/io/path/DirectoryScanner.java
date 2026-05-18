@@ -58,7 +58,7 @@ public class DirectoryScanner {
         List<PathPart> parts = new ArrayList<>();
         NPath h = initialPattern;
         while (h != null) {
-            String name = h.getName();
+            String name = h.name();
             if (containsWildcard(name)) {
                 if (name.contains("**")) {
                     parts.add(0, new SubPathWildCardPathPart(name));
@@ -68,7 +68,7 @@ public class DirectoryScanner {
             } else {
                 parts.add(0, new PlainPathPart(name));
             }
-            NPath p = h.getParent();
+            NPath p = h.parent();
             if (p == h) {
                 h = null;
             } else {
@@ -95,7 +95,7 @@ public class DirectoryScanner {
         for (int i = from; i < parts.length; i++) {
             if (parts[i] instanceof PlainPathPart) {
                 if (r == null) {
-                    r = initialPattern.getRoot();
+                    r = initialPattern.root();
                 }
                 if (r == null) {
                     r = NPath.of(((PlainPathPart) parts[i]).value);
@@ -108,13 +108,13 @@ public class DirectoryScanner {
             } else if (parts[i] instanceof NameWildCardPathPart) {
                 NameWildCardPathPart w = (NameWildCardPathPart) parts[i];
                 if (r == null) {
-                    r = initialPattern.getRoot();
+                    r = initialPattern.root();
                 }
                 if (r == null) {
                     return NStream.ofEmpty();
                 }
                 NStream<NPath> t = r.stream().filter(
-                        NPredicate.of(x -> w.matchesName(x.getName()), NElement.ofName("name"))
+                        NPredicate.of(x -> w.matchesName(x.name()), NElement.ofName("name"))
 
                 );
                 if (parts.length - i - 1 == 0) {
@@ -127,7 +127,7 @@ public class DirectoryScanner {
             } else if (parts[i] instanceof SubPathWildCardPathPart) {
                 SubPathWildCardPathPart w = (SubPathWildCardPathPart) parts[i];
                 if (r == null) {
-                    r = initialPattern.getRoot();
+                    r = initialPattern.root();
                 }
 
                 NStream<NPath> t = new SubPathWildCardPathPartIterator(w, r).stream();
@@ -144,7 +144,7 @@ public class DirectoryScanner {
             }
         }
         if (r == null) {
-            return NStream.ofSingleton(initialPattern.getRoot());
+            return NStream.ofSingleton(initialPattern.root());
         }
         return NStream.ofSingleton(r);
     }

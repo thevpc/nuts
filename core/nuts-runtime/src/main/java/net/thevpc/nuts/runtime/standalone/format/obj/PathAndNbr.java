@@ -26,6 +26,6 @@ class PathAndNbr implements Comparable<PathAndNbr> {
         if (e != 0) {
             return e;
         }
-        return p.getName().compareTo(o.p.getName());
+        return p.name().compareTo(o.p.name());
     }
 }

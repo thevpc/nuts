@@ -53,7 +53,10 @@ import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.Charset;
 import java.nio.file.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
@@ -93,10 +96,7 @@ public class CoreIOUtils {
         if (l == null) {
             return false;
         }
-        if (l.charAt(0) == '#') {
-            return false;
-        }
-        return true;
+        return l.charAt(0) != '#';
     }
 
     public static Stream<String> confLines(InputStream stream) {
@@ -113,7 +113,7 @@ public class CoreIOUtils {
 
     public static Stream<String> lines(Reader reader) {
         return NCollections.finiteStream(new Supplier<String>() {
-            private BufferedReader r = new BufferedReader(reader);
+            private final BufferedReader r = new BufferedReader(reader);
 
             public String get() {
                 try {
@@ -380,8 +380,8 @@ public class CoreIOUtils {
         }
 
         NPath header = NPath.of(path);
-        long size = header.getContentLength();
-        Instant lastModifiedInstant = header.getLastModifiedInstant();
+        long size = header.contentLength();
+        Instant lastModifiedInstant = header.lastModifiedInstant();
         long lastModified = lastModifiedInstant == null ? 0 : lastModifiedInstant.toEpochMilli();
 
         //when sha1 was not resolved check size and last modification
@@ -413,7 +413,7 @@ public class CoreIOUtils {
                         ccu.url = path;
                         ccu.path = s;
                         ccu.sha1 = NDigestUtils.evalSHA1Hex(outPath);
-                        long newSize = outPath.getContentLength();
+                        long newSize = outPath.contentLength();
                         ccu.size = newSize;
                         ccu.lastModified = finalLastModified;
                         NPath newLocalPath = urlContent.resolve(s);
@@ -431,7 +431,7 @@ public class CoreIOUtils {
                 .setMetadata(new DefaultNContentMetadata(
                         path,
                         NMsg.ofNtf(NText.ofStyledPath(path)),
-                        size, header.getContentType(), header.getCharset(), sourceTypeName
+                        size, header.contentType(), header.getCharset(), sourceTypeName
                 )).createInputStream()
                 ;
 
@@ -490,7 +490,7 @@ public class CoreIOUtils {
 
     public static boolean isObsoletePath(NPath path) {
         try {
-            Instant i = path.getLastModifiedInstant();
+            Instant i = path.lastModifiedInstant();
             if (i == null) {
                 return false;
             }
@@ -705,8 +705,8 @@ public class CoreIOUtils {
         Set<CopyOption> joptions = new HashSet<>();
 
         for (NPathOption option : noptions) {
-            if(option instanceof NPathStandardOption) {
-                switch ((NPathStandardOption)option) {
+            if (option instanceof NPathStandardOption) {
+                switch ((NPathStandardOption) option) {
                     case REPLACE_EXISTING: {
                         joptions.add(StandardCopyOption.REPLACE_EXISTING);
                         break;
@@ -813,6 +813,54 @@ public class CoreIOUtils {
             return NOptional.ofNamedEmpty("null stream for " + u);
         }
         return NOptional.of(in);
+    }
+
+    public static NStream<String> bufferedReaderToLinesStream(BufferedReader br) {
+        try {
+            return NStream.ofStream(br.lines().onClose(() -> {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }));
+        } catch (Error | RuntimeException e) {
+            try {
+                br.close();
+            } catch (IOException ex) {
+                try {
+                    e.addSuppressed(ex);
+                } catch (Throwable ignore) {
+
+                }
+            }
+            throw e;
+        }
+    }
+
+
+    public static byte[] getDigest(InputStream input,String algo) {
+        if (NBlankable.isBlank(algo)) {
+            algo = "SHA-1";
+        }
+        MessageDigest sha1 = null;
+        try {
+            sha1 = MessageDigest.getInstance(algo);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new NIOException(ex);
+        }
+        byte[] buffer = new byte[8192];
+        int len = 0;
+        try {
+            len = input.read(buffer);
+            while (len != -1) {
+                sha1.update(buffer, 0, len);
+                len = input.read(buffer);
+            }
+        } catch (IOException e) {
+            throw new NIOException(e);
+        }
+        return sha1.digest();
     }
 
 
@@ -986,6 +1034,119 @@ public class CoreIOUtils {
             return s;
         }
         return "/";
+    }
+
+
+    /**
+     * this is teh default implementation of lines part of any input stream
+     *
+     * @param from 0-based inclusive index of the first line to return or null. when negative, should consider tail (-from)
+     * @param to   0-based exclusive index of the last line to return or null. when negative, should consider tail (-to where -1 relates to the end of the stream)
+     * @param cs   charset if provided , if ot use default
+     * @return stream of lines
+     */
+    public static NStream<String> lines(NInputSource is, Long from, Long to, Charset cs) {
+        // ── Base case ──────────────────────────────────────────────
+        if (from == null && to == null) {
+            return is.lines(cs);
+        }
+
+        // Lazy supplier to avoid double-evaluating the base stream
+        Supplier<NStream<String>> base = () -> is.lines(cs);
+
+        // ── Only 'from' specified ─────────────────────────────────
+        if (from != null && to == null) {
+            return from >= 0
+                    ? base.get().skip(from)      // skip first N
+                    : is.tail(-from, cs);           // last N (your existing method)
+        }
+
+        // ── Only 'to' specified ───────────────────────────────────
+        if (from == null && to != null) {
+            return to >= 0
+                    ? base.get().limit(to)       // first N (exclusive)
+                    : excludeTail(is, -to, cs);      // all but last N
+        }
+
+        // ── Both specified, both non-negative ─────────────────────
+        if (from >= 0 && to >= 0) {
+            return (to <= from)
+                    ? NStream.ofEmpty()
+                    : base.get().skip(from).limit(to - from);
+        }
+
+        // ── At least one negative: resolve indices if possible ────
+        if (is.isMultiRead()) {
+            // Two-pass: count once, then compose with skip/limit
+            long total = base.get().count();
+            long start = (from < 0) ? Math.max(0, total + from) : from;
+            long end = (to < 0) ? Math.max(0, total + to) : to;
+
+            return (start >= end || start >= total)
+                    ? NStream.ofEmpty()
+                    : base.get().skip(start).limit(end - start);
+        }
+
+        // ── Single-read fallback: buffer minimally ────────────────
+        // Unavoidable: negative indices require seeing all lines once
+        List<String> all = base.get().toList();
+        long total = all.size();
+        long start = (from < 0) ? Math.max(0, total + from) : from;
+        long end = (to < 0) ? Math.max(0, total + to) : to;
+
+        if (start >= end || start >= total) return NStream.ofEmpty();
+        return NStream.ofStream(all.subList(
+                (int) start,
+                (int) Math.min(end, total)
+        ).stream());
+    }
+
+    /**
+     * Helper: return all lines except the last 'count' lines.
+     * Composes with head() if total is known, otherwise uses sliding buffer.
+     */
+    private static NStream<String> excludeTail(NInputSource is, long count, Charset cs) {
+        if (count <= 0) return is.lines(cs);
+
+        if (is.isMultiRead()) {
+            long total = is.lines(cs).count();
+            long keep = Math.max(0, total - count);
+            return keep == 0 ? NStream.ofEmpty() : is.lines(cs).limit(keep); // or head(keep)
+        }
+
+        // Single-pass: output lines with a 'count'-line delay
+        return NStream.ofIterator(new NIteratorBase<String>() {
+            private final Deque<String> buffer = new ArrayDeque<>((int) count);
+            private final NIterator<String> src = is.lines(cs).iterator();
+            private boolean initialized = false;
+            private String nextVal = null;
+
+            @Override
+            protected boolean hasNextImpl() {
+                if (!initialized) {
+                    // Prime the buffer with first 'count' lines
+                    for (int i = 0; i < count && src.hasNext(); i++) {
+                        buffer.addLast(src.next());
+                    }
+                    initialized = true;
+                }
+                if (nextVal != null) return true;
+                if (src.hasNext()) {
+                    nextVal = buffer.pollFirst();   // emit oldest
+                    buffer.addLast(src.next());      // buffer newest
+                    return true;
+                }
+                return false; // stream exhausted, remaining buffer is the tail to exclude
+            }
+
+            @Override
+            public String next() {
+                hasNext();
+                String result = nextVal;
+                nextVal = null;
+                return result;
+            }
+        });
     }
 
 }

@@ -58,7 +58,7 @@ public interface NLock extends Lock, NDescribable {
     }
 
     static NLock ofPathCompanion(NPath source) {
-        return NLockBuilder.of().setSource(source).setResource(source.resolveSibling(source.getName() + ".lock")).build();
+        return NLockBuilder.of().setSource(source).setResource(source.resolveSibling(source.name() + ".lock")).build();
     }
 
     static NLock ofResource(Object resource) {

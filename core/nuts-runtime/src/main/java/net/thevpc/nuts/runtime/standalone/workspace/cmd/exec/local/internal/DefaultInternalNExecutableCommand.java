@@ -68,7 +68,7 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
                         .setProcessAll(true)
                         .setRootLevel(1)
                         .setImportClassLoader(getClass().getClassLoader())
-                        .setCurrentDir(path.getParent())
+                        .setCurrentDir(path.parent())
         );
     }
 

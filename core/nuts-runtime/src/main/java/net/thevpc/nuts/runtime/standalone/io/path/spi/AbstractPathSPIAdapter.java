@@ -61,12 +61,12 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
     @Override
     public String getName(NPath basePath) {
-        return ref.getName();
+        return ref.name();
     }
 
     @Override
     public String getProtocol(NPath basePath) {
-        return ref.getProtocol();
+        return ref.protocol();
     }
 
 
@@ -107,7 +107,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
     @Override
     public long getContentLength(NPath basePath) {
-        return ref.getContentLength();
+        return ref.contentLength();
     }
 
     public String getContentEncoding(NPath basePath) {
@@ -115,7 +115,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     public String getContentType(NPath basePath) {
-        return ref.getContentType();
+        return ref.contentType();
     }
 
     public String getCharset(NPath basePath) {
@@ -124,7 +124,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
     @Override
     public String getLocation(NPath basePath) {
-        return ref.getLocation();
+        return ref.location();
     }
 
     public InputStream getInputStream(NPath basePath, NPathOption... options) {
@@ -147,22 +147,22 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
     @Override
     public Instant getLastModifiedInstant(NPath basePath) {
-        return ref.getLastModifiedInstant();
+        return ref.lastModifiedInstant();
     }
 
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
-        return ref.getLastAccessInstant();
+        return ref.lastAccessInstant();
     }
 
     @Override
     public Instant getCreationInstant(NPath basePath) {
-        return ref.getCreationInstant();
+        return ref.creationInstant();
     }
 
     @Override
     public NPath getParent(NPath basePath) {
-        return ref.getParent();
+        return ref.parent();
     }
 
     @Override
@@ -195,7 +195,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
     @Override
     public Set<NPathPermission> getPermissions(NPath basePath) {
-        return ref.getPermissions();
+        return ref.permissions();
     }
 
     @Override
@@ -220,7 +220,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
     @Override
     public Integer getNameCount(NPath basePath) {
-        return ref.getNameCount();
+        return ref.nameCount();
     }
 
     @Override
@@ -238,7 +238,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return ref.getRoot();
+        return ref.root();
     }
 
     @Override
@@ -253,7 +253,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
     @Override
     public List<String> getNames(NPath basePath) {
-        return ref.getNames();
+        return ref.names();
     }
 
     @Override

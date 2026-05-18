@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
@@ -62,7 +61,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 factory.ofStyled("force updating", NTextStyle.warn().append(NTextStyle.underlined())) :
                                 factory.ofStyled("force updating", NTextStyle.warn())
                 ));
-                List<String> sortedNames = Arrays.stream(updatedPaths).map(x->x.getPath().getName()).sorted().collect(Collectors.toList());
+                List<String> sortedNames = Arrays.stream(updatedPaths).map(x->x.getPath().name()).sorted().collect(Collectors.toList());
                 int maxPerLine = 5; // adjust for readability
                 for (int i = 0; i < sortedNames.size(); i += maxPerLine) {
                     List<String> sublist = sortedNames.subList(i, Math.min(i + maxPerLine, sortedNames.size()));

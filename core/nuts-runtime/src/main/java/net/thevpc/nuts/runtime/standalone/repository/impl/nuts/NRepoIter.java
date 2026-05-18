@@ -35,7 +35,7 @@ class NRepoIter extends NIdPathIteratorBase {
 
     @Override
     public boolean isDescFile(NPath pathname) {
-        String name = pathname.getName();
+        String name = pathname.name();
         return name.endsWith(".pom") || name.endsWith(".nuts");
     }
 
@@ -43,7 +43,7 @@ class NRepoIter extends NIdPathIteratorBase {
     public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL)  {
         NSession session=getWorkspace().currentSession();
         session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "parse", NCoreLogUtils.forProgress(pathname)));
-        String fn = pathname.getName();
+        String fn = pathname.name();
         if (fn.endsWith(".pom")) {
             return MavenUtils.of().parsePomXmlAndResolveParents(in, fetchMode, pathname.toString(), repository);
         }else{
@@ -53,21 +53,21 @@ class NRepoIter extends NIdPathIteratorBase {
 
     @Override
     public NId parseId(NPath pomFile, NPath rootPath, NDefinitionFilter filter, NRepository repository)  {
-        String fn = pomFile.getName();
+        String fn = pomFile.name();
         if (fn.endsWith(".pom")) {
-            NPath versionFolder = pomFile.getParent();
+            NPath versionFolder = pomFile.parent();
             if (versionFolder != null) {
-                String vn = versionFolder.getName();
-                NPath artifactFolder = versionFolder.getParent();
+                String vn = versionFolder.name();
+                NPath artifactFolder = versionFolder.parent();
                 if (artifactFolder != null) {
-                    String an = artifactFolder.getName();
+                    String an = artifactFolder.name();
                     if (fn.equals(an + "-" + vn + ".pom")) {
-                        NPath groupFolder = artifactFolder.getParent();
+                        NPath groupFolder = artifactFolder.parent();
                         if (groupFolder != null) {
-                            NPath gg = groupFolder.subpath(rootPath.getNameCount(), groupFolder.getNameCount());
+                            NPath gg = groupFolder.subpath(rootPath.nameCount(), groupFolder.nameCount());
                             StringBuilder gn = new StringBuilder();
-                            for (int i = 0; i < gg.getNameCount(); i++) {
-                                String ns = gg.getName(i);
+                            for (int i = 0; i < gg.nameCount(); i++) {
+                                String ns = gg.nameAt(i);
                                 if (i > 0) {
                                     gn.append('.');
                                 }
@@ -85,19 +85,19 @@ class NRepoIter extends NIdPathIteratorBase {
                 }
             }
         }else if(fn.endsWith(".nuts")){
-            NPath versionFolder = pomFile.getParent();
+            NPath versionFolder = pomFile.parent();
             if (versionFolder != null) {
-                String vn = versionFolder.getName();
-                NPath artifactFolder = versionFolder.getParent();
+                String vn = versionFolder.name();
+                NPath artifactFolder = versionFolder.parent();
                 if (artifactFolder != null) {
-                    String an = artifactFolder.getName();
+                    String an = artifactFolder.name();
                     if (fn.equals(an + "-" + vn + ".nuts")) {
-                        NPath groupFolder = artifactFolder.getParent();
+                        NPath groupFolder = artifactFolder.parent();
                         if (groupFolder != null) {
-                            NPath gg = groupFolder.subpath(rootPath.getNameCount(), groupFolder.getNameCount());
+                            NPath gg = groupFolder.subpath(rootPath.nameCount(), groupFolder.nameCount());
                             StringBuilder gn = new StringBuilder();
-                            for (int i = 0; i < gg.getNameCount(); i++) {
-                                String ns = gg.getName(i);
+                            for (int i = 0; i < gg.nameCount(); i++) {
+                                String ns = gg.nameAt(i);
                                 if (i > 0) {
                                     gn.append('.');
                                 }

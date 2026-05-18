@@ -71,7 +71,7 @@ public class DefaultNDescriptorContentParserContext implements NDescriptorConten
                 throw new NIOException(e);
             }
         }
-        return CoreIOUtils.createBytesStream(bytes, NMsg.ofC("%s", file), file.getContentType(),
+        return CoreIOUtils.createBytesStream(bytes, NMsg.ofC("%s", file), file.contentType(),
                 file.getCharset(), file.getMetaData().getKind().orNull());
     }
 
@@ -92,7 +92,7 @@ public class DefaultNDescriptorContentParserContext implements NDescriptorConten
 
     @Override
     public String getName() {
-        return file.getName();
+        return file.name();
     }
 
 }

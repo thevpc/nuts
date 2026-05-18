@@ -57,11 +57,11 @@ public class CommonRootsByPathHelper {
     }
 
     static private boolean deepOf(NPath p){
-        return p.getName().equals("*");
+        return p.name().equals("*");
     }
     static private String pathOf(NPath p){
-        if(p.getName().equals("*")){
-            p=p.getParent();
+        if(p.name().equals("*")){
+            p=p.parent();
         }
         if(p==null){
             return "";
@@ -97,16 +97,16 @@ public class CommonRootsByPathHelper {
         String a_path;
         boolean b_deep;
         String b_path;
-        if(a.getName().equals("*")){
+        if(a.name().equals("*")){
             a_deep=true;
-            a_path=a.getParent()==null?"":a.getParent().toString();
+            a_path=a.parent()==null?"":a.parent().toString();
         }else{
             a_deep=false;
             a_path=a.toString();
         }
-        if(b.getName().equals("*")){
+        if(b.name().equals("*")){
             b_deep=true;
-            b_path=b.getParent()==null?"":b.getParent().toString();
+            b_path=b.parent()==null?"":b.parent().toString();
         }else{
             b_deep=false;
             b_path=a.toString();

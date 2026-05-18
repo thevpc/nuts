@@ -312,8 +312,8 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
             createFileFromTemplate("service-initd", tempFile.toString());
             NPath rcFile = rootFile("/etc/rc.d/S99z_" + serviceName);
             ScriptBuilder script = new ScriptBuilder(serviceName, "initd service enable/start " + serviceName + " script")
-                    .printlnEcho("mkdir -p " + rcFile.getParent())
-                    .printlnEcho("mkdir -p " + serviceFilePath.getParent())
+                    .printlnEcho("mkdir -p " + rcFile.parent())
+                    .printlnEcho("mkdir -p " + serviceFilePath.parent())
                     .printlnEcho("cp " + tempFile.getPath() + " " + serviceFilePath)
                     .printlnEcho("rm -Rf " + rcFile)
                     .printlnEcho("ln -s " + serviceFilePath + " " + rcFile);
@@ -328,7 +328,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
             // added to always return 0 code
             script.printlnEcho("echo 'end of script'");
             if (NSession.of().isDry()) {
-                serviceFilePath.getParent().mkdirs();
+                serviceFilePath.parent().mkdirs();
                 Files.copy(tempFile.toPath(), serviceFilePath.toPath().get(), StandardCopyOption.REPLACE_EXISTING);
                 logInfo("[DRY] run script: ");
                 logInfo(script.toString());

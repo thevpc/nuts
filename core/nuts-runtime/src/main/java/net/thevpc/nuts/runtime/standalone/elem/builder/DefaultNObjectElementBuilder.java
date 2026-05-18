@@ -98,17 +98,41 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NObjectElementBuilder setParamAt(int index, boolean value) {
+    public NObjectElementBuilder setParamAt(int index, Long value) {
+        this.params = CoreNElementUtils.setAt(index, NElement.ofLong(value), this.params);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder setParamAt(int index, Short value) {
+        this.params = CoreNElementUtils.setAt(index, NElement.ofShort(value), this.params);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder setParamAt(int index, Character value) {
+        this.params = CoreNElementUtils.setAt(index, NElement.ofChar(value), this.params);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder setParamAt(int index, Byte value) {
+        this.params = CoreNElementUtils.setAt(index, NElement.ofByte(value), this.params);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder setParamAt(int index, Boolean value) {
         return setParamAt(index, NElement.ofBoolean(value));
     }
 
     @Override
-    public NObjectElementBuilder setParamAt(int index, int value) {
+    public NObjectElementBuilder setParamAt(int index, Integer value) {
         return setParamAt(index, NElement.ofInt(value));
     }
 
     @Override
-    public NObjectElementBuilder setParamAt(int index, double value) {
+    public NObjectElementBuilder setParamAt(int index, Double value) {
         return setParamAt(index, NElement.ofDouble(value));
     }
 
@@ -242,22 +266,37 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NObjectElementBuilder set(String name, boolean value) {
+    public NObjectElementBuilder set(String name, Boolean value) {
         return set(CoreNElementUtils.pair(name, value));
     }
 
     @Override
-    public NObjectElementBuilder set(String name, int value) {
+    public NObjectElementBuilder set(String name, Integer value) {
         return set(CoreNElementUtils.pair(name, value));
     }
 
     @Override
-    public NObjectElementBuilder set(String name, double value) {
+    public NObjectElementBuilder set(String name, Double value) {
         return set(CoreNElementUtils.pair(name, value));
     }
 
     @Override
     public NObjectElementBuilder set(String name, String value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
+    public NObjectElementBuilder set(String name, Long value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
+    public NObjectElementBuilder set(String name, Short value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
+    public NObjectElementBuilder set(String name, Character value) {
         return set(CoreNElementUtils.pair(name, value));
     }
 
@@ -323,17 +362,43 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NObjectElementBuilder set(NElement name, boolean value) {
+    public NObjectElementBuilder set(NElement name, Boolean value) {
         return set(name, NElement.ofBoolean(value));
     }
 
     @Override
-    public NObjectElementBuilder set(NElement name, int value) {
+    public NObjectElementBuilder set(NElement name, Integer value) {
         return set(name, NElement.ofInt(value));
     }
 
     @Override
-    public NObjectElementBuilder set(NElement name, double value) {
+    public NObjectElementBuilder set(NElement name, Long value) {
+        return set(name, NElement.ofLong(value));
+    }
+
+
+    @Override
+    public NObjectElementBuilder set(NElement name, Float value) {
+        return set(name, NElement.ofFloat(value));
+    }
+
+    @Override
+    public NObjectElementBuilder set(NElement name, Short value) {
+        return set(name, NElement.ofShort(value));
+    }
+
+    @Override
+    public NObjectElementBuilder set(NElement name, Byte value) {
+        return set(name, NElement.ofByte(value));
+    }
+
+    @Override
+    public NObjectElementBuilder set(NElement name, Character value) {
+        return set(name, NElement.ofChar(value));
+    }
+
+    @Override
+    public NObjectElementBuilder set(NElement name, Double value) {
         return set(name, NElement.ofDouble(value));
     }
 
@@ -379,18 +444,43 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NObjectElementBuilder add(String name, boolean value) {
+    public NObjectElementBuilder add(String name, Boolean value) {
         return add(NElement.ofNameOrString(name), NElement.ofBoolean(value));
     }
 
     @Override
-    public NObjectElementBuilder add(String name, int value) {
+    public NObjectElementBuilder add(String name, Integer value) {
         return add(NElement.ofNameOrString(name), NElement.ofInt(value));
     }
 
     @Override
-    public NObjectElementBuilder add(String name, double value) {
+    public NObjectElementBuilder add(String name, Short value) {
+        return add(NElement.ofNameOrString(name), NElement.ofShort(value));
+    }
+
+    @Override
+    public NObjectElementBuilder add(String name, Double value) {
         return add(NElement.ofNameOrString(name), NElement.ofDouble(value));
+    }
+
+    @Override
+    public NObjectElementBuilder add(String name, Long value) {
+        return add(NElement.ofNameOrString(name), NElement.ofLong(value));
+    }
+
+    @Override
+    public NObjectElementBuilder add(String name, Float value) {
+        return add(NElement.ofNameOrString(name), NElement.ofFloat(value));
+    }
+
+    @Override
+    public NObjectElementBuilder add(String name, Byte value) {
+        return add(NElement.ofNameOrString(name), NElement.ofByte(value));
+    }
+
+    @Override
+    public NObjectElementBuilder add(String name, Character value) {
+        return add(NElement.ofNameOrString(name), NElement.ofChar(value));
     }
 
     @Override
@@ -487,37 +577,37 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
-    public NObjectElementBuilder add(int value) {
+    public NObjectElementBuilder add(Integer value) {
         return add(NElement.ofInt(value));
     }
 
     @Override
-    public NObjectElementBuilder add(long value) {
+    public NObjectElementBuilder add(Long value) {
         return add(NElement.ofLong(value));
     }
 
     @Override
-    public NObjectElementBuilder add(double value) {
+    public NObjectElementBuilder add(Double value) {
         return add(NElement.ofDouble(value));
     }
 
     @Override
-    public NObjectElementBuilder add(float value) {
+    public NObjectElementBuilder add(Float value) {
         return add(NElement.ofFloat(value));
     }
 
     @Override
-    public NObjectElementBuilder add(byte value) {
+    public NObjectElementBuilder add(Byte value) {
         return add(NElement.ofByte(value));
     }
 
     @Override
-    public NObjectElementBuilder add(boolean value) {
+    public NObjectElementBuilder add(Boolean value) {
         return add(NElement.ofBoolean(value));
     }
 
     @Override
-    public NObjectElementBuilder add(char value) {
+    public NObjectElementBuilder add(Character value) {
         return add(NElement.ofString(String.valueOf(value)));
     }
 

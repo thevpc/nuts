@@ -226,37 +226,37 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder add(int value) {
+    public NUpletElementBuilder add(Integer value) {
         return add(NElement.ofInt(value));
     }
 
     @Override
-    public NUpletElementBuilder add(long value) {
+    public NUpletElementBuilder add(Long value) {
         return add(NElement.ofLong(value));
     }
 
     @Override
-    public NUpletElementBuilder add(double value) {
+    public NUpletElementBuilder add(Double value) {
         return add(NElement.ofDouble(value));
     }
 
     @Override
-    public NUpletElementBuilder add(float value) {
+    public NUpletElementBuilder add(Float value) {
         return add(NElement.ofFloat(value));
     }
 
     @Override
-    public NUpletElementBuilder add(byte value) {
+    public NUpletElementBuilder add(Byte value) {
         return add(NElement.ofByte(value));
     }
 
     @Override
-    public NUpletElementBuilder add(boolean value) {
+    public NUpletElementBuilder add(Boolean value) {
         return add(NElement.ofBoolean(value));
     }
 
     @Override
-    public NUpletElementBuilder add(char value) {
+    public NUpletElementBuilder add(Character value) {
         return add(NElement.ofString(String.valueOf(value)));
     }
 
@@ -313,19 +313,19 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder set(String name, boolean value) {
+    public NUpletElementBuilder set(String name, Boolean value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(String name, int value) {
+    public NUpletElementBuilder set(String name, Integer value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(String name, double value) {
+    public NUpletElementBuilder set(String name, Double value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
@@ -337,19 +337,73 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder set(NElement name, boolean value) {
+    public NUpletElementBuilder set(NElement name, Boolean value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(NElement name, int value) {
+    public NUpletElementBuilder set(NElement name, Integer value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(NElement name, double value) {
+    public NUpletElementBuilder set(NElement name, Character value) {
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
+    }
+
+    @Override
+    public NUpletElementBuilder set(NElement name, Byte value) {
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
+    }
+
+    @Override
+    public NUpletElementBuilder set(NElement name, Short value) {
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
+    }
+
+    @Override
+    public NUpletElementBuilder set(NElement name, Long value) {
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
+    }
+
+    @Override
+    public NUpletElementBuilder set(String name, Long value) {
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
+    }
+
+    @Override
+    public NUpletElementBuilder set(String name, Float value) {
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
+    }
+
+    @Override
+    public NUpletElementBuilder set(String name, Short value) {
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
+    }
+
+    @Override
+    public NUpletElementBuilder set(String name, Byte value) {
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
+    }
+
+    @Override
+    public NUpletElementBuilder set(String name, Character value) {
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
+        return this;
+    }
+
+    @Override
+    public NUpletElementBuilder set(NElement name, Double value) {
         return set(name, NElement.ofDouble(value));
     }
 
@@ -367,17 +421,42 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder add(String name, boolean value) {
+    public NUpletElementBuilder add(String name, Boolean value) {
         return add(NElement.ofNameOrString(name), NElement.ofBoolean(value));
     }
 
     @Override
-    public NUpletElementBuilder add(String name, int value) {
+    public NUpletElementBuilder add(String name, Character value) {
+        return add(NElement.ofNameOrString(name), NElement.ofChar(value));
+    }
+
+    @Override
+    public NUpletElementBuilder add(String name, Byte value) {
+        return add(NElement.ofNameOrString(name), NElement.ofByte(value));
+    }
+
+    @Override
+    public NUpletElementBuilder add(String name, Short value) {
+        return add(NElement.ofNameOrString(name), NElement.ofShort(value));
+    }
+
+    @Override
+    public NUpletElementBuilder add(String name, Long value) {
+        return add(NElement.ofNameOrString(name), NElement.ofLong(value));
+    }
+
+    @Override
+    public NUpletElementBuilder add(String name, Float value) {
+        return add(NElement.ofNameOrString(name), NElement.ofFloat(value));
+    }
+
+    @Override
+    public NUpletElementBuilder add(String name, Integer value) {
         return add(NElement.ofNameOrString(name), NElement.ofInt(value));
     }
 
     @Override
-    public NUpletElementBuilder add(String name, double value) {
+    public NUpletElementBuilder add(String name, Double value) {
         return add(NElement.ofNameOrString(name), NElement.ofDouble(value));
     }
 

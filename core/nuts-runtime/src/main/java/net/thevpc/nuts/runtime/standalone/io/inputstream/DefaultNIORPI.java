@@ -256,8 +256,8 @@ public class DefaultNIORPI implements NIORPI {
                 }
 
                 @Override
-                public long getContentLength() {
-                    return o.getContentLength();
+                public long contentLength() {
+                    return o.contentLength();
                 }
 
                 @Override
@@ -300,8 +300,8 @@ public class DefaultNIORPI implements NIORPI {
                 }
 
                 @Override
-                public long getContentLength() {
-                    return o.getContentLength();
+                public long contentLength() {
+                    return o.contentLength();
                 }
 
                 @Override
@@ -474,7 +474,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public List<NExecutionEntry> parseExecutionEntries(NPath file) {
-        if (file.getName().toLowerCase().endsWith(".jar")) {
+        if (file.name().toLowerCase().endsWith(".jar")) {
             try {
                 try (InputStream in = file.getInputStream()) {
                     return parseExecutionEntries(in, "jar", file.toAbsolute().normalize().toString());
@@ -482,7 +482,7 @@ public class DefaultNIORPI implements NIORPI {
             } catch (IOException ex) {
                 throw new NIOException(ex);
             }
-        } else if (file.getName().toLowerCase().endsWith(".class")) {
+        } else if (file.name().toLowerCase().endsWith(".class")) {
             try {
                 try (InputStream in = file.getInputStream()) {
                     return parseExecutionEntries(in, "class", file.toAbsolute().normalize().toString());
@@ -813,7 +813,7 @@ public class DefaultNIORPI implements NIORPI {
         }
 
         @Override
-        public long getContentLength() {
+        public long contentLength() {
             return -1;
         }
 
@@ -849,7 +849,7 @@ public class DefaultNIORPI implements NIORPI {
         }
 
         @Override
-        public long getContentLength() {
+        public long contentLength() {
             return -1;
         }
 

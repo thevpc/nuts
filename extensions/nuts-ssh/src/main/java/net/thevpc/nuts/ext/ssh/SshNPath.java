@@ -67,6 +67,11 @@ class SshNPath implements NPathSPI {
         return NStream.ofEmpty();
     }
 
+    @Override
+    public boolean isHidden(NPath basePath) {
+        return basePath.name().startsWith(".");
+    }
+
     private SshConnection prepareSshConnection() {
         return SshConnectionPool.of().acquire(path)
                 .addListener(listener);
@@ -400,7 +405,7 @@ class SshNPath implements NPathSPI {
         if (NBlankable.isBlank(location)) {
             return 0;
         }
-        return NPath.of(location).getNameCount();
+        return NPath.of(location).nameCount();
     }
 
     @Override
@@ -450,7 +455,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public List<String> getNames(NPath basePath) {
-        return NPath.of(getLocation(basePath)).getNames();
+        return NPath.of(getLocation(basePath)).names();
     }
 
     @Override

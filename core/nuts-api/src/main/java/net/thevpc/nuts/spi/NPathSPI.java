@@ -44,6 +44,8 @@ public interface NPathSPI {
 
     NStream<NPath> list(NPath basePath);
 
+    boolean isHidden(NPath basePath);
+
     NPathType getType(NPath basePath);
 
     boolean exists(NPath basePath);
@@ -120,7 +122,7 @@ public interface NPathSPI {
     }
 
     default NPath resolveSibling(NPath basePath, String path) {
-        NPath parent = basePath.getParent();
+        NPath parent = basePath.parent();
         return parent.resolve(path);
     }
 
@@ -282,7 +284,7 @@ public interface NPathSPI {
         return null;
     }
 
-    default NStream<String> reversedLines(NPath basePath,Charset charset) {
+    default NStream<String> reversedLines(NPath basePath, Charset charset) {
         return null;
     }
 

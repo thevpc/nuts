@@ -131,7 +131,7 @@ public class MavenRepositoryFolderHelper {
 
             @Override
             public boolean isDescFile(NPath pathname) {
-                return pathname.getName().equals("pom.xml");
+                return pathname.name().equals("pom.xml");
             }
 
             @Override
@@ -152,7 +152,7 @@ public class MavenRepositoryFolderHelper {
             NPath[] versionFolders = file.stream().filter(NPath::isDirectory).withDescription(NDescribables.ofDesc("isDirectory"))
                     .toArray(NPath[]::new);
             for (NPath versionFolder : versionFolders) {
-                NId id2 = id.builder().setVersion(versionFolder.getName()).build();
+                NId id2 = id.builder().setVersion(versionFolder.name()).build();
                 if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                     bestId = id2;
                 }

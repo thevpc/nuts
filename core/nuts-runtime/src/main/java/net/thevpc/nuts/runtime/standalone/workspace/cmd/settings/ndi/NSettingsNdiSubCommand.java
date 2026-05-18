@@ -456,7 +456,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         if (session.isTrace()) {
             result = Arrays.stream(result).filter(x -> x.getStatus() != PathInfo.Status.DISCARDED).toArray(PathInfo[]::new);
             if (session.isPlainTrace()) {
-                int namesSize = Arrays.stream(result).mapToInt(x -> x.getPath().getName().length()).max().orElse(1);
+                int namesSize = Arrays.stream(result).mapToInt(x -> x.getPath().name().length()).max().orElse(1);
                 for (PathInfo ndiScriptInfo : result) {
                     NTexts txt = NTexts.of();
                     NOut.println(NMsg.ofC(
@@ -466,7 +466,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                                     ? txt.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()))
                                     : txt.ofStyled("install", NTextStyle.success())
                             ,
-                            txt.ofStyled(ndiScriptInfo.getPath().getName(), NTextStyle.path()),
+                            txt.ofStyled(ndiScriptInfo.getPath().name(), NTextStyle.path()),
                             ndiScriptInfo.getId(),
                             txt.ofStyled(CoreIOUtils.betterPath(ndiScriptInfo.getPath().toString()), NTextStyle.path())
                     ));

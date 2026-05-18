@@ -109,7 +109,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NArrayElementBuilder add(long value);
+    NArrayElementBuilder add(Long value);
 
     /**
      * add element to the given array
@@ -117,7 +117,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NArrayElementBuilder add(double value);
+    NArrayElementBuilder add(Double value);
 
     /**
      * add element to the given array
@@ -125,7 +125,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NArrayElementBuilder add(float value);
+    NArrayElementBuilder add(Float value);
 
     /**
      * add element to the given array
@@ -133,7 +133,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NArrayElementBuilder add(byte value);
+    NArrayElementBuilder add(Byte value);
 
     /**
      * add element to the given array
@@ -141,7 +141,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NArrayElementBuilder add(boolean value);
+    NArrayElementBuilder add(Boolean value);
 
     /**
      * add element to the given array
@@ -149,7 +149,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NArrayElementBuilder add(char value);
+    NArrayElementBuilder add(Character value);
 
     /**
      * add element to the given array
@@ -299,6 +299,7 @@ public interface NArrayElementBuilder extends NElementBuilder {
 
 
     NArrayElementBuilder doWith(Consumer<NArrayElementBuilder> con);
+
     /**
      * create array with this instance elements
      *
@@ -365,7 +366,6 @@ public interface NArrayElementBuilder extends NElementBuilder {
     /// ///////
 
 
-
     /**
      * set value for property {@code name}
      *
@@ -375,19 +375,27 @@ public interface NArrayElementBuilder extends NElementBuilder {
      */
     NArrayElementBuilder set(String name, NElement value);
 
-    NArrayElementBuilder set(String name, boolean value);
+    NArrayElementBuilder set(String name, Boolean value);
 
-    NArrayElementBuilder set(String name, int value);
+    NArrayElementBuilder set(String name, Integer value);
 
-    NArrayElementBuilder set(String name, double value);
+    NArrayElementBuilder set(String name, Double value);
 
     NArrayElementBuilder set(String name, String value);
 
-    NArrayElementBuilder setParamAt(int index, boolean value);
+    NArrayElementBuilder setParamAt(int index, Boolean value);
 
-    NArrayElementBuilder setParamAt(int index, int value);
+    NArrayElementBuilder setParamAt(int index, Integer value);
 
-    NArrayElementBuilder setParamAt(int index, double value);
+    NArrayElementBuilder setParamAt(int index, Double value);
+
+    NArrayElementBuilder setParamAt(int index, Long value);
+
+    NArrayElementBuilder setParamAt(int index, Short value);
+
+    NArrayElementBuilder setParamAt(int index, Character value);
+
+    NArrayElementBuilder setParamAt(int index, Byte value);
 
     NArrayElementBuilder setParamAt(int index, String value);
 
@@ -397,11 +405,21 @@ public interface NArrayElementBuilder extends NElementBuilder {
 
     NArrayElementBuilder add(String name, Number value);
 
-    NArrayElementBuilder add(String name, boolean value);
+    NArrayElementBuilder add(String name, Boolean value);
 
-    NArrayElementBuilder add(String name, int value);
+    NArrayElementBuilder add(String name, Byte value);
 
-    NArrayElementBuilder add(String name, double value);
+    NArrayElementBuilder add(String name, Short value);
+
+    NArrayElementBuilder add(String name, Integer value);
+
+    NArrayElementBuilder add(String name, Long value);
+
+    NArrayElementBuilder add(String name, Float value);
+
+    NArrayElementBuilder add(String name, Character value);
+
+    NArrayElementBuilder add(String name, Double value);
 
     NArrayElementBuilder add(String name, String value);
 
@@ -473,11 +491,19 @@ public interface NArrayElementBuilder extends NElementBuilder {
 
     NArrayElementBuilder set(NElement name, String value);
 
-    NArrayElementBuilder set(NElement name, boolean value);
+    NArrayElementBuilder set(NElement name, Boolean value);
 
-    NArrayElementBuilder set(NElement name, double value);
+    NArrayElementBuilder set(NElement name, Byte value);
 
-    NArrayElementBuilder set(NElement name, int value);
+    NArrayElementBuilder set(NElement name, Short value);
+
+    NArrayElementBuilder set(NElement name, Character value);
+
+    NArrayElementBuilder set(NElement name, Double value);
+
+    NArrayElementBuilder set(NElement name, Integer value);
+
+    NArrayElementBuilder set(NElement name, Long value);
 
     NOptional<NElement> get(NElement s);
 

@@ -20,7 +20,7 @@ public class SingleBaseIdFilterHelper {
         } else {
             this.baseId = NId.of(baseId).getShortId();
             this.baseIdString = this.baseId.toString();
-            this.expectedPathName = NPath.of(this.baseId.getMavenPath("")).getNames();
+            this.expectedPathName = NPath.of(this.baseId.getMavenPath("")).names();
         }
     }
 
@@ -49,7 +49,7 @@ public class SingleBaseIdFilterHelper {
     }
 
     private boolean isAcceptableBasePath(NPath basePath) {
-        List<String> names = basePath.getNames();
+        List<String> names = basePath.names();
         int size = expectedPathName.size();
         if (size == 0) {
             return true;

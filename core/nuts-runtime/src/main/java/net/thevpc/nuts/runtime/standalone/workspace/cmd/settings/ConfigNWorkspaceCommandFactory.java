@@ -11,8 +11,6 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 
 
-import net.thevpc.nuts.platform.NStoreScope;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -102,8 +100,8 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
             return all;
         }
         storeLocation.stream().forEach(file -> {
-            String fileName = file.getName();
-            if (file.getName().endsWith(NConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
+            String fileName = file.name();
+            if (file.name().endsWith(NConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
                 NCommandConfig c = null;
                 try {
                     c = NElementReader.ofJson().read(file, NCommandConfig.class);

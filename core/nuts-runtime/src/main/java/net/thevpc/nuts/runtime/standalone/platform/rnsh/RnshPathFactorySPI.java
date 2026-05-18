@@ -14,7 +14,6 @@ import net.thevpc.nuts.util.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RnshPathFactorySPI implements NPathFactorySPI {
@@ -73,6 +72,10 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
             this.cnx = cnx;
             this.client = client;
             this.remotePath = remotePath;
+        }
+        @Override
+        public boolean isHidden(NPath basePath) {
+            return basePath.name().startsWith(".");
         }
 
         public NServerPathSPI(NConnectionString cnx) {
@@ -182,18 +185,18 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
 
         @Override
         public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
-            String name = NPath.of(remotePath).getName();
+            String name = NPath.of(remotePath).name();
             NTempOutputStreamImpl nTempOutputStream = new NTempOutputStreamImpl();
             nTempOutputStream.setOnCompleted(inputStream -> {
                 client.ensureConnected();
                 client.putFile(new NInputContentProvider() {
                     @Override
-                    public String getName() {
+                    public String name() {
                         return name;
                     }
 
                     @Override
-                    public String getContentType() {
+                    public String contentType() {
                         return "application/octet-stream";
                     }
 

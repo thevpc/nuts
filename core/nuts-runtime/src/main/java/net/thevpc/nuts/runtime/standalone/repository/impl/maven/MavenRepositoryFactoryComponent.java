@@ -31,9 +31,7 @@ import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NRepositoryConfig;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
-import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
 
@@ -142,7 +140,7 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
             return null;
         }
         NPath p = NPath.of(options.getSourceLocation().getPath());
-        String pr = NStringUtils.trim(p.getProtocol());
+        String pr = NStringUtils.trim(p.protocol());
         switch (pr) {
             //non traversable!
             case "http":

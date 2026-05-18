@@ -535,12 +535,28 @@ public class CoreNElementUtils {
         return new DefaultNPairElement(denullOne(k), denullOne(v));
     }
 
-    public static NPairElement pair(NElement k, boolean v) {
+    public static NPairElement pair(NElement k, Boolean v) {
         return new DefaultNPairElement(denullOne(k), NElement.ofBoolean(v));
     }
 
-    public static NPairElement pair(NElement k, int v) {
+    public static NPairElement pair(NElement k, Integer v) {
         return new DefaultNPairElement(denullOne(k), NElement.ofInt(v));
+    }
+
+    public static NPairElement pair(NElement k, Character v) {
+        return new DefaultNPairElement(denullOne(k), NElement.ofChar(v));
+    }
+
+    public static NPairElement pair(NElement k, Short v) {
+        return new DefaultNPairElement(denullOne(k), NElement.ofShort(v));
+    }
+
+    public static NPairElement pair(NElement k, Long v) {
+        return new DefaultNPairElement(denullOne(k), NElement.ofLong(v));
+    }
+
+    public static NPairElement pair(NElement k, Byte v) {
+        return new DefaultNPairElement(denullOne(k), NElement.ofByte(v));
     }
 
 
@@ -548,15 +564,23 @@ public class CoreNElementUtils {
         return pair(NElement.ofNameOrString(name), denullOne(value));
     }
 
-    public static NPairElement pair(String name, boolean value) {
+    public static NPairElement pair(String name, Boolean value) {
         return pair(NElement.ofNameOrString(name), NElement.ofBoolean(value));
     }
 
-    public static NPairElement pair(String name, int value) {
+    public static NPairElement pair(String name, Integer value) {
         return pair(NElement.ofNameOrString(name), NElement.ofInt(value));
     }
 
-    public static NPairElement pair(String name, double value) {
+    public static NPairElement pair(String name, Character value) {
+        return pair(NElement.ofNameOrString(name), NElement.ofChar(value));
+    }
+
+    public static NPairElement pair(String name, Long value) {
+        return pair(NElement.ofNameOrString(name), NElement.ofLong(value));
+    }
+
+    public static NPairElement pair(String name, Double value) {
         return pair(NElement.ofNameOrString(name), NElement.ofDouble(value));
     }
 

@@ -95,8 +95,8 @@ public class RemoteConnectionStringInfo {
     public boolean copy(NPath local, NPath remote) {
         NLog log = LOG();
         log.log(NMsg.ofC("try copy %s %s", local, remote).asFiner().withIntent(NMsgIntent.START));
-        long localContentLength = local.getContentLength();
-        long remoteContentLength = remote.getContentLength();
+        long localContentLength = local.contentLength();
+        long remoteContentLength = remote.contentLength();
         if (remoteContentLength >= 0) {
             if (localContentLength == remoteContentLength) {
                 String ld = local.getDigestString();
@@ -154,7 +154,7 @@ public class RemoteConnectionStringInfo {
             NWorkspace workspace = NWorkspace.of();
             copyId(workspace.getApiId(), getStoreLocationLibRepo(commExec), remoteApiJar);
             copyId(workspace.getRuntimeId(), getStoreLocationLibRepo(commExec), null);
-            nutsJar = remoteApiJar.get().getLocation();
+            nutsJar = remoteApiJar.get().location();
         }
         return nutsJar;
     }

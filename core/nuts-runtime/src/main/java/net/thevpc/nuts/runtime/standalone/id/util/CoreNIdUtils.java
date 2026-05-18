@@ -38,7 +38,7 @@ public class CoreNIdUtils {
 
     public static NId generateIdFromFileName(NPath path) {
         NDigest nDigest = NDigest.of();
-        String id0 = CoreNIdUtils.resolveValidIdStringFromFileName(path.getName());
+        String id0 = CoreNIdUtils.resolveValidIdStringFromFileName(path.name());
         nDigest.setSource(path);
         return NId.get("temp.url:" + id0 + "-" + nDigest.computeString() + "#1.0").get();
     }

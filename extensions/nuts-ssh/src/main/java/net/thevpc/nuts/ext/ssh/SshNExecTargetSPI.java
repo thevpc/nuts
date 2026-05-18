@@ -91,7 +91,7 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
                 }
                 //if (dependenciesCount > 0) {
                 //    if (requireTempRepo) {
-                cmd.add("-r=" + k.getStoreLocationCacheRepoSSH(this).getLocation());
+                cmd.add("-r=" + k.getStoreLocationCacheRepoSSH(this).location());
                 //    }
                 //}
                 cmd.add("---caller-app=remote-nuts");

@@ -357,15 +357,15 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         List<NIterator<? extends NId>> li = new ArrayList<>();
         for (NPath basePath : basePaths) {
             if (fetchMode != NFetchMode.REMOTE) {
-                if (basePath.getName().equals("*")) {
-                    li.add(lib.findInFolder(basePath.getParent(), filter, Integer.MAX_VALUE));
+                if (basePath.name().equals("*")) {
+                    li.add(lib.findInFolder(basePath.parent(), filter, Integer.MAX_VALUE));
                 } else {
                     li.add(lib.findInFolder(basePath, filter, 2));
                 }
             }
             if (cache.isReadEnabled() && session.isCached()) {
-                if (basePath.getName().equals("*")) {
-                    li.add(cache.findInFolder(basePath.getParent(), filter, Integer.MAX_VALUE));
+                if (basePath.name().equals("*")) {
+                    li.add(cache.findInFolder(basePath.parent(), filter, Integer.MAX_VALUE));
                 } else {
                     li.add(cache.findInFolder(basePath, filter, 2));
                 }

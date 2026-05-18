@@ -1200,6 +1200,10 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      */
     NStream<T> stream();
 
+    boolean orFalse();
+
+    boolean orTrue();
+
     /**
      * Factory interface used to customize the creation of exceptions thrown by
      * {@code NOptional} when terminal methods (like {@link NOptional#get()})

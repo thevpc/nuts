@@ -312,7 +312,7 @@ public class NRepositoryFolderHelper {
 
             @Override
             public boolean isDescFile(NPath pathname) {
-                return pathname.getName().endsWith(NConstants.Files.DESCRIPTOR_FILE_EXTENSION);
+                return pathname.name().endsWith(NConstants.Files.DESCRIPTOR_FILE_EXTENSION);
             }
 
             @Override
@@ -346,7 +346,7 @@ public class NRepositoryFolderHelper {
             if (versionFolders != null) {
                 for (NPath versionFolder : versionFolders) {
                     if (pathExists(versionFolder)) {
-                        NId id2 = id.builder().setVersion(versionFolder.getName()).build();
+                        NId id2 = id.builder().setVersion(versionFolder.name()).build();
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                             if (safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id2, repo, "NRepositoryFolderHelper"))) {
                                 bestId = id2;
@@ -452,7 +452,7 @@ public class NRepositoryFolderHelper {
                                             StandardCharsets.UTF_8.name(), "descriptor hash"
                                     )
                             )
-                    ).to(descFile.resolveSibling(descFile.getName() + ".sha1")).addOptions(NPathOption.SAFE).run();
+                    ).to(descFile.resolveSibling(descFile.name() + ".sha1")).addOptions(NPathOption.SAFE).run();
             _LOG().log(NMsg.ofC("[%s] cached descriptor %s to %s", repo.getName(), id,descFile).asFinest().withIntent(NMsgIntent.CACHE));
             return descFile;
         });
@@ -498,7 +498,7 @@ public class NRepositoryFolderHelper {
                             CoreIOUtils.MIME_TYPE_SHA1,
                             StandardCharsets.UTF_8.name(), null
                     )
-            ).to(pckFile.resolveSibling(pckFile.getName() + ".sha1")).addOptions(NPathOption.SAFE).run();
+            ).to(pckFile.resolveSibling(pckFile.name() + ".sha1")).addOptions(NPathOption.SAFE).run();
             return pckFile;
         });
     }

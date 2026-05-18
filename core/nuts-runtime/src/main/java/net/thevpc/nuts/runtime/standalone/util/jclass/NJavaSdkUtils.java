@@ -659,7 +659,7 @@ public class NJavaSdkUtils {
                 if (cmdOutputString.contains("Eclipse OpenJ9")) {
                     variant = "openj9";
                 }
-                String uu = detectJdkProvider(path.getName());
+                String uu = detectJdkProvider(path.name());
                 if (uu != null) {
                     vendor += " " + uu.trim();
                 }

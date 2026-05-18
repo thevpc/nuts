@@ -107,7 +107,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(int value);
+    NUpletElementBuilder add(Integer value);
 
     /**
      * add element to the given array
@@ -115,7 +115,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(long value);
+    NUpletElementBuilder add(Long value);
 
     /**
      * add element to the given array
@@ -123,7 +123,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(double value);
+    NUpletElementBuilder add(Double value);
 
     /**
      * add element to the given array
@@ -131,7 +131,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(float value);
+    NUpletElementBuilder add(Float value);
 
     /**
      * add element to the given array
@@ -139,7 +139,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(byte value);
+    NUpletElementBuilder add(Byte value);
 
     /**
      * add element to the given array
@@ -147,7 +147,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(boolean value);
+    NUpletElementBuilder add(Boolean value);
 
     /**
      * add element to the given array
@@ -155,7 +155,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(char value);
+    NUpletElementBuilder add(Character value);
 
     /**
      * add element to the given array
@@ -261,11 +261,21 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     NUpletElementBuilder set(String name, NElement value);
 
-    NUpletElementBuilder set(String name, boolean value);
+    NUpletElementBuilder set(String name, Boolean value);
 
-    NUpletElementBuilder set(String name, int value);
+    NUpletElementBuilder set(String name, Integer value);
 
-    NUpletElementBuilder set(String name, double value);
+    NUpletElementBuilder set(String name, Character value);
+
+    NUpletElementBuilder set(String name, Double value);
+
+    NUpletElementBuilder set(String name, Byte value);
+
+    NUpletElementBuilder set(String name, Short value);
+
+    NUpletElementBuilder set(String name, Float value);
+
+    NUpletElementBuilder set(String name, Long value);
 
     NUpletElementBuilder set(String name, String value);
 
@@ -277,21 +287,39 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     NUpletElementBuilder add(String name, Number value);
 
-    NUpletElementBuilder set(NElement name, boolean value);
+    NUpletElementBuilder set(NElement name, Boolean value);
 
-    NUpletElementBuilder set(NElement name, int value);
+    NUpletElementBuilder set(NElement name, Integer value);
 
-    NUpletElementBuilder set(NElement name, double value);
+    NUpletElementBuilder set(NElement name, Long value);
+
+    NUpletElementBuilder set(NElement name, Short value);
+
+    NUpletElementBuilder set(NElement name, Byte value);
+
+    NUpletElementBuilder set(NElement name, Character value);
+
+    NUpletElementBuilder set(NElement name, Double value);
 
     NUpletElementBuilder set(NElement name, String value);
 
     NUpletElementBuilder set(NPairElement entry);
 
-    NUpletElementBuilder add(String name, boolean value);
+    NUpletElementBuilder add(String name, Boolean value);
 
-    NUpletElementBuilder add(String name, int value);
+    NUpletElementBuilder add(String name, Character value);
 
-    NUpletElementBuilder add(String name, double value);
+    NUpletElementBuilder add(String name, Byte value);
+
+    NUpletElementBuilder add(String name, Short value);
+
+    NUpletElementBuilder add(String name, Integer value);
+
+    NUpletElementBuilder add(String name, Long value);
+
+    NUpletElementBuilder add(String name, Float value);
+
+    NUpletElementBuilder add(String name, Double value);
 
     NUpletElementBuilder add(String name, String value);
 

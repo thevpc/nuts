@@ -301,7 +301,7 @@ public abstract class SshConnectionBase implements SshConnection {
         switch (resolveShellFamily()) {
             case WIN_CMD: {
                 if (!p) {
-                    NPath parent = NPath.of(from).getParent();
+                    NPath parent = NPath.of(from).parent();
                     if (parent != null) {
                         NPathType d = type(parent.toString());
                         if (d != NPathType.DIRECTORY) {
@@ -320,7 +320,7 @@ public abstract class SshConnectionBase implements SshConnection {
                 if (p) {
                     execArrayCommandGrabbed("mkdir", "-p", ensureWindowPath(from));
                 } else {
-                    NPath parent = NPath.of(from).getParent();
+                    NPath parent = NPath.of(from).parent();
                     if (parent != null) {
                         NPathType d = type(parent.toString());
                         if (d != NPathType.DIRECTORY) {

@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.io.NTempOutputStream;
+import net.thevpc.nuts.runtime.standalone.io.inputstream.NTempOutputStreamImpl;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
-import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.io.NIOUtils;
-import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -13,10 +13,8 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,12 +24,12 @@ public abstract class AbstractNInputSource implements NInputSource {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return getMetaData().getName().orNull();
     }
 
     @Override
-    public String getContentType() {
+    public String contentType() {
         return getMetaData().getContentType().orNull();
     }
 
@@ -46,6 +44,10 @@ public abstract class AbstractNInputSource implements NInputSource {
         return lines(null);
     }
 
+    @Override
+    public NStream<String> lines(Long from, Long to) {
+        return lines(from, to, null);
+    }
 
     @Override
     public String readString() {
@@ -77,26 +79,26 @@ public abstract class AbstractNInputSource implements NInputSource {
     }
 
     @Override
-    public List<String> tail(int count, Charset cs) {
-        try(NStream<String> rl=reversedLines()){
+    public NStream<String> tail(long count, Charset cs) {
+        try (NStream<String> rl = reversedLines()) {
             List<String> list = rl.limit(count).collect(Collectors.toList());
             Collections.reverse(list);
-            return list;
+            return NStream.ofStream(list.stream());
         }
     }
 
     @Override
-    public List<String> head(int count) {
+    public NStream<String> head(long count) {
         return head(count, null);
     }
 
     @Override
-    public List<String> head(int count, Charset cs) {
-        return lines(cs).limit(count).collect(Collectors.toList());
+    public NStream<String> head(long count, Charset cs) {
+        return lines(cs).limit(count);
     }
 
     @Override
-    public List<String> tail(int count) {
+    public NStream<String> tail(long count) {
         return tail(count, null);
     }
 
@@ -116,26 +118,20 @@ public abstract class AbstractNInputSource implements NInputSource {
 
     @Override
     public NStream<String> lines(Charset cs) {
-        BufferedReader br = getBufferedReader(cs);
-        try {
-            return NStream.ofStream(br.lines().onClose(() -> {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            }));
-        } catch (Error | RuntimeException e) {
-            try {
-                br.close();
-            } catch (IOException ex) {
-                try {
-                    e.addSuppressed(ex);
-                } catch (Throwable ignore) {
-                }
-            }
-            throw e;
-        }
+        return CoreIOUtils.bufferedReaderToLinesStream(getBufferedReader(cs));
+    }
+
+    /**
+     * this is teh default implementation of lines part of any input stream
+     *
+     * @param from 0-based inclusive index of the first line to return or null. when negative, should consider tail (-from)
+     * @param to   0-based exclusive index of the last line to return or null. when negative, should consider tail (-to where -1 relates to the end of the stream)
+     * @param cs   charset if provided , if ot use default
+     * @return stream of lines
+     */
+    @Override
+    public NStream<String> lines(Long from, Long to, Charset cs) {
+        return CoreIOUtils.lines(this, from, to, cs);
     }
 
     @Override
@@ -174,29 +170,8 @@ public abstract class AbstractNInputSource implements NInputSource {
 
     @Override
     public byte[] getDigest(String algo) {
-        if (NBlankable.isBlank(algo)) {
-            algo = "SHA-1";
-        }
         try (InputStream input = getInputStream()) {
-            MessageDigest sha1 = null;
-            try {
-                sha1 = MessageDigest.getInstance(algo);
-            } catch (NoSuchAlgorithmException ex) {
-                throw new NIOException(ex);
-            }
-            byte[] buffer = new byte[8192];
-            int len = 0;
-            try {
-                len = input.read(buffer);
-                while (len != -1) {
-                    sha1.update(buffer, 0, len);
-                    len = input.read(buffer);
-                }
-            } catch (IOException e) {
-                throw new NIOException(e);
-            }
-            return sha1.digest();
-
+            return CoreIOUtils.getDigest(input, algo);
         } catch (IOException e) {
             throw new NIOException(e);
         }

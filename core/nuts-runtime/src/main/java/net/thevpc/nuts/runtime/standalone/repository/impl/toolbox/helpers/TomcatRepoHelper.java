@@ -146,16 +146,16 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
 
         return NPath.of("htmlfs+https://archive.apache.org/dist/tomcat/")
                 .stream()
-                .filter(NPredicate.of((NPath x) -> x.isDirectory() && x.getName().matches("tomcat-[0-9.]+")).withDescription(NDescribables.ofDesc("directory && tomcat")))
+                .filter(NPredicate.of((NPath x) -> x.isDirectory() && x.name().matches("tomcat-[0-9.]+")).withDescription(NDescribables.ofDesc("directory && tomcat")))
                 .flatMapStream(NFunction.of(
                         (NPath s) -> s.stream()
-                                .filter(NPredicate.of((NPath x2) -> x2.isDirectory() && x2.getName().startsWith("v")).withDescription(NDescribables.ofDesc("isDirectory")))
+                                .filter(NPredicate.of((NPath x2) -> x2.isDirectory() && x2.name().startsWith("v")).withDescription(NDescribables.ofDesc("isDirectory")))
                                 .flatMapStream(
                                         NFunction.of(
                                                 new Function<NPath, NStream<NId>>() {
                                                     @Override
                                                     public NStream<NId> apply(NPath x3) {
-                                                        String s2n = x3.getName();
+                                                        String s2n = x3.name();
                                                         String prefix = "apache-tomcat-";
                                                         String bin = "bin";
                                                         if (
@@ -179,13 +179,13 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                                             return x3.resolve(bin)
                                                                     .stream()
                                                                     .filter(
-                                                                            NPredicate.<NPath>of((NPath x4) -> x4.getName().matches(finalPrefix + "[0-9]+\\.[0-9]+\\.[0-9]+\\.zip"))
+                                                                            NPredicate.<NPath>of((NPath x4) -> x4.name().matches(finalPrefix + "[0-9]+\\.[0-9]+\\.[0-9]+\\.zip"))
                                                                                     .withDescription(NDescribables.ofDesc("name.isZip"))
 
                                                                     )
                                                                     .map(NFunction.<NPath, NId>of(
                                                                             (NPath x5) -> {
-                                                                                String s3 = x5.getName();
+                                                                                String s3 = x5.name();
                                                                                 String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
                                                                                 NVersion v = NVersion.get(v0).get();
                                                                                 NId id2 = idBuilder.setVersion(v).build();

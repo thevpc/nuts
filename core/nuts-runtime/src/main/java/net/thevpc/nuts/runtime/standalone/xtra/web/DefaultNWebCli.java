@@ -422,7 +422,7 @@ public class DefaultNWebCli implements NWebCli {
                 uc.setRequestMethod(method.toString());
                 uc.setUseCaches(false);
 
-                long bodyLength = requestBody == null || requestBody.isKnownContentLength() ? -1 : requestBody.getContentLength();
+                long bodyLength = requestBody == null || requestBody.isKnownContentLength() ? -1 : requestBody.contentLength();
                 boolean someBody = requestBody != null;
 
                 uc.setDoInput(!r.isOneWay());

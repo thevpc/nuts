@@ -634,7 +634,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             NPath p = NPath.of("classpath:/net/thevpc/nuts/runtime/includes/standard-header.ntf", getClass().getClassLoader());
             NText n = data.text.parser().parse(p);
             n = data.text.transform(n, new NTextTransformConfig()
-                    .setCurrentDir(p.getParent())
+                    .setCurrentDir(p.parent())
                     .setImportClassLoader(getClass().getClassLoader())
                     .setProcessAll(true)
             );
@@ -1217,7 +1217,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             NText n = txt.parser().parse(p);
             n = txt.transform(n, new NTextTransformConfig().setProcessAll(true)
                     .setImportClassLoader(getClass().getClassLoader())
-                    .setCurrentDir(p.getParent()));
+                    .setCurrentDir(p.parent()));
             return (n == null ? txt.ofStyled("no welcome found!", NTextStyle.error()) : n);
         });
     }
@@ -1247,7 +1247,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 n = txt.transform(n, new NTextTransformConfig()
                         .setProcessAll(true)
                         .setImportClassLoader(clazz == null ? null : clazz.getClassLoader())
-                        .setCurrentDir(urlPath.getParent())
+                        .setCurrentDir(urlPath.parent())
                         .setRootLevel(1));
                 if (n == null) {
                     return txt.ofStyled(

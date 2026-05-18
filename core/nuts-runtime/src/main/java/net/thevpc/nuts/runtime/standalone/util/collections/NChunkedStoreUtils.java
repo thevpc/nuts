@@ -74,14 +74,14 @@ public class NChunkedStoreUtils {
             if (i != 0) {
                 return i;
             }
-            return o1.path.getName().compareTo(o2.path.getName());
+            return o1.path.name().compareTo(o2.path.name());
         }
     }
 
     public static void writePointerInfo(PointerInfo ptr, NPath folder, String file) {
         if (ptr != null) {
             NPath ptrPath = folder.resolve(file);
-            NPath tmp = ptrPath.resolveSibling(ptrPath.getName() + ".tmp");
+            NPath tmp = ptrPath.resolveSibling(ptrPath.name() + ".tmp");
 
             tmp.writeString(ptr.chunk + "," + ptr.index);
             tmp.moveTo(ptrPath, NPathOption.ATOMIC, NPathOption.REPLACE_EXISTING);

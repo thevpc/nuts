@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.util.NStream;
@@ -118,12 +119,12 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return getMetaData().getName().orNull();
     }
 
     @Override
-    public String getContentType() {
+    public String contentType() {
         return getMetaData().getContentType().orNull();
     }
 
@@ -155,6 +156,16 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
     }
 
     @Override
+    public NStream<String> lines(Long from, Long to) {
+        return lines(from, to, null);
+    }
+
+    @Override
+    public NStream<String> lines(Long from, Long to, Charset cs) {
+        return CoreIOUtils.lines(this,from,to,cs);
+    }
+
+    @Override
     public String readString() {
         return new String(readBytes());
     }
@@ -183,7 +194,7 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
     }
 
     @Override
-    public List<String> tail(int count, Charset cs) {
+    public NStream<String> tail(long count, Charset cs) {
         LinkedList<String> lines = new LinkedList<>();
         BufferedReader br = getBufferedReader(cs);
         String line;
@@ -199,46 +210,27 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
         } catch (IOException e) {
             throw new NIOException(e);
         }
-        return lines;
+        return NStream.ofStream(lines.stream());
     }
 
     @Override
-    public List<String> head(int count) {
+    public NStream<String> head(long count) {
         return head(count, null);
     }
 
     @Override
-    public List<String> head(int count, Charset cs) {
-        return lines(cs).limit(count).collect(Collectors.toList());
+    public NStream<String> head(long count, Charset cs) {
+        return lines(cs).limit(count);
     }
 
     @Override
-    public List<String> tail(int count) {
+    public NStream<String> tail(long count) {
         return tail(count, null);
     }
 
     @Override
     public NStream<String> lines(Charset cs) {
-        BufferedReader br = getBufferedReader(cs);
-        try {
-            return NStream.ofStream(br.lines().onClose(() -> {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            }));
-        } catch (Error | RuntimeException e) {
-            try {
-                br.close();
-            } catch (IOException ex) {
-                try {
-                    e.addSuppressed(ex);
-                } catch (Throwable ignore) {
-                }
-            }
-            throw e;
-        }
+        return CoreIOUtils.bufferedReaderToLinesStream(getBufferedReader(cs));
     }
 
     @Override
@@ -277,29 +269,8 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
 
     @Override
     public byte[] getDigest(String algo) {
-        if (NBlankable.isBlank(algo)) {
-            algo = "SHA-1";
-        }
         try (InputStream input = getInputStream()) {
-            MessageDigest sha1 = null;
-            try {
-                sha1 = MessageDigest.getInstance(algo);
-            } catch (NoSuchAlgorithmException ex) {
-                throw new NIOException(ex);
-            }
-            byte[] buffer = new byte[8192];
-            int len = 0;
-            try {
-                len = input.read(buffer);
-                while (len != -1) {
-                    sha1.update(buffer, 0, len);
-                    len = input.read(buffer);
-                }
-            } catch (IOException e) {
-                throw new NIOException(e);
-            }
-            return sha1.digest();
-
+            return CoreIOUtils.getDigest(input,algo);
         } catch (IOException e) {
             throw new NIOException(e);
         }
@@ -316,7 +287,7 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
     }
 
     @Override
-    public long getContentLength() {
+    public long contentLength() {
         return contentLength;
     }
 

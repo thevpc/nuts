@@ -27,7 +27,7 @@ public class NUncompressGzip implements NUncompressPackaging {
             InputStream _in = source.getInputStream();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
-                    String n = NPath.of(baseName).getName();
+                    String n = NPath.of(baseName).name();
                     if (n.endsWith(".gz")) {
                         n = n.substring(0, n.length() - 3);
                     }
@@ -85,7 +85,7 @@ public class NUncompressGzip implements NUncompressPackaging {
             InputStream _in = source.getInputStream();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
-                    String n = NPath.of(baseName).getName();
+                    String n = NPath.of(baseName).name();
                     if (n.endsWith(".gz")) {
                         n = n.substring(0, n.length() - 3);
                     }

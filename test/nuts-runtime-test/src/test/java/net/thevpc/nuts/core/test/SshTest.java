@@ -66,7 +66,7 @@ public class SshTest {
     // disable test before commit
     //@Test
     public void test07() {
-        long l = NPath.of("ssh://"+ TestUtils.WINDOWS_TEST_SERVER +"/test.txt").getContentLength();
+        long l = NPath.of("ssh://"+ TestUtils.WINDOWS_TEST_SERVER +"/test.txt").contentLength();
 //        String en = NPath.of("ssh://"+ TestUtils.WINDOWS_TEST_SERVER +"/tmp.txt").contentEncoding();
 //        String ct = NPath.of("ssh://"+ TestUtils.WINDOWS_TEST_SERVER +"/tmp.txt").getContentType();
 //        String cs = NPath.of("ssh://"+ TestUtils.WINDOWS_TEST_SERVER +"/tmp.txt").getCharset();

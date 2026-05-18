@@ -209,7 +209,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
     }
 
     private Info prepareSource(NPath source) {
-        if (!source.getName().toLowerCase().endsWith(".zip")) {
+        if (!source.name().toLowerCase().endsWith(".zip")) {
             Info info = new Info();
             info.repoFolder = source;
             NPath s = source.resolve("sys-editor-support.tson");
@@ -362,8 +362,8 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                 }
                 return true;
             }).sorted((a, b) -> {
-                return -NVersion.of(resolveJetbrainsVersion(a.getName()))
-                        .compareTo(resolveJetbrainsVersion(b.getName()));
+                return -NVersion.of(resolveJetbrainsVersion(a.name()))
+                        .compareTo(resolveJetbrainsVersion(b.name()));
             }).findFirst().orElse(null);
             if (local != null) {
                 local = local.resolve("filetypes").resolve(info.getLanguageId() + ".xml");
@@ -586,7 +586,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
         if (NEnv.of().getOsFamily().isPosix()) {
             String latestGnomeVersion = "5";
             NPath local = NPath.ofUserHome().resolve(".local/share/").list().stream().filter(x -> x.startsWith("gtksourceview-"))
-                    .sorted((a, b) -> NVersion.of(b.getName()).compareTo(a.getName()))
+                    .sorted((a, b) -> NVersion.of(b.name()).compareTo(a.name()))
                     .findFirst().orElse(null);
             if (local == null) {
                 local = NPath.ofUserHome().resolve(".local/share/gtksourceview-" + latestGnomeVersion + "/language-specs/" + info.getLanguageId() + ".lang");

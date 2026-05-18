@@ -280,7 +280,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
                 return getSmartFileNameParts();
             }
             case LONG: {
-                String n = getName();
+                String n = name();
                 int i = n.indexOf('.');
                 if (i < 0) {
                     return new NPathNameParts(n, "", "", NPathExtensionType.LONG);
@@ -288,7 +288,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
                 return new NPathNameParts(n.substring(0, i), n.substring(i + 1), n.substring(i), NPathExtensionType.LONG);
             }
             case SHORT: {
-                String n = getName();
+                String n = name();
                 int i = n.lastIndexOf('.');
                 if (i < 0) {
                     return new NPathNameParts(n, "", "", NPathExtensionType.SHORT);
@@ -300,7 +300,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     public NPathNameParts getSmartFileNameParts() {
-        String n = getName();
+        String n = name();
         int li = n.indexOf('.');
         if (li < 0) {
             return new NPathNameParts(n, "", "", NPathExtensionType.SMART);
@@ -578,7 +578,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
                 d.setAlgorithm(algo);
                 d.addSource(type().name().getBytes());
                 for (NPath nPath : list()) {
-                    d.addSource(nPath.getName().getBytes());
+                    d.addSource(nPath.name().getBytes());
                 }
                 return d.computeBytes();
             }

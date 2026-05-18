@@ -56,7 +56,7 @@ public class DefaultNPathMetadata {
         if (!NBlankable.isBlank(name)) {
             return NOptional.of(name);
         }
-        String n = path.getName();
+        String n = path.name();
         if (!NBlankable.isBlank(n)) {
             return NOptional.of(n);
         }
@@ -79,13 +79,13 @@ public class DefaultNPathMetadata {
 
     public NOptional<Long> getContentLength() {
         return NOptional.ofNamed(contentLength, "contentLength")
-                .orElseGetOptionalOf(() -> path.getContentLength())
+                .orElseGetOptionalOf(() -> path.contentLength())
                 ;
     }
 
     public NOptional<String> getContentType() {
         return NOptional.ofNamed(contentType, "contentType")
-                .orElseGetOptionalOf(() -> path.getContentType())
+                .orElseGetOptionalOf(() -> path.contentType())
                 ;
     }
 

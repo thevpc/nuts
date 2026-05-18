@@ -420,7 +420,7 @@ public class ProcessBuilder2 {
             throw new IOException("Not started");
         }
         long ppid = getProcessId();
-        String procString = NPath.of(command.get(0)).getName()
+        String procString = NPath.of(command.get(0)).name()
                 + "-" + (ppid < 0 ? ("unknown-pid" + -ppid) : String.valueOf(ppid));
         String cmdStr = String.join(" ", command);
         switch (in.base.getType()) {

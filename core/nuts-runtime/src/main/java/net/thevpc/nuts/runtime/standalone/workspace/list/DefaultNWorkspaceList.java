@@ -8,8 +8,6 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 
 
-import net.thevpc.nuts.platform.NStoreScope;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NScorable;
@@ -97,7 +95,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
         NWorkspace workspace = NWorkspace.of();
         NWorkspaceLocation workspaceLocation = new NWorkspaceLocation()
                 .setUuid(ss.getUuid())
-                .setName(workspace.getWorkspaceLocation().getName())
+                .setName(workspace.getWorkspaceLocation().name())
                 .setLocation(workspace.getWorkspaceLocation().toString());
         workspaces.put(ss.getUuid(), workspaceLocation);
         this.save();

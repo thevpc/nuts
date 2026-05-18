@@ -46,6 +46,11 @@ public class URLPath implements NPathSPI {
         this(url, false);
     }
 
+    @Override
+    public boolean isHidden(NPath basePath) {
+        return false;
+    }
+
     protected URLPath(URL url, boolean acceptNull) {
         if (url == null) {
             if (!acceptNull) {
@@ -311,7 +316,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.getContentLength();
+            return f.contentLength();
         }
         try {
             CacheInfo a = cachedHeader().get();
@@ -342,7 +347,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.getContentType();
+            return f.contentType();
         }
         try {
             CacheInfo a = cachedHeader().get();
@@ -362,7 +367,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.getContentType();
+            return f.contentType();
         }
         try {
             CacheInfo a = cachedHeader().get();
@@ -446,7 +451,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.getLastModifiedInstant();
+            return f.lastModifiedInstant();
         }
         try {
             CacheInfo a = cachedHeader().get();
@@ -462,13 +467,13 @@ public class URLPath implements NPathSPI {
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
         NPath f = asFilePath(basePath);
-        return (f != null) ? f.getLastAccessInstant() : null;
+        return (f != null) ? f.lastAccessInstant() : null;
     }
 
     @Override
     public Instant getCreationInstant(NPath basePath) {
         NPath f = asFilePath(basePath);
-        return (f != null) ? f.getCreationInstant() : null;
+        return (f != null) ? f.creationInstant() : null;
     }
 
     @Override
@@ -478,7 +483,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.getParent();
+            return f.parent();
         }
         try {
             String ppath = getURLParentPath(url.getPath());
@@ -534,7 +539,7 @@ public class URLPath implements NPathSPI {
     @Override
     public Set<NPathPermission> getPermissions(NPath basePath) {
         NPath f = asFilePath(basePath);
-        return (f != null) ? f.getPermissions() : Collections.emptySet();
+        return (f != null) ? f.permissions() : Collections.emptySet();
     }
 
     @Override
@@ -572,7 +577,7 @@ public class URLPath implements NPathSPI {
         if (NBlankable.isBlank(location)) {
             return 0;
         }
-        return NPath.of(location).getNameCount();
+        return NPath.of(location).nameCount();
     }
 
     @Override
@@ -594,7 +599,7 @@ public class URLPath implements NPathSPI {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return basePath.getParent().getRoot();
+        return basePath.parent().root();
     }
 
     @Override
@@ -616,7 +621,7 @@ public class URLPath implements NPathSPI {
 
     @Override
     public List<String> getNames(NPath basePath) {
-        return NPath.of(getLocation(basePath)).getNames();
+        return NPath.of(getLocation(basePath)).names();
     }
 
     @Override

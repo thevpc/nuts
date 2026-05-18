@@ -96,7 +96,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                 .filter(path -> path.isDirectory())
                 .map(p -> {
                     ///12.0/netbeans-12.0-bin.zip
-                    String version = p.getName();
+                    String version = p.name();
                     NPath b = NPath.of("https://archive.apache.org/dist/netbeans/netbeans/" + version + "/netbeans-" + version + "-bin.zip");
                     if (b.exists()) {
                         return idBuilder.setVersion(version).build();
@@ -107,7 +107,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                 .filter(path -> path.isDirectory())
                 .map(p -> {
                     ///12.0/netbeans-12.0-bin.zip
-                    String version = p.getName();
+                    String version = p.name();
                     NPath b = NPath.of("https://downloads.apache.org/netbeans/netbeans/" + version + "/netbeans-" + version + "-bin.zip");
                     if (b.exists()) {
                         return idBuilder.setVersion(version).build();

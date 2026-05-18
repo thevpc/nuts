@@ -32,8 +32,6 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.*;
-import net.thevpc.nuts.platform.NStoreScope;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
@@ -345,7 +343,7 @@ public class NIdFormatHelper {
             }
             case FILE_NAME: {
                 if (def != null && def.getContent().isPresent()) {
-                    return text.ofPlain(def.getContent().get().getName());
+                    return text.ofPlain(def.getContent().get().name());
                 }
                 return text.ofStyled("missing-file-name", NTextStyle.error());
             }

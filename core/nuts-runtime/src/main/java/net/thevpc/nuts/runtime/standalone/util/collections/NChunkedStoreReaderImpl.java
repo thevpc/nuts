@@ -101,7 +101,7 @@ public class NChunkedStoreReaderImpl<T>  {
             return file;
         }
         try (NStream<NPath> stream = folder.stream()) {
-            NChunkedStoreUtils.FileAndNumber s = stream.filter(x -> x.getName().endsWith(NChunkedStoreUtils.CHUNK_EXT))
+            NChunkedStoreUtils.FileAndNumber s = stream.filter(x -> x.name().endsWith(NChunkedStoreUtils.CHUNK_EXT))
                     .map(NChunkedStoreUtils.FileAndNumber::new)
                     .filter(x -> x.number >= index).min(new NChunkedStoreUtils.FileAndNumberComparator()).orNull();
             return s == null ? null : s.path;

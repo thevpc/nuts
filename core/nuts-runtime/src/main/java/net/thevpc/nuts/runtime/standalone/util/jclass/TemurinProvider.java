@@ -10,8 +10,6 @@ import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.io.NUncompress;
 import net.thevpc.nuts.platform.NArchFamily;
 import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.platform.NStoreScope;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
@@ -34,7 +32,7 @@ public class TemurinProvider implements JavaProvider {
             if (folderCache.resolve("dist/nuts-install-info.tson").isRegularFile()) {
                 return NOptional.of(folderCache.resolve("dist"));
             }
-            NPath toCache = folderCache.resolve(p.get().path.getName());
+            NPath toCache = folderCache.resolve(p.get().path.name());
             if (!toCache.exists()) {
                 NCp.of().from(p.get().path)
                         .to(toCache.mkParentDirs())
@@ -42,10 +40,10 @@ public class TemurinProvider implements JavaProvider {
                         .run();
             }
             boolean checkFolder = false;
-            if (toCache.getName().endsWith(".zip")) {
+            if (toCache.name().endsWith(".zip")) {
                 NUncompress.of().from(toCache).to(folderCache).run();
                 checkFolder = true;
-            } else if (toCache.getName().endsWith(".tar.gz")) {
+            } else if (toCache.name().endsWith(".tar.gz")) {
                 NExec.of()
                         .addCommand("tar", "-xzf", toCache.toString(), "-C", folderBin.mkdirs().toString())
                         .run();
@@ -62,7 +60,7 @@ public class TemurinProvider implements JavaProvider {
                                     .add("version", String.valueOf(version))
                                     .add("os", NElement.ofEnum(os))
                                     .add("arch", NElement.ofEnum(arch))
-                                    .add("distFolderName", singleRoot.get(0).getName())
+                                    .add("distFolderName", singleRoot.get(0).name())
                                     .add("downloadUrl", p.get().path.toString())
                                     .add("downloadDate", NElement.ofInstant(Instant.now()))
                                     .add("localCachePath", toCache.toString()), finalFolder.resolve("nuts-install-info.tson"));

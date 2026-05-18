@@ -58,7 +58,7 @@ public class NPathSPIHelper {
 
                                 if (sorted) {
                                     // Deterministic sort by name
-                                    children.sort(Comparator.comparing(NPath::getName));
+                                    children.sort(Comparator.comparing(NPath::name));
                                 }
 
                                 // PUSH IN REVERSE:
@@ -127,7 +127,7 @@ public class NPathSPIHelper {
                     List<NPath> children = i.p.stream().toList();
 
                     if (sorted) {
-                        children.sort(Comparator.comparing(NPath::getName));
+                        children.sort(Comparator.comparing(NPath::name));
                     }
                     for (int j = children.size() - 1; j >= 0; j--) {
                         NPath c = children.get(j);

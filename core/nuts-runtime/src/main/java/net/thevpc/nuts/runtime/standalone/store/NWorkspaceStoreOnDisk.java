@@ -226,7 +226,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         NWorkspace workspace = NWorkspace.of();
         NPath file = NPath.of(location).resolve(NConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
         NRepositoryConfig conf = null;
-        if (file.isRegularFile() && file.getPermissions().contains(NPathPermission.CAN_READ)) {
+        if (file.isRegularFile() && file.permissions().contains(NPathPermission.CAN_READ)) {
             byte[] bytes = file.readBytes();
             try {
                 Map<String, Object> a_config0 = NElementReader.ofJson().read(bytes, Map.class);
@@ -300,7 +300,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     public Iterator<NVersion> searchInstalledVersions(NId id) {
 //        NWorkspace workspace = NWorkspace.of();
         NPath installFolder
-                = NPath.of(NStoreKey.ofConf(id.builder().setVersion("ANY").build())).getParent();
+                = NPath.of(NStoreKey.ofConf(id.builder().setVersion("ANY").build())).parent();
         if (installFolder.isDirectory()) {
             final NVersionFilter filter0 = id.getVersion().toFilter();
             return NIteratorBuilder.of(installFolder.stream().iterator())
@@ -310,7 +310,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                                 public NVersion apply(NPath folder) {
                                     if (folder.isDirectory()
                                             && folder.resolve(DefaultNInstalledRepository.NUTS_INSTALL_FILE).isRegularFile()) {
-                                        NVersion vv = NVersion.get(folder.getName()).get();
+                                        NVersion vv = NVersion.get(folder.name()).get();
                                         if (filter0.acceptVersion(vv)) {
                                             return vv;
                                         }
@@ -333,7 +333,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                 null, -1, new FolderObjectIterator.FolderIteratorModel<InstallInfoConfig>() {
             @Override
             public boolean isObjectFile(NPath pathname) {
-                return pathname.getName().equals(DefaultNInstalledRepository.NUTS_INSTALL_FILE);
+                return pathname.name().equals(DefaultNInstalledRepository.NUTS_INSTALL_FILE);
             }
 
             @Override

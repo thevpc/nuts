@@ -269,3 +269,4 @@ core/nuts-app-full/target
 /nuts-release-tool.tson.local
 /nuts-release-tool.local.tson
 .aider*
+/.naru/local

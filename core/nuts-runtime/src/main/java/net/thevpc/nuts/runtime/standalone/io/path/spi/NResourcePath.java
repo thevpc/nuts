@@ -68,6 +68,12 @@ public class NResourcePath implements NPathSPI {
         }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
+    @Override
+    public boolean isHidden(NPath basePath) {
+        return false;
+    }
+
+
     protected static String rebuildURL(String location, NId[] ids) {
         StringBuilder sb = new StringBuilder(nResourceProtocol);
         boolean complex = Arrays.stream(ids).map(Object::toString).anyMatch(x -> x.contains(";") || x.contains("/"));
@@ -226,7 +232,7 @@ public class NResourcePath implements NPathSPI {
         if (up == null) {
             return -1;
         }
-        return up.getContentLength();
+        return up.contentLength();
     }
 
     @Override
@@ -242,7 +248,7 @@ public class NResourcePath implements NPathSPI {
     public String getContentType(NPath basePath) {
         NPath up = toURLPath();
         if (up != null) {
-            return up.getContentType();
+            return up.contentType();
         }
         return null;
     }
@@ -305,19 +311,19 @@ public class NResourcePath implements NPathSPI {
         if (up == null) {
             return null;
         }
-        return up.getLastModifiedInstant();
+        return up.lastModifiedInstant();
     }
 
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
         NPath up = toURLPath();
-        return up != null ? up.getLastAccessInstant() : null;
+        return up != null ? up.lastAccessInstant() : null;
     }
 
     @Override
     public Instant getCreationInstant(NPath basePath) {
         NPath up = toURLPath();
-        return up != null ? up.getCreationInstant() : null;
+        return up != null ? up.creationInstant() : null;
     }
 
     @Override
@@ -359,7 +365,7 @@ public class NResourcePath implements NPathSPI {
     @Override
     public Set<NPathPermission> getPermissions(NPath basePath) {
         NPath up = toURLPath();
-        return up != null ? up.getPermissions() : new LinkedHashSet<>();
+        return up != null ? up.permissions() : new LinkedHashSet<>();
     }
 
     @Override
@@ -385,7 +391,7 @@ public class NResourcePath implements NPathSPI {
         if (NBlankable.isBlank(location)) {
             return 0;
         }
-        return NPath.of(location).getNameCount();
+        return NPath.of(location).nameCount();
     }
 
     @Override
@@ -407,7 +413,7 @@ public class NResourcePath implements NPathSPI {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return basePath.getParent().getRoot();
+        return basePath.parent().root();
     }
 
     @Override
@@ -424,7 +430,7 @@ public class NResourcePath implements NPathSPI {
 
     @Override
     public List<String> getNames(NPath basePath) {
-        return NPath.of(location).getNames();
+        return NPath.of(location).names();
     }
 
     @Override

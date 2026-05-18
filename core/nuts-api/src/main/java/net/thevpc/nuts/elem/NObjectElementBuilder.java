@@ -47,6 +47,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
     }
 
     NObjectElementBuilder setAt(int i, NElement element);
+
     /**
      * set value for property {@code name}
      *
@@ -56,13 +57,19 @@ public interface NObjectElementBuilder extends NElementBuilder {
      */
     NObjectElementBuilder set(String name, NElement value);
 
-    NObjectElementBuilder set(String name, boolean value);
+    NObjectElementBuilder set(String name, Boolean value);
 
-    NObjectElementBuilder set(String name, int value);
+    NObjectElementBuilder set(String name, Integer value);
 
-    NObjectElementBuilder set(String name, double value);
+    NObjectElementBuilder set(String name, Double value);
 
     NObjectElementBuilder set(String name, String value);
+
+    NObjectElementBuilder set(String name, Long value);
+
+    NObjectElementBuilder set(String name, Short value);
+
+    NObjectElementBuilder set(String name, Character value);
 
     /**
      * set value for property {@code name}
@@ -72,28 +79,47 @@ public interface NObjectElementBuilder extends NElementBuilder {
      */
     NObjectElementBuilder setParamAt(int index, NElement value);
 
-    NObjectElementBuilder setParamAt(int index, boolean value);
+    NObjectElementBuilder setParamAt(int index, Boolean value);
 
-    NObjectElementBuilder setParamAt(int index, int value);
+    NObjectElementBuilder setParamAt(int index, Integer value);
 
-    NObjectElementBuilder setParamAt(int index, double value);
+    NObjectElementBuilder setParamAt(int index, Double value);
+
+    NObjectElementBuilder setParamAt(int index, Long value);
+
+    NObjectElementBuilder setParamAt(int index, Short value);
+
+    NObjectElementBuilder setParamAt(int index, Character value);
+
+    NObjectElementBuilder setParamAt(int index, Byte value);
 
     NObjectElementBuilder setParamAt(int index, String value);
 
     NObjectElementBuilder add(NElement name, NElement value);
 
     NObjectElementBuilder addIf(String name, NElement value, Predicate<NElement> predicate);
+
     NObjectElementBuilder addIf(NElement name, NElement value, Predicate<NElement> predicate);
 
     NObjectElementBuilder add(String name, NElement value);
 
     NObjectElementBuilder add(String name, Number value);
 
-    NObjectElementBuilder add(String name, boolean value);
+    NObjectElementBuilder add(String name, Boolean value);
 
-    NObjectElementBuilder add(String name, int value);
+    NObjectElementBuilder add(String name, Short value);
 
-    NObjectElementBuilder add(String name, double value);
+    NObjectElementBuilder add(String name, Integer value);
+
+    NObjectElementBuilder add(String name, Double value);
+
+    NObjectElementBuilder add(String name, Long value);
+
+    NObjectElementBuilder add(String name, Float value);
+
+    NObjectElementBuilder add(String name, Byte value);
+
+    NObjectElementBuilder add(String name, Character value);
 
     NObjectElementBuilder add(String name, String value);
 
@@ -140,7 +166,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      */
     List<NElement> children();
 
-    public List<NElement> getAll(NElement s);
+    List<NElement> getAll(NElement s);
 
 
     /**
@@ -198,11 +224,20 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder set(NElement name, String value);
 
-    NObjectElementBuilder set(NElement name, boolean value);
+    NObjectElementBuilder set(NElement name, Boolean value);
 
-    NObjectElementBuilder set(NElement name, double value);
+    NObjectElementBuilder set(NElement name, Double value);
+    NObjectElementBuilder set(NElement name, Float value);
 
-    NObjectElementBuilder set(NElement name, int value);
+    NObjectElementBuilder set(NElement name, Integer value);
+
+    NObjectElementBuilder set(NElement name, Long value);
+
+    NObjectElementBuilder set(NElement name, Short value);
+
+    NObjectElementBuilder set(NElement name, Byte value);
+
+    NObjectElementBuilder set(NElement name, Character value);
 
     NOptional<NElement> get(NElement s);
 
@@ -272,19 +307,19 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder addAll(byte[] value);
 
-    NObjectElementBuilder add(int value);
+    NObjectElementBuilder add(Integer value);
 
-    NObjectElementBuilder add(long value);
+    NObjectElementBuilder add(Long value);
 
-    NObjectElementBuilder add(double value);
+    NObjectElementBuilder add(Double value);
 
-    NObjectElementBuilder add(float value);
+    NObjectElementBuilder add(Float value);
 
-    NObjectElementBuilder add(byte value);
+    NObjectElementBuilder add(Byte value);
 
-    NObjectElementBuilder add(boolean value);
+    NObjectElementBuilder add(Boolean value);
 
-    NObjectElementBuilder add(char value);
+    NObjectElementBuilder add(Character value);
 
     NObjectElementBuilder add(Number value);
 
