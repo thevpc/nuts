@@ -16,7 +16,7 @@ public class NDescriptorInputSourceWriterSPI implements NObjectWriterSPI {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "input-stream";
     }
 

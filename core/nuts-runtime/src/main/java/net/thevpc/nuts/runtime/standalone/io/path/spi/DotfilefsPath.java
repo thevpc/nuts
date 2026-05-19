@@ -302,7 +302,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 

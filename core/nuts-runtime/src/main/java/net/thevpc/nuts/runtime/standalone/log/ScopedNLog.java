@@ -25,14 +25,14 @@ class ScopedNLog implements NLog {
 
 
     @Override
-    public String getName() {
-        return base.getName();
+    public String name() {
+        return base.name();
     }
 
     @Override
     public boolean isLoggable(Level level) {
         NLogScope c = NLogs.of().getContext();
-        NLog s = c.getLog();
+        NLog s = c.log();
         if (s != null) {
             return s.isLoggable(level);
         }
@@ -42,7 +42,7 @@ class ScopedNLog implements NLog {
     @Override
     public void log(Level level, Supplier<NMsg> msgSupplier) {
         NLogScope c = NLogs.of().getContext();
-        NLog s = c.getLog();
+        NLog s = c.log();
         if (s != null) {
             s.log(level, () -> prepareMsg(msgSupplier.get(), c));
             return;
@@ -53,7 +53,7 @@ class ScopedNLog implements NLog {
     @Override
     public void log(NMsg msg) {
         NLogScope c = NLogs.of().getContext();
-        NLog s = c.getLog();
+        NLog s = c.log();
         if (s != null) {
             s.log(msg);
 //            s.log(prepareMsg(msg, c));

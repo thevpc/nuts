@@ -29,7 +29,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     private final NPrintStream err;
     private final InputStream in;
     private NCmdLineHistory history;
-    private String commandHighlighter;
+    private NTerminalFormatter commandHighlighter;
     private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
     protected boolean lastWasProgress=false;
 
@@ -59,13 +59,13 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
         }
         if(bootStdFd.getOut()==bootStdFd.getErr()){
             this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFdAnsi,
-                    this).setTerminalMode(terminalMode);
+                    this).terminalMode(terminalMode);
             this.err = this.out;
         }else {
             this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFdAnsi,
-                    this).setTerminalMode(terminalMode);
+                    this).terminalMode(terminalMode);
             this.err = new NPrintStreamSystem(bootStdFd.getErr(), null, null, bootStdFdAnsi,
-                    this).setTerminalMode(terminalMode);
+                    this).terminalMode(terminalMode);
         }
         this.in = bootStdFd.getIn();
         this.scanner = new Scanner(this.in);
@@ -152,12 +152,12 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public String getCommandHighlighter() {
+    public NTerminalFormatter getCommandHighlighter() {
         return commandHighlighter;
     }
 
     @Override
-    public NSystemTerminalBase setCommandHighlighter(String commandHighlighter) {
+    public NSystemTerminalBase setCommandHighlighter(NTerminalFormatter commandHighlighter) {
         this.commandHighlighter = commandHighlighter;
         return this;
     }

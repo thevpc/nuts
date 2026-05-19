@@ -121,7 +121,7 @@ public class SshConnectionPool {
     }
 
     private synchronized ConnectionQueue getIdle(NConnectionString connectionString) {
-        NConnectionString normalized = connectionString.builder().setPath(null).setNormalized(true).build();
+        NConnectionString normalized = connectionString.builder().path(null).normalized(true).build();
         return idleMap.computeIfAbsent(normalized, r -> new ConnectionQueue(r,maxSize));
     }
 

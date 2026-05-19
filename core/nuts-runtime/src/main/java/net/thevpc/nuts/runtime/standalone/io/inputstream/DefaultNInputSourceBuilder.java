@@ -34,7 +34,7 @@ public class DefaultNInputSourceBuilder implements NInputSourceBuilder {
     }
 
     @Override
-    public NInputSourceBuilder setBase(InputStream baseInputStream) {
+    public NInputSourceBuilder base(InputStream baseInputStream) {
         this.baseInputStream = baseInputStream;
         return this;
     }
@@ -45,18 +45,18 @@ public class DefaultNInputSourceBuilder implements NInputSourceBuilder {
     }
 
     @Override
-    public NInputSourceBuilder setCloseBase(boolean closeBase) {
+    public NInputSourceBuilder closeBase(boolean closeBase) {
         this.closeBase = closeBase;
         return this;
     }
 
     @Override
-    public Runnable getCloseAction() {
+    public Runnable closeAction() {
         return closeAction;
     }
 
     @Override
-    public NInputSourceBuilder setCloseAction(Runnable closeAction) {
+    public NInputSourceBuilder closeAction(Runnable closeAction) {
         this.closeAction = closeAction;
         return this;
     }
@@ -67,18 +67,18 @@ public class DefaultNInputSourceBuilder implements NInputSourceBuilder {
     }
 
     @Override
-    public NInputSourceBuilder setInterruptible(boolean interruptible) {
+    public NInputSourceBuilder interruptible(boolean interruptible) {
         this.interruptible = interruptible;
         return this;
     }
 
     @Override
-    public NContentMetadata getMetadata() {
+    public NContentMetadata metadata() {
         return metadata;
     }
 
     @Override
-    public NInputSourceBuilder setMetadata(NContentMetadata metadata) {
+    public NInputSourceBuilder metadata(NContentMetadata metadata) {
         this.metadata = metadata;
         return this;
     }

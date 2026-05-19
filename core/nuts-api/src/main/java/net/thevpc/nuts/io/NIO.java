@@ -26,15 +26,10 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NPathFactorySPI;
-import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
-import net.thevpc.nuts.text.NObjectWriter;
-import net.thevpc.nuts.util.NOptional;
 
 import java.io.File;
 import java.io.InputStream;
@@ -98,7 +93,7 @@ public interface NIO extends NComponent {
      *
      * @return workspace system terminal
      */
-    NSystemTerminal getSystemTerminal();
+    NSystemTerminal systemTerminal();
 
     /**
      * update workspace wide system terminal
@@ -106,14 +101,14 @@ public interface NIO extends NComponent {
      * @param terminal system terminal
      * @return {@code this} instance
      */
-    NIO setSystemTerminal(NSystemTerminalBase terminal);
+    NIO systemTerminal(NSystemTerminalBase terminal);
 
     /**
      * return workspace default terminal
      *
      * @return workspace default terminal
      */
-    NTerminal getDefaultTerminal();
+    NTerminal defaultTerminal();
 
     /**
      * update workspace wide terminal
@@ -121,7 +116,7 @@ public interface NIO extends NComponent {
      * @param terminal terminal
      * @return {@code this} instance
      */
-    NIO setDefaultTerminal(NTerminal terminal);
+    NIO defaultTerminal(NTerminal terminal);
 
     NIO addPathFactory(NPathFactorySPI pathFactory);
 

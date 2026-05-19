@@ -31,18 +31,18 @@ public class ToolboxRepositoryModel implements NRepositoryModel {
     }
 
     @Override
-    public String getRepositoryType() {
+    public String repositoryType() {
         return REPOSITORY_TYPE;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return REPOSITORY_TYPE;
     }
 
     @Override
-    public String getUuid() {
-        return UUID.nameUUIDFromBytes(getName().getBytes()).toString();
+    public String uuid() {
+        return UUID.nameUUIDFromBytes(name().getBytes()).toString();
     }
 
     private ToolboxRepoHelper findByShortId(NId id) {

@@ -24,7 +24,6 @@ import java.nio.file.*;
 import java.nio.file.attribute.*;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -892,7 +891,7 @@ public class FilePath implements NPathSPI {
         }
 
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 
@@ -922,7 +921,7 @@ public class FilePath implements NPathSPI {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
                     return null;
                 }
-                if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS && path.matches("^[\\\\/][a-zA-Z]:([\\\\/].*)?")) {
+                if (NEnv.of().osFamily() == NOsFamily.WINDOWS && path.matches("^[\\\\/][a-zA-Z]:([\\\\/].*)?")) {
                     //remove trailing slash
                     path = path.substring(1);
                 }

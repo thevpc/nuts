@@ -124,16 +124,16 @@ public class NWorkspaceUtils {
                 && qm.get(NConstants.IdProperties.DESKTOP) == null
         ) {
             NEnv environment = NEnv.of();
-            qm.put(NConstants.IdProperties.ARCH, environment.getArchFamily().id());
-            qm.put(NConstants.IdProperties.OS, environment.getOs().toString());
-            if (environment.getOsDist() != null) {
-                qm.put(NConstants.IdProperties.OS_DIST, environment.getOsDist().toString());
+            qm.put(NConstants.IdProperties.ARCH, environment.archFamily().id());
+            qm.put(NConstants.IdProperties.OS, environment.os().toString());
+            if (environment.osDist() != null) {
+                qm.put(NConstants.IdProperties.OS_DIST, environment.osDist().toString());
             }
-            if (environment.getJava() != null) {
-                qm.put(NConstants.IdProperties.PLATFORM, environment.getJava().toString());
+            if (environment.java() != null) {
+                qm.put(NConstants.IdProperties.PLATFORM, environment.java().toString());
             }
-            if (environment.getDesktopEnvironment() != null) {
-                qm.put(NConstants.IdProperties.DESKTOP, environment.getDesktopEnvironment().toString());
+            if (environment.desktopEnvironment() != null) {
+                qm.put(NConstants.IdProperties.DESKTOP, environment.desktopEnvironment().toString());
             }
             return id.builder().setProperties(qm).build();
         }
@@ -301,13 +301,13 @@ public class NWorkspaceUtils {
         try {
             NWorkspace.of().addLauncher(
                     new NLauncherOptions()
-                            .setId(session.workspace().apiId())
-                            .setCreateScript(true)
-                            .setSwitchWorkspace(
+                            .id(session.workspace().apiId())
+                            .createScript(true)
+                            .switchWorkspace(
                                     NWorkspace.of().bootOptions().switchWorkspace().orNull()
                             )
-                            .setCreateDesktopLauncher(includeGraphicalLaunchers ? NSupportMode.PREFERRED : NSupportMode.NEVER)
-                            .setCreateMenuLauncher(includeGraphicalLaunchers ? NSupportMode.SUPPORTED : NSupportMode.NEVER)
+                            .createDesktopLauncher(includeGraphicalLaunchers ? NSupportMode.PREFERRED : NSupportMode.NEVER)
+                            .createMenuLauncher(includeGraphicalLaunchers ? NSupportMode.SUPPORTED : NSupportMode.NEVER)
             );
         } catch (Exception ex) {
             _LOG()
@@ -324,7 +324,7 @@ public class NWorkspaceUtils {
     public void installCompanions() {
         NSession session = NSession.of();
         NTexts text = NTexts.of();
-        Set<NId> companionIds = NExtensions.of().getCompanionIds();
+        Set<NId> companionIds = NExtensions.of().companionIds();
         if (companionIds.isEmpty()) {
             return;
         }

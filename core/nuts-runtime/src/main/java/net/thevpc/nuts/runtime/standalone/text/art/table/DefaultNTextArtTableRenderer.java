@@ -142,7 +142,7 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
     }
 
     @Override
-    public String getName() {
+    public String name() {
         DefaultTableFormatBorders b = (DefaultTableFormatBorders) border;
         return b == null ? "none" : b.getName();
     }
@@ -217,6 +217,6 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
 
     @Override
     public String toString() {
-        return "DefaultNTextArtTableRenderer(" + getName() + ")";
+        return "DefaultNTextArtTableRenderer(" + name() + ")";
     }
 }

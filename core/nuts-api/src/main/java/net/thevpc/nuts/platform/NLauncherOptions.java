@@ -56,74 +56,74 @@ public class NLauncherOptions implements Cloneable {
     private String switchWorkspaceLocation;
     private String workingDirectory;
 
-    public boolean isCreateScript() {
+    public boolean createScript() {
         return createScript;
     }
 
-    public NLauncherOptions setCreateScript(boolean createScript) {
+    public NLauncherOptions createScript(boolean createScript) {
         this.createScript = createScript;
         return this;
     }
 
-    public NSupportMode getCreateMenuLauncher() {
+    public NSupportMode createMenuLauncher() {
         return createMenuLauncher;
     }
 
-    public NLauncherOptions setCreateMenuLauncher(NSupportMode createMenuShortcut) {
+    public NLauncherOptions createMenuLauncher(NSupportMode createMenuShortcut) {
         this.createMenuLauncher = createMenuShortcut;
         return this;
     }
 
-    public NSupportMode getCreateDesktopLauncher() {
+    public NSupportMode createDesktopLauncher() {
         return createDesktopLauncher;
     }
 
-    public NLauncherOptions setCreateDesktopLauncher(NSupportMode createDesktopLauncher) {
+    public NLauncherOptions createDesktopLauncher(NSupportMode createDesktopLauncher) {
         this.createDesktopLauncher = createDesktopLauncher;
         return this;
     }
 
-    public NSupportMode getCreateUserLauncher() {
+    public NSupportMode createUserLauncher() {
         return createUserLauncher;
     }
 
-    public NLauncherOptions setCreateUserLauncher(NSupportMode createUserLauncher) {
+    public NLauncherOptions createUserLauncher(NSupportMode createUserLauncher) {
         this.createUserLauncher = createUserLauncher;
         return this;
     }
 
-    public String getShortcutName() {
+    public String shortcutName() {
         return shortcutName;
     }
 
-    public NLauncherOptions setShortcutName(String shortcutName) {
+    public NLauncherOptions shortcutName(String shortcutName) {
         this.shortcutName = shortcutName;
         return this;
     }
 
-    public String getCustomShortcutPath() {
+    public String customShortcutPath() {
         return customShortcutPath;
     }
 
-    public NLauncherOptions setCustomShortcutPath(String customShortcutPath) {
+    public NLauncherOptions customShortcutPath(String customShortcutPath) {
         this.customShortcutPath = customShortcutPath;
         return this;
     }
 
-    public String getIcon() {
+    public String icon() {
         return icon;
     }
 
-    public NLauncherOptions setIcon(String icon) {
+    public NLauncherOptions icon(String icon) {
         this.icon = icon;
         return this;
     }
 
-    public String getMenuCategory() {
+    public String menuCategory() {
         return menuCategory;
     }
 
-    public NLauncherOptions setMenuCategory(String menuCategory) {
+    public NLauncherOptions menuCategory(String menuCategory) {
         this.menuCategory = menuCategory;
         return this;
     }
@@ -132,43 +132,43 @@ public class NLauncherOptions implements Cloneable {
         return openTerminal;
     }
 
-    public NLauncherOptions setOpenTerminal(boolean openTerminal) {
+    public NLauncherOptions openTerminal(boolean openTerminal) {
         this.openTerminal = openTerminal;
         return this;
     }
 
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
-    public NLauncherOptions setId(NId id) {
+    public NLauncherOptions id(NId id) {
         this.id = id;
         return this;
     }
 
-    public List<String> getArgs() {
+    public List<String> args() {
         return args;
     }
 
-    public NLauncherOptions setArgs(List<String> args) {
+    public NLauncherOptions args(List<String> args) {
         this.args = args;
         return this;
     }
 
-    public List<String> getNutsOptions() {
+    public List<String> nutsOptions() {
         return nutsOptions;
     }
 
-    public NLauncherOptions setNutsOptions(List<String> nutsOptions) {
+    public NLauncherOptions nutsOptions(List<String> nutsOptions) {
         this.nutsOptions = nutsOptions;
         return this;
     }
 
-    public String getAlias() {
+    public String alias() {
         return alias;
     }
 
-    public NLauncherOptions setAlias(String alias) {
+    public NLauncherOptions alias(String alias) {
         this.alias = alias;
         return this;
     }
@@ -177,7 +177,7 @@ public class NLauncherOptions implements Cloneable {
         return createAlias;
     }
 
-    public NLauncherOptions setCreateAlias(boolean createAlias) {
+    public NLauncherOptions createAlias(boolean createAlias) {
         this.createAlias = createAlias;
         return this;
     }
@@ -186,43 +186,43 @@ public class NLauncherOptions implements Cloneable {
         return installExtensions;
     }
 
-    public NLauncherOptions setInstallExtensions(boolean installExtensions) {
+    public NLauncherOptions installExtensions(boolean installExtensions) {
         this.installExtensions = installExtensions;
         return this;
     }
 
-    public String getCustomScriptPath() {
+    public String customScriptPath() {
         return customScriptPath;
     }
 
-    public NLauncherOptions setCustomScriptPath(String customScriptPath) {
+    public NLauncherOptions customScriptPath(String customScriptPath) {
         this.customScriptPath = customScriptPath;
         return this;
     }
 
-    public Boolean getSwitchWorkspace() {
+    public Boolean switchWorkspace() {
         return switchWorkspace;
     }
 
-    public NLauncherOptions setSwitchWorkspace(Boolean switchWorkspace) {
+    public NLauncherOptions switchWorkspace(Boolean switchWorkspace) {
         this.switchWorkspace = switchWorkspace;
         return this;
     }
 
-    public String getSwitchWorkspaceLocation() {
+    public String switchWorkspaceLocation() {
         return switchWorkspaceLocation;
     }
 
-    public NLauncherOptions setSwitchWorkspaceLocation(String switchWorkspaceLocation) {
+    public NLauncherOptions switchWorkspaceLocation(String switchWorkspaceLocation) {
         this.switchWorkspaceLocation = switchWorkspaceLocation;
         return this;
     }
 
-    public String getWorkingDirectory() {
+    public String workingDirectory() {
         return workingDirectory;
     }
 
-    public NLauncherOptions setWorkingDirectory(String workingDirectory) {
+    public NLauncherOptions workingDirectory(String workingDirectory) {
         this.workingDirectory = workingDirectory;
         return this;
     }

@@ -439,10 +439,10 @@ public class DefaultNFetch extends AbstractNFetch {
         @Override
         public NDependencies get() {
             return NDependencySolver.of()
-                    .setIgnoreCurrentEnvironment(ignoreCurrentEnvironment)
-                    .setDependencyFilter(dependencyFilter)
+                    .ignoreCurrentEnvironment(ignoreCurrentEnvironment)
+                    .dependencyFilter(dependencyFilter)
                     .add(id.toDependency(), foundDefinitionBuilder.build())
-                    .setRepositoryFilter(repositoryFilter)
+                    .repositoryFilter(repositoryFilter)
                     .solve();
         }
     }

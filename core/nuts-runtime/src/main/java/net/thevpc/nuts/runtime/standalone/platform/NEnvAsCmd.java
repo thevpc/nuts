@@ -32,8 +32,8 @@ public class NEnvAsCmd extends NEnvBase {
         return new NEnvAsCmd(envCmdSPI);
     }
 
-    public NConnectionString getConnectionString() {
-        return envCmdSPI.getTargetConnectionString();
+    public NConnectionString connectionString() {
+        return envCmdSPI.targetConnectionString();
     }
 
     public synchronized boolean tryUpdate() {
@@ -190,7 +190,7 @@ public class NEnvAsCmd extends NEnvBase {
     }
 
     private void resolveWindowAdminName() {
-        rootUserName = resolveWindowAdminName(envCmdSPI.getTargetConnectionString().getUserName(), rootUserName);
+        rootUserName = resolveWindowAdminName(envCmdSPI.targetConnectionString().userName(), rootUserName);
     }
 
     public String runOnceSystemGrab(String cmd) {
@@ -247,7 +247,7 @@ public class NEnvAsCmd extends NEnvBase {
     @Override
     protected NId getOsDist0() {
         try {
-            if (getOsFamily() == NOsFamily.LINUX) {
+            if (osFamily() == NOsFamily.LINUX) {
                 // POSIX-safe: cat may fail, that's OK
                 String r = runOnceSystemGrab("cat /etc/os-release");
                 if (!NBlankable.isBlank(r)) {
@@ -383,18 +383,18 @@ public class NEnvAsCmd extends NEnvBase {
 
     @Override
     public NOptional<String> getEnv(String name) {
-        return NOptional.ofNamed(getEnv().get(name), name);
+        return NOptional.ofNamed(env().get(name), name);
     }
 
     @Override
-    public Map<String, String> getEnv() {
+    public Map<String, String> env() {
         if (envSnapshot == null) {
             synchronized (this) {
                 if (envSnapshot == null) {
                     Map<String, String> m = new LinkedHashMap<>();
                     try {
                         String result;
-                        if (getOsFamily() == NOsFamily.WINDOWS) {
+                        if (osFamily() == NOsFamily.WINDOWS) {
                             result = runOnceSystemGrab("cmd /c set");
                         } else {
                             result = runOnceSystemGrab("env");
@@ -452,6 +452,6 @@ public class NEnvAsCmd extends NEnvBase {
 
     @Override
     public String getHostName0() {
-        return NEnvUtils.getHostName(this, strings -> envCmdSPI.exec(NCmdLine.of(strings).toString()), getConnectionString());
+        return NEnvUtils.getHostName(this, strings -> envCmdSPI.exec(NCmdLine.of(strings).toString()), connectionString());
     }
 }

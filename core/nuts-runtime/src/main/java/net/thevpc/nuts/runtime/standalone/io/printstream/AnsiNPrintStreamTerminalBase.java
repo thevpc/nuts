@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
+import net.thevpc.nuts.io.NTerminalFormatter;
 import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.text.NMsg;
@@ -18,7 +19,7 @@ import java.io.InputStream;
 public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
     private NPrintStream out;
     private NCmdLineHistory history;
-    private String commandHighlighter;
+    private NTerminalFormatter commandHighlighter;
     private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
     protected boolean lastWasProgress = false;
 
@@ -78,12 +79,12 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public String getCommandHighlighter() {
+    public NTerminalFormatter getCommandHighlighter() {
         return commandHighlighter;
     }
 
     @Override
-    public NSystemTerminalBase setCommandHighlighter(String commandHighlighter) {
+    public NSystemTerminalBase setCommandHighlighter(NTerminalFormatter commandHighlighter) {
         this.commandHighlighter = commandHighlighter;
         return this;
     }

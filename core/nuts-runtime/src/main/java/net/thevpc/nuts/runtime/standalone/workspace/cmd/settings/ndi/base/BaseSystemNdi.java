@@ -49,7 +49,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public NdiScriptInfo[] getSysRC(NdiScriptOptions options) {
         List<NdiScriptInfo> scriptInfos = new ArrayList<>();
         Set<String> visited = new LinkedHashSet<>();
-        for (NShellFamily sf : NEnv.of().getShellFamilies()) {
+        for (NShellFamily sf : NEnv.of().shellFamilies()) {
             String z = NShellHelper.of(sf).getSysRcName();
             if (!visited.contains(z)) {
                 visited.add(z);
@@ -201,7 +201,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             String n = nid.artifactId();
             NPath ff = getBinScriptFile(n, options);
             {
-                String s = options.getLauncher().getCustomScriptPath();
+                String s = options.getLauncher().customScriptPath();
                 if (NBlankable.isBlank(s)) {
                     NDefinition appDef = loadIdDefinition(nid);
                     s = NameBuilder.id(appDef.id(), "%n", null, appDef.descriptor()).buildName();
@@ -220,13 +220,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         .println(createNutsScriptContent(nid, options, shellFamily))
                         .build());
             }
-            if (matchCondition(options.getLauncher().getCreateDesktopLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP))) {
+            if (matchCondition(options.getLauncher().createDesktopLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP))) {
                 r.addAll(Arrays.asList(createShortcut(NDesktopIntegrationItem.DESKTOP, options.copy().setId(nid.toString()))));
             }
-            if (matchCondition(options.getLauncher().getCreateUserLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.USER))) {
+            if (matchCondition(options.getLauncher().createUserLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.USER))) {
                 r.addAll(Arrays.asList(createShortcut(NDesktopIntegrationItem.USER, options.copy().setId(nid.toString()))));
             }
-            if (matchCondition(options.getLauncher().getCreateMenuLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU))) {
+            if (matchCondition(options.getLauncher().createMenuLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU))) {
                 r.addAll(Arrays.asList(createShortcut(NDesktopIntegrationItem.MENU, options.copy().setId(nid.toString()))));
             }
         }
@@ -236,7 +236,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     @Override
     public void removeNutsScript(String id, String switchWorkspaceLocation) {
         NdiScriptOptions options = new NdiScriptOptions();
-        options.getLauncher().setSwitchWorkspaceLocation(switchWorkspaceLocation);
+        options.getLauncher().switchWorkspaceLocation(switchWorkspaceLocation);
         NId nid = NId.get(id).get();
         NPath f = getBinScriptFile(nid.artifactId(), options);
         NTexts factory = NTexts.of();
@@ -259,7 +259,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     @Override
     public PathInfo[] switchWorkspace(NdiScriptOptions options) {
         options = options.copy();
-        options.getLauncher().setSwitchWorkspace(true);
+        options.getLauncher().switchWorkspace(true);
         PathInfo[] v = createBootScripts(options);
         NSession session = NSession.of();
         if (session.isPlainTrace()) {
@@ -290,7 +290,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NSession session = NSession.of();
         Path workspaceLocation = NWorkspace.of().workspaceLocation().toPath().get();
         List<PathInfo> result = new ArrayList<>();
-        Boolean systemWideConfig = options.getLauncher().getSwitchWorkspace();
+        Boolean systemWideConfig = options.getLauncher().switchWorkspace();
         if (!idsToInstall.isEmpty()) {
             if (systemWideConfig == null) {
                 systemWideConfig = workspaceLocation.toString().equals(NPlatformHome.of(NOsFamily.getCurrent()).getWorkspaceLocation(null));
@@ -305,7 +305,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     includeEnv = true;
                 }
             }
-            String linkNameCurrent = options.getLauncher().getCustomScriptPath();
+            String linkNameCurrent = options.getLauncher().customScriptPath();
 //            if (includeEnv) {
 //                linkNameCurrent = prepareLinkName(linkNameCurrent);
 //            }
@@ -325,8 +325,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     }
 
                     NdiScriptOptions oo = options.copy().setId(id);
-                    oo.getLauncher().setCustomScriptPath(linkNameCurrent);
-                    oo.getLauncher().setSwitchWorkspace(systemWideConfig != null && systemWideConfig);
+                    oo.getLauncher().customScriptPath(linkNameCurrent);
+                    oo.getLauncher().switchWorkspace(systemWideConfig != null && systemWideConfig);
 
                     result.addAll(Arrays.asList(createArtifactScript(oo)));
                 } catch (UncheckedIOException | NIOException e) {
@@ -336,9 +336,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (!bootAlreadyProcessed && !nonNutsIds.isEmpty()) {
                 NdiScriptOptions oo = options.copy()
                         .setId(options.resolveNutsApiId().toString());
-                oo.getLauncher().setCustomScriptPath(null);//reset script path!
-                oo.getLauncher().setCustomScriptPath(linkNameCurrent);
-                oo.getLauncher().setSwitchWorkspace(systemWideConfig != null && systemWideConfig);
+                oo.getLauncher().customScriptPath(null);//reset script path!
+                oo.getLauncher().customScriptPath(linkNameCurrent);
+                oo.getLauncher().switchWorkspace(systemWideConfig != null && systemWideConfig);
                 result.addAll(Arrays.asList(createBootScripts(oo)));
             }
             for (String id : nonNutsIds) {
@@ -349,8 +349,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     }
                     NdiScriptOptions oo = options.copy()
                             .setId(id);
-                    oo.getLauncher().setCustomScriptPath(linkNameCurrent);
-                    oo.getLauncher().setSwitchWorkspace(systemWideConfig != null && systemWideConfig);
+                    oo.getLauncher().customScriptPath(linkNameCurrent);
+                    oo.getLauncher().switchWorkspace(systemWideConfig != null && systemWideConfig);
                     oo.setIncludeEnv(includeEnv);
                     result.addAll(Arrays.asList(createArtifactScript(oo)));
                 } catch (UncheckedIOException | NIOException e) {
@@ -365,7 +365,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public PathInfo[] createBootScripts(NdiScriptOptions options) {
-        String preferredName = options.getLauncher().getShortcutName();
+        String preferredName = options.getLauncher().shortcutName();
         List<PathInfo> all = new ArrayList<>();
 
         // create $nuts-api-app/.nutsenv
@@ -378,7 +378,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             all.add(i.create());
         }
 
-        String scriptPath = options.getLauncher().getCustomScriptPath();
+        String scriptPath = options.getLauncher().customScriptPath();
         all.add(scriptBuilderTemplate("nuts", getShellGroups()[0], "nuts", options.resolveNutsApiId(), options)
                 .setPath(getBinScriptFile(NameBuilder.id(options.resolveNutsApiId(), scriptPath, "%n",
                         options.resolveNutsApiDef().descriptor()).buildName(), options))
@@ -390,7 +390,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             all.add(i.create());
         }
 
-        if (options.getLauncher().getSwitchWorkspace() != null && options.getLauncher().getSwitchWorkspace()) {
+        if (options.getLauncher().switchWorkspace() != null && options.getLauncher().switchWorkspace()) {
             // create $home/.bashrc
             //PathInfo sysRC = getSysRC(options).create();
 
@@ -404,25 +404,25 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 }
 
             }
-            if (matchCondition(options.getLauncher().getCreateDesktopLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP))) {
+            if (matchCondition(options.getLauncher().createDesktopLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP))) {
                 all.addAll(Arrays.asList(createLaunchTermShortcutGlobal(NDesktopIntegrationItem.DESKTOP, options)));
             }
-            if (matchCondition(options.getLauncher().getCreateMenuLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU))) {
+            if (matchCondition(options.getLauncher().createMenuLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU))) {
                 all.addAll(Arrays.asList(createLaunchTermShortcutGlobal(NDesktopIntegrationItem.MENU, options)));
             }
         } else {
-            if (matchCondition(options.getLauncher().getCreateDesktopLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP))) {
+            if (matchCondition(options.getLauncher().createDesktopLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP))) {
                 all.addAll(Arrays.asList(createLaunchTermShortcut(NDesktopIntegrationItem.DESKTOP, options, scriptPath, preferredName)));
             }
-            if (matchCondition(options.getLauncher().getCreateMenuLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU))) {
+            if (matchCondition(options.getLauncher().createMenuLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU))) {
                 all.addAll(Arrays.asList(createLaunchTermShortcut(NDesktopIntegrationItem.MENU, options, scriptPath, preferredName)));
             }
-            if (matchCondition(options.getLauncher().getCreateUserLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.USER))) {
+            if (matchCondition(options.getLauncher().createUserLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.USER))) {
                 all.addAll(Arrays.asList(createLaunchTermShortcut(NDesktopIntegrationItem.USER, options, scriptPath, preferredName)));
             }
         }
 
-        if (options.getLauncher().getSwitchWorkspace() != null && options.getLauncher().getSwitchWorkspace()
+        if (options.getLauncher().switchWorkspace() != null && options.getLauncher().switchWorkspace()
                 && all.stream().anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED)) {
             onPostGlobal(options, all.toArray(new PathInfo[0]));
         }
@@ -680,8 +680,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     protected int compareIconPaths(String a, String b) {
-        String n1 = NPath.of(a).nameParts(NPathExtensionType.SHORT).getExtension();
-        String n2 = NPath.of(b).nameParts(NPathExtensionType.SHORT).getExtension();
+        String n1 = NPath.of(a).nameParts(NPathExtensionType.SHORT).extension();
+        String n2 = NPath.of(b).nameParts(NPathExtensionType.SHORT).extension();
         return compareIconExtensions(n1, n2);
     }
 
@@ -691,7 +691,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             List<String> all = iconPaths.stream().map(x -> (x == null) ? "" : x.trim())
                     .filter(x -> !x.isEmpty())
                     .filter(x ->
-                            resolveIconExtensionPriority(NPath.of(x).nameParts(NPathExtensionType.SHORT).getExtension()) >= 0
+                            resolveIconExtensionPriority(NPath.of(x).nameParts(NPathExtensionType.SHORT).extension()) >= 0
                     )
                     .sorted(this::compareIconPaths).collect(Collectors.toList());
             if (all.size() > 0) {
@@ -773,7 +773,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             String descAppIconDigest = NDigest.of().md5().source(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
             NPath p0 = NPath.of(descAppIcon);
             descAppIcon=toAbsoluteIconPath(appId, descAppIcon);
-            String bestName = descAppIconDigest + "." + p0.nameParts(NPathExtensionType.SHORT).getExtension();
+            String bestName = descAppIconDigest + "." + p0.nameParts(NPathExtensionType.SHORT).extension();
             NPath localIconPath = NPath.of(NStoreKey.ofConf(appDef.id()))
                     .resolve("icons")
                     .resolve(bestName);
@@ -804,7 +804,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 .getResultDefinitions()
                 .findSingleton().get();
 
-        String fileName = options.getLauncher().getCustomScriptPath();
+        String fileName = options.getLauncher().customScriptPath();
         fileName = resolveShortcutFileName(appDef.id(), appDef.descriptor(), fileName, null);
         return Paths.get(fileName);
     }
@@ -825,22 +825,22 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         cmd.add(getNutsStart(options).path().toString());
         cmd.add("-y");
         cmd.add(appId.toString());
-        if (options.getLauncher().getArgs() != null) {
-            cmd.addAll(options.getLauncher().getArgs());
+        if (options.getLauncher().args() != null) {
+            cmd.addAll(options.getLauncher().args());
         }
-        String cwd = options.getLauncher().getWorkingDirectory();
+        String cwd = options.getLauncher().workingDirectory();
         if (cwd == null) {
             //should it be id's var folder?
             cwd = System.getProperty("user.home");
         }
-        String iconPath = resolveIcon(options.getLauncher().getIcon(), appId);
+        String iconPath = resolveIcon(options.getLauncher().icon(), appId);
 
-        String shortcutName = options.getLauncher().getShortcutName();
+        String shortcutName = options.getLauncher().shortcutName();
         if (shortcutName == null) {
             if (nDesktopIntegrationItem == NDesktopIntegrationItem.USER) {
-                shortcutName = options.getLauncher().getCustomShortcutPath();
+                shortcutName = options.getLauncher().customShortcutPath();
                 if (shortcutName == null) {
-                    shortcutName = options.getLauncher().getCustomScriptPath();
+                    shortcutName = options.getLauncher().customScriptPath();
                 }
             }
         }
@@ -858,8 +858,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         sl.setGenericName(apiDefinition.descriptor().genericName());
         sl.setComment(appDef.descriptor().description());
         sl.setTerminal(options.getLauncher().isOpenTerminal());
-        if (options.getLauncher().getMenuCategory() != null) {
-            sl.addCategory(options.getLauncher().getMenuCategory());
+        if (options.getLauncher().menuCategory() != null) {
+            sl.addCategory(options.getLauncher().menuCategory());
         } else {
             sl.setCategories(appDef.descriptor().categories());
         }

@@ -128,9 +128,9 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
     private NWorkspace createWorkspace(String path) {
         return Nuts.openWorkspace(
                 NWorkspaceOptionsBuilder.of()
-                        .setWorkspace(path)
-                        .setOpenMode(NOpenMode.OPEN_OR_CREATE)
-                        .setInstallCompanions(false)
+                        .workspace(path)
+                        .openMode(NOpenMode.OPEN_OR_CREATE)
+                        .installCompanions(false)
                         .build()
         );
     }

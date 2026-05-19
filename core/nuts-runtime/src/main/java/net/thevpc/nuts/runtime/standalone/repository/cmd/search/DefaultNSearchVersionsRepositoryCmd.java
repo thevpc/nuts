@@ -55,10 +55,10 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
             List<NIterator<? extends NId>> resultList = new ArrayList<>();
             SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("DefaultNSearchVersionsRepositoryCmd"));
             if(getFetchMode()== NFetchMode.REMOTE) {
-                if (session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+                if (session.isIndexed() && xrepo.indexStore() != null && xrepo.indexStore().isEnabled()) {
                     NIterator<NId> d = null;
                     try {
-                        d = xrepo.getIndexStore().searchVersions(id);
+                        d = xrepo.indexStore().searchVersions(id);
                     } catch (NException ex) {
                         _LOG()
                                 .log(NMsg.ofC("error finding version with Indexer for %s : %s", getRepo().name(), ex)

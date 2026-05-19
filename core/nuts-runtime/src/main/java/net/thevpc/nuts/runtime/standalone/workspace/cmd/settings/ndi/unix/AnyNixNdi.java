@@ -27,7 +27,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
     protected NShellFamily[] getShellGroups() {
-        Set<NShellFamily> all=new LinkedHashSet<>(NEnv.of().getShellFamilies());
+        Set<NShellFamily> all=new LinkedHashSet<>(NEnv.of().shellFamilies());
         all.retainAll(Arrays.asList(NShellFamily.SH, NShellFamily.FISH));
         return all.toArray(new NShellFamily[0]);
     }
@@ -41,8 +41,8 @@ public class AnyNixNdi extends BaseSystemNdi {
         StringBuilder command = new StringBuilder();
         command.append(getExecFileName("nuts")).append(" ").append(
                 NShellHelper.of(shellFamily).varRef("NUTS_OPTIONS")).append(" ");
-        if (options.getLauncher().getNutsOptions() != null) {
-            for (String no : options.getLauncher().getNutsOptions()) {
+        if (options.getLauncher().nutsOptions() != null) {
+            for (String no : options.getLauncher().nutsOptions()) {
                 command.append(" ").append(no);
             }
         }
@@ -74,7 +74,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                     );
                 }
             }
-            final String sysRcName = NShellHelper.of(NEnv.of().getShellFamily()).getSysRcName();
+            final String sysRcName = NShellHelper.of(NEnv.of().shellFamily()).getSysRcName();
             NIn.ask()
                     .forBoolean(NMsg.ofC(
                             "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
@@ -132,7 +132,7 @@ public class AnyNixNdi extends BaseSystemNdi {
 
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
-        return new UnixFreeDesktopEntryWriter(NPath.of(NEnv.of().getDesktopPath()));
+        return new UnixFreeDesktopEntryWriter(NPath.of(NEnv.of().desktopPath()));
     }
 
 

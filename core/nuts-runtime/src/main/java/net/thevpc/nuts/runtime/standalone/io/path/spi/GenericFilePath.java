@@ -286,7 +286,7 @@ public class GenericFilePath implements NPathSPI {
             if (f.getSeparator().length() > 0) {
                 return true;
             }
-            if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
+            if (NEnv.of().osFamily() == NOsFamily.WINDOWS) {
                 String n = f.getName();
                 //test if the name is a drive name
                 if (n.length() == 2 && n.charAt(1) == ':') {
@@ -424,7 +424,7 @@ public class GenericFilePath implements NPathSPI {
         private final GenericFilePath p;
 
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 

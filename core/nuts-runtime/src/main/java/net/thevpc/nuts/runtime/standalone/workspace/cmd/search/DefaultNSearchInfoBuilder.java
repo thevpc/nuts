@@ -54,7 +54,7 @@ public class DefaultNSearchInfoBuilder {
             someIds.add(id.toString());
         }
         if (defaultNSearchCmd.isCompanion()) {
-            for (NId s : NExtensions.of().getCompanionIds()) {
+            for (NId s : NExtensions.of().companionIds()) {
                 if(!isIncludedShortName(s, someIds)) {
                     someIds.add(s.toString());
                 }

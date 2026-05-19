@@ -17,7 +17,7 @@ public class NMemorySizeWriterSPI implements NObjectWriterSPI {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "memory-size";
     }
 

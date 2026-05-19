@@ -432,8 +432,8 @@ public class DefaultNExec extends AbstractNExec {
                             NDependencyFilters ff = NDependencyFilters.of();
 
                             resolver
-                                    .setRepositoryFilter(null)
-                                    .setDependencyFilter(ff.byScope(NDependencyScopePattern.RUN)
+                                    .repositoryFilter(null)
+                                    .dependencyFilter(ff.byScope(NDependencyScopePattern.RUN)
                                             //                            .and(ff.byOptional(getOptional())
                                             //                            ).and(getDependencyFilter())
                                     );

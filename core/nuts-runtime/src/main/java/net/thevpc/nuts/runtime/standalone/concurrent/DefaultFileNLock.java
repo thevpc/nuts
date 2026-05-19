@@ -330,7 +330,7 @@ public class DefaultFileNLock extends AbstractNLock {
 
         try {
             LockInfo li = new LockInfo();
-            li.hostname = NEnv.of().getHostName();
+            li.hostname = NEnv.of().hostName();
             li.instant = Instant.now();
             li.maxValidInstant = li.instant.plusSeconds(12 * 3600); // 12 hours TTL
             li.pid = NWorkspace.of().pid();

@@ -56,27 +56,27 @@ public class DefaultNExtensionInformation implements NExtensionInformation {
         this.source = source;
     }
 
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public String getDescription() {
+    public String description() {
         return description;
     }
 
-    public String getAuthor() {
+    public String author() {
         return author;
     }
 
-    public String getCategory() {
+    public String category() {
         return category;
     }
 
-    public String getSource() {
+    public String source() {
         return source;
     }
 

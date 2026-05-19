@@ -17,11 +17,11 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
 
     public NSimpleRepositoryWrapper(NRepositorySpec options, NRepository parent, NRepositoryModel base) {
         super(options, parent,
-                base.getSpeed(),
-                (base.getMode() & NRepositoryModel.MIRRORING) != 0,
-                base.getRepositoryType(),true
+                base.speed(),
+                (base.mode() & NRepositoryModel.MIRRORING) != 0,
+                base.repositoryType(),true
         );
-        this.mode = base.getMode();
+        this.mode = base.mode();
         lib.setReadEnabled((this.mode & NRepositoryModel.LIB_READ) != 0);
         lib.setWriteEnabled((this.mode & NRepositoryModel.LIB_WRITE) != 0);
         cache.setReadEnabled((this.mode & NRepositoryModel.CACHE_READ) != 0);

@@ -244,7 +244,7 @@ public class NJavaSdkUtils {
 
     public NExecutionEngineLocation getHostJvm() {
         if (hostVm == null) {
-            String appSuffix = NEnv.of().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
+            String appSuffix = NEnv.of().osFamily() == NOsFamily.WINDOWS ? ".exe" : "";
             String product = NExecutionEngineLocation.JAVA_PRODUCT_JRE;
             if (new File(System.getProperty("java.home"), "bin" + File.separator + "javac" + (appSuffix)).isFile()) {
                 product = NExecutionEngineLocation.JAVA_PRODUCT_JDK;
@@ -254,7 +254,7 @@ public class NJavaSdkUtils {
                     vmName.toLowerCase().contains("hotspot") ? "HotSpot" :
                     vmName;
             NExecutionEngineLocation current = new NExecutionEngineLocation(
-                    NEnv.of().getJava(),
+                    NEnv.of().java(),
                     System.getProperty("java.vendor"),
                     product,
                     variant,
@@ -289,8 +289,8 @@ public class NJavaSdkUtils {
             // [1] look if locally this version is installed (1.8)
             // [2] look if host JVM 1.8
             NExecutionEngineLocation[] found = Arrays.stream(allRegisteredInstallations).filter(x ->
-                    (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.getProduct())) &&
-                            requestedVersionFilterExact.test(NVersion.get(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                    (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
+                            requestedVersionFilterExact.test(NVersion.get(x.version()).orNull())).toArray(NExecutionEngineLocation[]::new);
             if (found.length > 0) {
                 NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(highestVersionFirst).toArray(NExecutionEngineLocation[]::new);
                 return NOptional.of(sorted[0]);
@@ -305,13 +305,13 @@ public class NJavaSdkUtils {
             searchedJdkLocations = searchJdkLocations();
             NExecutionEngineLocation[] found = Stream.of(searchedJdkLocations).filter(
                     x ->
-                            (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.getProduct())) &&
-                                    requestedVersionFilterExact.test(NVersion.get(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                            (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
+                                    requestedVersionFilterExact.test(NVersion.get(x.version()).orNull())).toArray(NExecutionEngineLocation[]::new);
             if (found.length > 0) {
                 NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(highestVersionFirst).toArray(NExecutionEngineLocation[]::new);
                 for (NExecutionEngineLocation selected : sorted) {
                     if (NIn.ask().forBoolean(
-                                    NMsg.ofC("Found in your system this %s installation : %s (located at %s). Would you like to auto-configure and use it?", javaVersion, selected.getName(), selected.getPath())
+                                    NMsg.ofC("Found in your system this %s installation : %s (located at %s). Would you like to auto-configure and use it?", javaVersion, selected.name(), selected.path())
                             ).defaultValue(true)
                             .booleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
@@ -330,13 +330,13 @@ public class NJavaSdkUtils {
             // [4] look if remotely this version could be installed (1.8 after confirmation)
             NExecutionEngineLocation[] found = Stream.of(searchRemoteLocationsAndInstall(jdk ? NExecutionEngineLocation.JAVA_PRODUCT_JDK : NExecutionEngineLocation.JAVA_PRODUCT_JRE, NBlankable.isBlank(javaVersion) ? NVersion.BLANK : NVersion.of(javaVersion))).filter(
                     x ->
-                            (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.getProduct())) &&
-                                    requestedVersionFilterExact.test(NVersion.get(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                            (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
+                                    requestedVersionFilterExact.test(NVersion.get(x.version()).orNull())).toArray(NExecutionEngineLocation[]::new);
             if (found.length > 0) {
                 NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(highestVersionFirst).toArray(NExecutionEngineLocation[]::new);
                 for (NExecutionEngineLocation selected : sorted) {
                     if (NIn.ask().forBoolean(
-                                    NMsg.ofC("Found in your system this %s installation : %s (located at %s). Would you like to auto-configure and use it?", javaVersion, selected.getName(), selected.getPath())
+                                    NMsg.ofC("Found in your system this %s installation : %s (located at %s). Would you like to auto-configure and use it?", javaVersion, selected.name(), selected.path())
                             ).defaultValue(true)
                             .booleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
@@ -353,13 +353,13 @@ public class NJavaSdkUtils {
             // [5] look if locally this version is installed >1.8)
             // [6] look if host JVM >1.8
             NExecutionEngineLocation[] found = Arrays.stream(allRegisteredInstallations).filter(x ->
-                    (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.getProduct())) &&
-                            requestedVersionFilterBigger.test(NVersion.get(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                    (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
+                            requestedVersionFilterBigger.test(NVersion.get(x.version()).orNull())).toArray(NExecutionEngineLocation[]::new);
             if (found.length > 0) {
                 NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(lowerVersionFirst).toArray(NExecutionEngineLocation[]::new);
                 for (NExecutionEngineLocation selected : sorted) {
                     if (NIn.ask().forBoolean(
-                                    NMsg.ofC("Found this registered installation : %s. Would you like to use it instead of %s?", selected.getName(), javaVersion)
+                                    NMsg.ofC("Found this registered installation : %s. Would you like to use it instead of %s?", selected.name(), javaVersion)
                             ).defaultValue(true)
                             .booleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
@@ -373,13 +373,13 @@ public class NJavaSdkUtils {
             // [7] look if locally this version could be installed (>1.8 after confirmation)
             NExecutionEngineLocation[] found = Stream.of(searchedJdkLocations).filter(
                     x ->
-                            (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.getProduct())) &&
-                                    requestedVersionFilterBigger.test(NVersion.get(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                            (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
+                                    requestedVersionFilterBigger.test(NVersion.get(x.version()).orNull())).toArray(NExecutionEngineLocation[]::new);
             if (found.length > 0) {
                 NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(lowerVersionFirst).toArray(NExecutionEngineLocation[]::new);
                 for (NExecutionEngineLocation selected : sorted) {
                     if (NIn.ask().forBoolean(
-                                    NMsg.ofC("Found this system installation : %s (located at %s). Would you like to auto-configure and use it?", selected.getName(), selected.getPath())
+                                    NMsg.ofC("Found this system installation : %s (located at %s). Would you like to auto-configure and use it?", selected.name(), selected.path())
                             ).defaultValue(true)
                             .booleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
@@ -395,13 +395,13 @@ public class NJavaSdkUtils {
                     jdk ? NExecutionEngineLocation.JAVA_PRODUCT_JDK : NExecutionEngineLocation.JAVA_PRODUCT_JRE
                     , NBlankable.isBlank(javaVersion) ? NVersion.BLANK : NVersion.of(javaVersion))).filter(
                     x ->
-                            (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.getProduct())) &&
-                                    requestedVersionFilterBigger.test(NVersion.get(x.getVersion()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                            (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
+                                    requestedVersionFilterBigger.test(NVersion.get(x.version()).orNull())).toArray(NExecutionEngineLocation[]::new);
             if (found.length > 0) {
                 NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(lowerVersionFirst).toArray(NExecutionEngineLocation[]::new);
                 for (NExecutionEngineLocation selected : sorted) {
                     if (NIn.ask().forBoolean(
-                                    NMsg.ofC("Found this installation : %s (located at %s). Would you like to auto-configure and use it?", selected.getName(), selected.getPath())
+                                    NMsg.ofC("Found this installation : %s (located at %s). Would you like to auto-configure and use it?", selected.name(), selected.path())
                             ).defaultValue(true)
                             .booleanValue()) {
                         nExecutionEngines.addExecutionEngine(selected);
@@ -429,7 +429,7 @@ public class NJavaSdkUtils {
 
     public NExecutionEngineLocation[] searchJdkLocations() {
         String[] conf = {};
-        switch (NEnv.of().getOsFamily()) {
+        switch (NEnv.of().osFamily()) {
             case LINUX:
             case UNIX:
             case UNKNOWN: {
@@ -466,7 +466,7 @@ public class NJavaSdkUtils {
         if (base != null) {
             all.add(CompletableFuture.completedFuture(new NExecutionEngineLocation[]{base}));
         }
-        switch (NEnv.of().getOsFamily()) {
+        switch (NEnv.of().osFamily()) {
             case LINUX:
             case UNIX:
             case UNKNOWN: {
@@ -538,9 +538,9 @@ public class NJavaSdkUtils {
                                     synchronized (workspace) {
                                         NTexts factory = NTexts.of();
                                         workspace.currentSession().terminal().printProgress(
-                                                NMsg.ofC("detected java %s %s at %s", r.getProduct(),
-                                                        factory.ofStyled(r.getVersion(), NTextStyle.version()),
-                                                        NCoreLogUtils.forProgressPathString(r.getPath()))
+                                                NMsg.ofC("detected java %s %s at %s", r.product(),
+                                                        factory.ofStyled(r.version(), NTextStyle.version()),
+                                                        NCoreLogUtils.forProgressPathString(r.path()))
                                         );
                                     }
                                 }
@@ -594,7 +594,7 @@ public class NJavaSdkUtils {
 
     public NExecutionEngineLocation resolveJdkLocation(NPath path, String preferredName) {
         NAssert.requireNamedNonBlank(path, "path");
-        String appSuffix = NEnv.of().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
+        String appSuffix = NEnv.of().osFamily() == NOsFamily.WINDOWS ? ".exe" : "";
         NPath bin = path.resolve("bin");
         NPath javaExePath = bin.resolve("java" + appSuffix);
         if (!javaExePath.isRegularFile()) {
@@ -734,11 +734,11 @@ public class NJavaSdkUtils {
         if (nutsPlatformLocation == null) {
             return NOptional.of("command");
         }
-        String bestJavaPath = nutsPlatformLocation.getPath();
+        String bestJavaPath = nutsPlatformLocation.path();
         //if (bestJavaPath.contains("/") || bestJavaPath.contains("\\") || bestJavaPath.equals(".") || bestJavaPath.equals("..")) {
         NPath file = NPath.of(bestJavaPath).toAbsolute(NWorkspace.of().workspaceLocation());
         //if (file.isDirectory() && file.resolve("bin").isDirectory()) {
-        boolean winOs = NEnv.of().getOsFamily() == NOsFamily.WINDOWS;
+        boolean winOs = NEnv.of().osFamily() == NOsFamily.WINDOWS;
         if (winOs) {
             if (javaw) {
                 bestJavaPath = file.resolve("bin").resolve("javaw.exe").toString();
@@ -797,7 +797,7 @@ public class NJavaSdkUtils {
     }
 
     public String resolveJavaCommandByHome(String javaHome) {
-        String appSuffix = NEnv.of().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
+        String appSuffix = NEnv.of().osFamily() == NOsFamily.WINDOWS ? ".exe" : "";
         String exe = "java" + appSuffix;
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
@@ -812,7 +812,7 @@ public class NJavaSdkUtils {
     private static class ByVersionSorter implements Function<NExecutionEngineLocation, NVersion> {
         @Override
         public NVersion apply(NExecutionEngineLocation x) {
-            return NVersion.get(x.getVersion()).orNull();
+            return NVersion.get(x.version()).orNull();
         }
     }
 
@@ -883,12 +883,12 @@ public class NJavaSdkUtils {
         @Override
         public int compare(NExecutionEngineLocation a, NExecutionEngineLocation b) {
             int c;
-            c = Integer.compare(b.getPriority(), a.getPriority()); // higher priority first
+            c = Integer.compare(b.priority(), a.priority()); // higher priority first
             if (c != 0) {
                 return c;
             }
-            NVersion v1 = NVersion.get(a.getVersion()).orElse(NVersion.BLANK);
-            NVersion v2 = NVersion.get(b.getVersion()).orElse(NVersion.BLANK);
+            NVersion v1 = NVersion.get(a.version()).orElse(NVersion.BLANK);
+            NVersion v2 = NVersion.get(b.version()).orElse(NVersion.BLANK);
             if (lowestVersionFirst) {
                 c = v1.compareTo(v2);
             } else {
@@ -898,25 +898,25 @@ public class NJavaSdkUtils {
                 return c;
             }
             c = Integer.compare(
-                    (NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(a.getProduct()) ? 0 : 1),
-                    (NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(b.getProduct()) ? 0 : 1)
+                    (NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(a.product()) ? 0 : 1),
+                    (NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(b.product()) ? 0 : 1)
             );
             if (c != 0) {
                 return c;
             }
-            c = NStringUtils.trim(a.getName()).compareTo(NStringUtils.trim(b.getName()));
+            c = NStringUtils.trim(a.name()).compareTo(NStringUtils.trim(b.name()));
             if (c != 0) {
                 return c;
             }
-            c = NStringUtils.trim(a.getVariant()).compareTo(NStringUtils.trim(b.getVariant()));
+            c = NStringUtils.trim(a.variant()).compareTo(NStringUtils.trim(b.variant()));
             if (c != 0) {
                 return c;
             }
-            c = NStringUtils.trim(a.getPath()).compareTo(NStringUtils.trim(b.getPath()));
+            c = NStringUtils.trim(a.path()).compareTo(NStringUtils.trim(b.path()));
             if (c != 0) {
                 return c;
             }
-            c = NStringUtils.trim(a.getPackaging()).compareTo(NStringUtils.trim(b.getPackaging()));
+            c = NStringUtils.trim(a.packaging()).compareTo(NStringUtils.trim(b.packaging()));
             if (c != 0) {
                 return c;
             }

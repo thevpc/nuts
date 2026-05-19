@@ -3,6 +3,7 @@ package net.thevpc.nuts.net;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.util.NGetter;
 
 import java.util.List;
 import java.util.Map;
@@ -14,19 +15,21 @@ public interface NWebCli extends NComponent {
         return NExtensions.of(NWebCli.class);
     }
 
-    Function<NWebResponse, NWebResponse> getResponsePostProcessor();
+    Function<NWebResponse, NWebResponse> responsePostProcessor();
 
-    NWebCli setResponsePostProcessor(Function<NWebResponse, NWebResponse> responsePostProcessor);
+    NWebCli responsePostProcessor(Function<NWebResponse, NWebResponse> responsePostProcessor);
 
-    String getPrefix();
+    @NGetter
+    String prefix();
 
-    NWebCli setPrefix(String prefix);
+    NWebCli prefix(String prefix);
 
     NWebRequest req(NHttpMethod method);
 
-    List<NWebCookie> getCookies();
+    @NGetter
+    List<NWebCookie> cookies();
 
-    NWebCli setHeader(String name, String value);
+    NWebCli header(String name, String value);
 
     NWebCli addHeader(String name, String value);
 
@@ -36,7 +39,8 @@ public interface NWebCli extends NComponent {
 
     boolean containsHeader(String name);
 
-    Map<String, List<String>> getHeaders();
+    @NGetter
+    Map<String, List<String>> headers();
 
     NWebCli clearHeaders();
 
@@ -90,13 +94,13 @@ public interface NWebCli extends NComponent {
 
     NWebRequest TRACE(String path);
 
-    NDuration getReadTimeout();
+    NDuration readTimeout();
 
     NWebCli timeout(NDuration timeout);
 
     NWebCli readTimeout(NDuration readTimeout);
 
-    NDuration getConnectTimeout();
+    NDuration connectTimeout();
 
     NWebCli connectTimeout(NDuration connectTimeout);
 }

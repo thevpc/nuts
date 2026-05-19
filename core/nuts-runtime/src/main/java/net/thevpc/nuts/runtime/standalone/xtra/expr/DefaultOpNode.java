@@ -33,7 +33,7 @@ public class DefaultOpNode implements NExprOpNode {
         return args.get(index);
     }
 
-    public List<NExprNode> getOperands() {
+    public List<NExprNode> operands() {
         return Collections.unmodifiableList(args);
     }
 
@@ -51,7 +51,7 @@ public class DefaultOpNode implements NExprOpNode {
         return name;
     }
 
-    public String getUniformName() {
+    public String uniformName() {
         return uniformName;
     }
 

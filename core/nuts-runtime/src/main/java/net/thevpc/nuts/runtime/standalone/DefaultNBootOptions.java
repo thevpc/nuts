@@ -1073,13 +1073,13 @@ public class DefaultNBootOptions implements NBootOptions {
             NBootLogConfig v = null;
             if (c != null) {
                 v = new NBootLogConfig();
-                v.setLogFileBase(c.getLogFileBase());
-                v.setLogFileLevel(c.getLogFileLevel());
-                v.setLogTermLevel(c.getLogTermLevel());
-                v.setLogFileSize(c.getLogFileSize());
-                v.setLogFileCount(c.getLogFileCount());
-                v.setLogFileName(c.getLogFileName());
-                v.setLogFileBase(c.getLogFileBase());
+                v.setLogFileBase(c.logFileBase());
+                v.setLogFileLevel(c.logFileLevel());
+                v.setLogTermLevel(c.logTermLevel());
+                v.setLogFileSize(c.logFileSize());
+                v.setLogFileCount(c.logFileCount());
+                v.setLogFileName(c.logFileName());
+                v.setLogFileBase(c.logFileBase());
             }
             r.setLogConfig(v);
         }
@@ -1111,8 +1111,8 @@ public class DefaultNBootOptions implements NBootOptions {
                 v = new HashMap<>();
                 for (Map.Entry<NHomeLocation, String> e : c.entrySet()) {
                     v.put(NBootHomeLocation.of(
-                            e.getKey().getOsFamily().id(),
-                            e.getKey().getStoreType().id()
+                            e.getKey().osFamily().id(),
+                            e.getKey().storeType().id()
                     ), e.getValue());
                 }
             }
@@ -1202,80 +1202,80 @@ public class DefaultNBootOptions implements NBootOptions {
     @Override
     public NWorkspaceOptions toWorkspaceOptions() {
         NWorkspaceOptionsBuilder b = NWorkspaceOptionsBuilder.of();
-        b.setApiVersion(this.apiVersion().orNull());
-        b.setRuntimeId(this.runtimeId().orNull());
-        b.setJavaCommand(this.javaCommand().orNull());
-        b.setJavaOptions(this.javaOptions().orNull());
-        b.setWorkspace(this.workspace().orNull());
-        b.setName(this.name().orNull());
-        b.setInstallCompanions(this.installCompanions().orNull());
-        b.setSkipWelcome(this.skipWelcome().orNull());
-        b.setSkipBoot(this.skipBoot().orNull());
-        b.setSystem(this.system().orNull());
-        b.setGui(this.gui().orNull());
+        b.apiVersion(this.apiVersion().orNull());
+        b.runtimeId(this.runtimeId().orNull());
+        b.javaCommand(this.javaCommand().orNull());
+        b.javaOptions(this.javaOptions().orNull());
+        b.workspace(this.workspace().orNull());
+        b.name(this.name().orNull());
+        b.installCompanions(this.installCompanions().orNull());
+        b.skipWelcome(this.skipWelcome().orNull());
+        b.skipBoot(this.skipBoot().orNull());
+        b.system(this.system().orNull());
+        b.gui(this.gui().orNull());
         b.setUserName(this.userName().orNull());
-        b.setCredential(this.credential().orNull());
-        b.setTerminalMode(this.terminalMode().orNull());
-        b.setReadOnly(this.readOnly().orNull());
-        b.setTrace(this.trace().orNull());
-        b.setProgressOptions(this.progressOptions().orNull());
-        b.setLogConfig(this.logConfig().orNull());
-        b.setConfirm(this.confirm().orNull());
-        b.setConfirm(this.confirm().orNull());
-        b.setOutputFormat(this.outputFormat().orNull());
-        b.setOutputFormatOptions(this.outputFormatOptions().orNull());
-        b.setOpenMode(this.openMode().orNull());
-        b.setCreationTime(this.creationTime().orNull());
-        b.setDry(this.dry().orNull());
-        b.setShowStacktrace(this.showStacktrace().orNull());
-        b.setClassLoaderSupplier(this.classLoaderSupplier().orNull());
-        b.setExecutorOptions(this.executorOptions().orNull());
-        b.setRecover(this.recover().orNull());
-        b.setReset(this.reset().orNull());
-        b.setResetHard(this.resetHard().orNull());
-        b.setCommandVersion(this.commandVersion().orNull());
-        b.setCommandHelp(this.commandHelp().orNull());
-        b.setDebug(this.debug().orNull());
-        b.setInherited(this.inherited().orNull());
-        b.setExecutionType(this.executionType().orNull());
-        b.setRunAs(this.runAs().orNull());
-        b.setArchetype(this.archetype().orNull());
-        b.setStoreStrategy(this.storeStrategy().orNull());
-        b.setHomeLocations(this.homeLocations().orNull());
-        b.setStoreLocations(this.storeLocations().orNull());
-        b.setStoreLayout(this.storeLayout().orNull());
-        b.setStoreStrategy(this.storeStrategy().orNull());
-        b.setRepositoryStoreStrategy(this.repositoryStoreStrategy().orNull());
-        b.setFetchStrategy(this.fetchStrategy().orNull());
-        b.setCached(this.cached().orNull());
-        b.setIndexed(this.indexed().orNull());
-        b.setTransitive(this.transitive().orNull());
-        b.setBot(this.bot().orNull());
-        b.setStdin(this.stdin().orNull());
-        b.setStdout(this.stdout().orNull());
-        b.setStderr(this.stderr().orNull());
-        b.setExecutorService(this.executorService().orNull());
-        b.setExcludedExtensions(this.excludedExtensions().orNull());
-        b.setRepositories(this.repositories().orNull());
-        b.setApplicationArguments(this.applicationArguments().orNull());
-        b.setCustomOptions(this.customOptions().orNull());
-        b.setExpireTime(this.expireTime().orNull());
-        b.setErrors(this.errors().orNull());
-        b.setSkipErrors(this.skipErrors().orNull());
-        b.setSwitchWorkspace(this.switchWorkspace().orNull());
-        b.setLocale(this.locale().orNull());
-        b.setTheme(this.theme().orNull());
-        b.setDependencySolver(this.dependencySolver().orNull());
-        b.setIsolationLevel(this.isolationLevel().orNull());
-        b.setInitLaunchers(this.initLaunchers().orNull());
-        b.setInitJava(this.initJava().orNull());
-        b.setInitScripts(this.initScripts().orNull());
-        b.setInitPlatforms(this.initPlatforms().orNull());
-        b.setDesktopLauncher(this.desktopLauncher().orNull());
-        b.setMenuLauncher(this.menuLauncher().orNull());
-        b.setUserLauncher(this.userLauncher().orNull());
-        b.setSharedInstance(this.sharedInstance().orNull());
-        b.setPreviewRepo(this.previewRepo().orNull());
+        b.credential(this.credential().orNull());
+        b.terminalMode(this.terminalMode().orNull());
+        b.readOnly(this.readOnly().orNull());
+        b.trace(this.trace().orNull());
+        b.progressOptions(this.progressOptions().orNull());
+        b.logConfig(this.logConfig().orNull());
+        b.confirm(this.confirm().orNull());
+        b.confirm(this.confirm().orNull());
+        b.outputFormat(this.outputFormat().orNull());
+        b.outputFormatOptions(this.outputFormatOptions().orNull());
+        b.openMode(this.openMode().orNull());
+        b.creationTime(this.creationTime().orNull());
+        b.dry(this.dry().orNull());
+        b.showStacktrace(this.showStacktrace().orNull());
+        b.classLoaderSupplier(this.classLoaderSupplier().orNull());
+        b.executorOptions(this.executorOptions().orNull());
+        b.recover(this.recover().orNull());
+        b.reset(this.reset().orNull());
+        b.resetHard(this.resetHard().orNull());
+        b.commandVersion(this.commandVersion().orNull());
+        b.commandHelp(this.commandHelp().orNull());
+        b.debug(this.debug().orNull());
+        b.inherited(this.inherited().orNull());
+        b.executionType(this.executionType().orNull());
+        b.runAs(this.runAs().orNull());
+        b.archetype(this.archetype().orNull());
+        b.storeStrategy(this.storeStrategy().orNull());
+        b.homeLocations(this.homeLocations().orNull());
+        b.storeLocations(this.storeLocations().orNull());
+        b.storeLayout(this.storeLayout().orNull());
+        b.storeStrategy(this.storeStrategy().orNull());
+        b.repositoryStoreStrategy(this.repositoryStoreStrategy().orNull());
+        b.fetchStrategy(this.fetchStrategy().orNull());
+        b.cached(this.cached().orNull());
+        b.indexed(this.indexed().orNull());
+        b.transitive(this.transitive().orNull());
+        b.bot(this.bot().orNull());
+        b.stdin(this.stdin().orNull());
+        b.stdout(this.stdout().orNull());
+        b.stderr(this.stderr().orNull());
+        b.executorService(this.executorService().orNull());
+        b.excludedExtensions(this.excludedExtensions().orNull());
+        b.repositories(this.repositories().orNull());
+        b.applicationArguments(this.applicationArguments().orNull());
+        b.customOptions(this.customOptions().orNull());
+        b.expireTime(this.expireTime().orNull());
+        b.errors(this.errors().orNull());
+        b.skipErrors(this.skipErrors().orNull());
+        b.switchWorkspace(this.switchWorkspace().orNull());
+        b.locale(this.locale().orNull());
+        b.theme(this.theme().orNull());
+        b.dependencySolver(this.dependencySolver().orNull());
+        b.isolationLevel(this.isolationLevel().orNull());
+        b.initLaunchers(this.initLaunchers().orNull());
+        b.initJava(this.initJava().orNull());
+        b.initScripts(this.initScripts().orNull());
+        b.initPlatforms(this.initPlatforms().orNull());
+        b.desktopLauncher(this.desktopLauncher().orNull());
+        b.menuLauncher(this.menuLauncher().orNull());
+        b.userLauncher(this.userLauncher().orNull());
+        b.sharedInstance(this.sharedInstance().orNull());
+        b.previewRepo(this.previewRepo().orNull());
         return b.build();
     }
 

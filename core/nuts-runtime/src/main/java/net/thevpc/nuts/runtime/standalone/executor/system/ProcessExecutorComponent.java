@@ -76,7 +76,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
 
         Map<String, String> osEnv = new HashMap<>();
         String bootArgumentsString = JavaExecutorComponent.createChildOptions(executionContext)
-                .toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))
+                .toCmdLine(new NWorkspaceOptionsConfig().compact(true))
                 .toString();
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;

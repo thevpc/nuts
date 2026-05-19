@@ -75,14 +75,14 @@ public class BinSshFileOutputStreamSftp extends OutputStream {
     private void uploadTempFile() throws IOException {
         NPath batchFile = NPath.ofTempFile();
         try (OutputStream os = batchFile.outputStream()) {
-            String putCommand = "put " + temp.toString() + " " + remotePath.getPath() + "\n";
+            String putCommand = "put " + temp.toString() + " " + remotePath.path() + "\n";
             os.write(putCommand.getBytes(StandardCharsets.UTF_8));
         }
 
         try {
             NConnectionStringBuilder cbuilder = remotePath.builder();
             String identityFile = cbuilder.getQueryParam(SshConnection.IDENTITY_FILE).orNull();
-            int port = NLiteral.of(remotePath.getPort()).asInt().orElse(-1);
+            int port = NLiteral.of(remotePath.port()).asInt().orElse(-1);
             NExec sftp = NExec.ofSystem("sftp");
             if (port > 0 && port != 22) {
                 sftp.addCommand("-oPort");
@@ -92,7 +92,7 @@ public class BinSshFileOutputStreamSftp extends OutputStream {
                 sftp.addCommand("-oIdentityFile",identityFile);
             }
             sftp.addCommand("-b", batchFile.toString(),
-                            cbuilder.setQueryMap(null).setPort(null).setPath(null).build().toString())
+                            cbuilder.queryMap(null).port(null).path(null).build().toString())
                     .in(NExecInput.ofNull())
                     .out(NExecOutput.ofNull())
                     .err(NExecOutput.ofNull())

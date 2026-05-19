@@ -118,10 +118,6 @@ public class DefaultNTextInclude extends NTextSpecialBase implements NTextInclud
         return new DefaultNTextPlain("");
     }
 
-    public List<NText> split(String chars, boolean returnSeparator) {
-        return new ArrayList<>();
-    }
-
     @Override
     public NText trim() {
         return this;

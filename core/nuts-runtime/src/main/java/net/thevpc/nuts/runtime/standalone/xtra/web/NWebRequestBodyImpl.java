@@ -27,81 +27,81 @@ public class NWebRequestBodyImpl implements NWebRequestBody {
     }
 
     @Override
-    public NInputSource getBody() {
+    public NInputSource body() {
         return body;
     }
 
     @Override
-    public NWebRequestBody setBody(NInputSource body) {
+    public NWebRequestBody body(NInputSource body) {
         this.body = body;
         return this;
     }
 
     @Override
-    public String getContentType() {
+    public String contentType() {
         return contentType;
     }
 
     @Override
-    public NWebRequestBody setContentType(String contentType) {
+    public NWebRequestBody contentType(String contentType) {
         this.contentType = contentType;
         return this;
     }
 
     @Override
-    public String getEncoding() {
+    public String encoding() {
         return encoding;
     }
 
     @Override
-    public NWebRequestBody setEncoding(String encoding) {
+    public NWebRequestBody encoding(String encoding) {
         this.encoding = encoding;
         return this;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public NWebRequestBody setName(String name) {
+    public NWebRequestBody name(String name) {
         this.name = name;
         return this;
     }
 
     @Override
-    public String getFileName() {
+    public String fileName() {
         return fileName;
     }
 
     @Override
-    public NWebRequestBody setFileName(String fileName) {
+    public NWebRequestBody fileName(String fileName) {
         this.fileName = fileName;
         return this;
     }
 
     @Override
-    public String getStringValue() {
+    public String stringValue() {
         return stringValue;
     }
 
     @Override
-    public NWebRequestBody setStringValue(String stringValue) {
+    public NWebRequestBody stringValue(String stringValue) {
         this.stringValue = stringValue;
         return this;
     }
 
     @Override
-    public String getContentDisposition() {
+    public String contentDisposition() {
         StringBuilder sb = new StringBuilder("form-data");
-        if (!NBlankable.isBlank(getName())) {
+        if (!NBlankable.isBlank(name())) {
             sb.append("; name=");
-            sb.append(NStringUtils.formatStringLiteral(getName(), NElementType.DOUBLE_QUOTED_STRING));
+            sb.append(NStringUtils.formatStringLiteral(name(), NElementType.DOUBLE_QUOTED_STRING));
         }
-        if (!NBlankable.isBlank(getFileName())) {
+        if (!NBlankable.isBlank(fileName())) {
             sb.append("; filename=");
-            sb.append(NStringUtils.formatStringLiteral(getFileName(), NElementType.DOUBLE_QUOTED_STRING));
+            sb.append(NStringUtils.formatStringLiteral(fileName(), NElementType.DOUBLE_QUOTED_STRING));
         }
         return sb.toString();
     }

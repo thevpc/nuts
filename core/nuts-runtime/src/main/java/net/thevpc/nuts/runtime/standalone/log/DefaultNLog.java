@@ -29,7 +29,7 @@ public class DefaultNLog implements NLog {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 

@@ -34,7 +34,7 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 

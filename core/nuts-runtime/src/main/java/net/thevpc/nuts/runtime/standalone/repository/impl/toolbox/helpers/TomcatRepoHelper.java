@@ -107,7 +107,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                             .scriptName("install-catalina.nsh")
                             .scriptContent(
                                     "unzip --skip-root \"$nutsIdContentPath\" \"$nutsIdBinPath/app\" \n" +
-                                            (NEnv.of().getOsFamily().isPosix() ?
+                                            (NEnv.of().osFamily().isPosix() ?
                                                     "chmod a+x $nutsIdBinPath/app/*.sh \n" : "")
                             )
                             .build()
@@ -115,7 +115,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                     .executor(NArtifactCallBuilder.of()
                             .id(NId.of("exec"))
                             .arguments(
-                                    NEnv.of().getOsFamily().isWindow()
+                                    NEnv.of().osFamily().isWindow()
                                             ? "$nutsIdBinPath/app/bin/catalina.bat"
                                             : "$nutsIdBinPath/app/bin/catalina.sh"
                             )

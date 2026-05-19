@@ -288,7 +288,7 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
 
     @Override
     public int getResultCount() {
-        return getResult().getUpdatesCount();
+        return getResult().updatesCount();
     }
 
     @Override

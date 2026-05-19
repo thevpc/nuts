@@ -91,7 +91,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
 
     @Override
     public NText helpText() {
-        switch (NEnv.of().getOsFamily()) {
+        switch (NEnv.of().osFamily()) {
             case WINDOWS: {
                 return NText.ofStyled(
                         "No help available. Try " + name() + " /help",

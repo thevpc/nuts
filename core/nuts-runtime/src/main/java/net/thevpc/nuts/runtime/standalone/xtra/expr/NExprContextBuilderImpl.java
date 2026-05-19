@@ -912,7 +912,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                 NExprFunctionNode w = (NExprFunctionNode) b.node();
                 String n = w.name();
                 NReflectType t = NReflectRepository.of().getType(instance.getClass());
-                if (w.getArguments().size() == 0) {
+                if (w.arguments().size() == 0) {
                     NOptional<NReflectMethod> method = t.getMethod(n, NReflectSignatureImpl.of());
                     if (method.isPresent() && method.get().isAccessible()) {
                         return method.get().invoke(instance);
@@ -925,8 +925,8 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                 } else {
                     List<NReflectMethod> methodsByName = t.methods().stream().filter(x -> x.getName().equals(n)).collect(Collectors.toList());
                     List<NReflectMethod> found1 = methodsByName.stream().filter(x ->
-                            x.getSignature().size() == w.getArguments().size()
-                                    || (x.getSignature().isVarArgs() && x.getSignature().size() > w.getArguments().size())
+                            x.getSignature().size() == w.arguments().size()
+                                    || (x.getSignature().isVarArgs() && x.getSignature().size() > w.arguments().size())
                     ).collect(Collectors.toList());
                     NReflectMethod goodMethod = null;
                     if (found1.size() == 1) {
@@ -937,7 +937,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                     if (goodMethod == null) {
                         throw new NIllegalArgumentException(NMsg.ofC("method not found to match  %s", w));
                     }
-                    List<Object> values = w.getArguments().stream().map(x -> x.eval(context)).collect(Collectors.toList());
+                    List<Object> values = w.arguments().stream().map(x -> x.eval(context)).collect(Collectors.toList());
                     NOptional<NReflectMethod> matchingMethod = t.getMatchingMethod(n, NReflectSignatureImpl.of(values.stream().map(x -> x == null ? null : NReflectRepository.of().getType(x.getClass())).toArray(NReflectType[]::new)));
                     goodMethod = matchingMethod.get();
                     return goodMethod.invoke(instance, values.toArray());

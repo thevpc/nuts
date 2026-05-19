@@ -3,6 +3,8 @@ package net.thevpc.nuts.log;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NSessionProvider;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -26,23 +28,28 @@ public class NLogRecord extends LogRecord implements NSessionProvider {
         setThrown(thrown);
     }
 
-    public NMsg getFormattedMessage() {
+    @NGetter
+    public NMsg formattedMessage() {
         return nmsg;
     }
 
-    public long getTime() {
+    @NGetter
+    public long time() {
         return time;
     }
 
+    @NGetter
     public NMsgIntent getVerb() {
         return verb;
     }
 
+    @NGetter
     public NSession session() {
         return session;
     }
 
-    public void setSession(NSession session) {
+    @NSetter
+    public void session(NSession session) {
         this.session = session;
     }
 

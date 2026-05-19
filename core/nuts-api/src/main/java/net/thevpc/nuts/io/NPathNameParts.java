@@ -2,6 +2,7 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Objects;
@@ -43,19 +44,23 @@ public class NPathNameParts {
         this.type = type == null ? NPathExtensionType.SHORT : type;
     }
 
-    public NPathExtensionType getType() {
+    @NGetter
+    public NPathExtensionType type() {
         return type;
     }
 
-    public String getBaseName() {
+    @NGetter
+    public String baseName() {
         return baseName;
     }
 
-    public String getExtension() {
+    @NGetter
+    public String extension() {
         return extension;
     }
 
-    public String getFullExtension() {
+    @NGetter
+    public String fullExtension() {
         return fullExtension;
     }
 
@@ -87,15 +92,15 @@ public class NPathNameParts {
                         case "base":
                         case "basename":
                         case "base-name":
-                            return getBaseName();
+                            return baseName();
                         case "ext":
                         case "extension":
-                            return getExtension();
+                            return extension();
                         case "fullext":
                         case "full-ext":
                         case "full-extension":
                         case "fullextension":
-                            return getFullExtension();
+                            return fullExtension();
                     }
                     return null;
                 }

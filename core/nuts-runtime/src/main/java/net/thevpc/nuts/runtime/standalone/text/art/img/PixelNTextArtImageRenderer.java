@@ -113,11 +113,11 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
     public PixelNTextArtImageRenderer(NInputSource file) {
         try (InputStream in = file.inputStream()) {
             if (file instanceof NPath) {
-                fontName = ((NPath) file).nameParts().getBaseName();
+                fontName = ((NPath) file).nameParts().baseName();
             } else {
                 NContentMetadata md = file.metaData();
                 if (md != null) {
-                    fontName = NPath.of(md.name().orElse(null)).nameParts().getBaseName();
+                    fontName = NPath.of(md.name().orElse(null)).nameParts().baseName();
                 }
             }
             load(NIOUtils.loadString(in,false));
@@ -224,7 +224,7 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 

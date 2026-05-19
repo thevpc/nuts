@@ -643,6 +643,7 @@ public class ShCodeHighlighter implements NCodeHighlighter {
                 } else {
                     all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 }
+                break;
             }
             case ')':
             case '{':

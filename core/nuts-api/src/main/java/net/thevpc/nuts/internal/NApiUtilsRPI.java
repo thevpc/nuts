@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts.internal;
 
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.boot.NBootLogConfig;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.core.NSession;
@@ -35,7 +34,6 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLogConfig;
-import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 
 import java.io.File;
@@ -101,20 +99,20 @@ public class NApiUtilsRPI {
     }
 
     public static boolean resolveShowStackTrace(NWorkspaceOptions bo) {
-        if (bo.getShowStacktrace().isPresent()) {
-            return bo.getShowStacktrace().get();
-        } else if (bo.getBot().orElse(false)) {
+        if (bo.showStacktrace().isPresent()) {
+            return bo.showStacktrace().get();
+        } else if (bo.bot().orElse(false)) {
             return false;
         } else {
             if (NApiUtilsRPI.getSysBoolNutsProperty("stacktrace", false)) {
                 return true;
             }
-            if (bo.getDebug().isPresent() && !NBlankable.isBlank(bo.getDebug().get())) {
+            if (bo.debug().isPresent() && !NBlankable.isBlank(bo.debug().get())) {
                 return true;
             }
-            NLogConfig nLogConfig = bo.getLogConfig().orElseGet(NLogConfig::new);
-            if ((nLogConfig.getLogTermLevel() != null
-                    && nLogConfig.getLogTermLevel().intValue() < Level.INFO.intValue())) {
+            NLogConfig nLogConfig = bo.logConfig().orElseGet(NLogConfig::new);
+            if ((nLogConfig.logTermLevel() != null
+                    && nLogConfig.logTermLevel().intValue() < Level.INFO.intValue())) {
                 return true;
             }
             return false;
@@ -144,10 +142,10 @@ public class NApiUtilsRPI {
 
 
     public static boolean resolveGui(NWorkspaceOptions bo) {
-        if (bo.getBot().orElse(false)) {
+        if (bo.bot().orElse(false)) {
             return false;
         }
-        if (bo.getGui().orElse(false)) {
+        if (bo.gui().orElse(false)) {
             if (!NApiUtilsRPI.isGraphicalDesktopEnvironment()) {
                 return false;
             }

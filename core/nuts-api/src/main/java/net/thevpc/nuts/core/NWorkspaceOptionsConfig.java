@@ -25,6 +25,8 @@
 package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.Objects;
 
@@ -39,16 +41,19 @@ public class NWorkspaceOptionsConfig {
     private NVersion apiVersion;
 
 
-    public NWorkspaceOptionsConfig setApiVersion(NVersion apiVersion) {
+    @NSetter
+    public NWorkspaceOptionsConfig apiVersion(NVersion apiVersion) {
         this.apiVersion = apiVersion;
         return this;
     }
 
-    public NVersion getApiVersion() {
+    @NGetter
+    public NVersion apiVersion() {
         return apiVersion;
     }
 
-    public NWorkspaceOptionsConfig setCompact(boolean compact) {
+    @NSetter
+    public NWorkspaceOptionsConfig compact(boolean compact) {
         if (compact) {
             shortOptions = true;
             singleArgOptions = true;

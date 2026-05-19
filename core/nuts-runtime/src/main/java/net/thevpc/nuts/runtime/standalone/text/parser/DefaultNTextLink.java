@@ -125,10 +125,6 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
         return prerender().substring(start, end);
     }
 
-    public List<NText> split(String chars, boolean returnSeparator) {
-        return prerender().split(chars, returnSeparator);
-    }
-
     private NText prerender() {
         return new DefaultNTextStyled(new DefaultNTextPlain(value), NTextStyles.of(NTextStyle.underlined()));
     }

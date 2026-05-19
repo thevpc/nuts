@@ -65,11 +65,11 @@ public class DefaultNSearchRepositoryCmd extends AbstractNSearchRepositoryCmd {
         try {
             NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
             boolean processIndexFirst =
-                getFetchMode()== NFetchMode.REMOTE && session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled();
+                getFetchMode()== NFetchMode.REMOTE && session.isIndexed() && xrepo.indexStore() != null && xrepo.indexStore().isEnabled();
             if (processIndexFirst) {
                 Iterator<NId> o = null;
                 try {
-                    o = xrepo.getIndexStore().search(filter);
+                    o = xrepo.indexStore().search(filter);
                 } catch (NIndexerNotAccessibleException ex) {
                     //just ignore
                 } catch (NException ex) {

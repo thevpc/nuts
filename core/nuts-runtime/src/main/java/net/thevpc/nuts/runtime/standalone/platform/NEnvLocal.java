@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.platform;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExec;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNUtilGui;
@@ -42,7 +41,7 @@ public class NEnvLocal extends NEnvBase {
             userHome = System.getProperty("user.home");
             userName = System.getProperty("user.name");
             nativeImage = "runtime".equals(System.getProperty("org.graalvm.nativeimage.imagecode"));
-            switch (getOsFamily()) {
+            switch (osFamily()) {
                 case WINDOWS: {
                     rootUserName = resolveWindowAdminName(userName, rootUserName);
                     break;
@@ -79,7 +78,7 @@ public class NEnvLocal extends NEnvBase {
         return null;
     }
 
-    public NConnectionString getConnectionString() {
+    public NConnectionString connectionString() {
         return null;
     }
 
@@ -130,11 +129,11 @@ public class NEnvLocal extends NEnvBase {
 
     @Override
     public NOptional<String> getEnv(String name) {
-        return NOptional.of(getEnv().get(name));
+        return NOptional.of(env().get(name));
     }
 
     @Override
-    public Map<String, String> getEnv() {
+    public Map<String, String> env() {
         return NWorkspaceExt.of().getSysEnv();
     }
 

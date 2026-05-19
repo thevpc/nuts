@@ -65,7 +65,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private InputStream in;
     private NCmdLineAutoCompleteResolver autoCompleteResolver;
     private NCmdLineHistory commandHistory;
-    private String commandHighlighter;
+    private NTerminalFormatter commandHighlighter;
     protected boolean lastWasProgress = false;
 
     public NJLineTerminal() {
@@ -228,31 +228,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         NSession session = NSession.of();
         reader = LineReaderBuilder.builder()
                 .completer(new NJLineCompleter(this))
-                .highlighter(new Highlighter() {
-                    @Override
-                    public AttributedString highlight(LineReader reader, String buffer) {
-                        //session is not inherited here so pass it manually
-                        return session.callWith(() -> {
-                            String ct = getCommandHighlighter();
-                            if (NBlankable.isBlank(ct)) {
-                                ct = "system";
-                            }
-                            NText n = NText.ofCode(ct, buffer).highlight();
-                            return toAttributedString(n, NTextStyles.PLAIN);
-                        });
-                    }
-
-                    @Override
-                    public void setErrorPattern(Pattern ptrn) {
-
-                    }
-
-                    @Override
-                    public void setErrorIndex(int i) {
-
-                    }
-
-                })
+                .highlighter(new NutsJLineHighlighter(session))
                 .terminal(terminal)
                 //                .completer(completer)
                 //                .parse(parse)
@@ -383,11 +359,11 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         return this;
     }
 
-    public String getCommandHighlighter() {
+    public NTerminalFormatter getCommandHighlighter() {
         return commandHighlighter;
     }
 
-    public NJLineTerminal setCommandHighlighter(String commandHighlighter) {
+    public NJLineTerminal setCommandHighlighter(NTerminalFormatter commandHighlighter) {
         this.commandHighlighter = commandHighlighter;
         return this;
     }
@@ -479,4 +455,61 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
 
     }
 
+    private static class MyContext implements NTerminalFormatter.Context {
+        private final String buffer;
+        private final Highlighter h;
+
+        public MyContext(String buffer,Highlighter h) {
+            this.buffer = buffer;
+            this.h = h;
+        }
+
+        @Override
+        public String buffer() {
+            return buffer;
+        }
+
+    }
+
+    private class NutsJLineHighlighter implements Highlighter {
+        private final NSession session;
+
+        public NutsJLineHighlighter(NSession session) {
+            this.session = session;
+        }
+
+        @Override
+        public AttributedString highlight(LineReader reader, String buffer) {
+            //session is not inherited here so pass it manually
+            return session.callWith(() -> {
+                setErrorIndex(-1);
+                setErrorPattern(null);
+                NTerminalFormatter ct = getCommandHighlighter();
+                if(ct==null){
+                    ct=NTerminalFormatter.ofSystemHighlighter();
+                }
+                NText n;
+                try {
+                    n = ct.format(new MyContext(buffer,NutsJLineHighlighter.this));
+                }catch (Exception ex){
+                    n=NText.ofPlain(buffer);
+                }
+                if(n==null){
+                    n=NText.ofPlain(buffer);
+                }
+                return toAttributedString(n, NTextStyles.PLAIN);
+            });
+        }
+
+        @Override
+        public void setErrorPattern(Pattern ptrn) {
+
+        }
+
+        @Override
+        public void setErrorIndex(int i) {
+
+        }
+
+    }
 }

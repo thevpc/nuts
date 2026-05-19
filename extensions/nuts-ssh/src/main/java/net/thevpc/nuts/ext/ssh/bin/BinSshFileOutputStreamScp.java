@@ -75,8 +75,8 @@ public class BinSshFileOutputStreamScp extends OutputStream {
         NConnectionStringBuilder cbuilder = remotePath.builder();
         String identityFile = cbuilder.getQueryParam(SshConnection.IDENTITY_FILE).orNull();
         NExec scp = NExec.ofSystem("scp", "-q", temp.toString(),
-                cbuilder.setPort(null).setQueryMap(null).toString());
-        int port = NLiteral.of(remotePath.getPort()).asInt().orElse(-1);
+                cbuilder.port(null).queryMap(null).toString());
+        int port = NLiteral.of(remotePath.port()).asInt().orElse(-1);
         if(port<=0){
             port=22;
         }

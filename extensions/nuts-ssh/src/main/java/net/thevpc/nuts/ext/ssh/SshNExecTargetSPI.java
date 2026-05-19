@@ -40,35 +40,35 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
             case EMBEDDED:
             case SPAWN: {
                 NWorkspaceOptionsBuilder wOptions = NWorkspaceOptionsBuilder.of();
-                wOptions.setBot(session.isBot());
-                wOptions.setConfirm(session.confirm().orDefault());
-                wOptions.setDry(session.isDry());
-                wOptions.setShowStacktrace(session.showStacktrace().orDefault());
-                wOptions.setExpireTime(session.expireTime().orNull());
-                wOptions.setGui(session.isGui());
-                wOptions.setLocale(session.locale().orDefault());
-                wOptions.setTerminalMode(session.terminal().out().terminalMode());
-                wOptions.setTrace(session.isTrace());
-                wOptions.setTransitive(session.isTransitive());
+                wOptions.bot(session.isBot());
+                wOptions.confirm(session.confirm().orDefault());
+                wOptions.dry(session.isDry());
+                wOptions.showStacktrace(session.showStacktrace().orDefault());
+                wOptions.expireTime(session.expireTime().orNull());
+                wOptions.gui(session.isGui());
+                wOptions.locale(session.locale().orDefault());
+                wOptions.terminalMode(session.terminal().out().terminalMode());
+                wOptions.trace(session.isTrace());
+                wOptions.transitive(session.isTransitive());
                 // will be processed "in amont"
                 //wOptions.setRunAs(session1.getRunAs());
                 //if(getExecCommand().getRunAs()!=null) {
                 //    wOptions.setRunAs(getExecCommand().getRunAs());
                 //}
-                wOptions.setFetchStrategy(session.fetchStrategy().orDefault());
-                wOptions.setExecutionType(session.executionType().orDefault());
-                wOptions.setExecutionType(executionType);
-                wOptions.setOutLinePrefix(session.outLinePrefix());
-                wOptions.setOutputFormat(session.outputFormat().orDefault());
-                wOptions.setOutputFormatOptions(session.outputFormatOptions());
+                wOptions.fetchStrategy(session.fetchStrategy().orDefault());
+                wOptions.executionType(session.executionType().orDefault());
+                wOptions.executionType(executionType);
+                wOptions.outLinePrefix(session.outLinePrefix());
+                wOptions.outputFormat(session.outputFormat().orDefault());
+                wOptions.outputFormatOptions(session.outputFormatOptions());
 
                 String[] executorOptions = execCommand.executorOptions().toArray(new String[0]);
                 RemoteConnectionStringInfo k = RemoteConnectionStringInfo.of(execCommand.connectionString());
-                wOptions.setWorkspace(k.getWorkspaceName(this));
+                wOptions.workspace(k.getWorkspaceName(this));
                 cmd.add(k.getJavaCommand(this));
                 cmd.add("-jar");
                 cmd.add(k.getNutsJar(this));
-                NCmdLine ncmdLine = wOptions.toCmdLine(new NWorkspaceOptionsConfig().setCompact(true));
+                NCmdLine ncmdLine = wOptions.toCmdLine(new NWorkspaceOptionsConfig().compact(true));
                 cmd.addAll(ncmdLine.toStringList());
                 int dependenciesCount = 0;
                 boolean requireTempRepo = false;
@@ -212,19 +212,19 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
         Object c = context.getCriteria();
         if (c instanceof String) {
             NConnectionStringBuilder z = NConnectionStringBuilder.get((String) c).orNull();
-            if (z != null && isSupportedProtocol(z.getProtocol())) {
+            if (z != null && isSupportedProtocol(z.protocol())) {
                 return NScorable.DEFAULT_SCORE;
             }
         }
         if (c instanceof NConnectionStringBuilder) {
             NConnectionStringBuilder z = (NConnectionStringBuilder) c;
-            if (isSupportedProtocol(z.getProtocol())) {
+            if (isSupportedProtocol(z.protocol())) {
                 return NScorable.DEFAULT_SCORE;
             }
         }
         if (c instanceof NConnectionString) {
             NConnectionString z = (NConnectionString) c;
-            if (isSupportedProtocol(z.getProtocol())) {
+            if (isSupportedProtocol(z.protocol())) {
                 return NScorable.DEFAULT_SCORE;
             }
         }

@@ -118,7 +118,7 @@ public class DefaultNTextManagerModel {
 
     public NTextFormatTheme getDefaultTheme() {
         if (defaultTheme == null) {
-            if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
+            if (NEnv.of().osFamily() == NOsFamily.WINDOWS) {
                 //dark blue and red are very ugly under windows, replace them with green tones !
                 defaultTheme = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme("grass", null, workspace));
             } else {
@@ -219,7 +219,7 @@ public class DefaultNTextManagerModel {
             }
         }
         if ("system".equals(lc)) {
-            NShellFamily shellFamily = NEnv.of().getShellFamily();
+            NShellFamily shellFamily = NEnv.of().shellFamily();
             h = getCodeHighlighter(shellFamily.id());
             _cachedHighlighters.put(lc, h);
             return h;

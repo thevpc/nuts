@@ -142,14 +142,6 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
         );
     }
 
-    public List<NText> split(String chars, boolean returnSeparator) {
-        return NStringUtils.split(getValue(), chars,false,false)
-                .stream().map(x->new DefaultNTextCode(
-                        this.getStart(), getKind(), getSeparator(), getEnd(),
-                        x
-                )).collect(Collectors.toList());
-    }
-
     @Override
     public NText trimLeft() {
         String c = NStringUtils.trimLeft(text);

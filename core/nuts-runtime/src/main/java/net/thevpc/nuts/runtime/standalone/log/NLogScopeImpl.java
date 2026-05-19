@@ -164,8 +164,8 @@ public final class NLogScopeImpl implements NLogScope {
             return other;
         }
         NLog newLog = log;
-        if (other.getLog() != null) {
-            newLog = other.getLog();
+        if (other.log() != null) {
+            newLog = other.log();
         }
         NMsgSupplier<NMsg> prefix2 = mergeBoundaries(messagePrefix, other.getMessagePrefix());
         NMsgSupplier<NMsg> suffix2 = mergeBoundaries(messageSuffix, other.getMessageSuffix());
@@ -241,7 +241,7 @@ public final class NLogScopeImpl implements NLogScope {
     }
 
     @Override
-    public NLog getLog() {
+    public NLog log() {
         return log;
     }
 

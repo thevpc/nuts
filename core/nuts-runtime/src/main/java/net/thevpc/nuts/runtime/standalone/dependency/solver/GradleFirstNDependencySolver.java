@@ -8,7 +8,7 @@ public class GradleFirstNDependencySolver extends GradleNDependencySolver {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "gradle-first";
     }
 }

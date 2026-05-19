@@ -183,7 +183,7 @@ public class InstallHelper {
             } else {
                 mout.println("should we proceed installation?");
             }
-            if (!NIO.of().getDefaultTerminal().ask()
+            if (!NIO.of().defaultTerminal().ask()
                     .forBoolean(NMsg.ofNtf(mout.toString()))
                     .defaultValue(true)
                     .cancelMessage(
@@ -198,7 +198,7 @@ public class InstallHelper {
                 printList(mout, "installed", "re-reinstalled", installed_ignored);
             }
             mout.println("should we proceed?");
-            if (!NIO.of().getDefaultTerminal().ask()
+            if (!NIO.of().defaultTerminal().ask()
                     .forBoolean(NMsg.ofNtf(mout.toString()))
                     .defaultValue(true)
                     .cancelMessage(
@@ -231,7 +231,7 @@ public class InstallHelper {
                     failedIdList.add(info.id);
                     failedErrorList.add(NExceptions.ofUncheckedException(ex));
                     if (session.isPlainTrace()) {
-                        if (!NIO.of().getDefaultTerminal().ask()
+                        if (!NIO.of().defaultTerminal().ask()
                                 .forBoolean(NMsg.ofC("%s %s and its dependencies... Continue installation?",
                                         NMsg.ofStyledError("failed to install"),
                                         info.id))
@@ -278,7 +278,7 @@ public class InstallHelper {
                     );
             failedIdList.add(info.id);
             if (NSession.of().isPlainTrace()) {
-                if (!NIO.of().getDefaultTerminal().ask()
+                if (!NIO.of().defaultTerminal().ask()
                         .forBoolean(NMsg.ofC("%s %s and its dependencies... Continue installation?",
                                 NMsg.ofStyledError("failed to install"),
                                 info.id))

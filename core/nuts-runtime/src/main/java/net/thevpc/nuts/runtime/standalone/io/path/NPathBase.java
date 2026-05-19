@@ -209,7 +209,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public void copyToWriter(Writer other, Charset cs, NPathOption... options) {
-        try (Reader reader = getReader(cs)) {
+        try (Reader reader = asReader(cs)) {
             char[] buffer = new char[BUFFER_SIZE];
             int count;
             while ((count = reader.read(buffer)) > 0) {
@@ -227,7 +227,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public NPath userCache(boolean userCache) {
-        this.omd.setUserCache(userCache);
+        this.omd.userCache(userCache);
         return this;
     }
 
@@ -238,7 +238,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public NPath userTemporary(boolean temporary) {
-        this.omd.setUserTemporary(temporary);
+        this.omd.userTemporary(temporary);
         return this;
     }
 
@@ -472,7 +472,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public Reader getReader(NPathOption... options) {
-        return getReader((Charset) null);
+        return asReader((Charset) null);
     }
 
     @Override
@@ -493,7 +493,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public NContentMetadata metaData() {
-        return omd.getMetaData();
+        return omd.metaData();
     }
 
     @Override

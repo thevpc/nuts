@@ -3,8 +3,6 @@ package net.thevpc.nuts.runtime.standalone.extension;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.net.NConnectionString;
-import net.thevpc.nuts.runtime.standalone.workspace.NFailSafeHelper;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NExecTargetSPI;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -12,7 +10,6 @@ import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NOptional;
 
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,10 +22,10 @@ public class NExtensionUtils {
     );
 
     public static NOptional<NId> ensureExtensionLoadedForProtocol(NConnectionString connectionString) {
-        if (NBlankable.isBlank(connectionString) || NBlankable.isBlank(connectionString.getProtocol())) {
+        if (NBlankable.isBlank(connectionString) || NBlankable.isBlank(connectionString.protocol())) {
             return NOptional.ofNamedEmpty("protocol");
         }
-        return ensureExtensionLoadedForProtocol(connectionString == null ? null : connectionString.getProtocol());
+        return ensureExtensionLoadedForProtocol(connectionString == null ? null : connectionString.protocol());
     }
 
     public static NOptional<NId> ensureExtensionLoadedForProtocol(String protocol) {

@@ -49,19 +49,19 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                         joptions.getAppArgs().toArray(new String[0])
                 );
                 List<String> appArgs;
-                if (o.getApplicationArguments().get().isEmpty()) {
-                    if (o.getSkipWelcome().orElse(false)) {
+                if (o.applicationArguments().get().isEmpty()) {
+                    if (o.skipWelcome().orElse(false)) {
                         return null;
                     }
                     appArgs = Arrays.asList(new String[]{"welcome"});
                 } else {
-                    appArgs = o.getApplicationArguments().get();
+                    appArgs = o.applicationArguments().get();
                 }
                 session.configure(o.build());
                 NExec.of()
                         .addCommand(appArgs)
-                        .addExecutorOptions(o.getExecutorOptions().orNull())
-                        .executionType(o.getExecutionType().orNull())
+                        .addExecutorOptions(o.executorOptions().orNull())
+                        .executionType(o.executionType().orNull())
                         .failFast(true)
                         .run();
                 return null;
@@ -98,7 +98,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                         NWorkspaceOptionsBuilder bootOptions = JavaExecutorComponent.createChildOptions(executionContext);
                         System.setProperty("nuts.boot.args",
                                 NCmdLineWriter.of().setShellFamily(NShellFamily.SH).formatPlain(bootOptions
-                                        .toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))
+                                        .toCmdLine(new NWorkspaceOptionsConfig().compact(true))
                                         .add(id.longName()))
                         );
                         System.setProperty("nuts.args","");

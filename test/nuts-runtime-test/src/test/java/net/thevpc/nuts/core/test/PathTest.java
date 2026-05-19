@@ -401,7 +401,7 @@ public class PathTest {
             return new String[]{"", "", ""};
         }
         NPathNameParts nameParts = p.nameParts();
-        String[] strings = {nameParts.getBaseName(), nameParts.getExtension(), nameParts.getFullExtension()};
+        String[] strings = {nameParts.baseName(), nameParts.extension(), nameParts.fullExtension()};
         return strings;
     }
 

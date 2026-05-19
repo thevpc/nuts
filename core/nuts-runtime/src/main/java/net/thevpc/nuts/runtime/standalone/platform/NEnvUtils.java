@@ -73,7 +73,7 @@ public class NEnvUtils {
             return Collections.singleton(
                     NIdBuilder.of().artifactId(NDesktopEnvironmentFamily.HEADLESS.id()).build());
         }
-        switch (NEnv.of().getOsFamily()) {
+        switch (NEnv.of().osFamily()) {
             case WINDOWS: {
                 return Collections.singleton(NIdBuilder.of().artifactId(NDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build());
             }
@@ -99,12 +99,12 @@ public class NEnvUtils {
             NEnv env,
             boolean allEvenNonInstalled) {
         ArrayList<NShellFamily> shellFamilies = new ArrayList<>();
-        switch (env.getOsFamily()) {
+        switch (env.osFamily()) {
             case UNIX:
             case LINUX:
             case MACOS: {
                 LinkedHashSet<NShellFamily> families = new LinkedHashSet<>();
-                families.add(env.getShellFamily());
+                families.add(env.shellFamily());
                 //add bash with existing rc
                 NShellFamily[] all = {
                         NShellFamily.SH,
@@ -130,10 +130,10 @@ public class NEnvUtils {
             }
             case WINDOWS: {
                 LinkedHashSet<NShellFamily> families = new LinkedHashSet<>();
-                families.add(env.getShellFamily());
+                families.add(env.shellFamily());
                 //add bash with existing rc
                 families.add(NShellFamily.WIN_CMD);
-                if (env.getOs().version().compareTo("7") >= 0) {
+                if (env.os().version().compareTo("7") >= 0) {
                     families.add(NShellFamily.WIN_POWER_SHELL);
                 }
                 shellFamilies.addAll(families);
@@ -173,7 +173,7 @@ public class NEnvUtils {
                 break;
             }
         }
-        switch (env.getOsFamily()) {
+        switch (env.osFamily()) {
             case LINUX: {
                 switch (item) {
                     case DESKTOP: {
@@ -219,7 +219,7 @@ public class NEnvUtils {
     }
 
     public static Path getDesktopPath(NEnv env) {
-        switch (env.getOsFamily()) {
+        switch (env.osFamily()) {
             case LINUX:
             case UNIX:
             case MACOS: {
@@ -286,7 +286,7 @@ public class NEnvUtils {
             // Fall through to OS-specific methods
         }
         String hostName = null;
-        switch (env.getOsFamily()) {
+        switch (env.osFamily()) {
             case WINDOWS: {
                 // Windows: Query network hostname from registry (not COMPUTERNAME!)
                 try {
@@ -319,7 +319,7 @@ public class NEnvUtils {
                 String h = null;
                 try {
                     h = NStringUtils.trim(
-                            (connectionString==null? NPath.of("/etc/hostname"):NPath.of(connectionString.builder().setPath("/etc/hostname").build()))
+                            (connectionString==null? NPath.of("/etc/hostname"):NPath.of(connectionString.builder().path("/etc/hostname").build()))
                             .readString());
                 } catch (Exception e) {
                     //ignore
@@ -335,11 +335,11 @@ public class NEnvUtils {
     }
 
     public static String getMachineName(NEnv env, Function<String[],String> cmdRunner) {
-        switch (env.getOsFamily()) {
+        switch (env.osFamily()) {
             case WINDOWS: {
                 // Windows "Computer name" from System Properties
                 String computerName = env.getEnv("COMPUTERNAME").orNull();
-                return NBlankable.isBlank(computerName) ? env.getHostName() : computerName;
+                return NBlankable.isBlank(computerName) ? env.hostName() : computerName;
             }
             case MACOS: {
                 // macOS "Computer Name" (friendly name shown in System Settings)
@@ -353,7 +353,7 @@ public class NEnvUtils {
                     // fallback below
                 }
                 // Fallback: use hostname without domain suffix
-                String host = env.getHostName();
+                String host = env.hostName();
                 return host != null ? host.split("\\.")[0] : "";
             }
             case LINUX: {
@@ -368,10 +368,10 @@ public class NEnvUtils {
                     // fallback below
                 }
                 // Fallback: static hostname (same as getHostName())
-                return env.getHostName();
+                return env.hostName();
             }
             default:
-                return env.getHostName(); // No distinction on other OSes
+                return env.hostName(); // No distinction on other OSes
         }
     }
 }

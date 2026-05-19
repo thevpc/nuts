@@ -73,7 +73,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     @Override
-    public NIndexStore getIndexStore() {
+    public NIndexStore indexStore() {
         return nIndexStore;
     }
 

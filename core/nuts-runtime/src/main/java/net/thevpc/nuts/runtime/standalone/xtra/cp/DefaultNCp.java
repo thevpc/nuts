@@ -552,7 +552,7 @@ public class DefaultNCp implements NCp {
                     return null;
                 }
             }
-            try (InputStream in = NInputSourceBuilder.of(Files.newInputStream(source)).setInterruptible(true).createInputStream()) {
+            try (InputStream in = NInputSourceBuilder.of(Files.newInputStream(source)).interruptible(true).createInputStream()) {
                 interruptibleInstance = (NInterruptible) in;
                 try (OutputStream out = Files.newOutputStream(target)) {
                     transferTo(in, out);
@@ -566,7 +566,7 @@ public class DefaultNCp implements NCp {
     public long copy(InputStream in, Path target, Set<NPathOption> options)
             throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            in = NInputSourceBuilder.of(in).setInterruptible(true).createInputStream();
+            in = NInputSourceBuilder.of(in).interruptible(true).createInputStream();
             interruptibleInstance = (NInterruptible) in;
             try (OutputStream out = Files.newOutputStream(target)) {
                 return transferTo(in, out);
@@ -578,7 +578,7 @@ public class DefaultNCp implements NCp {
     public long copy(InputStream in, OutputStream out, Set<NPathOption> options)
             throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            in = NInputSourceBuilder.of(in).setInterruptible(true).createInputStream();
+            in = NInputSourceBuilder.of(in).interruptible(true).createInputStream();
             interruptibleInstance = (NInterruptible) in;
             return transferTo(in, out);
         }
@@ -596,7 +596,7 @@ public class DefaultNCp implements NCp {
 
     public long copy(Path source, OutputStream out) throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            try (InputStream in = NInputSourceBuilder.of(Files.newInputStream(source)).setInterruptible(true).createInputStream()) {
+            try (InputStream in = NInputSourceBuilder.of(Files.newInputStream(source)).interruptible(true).createInputStream()) {
                 interruptibleInstance = (NInterruptible) in;
                 try {
                     return transferTo(in, out);

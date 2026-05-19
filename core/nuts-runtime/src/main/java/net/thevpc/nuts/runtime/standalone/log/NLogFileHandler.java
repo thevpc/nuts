@@ -28,11 +28,11 @@ public class NLogFileHandler implements NLogSPI {
     private FileHandler fileHandler;
 
     public static NLogFileHandler create(NLogConfig config, boolean append, Path logFolder) throws IOException, SecurityException {
-        Level level = config.getLogFileLevel();
-        String folder = config.getLogFileBase();
-        String name = config.getLogFileName();
-        int maxSize = config.getLogFileSize();
-        int count = config.getLogFileCount();
+        Level level = config.logFileLevel();
+        String folder = config.logFileBase();
+        String name = config.logFileName();
+        int maxSize = config.logFileSize();
+        int count = config.logFileCount();
 //        String rootPackage = "net.thevpc.nuts";
         if (level == null) {
             level = Level.INFO;
@@ -106,7 +106,7 @@ public class NLogFileHandler implements NLogSPI {
         Level sessionLogLevel = session.logFileLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {
-                sessionLogLevel = logConfig.getLogFileLevel();
+                sessionLogLevel = logConfig.logFileLevel();
             }
             if (sessionLogLevel == null) {
                 sessionLogLevel = Level.OFF;

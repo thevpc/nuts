@@ -118,9 +118,9 @@ public class CoreFilterUtils {
             (List<NExtensionInformation> base) {
         LinkedHashMap<String, NExtensionInformation> valid = new LinkedHashMap<>();
         for (NExtensionInformation n : base) {
-            NExtensionInformation old = valid.get(n.getId().shortName());
-            if (old == null || old.getId().version().compareTo(n.getId().version()) < 0) {
-                valid.put(n.getId().shortName(), n);
+            NExtensionInformation old = valid.get(n.id().shortName());
+            if (old == null || old.id().version().compareTo(n.id().version()) < 0) {
+                valid.put(n.id().shortName(), n);
             }
         }
         return new ArrayList<>(valid.values());
@@ -167,14 +167,14 @@ public class CoreFilterUtils {
                     if (a.length > 0) {
                         NOsFamily o = NOsFamily.parse(a[0]).orNull();
                         if (o != null) {
-                            if (o != NEnv.of().getOsFamily()) {
+                            if (o != NEnv.of().osFamily()) {
                                 return false;
                             }
                         }
                         if (a.length > 1) {
                             NArchFamily af = NArchFamily.parse(a[1]).orNull();
                             if (af != null) {
-                                if (af != NEnv.of().getArchFamily()) {
+                                if (af != NEnv.of().archFamily()) {
                                     return false;
                                 }
                             }
@@ -239,26 +239,26 @@ public class CoreFilterUtils {
         }
         NEnv env = NEnv.of();
         if (!matchesArch(
-                env.getArchFamily().id(),
+                env.archFamily().id(),
                 envCond.arch()
         )) {
             return false;
         }
         if (!matchesOs(
-                env.getOsFamily().id(),
+                env.osFamily().id(),
                 envCond.os()
         )) {
             return false;
         }
         if (!matchesOsDist(
-                env.getOsDist().toString(),
+                env.osDist().toString(),
                 envCond.osDist()
         )) {
             return false;
         }
         if (currentVMOnLy) {
             if (!matchesPlatform(
-                    env.getJava().toString(),
+                    env.java().toString(),
                     envCond.platform()
             )) {
                 return false;
@@ -273,7 +273,7 @@ public class CoreFilterUtils {
         }
 
         if (!matchesDesktopEnvironment(
-                env.getDesktopEnvironments(),
+                env.desktopEnvironments(),
                 envCond.desktopEnvironment()
         )) {
             return false;
@@ -429,7 +429,7 @@ public class CoreFilterUtils {
             return true;
         }
         for (NExecutionEngineLocation platform : platforms) {
-            NId id = platform.getId();
+            NId id = platform.id();
             if (id != null) {
                 if (matchesPlatform(id.toString(), allCond)) {
                     return true;

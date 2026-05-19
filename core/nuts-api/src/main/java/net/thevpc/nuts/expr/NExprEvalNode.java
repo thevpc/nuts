@@ -3,7 +3,7 @@ package net.thevpc.nuts.expr;
 import net.thevpc.nuts.util.NOptional;
 
 public interface NExprEvalNode {
-    NExprNode getNode();
+    NExprNode node();
 
-    NOptional<Object> getValue();
+    NOptional<Object> value();
 }

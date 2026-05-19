@@ -61,7 +61,7 @@ public interface NLogs extends NComponent {
 
     NLog getLogger(Logger logger);
 
-    NLog getNullLogger();
+    NLog nullLogger();
 
     NLog createCustomLogger(String name, NLogSPI spi);
 
@@ -70,7 +70,7 @@ public interface NLogs extends NComponent {
      *
      * @return terminal logger level
      */
-    Level getTermLevel();
+    Level termLevel();
 
     /**
      * set terminal logger level
@@ -78,14 +78,14 @@ public interface NLogs extends NComponent {
      * @param level new level
      * @return this
      */
-    NLogs setTermLevel(Level level);
+    NLogs termLevel(Level level);
 
     /**
      * return file logger level
      *
      * @return file logger level
      */
-    Level getFileLevel();
+    Level fileLevel();
 
     /**
      * set file logger level
@@ -93,6 +93,6 @@ public interface NLogs extends NComponent {
      * @param level new level
      * @return this
      */
-    NLogs setFileLevel(Level level);
+    NLogs fileLevel(Level level);
 
 }

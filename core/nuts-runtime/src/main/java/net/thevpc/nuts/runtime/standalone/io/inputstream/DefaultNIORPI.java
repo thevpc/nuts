@@ -102,7 +102,7 @@ public class DefaultNIORPI implements NIORPI {
             }
         }
         if (out instanceof NPrintStreamAdapter) {
-            return ((NPrintStreamAdapter) out).basePrintStream().setTerminalMode(expectedMode);
+            return ((NPrintStreamAdapter) out).basePrintStream().terminalMode(expectedMode);
         }
         switch (expectedMode) {
             case DEFAULT:
@@ -118,7 +118,7 @@ public class DefaultNIORPI implements NIORPI {
                 return new NPrintStreamRaw(out, NTerminalMode.INHERITED,
                         null, null,
                         new NPrintStreamBase.Bindings(), term
-                ).setTerminalMode(expectedMode);
+                ).terminalMode(expectedMode);
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported mode %s", expectedMode));
@@ -133,7 +133,7 @@ public class DefaultNIORPI implements NIORPI {
             expectedMode = baseAnsi?NTerminalMode.FORMATTED : NTerminalMode.FILTERED;
         }
         if (out instanceof NPrintStreamAdapter) {
-            return ((NPrintStreamAdapter) out).basePrintStream().setTerminalMode(expectedMode);
+            return ((NPrintStreamAdapter) out).basePrintStream().terminalMode(expectedMode);
         }
         switch (expectedMode) {
             case DEFAULT:
@@ -150,12 +150,12 @@ public class DefaultNIORPI implements NIORPI {
                     return new NPrintStreamRaw(out, NTerminalMode.ANSI,
                             null, null,
                             new NPrintStreamBase.Bindings(), null
-                    ).setTerminalMode(expectedMode);
+                    ).terminalMode(expectedMode);
                 }
                 return new NPrintStreamRaw(out, NTerminalMode.INHERITED,
                         null, null,
                         new NPrintStreamBase.Bindings(), null
-                ).setTerminalMode(expectedMode);
+                ).terminalMode(expectedMode);
             }
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported mode %s", expectedMode));
@@ -187,7 +187,7 @@ public class DefaultNIORPI implements NIORPI {
             return null;
         }
         if (out instanceof NPrintStreamAdapter) {
-            return ((NPrintStreamAdapter) out).basePrintStream().setTerminalMode(mode);
+            return ((NPrintStreamAdapter) out).basePrintStream().terminalMode(mode);
         }
         SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, terminal);
         return ofPrintStream(w, mode, terminal);
@@ -347,7 +347,7 @@ public class DefaultNIORPI implements NIORPI {
             metadata = new DefaultNContentMetadata(NMsg.ofNtf(str), contentLength, null, null, null);
         }
 
-        InputStream inputStreamExt = ofInputSourceBuilder(inputStream).setMetadata(metadata).createInputStream();
+        InputStream inputStreamExt = ofInputSourceBuilder(inputStream).metadata(metadata).createInputStream();
         return new NInputStreamSource(inputStreamExt, null);
     }
 
@@ -391,7 +391,7 @@ public class DefaultNIORPI implements NIORPI {
     @Override
     public NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata) {
         return new OutputTargetExt(NOutputStreamBuilder.of(outputStream)
-                .setMetadata(metadata).createOutputStream(), null);
+                .metadata(metadata).createOutputStream(), null);
     }
 
     @Override
@@ -412,7 +412,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NOutputStreamBuilder ofOutputStreamBuilder(OutputStream base) {
-        return new DefaultNOutputStreamBuilder().setBase(base);
+        return new DefaultNOutputStreamBuilder().base(base);
     }
 
     public NNonBlockingInputStream ofNonBlockingInputStream(InputStream base) {
@@ -424,7 +424,7 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     public NInputSourceBuilder ofInputSourceBuilder(InputStream inputStream) {
-        return new DefaultNInputSourceBuilder().setBase(inputStream);
+        return new DefaultNInputSourceBuilder().base(inputStream);
     }
 
     @Override
@@ -860,17 +860,17 @@ public class DefaultNIORPI implements NIORPI {
 
         @Override
         public InputStream inputStream() {
-            return new ReaderInputStream(inputStreamProvider.getReader(), null);
+            return new ReaderInputStream(inputStreamProvider.reader(), null);
         }
 
         @Override
-        public Reader getReader() {
-            return inputStreamProvider.getReader();
+        public Reader asReader() {
+            return inputStreamProvider.reader();
         }
 
         @Override
-        public Reader getReader(Charset cs) {
-            return inputStreamProvider.getReader();
+        public Reader asReader(Charset cs) {
+            return inputStreamProvider.reader();
         }
     }
 }

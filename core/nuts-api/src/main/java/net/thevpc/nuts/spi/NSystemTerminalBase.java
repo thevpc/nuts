@@ -27,6 +27,7 @@ package net.thevpc.nuts.spi;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.io.NTerminalFormatter;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NMsg;
@@ -85,7 +86,7 @@ public interface NSystemTerminalBase extends NComponent {
      * @return command line language content type (or simple id) used for highlighting (syntax coloring)
      * @since 0.8.3
      */
-    String getCommandHighlighter();
+    NTerminalFormatter getCommandHighlighter();
 
     /**
      * set command line language content type (or simple id) used for highlighting (syntax coloring).
@@ -95,7 +96,7 @@ public interface NSystemTerminalBase extends NComponent {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NSystemTerminalBase setCommandHighlighter(String commandHighlighter);
+    NSystemTerminalBase setCommandHighlighter(NTerminalFormatter commandHighlighter);
 
     Object run(NTerminalCmd command, NPrintStream printStream);
 

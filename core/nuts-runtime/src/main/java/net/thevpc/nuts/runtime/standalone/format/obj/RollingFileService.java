@@ -44,8 +44,8 @@ public class RollingFileService {
         }
         this.fileName = folder.name();
         if (this.fileName.indexOf('#') < 0) {
-            String b = folder.nameParts().getBaseName();
-            String e = folder.nameParts().getExtension();
+            String b = folder.nameParts().baseName();
+            String e = folder.nameParts().extension();
             this.fileName = b + "#" + e;
         }
         char[] t = fileName.toCharArray();

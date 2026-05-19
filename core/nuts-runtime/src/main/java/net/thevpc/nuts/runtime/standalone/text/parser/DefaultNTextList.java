@@ -30,6 +30,9 @@ import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NStream;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 5/23/17.
@@ -208,34 +211,6 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
             pos += childLen;
         }
         return new DefaultNTextList(result.toArray(new NText[0]));
-    }
-
-    @Override
-    public List<NText> split(String separators, boolean keepSeparators) {
-        List<NText> result = new ArrayList<>();
-        NTextBuilder current = NTextBuilder.of();
-
-        for (NText child : getChildren()) {
-            List<NText> parts = child.split(separators, keepSeparators); // recursively split child
-            for (NText part : parts) {
-                String s = part.filteredText();
-                if (keepSeparators && s.length() == 1 && separators.indexOf(s.charAt(0)) >= 0) {
-                    if (current.length() > 0) {
-                        result.add(current.build());
-                        current = NTextBuilder.of();
-                    }
-                    result.add(part); // separator as own element
-                } else {
-                    current.append(part); // normal text
-                }
-            }
-        }
-
-        if (current.length() > 0) {
-            result.add(current.build());
-        }
-
-        return result;
     }
 
     @Override

@@ -173,7 +173,7 @@ public class NExceptionHandler {
         if (getOut() == null) {
             if (getSession() != null) {
                 try {
-                    sessionOut = NIO.of().getSystemTerminal().getErr();
+                    sessionOut = NIO.of().systemTerminal().getErr();
                     if (messageFormatted != null) {
                         messageFormatted = NMsg.ofNtf(NTextBuilder.of().append(messageFormatted, NTextStyle.error()).build());
                     } else {

@@ -30,7 +30,7 @@ public class DefaultNPathMetadata {
         this.path = path;
     }
 
-    public NContentMetadata getMetaData() {
+    public NContentMetadata metaData() {
         return md;
     }
 
@@ -38,7 +38,7 @@ public class DefaultNPathMetadata {
         return userCache;
     }
 
-    public DefaultNPathMetadata setUserCache(boolean userCache) {
+    public DefaultNPathMetadata userCache(boolean userCache) {
         this.userCache = userCache;
         return this;
     }
@@ -47,12 +47,12 @@ public class DefaultNPathMetadata {
         return userTemporary;
     }
 
-    public DefaultNPathMetadata setUserTemporary(boolean userTemporary) {
+    public DefaultNPathMetadata userTemporary(boolean userTemporary) {
         this.userTemporary = userTemporary;
         return this;
     }
 
-    public NOptional<String> getName() {
+    public NOptional<String> name() {
         if (!NBlankable.isBlank(name)) {
             return NOptional.of(name);
         }
@@ -60,63 +60,63 @@ public class DefaultNPathMetadata {
         if (!NBlankable.isBlank(n)) {
             return NOptional.of(n);
         }
-        NMsg m = getMessage().orNull();
+        NMsg m = message().orNull();
         if (m != null) {
             return NOptional.of(m.toString());
         }
         return NOptional.ofNamedEmpty("name");
     }
 
-    public NOptional<NMsg> getMessage() {
+    public NOptional<NMsg> message() {
         return NOptional.ofNamed(message, "message")
                 .orElseGetOptionalOf(() -> NMsg.ofNtf(NObjectWriter.of(path).format(path)))
                 ;
     }
 
-    public NOptional<String> getKind() {
+    public NOptional<String> kind() {
         return NOptional.ofNamed(kind, "kind");
     }
 
-    public NOptional<Long> getContentLength() {
+    public NOptional<Long> contentLength() {
         return NOptional.ofNamed(contentLength, "contentLength")
                 .orElseGetOptionalOf(() -> path.contentLength())
                 ;
     }
 
-    public NOptional<String> getContentType() {
+    public NOptional<String> contentType() {
         return NOptional.ofNamed(contentType, "contentType")
                 .orElseGetOptionalOf(() -> path.contentType())
                 ;
     }
 
-    public NOptional<String> getCharset() {
+    public NOptional<String> charset() {
         return NOptional.ofNamed(charset, "charset")
                 .orElseGetOptionalOf(() -> path.charset())
                 ;
     }
 
 
-    public void setMessage(NMsg message) {
+    public void message(NMsg message) {
         this.message = message;
     }
 
-    public void setKind(String kind) {
+    public void kind(String kind) {
         this.kind = kind;
     }
 
-    public void setName(String name) {
+    public void name(String name) {
         this.name = name;
     }
 
-    public void setContentLength(Long contentLength) {
+    public void contentLength(Long contentLength) {
         this.contentLength = contentLength;
     }
 
-    public void setContentType(String contentType) {
+    public void contentType(String contentType) {
         this.contentType = contentType;
     }
 
-    public void setCharset(String charset) {
+    public void charset(String charset) {
         this.charset = charset;
     }
 
@@ -161,35 +161,35 @@ public class DefaultNPathMetadata {
 
         @Override
         public NOptional<String> name() {
-            return outer.getName();
+            return outer.name();
         }
 
         @Override
         public NContentMetadata name(String name) {
-            outer.setName(name);
+            outer.name(name);
             return this;
         }
 
         @Override
         public NOptional<String> kind() {
-            return outer.getName();
+            return outer.name();
         }
 
         @Override
         public NContentMetadata kind(String userKind) {
-            outer.setKind(userKind);
+            outer.kind(userKind);
             return this;
         }
 
         @Override
         public NContentMetadata message(NMsg message) {
-            outer.setMessage(message);
+            outer.message(message);
             return this;
         }
 
         @Override
         public NOptional<NMsg> message() {
-            return outer.getMessage();
+            return outer.message();
         }
 
         @Override
@@ -199,34 +199,34 @@ public class DefaultNPathMetadata {
 
         @Override
         public NOptional<Long> contentLength() {
-            return outer.getContentLength();
+            return outer.contentLength();
         }
 
         @Override
         public NOptional<String> contentType() {
-            return outer.getContentType();
+            return outer.contentType();
         }
 
         @Override
         public NContentMetadata contentType(String contentType) {
-            outer.setContentType(contentType);
+            outer.contentType(contentType);
             return this;
         }
 
         @Override
         public NContentMetadata contentLength(Long contentLength) {
-            outer.setContentLength(contentLength);
+            outer.contentLength(contentLength);
             return this;
         }
 
         @Override
         public NOptional<String> charset() {
-            return outer.getCharset();
+            return outer.charset();
         }
 
         @Override
         public NContentMetadata charset(String charset) {
-            outer.setCharset(charset);
+            outer.charset(charset);
             return this;
         }
 

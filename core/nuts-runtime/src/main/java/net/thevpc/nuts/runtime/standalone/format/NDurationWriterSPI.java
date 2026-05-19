@@ -17,7 +17,7 @@ public class NDurationWriterSPI implements NObjectWriterSPI {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "duration";
     }
 

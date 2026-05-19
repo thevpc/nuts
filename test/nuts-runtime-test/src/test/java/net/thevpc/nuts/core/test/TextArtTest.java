@@ -58,12 +58,12 @@ public class TextArtTest {
         NOut.println(art.getImageRenderer("pixel:standard").get().setFontSize(20).setOutputColumns(60).render(text));
         for (NTextArtRenderer renderer : art.getRenderers()) {
             NOut.println("----------------------------------------------------------------------------------------");
-            NOut.println(renderer.getName());
+            NOut.println(renderer.name());
             NOut.println("----------------------------------------------------------------------------------------");
             if (renderer instanceof NTextArtImageRenderer) {
-                NOut.println(((NTextArtImageRenderer) renderer).setOutputColumns(0).render(NText.of(renderer.getName())));
+                NOut.println(((NTextArtImageRenderer) renderer).setOutputColumns(0).render(NText.of(renderer.name())));
             } else if (renderer instanceof NTextArtTextRenderer) {
-                NOut.println(((NTextArtTextRenderer) renderer).render(NText.of(renderer.getName())));
+                NOut.println(((NTextArtTextRenderer) renderer).render(NText.of(renderer.name())));
             }
         }
     }
@@ -78,12 +78,12 @@ public class TextArtTest {
         NOut.println(art.getImageRenderer("pixel:standard").get().setFontSize(20).setOutputColumns(60).render(text));
         for (NTextArtRenderer renderer : art.getRenderers()) {
             NOut.println("----------------------------------------------------------------------------------------");
-            NOut.println(renderer.getName());
+            NOut.println(renderer.name());
             NOut.println("----------------------------------------------------------------------------------------");
             if (renderer instanceof NTextArtImageRenderer) {
-                NOut.println(((NTextArtImageRenderer) renderer).setOutputColumns(0).render(NText.of(renderer.getName())));
+                NOut.println(((NTextArtImageRenderer) renderer).setOutputColumns(0).render(NText.of(renderer.name())));
             } else if (renderer instanceof NTextArtTextRenderer) {
-                NOut.println(((NTextArtTextRenderer) renderer).render(NText.of(renderer.getName())));
+                NOut.println(((NTextArtTextRenderer) renderer).render(NText.of(renderer.name())));
             }
         }
     }
@@ -151,7 +151,7 @@ public class TextArtTest {
                 .addRow(NText.of("adam\nwas\nhere"), NText.ofStyled("active", NTextStyle.italic()))
                 .addRow(NText.of("eve"), NText.ofStyled("inactive", NTextStyle.success()));
         for (NTextArtTableRenderer renderer : art.getTableRenderers()) {
-            NOut.println(renderer.getName() + "::");
+            NOut.println(renderer.name() + "::");
 //            NOut.println(art.getDefaultTextRenderer().get().render(NText.of(renderer.getName())));
             NOut.println(renderer.render(table));
         }
@@ -248,7 +248,7 @@ public class TextArtTest {
                     .addRow(NText.of("adam\nwas\nhere"), NText.ofStyled("active", NTextStyle.italic()))
                     .addRow(NText.of("eve"), NText.ofStyled("inactive", NTextStyle.success()));
             for (NTextArtTableRenderer renderer : art.getTableRenderers()) {
-                NOut.println(renderer.getName() + "::");
+                NOut.println(renderer.name() + "::");
 //            NOut.println(art.getDefaultTextRenderer().get().render(NText.of(renderer.getName())));
                 NOut.println(renderer.render(table));
             }

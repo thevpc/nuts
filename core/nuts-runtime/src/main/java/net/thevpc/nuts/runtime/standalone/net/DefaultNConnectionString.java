@@ -50,7 +50,7 @@ public class DefaultNConnectionString implements NConnectionString {
 
     @Override
     public NConnectionString normalize() {
-        return builder().setNormalized(true).build();
+        return builder().normalized(true).build();
     }
 
     @Override
@@ -71,52 +71,52 @@ public class DefaultNConnectionString implements NConnectionString {
     }
 
     @Override
-    public String getProtocol() {
+    public String protocol() {
         return protocol;
     }
 
     @Override
-    public String getUserName() {
+    public String userName() {
         return userName;
     }
 
     @Override
-    public String getPassword() {
+    public String password() {
         return password;
     }
 
     @Override
-    public String getHost() {
+    public String host() {
         return host;
     }
 
     @Override
-    public String getPort() {
+    public String port() {
         return port;
     }
 
     @Override
-    public String getPath() {
+    public String path() {
         return path;
     }
 
     @Override
-    public String getQueryString() {
+    public String queryString() {
         return queryString;
     }
 
     @Override
-    public NOptional<Map<String, List<String>>> getQueryMap() {
+    public NOptional<Map<String, List<String>>> queryMap() {
         return NOptional.ofNamed(queryMap, "queryMap");
     }
 
     @Override
-    public NConnectionString getRoot() {
-        return builder().setPath("/").build();
+    public NConnectionString root() {
+        return builder().path("/").build();
     }
 
     @Override
-    public NConnectionString getParent() {
+    public NConnectionString parent() {
         String ppath = path;
         if (NBlankable.isBlank(ppath) || "/".equals(ppath)) {
             return null;
@@ -125,7 +125,7 @@ public class DefaultNConnectionString implements NConnectionString {
             ppath = ppath.substring(0, ppath.length() - 1);
         }
         if (ppath.isEmpty()) {
-            return builder().setPath("/").build();
+            return builder().path("/").build();
         }
         int i = ppath.lastIndexOf('/');
         if (i <= 0) {
@@ -133,7 +133,7 @@ public class DefaultNConnectionString implements NConnectionString {
         } else {
             ppath = ppath.substring(0, i + 1);
         }
-        return builder().setPath(ppath).build();
+        return builder().path(ppath).build();
     }
 
     public String toString() {
@@ -203,7 +203,7 @@ public class DefaultNConnectionString implements NConnectionString {
     }
 
     @Override
-    public List<String> getNames() {
+    public List<String> names() {
         return NStringUtils.split(path, "/", true, true)
                 .stream().map(s -> s).collect(Collectors.toList());
     }
@@ -228,13 +228,13 @@ public class DefaultNConnectionString implements NConnectionString {
     @Override
     public NConnectionString resolve(String child) {
         if (!NBlankable.isBlank(child)) {
-            return builder().setPath(NStringUtils.pjoin("/", path, child)).build();
+            return builder().path(NStringUtils.pjoin("/", path, child)).build();
         }
         return this;
     }
 
     @Override
     public NConnectionString withPath(String path) {
-        return builder().setPath(path).build();
+        return builder().path(path).build();
     }
 }

@@ -194,7 +194,7 @@ public interface NPrintStream extends NOutputTarget, AutoCloseable {
      * @param other new mode
      * @return a new instance of NutsPrintStream (if the mode changes)
      */
-    NPrintStream setTerminalMode(NTerminalMode other);
+    NPrintStream terminalMode(NTerminalMode other);
 
     NPrintStream run(NTerminalCmd command);
 

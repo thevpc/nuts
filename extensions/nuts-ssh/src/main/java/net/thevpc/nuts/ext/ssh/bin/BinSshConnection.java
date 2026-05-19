@@ -32,11 +32,11 @@ public class BinSshConnection extends SshConnectionBase {
 
     private void init(NConnectionString connectionString) {
         this.connectionString = connectionString;
-        String user = connectionString.getUserName();
-        String host = connectionString.getHost();
-        int port = NLiteral.of(connectionString.getPort()).asInt().orElse(-1);
+        String user = connectionString.userName();
+        String host = connectionString.host();
+        int port = NLiteral.of(connectionString.port()).asInt().orElse(-1);
         String keyFilePath = connectionString.builder().getQueryParam(SshConnection.IDENTITY_FILE).orNull();
-        String keyPassword = connectionString.getPassword();
+        String keyPassword = connectionString.password();
         if (port <= 0) {
             port = 22;
         }
@@ -58,7 +58,7 @@ public class BinSshConnection extends SshConnectionBase {
         sshCommandPrefix.add(user + "@" + host);
         if (false) {
             throw new UncheckedIOException(new IOException("unable to run ssh command (" +
-                    NConnectionStringBuilder.of().setUserName(user).setHost(host).setPort(String.valueOf(port)).setPassword(keyPassword).setQueryString(
+                    NConnectionStringBuilder.of().userName(user).host(host).port(String.valueOf(port)).password(keyPassword).queryString(
                             keyFilePath == null ? null : NStringMapFormat.URL_FORMAT
                                     .format(
                                             NMaps.of(SshConnection.IDENTITY_FILE, keyFilePath)
@@ -97,7 +97,7 @@ public class BinSshConnection extends SshConnectionBase {
     public InputStream getInputStream(String from) {
         NConnectionStringBuilder cbuilder = connectionString.builder();
         String identityFile = cbuilder.getQueryParam(SshConnection.IDENTITY_FILE).orNull();
-        int port = NLiteral.of(connectionString.getPort()).asInt().orElse(-1);
+        int port = NLiteral.of(connectionString.port()).asInt().orElse(-1);
         if (port <= 0) {
             port = 22;
         }
@@ -115,9 +115,9 @@ public class BinSshConnection extends SshConnectionBase {
 
                 // Build remote "host" string including port + user if needed
                 String target = getNConnectionStringBuilder(from)
-                        .setPort(null)
-                        .setQueryMap(null)
-                        .setPath(null)
+                        .port(null)
+                        .queryMap(null)
+                        .path(null)
                         .build()
                         .toString();
 
@@ -152,7 +152,7 @@ public class BinSshConnection extends SshConnectionBase {
                 exec.addCommand("-oIdentityFile", identityFile);
             }
             exec.addCommand("-q"); // quiet
-            exec.addCommand(connectionString.builder().setPort(null).setQueryMap(null).toString());
+            exec.addCommand(connectionString.builder().port(null).queryMap(null).toString());
             exec.addCommand("-"); // output to stdout
                     exec
                     .in(NExecInput.ofNull())
@@ -174,7 +174,7 @@ public class BinSshConnection extends SshConnectionBase {
     }
 
     private NConnectionStringBuilder getNConnectionStringBuilder(String path) {
-        return connectionString.builder().setQueryMap(null).setPath(path);
+        return connectionString.builder().queryMap(null).path(path);
     }
 
     @Override

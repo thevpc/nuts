@@ -82,7 +82,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
             this.cnx = cnx;
             this.client = new RnshHttpClient();
             this.client.setConnectionString(cnx);
-            this.remotePath = NStringUtils.firstNonBlank(cnx.getPath(), "/");
+            this.remotePath = NStringUtils.firstNonBlank(cnx.path(), "/");
         }
 
         @Override
@@ -228,7 +228,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
 
         @Override
         public List<String> getNames(NPath basePath) {
-            return cnx.getNames();
+            return cnx.names();
         }
 
         @Override
@@ -236,12 +236,12 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
             if (isRoot(basePath)) {
                 return basePath;
             }
-            return NPath.of(cnx.getRoot().toString());
+            return NPath.of(cnx.root().toString());
         }
 
         @Override
         public Boolean isRoot(NPath basePath) {
-            return "/".equals(String.valueOf(cnx.getPath()));
+            return "/".equals(String.valueOf(cnx.path()));
         }
 
         @Override
@@ -249,12 +249,12 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
             if (isRoot(basePath)) {
                 return null;
             }
-            return NPath.of(cnx.getParent().toString());
+            return NPath.of(cnx.parent().toString());
         }
 
         @Override
         public String toString() {
-            return cnx.builder().setPath(remotePath).build().toString();
+            return cnx.builder().path(remotePath).build().toString();
         }
 
         @Override

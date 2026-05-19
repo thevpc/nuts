@@ -43,13 +43,13 @@ import java.util.Map;
  */
 public interface NWorkspaceStoredConfig {
 
-    String getName();
+    String name();
 
-    NStoreStrategy getStoreStrategy();
+    NStoreStrategy storeStrategy();
 
-    NStoreStrategy getRepositoryStoreStrategy();
+    NStoreStrategy repositoryStoreStrategy();
 
-    NOsFamily getStoreLayout();
+    NOsFamily storeLayout();
 
     /**
      * all home locations key/value map where keys are in the form "location"
@@ -57,7 +57,7 @@ public interface NWorkspaceStoredConfig {
      *
      * @return home locations mapping
      */
-    Map<NStoreType, String> getStoreLocations();
+    Map<NStoreType, String> storeLocations();
 
     /**
      * all home locations key/value map where keys are in the form
@@ -65,23 +65,23 @@ public interface NWorkspaceStoredConfig {
      *
      * @return home locations mapping
      */
-    Map<NHomeLocation, String> getHomeLocations();
+    Map<NHomeLocation, String> homeLocations();
 
     String getStoreLocation(NStoreType folderType);
 
     String getHomeLocation(NHomeLocation homeLocation);
 
-    NId getApiId();
+    NId apiId();
 
-    NId getRuntimeId();
+    NId runtimeId();
 
-    String getRuntimeDependencies();
+    String runtimeDependencies();
 
-    List<String> getBootRepositories();
+    List<String> bootRepositories();
 
-    String getJavaCommand();
+    String javaCommand();
 
-    String getJavaOptions();
+    String javaOptions();
 
     boolean isSystem();
 }

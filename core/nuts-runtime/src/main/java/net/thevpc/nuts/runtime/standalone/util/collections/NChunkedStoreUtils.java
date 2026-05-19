@@ -42,7 +42,7 @@ public class NChunkedStoreUtils {
     }
 
     public static long chunkNumber(NPath path) {
-        String a = path.nameParts().getBaseName();
+        String a = path.nameParts().baseName();
         int i = 0;
         while (i < a.length() && a.charAt(i) == '0') {
             i++;

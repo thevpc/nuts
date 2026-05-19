@@ -72,7 +72,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
             return NPath.of(d.name()).toAbsolute(repositoriesRoot).toString();
         } else if (d.sourceModel() != null) {
             String n = NAssert.requireNamedNonBlank(
-                    NStringUtils.firstNonBlank(d.sourceModel().getName(), d.sourceModel().getUuid()),
+                    NStringUtils.firstNonBlank(d.sourceModel().name(), d.sourceModel().uuid()),
                     "RepositoryModel name"
             );
             return NPath.of(n).toAbsolute(NWorkspaceExt.of().getConfigModel().getRepositoriesRoot()).toString();

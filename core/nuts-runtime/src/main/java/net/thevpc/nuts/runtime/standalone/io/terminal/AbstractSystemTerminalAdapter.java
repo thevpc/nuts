@@ -5,6 +5,7 @@ import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
+import net.thevpc.nuts.io.NTerminalFormatter;
 import net.thevpc.nuts.runtime.standalone.xtra.time.CProgressBar;
 import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NScorable;
@@ -21,7 +22,6 @@ import java.io.InputStream;
 public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseImpl implements NSystemTerminal {
 
     protected CProgressBar progressBar;
-    private String commandHighlighter;
 
     public AbstractSystemTerminalAdapter() {
         super();
@@ -159,13 +159,13 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     public abstract NSystemTerminalBase base();
 
     @Override
-    public String getCommandHighlighter() {
-        return commandHighlighter;
+    public NTerminalFormatter getCommandHighlighter() {
+        return base().getCommandHighlighter();
     }
 
     @Override
-    public NSystemTerminal setCommandHighlighter(String commandHighlighter) {
-        this.commandHighlighter = commandHighlighter;
+    public NSystemTerminal setCommandHighlighter(NTerminalFormatter commandHighlighter) {
+        base().setCommandHighlighter(commandHighlighter);
         return this;
     }
 

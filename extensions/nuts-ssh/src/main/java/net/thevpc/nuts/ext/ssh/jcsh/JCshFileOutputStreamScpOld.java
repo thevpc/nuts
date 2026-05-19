@@ -31,7 +31,7 @@ public class JCshFileOutputStreamScpOld extends OutputStream {
         NSession session = NSession.of();
         this.connection = SshConnectionPool.of().acquire(path);
         this.mkdirs = mkdirs;
-        this.to = path.getPath();
+        this.to = path.path();
         this.failFast = failFast;
         this.filesize = filesize;
     }

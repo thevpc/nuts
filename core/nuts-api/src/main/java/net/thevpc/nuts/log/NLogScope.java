@@ -44,7 +44,7 @@ public interface NLogScope extends NBlankable {
 
     NMsgSupplier<NMsg> getMessageSuffix();
 
-    NLog getLog();
+    NLog log();
 
     @Override
     boolean isBlank();

@@ -54,7 +54,7 @@ public class DefaultNIO implements NIO {
     public InputStream unwrapInputStream(InputStream in) {
         while (in != null) {
             if (in instanceof InputStreamDelegate) {
-                in = ((InputStreamDelegate) in).getDelegateInputStream();
+                in = ((InputStreamDelegate) in).delegateInputStream();
             } else {
                 break;
             }
@@ -168,23 +168,23 @@ public class DefaultNIO implements NIO {
 //    }
 
     @Override
-    public NSystemTerminal getSystemTerminal() {
+    public NSystemTerminal systemTerminal() {
         return NWorkspaceExt.of().getModel().bootModel.getSystemTerminal();
     }
 
     @Override
-    public NIO setSystemTerminal(NSystemTerminalBase terminal) {
+    public NIO systemTerminal(NSystemTerminalBase terminal) {
         NWorkspaceExt.of().getModel().bootModel.setSystemTerminal(terminal);
         return this;
     }
 
     @Override
-    public NTerminal getDefaultTerminal() {
+    public NTerminal defaultTerminal() {
         return cmodel.getTerminal();
     }
 
     @Override
-    public NIO setDefaultTerminal(NTerminal terminal) {
+    public NIO defaultTerminal(NTerminal terminal) {
         cmodel.setTerminal(terminal);
         return this;
     }

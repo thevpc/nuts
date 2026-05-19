@@ -52,7 +52,7 @@ public class DefaultNLogs implements NLogs {
     }
 
     @Override
-    public NLog getNullLogger() {
+    public NLog nullLogger() {
         return model.getNullLogger();
     }
 
@@ -62,23 +62,23 @@ public class DefaultNLogs implements NLogs {
     }
 
     @Override
-    public Level getTermLevel() {
+    public Level termLevel() {
         return model.getTermLevel();
     }
 
     @Override
-    public NLogs setTermLevel(Level level) {
+    public NLogs termLevel(Level level) {
         model.setTermLevel(level);
         return this;
     }
 
     @Override
-    public Level getFileLevel() {
+    public Level fileLevel() {
         return model.getFileLevel();
     }
 
     @Override
-    public NLogs setFileLevel(Level level) {
+    public NLogs fileLevel(Level level) {
         model.setFileLevel(level);
         return this;
     }

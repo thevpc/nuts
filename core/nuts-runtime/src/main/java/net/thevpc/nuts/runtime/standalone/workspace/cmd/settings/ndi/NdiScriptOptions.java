@@ -133,12 +133,12 @@ public class NdiScriptOptions implements Cloneable {
     public NPath resolveNutsApiJarPath() {
         if (nutsApiJarPath == null) {
             NId nid = resolveNutsApiId();
-            if (getLauncher().getSwitchWorkspaceLocation() == null) {
+            if (getLauncher().switchWorkspaceLocation() == null) {
                 NDefinition apiDef = NSearch.of()
                         .addId(nid).dependencyFilter(NDependencyFilters.of().byRunnable()).latest(true).getResultDefinitions().findFirst().get();
                 nutsApiJarPath = apiDef.content().orNull();
             } else {
-                NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+                NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().switchWorkspaceLocation());
                 nutsApiJarPath = NPath.of(bootConfig.getStoreLocation(nid, NStoreType.LIB));
                 NWorkspace.of().getDefaultIdFilename(nid);
             }
@@ -148,12 +148,12 @@ public class NdiScriptOptions implements Cloneable {
     public NPath resolveNutsAppJarPath() {
         if (nutsAppJarPath == null) {
             NId nid = resolveNutsAppId();
-            if (getLauncher().getSwitchWorkspaceLocation() == null) {
+            if (getLauncher().switchWorkspaceLocation() == null) {
                 NDefinition appDef = NSearch.of()
                         .addId(nid).dependencyFilter(NDependencyFilters.of().byRunnable()).latest(true).getResultDefinitions().findFirst().get();
                 nutsAppJarPath = appDef.content().get();
             } else {
-                NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+                NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().switchWorkspaceLocation());
                 nutsAppJarPath = NPath.of(bootConfig.getStoreLocation(nid, NStoreType.LIB));
                 NWorkspace.of().getDefaultIdFilename(nid);
             }
@@ -172,8 +172,8 @@ public class NdiScriptOptions implements Cloneable {
     public NPath resolveNutsBinFolder() {
         NWorkspaceBootConfig bootConfig = null;
         NId apiId = NWorkspace.of().apiId();
-        if (getLauncher().getSwitchWorkspaceLocation() != null) {
-            bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+        if (getLauncher().switchWorkspaceLocation() != null) {
+            bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().switchWorkspaceLocation());
             return NPath.of(
                     bootConfig.getStoreLocation(apiId, NStoreType.BIN)
             );
@@ -189,8 +189,8 @@ public class NdiScriptOptions implements Cloneable {
                 .distinct(true)
                 .getResultDefinitions()
                 .findSingleton().get().id();
-        if (getLauncher().getSwitchWorkspaceLocation() != null) {
-            bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+        if (getLauncher().switchWorkspaceLocation() != null) {
+            bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().switchWorkspaceLocation());
             return NPath.of(bootConfig.getStoreLocation(apiId, NStoreType.BIN));
         } else {
             return NPath.of(NStoreKey.ofBin(apiId));
@@ -215,7 +215,7 @@ public class NdiScriptOptions implements Cloneable {
     public NId resolveNutsApiId() {
         if (nutsApiId == null) {
             NWorkspace workspace = NWorkspace.of();
-            if (getLauncher().getSwitchWorkspaceLocation() == null) {
+            if (getLauncher().switchWorkspaceLocation() == null) {
                 if (nutsVersion == null) {
                     nutsApiId = workspace.apiId();
                 } else {
@@ -227,7 +227,7 @@ public class NdiScriptOptions implements Cloneable {
                             .findSingleton().get();
                 }
             } else {
-                NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+                NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().switchWorkspaceLocation());
                 NVersion _latestVersion = null;
                 try {
                     _latestVersion = Files.list(
@@ -257,8 +257,8 @@ public class NdiScriptOptions implements Cloneable {
     }
 
     public Path getWorkspaceLocation() {
-        if (getLauncher().getSwitchWorkspaceLocation() != null) {
-            NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+        if (getLauncher().switchWorkspaceLocation() != null) {
+            NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().switchWorkspaceLocation());
             return Paths.get(bootConfig.effectiveWorkspace());
         } else {
             return NWorkspace.of().workspaceLocation().toPath().get();

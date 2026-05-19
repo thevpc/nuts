@@ -290,7 +290,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
         }
 
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 
@@ -308,7 +308,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
     @Override
     public byte[] getDigest(NPath basePath, String algo) {
-        return ref.getDigest();
+        return ref.digest();
     }
 
     @Override

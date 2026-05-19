@@ -3,6 +3,7 @@ package net.thevpc.nuts.net;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 import java.util.Map;
@@ -22,41 +23,49 @@ public interface NConnectionStringBuilder extends NComponent {
                 .create();
     }
 
-    String getUserName();
+    String userName();
 
-    NConnectionStringBuilder setUserName(String userName);
+    @NSetter
+    NConnectionStringBuilder userName(String userName);
 
-    String getPassword();
+    String password();
 
-    NConnectionStringBuilder setPassword(String password);
+    @NSetter
+    NConnectionStringBuilder password(String password);
 
-    String getHost();
+    String host();
 
-    NConnectionStringBuilder setHost(String host);
+    @NSetter
+    NConnectionStringBuilder host(String host);
 
-    NConnectionStringBuilder getRoot();
+    NConnectionStringBuilder root();
 
-    NConnectionStringBuilder getParent();
+    NConnectionStringBuilder parent();
 
-    String getPort();
+    String port();
 
-    NConnectionStringBuilder setPort(String port);
+    @NSetter
+    NConnectionStringBuilder port(String port);
 
-    NConnectionStringBuilder setQueryMap(Map<String, List<String>> queryMap);
+    @NSetter
+    NConnectionStringBuilder queryMap(Map<String, List<String>> queryMap);
 
-    NOptional<Map<String, List<String>>> getQueryMap();
+    NOptional<Map<String, List<String>>> queryMap();
 
-    String getPath();
+    String path();
 
-    NConnectionStringBuilder setPath(String path);
+    @NSetter
+    NConnectionStringBuilder path(String path);
 
-    String getProtocol();
+    String protocol();
 
-    NConnectionStringBuilder setProtocol(String protocol);
+    @NSetter
+    NConnectionStringBuilder protocol(String protocol);
 
     String getQueryString();
 
-    NConnectionStringBuilder setQueryString(String queryString);
+    @NSetter
+    NConnectionStringBuilder queryString(String queryString);
 
     /**
      * @since 0.8.9
@@ -96,7 +105,8 @@ public interface NConnectionStringBuilder extends NComponent {
      *
      * @since  0.8.9
      */
-    NConnectionStringBuilder setNormalized(boolean normalized);
+    @NSetter
+    NConnectionStringBuilder normalized(boolean normalized);
 
     /**
      *
@@ -106,7 +116,7 @@ public interface NConnectionStringBuilder extends NComponent {
 
     NConnectionStringBuilder copy();
 
-    List<String> getNames();
+    List<String> names();
 
     NConnectionStringBuilder resolve(String child);
 

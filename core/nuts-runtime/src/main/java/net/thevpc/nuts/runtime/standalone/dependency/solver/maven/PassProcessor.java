@@ -142,7 +142,7 @@ class PassProcessor {
         final NDependency[] nonMergedDepsList = nonMergedVisitedSet.visitedSet.values().stream().map(NDependencyInfo::getDependency)
                 .toArray(NDependency[]::new);
         return new DefaultNDependencies(
-                mavenNDependencySolver.getName(),
+                mavenNDependencySolver.name(),
                 sourceIds.toArray(new NId[0]), mavenNDependencySolver.getDependencyFilter(),
                 immediates.toArray(new NDependency[0]),
                 nonMergedDepsList,

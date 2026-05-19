@@ -245,7 +245,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 

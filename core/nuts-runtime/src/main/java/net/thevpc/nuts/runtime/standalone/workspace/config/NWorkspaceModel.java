@@ -165,7 +165,7 @@ public class NWorkspaceModel {
     }
 
     public Map<String, String> newSysEnvEmptyMap() {
-        switch (getEnv().getOsFamily()) {
+        switch (getEnv().osFamily()) {
             case WINDOWS: {
                 return NNormalizedStringMapImpl.ofCaseInsensitive();
             }

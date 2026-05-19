@@ -48,7 +48,7 @@ public class NLogConsoleHandler implements NLogSPI {
         Level sessionLogLevel = session.logTermLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {
-                sessionLogLevel = logConfig.getLogTermLevel();
+                sessionLogLevel = logConfig.logTermLevel();
             }
             if (sessionLogLevel == null) {
                 sessionLogLevel = Level.OFF;

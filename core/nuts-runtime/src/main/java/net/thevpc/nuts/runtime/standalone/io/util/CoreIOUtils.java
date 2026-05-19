@@ -407,7 +407,7 @@ public class CoreIOUtils {
         NIO io = NIO.of();
         InputStream ist = NInputSourceBuilder.of(header.inputStream())
                 .tee(p)
-                .setCloseAction(() -> {
+                .closeAction(() -> {
                     if (outPath.exists()) {
                         CachedURL ccu = new CachedURL();
                         ccu.url = path;
@@ -428,7 +428,7 @@ public class CoreIOUtils {
                 })
                 .createInputStream();
         return NInputSourceBuilder.of(ist)
-                .setMetadata(new DefaultNContentMetadata(
+                .metadata(new DefaultNContentMetadata(
                         path,
                         NMsg.ofNtf(NText.ofStyledPath(path)),
                         size, header.contentType(), header.charset(), sourceTypeName
@@ -457,7 +457,7 @@ public class CoreIOUtils {
 
         if (enforceExtension) {
             NPath pp = NPath.of(temp);
-            String ext = pp.nameParts(NPathExtensionType.SHORT).getExtension();
+            String ext = pp.nameParts(NPathExtensionType.SHORT).extension();
             if (ext.isEmpty()) {
                 String ct = NIO.of().probeContentType(temp);
                 if (ct != null) {
@@ -538,7 +538,7 @@ public class CoreIOUtils {
 
     public static InputStream createBytesStream(byte[] bytes, NMsg message, String contentType, String encoding, String kind) {
         return NInputSourceBuilder.of(new ByteArrayInputStream(bytes))
-                .setMetadata(new DefaultNContentMetadata(
+                .metadata(new DefaultNContentMetadata(
                                 message,
                                 (long) bytes.length,
                                 contentType,

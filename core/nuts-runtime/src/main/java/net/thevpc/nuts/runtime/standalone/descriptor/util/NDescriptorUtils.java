@@ -655,31 +655,31 @@ public class NDescriptorUtils {
             }
             switch (s){
                 case "os.detected.name":{
-                    return NEnv.of().getOs().artifactId();
+                    return NEnv.of().os().artifactId();
                 }
                 case "os.detected.version":{
-                    return NEnv.of().getOs().version().toString();
+                    return NEnv.of().os().version().toString();
                 }
                 case "os.detected.os.release":{
-                    return NEnv.of().getOsDist().artifactId();
+                    return NEnv.of().osDist().artifactId();
                 }
                 case "os.detected.release.version":{
-                    return NEnv.of().getOsDist().version().toString();
+                    return NEnv.of().osDist().version().toString();
                 }
                 case "os.detected.arch":{
-                    return NEnv.of().getArch().artifactId();
+                    return NEnv.of().arch().artifactId();
                 }
                 case "os.detected.classifier":{
-                    return NEnv.of().getOs().artifactId()+"-"+ NEnv.of().getArch().artifactId();
+                    return NEnv.of().os().artifactId()+"-"+ NEnv.of().arch().artifactId();
                 }
                 case "os.detected.bitness":{
-                    return String.valueOf(NEnv.of().getArchFamily().getBits());
+                    return String.valueOf(NEnv.of().archFamily().getBits());
                 }
                 case "os.detected.release.like":{
-                    return NEnv.of().getOsDist().properties().get("like");
+                    return NEnv.of().osDist().properties().get("like");
                 }
                 case "os.detected.release.codename":{
-                    return NEnv.of().getOsDist().properties().get("codename");
+                    return NEnv.of().osDist().properties().get("codename");
                 }
             }
             return null;

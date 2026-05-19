@@ -97,7 +97,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public String getUri() {
+    public String uri() {
         return url;
     }
 
@@ -227,7 +227,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     public NWebRequest addCookie(NWebCookie cookie) {
         if (cookie != null) {
-            addHeader("Cookie", cookie.getName() + "=" + cookie.getValue());
+            addHeader("Cookie", cookie.name() + "=" + cookie.value());
         }
         return this;
     }
@@ -239,7 +239,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NHttpMethod getMethod() {
+    public NHttpMethod method() {
         return method;
     }
 
@@ -345,12 +345,12 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public List<String> getHeaders(String name) {
+    public List<String> headers(String name) {
         return headers.getOrEmpty(name);
     }
 
     @Override
-    public Map<String, List<String>> getHeaders() {
+    public Map<String, List<String>> headers() {
         return headers.toMap();
     }
 
@@ -453,7 +453,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     private Map<String, List<String>> _mapFromJsonFile(NPath path) {
-        Map<String, Object> map = NElementReader.ofJson().read(path.getReader(), Map.class);
+        Map<String, Object> map = NElementReader.ofJson().read(path.asReader(), Map.class);
         Map<String, List<String>> newHeaders = new LinkedHashMap<>();
         for (Map.Entry<String, Object> e : map.entrySet()) {
             String k = e.getKey();
@@ -498,7 +498,7 @@ public class NWebRequestImpl implements NWebRequest {
 
 
     @Override
-    public Map<String, List<String>> getParameters() {
+    public Map<String, List<String>> parameters() {
         return parameters;
     }
 
@@ -551,7 +551,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NInputSource getRequestBody() {
+    public NInputSource requestBody() {
         switch (mode) {
             case BODY:
                 return requestBody;
@@ -613,17 +613,17 @@ public class NWebRequestImpl implements NWebRequest {
                         if (parts != null && !parts.isEmpty()) {
                             for (NWebRequestBody part : parts) {
                                 sw.println("--" + boundary);
-                                sw.println("Content-Disposition: " + part.getContentDisposition());
-                                if (!NBlankable.isBlank(part.getContentType())) {
-                                    sw.println("Content-Type: " + part.getContentType());
+                                sw.println("Content-Disposition: " + part.contentDisposition());
+                                if (!NBlankable.isBlank(part.contentType())) {
+                                    sw.println("Content-Type: " + part.contentType());
                                 }
                                 sw.println();
-                                if (part.getBody() != null) {
-                                    try (InputStream tis = part.getBody().inputStream()) {
+                                if (part.body() != null) {
+                                    try (InputStream tis = part.body().inputStream()) {
                                         NIOUtils.copy(tis, sw.tos);
                                     }
-                                } else if (part.getStringValue() != null) {
-                                    sw.println(part.getStringValue());
+                                } else if (part.stringValue() != null) {
+                                    sw.println(part.stringValue());
                                 }
                                 sw.println();
                             }
@@ -732,12 +732,12 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public String getAuthorization() {
+    public String authorization() {
         return getHeader("Authorization");
     }
 
     @Override
-    public String getAuthorizationBearer() {
+    public String authorizationBearer() {
         String b = getHeader("Authorization");
         if (b != null && b.toLowerCase().startsWith("bearer ")) {
             return b.substring("bearer ".length()).trim();
@@ -746,12 +746,12 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public String getContentLanguage() {
+    public String contentLanguage() {
         return getHeader("Content-Language");
     }
 
     @Override
-    public String getContentType() {
+    public String contentType() {
         return getHeader("Content-Type");
     }
 
@@ -856,7 +856,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NDuration getReadTimeout() {
+    public NDuration readTimeout() {
         return readTimeout;
     }
 
@@ -874,7 +874,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NDuration getConnectTimeout() {
+    public NDuration connectTimeout() {
         return connectTimeout;
     }
 
@@ -885,7 +885,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public List<NWebRequestBody> getParts() {
+    public List<NWebRequestBody> parts() {
         return parts;
     }
 
@@ -905,17 +905,17 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequestBody addPart(String name) {
-        return addPart().setName(name);
+        return addPart().name(name);
     }
 
     @Override
     public NWebRequest addPart(String name, String value) {
-        return addPart().setName(name).setStringValue(value).end();
+        return addPart().name(name).stringValue(value).end();
     }
 
     @Override
     public NWebRequest addPart(String name, String fileName, String contentType, NInputSource body) {
-        return addPart().setName(name).setContentType(contentType).setBody(body).end();
+        return addPart().name(name).contentType(contentType).body(body).end();
     }
 
     @Override
@@ -923,20 +923,20 @@ public class NWebRequestImpl implements NWebRequest {
         return cli.run(this);
     }
 
-    public String getEffectiveUrl() {
+    public String effectiveUrl() {
         return cli.formatURL(this, true);
     }
 
     @Override
     public String toString() {
-        return getEffectiveUrl();
+        return effectiveUrl();
     }
 
     @Override
     public NMsg toMsg() {
         return NMsg.ofC("%s %s",
                 method == null ? NHttpMethod.GET : method,
-                NMsg.ofStyledPath(getEffectiveUrl())
+                NMsg.ofStyledPath(effectiveUrl())
         );
     }
 }

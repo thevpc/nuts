@@ -106,7 +106,7 @@ public class NHomeLocation implements NEnum {
      *
      * @return OS family
      */
-    public NOsFamily getOsFamily() {
+    public NOsFamily osFamily() {
         return osFamily;
     }
 
@@ -115,7 +115,7 @@ public class NHomeLocation implements NEnum {
      *
      * @return Store Location
      */
-    public NStoreType getStoreType() {
+    public NStoreType storeType() {
         return storeType;
     }
 

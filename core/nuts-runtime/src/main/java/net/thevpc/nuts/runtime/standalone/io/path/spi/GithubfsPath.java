@@ -341,7 +341,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
             this.p = p;
         }
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 

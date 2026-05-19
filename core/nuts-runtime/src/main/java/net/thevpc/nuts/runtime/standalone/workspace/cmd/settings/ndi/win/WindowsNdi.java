@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.win;
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.io.NPath;
@@ -24,7 +23,7 @@ public class WindowsNdi extends BaseSystemNdi {
     }
 
     protected NShellFamily[] getShellGroups() {
-        Set<NShellFamily> all=new LinkedHashSet<>(NEnv.of().getShellFamilies());
+        Set<NShellFamily> all=new LinkedHashSet<>(NEnv.of().shellFamilies());
         all.retainAll(Arrays.asList(NShellFamily.WIN_CMD, NShellFamily.WIN_POWER_SHELL));
         return all.toArray(new NShellFamily[0]);
     }
@@ -57,8 +56,8 @@ public class WindowsNdi extends BaseSystemNdi {
     protected String createNutsScriptContent(NId fnutsId, NdiScriptOptions options, NShellFamily shellFamily) {
         StringBuilder command = new StringBuilder();
         command.append(getExecFileName("nuts")).append(" ").append(NShellHelper.of(shellFamily).varRef("NUTS_OPTIONS")).append(" ");
-        if (options.getLauncher().getNutsOptions() != null) {
-            for (String o : options.getLauncher().getNutsOptions()) {
+        if (options.getLauncher().nutsOptions() != null) {
+            for (String o : options.getLauncher().nutsOptions()) {
                 command.append(" ").append(o);
             }
         }
@@ -80,7 +79,7 @@ public class WindowsNdi extends BaseSystemNdi {
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new WindowFreeDesktopEntryWriter(
-                NEnv.of().getDesktopPath()==null?null: NPath.of(NEnv.of().getDesktopPath())
+                NEnv.of().desktopPath()==null?null: NPath.of(NEnv.of().desktopPath())
         );
     }
 

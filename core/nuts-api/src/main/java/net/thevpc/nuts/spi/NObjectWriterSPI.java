@@ -37,7 +37,7 @@ import net.thevpc.nuts.io.NPrintStream;
  * @since 0.8.1
  */
 public interface NObjectWriterSPI {
-    String getName();
+    String name();
 
     /**
      * format current value and write result to {@code out} and finally appends

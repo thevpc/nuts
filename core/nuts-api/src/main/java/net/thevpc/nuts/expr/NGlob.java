@@ -36,9 +36,9 @@ public interface NGlob extends NComponent {
         return NExtensions.of(NGlob.class);
     }
 
-    String getSeparator();
+    String separator();
 
-    NGlob setSeparator(String c);
+    NGlob separator(String c);
 
     boolean isGlob(String pattern);
 

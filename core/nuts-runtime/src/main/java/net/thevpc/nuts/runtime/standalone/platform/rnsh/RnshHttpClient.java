@@ -35,7 +35,7 @@ public class RnshHttpClient {
     public String version() {
         return NWebCli.of().POST(resolveUrl("version"))
                 .doWith(this::prepareSecurity)
-                .run().getContentAsString();
+                .run().contentAsString();
     }
 
     public NInputSource getFile(String remotePath) {
@@ -48,7 +48,7 @@ public class RnshHttpClient {
                 .doWith(this::prepareSecurity)
                 .run();
         rethrowError(run);
-        return run.getContent();
+        return run.content();
     }
 
     public void getFile(String remotePath, String localPath) {
@@ -99,14 +99,14 @@ public class RnshHttpClient {
                         .addFormData("content", x.toString())
                         .addFormData("path", toStr.toString())
                         .doWith(this::prepareSecurity)
-                        .run().getContent();
+                        .run().content();
             });
         } else if (fromPathObj.isRegularFile()) {
             NWebCli.of().POST(resolveUrl("put-file"))
                     .addFormData("content", fromPathObj.toString())
                     .addFormData("path", toPathObj.toString())
                     .doWith(this::prepareSecurity)
-                    .run().getContent();
+                    .run().content();
         }
     }
 
@@ -123,11 +123,11 @@ public class RnshHttpClient {
                 .doWith(this::prepareSecurity)
                 .run();
         rethrowError(run);
-        run.getContent();
+        run.content();
     }
 
     private void rethrowError(NWebResponse run) {
-        NHttpCode statusCode = run.getCode();
+        NHttpCode statusCode = run.statusCode();
         if (statusCode.getCode() >= 400) {
             String appError = run.getHeader("X-APP-ERROR").orNull();
             NMsgCode code = null;
@@ -185,7 +185,7 @@ public class RnshHttpClient {
             }
         }
         try {
-            login(connectionString.getUserName(), connectionString.getPassword());
+            login(connectionString.userName(), connectionString.password());
             return true;
         } catch (Exception e) {
             return false;
@@ -212,7 +212,7 @@ public class RnshHttpClient {
                 //
             }
         }
-        login(connectionString.getUserName(), connectionString.getPassword());
+        login(connectionString.userName(), connectionString.password());
         return this;
     }
 
@@ -220,7 +220,7 @@ public class RnshHttpClient {
         if (connectionString == null) {
             return new DefaultNConnectionString();
         }
-        return connectionString.builder().setPassword("***").build();
+        return connectionString.builder().password("***").build();
     }
 
     public static class LoginResult {
@@ -336,43 +336,43 @@ public class RnshHttpClient {
 
     private NConnectionString resolveConnectionString() {
         NConnectionStringBuilder c = connectionString == null ? new DefaultNConnectionStringBuilder() : connectionString.builder();
-        if (NBlankable.isBlank(c.getHost())) {
-            c.setHost("localhost");
+        if (NBlankable.isBlank(c.host())) {
+            c.host("localhost");
         }
-        if (NBlankable.isBlank(c.getPort())) {
-            c.setPort("8899");
+        if (NBlankable.isBlank(c.port())) {
+            c.port("8899");
         }
-         Map<String, List<String>> qm = new LinkedHashMap<>(c.getQueryMap().orElse(new HashMap<>()));
+         Map<String, List<String>> qm = new LinkedHashMap<>(c.queryMap().orElse(new HashMap<>()));
         String context = NOptional.ofFirst(qm.get(CONTEXT_PATH_PARAM)).orElse(null);
         if (NBlankable.isBlank(context)) {
             qm.put(CONTEXT_PATH_PARAM, new ArrayList<>(Arrays.asList("/")));
         } else {
             qm.put(CONTEXT_PATH_PARAM, new ArrayList<>(Arrays.asList(context)));
         }
-        c.setQueryMap(qm);
+        c.queryMap(qm);
         return c.build();
     }
 
     private String resolveUrl(String extra) {
         NConnectionString c = resolveConnectionString();
         DefaultNConnectionStringBuilder c2 = new DefaultNConnectionStringBuilder();
-        String context = NOptional.ofFirst(c.getQueryMap().orElse(new HashMap<>()).get(CONTEXT_PATH_PARAM)).orElse("/");
-        c2.setProtocol("https");
-        switch (c.getProtocol()) {
+        String context = NOptional.ofFirst(c.queryMap().orElse(new HashMap<>()).get(CONTEXT_PATH_PARAM)).orElse("/");
+        c2.protocol("https");
+        switch (c.protocol()) {
             case "rnsh":
             case "rnsh-http": {
-                c2.setProtocol("http");
+                c2.protocol("http");
                 break;
             }
             case "rnshs":
             case "rnsh-https": {
-                c2.setProtocol("https");
+                c2.protocol("https");
                 break;
             }
         }
-        c2.setHost(c.getHost());
-        c2.setPort(c.getPort());
-        c2.setPath(NStringUtils.pjoin("/", context, extra));
+        c2.host(c.host());
+        c2.port(c.port());
+        c2.path(NStringUtils.pjoin("/", context, extra));
         return c2.toString();
     }
 
@@ -462,7 +462,7 @@ public class RnshHttpClient {
                 .doWith(this::prepareSecurity)
                 .run();
         rethrowError(r);
-        NInputSource content = r.getContent();
+        NInputSource content = r.content();
 //        byte[] bytes = content.readBytes();
 //        content=NInputSource.of(bytes);
         return new ExecResult(

@@ -425,7 +425,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
     }
 
     @Override
-    public NPrintStream setTerminalMode(NTerminalMode other) {
+    public NPrintStream terminalMode(NTerminalMode other) {
         if (other == null || other == this.terminalMode()) {
             return this;
         }

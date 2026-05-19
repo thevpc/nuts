@@ -21,22 +21,22 @@ public class DefaultNWorkspaceUpdateResult implements NWorkspaceUpdateResult {
     }
 
     @Override
-    public NUpdateResult getApi() {
+    public NUpdateResult api() {
         return api;
     }
 
     @Override
-    public NUpdateResult getRuntime() {
+    public NUpdateResult runtime() {
         return runtime;
     }
 
     @Override
-    public List<NUpdateResult> getExtensions() {
+    public List<NUpdateResult> extensions() {
         return extensions;
     }
 
     @Override
-    public List<NUpdateResult> getArtifacts() {
+    public List<NUpdateResult> artifacts() {
         return artifacts;
     }
 
@@ -62,11 +62,11 @@ public class DefaultNWorkspaceUpdateResult implements NWorkspaceUpdateResult {
 
     @Override
     public boolean isUpdateAvailable() {
-        return getUpdatesCount() > 0;
+        return updatesCount() > 0;
     }
 
     @Override
-    public List<NUpdateResult> getUpdatable() {
+    public List<NUpdateResult> updatable() {
         List<NUpdateResult> all = new ArrayList<>();
         if (api != null && api.isUpdatable()) {
             all.add(api);
@@ -88,7 +88,7 @@ public class DefaultNWorkspaceUpdateResult implements NWorkspaceUpdateResult {
     }
 
     @Override
-    public List<NUpdateResult> getAllResults() {
+    public List<NUpdateResult> allResults() {
         List<NUpdateResult> all = new ArrayList<>();
         if (api != null) {
             all.add(api);
@@ -102,7 +102,7 @@ public class DefaultNWorkspaceUpdateResult implements NWorkspaceUpdateResult {
     }
 
     @Override
-    public int getUpdatesCount() {
+    public int updatesCount() {
         int c = 0;
         if (api != null && api.isUpdatable()) {
             c++;

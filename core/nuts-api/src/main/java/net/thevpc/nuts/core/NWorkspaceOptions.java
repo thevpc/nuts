@@ -61,13 +61,13 @@ import java.util.function.Supplier;
  */
 public interface NWorkspaceOptions extends Serializable {
 
-    NOptional<NSupportMode> getDesktopLauncher();
+    NOptional<NSupportMode> desktopLauncher();
 
-    NOptional<NSupportMode> getMenuLauncher();
+    NOptional<NSupportMode> menuLauncher();
 
-    NOptional<NSupportMode> getUserLauncher();
+    NOptional<NSupportMode> userLauncher();
 
-    NOptional<NIsolationLevel> getIsolationLevel();
+    NOptional<NIsolationLevel> isolationLevel();
 
     NBootOptionsInfo toBootOptionsInfo();
 
@@ -77,7 +77,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return init launcher
      * @since 0.8.4
      */
-    NOptional<Boolean> getInitLaunchers();
+    NOptional<Boolean> initLaunchers();
 
     /**
      * init scripts
@@ -85,7 +85,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return init scripts
      * @since 0.8.4
      */
-    NOptional<Boolean> getInitScripts();
+    NOptional<Boolean> initScripts();
 
     /**
      * init platforms
@@ -93,7 +93,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return init platforms
      * @since 0.8.4
      */
-    NOptional<Boolean> getInitPlatforms();
+    NOptional<Boolean> initPlatforms();
 
     /**
      * init java
@@ -101,7 +101,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return init java
      * @since 0.8.4
      */
-    NOptional<Boolean> getInitJava();
+    NOptional<Boolean> initJava();
 
     /**
      * nuts api version to boot.
@@ -111,7 +111,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return nuts api version to boot.
      */
-    NOptional<NVersion> getApiVersion();
+    NOptional<NVersion> apiVersion();
 
     /**
      * application arguments.
@@ -120,7 +120,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return application arguments.
      */
-    NOptional<List<String>> getApplicationArguments();
+    NOptional<List<String>> applicationArguments();
 
     /**
      * workspace archetype to consider when creating a new workspace.
@@ -130,7 +130,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return workspace archetype to consider when creating a new workspace.
      */
-    NOptional<String> getArchetype();
+    NOptional<String> archetype();
 
     /**
      * class loader supplier.
@@ -139,7 +139,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return class loader supplier.
      */
-    NOptional<Supplier<ClassLoader>> getClassLoaderSupplier();
+    NOptional<Supplier<ClassLoader>> classLoaderSupplier();
 
     /**
      * confirm mode.
@@ -148,7 +148,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return confirm mode.
      */
-    NOptional<NConfirmationMode> getConfirm();
+    NOptional<NConfirmationMode> confirm();
 
     /**
      * if true no real execution, with dry exec (execute without side effect).
@@ -158,7 +158,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return if true no real execution, with dry exec (execute without side effect).
      */
 
-    NOptional<Boolean> getDry();
+    NOptional<Boolean> dry();
 
     /**
      * if true, show exception stacktrace when error.
@@ -168,7 +168,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return if true, show stacktrace when error.
      */
 
-    NOptional<Boolean> getShowStacktrace();
+    NOptional<Boolean> showStacktrace();
 
     /**
      * workspace creation evaluated time.
@@ -177,7 +177,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return workspace creation evaluated time.
      */
-    NOptional<Instant> getCreationTime();
+    NOptional<Instant> creationTime();
 
     /**
      * extensions to be excluded when opening the workspace.
@@ -186,7 +186,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return extensions to be excluded when opening the workspace.
      */
-    NOptional<List<String>> getExcludedExtensions();
+    NOptional<List<String>> excludedExtensions();
 
     /**
      * execution type.
@@ -195,9 +195,9 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return execution type.
      */
-    NOptional<NExecutionType> getExecutionType();
+    NOptional<NExecutionType> executionType();
 
-    NOptional<NRunAs> getRunAs();
+    NOptional<NRunAs> runAs();
 
     /**
      * extra executor options.
@@ -206,7 +206,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return extra executor options.
      */
-    NOptional<List<String>> getExecutorOptions();
+    NOptional<List<String>> executorOptions();
 
     /**
      * return home location.
@@ -217,7 +217,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @param location location
      * @return home location.
      */
-    NOptional<String> getHomeLocation(NHomeLocation location);
+    NOptional<String> homeLocation(NHomeLocation location);
 
     /**
      * return home locations.
@@ -227,7 +227,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return home locations
      */
-    NOptional<Map<NHomeLocation, String>> getHomeLocations();
+    NOptional<Map<NHomeLocation, String>> homeLocations();
 
     /**
      * java command (or java home) used to run workspace.
@@ -236,7 +236,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return java command (or java home) used to run workspace.
      */
-    NOptional<String> getJavaCommand();
+    NOptional<String> javaCommand();
 
     /**
      * java options used to run workspace.
@@ -245,7 +245,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return java options used to run workspace.
      */
-    NOptional<String> getJavaOptions();
+    NOptional<String> javaOptions();
 
     /**
      * workspace log configuration.
@@ -254,7 +254,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return workspace log configuration.
      */
-    NOptional<NLogConfig> getLogConfig();
+    NOptional<NLogConfig> logConfig();
 
     /**
      * user friendly workspace name.
@@ -264,7 +264,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return user friendly workspace name.
      */
-    NOptional<String> getName();
+    NOptional<String> name();
 
     /**
      * mode used to open workspace.
@@ -273,7 +273,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return mode used to open workspace.
      */
-    NOptional<NOpenMode> getOpenMode();
+    NOptional<NOpenMode> openMode();
 
     /**
      * default output format type.
@@ -282,7 +282,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return default output format type.
      */
-    NOptional<NContentType> getOutputFormat();
+    NOptional<NContentType> outputFormat();
 
     /**
      * default output formation options.
@@ -291,7 +291,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return default output formation options.
      */
-    NOptional<List<String>> getOutputFormatOptions();
+    NOptional<List<String>> outputFormatOptions();
 
     /**
      * credential needed to log into workspace.
@@ -300,7 +300,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return credential needed to log into workspace.
      */
-    NOptional<char[]> getCredential();
+    NOptional<char[]> credential();
 
     /**
      * repository store location strategy to consider when creating new repositories
@@ -312,7 +312,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return repository store location strategy to consider when creating new repositories
      * for a new workspace.
      */
-    NOptional<NStoreStrategy> getRepositoryStoreStrategy();
+    NOptional<NStoreStrategy> repositoryStoreStrategy();
 
     /**
      * nuts runtime id (or version) to boot.
@@ -322,7 +322,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return nuts runtime id (or version) to boot.
      */
-    NOptional<NId> getRuntimeId();
+    NOptional<NId> runtimeId();
 
     /**
      * store location for the given folder.
@@ -344,7 +344,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return store location layout to consider when creating a new workspace.
      */
-    NOptional<NOsFamily> getStoreLayout();
+    NOptional<NOsFamily> storeLayout();
 
     /**
      * store location strategy for creating a new workspace.
@@ -354,7 +354,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return store location strategy for creating a new workspace.
      */
-    NOptional<NStoreStrategy> getStoreStrategy();
+    NOptional<NStoreStrategy> storeStrategy();
 
     /**
      * store locations map to consider when creating a new workspace.
@@ -364,7 +364,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return store locations map to consider when creating a new workspace.
      */
-    NOptional<Map<NStoreType, String>> getStoreLocations();
+    NOptional<Map<NStoreType, String>> storeLocations();
 
     /**
      * terminal mode (inherited, formatted, filtered) to use.
@@ -373,7 +373,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return terminal mode (inherited, formatted, filtered) to use.
      */
-    NOptional<NTerminalMode> getTerminalMode();
+    NOptional<NTerminalMode> terminalMode();
 
     /**
      * repositories to register temporarily when running the workspace.
@@ -382,8 +382,8 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return repositories to register temporarily when running the workspace.
      */
-    NOptional<List<String>> getRepositories();
-    NOptional<List<String>> getBootRepositories();
+    NOptional<List<String>> repositories();
+    NOptional<List<String>> bootRepositories();
 
     /**
      * username to log into when running workspace.
@@ -392,7 +392,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return username to log into when running workspace.
      */
-    NOptional<String> getUserName();
+    NOptional<String> userName();
 
     /**
      * workspace folder location path.
@@ -402,9 +402,9 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return workspace folder location path.
      */
-    NOptional<String> getWorkspace();
+    NOptional<String> workspace();
 
-    NOptional<String> getDebug();
+    NOptional<String> debug();
 
     /**
      * if true consider system repository
@@ -414,7 +414,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return if true consider system repository
      */
 
-    NOptional<Boolean> getSystem();
+    NOptional<Boolean> system();
 
     /**
      * if true consider GUI/Swing mode
@@ -424,7 +424,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return if true consider GUI/Swing mode
      */
 
-    NOptional<Boolean> getGui();
+    NOptional<Boolean> gui();
 
     /**
      * if true, workspace were invoked from parent process and hence inherits its options.
@@ -434,7 +434,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return if true, workspace were invoked from parent process and hence inherits its options.
      */
 
-    NOptional<Boolean> getInherited();
+    NOptional<Boolean> inherited();
 
     /**
      * if true, workspace configuration are non modifiable.
@@ -445,7 +445,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return if true, workspace configuration are non modifiable.
      */
 
-    NOptional<Boolean> getReadOnly();
+    NOptional<Boolean> readOnly();
 
     /**
      * if true, boot, cache and temp folder are deleted.
@@ -455,7 +455,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return if true, boot, cache and temp folder are deleted.
      */
 
-    NOptional<Boolean> getRecover();
+    NOptional<Boolean> recover();
 
     /**
      * if true, workspace will be reset (all configuration and runtime files deleted).
@@ -465,15 +465,15 @@ public interface NWorkspaceOptions extends Serializable {
      * @return if true, workspace will be reset (all configuration and runtime files deleted).
      */
 
-    NOptional<Boolean> getReset();
+    NOptional<Boolean> reset();
 
-    NOptional<Boolean> getResetHard();
-
-
-    NOptional<Boolean> getCommandVersion();
+    NOptional<Boolean> resetHard();
 
 
-    NOptional<Boolean> getCommandHelp();
+    NOptional<Boolean> commandVersion();
+
+
+    NOptional<Boolean> commandHelp();
 
     /**
      * if true, do not install nuts companion tools upon workspace creation.
@@ -483,7 +483,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return if true, do not install nuts companion tools upon workspace creation.
      */
 
-    NOptional<Boolean> getInstallCompanions();
+    NOptional<Boolean> installCompanions();
 
     /**
      * if true, do not run welcome when no application arguments were resolved.
@@ -496,7 +496,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @since 0.5.5
      */
 
-    NOptional<Boolean> getSkipWelcome();
+    NOptional<Boolean> skipWelcome();
 
 
     /**
@@ -509,7 +509,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return out line prefix
      * @since 0.8.0
      */
-    NOptional<String> getOutLinePrefix();
+    NOptional<String> outLinePrefix();
 
     /**
      * if not null ant not empty, this prefix will be prefixed to error stream
@@ -521,7 +521,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return err line prefix
      * @since 0.8.0
      */
-    NOptional<String> getErrLinePrefix();
+    NOptional<String> errLinePrefix();
 
     /**
      * if true, do not bootstrap workspace after reset/recover.
@@ -535,7 +535,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @since 0.6.0
      */
 
-    NOptional<Boolean> getSkipBoot();
+    NOptional<Boolean> skipBoot();
 
     /**
      * when true, extra trace user-friendly information is written to standard output.
@@ -545,7 +545,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return when true, extra trace user-friendly information is written to standard output.
      */
 
-    NOptional<Boolean> getTrace();
+    NOptional<Boolean> trace();
 
     /**
      * return progress options string.
@@ -556,7 +556,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return when true, extra trace user-friendly information is written to standard output.
      */
-    NOptional<String> getProgressOptions();
+    NOptional<String> progressOptions();
 
     /**
      * return dependency solver Name
@@ -564,7 +564,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return dependency solver Name
      * @since 0.8.3
      */
-    NOptional<String> getDependencySolver();
+    NOptional<String> dependencySolver();
 
     /**
      * when true, use cache
@@ -574,7 +574,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return use cache when true
      */
 
-    NOptional<Boolean> getCached();
+    NOptional<Boolean> cached();
 
     /**
      * when true, use index
@@ -583,7 +583,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return use index when true
      */
-    NOptional<Boolean> getIndexed();
+    NOptional<Boolean> indexed();
 
     /**
      * when true, use transitive repositories
@@ -593,7 +593,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return use transitive repositories when true
      */
 
-    NOptional<Boolean> getTransitive();
+    NOptional<Boolean> transitive();
 
     /**
      * when true, application is running in bot (robot) mode. No interaction or trace is allowed.
@@ -603,19 +603,19 @@ public interface NWorkspaceOptions extends Serializable {
      * @return application is running in bot (robot) mode. No interaction or trace is allowed.
      */
 
-    NOptional<Boolean> getBot();
+    NOptional<Boolean> bot();
 
     /**
      * @since 0.8.5
      * @return application is running in preview mode (using preview repositories)
      */
-    NOptional<Boolean> getPreviewRepo();
+    NOptional<Boolean> previewRepo();
 
     /**
      * @since 0.8.5
      * @return workspace is running as shared Workspace instance (Singleton)
      */
-    NOptional<Boolean> getSharedInstance();
+    NOptional<Boolean> sharedInstance();
 
     /**
      * default fetch strategy
@@ -624,7 +624,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return use transitive repositories when true
      */
-    NOptional<NFetchStrategy> getFetchStrategy();
+    NOptional<NFetchStrategy> fetchStrategy();
 
 
     /**
@@ -636,7 +636,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return default standard input or null
      */
-    NOptional<InputStream> getStdin();
+    NOptional<InputStream> stdin();
 
     /**
      * default standard output. when null, use {@code System.out}
@@ -647,7 +647,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return default standard output or null
      */
-    NOptional<PrintStream> getStdout();
+    NOptional<PrintStream> stdout();
 
     /**
      * default standard error. when null, use {@code System.err}
@@ -658,7 +658,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return default standard error or null
      */
-    NOptional<PrintStream> getStderr();
+    NOptional<PrintStream> stderr();
 
     /**
      * executor service used to create worker threads. when null, use default.
@@ -669,7 +669,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return executor service used to create worker threads. when null, use default.
      */
-    NOptional<ExecutorService> getExecutorService();
+    NOptional<ExecutorService> executorService();
 
     /**
      * return expired date/time or zero if not set.
@@ -678,15 +678,15 @@ public interface NWorkspaceOptions extends Serializable {
      * @return expired date/time or zero
      * @since 0.8.0
      */
-    NOptional<Instant> getExpireTime();
+    NOptional<Instant> expireTime();
 
-    NOptional<Boolean> getSkipErrors();
+    NOptional<Boolean> skipErrors();
 
-    NOptional<Boolean> getSwitchWorkspace();
+    NOptional<Boolean> switchWorkspace();
 
-    NOptional<List<NMsg>> getErrors();
+    NOptional<List<NMsg>> errors();
 
-    NOptional<List<String>> getCustomOptions();
+    NOptional<List<String>> customOptions();
 
     /**
      * locale
@@ -694,7 +694,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return session locale
      * @since 0.8.1
      */
-    NOptional<String> getLocale();
+    NOptional<String> locale();
 
     /**
      * theme
@@ -702,7 +702,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return session locale
      * @since 0.8.1
      */
-    NOptional<String> getTheme();
+    NOptional<String> theme();
 
     NWorkspaceOptionsBuilder builder();
 

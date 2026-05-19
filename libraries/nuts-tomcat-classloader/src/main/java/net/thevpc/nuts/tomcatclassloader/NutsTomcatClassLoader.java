@@ -132,13 +132,13 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
             workspace
                     = Nuts.openWorkspace(
                         NWorkspaceOptionsBuilder.of()
-                                    .setRuntimeId(getWorkspaceBootRuntime())
-                                    .setClassLoaderSupplier(this::getParent)
-                                    .setOpenMode(NOpenMode.OPEN_OR_CREATE)
-                                    .setWorkspace(getWorkspaceLocation())
-                                    .setArchetype(getWorkspaceArchetype())
+                                    .runtimeId(getWorkspaceBootRuntime())
+                                    .classLoaderSupplier(this::getParent)
+                                    .openMode(NOpenMode.OPEN_OR_CREATE)
+                                    .workspace(getWorkspaceLocation())
+                                    .archetype(getWorkspaceArchetype())
 //                                    .setExcludedRepositories(splitString(getWorkspaceExcludedRepositories(), ";"))
-                                    .setExcludedExtensions(
+                                    .excludedExtensions(
                                             Arrays.asList(splitString(getWorkspaceExcludedExtensions(), " ;"))
                                     ).build()
                     );

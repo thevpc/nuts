@@ -42,7 +42,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
 
     public static SystemNdi createNdi() {
         SystemNdi ndi = null;
-        switch (NEnv.of().getOsFamily()) {
+        switch (NEnv.of().osFamily()) {
             case LINUX:
             case UNIX: {
 
@@ -92,64 +92,64 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 }
                 case "-d":
                 case "--workdir": {
-                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().setWorkingDirectory(v.stringValue())).anyMatch();
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().workingDirectory(v.stringValue())).anyMatch();
                     break;
                 }
                 case "--icon": {
-                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().setIcon(v.stringValue())).anyMatch();
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().icon(v.stringValue())).anyMatch();
                     break;
                 }
                 case "--menu": {
-                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().setCreateMenuLauncher(parseCond(v.stringValue()))).anyMatch();
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().createMenuLauncher(parseCond(v.stringValue()))).anyMatch();
                     break;
                 }
                 case "--menu-category": {
                     cmdLine.matcher().matchEntry((v) -> {
-                        d.options.getLauncher().setMenuCategory(v.stringValue());
-                        if (d.options.getLauncher().getMenuCategory() != null && !d.options.getLauncher().getMenuCategory().isEmpty()) {
-                            if (d.options.getLauncher().getCreateMenuLauncher() == NSupportMode.NEVER) {
-                                d.options.getLauncher().setCreateMenuLauncher(NSupportMode.PREFERRED);
+                        d.options.getLauncher().menuCategory(v.stringValue());
+                        if (d.options.getLauncher().menuCategory() != null && !d.options.getLauncher().menuCategory().isEmpty()) {
+                            if (d.options.getLauncher().createMenuLauncher() == NSupportMode.NEVER) {
+                                d.options.getLauncher().createMenuLauncher(NSupportMode.PREFERRED);
                             }
                         }
                     }).anyMatch();
                     break;
                 }
                 case "--desktop": {
-                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().setCreateDesktopLauncher(parseCond(v.stringValue()))).anyMatch();
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().createDesktopLauncher(parseCond(v.stringValue()))).anyMatch();
                     break;
                 }
                 case "--desktop-name": {
                     cmdLine.matcher().matchEntry((v) -> {
-                        d.options.getLauncher().setShortcutName(v.stringValue());
-                        if (d.options.getLauncher().getCreateDesktopLauncher() == NSupportMode.NEVER) {
-                            d.options.getLauncher().setCreateDesktopLauncher(NSupportMode.PREFERRED);
+                        d.options.getLauncher().shortcutName(v.stringValue());
+                        if (d.options.getLauncher().createDesktopLauncher() == NSupportMode.NEVER) {
+                            d.options.getLauncher().createDesktopLauncher(NSupportMode.PREFERRED);
                         }
                     }).anyMatch();
                     break;
                 }
                 case "--menu-name": {
                     cmdLine.matcher().matchEntry((v) -> {
-                        d.options.getLauncher().setShortcutName(v.stringValue());
-                        if (d.options.getLauncher().getCreateDesktopLauncher() == NSupportMode.NEVER) {
-                            d.options.getLauncher().setCreateMenuLauncher(NSupportMode.PREFERRED);
+                        d.options.getLauncher().shortcutName(v.stringValue());
+                        if (d.options.getLauncher().createDesktopLauncher() == NSupportMode.NEVER) {
+                            d.options.getLauncher().createMenuLauncher(NSupportMode.PREFERRED);
                         }
                     }).anyMatch();
                     break;
                 }
                 case "--shortcut-name": {
                     cmdLine.matcher().matchEntry((v) -> {
-                        d.options.getLauncher().setShortcutName(v.stringValue());
-                        if (d.options.getLauncher().getCreateUserLauncher() == NSupportMode.NEVER) {
-                            d.options.getLauncher().setCreateUserLauncher(NSupportMode.PREFERRED);
+                        d.options.getLauncher().shortcutName(v.stringValue());
+                        if (d.options.getLauncher().createUserLauncher() == NSupportMode.NEVER) {
+                            d.options.getLauncher().createUserLauncher(NSupportMode.PREFERRED);
                         }
                     }).anyMatch();
                     break;
                 }
                 case "--shortcut-path": {
                     cmdLine.matcher().matchEntry((v) -> {
-                        d.options.getLauncher().setCustomShortcutPath(v.stringValue());
-                        if (d.options.getLauncher().getCreateUserLauncher() == NSupportMode.NEVER) {
-                            d.options.getLauncher().setCreateUserLauncher(NSupportMode.PREFERRED);
+                        d.options.getLauncher().customShortcutPath(v.stringValue());
+                        if (d.options.getLauncher().createUserLauncher() == NSupportMode.NEVER) {
+                            d.options.getLauncher().createUserLauncher(NSupportMode.PREFERRED);
                         }
                     }).anyMatch();
                     break;
@@ -157,16 +157,16 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 case "-x":
                 case "--external":
                 case "--spawn": {
-                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--spawn")).anyMatch();
+                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().nutsOptions().add("--spawn")).anyMatch();
                     break;
                 }
                 case "-b":
                 case "--embedded": {
-                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--embedded")).anyMatch();
+                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().nutsOptions().add("--embedded")).anyMatch();
                     break;
                 }
                 case "--terminal": {
-                    cmdLine.matcher().matchFlag((v) -> d.options.getLauncher().setOpenTerminal(v.booleanValue())).anyMatch();
+                    cmdLine.matcher().matchFlag((v) -> d.options.getLauncher().openTerminal(v.booleanValue())).anyMatch();
                     break;
                 }
                 case "-e":
@@ -175,24 +175,24 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--system": {
-                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--system")).anyMatch();
+                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().nutsOptions().add("--system")).anyMatch();
                     break;
                 }
                 case "--current-user": {
-                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--current-user")).anyMatch();
+                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().nutsOptions().add("--current-user")).anyMatch();
                     break;
                 }
                 case "--as-root": {
-                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().getNutsOptions().add("--as-root")).anyMatch();
+                    cmdLine.matcher().matchTrueFlag((v) -> d.options.getLauncher().nutsOptions().add("--as-root")).anyMatch();
                     break;
                 }
                 case "--run-as": {
-                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().getNutsOptions().add("--run-as=" + v)).anyMatch();
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().nutsOptions().add("--run-as=" + v)).anyMatch();
                     break;
                 }
                 case "-X":
                 case "--exec-options": {
-                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().getNutsOptions().add("--exec-options=" + v)).anyMatch();
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().nutsOptions().add("--exec-options=" + v)).anyMatch();
                     break;
                 }
                 case "-i":
@@ -212,7 +212,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 case "--companions": {
                     cmdLine.matcher().matchTrueFlag((v) -> {
                         session.confirm(NConfirmationMode.YES);
-                        for (NId companion : NExtensions.of().getCompanionIds()) {
+                        for (NId companion : NExtensions.of().companionIds()) {
                             d.idsToInstall.add(NSearch.of().addId(companion).latest(true).getResultIds().findFirst().get().longName());
                             d.missingAnyArgument = false;
                         }
@@ -220,7 +220,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--switch": {
-                    cmdLine.matcher().matchFlag((v) -> d.options.getLauncher().setSwitchWorkspace(v.booleanValue())).anyMatch();
+                    cmdLine.matcher().matchFlag((v) -> d.options.getLauncher().switchWorkspace(v.booleanValue())).anyMatch();
                     break;
                 }
                 case "--ignore-unsupported-os": {
@@ -229,12 +229,12 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 }
                 case "-w":
                 case "--workspace": {
-                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().setSwitchWorkspaceLocation(v.stringValue())).anyMatch();
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().switchWorkspaceLocation(v.stringValue())).anyMatch();
                     break;
                 }
                 case "-n":
                 case "--name": {
-                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().setCustomScriptPath(v.stringValue())).anyMatch();
+                    cmdLine.matcher().matchEntry((v) -> d.options.getLauncher().customScriptPath(v.stringValue())).anyMatch();
                     break;
                 }
                 default: {
@@ -258,7 +258,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NEnv.of().getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NEnv.of().os()), NExecutionException.ERROR_2);
             }
             if (!d.idsToInstall.isEmpty()) {
                 printResults(ndi.addScript(d.options, d.idsToInstall.toArray(new String[0])));
@@ -323,7 +323,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NEnv.of().getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NEnv.of().os()), NExecutionException.ERROR_2);
             }
             boolean subTrace = session.isTrace();
             if (!session.isPlainTrace()) {
@@ -436,15 +436,15 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(NMsg.ofC("platform not supported : %s ", NEnv.of().getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s ", NEnv.of().os()), NExecutionException.ERROR_2);
             }
             if (d.switchWorkspaceLocation != null || d.switchWorkspaceApi != null) {
                 NdiScriptOptions oo = new NdiScriptOptions();
-                oo.getLauncher().setSwitchWorkspaceLocation(d.switchWorkspaceLocation);
-                oo.getLauncher().setCreateDesktopLauncher(d.createDesktop);
-                oo.getLauncher().setMenuCategory(d.menuCategory);
-                oo.getLauncher().setCreateMenuLauncher(d.createMenu);
-                oo.getLauncher().setShortcutName(d.shortcutName);
+                oo.getLauncher().switchWorkspaceLocation(d.switchWorkspaceLocation);
+                oo.getLauncher().createDesktopLauncher(d.createDesktop);
+                oo.getLauncher().menuCategory(d.menuCategory);
+                oo.getLauncher().createMenuLauncher(d.createMenu);
+                oo.getLauncher().shortcutName(d.shortcutName);
                 ndi.switchWorkspace(oo);
             }
         }

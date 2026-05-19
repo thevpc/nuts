@@ -49,7 +49,7 @@ public interface NPs extends NComponent, NConnectionStringAware {
      *
      * @return process type to consider. Supported 'java'
      */
-    NExecutionEngineFamily getPlatformFamily();
+    NExecutionEngineFamily platformFamily();
 
     /**
      * set process type to consider.
@@ -58,12 +58,12 @@ public interface NPs extends NComponent, NConnectionStringAware {
      * @param processType new type
      * @return return {@code this} instance
      */
-    NPs setPlatformFamily(NExecutionEngineFamily processType);
+    NPs platformFamily(NExecutionEngineFamily processType);
 
     /**
-     * list all processes of type {@link #getPlatformFamily()}
+     * list all processes of type {@link #platformFamily()}
      *
-     * @return list all processes of type {@link #getPlatformFamily()}
+     * @return list all processes of type {@link #platformFamily()}
      */
     NStream<NPsInfo> getResultList();
 

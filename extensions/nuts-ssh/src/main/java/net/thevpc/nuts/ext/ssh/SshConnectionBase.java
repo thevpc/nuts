@@ -378,7 +378,7 @@ public abstract class SshConnectionBase implements SshConnection {
             }
         }
         if (getProbedInfo() != null) {
-            shellFamily = getProbedInfo().getShellFamily();
+            shellFamily = getProbedInfo().shellFamily();
         }
         return shellFamily;
     }
@@ -393,7 +393,7 @@ public abstract class SshConnectionBase implements SshConnection {
     private NOsFamily resolveOsFamily() {
         NOsFamily nOsFamily = NOsFamily.LINUX;
         if (getProbedInfo() != null) {
-            nOsFamily = getProbedInfo().getOsFamily();
+            nOsFamily = getProbedInfo().osFamily();
         }
         return nOsFamily;
     }

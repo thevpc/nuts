@@ -66,22 +66,22 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         }
         NEnv environment = NEnv.of();
         if (agent.getArch() == null) {
-            agent.setArch(environment.getArch().toString());
+            agent.setArch(environment.arch().toString());
         }
         if (agent.getOs() == null) {
-            agent.setOs(environment.getOs().toString());
+            agent.setOs(environment.os().toString());
         }
         if (agent.getOsDist() == null) {
-            agent.setOsDist(environment.getOsDist().toString());
+            agent.setOsDist(environment.osDist().toString());
         }
         if (agent.getDesktop() == null) {
-            agent.setDesktop(environment.getDesktopEnvironment().toString());
+            agent.setDesktop(environment.desktopEnvironment().toString());
         }
         if (agent.getPlatform() == null) {
-            agent.setPlatform(environment.getJava().toString());
+            agent.setPlatform(environment.java().toString());
         }
         if (agent.getShell() == null) {
-            agent.setShell(environment.getShellFamily().toString());
+            agent.setShell(environment.shellFamily().toString());
         }
         if (agent.getUserDigest() == null) {
             agent.setUserDigest(getLocalUserUUID());
@@ -118,7 +118,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
                 cli.connectTimeout(NDuration.ofMillis(500));
                 cli.readTimeout(NDuration.ofMillis(500));
                 s = NStringUtils.trim(cli.GET("https://raw.githubusercontent.com/thevpc/nuts/master/.endpoint")
-                        .run().getContent().readString());
+                        .run().content().readString());
             } catch (Exception ex) {
                 //error;
             }

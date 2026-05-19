@@ -28,7 +28,7 @@ public interface NExprVar extends NExprVarReader, NExprVarWriter {
     }
 
 
-    String getName();
+    String name();
 
     Object get(NExprContext context);
 

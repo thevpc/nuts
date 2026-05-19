@@ -10,39 +10,39 @@ import java.util.List;
 import java.util.Map;
 
 public interface NWebResponse {
-    NHttpCode getCode();
+    NHttpCode statusCode();
 
-    int getIntCode();
+    int intStatusCode();
 
-    NMsg getMsg();
+    NMsg statusMessage();
 
     List<String> getHeaders(String name);
 
     NOptional<String> getHeader(String name);
 
-    Map<String, List<String>> getHeaders();
+    Map<String, List<String>> headers();
 
-    NInputSource getContent();
+    NInputSource content();
 
-    <K, V> Map<K, V> getContentMapAsJson();
+    <K, V> Map<K, V> contentMapAsJson();
 
-    <K> List<K> getContentListAsJson();
+    <K> List<K> contentListAsJson();
 
-    <T> List<T> getContentArrayAsJson();
+    <T> List<T> contentArrayAsJson();
 
     <T> T getContentAsJson(Class<T> clz);
 
     <T> T getContentAs(Class<T> clz, NContentType type);
 
-    Map<?, ?> getContentAsJsonMap();
+    Map<?, ?> contentAsJsonMap();
 
-    List<?> getContentAsJsonList();
+    List<?> contentAsJsonList();
 
-    String getContentAsString();
+    String contentAsString();
 
-    byte[] getContentAsBytes();
+    byte[] contentAsBytes();
 
-    List<NWebCookie> getCookies();
+    List<NWebCookie> cookies();
 
     boolean isError();
 
@@ -56,9 +56,9 @@ public interface NWebResponse {
 
     boolean isRedirect();
 
-    String getContentType();
+    String contentType();
 
-    NMsgCode getMsgCode();
+    NMsgCode userMessage();
 
-    NWebResponse setMsgCode(NMsgCode msgCode);
+    NWebResponse userMessage(NMsgCode msgCode);
 }

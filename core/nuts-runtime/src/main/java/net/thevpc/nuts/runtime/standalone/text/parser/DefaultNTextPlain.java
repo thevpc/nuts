@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -125,16 +127,6 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain, NToE
     @Override
     public NText substring(int start, int end) {
         return new DefaultNTextPlain(getValue().substring(start, end));
-    }
-
-    @Override
-    public List<NText> split(String separator, boolean returnSeparator) {
-        StringTokenizer st = new StringTokenizer(getValue(), separator, returnSeparator);
-        List<NText> all = new ArrayList<>();
-        while (st.hasMoreElements()) {
-            all.add(new DefaultNTextPlain(st.nextToken()));
-        }
-        return all;
     }
 
     @Override

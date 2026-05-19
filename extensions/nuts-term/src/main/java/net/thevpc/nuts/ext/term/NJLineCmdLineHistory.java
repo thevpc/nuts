@@ -95,7 +95,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        NSystemTerminal st = NIO.of().getSystemTerminal();
+        NSystemTerminal st = NIO.of().systemTerminal();
         boolean jline=false;
         NSystemTerminalBase b = st.base();
         if(b!=null){

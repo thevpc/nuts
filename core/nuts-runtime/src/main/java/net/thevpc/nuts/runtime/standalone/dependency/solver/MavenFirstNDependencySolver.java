@@ -8,7 +8,7 @@ public class MavenFirstNDependencySolver extends MavenNDependencySolver {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "maven-first";
     }
 }

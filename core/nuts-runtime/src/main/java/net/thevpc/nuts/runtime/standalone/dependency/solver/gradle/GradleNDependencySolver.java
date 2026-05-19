@@ -55,7 +55,7 @@ public class GradleNDependencySolver implements NDependencySolver {
     }
 
     @Override
-    public NDependencySolver setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment) {
+    public NDependencySolver ignoreCurrentEnvironment(boolean ignoreCurrentEnvironment) {
         this.ignoreCurrentEnvironment = ignoreCurrentEnvironment;
         return this;
     }
@@ -78,14 +78,14 @@ public class GradleNDependencySolver implements NDependencySolver {
     }
 
     @Override
-    public NDependencySolver setDependencyFilter(NDependencyFilter dependencyFilter) {
+    public NDependencySolver dependencyFilter(NDependencyFilter dependencyFilter) {
         this.dependencyFilter = dependencyFilter;
         this.effDependencyFilter = null;
         return this;
     }
 
     @Override
-    public NDependencySolver setRepositoryFilter(NRepositoryFilter repositoryFilter) {
+    public NDependencySolver repositoryFilter(NRepositoryFilter repositoryFilter) {
         this.repositoryFilter = repositoryFilter;
         return this;
     }
@@ -268,7 +268,7 @@ public class GradleNDependencySolver implements NDependencySolver {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "gradle";
     }
 

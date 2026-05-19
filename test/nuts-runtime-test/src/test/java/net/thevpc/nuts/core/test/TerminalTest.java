@@ -64,7 +64,7 @@ public class TerminalTest {
                 Assertions.assertThrows(NIllegalArgumentException.class,()->
 
                         {
-                            NSystemTerminal systemTerminal = NIO.of().getSystemTerminal();
+                            NSystemTerminal systemTerminal = NIO.of().systemTerminal();
                             NPrintStream sysInitMode = systemTerminal.out();
                             TestUtils.println(
                                     "sys-init="+(sysInitMode.terminalMode()==null?"default": sysInitMode.terminalMode().id())
@@ -72,7 +72,7 @@ public class TerminalTest {
                                             +" ->"+sessionMode.id());
 
                             NTerminal terminal = NTerminal.ofSystem();
-                            NPrintStream out = terminal.out().setTerminalMode(systemMode);
+                            NPrintStream out = terminal.out().terminalMode(systemMode);
                             NTerminalMode initMode = out.terminalMode();
                             Assertions.assertEquals(systemMode,initMode);
                             TestUtils.println(
@@ -83,7 +83,7 @@ public class TerminalTest {
 //            ws.term().getSystemTerminal().setMode(systemMode);
 //        }
 
-                            terminal.out(out.setTerminalMode(sessionMode));
+                            terminal.out(out.terminalMode(sessionMode));
                             NTerminalMode newMode = terminal.out().terminalMode();
                             TestUtils.println(
                                     "sys-init="+(sysInitMode.terminalMode()==null?"default": sysInitMode.terminalMode().id())
@@ -99,10 +99,10 @@ public class TerminalTest {
                 );
                 return;
             }else{
-                NSystemTerminal systemTerminal = NIO.of().getSystemTerminal();
+                NSystemTerminal systemTerminal = NIO.of().systemTerminal();
                 NPrintStream sysInitMode = systemTerminal.out();
                 NTerminal terminal = NTerminal.ofSystem();
-                NPrintStream out = terminal.out().setTerminalMode(systemMode);
+                NPrintStream out = terminal.out().terminalMode(systemMode);
                 NTerminalMode initMode = out.terminalMode();
                 Assertions.assertEquals(systemMode,initMode);
                 TestUtils.println(
@@ -112,7 +112,7 @@ public class TerminalTest {
 //        if(systemMode!=null) {
 //            ws.term().getSystemTerminal().setMode(systemMode);
 //        }
-                terminal.out(out.setTerminalMode(sessionMode));
+                terminal.out(out.terminalMode(sessionMode));
                 TestUtils.print("      ");
                 out.print("{**aa");
                 out.print("aa**}");

@@ -37,13 +37,13 @@ import java.util.List;
  */
 public interface NWorkspaceUpdateResult {
 
-    NUpdateResult getApi();
+    NUpdateResult api();
 
-    NUpdateResult getRuntime();
+    NUpdateResult runtime();
 
-    List<NUpdateResult> getExtensions();
+    List<NUpdateResult> extensions();
 
-    List<NUpdateResult> getArtifacts();
+    List<NUpdateResult> artifacts();
 
     boolean isUpdatableApi();
 
@@ -53,9 +53,9 @@ public interface NWorkspaceUpdateResult {
 
     boolean isUpdateAvailable();
 
-    int getUpdatesCount();
+    int updatesCount();
 
-    List<NUpdateResult> getUpdatable();
+    List<NUpdateResult> updatable();
 
-    List<NUpdateResult> getAllResults();
+    List<NUpdateResult> allResults();
 }

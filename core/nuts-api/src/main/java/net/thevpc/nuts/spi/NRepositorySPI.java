@@ -30,7 +30,9 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfigManager;
 import net.thevpc.nuts.core.NRepositoryListener;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NObservableMapListener;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 import java.util.Map;
@@ -48,14 +50,16 @@ public interface NRepositorySPI {
      *
      * @return repository type
      */
-    String getRepositoryType();
+    @NGetter
+    String repositoryType();
 
     /**
      * return repository unique identifier
      *
      * @return repository unique identifier
      */
-    String getUuid();
+    @NGetter
+    String uuid();
 
     /**
      * return repository name.
@@ -63,21 +67,24 @@ public interface NRepositorySPI {
      *
      * @return repository name
      */
-    String getName();
+    @NGetter
+    String name();
 
     /**
      * return parent workspace
      *
      * @return parent workspace
      */
-    NWorkspace getWorkspace();
+    @NGetter
+    NWorkspace workspace();
 
     /**
      * return parent repository or null
      *
      * @return parent repository or null
      */
-    NRepository getParentRepository();
+    @NGetter
+    NRepository parentRepository();
 
     /**
      * return repository configuration manager
@@ -142,40 +149,27 @@ public interface NRepositorySPI {
      */
     NUpdateRepositoryStatsCmd updateStatistics();
 
-//    /**
-//     * remove repository listener
-//     *
-//     * @param listener listener
-//     */
-//    void removeRepositoryListener(NutsRepositoryListener listener);
-//
-//    /**
-//     * add repository listener
-//     *
-//     * @param listener listener
-//     */
-//    void addRepositoryListener(NutsRepositoryListener listener);
-
     /**
      * Repository Listeners
      *
      * @return Repository Listeners
      */
-    List<NRepositoryListener> getRepositoryListeners();
+    List<NRepositoryListener> repositoryListeners();
 
     /**
      * return mutable instance of user properties
      *
      * @return mutable instance of user properties
      */
-    Map<String, Object> getUserProperties();
+    @NGetter
+    Map<String, Object> userProperties();
 
     /**
      * return array of registered user properties listeners
      *
      * @return array of registered user properties listeners
      */
-    List<NObservableMapListener<String, Object>> getUserPropertyListeners();
+    List<NObservableMapListener<String, Object>> userPropertyListeners();
 
     /**
      * enabled if config is enabled and runtime is enabled
@@ -190,7 +184,8 @@ public interface NRepositorySPI {
      * @param enabled runtime enabled value
      * @return {@code this} instance
      */
-    NRepository setEnabled(boolean enabled);
+    @NSetter
+    NRepository enabled(boolean enabled);
 
     /**
      * true if fetch mode is accepted

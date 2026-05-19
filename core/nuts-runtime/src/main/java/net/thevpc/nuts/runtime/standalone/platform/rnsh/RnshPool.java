@@ -18,19 +18,19 @@ public class RnshPool {
 
     public RnshHttpClient get(NConnectionString cnx) {
         NConnectionStringBuilder cb = cnx.builder();
-        String v = NStringUtils.trimToNull(cb.getPath());
-        Map<String, List<String>> qm = cb.getQueryMap().orElse(new HashMap<>());
+        String v = NStringUtils.trimToNull(cb.path());
+        Map<String, List<String>> qm = cb.queryMap().orElse(new HashMap<>());
         String context = NOptional.ofFirst(qm.get("context")).orElse(null);
         if (NBlankable.isBlank(context)) {
             Map<String, List<String>> qm2 = new HashMap<>(qm);
             qm2.put("context", new ArrayList<>(Arrays.asList(NStringUtils.firstNonBlank(v, "/"))));
-            cb.setQueryMap(qm2);
-            cb.setPath("/");
+            cb.queryMap(qm2);
+            cb.path("/");
         } else {
             Map<String, List<String>> qm2 = new HashMap<>(qm);
             qm2.put("context", new ArrayList<>(Arrays.asList(NStringUtils.firstNonBlank(context, v))));
-            cb.setQueryMap(qm2);
-            cb.setPath("/");
+            cb.queryMap(qm2);
+            cb.path("/");
         }
         NConnectionString c00 = cb.build();
         RnshHttpClient client = clients.get(c00);

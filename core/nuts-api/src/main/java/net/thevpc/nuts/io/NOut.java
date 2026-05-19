@@ -260,7 +260,7 @@ public class NOut {
     }
 
     public static NPrintStream setTerminalMode(NTerminalMode other) {
-        return out().setTerminalMode(other);
+        return out().terminalMode(other);
     }
 
     public static NPrintStream run(NTerminalCmd command) {

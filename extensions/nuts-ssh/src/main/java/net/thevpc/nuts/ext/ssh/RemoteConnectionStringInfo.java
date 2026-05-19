@@ -99,8 +99,8 @@ public class RemoteConnectionStringInfo {
         long remoteContentLength = remote.contentLength();
         if (remoteContentLength >= 0) {
             if (localContentLength == remoteContentLength) {
-                String ld = local.getDigestString();
-                String rd = remote.getDigestString();
+                String ld = local.digestString();
+                String rd = remote.digestString();
                 if (ld.equals(rd)) {
                     log.log(NMsg.ofC("do not copy %s %s", local, remote).asFiner().withIntent(NMsgIntent.START));
                     return false;
@@ -170,28 +170,28 @@ public class RemoteConnectionStringInfo {
     public String getRootName(NExecTargetSPI commExec) {
         NEnv o = getProbedOs();
         synchronized (o) {
-            return o.getRootUserName();
+            return o.rootUserName();
         }
     }
 
     public String getUserName(NExecTargetSPI commExec) {
         NEnv o = getProbedOs();
         synchronized (o) {
-            return o.getUserName();
+            return o.userName();
         }
     }
 
     public String getUserHome(NExecTargetSPI commExec) {
         NEnv o = getProbedOs();
         synchronized (o) {
-            return o.getUserHome();
+            return o.userHome();
         }
     }
 
     public NOsFamily getOsFamily(NExecTargetSPI commExec) {
         NEnv o = getProbedOs();
         synchronized (o) {
-            return o.getOsFamily();
+            return o.osFamily();
         }
     }
 
@@ -236,8 +236,8 @@ public class RemoteConnectionStringInfo {
         if (isUpdatable(loadedWorkspaceJson)) {
             loadedWorkspaceJson = System.currentTimeMillis();
             NConnectionStringBuilder targetConnection = connectionString.builder()
-                    .setQueryString(null)
-                    .setPath(null);
+                    .queryString(null)
+                    .path(null);
             NPlatformHome pHome = NPlatformHome.ofPortable(getOsFamily(commExec), false, null, p -> {
                 switch (p) {
                     case "user.name": {
@@ -252,7 +252,7 @@ public class RemoteConnectionStringInfo {
             try {
                 workspaceJson = null;
                 NPath rpath = NPath.of(targetConnection.copy()
-                        .setPath(pHome.getHome() + "/ws/" + workspaceName + "/" + NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)
+                        .path(pHome.getHome() + "/ws/" + workspaceName + "/" + NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)
                         .toString());
                 if (rpath.isRegularFile()) {
                     workspaceJson = NElementReader.ofJson()
@@ -276,10 +276,10 @@ public class RemoteConnectionStringInfo {
             }
 
             storeLocationLibRepo = NPath.of(targetConnection.copy()
-                    .setPath(storeLocationLib)
+                    .path(storeLocationLib)
                     .toString()).resolve(NConstants.Folders.ID);
             storeLocationCacheRepo = NPath.of(targetConnection.copy()
-                    .setPath(storeLocationCache)
+                    .path(storeLocationCache)
                     .toString()).resolve(NConstants.Folders.ID);
             NId appId = NApp.of().id().orElseGet(() -> NWorkspace.of().apiId());
             storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(appId.mavenFolder()).resolve("repo");

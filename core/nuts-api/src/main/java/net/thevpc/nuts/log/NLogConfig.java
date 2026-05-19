@@ -26,9 +26,10 @@
  */
 package net.thevpc.nuts.log;
 
+import net.thevpc.nuts.util.NGetter;
+
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.logging.Filter;
 import java.util.logging.Level;
 
 /**
@@ -68,11 +69,12 @@ public class NLogConfig implements Serializable, Cloneable {
         }
     }
 
-    public Level getLogFileLevel() {
+    @NGetter
+    public Level logFileLevel() {
         return logFileLevel;
     }
 
-    public NLogConfig setLogFileLevel(Level logFileLevel) {
+    public NLogConfig logFileLevel(Level logFileLevel) {
         if(readOnly){
             throw new IllegalArgumentException("read only");
         }
@@ -80,11 +82,12 @@ public class NLogConfig implements Serializable, Cloneable {
         return this;
     }
 
-    public Level getLogTermLevel() {
+    @NGetter
+    public Level logTermLevel() {
         return logTermLevel;
     }
 
-    public NLogConfig setLogTermLevel(Level logTermLevel) {
+    public NLogConfig logTermLevel(Level logTermLevel) {
         if(readOnly){
             throw new IllegalArgumentException("read only");
         }
@@ -97,7 +100,8 @@ public class NLogConfig implements Serializable, Cloneable {
      *
      * @return log file size
      */
-    public int getLogFileSize() {
+    @NGetter
+    public int logFileSize() {
         return logFileSize;
     }
 
@@ -107,7 +111,7 @@ public class NLogConfig implements Serializable, Cloneable {
      * @param logFileSize Log File Size in Mega Bytes
      * @return {@code this} instance
      */
-    public NLogConfig setLogFileSize(int logFileSize) {
+    public NLogConfig logFileSize(int logFileSize) {
         if(readOnly){
             throw new IllegalArgumentException("read only");
         }
@@ -120,7 +124,8 @@ public class NLogConfig implements Serializable, Cloneable {
      *
      * @return log rotation files count
      */
-    public int getLogFileCount() {
+    @NGetter
+    public int logFileCount() {
         return logFileCount;
     }
 
@@ -130,7 +135,7 @@ public class NLogConfig implements Serializable, Cloneable {
      * @param logFileCount Log File rotation count
      * @return {@code this} instance
      */
-    public NLogConfig setLogFileCount(int logFileCount) {
+    public NLogConfig logFileCount(int logFileCount) {
         if(readOnly){
             throw new IllegalArgumentException("read only");
         }
@@ -143,7 +148,8 @@ public class NLogConfig implements Serializable, Cloneable {
      *
      * @return Log File Name pattern
      */
-    public String getLogFileName() {
+    @NGetter
+    public String logFileName() {
         return logFileName;
     }
 
@@ -153,7 +159,7 @@ public class NLogConfig implements Serializable, Cloneable {
      * @param logFileName Log File Name pattern
      * @return {@code this} instance
      */
-    public NLogConfig setLogFileName(String logFileName) {
+    public NLogConfig logFileName(String logFileName) {
         if(readOnly){
             throw new IllegalArgumentException("read only");
         }
@@ -166,7 +172,8 @@ public class NLogConfig implements Serializable, Cloneable {
      *
      * @return Log File Base directory
      */
-    public String getLogFileBase() {
+    @NGetter
+    public String logFileBase() {
         return logFileBase;
     }
 
@@ -176,7 +183,7 @@ public class NLogConfig implements Serializable, Cloneable {
      * @param logFileBase Log File Base directory
      * @return {@code this} instance
      */
-    public NLogConfig setLogFileBase(String logFileBase) {
+    public NLogConfig logFileBase(String logFileBase) {
         if(readOnly){
             throw new IllegalArgumentException("read only");
         }

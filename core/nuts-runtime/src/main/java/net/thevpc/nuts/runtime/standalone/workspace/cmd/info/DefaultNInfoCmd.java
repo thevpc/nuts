@@ -407,7 +407,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("nuts-solver",
                 () -> {
                     String ds = NDependencySolverUtils.resolveSolverName(NWorkspace.of().bootOptions().dependencySolver().orNull());
-                    List<String> allDs = NDependencySolver.getSolverNames();
+                    List<String> allDs = NDependencySolver.solverNames();
                     return NText.ofStyled(
                             ds,
                             allDs.stream().map(NDependencySolverUtils::resolveSolverName)
@@ -418,7 +418,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("nuts-solver-list",
                 () -> {
                     String ds = NDependencySolverUtils.resolveSolverName(NWorkspace.of().bootOptions().dependencySolver().orNull());
-                    List<String> allDs = NDependencySolver.getSolverNames();
+                    List<String> allDs = NDependencySolver.solverNames();
                     NTexts txt = NTexts.of();
                     return txt.ofBuilder().appendJoined(";",
                             allDs.stream()
@@ -430,7 +430,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("sys-terminal-flags", () -> NWorkspace.of().bootTerminal().getFlags());
         props.put("sys-terminal-mode", () -> NWorkspace.of().bootOptions().terminalMode().orElse(NTerminalMode.DEFAULT));
         props.put("java-version", () -> NVersion.get(System.getProperty("java.version")).get());
-        props.put("platform", () -> NEnv.of().getJava());
+        props.put("platform", () -> NEnv.of().java());
         props.put("java-home", () -> NPath.of(System.getProperty("java.home")));
         props.put("java-executable", () -> NPath.of(NJavaSdkUtils.of().resolveJavaCommandByHome(null)));
         props.put("java-classpath",
@@ -447,28 +447,28 @@ public class DefaultNInfoCmd implements NInfoCmd {
                                 .collect(Collectors.toList())
                 )
         );
-        props.put("os-name", () -> NEnv.of().getOs());
-        props.put("os-family", () -> NEnv.of().getOsFamily());
-        props.put("os-dist", () -> NEnv.of().getOsDist());
-        props.put("os-arch", () -> NEnv.of().getArch());
-        props.put("os-arch-family", () -> NEnv.of().getArchFamily());
-        props.put("os-desktop", () -> NEnv.of().getDesktopEnvironment());
-        props.put("os-desktops", () -> NEnv.of().getDesktopEnvironments());
-        props.put("os-desktop-family", () -> NEnv.of().getDesktopEnvironmentFamily());
-        props.put("os-desktop-families", () -> NEnv.of().getDesktopEnvironmentFamilies());
-        props.put("os-desktop-path", () -> NEnv.of().getDesktopPath());
+        props.put("os-name", () -> NEnv.of().os());
+        props.put("os-family", () -> NEnv.of().osFamily());
+        props.put("os-dist", () -> NEnv.of().osDist());
+        props.put("os-arch", () -> NEnv.of().arch());
+        props.put("os-arch-family", () -> NEnv.of().archFamily());
+        props.put("os-desktop", () -> NEnv.of().desktopEnvironment());
+        props.put("os-desktops", () -> NEnv.of().desktopEnvironments());
+        props.put("os-desktop-family", () -> NEnv.of().desktopEnvironmentFamily());
+        props.put("os-desktop-families", () -> NEnv.of().desktopEnvironmentFamilies());
+        props.put("os-desktop-path", () -> NEnv.of().desktopPath());
         props.put("os-desktop-launcher", () -> NEnv.of().getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP));
         props.put("os-menu-launcher", () -> NEnv.of().getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU));
         props.put("os-user-launcher", () -> NEnv.of().getDesktopIntegrationSupport(NDesktopIntegrationItem.USER));
-        props.put("os-shell", () -> NEnv.of().getShellFamily());
-        props.put("os-shells", () -> NEnv.of().getShellFamilies());
+        props.put("os-shell", () -> NEnv.of().shellFamily());
+        props.put("os-shells", () -> NEnv.of().shellFamilies());
         props.put("os-username", () -> stringValue(System.getProperty("user.name")));
         props.put("user-home", () -> NPath.ofUserHome());
         props.put("user-dir", () -> NPath.ofUserDirectory());
         props.put("command-line-long",
-                () -> NWorkspace.of().bootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(false))
+                () -> NWorkspace.of().bootOptions().toCmdLine(new NWorkspaceOptionsConfig().compact(false))
         );
-        props.put("command-line-short", () -> NWorkspace.of().bootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(true)));
+        props.put("command-line-short", () -> NWorkspace.of().bootOptions().toCmdLine(new NWorkspaceOptionsConfig().compact(true)));
         props.put("inherited", () -> NWorkspace.of().bootOptions().inherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
         props.put("inherited-nuts-boot-args", () -> NCmdLineWriter.of().format(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)));
@@ -620,7 +620,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("nuts-theme", options.theme().orNull());
         props.put("nuts-username", options.userName().orNull());
         String ds = NDependencySolverUtils.resolveSolverName(options.dependencySolver().orNull());
-        List<String> allDs = NDependencySolver.getSolverNames();
+        List<String> allDs = NDependencySolver.solverNames();
         props.put("nuts-solver",
                 txt.ofStyled(
                         ds,
@@ -641,7 +641,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         NTerminalMode terminalMode = workspace.bootOptions().terminalMode().orElse(NTerminalMode.DEFAULT);
         props.put("sys-terminal-mode", terminalMode);
         props.put("java-version", NVersion.get(System.getProperty("java.version")).get());
-        props.put("platform", environment.getJava());
+        props.put("platform", environment.java());
         props.put("java-home", NPath.of(System.getProperty("java.home")));
         props.put("java-native", environment.isNativeImage());
         props.put("java-executable", NPath.of(NJavaSdkUtils.of().resolveJavaCommandByHome(null)));
@@ -659,30 +659,30 @@ public class DefaultNInfoCmd implements NInfoCmd {
                                 .collect(Collectors.toList())
                 )
         );
-        props.put("os-name", environment.getOs());
-        props.put("os-family", (environment.getOsFamily()));
-        if (environment.getOsDist() != null) {
-            props.put("os-dist", (environment.getOsDist()));
+        props.put("os-name", environment.os());
+        props.put("os-family", (environment.osFamily()));
+        if (environment.osDist() != null) {
+            props.put("os-dist", (environment.osDist()));
         }
-        props.put("os-arch", environment.getArch());
-        props.put("os-arch-family", environment.getArchFamily());
-        props.put("os-desktop", environment.getDesktopEnvironment());
-        props.put("os-desktops", environment.getDesktopEnvironments());
-        props.put("os-desktop-family", environment.getDesktopEnvironmentFamily());
-        props.put("os-desktop-families", environment.getDesktopEnvironmentFamilies());
-        props.put("os-desktop-path", environment.getDesktopPath());
+        props.put("os-arch", environment.arch());
+        props.put("os-arch-family", environment.archFamily());
+        props.put("os-desktop", environment.desktopEnvironment());
+        props.put("os-desktops", environment.desktopEnvironments());
+        props.put("os-desktop-family", environment.desktopEnvironmentFamily());
+        props.put("os-desktop-families", environment.desktopEnvironmentFamilies());
+        props.put("os-desktop-path", environment.desktopPath());
         props.put("os-desktop-launcher", environment.getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP));
         props.put("os-menu-launcher", environment.getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU));
         props.put("os-user-launcher", environment.getDesktopIntegrationSupport(NDesktopIntegrationItem.USER));
-        props.put("os-shell", environment.getShellFamily());
-        props.put("os-shells", environment.getShellFamilies());
+        props.put("os-shell", environment.shellFamily());
+        props.put("os-shells", environment.shellFamilies());
         props.put("os-username", stringValue(System.getProperty("user.name")));
         props.put("user-home", NPath.ofUserHome());
         props.put("user-dir", NPath.ofUserDirectory());
         props.put("command-line-long",
-                workspace.bootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(false))
+                workspace.bootOptions().toCmdLine(new NWorkspaceOptionsConfig().compact(false))
         );
-        props.put("command-line-short", workspace.bootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(true)));
+        props.put("command-line-short", workspace.bootOptions().toCmdLine(new NWorkspaceOptionsConfig().compact(true)));
         props.put("inherited", workspace.bootOptions().inherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
         props.put("inherited-nuts-boot-args", NCmdLineWriter.of().format(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)));

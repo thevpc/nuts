@@ -393,7 +393,7 @@ public class DefaultTsonWriter {
     private void writeCharStream(NCharStreamElement a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
         writeBoundedString("^" + a.blocIdentifier() + "{", 1, a.affixes());
-        try (Reader reader = a.value().getReader()) {
+        try (Reader reader = a.value().reader()) {
             char[] b = new char[1024];
             int c;
             while ((c = reader.read(b)) >= 0) {

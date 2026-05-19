@@ -62,7 +62,7 @@ public abstract class NEnvBase implements NEnv {
     }
 
     @Override
-    public NId getOsDist() {
+    public NId osDist() {
         if (osDist == null) {
             osDist = getOsDist0();
         }
@@ -70,7 +70,7 @@ public abstract class NEnvBase implements NEnv {
     }
 
     @Override
-    public final NId getArch() {
+    public final NId arch() {
         if (arch == null) {
             arch = getArch0();
         }
@@ -78,7 +78,7 @@ public abstract class NEnvBase implements NEnv {
     }
 
     @Override
-    public final NArchFamily getArchFamily() {
+    public final NArchFamily archFamily() {
         if (archFamily == null) {
             archFamily = getArchFamily0();
         }
@@ -86,7 +86,7 @@ public abstract class NEnvBase implements NEnv {
     }
 
     @Override
-    public final String getRootUserName() {
+    public final String rootUserName() {
         if (rootUserName == null) {
             rootUserName = getRootUserName0();
         }
@@ -94,7 +94,7 @@ public abstract class NEnvBase implements NEnv {
     }
 
     @Override
-    public final String getUserName() {
+    public final String userName() {
         if (userName == null) {
             userName = getUserName0();
         }
@@ -102,7 +102,7 @@ public abstract class NEnvBase implements NEnv {
     }
 
     @Override
-    public final NId getJava() {
+    public final NId java() {
         if (java == null) {
             java = getJava0();
         }
@@ -110,7 +110,7 @@ public abstract class NEnvBase implements NEnv {
     }
 
     @Override
-    public final String getUserHome() {
+    public final String userHome() {
         if (userHome == null) {
             userHome = getUserHome0();
         }
@@ -118,7 +118,7 @@ public abstract class NEnvBase implements NEnv {
     }
 
     @Override
-    public final NId getOs() {
+    public final NId os() {
         if (os == null) {
             os = getOs0();
         }
@@ -126,7 +126,7 @@ public abstract class NEnvBase implements NEnv {
     }
 
     @Override
-    public final NOsFamily getOsFamily() {
+    public final NOsFamily osFamily() {
         if (osFamily == null) {
             osFamily = getOsFamily0();
         }
@@ -135,7 +135,7 @@ public abstract class NEnvBase implements NEnv {
 
     @Override
     /*fix this add field  like above*/
-    public final Set<NShellFamily> getShellFamilies() {
+    public final Set<NShellFamily> shellFamilies() {
         return getShellFamilies(true);
     }
 
@@ -144,7 +144,7 @@ public abstract class NEnvBase implements NEnv {
     }
 
     @Override
-    public final NId getShell() {
+    public final NId shell() {
         if (shell == null) {
             shell = getShell0();
         }
@@ -152,7 +152,7 @@ public abstract class NEnvBase implements NEnv {
     }
 
     @Override
-    public final NShellFamily getShellFamily() {
+    public final NShellFamily shellFamily() {
         if (shellFamily == null) {
             shellFamily = getShellFamily0();
         }
@@ -160,12 +160,12 @@ public abstract class NEnvBase implements NEnv {
     }
 
     @Override
-    public final NId getDesktopEnvironment() {
-        return getDesktopEnvironments().stream().findFirst().get();
+    public final NId desktopEnvironment() {
+        return desktopEnvironments().stream().findFirst().get();
     }
 
     @Override
-    public final Set<NId> getDesktopEnvironments() {
+    public final Set<NId> desktopEnvironments() {
         if (desktopEnvironments == null) {
             desktopEnvironments = NEnvUtils.getDesktopEnvironments0(this);
         }
@@ -173,7 +173,7 @@ public abstract class NEnvBase implements NEnv {
     }
 
     @Override
-    public final NDesktopEnvironmentFamily getDesktopEnvironmentFamily() {
+    public final NDesktopEnvironmentFamily desktopEnvironmentFamily() {
         if (osDesktopEnvironmentFamily == null) {
             osDesktopEnvironmentFamily = getDesktopEnvironmentFamily0();
         }
@@ -181,8 +181,8 @@ public abstract class NEnvBase implements NEnv {
     }
 
     @Override
-    public final Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies() {
-        Set<NId> desktopEnvironments = getDesktopEnvironments();
+    public final Set<NDesktopEnvironmentFamily> desktopEnvironmentFamilies() {
+        Set<NId> desktopEnvironments = desktopEnvironments();
         LinkedHashSet<NDesktopEnvironmentFamily> all = new LinkedHashSet<>();
         for (NId desktopEnvironment : desktopEnvironments) {
             all.add(NDesktopEnvironmentFamily.parse(desktopEnvironment.shortName()).orNull());
@@ -191,7 +191,7 @@ public abstract class NEnvBase implements NEnv {
     }
 
     public NDesktopEnvironmentFamily getDesktopEnvironmentFamily0() {
-        Set<NDesktopEnvironmentFamily> all = getDesktopEnvironmentFamilies();
+        Set<NDesktopEnvironmentFamily> all = desktopEnvironmentFamilies();
         if (all.size() == 0) {
             return NDesktopEnvironmentFamily.UNKNOWN;
         }
@@ -229,7 +229,7 @@ public abstract class NEnvBase implements NEnv {
         return NDesktopEnvironmentFamily.UNKNOWN;
     }
 
-    public Path getDesktopPath() {
+    public Path desktopPath() {
         return NEnvUtils.getDesktopPath(this);
     }
 
@@ -238,14 +238,14 @@ public abstract class NEnvBase implements NEnv {
 
     public abstract String getHostName0();
 
-    public final String getMachineName() {
+    public final String machineName() {
         if (machineName == null) {
             machineName = getMachineName0();
         }
         return machineName;
     }
 
-    public final String getHostName() {
+    public final String hostName() {
         if (hostName == null) {
             hostName = getHostName0();
         }

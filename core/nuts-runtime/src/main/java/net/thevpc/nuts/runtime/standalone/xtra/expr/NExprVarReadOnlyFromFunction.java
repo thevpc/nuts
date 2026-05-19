@@ -21,7 +21,7 @@ public class NExprVarReadOnlyFromFunction implements NExprVar {
         this.name = name;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 

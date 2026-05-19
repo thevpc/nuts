@@ -41,16 +41,16 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     @Override
-    public int getIntCode() {
+    public int intStatusCode() {
         return httpCode.getCode();
     }
 
-    public NHttpCode getCode() {
+    public NHttpCode statusCode() {
         return httpCode;
     }
 
     @Override
-    public NMsg getMsg() {
+    public NMsg statusMessage() {
         return msg;
     }
 
@@ -65,27 +65,27 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     @Override
-    public Map<String, List<String>> getHeaders() {
+    public Map<String, List<String>> headers() {
         return headers.toMap();
     }
 
     @Override
-    public NInputSource getContent() {
+    public NInputSource content() {
         return content.get();
     }
 
     @Override
-    public <K, V> Map<K, V> getContentMapAsJson() {
+    public <K, V> Map<K, V> contentMapAsJson() {
         return getContentAsJson(Map.class);
     }
 
     @Override
-    public <K> List<K> getContentListAsJson() {
+    public <K> List<K> contentListAsJson() {
         return getContentAsJson(List.class);
     }
 
     @Override
-    public <T> List<T> getContentArrayAsJson() {
+    public <T> List<T> contentArrayAsJson() {
         return getContentAsJson(List.class);
     }
 
@@ -94,7 +94,7 @@ public class NWebResponseImpl implements NWebResponse {
         if (content == null) {
             return null;
         }
-        NInputSource content1 = getContent();
+        NInputSource content1 = content();
         if (content1 == null) {
             return null;
         }
@@ -110,7 +110,7 @@ public class NWebResponseImpl implements NWebResponse {
         if (content == null) {
             return null;
         }
-        NInputSource content1 = getContent();
+        NInputSource content1 = content();
         if (content1 == null) {
             return null;
         }
@@ -122,21 +122,21 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     @Override
-    public Map<?, ?> getContentAsJsonMap() {
+    public Map<?, ?> contentAsJsonMap() {
         return getContentAsJson(Map.class);
     }
 
     @Override
-    public List<?> getContentAsJsonList() {
+    public List<?> contentAsJsonList() {
         return getContentAsJson(List.class);
     }
 
     @Override
-    public String getContentAsString() {
+    public String contentAsString() {
         if (content == null) {
             return null;
         }
-        NInputSource content1 = getContent();
+        NInputSource content1 = content();
         if (content1 == null) {
             return null;
         }
@@ -144,18 +144,18 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     @Override
-    public byte[] getContentAsBytes() {
+    public byte[] contentAsBytes() {
         if (content == null) {
             return null;
         }
-        NInputSource content1 = getContent();
+        NInputSource content1 = content();
         if (content1 == null) {
             return null;
         }
         return content1.readBytes();
     }
 
-    public List<NWebCookie> getCookies() {
+    public List<NWebCookie> cookies() {
         return getHeaders("Set-Cookie").stream().map(DefaultNWebCookie::new).collect(Collectors.toList());
     }
 
@@ -197,17 +197,17 @@ public class NWebResponseImpl implements NWebResponse {
         return code >= 300 && code < 400;
     }
 
-    public NMsgCode getMsgCode() {
+    public NMsgCode userMessage() {
         return msgCode;
     }
 
-    public NWebResponse setMsgCode(NMsgCode msgCode) {
+    public NWebResponse userMessage(NMsgCode msgCode) {
         this.msgCode = msgCode;
         return this;
     }
 
     @Override
-    public String getContentType() {
+    public String contentType() {
         if (headers != null) {
             List<String> list = headers.getOrEmpty("Content-Type");
             for (String s : list) {

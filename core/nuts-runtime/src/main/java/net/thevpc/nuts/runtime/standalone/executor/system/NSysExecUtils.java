@@ -62,7 +62,7 @@ public class NSysExecUtils {
     }
 
     public static String resolveRootUserName() {
-        NOsFamily sysFamily = NEnv.of().getOsFamily();
+        NOsFamily sysFamily = NEnv.of().osFamily();
         switch (sysFamily) {
             case WINDOWS: {
                 String s = (String) NSession.of().getProperty("nuts.windows.root-user").orNull();
@@ -104,7 +104,7 @@ public class NSysExecUtils {
     ) {
         NSession session = NSession.of();
         return NSysExecUtils.buildEffectiveCommand(args, runAsMode,
-                NEnv.of().getDesktopEnvironmentFamilies(),
+                NEnv.of().desktopEnvironmentFamilies(),
                 n -> {
                     Path path = NSysExecUtils.sysWhich(n);
                     if (path != null) {
@@ -160,7 +160,7 @@ public class NSysExecUtils {
                                                      String[] executorOptions
     ) {
         //String runAsEffective = null;
-        NOsFamily sysFamily = NEnv.of().getOsFamily();
+        NOsFamily sysFamily = NEnv.of().osFamily();
         List<String> command = new ArrayList<>(Arrays.asList(cmd));
         if (runAsMode == null) {
             runAsMode = NRunAs.CURRENT_USER;
@@ -333,7 +333,7 @@ public class NSysExecUtils {
     private static NOptional<String[]> guiPosixSu
             (Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
         if (de == null) {
-            de = NEnv.of().getDesktopEnvironmentFamilies();
+            de = NEnv.of().desktopEnvironmentFamilies();
         }
         String currSu = null;
         currSu = sysWhich.apply("pkexec");
@@ -369,7 +369,7 @@ public class NSysExecUtils {
     private static NOptional<String[]> guiPosixSudo
             (Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
         if (de == null) {
-            de = NEnv.of().getDesktopEnvironmentFamilies();
+            de = NEnv.of().desktopEnvironmentFamilies();
         }
         String currSu = null;
         currSu = sysWhich.apply("pkexec");

@@ -72,7 +72,7 @@ public class DefaultNPs implements NPs {
     @Override
     public boolean isSupportedKillProcess() {
         NEnv target = NEnv.of(connectionString);
-        NOsFamily f = target.getOsFamily();
+        NOsFamily f = target.osFamily();
 
         return f == NOsFamily.LINUX || f == NOsFamily.MACOS || f == NOsFamily.UNIX || f == NOsFamily.WINDOWS;
     }
@@ -80,7 +80,7 @@ public class DefaultNPs implements NPs {
     @Override
     public boolean killProcess(String processId) {
         NEnv target = NEnv.of(connectionString);
-        NOsFamily f = target.getOsFamily();
+        NOsFamily f = target.osFamily();
         switch (f) {
             case LINUX:
             case MACOS:
@@ -99,7 +99,7 @@ public class DefaultNPs implements NPs {
                                 .failFast(isFailFast())
                                 .exitCode() == 0;
                     }
-                    throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NEnv.of().getOsFamily().id()));
+                    throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NEnv.of().osFamily().id()));
                 }else{
                     return NExec.ofSystem("taskkill", "/PID", processId, "/F")
                             .at(connectionString)
@@ -109,7 +109,7 @@ public class DefaultNPs implements NPs {
             }
         }
         if (isFailFast()) {
-            throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NEnv.of().getOsFamily().id()));
+            throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NEnv.of().osFamily().id()));
         } else {
             return false;
         }
@@ -123,11 +123,11 @@ public class DefaultNPs implements NPs {
 
 
     @Override
-    public NExecutionEngineFamily getPlatformFamily() {
+    public NExecutionEngineFamily platformFamily() {
         return platformFamily;
     }
 
-    public NPs setPlatformFamily(NExecutionEngineFamily platformFamily) {
+    public NPs platformFamily(NExecutionEngineFamily platformFamily) {
         this.platformFamily = platformFamily;
         return this;
     }
@@ -143,11 +143,11 @@ public class DefaultNPs implements NPs {
         NWorkspace workspace = NWorkspace.of();
         NVersionFilter nvf = NBlankable.isBlank(version) ? null : NVersion.get(version).get().toFilter();
         NExecutionEngineLocation[] availableJava = NExecutionEngines.of().findExecutionEngines(NExecutionEngineFamily.JAVA,
-                java -> NExecutionEngineLocation.JAVA_PRODUCT_JDK.equals(java.getProduct()) && (nvf == null || nvf.acceptVersion(NVersion.get(java.getVersion()).get()))
+                java -> NExecutionEngineLocation.JAVA_PRODUCT_JDK.equals(java.product()) && (nvf == null || nvf.acceptVersion(NVersion.get(java.version()).get()))
         ).toArray(NExecutionEngineLocation[]::new);
         for (NExecutionEngineLocation java : availableJava) {
-            detectedJavaHomes.add(java.getPath());
-            v = getJpsJavaHome(java.getPath());
+            detectedJavaHomes.add(java.path());
+            v = getJpsJavaHome(java.path());
             if (v != null) {
                 return v;
             }
@@ -175,7 +175,7 @@ public class DefaultNPs implements NPs {
     @Override
     public NStream<NPsInfo> getResultList() {
         NEnv target = NEnv.of(connectionString);
-        NOsFamily cmdOsFamily = target.getOsFamily();
+        NOsFamily cmdOsFamily = target.osFamily();
         NExecutionEngineFamily processType = NUtils.firstNonNull(platformFamily, NExecutionEngineFamily.OS);
         switch (processType) {
             case JAVA:
@@ -296,11 +296,11 @@ public class DefaultNPs implements NPs {
                                     .setCmdLineArgs(parsedCmdLine);
                             return p.build();
                         }).withDescription(NDescribables.ofDesc("processInfo"))).build();
-        return NStreamBase.ofIterator("process-" + getPlatformFamily(), it);
+        return NStreamBase.ofIterator("process-" + platformFamily(), it);
     }
 
     private String[] betterArgs(String pid, NEnv target) {
-        switch (target.getOsFamily()) {
+        switch (target.osFamily()) {
             case LINUX:
             case UNIX:
             case MACOS: {

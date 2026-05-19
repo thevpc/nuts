@@ -312,8 +312,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 .createComponent(NSystemTerminalBase.class).get();
         data.terminals = NIO.of();
         data.terminals
-                .setSystemTerminal(termb)
-                .setDefaultTerminal(NTerminal.ofSystem())
+                .systemTerminal(termb)
+                .defaultTerminal(NTerminal.ofSystem())
         ;
         wsModel.bootModel.bootSession().terminal(NTerminal.ofSystem());
         wsModel.logModel.getTermHandler().resumeTerminal();
@@ -409,7 +409,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     password = Arrays.copyOf(password, password.length);
                 }
                 if (NBlankable.isBlank(new String(password))) {
-                    password = data.terminals.getDefaultTerminal().readPassword(NMsg.ofPlain("Password : "));
+                    password = data.terminals.defaultTerminal().readPassword(NMsg.ofPlain("Password : "));
                 }
                 try (NSecureString s = NSecureString.ofSecure(password)) {
                     NSecurityManager.of().login(data.effectiveBootOptions.userName().get(), s);
@@ -768,7 +768,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     effectiveBootOptions.toCmdLine()
             ));
             wsModel.LOG.log(mread.withMsgC("open Nuts Workspace (compact)     : %s",
-                    effectiveBootOptions.toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))));
+                    effectiveBootOptions.toCmdLine(new NWorkspaceOptionsConfig().compact(true))));
 
             wsModel.LOG.log(mread.withMsgPlain("open Workspace with config        : "));
             wsModel.LOG.log(mread.withMsgC("   nuts-workspace-uuid            : %s", NTextUtils.desc(effectiveBootOptions.uuid().orNull(), text)));
@@ -857,24 +857,24 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             wsModel.LOG.log(mread.withMsgC("   java-classpath                 : %s", System.getProperty("java.class.path")));
             wsModel.LOG.log(mread.withMsgC("   java-library-path              : %s", System.getProperty("java.library.path")));
             wsModel.LOG.log(mread.withMsgC("   os-name                        : %s", System.getProperty("os.name")));
-            wsModel.LOG.log(mread.withMsgC("   os-family                      : %s", senvs.getOsFamily()));
-            wsModel.LOG.log(mread.withMsgC("   os-dist                        : %s", senvs.getOsDist().artifactId()));
+            wsModel.LOG.log(mread.withMsgC("   os-family                      : %s", senvs.osFamily()));
+            wsModel.LOG.log(mread.withMsgC("   os-dist                        : %s", senvs.osDist().artifactId()));
             wsModel.LOG.log(mread.withMsgC("   os-arch                        : %s", System.getProperty("os.arch")));
-            wsModel.LOG.log(mread.withMsgC("   os-shell                       : %s", senvs.getShellFamily()));
-            wsModel.LOG.log(mread.withMsgC("   os-shells                      : %s", text.ofBuilder().appendJoined(",", senvs.getShellFamilies())));
+            wsModel.LOG.log(mread.withMsgC("   os-shell                       : %s", senvs.shellFamily()));
+            wsModel.LOG.log(mread.withMsgC("   os-shells                      : %s", text.ofBuilder().appendJoined(",", senvs.shellFamilies())));
             NWorkspaceTerminalOptions b = getModel().bootModel.getBootTerminal();
             wsModel.LOG.log(mread.withMsgC("   os-terminal-flags              : %s", String.join(", ", b.getFlags())));
             NTerminalMode terminalMode = wsModel.bootModel.getBootUserOptions().terminalMode().orElse(NTerminalMode.DEFAULT);
             wsModel.LOG.log(mread.withMsgC("   os-terminal-mode               : %s", terminalMode));
-            wsModel.LOG.log(mread.withMsgC("   os-desktop                     : %s", senvs.getDesktopEnvironment()));
-            wsModel.LOG.log(mread.withMsgC("   os-desktop-family              : %s", senvs.getDesktopEnvironmentFamily()));
-            wsModel.LOG.log(mread.withMsgC("   os-desktops                    : %s", text.ofBuilder().appendJoined(",", (senvs.getDesktopEnvironments()))));
-            wsModel.LOG.log(mread.withMsgC("   os-desktop-families            : %s", text.ofBuilder().appendJoined(",", (senvs.getDesktopEnvironmentFamilies()))));
-            wsModel.LOG.log(mread.withMsgC("   os-desktop-path                : %s", senvs.getDesktopPath()));
+            wsModel.LOG.log(mread.withMsgC("   os-desktop                     : %s", senvs.desktopEnvironment()));
+            wsModel.LOG.log(mread.withMsgC("   os-desktop-family              : %s", senvs.desktopEnvironmentFamily()));
+            wsModel.LOG.log(mread.withMsgC("   os-desktops                    : %s", text.ofBuilder().appendJoined(",", (senvs.desktopEnvironments()))));
+            wsModel.LOG.log(mread.withMsgC("   os-desktop-families            : %s", text.ofBuilder().appendJoined(",", (senvs.desktopEnvironmentFamilies()))));
+            wsModel.LOG.log(mread.withMsgC("   os-desktop-path                : %s", senvs.desktopPath()));
             wsModel.LOG.log(mread.withMsgC("   os-desktop-integration         : %s", senvs.getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP)));
             wsModel.LOG.log(mread.withMsgC("   os-menu-integration            : %s", senvs.getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU)));
             wsModel.LOG.log(mread.withMsgC("   os-shortcut-integration        : %s", senvs.getDesktopIntegrationSupport(NDesktopIntegrationItem.USER)));
-            wsModel.LOG.log(mread.withMsgC("   os-version                     : %s", senvs.getOsDist().version()));
+            wsModel.LOG.log(mread.withMsgC("   os-version                     : %s", senvs.osDist().version()));
             wsModel.LOG.log(mread.withMsgC("   os-username                    : %s", System.getProperty("user.name")));
             wsModel.LOG.log(mread.withMsgC("   os-user-dir                    : %s", NPath.of(System.getProperty("user.dir"))));
             wsModel.LOG.log(mread.withMsgC("   os-user-home                   : %s", NPath.of(System.getProperty("user.home"))));
@@ -1154,7 +1154,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     protected boolean loadWorkspace(List<String> excludedExtensions, String[] excludedRepositories) {
         if (wsModel.configModel.loadWorkspace()) {
             //extensions already wired... this is needless!
-            for (NId extensionId : wsModel.extensions.getConfigExtensions()) {
+            for (NId extensionId : wsModel.extensions.configExtensions()) {
                 if (wsModel.extensionModel.isExcludedExtension(extensionId)) {
                     continue;
                 }
@@ -1346,7 +1346,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         } else if (shortName.equals(NConstants.Ids.NUTS_RUNTIME)) {
             idType = NIdType.RUNTIME;
         } else {
-            for (NId companionTool : wsModel.extensions.getCompanionIds()) {
+            for (NId companionTool : wsModel.extensions.companionIds()) {
                 if (companionTool.shortName().equals(shortName)) {
                     idType = NIdType.COMPANION;
                 }
@@ -1405,7 +1405,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     @Override
     public boolean requiresRuntimeExtension() {
         boolean coreFound = false;
-        for (NId ext : wsModel.extensions.getConfigExtensions()) {
+        for (NId ext : wsModel.extensions.configExtensions()) {
             if (ext.equalsShortId(runtimeId())) {
                 coreFound = true;
                 break;
@@ -1796,18 +1796,18 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         //apply isolation!
         NIsolationLevel isolation = this.bootOptions().isolationLevel().orElse(NIsolationLevel.SYSTEM);
         if (isolation.compareTo(NIsolationLevel.CONFINED) >= 0) {
-            launcher.setCreateDesktopLauncher(NSupportMode.NEVER);
-            launcher.setCreateMenuLauncher(NSupportMode.NEVER);
-            launcher.setCreateUserLauncher(NSupportMode.NEVER);
-            launcher.setSwitchWorkspace(false);
-            launcher.setSwitchWorkspaceLocation(null);
+            launcher.createDesktopLauncher(NSupportMode.NEVER);
+            launcher.createMenuLauncher(NSupportMode.NEVER);
+            launcher.createUserLauncher(NSupportMode.NEVER);
+            launcher.switchWorkspace(false);
+            launcher.switchWorkspaceLocation(null);
         }
         SystemNdi ndi = NSettingsNdiSubCommand.createNdi();
         if (ndi != null) {
             ndi.addScript(
                     new NdiScriptOptions()
                             .setLauncher(launcher.copy()),
-                    new String[]{launcher.getId().builder().fullName()}
+                    new String[]{launcher.id().builder().fullName()}
             );
         }
     }
@@ -1914,7 +1914,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         char pathSeparatorChar = File.pathSeparatorChar;
         if (!NBlankable.isBlank(commandName)) {
             if (!commandName.contains("/") && !commandName.contains("\\") && !commandName.equals(".") && !commandName.equals("..")) {
-                switch (NEnv.of().getOsFamily()) {
+                switch (NEnv.of().osFamily()) {
                     case WINDOWS: {
                         List<String> paths = NStringUtils.split(NEnv.of().getEnv("PATH").orNull(), "" + pathSeparatorChar, true, true);
                         List<String> execExtensions = NStringUtils.split(NEnv.of().getEnv("PATHEXT").orNull(), "" + pathSeparatorChar, true, true);

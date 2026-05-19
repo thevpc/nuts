@@ -444,7 +444,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     }
 
     private NIndexStore getIndexStore() {
-        return NRepositoryExt.of(repository).getIndexStore();
+        return NRepositoryExt.of(repository).indexStore();
     }
 
     @Override

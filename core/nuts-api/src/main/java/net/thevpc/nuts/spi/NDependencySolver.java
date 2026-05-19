@@ -49,7 +49,7 @@ public interface NDependencySolver {
         return NDependencySolvers.of().createSolver(solverName);
     }
 
-    static List<String> getSolverNames() {
+    static List<String> solverNames() {
         return NDependencySolvers.of().getSolverNames();
     }
 
@@ -60,16 +60,16 @@ public interface NDependencySolver {
 
     NDependencySolver add(NDependency dependency, NDefinition def);
 
-    NDependencySolver setDependencyFilter(NDependencyFilter dependencyFilter);
+    NDependencySolver dependencyFilter(NDependencyFilter dependencyFilter);
 
-    NDependencySolver setRepositoryFilter(NRepositoryFilter repositoryFilter);
+    NDependencySolver repositoryFilter(NRepositoryFilter repositoryFilter);
 
     NDependencies solve();
 
-    String getName();
+    String name();
 
     boolean isIgnoreCurrentEnvironment();
 
-    NDependencySolver setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
+    NDependencySolver ignoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
 
 }

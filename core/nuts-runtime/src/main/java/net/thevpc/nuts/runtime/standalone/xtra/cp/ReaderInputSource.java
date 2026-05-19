@@ -49,7 +49,7 @@ class ReaderInputSource extends AbstractNInputSource {
     }
 
     @Override
-    public Reader getReader() {
+    public Reader asReader() {
         return reader;
     }
 

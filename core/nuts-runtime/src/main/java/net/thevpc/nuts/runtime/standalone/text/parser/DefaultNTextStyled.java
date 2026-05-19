@@ -168,11 +168,6 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     }
 
     @Override
-    public List<NText> split(String separator, boolean returnSeparator) {
-        return child.split(separator, returnSeparator).stream().map(x -> DefaultNTextStyled.appendStyle(x, textStyles)).collect(Collectors.toList());
-    }
-
-    @Override
     public NText trimLeft() {
         NText c = child.trimLeft();
         if (c == child) {

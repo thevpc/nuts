@@ -34,6 +34,7 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by vpc on 5/23/17.
@@ -268,10 +269,15 @@ public interface NText extends NBlankable, NElementSimple {
     List<NText> split(String separator);
 
     List<NText> split(String separator, boolean returnSeparator);
+    List<NText> splitLines(boolean returnSeparator);
+    List<NText> splitLines();
+    List<NText> split(Pattern separator, boolean returnSeparator);
 
     NPrimitiveText[] toCharArray();
 
     List<NPrimitiveText> toCharList();
+
+    List<NPrimitiveText> toPrimitiveList();
 
     NStream<NPrimitiveText> toCharStream();
 

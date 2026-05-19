@@ -21,13 +21,13 @@ public interface NEnv extends NComponent {
     }
 
     static NEnv of(NConnectionString connectionString) {
-        if (NBlankable.isBlank(connectionString) || NBlankable.isBlank(connectionString.getHost())) {
+        if (NBlankable.isBlank(connectionString) || NBlankable.isBlank(connectionString.host())) {
             return of();
         }
 
         NConnectionStringBuilder connectionStringBuilder = connectionString.builder()
                 //remove 'path' query param because target is independent of path
-                .setPath(null);
+                .path(null);
         NConnectionString normalizedConnectionStringWithUse = connectionString.normalize();
 
         NConnectionString normalizedConnectionStringWithoutUse = connectionStringBuilder
@@ -54,65 +54,65 @@ public interface NEnv extends NComponent {
      * @return the target host connection string
      * @since 0.8.4
      */
-    NConnectionString getConnectionString();
+    NConnectionString connectionString();
 
-    NOsFamily getOsFamily();
+    NOsFamily osFamily();
 
-    Set<NShellFamily> getShellFamilies();
+    Set<NShellFamily> shellFamilies();
 
-    String getRootUserName();
+    String rootUserName();
 
-    String getUserName();
+    String userName();
 
-    String getUserHome();
+    String userHome();
 
-    NShellFamily getShellFamily();
+    NShellFamily shellFamily();
 
-    NId getShell();
+    NId shell();
 
-    NId getDesktopEnvironment();
+    NId desktopEnvironment();
 
-    Set<NId> getDesktopEnvironments();
+    Set<NId> desktopEnvironments();
 
-    NDesktopEnvironmentFamily getDesktopEnvironmentFamily();
+    NDesktopEnvironmentFamily desktopEnvironmentFamily();
 
-    Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies();
+    Set<NDesktopEnvironmentFamily> desktopEnvironmentFamilies();
 
     boolean isNativeImage();
 
-    NId getJava();
+    NId java();
 
-    NId getOs();
+    NId os();
 
-    NId getOsDist();
+    NId osDist();
 
-    NId getArch();
+    NId arch();
 
-    NArchFamily getArchFamily();
+    NArchFamily archFamily();
 
     boolean isGraphicalDesktopEnvironment();
 
     NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target);
 
-    Path getDesktopPath();
+    Path desktopPath();
 
     NOptional<String> getEnv(String name);
 
-    Map<String, String> getEnv();
+    Map<String, String> env();
 
     /**
      * Network/DNS hostname (what other machines resolve)
      *
      * @return
      */
-    String getHostName();
+    String hostName();
 
     /**
      * OS-level friendly/computer name (what user sees in System Settings)
      *
      * @return
      */
-    String getMachineName();
+    String machineName();
 
     /**
      * Returns a fresh NEnv instance with current runtime values.

@@ -211,13 +211,13 @@ public class NCompressedPathBase extends NPathBase {
     @Override
     public InputStream getInputStream(NPathOption... options) {
         return NInputSourceBuilder.of(base.getInputStream(options))
-                .setMetadata(metaData())
+                .metadata(metaData())
                 .createInputStream();
     }
 
     @Override
     public OutputStream getOutputStream(NPathOption... options) {
-        return NOutputStreamBuilder.of(base.getOutputStream(options)).setMetadata(this.metaData()).createOutputStream();
+        return NOutputStreamBuilder.of(base.getOutputStream(options)).metadata(this.metaData()).createOutputStream();
     }
 
     @Override

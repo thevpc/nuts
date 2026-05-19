@@ -13,7 +13,7 @@ public class ReservedNExprVar implements NExprVar {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 

@@ -73,7 +73,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                 .executor(NArtifactCallBuilder.of()
                         .id(NId.of("exec"))
                         .arguments(
-                                NEnv.of().getOsFamily().isWindow()
+                                NEnv.of().osFamily().isWindow()
                                         ? "$nutsIdBinPath/app/bin/netbeans.exe"
                                         : "$nutsIdBinPath/app/bin/netbeans"
                         )

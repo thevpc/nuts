@@ -141,7 +141,7 @@ public class NExprContextAlteration {
 
     public NExprVar declareVar(NExprVar varImpl) {
         NAssert.requireNamedNonNull(varImpl, "variable");
-        String name = varImpl.getName();
+        String name = varImpl.name();
         if (userVars == null) {
             userVars = new HashMap<>();
         }
@@ -253,7 +253,7 @@ public class NExprContextAlteration {
     public void undeclareVar(NExprVar member) {
         if (member != null) {
             if (userVars != null) {
-                userVars.remove(member.getName());
+                userVars.remove(member.name());
             }
         }
     }
@@ -263,7 +263,7 @@ public class NExprContextAlteration {
             if (userVars == null) {
                 userVars = new HashMap<>();
             }
-            userVars.put(member.getName(), REMOVED);
+            userVars.put(member.name(), REMOVED);
         }
     }
 

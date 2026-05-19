@@ -15,7 +15,7 @@ public class ReservedNExprConst implements NExprVar {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 

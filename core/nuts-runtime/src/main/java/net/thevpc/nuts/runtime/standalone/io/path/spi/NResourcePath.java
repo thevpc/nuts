@@ -468,7 +468,7 @@ public class NResourcePath implements NPathSPI {
             this.p = p;
         }
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 

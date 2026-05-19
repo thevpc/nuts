@@ -12,7 +12,7 @@ public class ConnectionStringTest {
         NConnectionStringBuilder test = DefaultNConnectionStringBuilder.of("test").get();
         Assertions.assertEquals(
                 new DefaultNConnectionStringBuilder()
-                        .setPath("/test")
+                        .path("/test")
                 ,
                 test
         );
@@ -26,12 +26,12 @@ public class ConnectionStringTest {
         NConnectionStringBuilder test = DefaultNConnectionStringBuilder.of("ssh://user:password@server:1234/folder/file").get();
         Assertions.assertEquals(
                 new DefaultNConnectionStringBuilder()
-                        .setProtocol("ssh")
-                        .setUserName("user")
-                        .setPassword("password")
-                        .setHost("server")
-                        .setPort("1234")
-                        .setPath("/folder/file")
+                        .protocol("ssh")
+                        .userName("user")
+                        .password("password")
+                        .host("server")
+                        .port("1234")
+                        .path("/folder/file")
                 ,
                 test
         );
@@ -45,11 +45,11 @@ public class ConnectionStringTest {
         NConnectionStringBuilder test = DefaultNConnectionStringBuilder.of("ssh://user@server:1234/folder/file").get();
         Assertions.assertEquals(
                 new DefaultNConnectionStringBuilder()
-                        .setProtocol("ssh")
-                        .setUserName("user")
-                        .setHost("server")
-                        .setPort("1234")
-                        .setPath("/folder/file")
+                        .protocol("ssh")
+                        .userName("user")
+                        .host("server")
+                        .port("1234")
+                        .path("/folder/file")
                 ,
                 test
         );
@@ -63,10 +63,10 @@ public class ConnectionStringTest {
         NConnectionStringBuilder test = DefaultNConnectionStringBuilder.of("ssh://user@server/folder/file").get();
         Assertions.assertEquals(
                 new DefaultNConnectionStringBuilder()
-                        .setProtocol("ssh")
-                        .setUserName("user")
-                        .setHost("server")
-                        .setPath("/folder/file")
+                        .protocol("ssh")
+                        .userName("user")
+                        .host("server")
+                        .path("/folder/file")
                 ,
                 test
         );
@@ -80,9 +80,9 @@ public class ConnectionStringTest {
         NConnectionStringBuilder test = DefaultNConnectionStringBuilder.of("ssh://server/folder/file").get();
         Assertions.assertEquals(
                 new DefaultNConnectionStringBuilder()
-                        .setProtocol("ssh")
-                        .setHost("server")
-                        .setPath("/folder/file")
+                        .protocol("ssh")
+                        .host("server")
+                        .path("/folder/file")
                 ,
                 test
         );
@@ -96,10 +96,10 @@ public class ConnectionStringTest {
         NConnectionStringBuilder test = DefaultNConnectionStringBuilder.of("ssh://me:ok@192.168.1.89").get();
         Assertions.assertEquals(
                 new DefaultNConnectionStringBuilder()
-                        .setProtocol("ssh")
-                        .setUserName("me")
-                        .setPassword("ok")
-                        .setHost("192.168.1.89")
+                        .protocol("ssh")
+                        .userName("me")
+                        .password("ok")
+                        .host("192.168.1.89")
                 ,
                 test
         );
@@ -113,8 +113,8 @@ public class ConnectionStringTest {
         NConnectionStringBuilder test = DefaultNConnectionStringBuilder.of("ssh://server").get();
         Assertions.assertEquals(
                 new DefaultNConnectionStringBuilder()
-                        .setProtocol("ssh")
-                        .setHost("server")
+                        .protocol("ssh")
+                        .host("server")
                 ,
                 test
         );
@@ -128,8 +128,8 @@ public class ConnectionStringTest {
         NConnectionStringBuilder test = DefaultNConnectionStringBuilder.of("file:/folder/file").get();
         Assertions.assertEquals(
                 new DefaultNConnectionStringBuilder()
-                        .setProtocol("file")
-                        .setPath("/folder/file")
+                        .protocol("file")
+                        .path("/folder/file")
                 ,
                 test
         );

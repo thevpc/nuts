@@ -1,1 +1,1 @@
-current public directives llive here
+current public directives live here

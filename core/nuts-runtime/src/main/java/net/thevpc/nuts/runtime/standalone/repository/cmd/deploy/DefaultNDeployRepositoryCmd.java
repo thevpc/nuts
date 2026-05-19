@@ -67,9 +67,9 @@ public class DefaultNDeployRepositoryCmd extends AbstractNDeployRepositoryCmd {
             NDescriptor rep = xrepo.deployImpl(this);
             this.setDescriptor(rep);
             this.setId(rep.id());
-            if (session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+            if (session.isIndexed() && xrepo.indexStore() != null && xrepo.indexStore().isEnabled()) {
                 try {
-                    xrepo.getIndexStore().revalidate(this.getId());
+                    xrepo.indexStore().revalidate(this.getId());
                 } catch (NException ex) {
                     _LOG()
                             .log(NMsg.ofJ("error revalidating Indexer for {0} : {1}", getRepo().name(), ex).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));

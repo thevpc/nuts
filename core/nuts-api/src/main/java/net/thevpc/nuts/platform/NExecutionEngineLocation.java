@@ -28,6 +28,8 @@ package net.thevpc.nuts.platform;
 import net.thevpc.nuts.core.NConfigItem;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.Objects;
 
@@ -80,27 +82,33 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
         this.priority = priority;
     }
 
-    public String getVariant() {
+    @NGetter
+    public String variant() {
         return variant;
     }
 
-    public String getVendor() {
+    @NGetter
+    public String vendor() {
         return vendor;
     }
 
-    public int getPriority() {
+    @NGetter
+    public int priority() {
         return priority;
     }
 
-    public NExecutionEngineLocation setPriority(int priority) {
+    @NSetter
+    public NExecutionEngineLocation priority(int priority) {
         return new NExecutionEngineLocation(id, vendor,product, variant,name, path, version, packaging, priority);
     }
 
-    public NId getId() {
+    @NGetter
+    public NId id() {
         return id;
     }
 
-    public NExecutionEngineFamily getExecutionEngineFamily() {
+    @NGetter
+    public NExecutionEngineFamily executionEngineFamily() {
         return executionEngineFamily;
     }
 
@@ -110,7 +118,8 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
      *
      * @return product name
      */
-    public String getProduct() {
+    @NGetter
+    public String product() {
         return product;
     }
 
@@ -119,7 +128,8 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
      *
      * @return SDK version
      */
-    public String getVersion() {
+    @NGetter
+    public String version() {
         return version;
     }
 
@@ -128,7 +138,8 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
      *
      * @return sdk name
      */
-    public String getName() {
+    @NGetter
+    public String name() {
         return name;
     }
 
@@ -137,7 +148,8 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
      *
      * @return sdk path
      */
-    public String getPath() {
+    @NGetter
+    public String path() {
         return path;
     }
 
@@ -147,7 +159,8 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
      *
      * @return packaging name
      */
-    public String getPackaging() {
+    @NGetter
+    public String packaging() {
         return packaging;
     }
 

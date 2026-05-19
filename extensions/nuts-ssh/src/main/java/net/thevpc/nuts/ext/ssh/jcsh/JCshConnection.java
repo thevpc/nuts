@@ -36,11 +36,11 @@ public class JCshConnection extends SshConnectionBase {
 
     private void init(NConnectionString connectionString) {
         this.connectionString = connectionString;
-        String user = connectionString.getUserName();
-        String host = connectionString.getHost();
-        int port = NLiteral.of(connectionString.getPort()).asInt().orElse(-1);
+        String user = connectionString.userName();
+        String host = connectionString.host();
+        int port = NLiteral.of(connectionString.port()).asInt().orElse(-1);
         String keyFilePath = connectionString.builder().getQueryParam(SshConnection.IDENTITY_FILE).orNull();
-        String keyPassword = connectionString.getPassword();
+        String keyPassword = connectionString.password();
         try {
             JSch jsch = new JSch();
 
@@ -78,7 +78,7 @@ public class JCshConnection extends SshConnectionBase {
         } catch (JSchException e) {
             //
             throw new UncheckedIOException(new IOException(e.getMessage() + " (" +
-                    NConnectionStringBuilder.of().setUserName(user).setHost(host).setPort(String.valueOf(port)).setPassword(keyPassword).setQueryString(
+                    NConnectionStringBuilder.of().userName(user).host(host).port(String.valueOf(port)).password(keyPassword).queryString(
                             keyFilePath == null ? null : NStringMapFormat.URL_FORMAT
                                     .format(
                                             NMaps.of(SshConnection.IDENTITY_FILE, keyFilePath)
@@ -506,9 +506,9 @@ public class JCshConnection extends SshConnectionBase {
     @Override
     public InputStream getInputStream(String from) {
         if (useFtp) {
-            return new JCshFileInputStreamSftp(_connectionStringBuilder().setPath(from).build());
+            return new JCshFileInputStreamSftp(_connectionStringBuilder().path(from).build());
         } else {
-            return new JCshFileInputStreamScp(_connectionStringBuilder().setPath(from).build());
+            return new JCshFileInputStreamScp(_connectionStringBuilder().path(from).build());
         }
     }
 
@@ -519,9 +519,9 @@ public class JCshConnection extends SshConnectionBase {
     @Override
     public OutputStream getOutputStream(String from) {
         if (useFtp) {
-            return new JCshFileOutputStreamSftp(_connectionStringBuilder().setPath(from).build(), false, true);
+            return new JCshFileOutputStreamSftp(_connectionStringBuilder().path(from).build(), false, true);
         }
-        return new JCshFileOutputStreamScp(_connectionStringBuilder().setPath(from).build(), false);
+        return new JCshFileOutputStreamScp(_connectionStringBuilder().path(from).build(), false);
     }
 
     public void copyLocalToRemote(String from, String to, boolean mkdirs) {

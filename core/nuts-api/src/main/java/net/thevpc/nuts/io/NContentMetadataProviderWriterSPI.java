@@ -19,7 +19,7 @@ public class NContentMetadataProviderWriterSPI implements NObjectWriterSPI {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         String name = p.metaData().name().orNull();
         if (!NBlankable.isBlank(defaultMsg)) {
             name = defaultMsg.toString();

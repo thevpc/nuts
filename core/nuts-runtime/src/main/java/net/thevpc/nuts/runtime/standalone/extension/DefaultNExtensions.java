@@ -39,7 +39,7 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     @Override
-    public Set<NId> getCompanionIds() {
+    public Set<NId> companionIds() {
         return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(NId.get("net.thevpc.nsh:nsh").get())));
     }
 
@@ -251,7 +251,7 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     @Override
-    public List<NId> getConfigExtensions() {
+    public List<NId> configExtensions() {
         return wsModel.extensionModel.getConfigExtensions();
     }
 

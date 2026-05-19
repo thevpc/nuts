@@ -65,23 +65,23 @@ public class DefaultNLogModel {
         this.logFolder = Paths.get(effOptions.getStoreType(NStoreType.LOG).get());
         NLogConfig lc = userOptions.logConfig().orNull();
         if (lc != null) {
-            if (lc.getLogFileLevel() != null) {
-                logConfig.setLogFileLevel(lc.getLogFileLevel());
+            if (lc.logFileLevel() != null) {
+                logConfig.logFileLevel(lc.logFileLevel());
             }
-            if (lc.getLogTermLevel() != null) {
-                logConfig.setLogTermLevel(lc.getLogTermLevel());
+            if (lc.logTermLevel() != null) {
+                logConfig.logTermLevel(lc.logTermLevel());
             }
-            logConfig.setLogFileName(lc.getLogFileName());
-            logConfig.setLogFileCount(lc.getLogFileCount());
-            logConfig.setLogFileBase(lc.getLogFileBase());
-            logConfig.setLogFileSize(lc.getLogFileSize());
+            logConfig.logFileName(lc.logFileName());
+            logConfig.logFileCount(lc.logFileCount());
+            logConfig.logFileBase(lc.logFileBase());
+            logConfig.logFileSize(lc.logFileSize());
         }
         consoleHandler = new NLogConsoleHandler(this);
         consoleHandler.suspendTerminal();
         try {
             fileHandler = NLogFileHandler.create(
                     logConfig, true, logFolder);
-            fileHandler.setLevel(logConfig.getLogFileLevel());
+            fileHandler.setLevel(logConfig.logFileLevel());
         } catch (Exception ex) {
             Logger.getLogger(DefaultNLogs.class.getName()).log(Level.FINE, "unable to create file handler", ex);
         }
@@ -119,7 +119,7 @@ public class DefaultNLogModel {
             this.factorySPI = factorySPI;
             NLogFactorySPI f2 = getFactorySPI();
             for (NLog l : loaded().values()) {
-                ((DefaultNLog) l).updateSPI(f2.getLogSPI(l.getName()));
+                ((DefaultNLog) l).updateSPI(f2.getLogSPI(l.name()));
             }
         }
         return this;
@@ -203,7 +203,7 @@ public class DefaultNLogModel {
 
 
     public Level getTermLevel() {
-        return this.logConfig.getLogTermLevel();
+        return this.logConfig.logTermLevel();
     }
 
 
@@ -211,12 +211,12 @@ public class DefaultNLogModel {
         if (level == null) {
             level = Level.INFO;
         }
-        this.logConfig.setLogFileLevel(level);
+        this.logConfig.logFileLevel(level);
     }
 
 
     public Level getFileLevel() {
-        return this.logConfig.getLogFileLevel();
+        return this.logConfig.logFileLevel();
     }
 
 
@@ -224,7 +224,7 @@ public class DefaultNLogModel {
         if (level == null) {
             level = Level.INFO;
         }
-        this.logConfig.setLogFileLevel(level);
+        this.logConfig.logFileLevel(level);
 //        session = CoreNutsUtils.validate(session, workspace);
         if (fileHandler != null) {
             fileHandler.setLevel(level);

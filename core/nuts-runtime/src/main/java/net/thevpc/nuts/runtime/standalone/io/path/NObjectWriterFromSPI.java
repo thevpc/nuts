@@ -13,7 +13,7 @@ public class NObjectWriterFromSPI extends DefaultObjectWriterBase<NObjectWriter>
     private final NObjectWriterSPI spi;
 
     public NObjectWriterFromSPI(NObjectWriterSPI spi) {
-        super(spi.getName());
+        super(spi.name());
         this.spi = spi;
     }
 

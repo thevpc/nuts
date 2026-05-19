@@ -135,14 +135,14 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
 
     NStream<String> reversedLines();
 
-    Reader getReader();
+    Reader asReader();
 
-    Reader getReader(Charset cs);
+    Reader asReader(Charset cs);
 
 
-    BufferedReader getBufferedReader();
+    BufferedReader asBufferedReader();
 
-    BufferedReader getBufferedReader(Charset cs);
+    BufferedReader asBufferedReader(Charset cs);
 
     NStream<String> head(long count, Charset cs);
 
@@ -156,11 +156,11 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     default void dispose() {
     }
 
-    byte[] getDigest();
+    byte[] digest();
 
     byte[] getDigest(String algo);
 
-    String getDigestString();
+    String digestString();
 
     String getDigestString(String algo);
 }

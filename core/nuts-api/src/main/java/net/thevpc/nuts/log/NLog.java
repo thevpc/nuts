@@ -66,7 +66,7 @@ public interface NLog extends NLogger{
     }
 
     static NLog ofNull() {
-        return NLogs.of().getNullLogger();
+        return NLogs.of().nullLogger();
     }
 
     static NLog ofScoped(Class<?> clazz) {
@@ -95,7 +95,7 @@ public interface NLog extends NLogger{
         return of(name).scoped();
     }
 
-    String getName();
+    String name();
 
     /**
      * Check if a message of the given level would actually be logged

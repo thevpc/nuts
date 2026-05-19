@@ -684,7 +684,7 @@ public class ProcessBuilder2 {
 
     private NNonBlockingInputStream createNonBlockingInput(InputStream proc, String pname, boolean closeFast) {
         return NInputSourceBuilder.of(proc)
-                .setMetadata(new DefaultNContentMetadata().message(NMsg.ofPlain(pname)))
+                .metadata(new DefaultNContentMetadata().message(NMsg.ofPlain(pname)))
                 .createNonBlockingInputStream();
     }
 

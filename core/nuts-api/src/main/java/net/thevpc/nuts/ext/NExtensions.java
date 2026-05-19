@@ -59,7 +59,7 @@ public interface NExtensions extends NComponent {
         return NWorkspace.get().map(x -> x.extensions());
     }
 
-    Set<NId> getCompanionIds();
+    Set<NId> companionIds();
 
     <T extends NComponent> boolean installWorkspaceExtensionComponent(Class<T> extensionPointType, T extensionImpl);
 
@@ -138,7 +138,7 @@ public interface NExtensions extends NComponent {
      *
      * @return extension ids
      */
-    List<NId> getConfigExtensions();
+    List<NId> configExtensions();
 
     boolean isExcludedExtension(String extensionId, NWorkspaceOptions options);
 

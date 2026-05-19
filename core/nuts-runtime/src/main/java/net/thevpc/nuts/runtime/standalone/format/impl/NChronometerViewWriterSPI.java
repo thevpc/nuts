@@ -19,7 +19,7 @@ public class NChronometerViewWriterSPI implements NObjectWriterSPI {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "chronometer";
     }
 

@@ -12,7 +12,7 @@ public class NonClosableInputStream extends InputStream implements InputStreamDe
     }
 
     @Override
-    public InputStream getDelegateInputStream() {
+    public InputStream delegateInputStream() {
         return base;
     }
 

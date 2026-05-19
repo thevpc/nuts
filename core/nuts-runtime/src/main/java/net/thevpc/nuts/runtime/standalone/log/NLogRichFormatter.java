@@ -139,12 +139,12 @@ public class NLogRichFormatter extends Formatter {
                 + NLogUtils.formatClassName(wRecord.getSourceClassName())
                 + ": ");
 
-        if (wRecord.getTime() > 0) {
+        if (wRecord.time() > 0) {
             sb.append("(");
-            sb.append(CoreTimeUtils.formatPeriodMilli(wRecord.getTime()), NTextStyle.config());
+            sb.append(CoreTimeUtils.formatPeriodMilli(wRecord.time()), NTextStyle.config());
             sb.append(") ");
         }
-        NMsg message = wRecord.getFormattedMessage();
+        NMsg message = wRecord.formattedMessage();
         NText msgStr =
                 NTexts.of()
                         .of(message);

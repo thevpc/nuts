@@ -9,21 +9,21 @@ public interface NOutputStreamBuilder {
         return NIORPI.of().ofOutputStreamBuilder(outputStream);
     }
 
-    OutputStream getBase();
+    OutputStream base();
 
-    NOutputStreamBuilder setBase(OutputStream base);
+    NOutputStreamBuilder base(OutputStream base);
 
-    NContentMetadata getMetadata();
+    NContentMetadata metadata();
 
-    NOutputStreamBuilder setMetadata(NContentMetadata metadata);
+    NOutputStreamBuilder metadata(NContentMetadata metadata);
 
     boolean isCloseBase();
 
-    NOutputStreamBuilder setCloseBase(boolean closeBase);
+    NOutputStreamBuilder closeBase(boolean closeBase);
 
-    Runnable getCloseAction();
+    Runnable closeAction();
 
-    NOutputStreamBuilder setCloseAction(Runnable closeAction);
+    NOutputStreamBuilder closeAction(Runnable closeAction);
 
     OutputStream createOutputStream();
 }

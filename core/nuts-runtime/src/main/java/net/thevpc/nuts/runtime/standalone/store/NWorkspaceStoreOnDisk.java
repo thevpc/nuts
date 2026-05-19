@@ -277,7 +277,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").outputStream())) {
             o.printf("workspace.path:%s%n", workspace.workspaceLocation());
             o.printf("repository.path:%s%n", file);
-            o.printf("workspace.options:%s%n", workspace.bootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(false)));
+            o.printf("workspace.options:%s%n", workspace.bootOptions().toCmdLine(new NWorkspaceOptionsConfig().compact(false)));
             for (NStoreType storeType : NStoreType.values()) {
                 o.printf("location." + storeType.id() + ":%s%n", NPath.of(NStoreKey.of(storeType)));
             }

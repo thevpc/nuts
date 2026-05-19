@@ -39,7 +39,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
         NWorkspaceOptionsBuilder bo = null;
         bo = NWorkspace.of().bootOptions().toWorkspaceOptions().builder();
         if (!NEnv.of().isGraphicalDesktopEnvironment()) {
-            bo.setGui(false);
+            bo.gui(false);
         }
 
         NWorkspaceOptions bbo = bo.build();
@@ -55,7 +55,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
 
         NPrintStream fout = null;
         try {
-            fout = NIO.of().getSystemTerminal().getErr();
+            fout = NIO.of().systemTerminal().getErr();
             if (fm != null) {
                 fm = NMsg.ofStyledError(fm);
             } else {

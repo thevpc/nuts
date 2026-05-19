@@ -18,12 +18,12 @@ public class DefaultNGlob implements NGlob {
     }
 
     @Override
-    public String getSeparator() {
+    public String separator() {
         return separator;
     }
 
     @Override
-    public NGlob setSeparator(String separator) {
+    public NGlob separator(String separator) {
         this.separator = separator;
         return this;
     }
@@ -51,7 +51,7 @@ public class DefaultNGlob implements NGlob {
         if (NBlankable.isBlank(pattern)) {
             return GlobUtils.PATTERN_ALL;
         }
-        return GlobUtils.glob(pattern, getSeparator());
+        return GlobUtils.glob(pattern, separator());
     }
 
     @Override
@@ -59,7 +59,7 @@ public class DefaultNGlob implements NGlob {
         if (NBlankable.isBlank(pattern)) {
             return ".*";
         }
-        return GlobUtils.globString(pattern, getSeparator());
+        return GlobUtils.globString(pattern, separator());
     }
 
     public String escape(String s) {

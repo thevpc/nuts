@@ -177,13 +177,13 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
     }
 
     @Override
-    public BufferedReader getBufferedReader() {
-        return getBufferedReader(null);
+    public BufferedReader asBufferedReader() {
+        return asBufferedReader(null);
     }
 
     @Override
-    public BufferedReader getBufferedReader(Charset cs) {
-        Reader r = getReader(cs);
+    public BufferedReader asBufferedReader(Charset cs) {
+        Reader r = asReader(cs);
         if (r instanceof BufferedReader) {
             return (BufferedReader) r;
         }
@@ -193,7 +193,7 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
     @Override
     public NStream<String> tail(long count, Charset cs) {
         LinkedList<String> lines = new LinkedList<>();
-        BufferedReader br = getBufferedReader(cs);
+        BufferedReader br = asBufferedReader(cs);
         String line;
         try {
             int count0 = 0;
@@ -227,16 +227,16 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
 
     @Override
     public NStream<String> lines(Charset cs) {
-        return CoreIOUtils.bufferedReaderToLinesStream(getBufferedReader(cs));
+        return CoreIOUtils.bufferedReaderToLinesStream(asBufferedReader(cs));
     }
 
     @Override
-    public Reader getReader() {
-        return getReader(null);
+    public Reader asReader() {
+        return asReader(null);
     }
 
     @Override
-    public Reader getReader(Charset cs) {
+    public Reader asReader(Charset cs) {
         CharsetDecoder decoder = nonNullCharset(cs).newDecoder();
         Reader reader = new InputStreamReader(inputStream(), decoder);
         return new BufferedReader(reader);
@@ -250,8 +250,8 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
     }
 
     @Override
-    public String getDigestString() {
-        return NHex.fromBytes(getDigest());
+    public String digestString() {
+        return NHex.fromBytes(digest());
     }
 
     @Override
@@ -260,7 +260,7 @@ public class NTempOutputStreamImpl extends NTempOutputStream {
     }
 
     @Override
-    public byte[] getDigest() {
+    public byte[] digest() {
         return getDigest(null);
     }
 

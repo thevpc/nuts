@@ -21,19 +21,19 @@ public class RnshExecTargetSPI implements NExecTargetSPI {
 
         if (c instanceof String) {
             NConnectionStringBuilder z = DefaultNConnectionStringBuilder.of((String) c).orNull();
-            if (z != null && isSupportedProtocol(z.getProtocol())) {
+            if (z != null && isSupportedProtocol(z.protocol())) {
                 return NScorable.DEFAULT_SCORE;
             }
         }
         if (c instanceof NConnectionStringBuilder) {
             NConnectionStringBuilder z = (NConnectionStringBuilder) c;
-            if (isSupportedProtocol(z.getProtocol())) {
+            if (isSupportedProtocol(z.protocol())) {
                 return NScorable.DEFAULT_SCORE;
             }
         }
         if (c instanceof NConnectionString) {
             NConnectionString z = (NConnectionString) c;
-            if (isSupportedProtocol(z.getProtocol())) {
+            if (isSupportedProtocol(z.protocol())) {
                 return NScorable.DEFAULT_SCORE;
             }
         }

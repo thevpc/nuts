@@ -88,7 +88,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
 
     @Override
     public int getResultCount() {
-        return getResult().getUpdatesCount();
+        return getResult().updatesCount();
     }
 
     @Override
@@ -218,7 +218,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
 
     private Set<NId> getExtensionsToUpdate() {
         Set<NId> ext = new HashSet<>();
-        for (NId extension : NExtensions.of().getConfigExtensions()) {
+        for (NId extension : NExtensions.of().configExtensions()) {
             ext.add(extension.shortId());
         }
         if (updateExtensions) {
@@ -243,7 +243,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
 
     private Set<NId> getCompanionsToUpdate() {
         Set<NId> ext = new HashSet<>();
-        for (NId extension : NExtensions.of().getCompanionIds()) {
+        for (NId extension : NExtensions.of().companionIds()) {
             ext.add(extension.shortId());
         }
         return ext;
@@ -251,7 +251,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
 
     private Set<NId> getRegularIds() {
         HashSet<String> extensions = new HashSet<>();
-        for (NId object : NExtensions.of().getConfigExtensions()) {
+        for (NId object : NExtensions.of().configExtensions()) {
             extensions.add(object.shortName());
         }
 
@@ -323,9 +323,9 @@ public class DefaultNUpdate extends AbstractNUpdate {
     protected void traceUpdates(NWorkspaceUpdateResult result) {
         NSession session = NSession.of();
         NPrintStream out = session.out();
-        List<NUpdateResult> all = result.getAllResults();
-        List<NUpdateResult> updates = result.getUpdatable();
-        List<NUpdateResult> notInstalled = result.getAllResults().stream()
+        List<NUpdateResult> all = result.allResults();
+        List<NUpdateResult> updates = result.updatable();
+        List<NUpdateResult> notInstalled = result.allResults().stream()
                 .filter(x -> !x.isInstalled()).collect(Collectors.toList());
         all.sort(new Comparator<NUpdateResult>() {
             private int itemOrder(NUpdateResult o) {
@@ -350,7 +350,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
             if (notInstalled.size() == 0 && updates.size() == 0) {
                 out.println(NMsg.ofC("all packages are %s. You are running latest version%s.",
                         NText.ofStyledSuccess("up-to-date"),
-                        result.getAllResults().size() > 1 ? "s" : ""));
+                        result.allResults().size() > 1 ? "s" : ""));
             } else {
                 if (updates.size() > 0 && notInstalled.size() > 0) {
                     out.println(NMsg.ofC("workspace has %s package%s not installed and %s package%s to update.",
@@ -398,7 +398,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
         } else {
             if (updates.size() == 0 && notInstalled.size() == 0) {
                 out.println(NElement.ofObjectBuilder()
-                        .set("message", "all packages are up-to-date. You are running latest version" + (result.getAllResults().size() > 1 ? "s" : "") + ".")
+                        .set("message", "all packages are up-to-date. You are running latest version" + (result.allResults().size() > 1 ? "s" : "") + ".")
                         .build());
             } else {
                 NArrayElementBuilder arrayElementBuilder = NElement.ofArrayBuilder();
@@ -544,9 +544,9 @@ public class DefaultNUpdate extends AbstractNUpdate {
         NSession session = NSession.of();
         NWorkspace ws = session.workspace();
         applyFixes();
-        NUpdateResult apiUpdate = result.getApi();
-        NUpdateResult runtimeUpdate = result.getRuntime();
-        List<NId> notInstalled = result.getAllResults().stream()
+        NUpdateResult apiUpdate = result.api();
+        NUpdateResult runtimeUpdate = result.runtime();
+        List<NId> notInstalled = result.allResults().stream()
                 .filter(x -> x.installed() == null) //not installed
                 .map(NUpdateResult::id)
                 .collect(Collectors.toList());
@@ -557,14 +557,14 @@ public class DefaultNUpdate extends AbstractNUpdate {
                 throw new NIllegalArgumentException(NMsg.ofC("%s are not yet installed for them to be updated.", notInstalled));
             }
         }
-        if (result.getUpdatesCount() == 0) {
+        if (result.updatesCount() == 0) {
             return;
         }
         NWorkspaceUtils.of().checkReadOnly();
         boolean requireSave = false;
         NSession validWorkspaceSession = session;
         final NPrintStream out = validWorkspaceSession.out();
-        boolean accept = NIO.of().getDefaultTerminal().ask()
+        boolean accept = NIO.of().defaultTerminal().ask()
                 .forBoolean(NMsg.ofPlain("would you like to apply updates?")).defaultValue(true)
                 .value();
         if (validWorkspaceSession.isAsk() && !accept) {
@@ -600,7 +600,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
             }
             traceSingleUpdate(runtimeUpdate);
         }
-        for (NUpdateResult extension : result.getExtensions()) {
+        for (NUpdateResult extension : result.extensions()) {
             if (!extension.isUpdateApplied()) {
                 if (extension.available() != null) {
                     applyRegularUpdate(((DefaultNUpdateResult) extension));
@@ -618,7 +618,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
                 }
             }
         }
-        for (NUpdateResult component : result.getArtifacts()) {
+        for (NUpdateResult component : result.artifacts()) {
             applyRegularUpdate((DefaultNUpdateResult) component);
         }
 
@@ -694,8 +694,8 @@ public class DefaultNUpdate extends AbstractNUpdate {
 //        NSession sessionOffline = session.copy().setFetchMode(NutsFetchMode.OFFLINE);
         switch (type) {
             case API: {
-                oldId = NWorkspace.of().storedConfig().getApiId();
-                NId confId = NWorkspace.of().storedConfig().getApiId();
+                oldId = NWorkspace.of().storedConfig().apiId();
+                NId confId = NWorkspace.of().storedConfig().apiId();
                 if (confId != null) {
                     oldId = confId;
                 }
@@ -732,7 +732,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
             }
             case RUNTIME: {
                 oldId = ws.runtimeId();
-                NId confId = NWorkspace.of().storedConfig().getRuntimeId();
+                NId confId = NWorkspace.of().storedConfig().runtimeId();
                 if (confId != null) {
                     oldId = confId;
                 }

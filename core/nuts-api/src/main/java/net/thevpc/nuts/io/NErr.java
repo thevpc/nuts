@@ -202,7 +202,7 @@ public class NErr {
     }
 
     public static NPrintStream setTerminalMode(NTerminalMode other){
-        return err().setTerminalMode(other);
+        return err().terminalMode(other);
     }
 
     public static NPrintStream run(NTerminalCmd command){

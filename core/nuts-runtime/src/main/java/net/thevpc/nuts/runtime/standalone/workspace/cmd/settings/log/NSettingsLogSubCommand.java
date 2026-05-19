@@ -38,39 +38,39 @@ public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
 //            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
             if (cmdLine.next("verbose", "finest").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().setTermLevel(Level.FINEST);
+                    NLogs.of().termLevel(Level.FINEST);
                 }
             } else if (cmdLine.next("fine").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().setTermLevel(Level.FINE);
+                    NLogs.of().termLevel(Level.FINE);
                 }
             } else if (cmdLine.next("finer").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().setTermLevel(Level.FINER);
+                    NLogs.of().termLevel(Level.FINER);
                 }
             } else if (cmdLine.next("info").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().setTermLevel(Level.INFO);
+                    NLogs.of().termLevel(Level.INFO);
                 }
             } else if (cmdLine.next("warning").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().setTermLevel(Level.WARNING);
+                    NLogs.of().termLevel(Level.WARNING);
                 }
             } else if (cmdLine.next("severe", "error").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().setTermLevel(Level.SEVERE);
+                    NLogs.of().termLevel(Level.SEVERE);
                 }
             } else if (cmdLine.next("config").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().setTermLevel(Level.CONFIG);
+                    NLogs.of().termLevel(Level.CONFIG);
                 }
             } else if (cmdLine.next("off").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().setTermLevel(Level.OFF);
+                    NLogs.of().termLevel(Level.OFF);
                 }
             } else if (cmdLine.next("all").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().setTermLevel(Level.ALL);
+                    NLogs.of().termLevel(Level.ALL);
                 }
             } else {
                 if (cmdLine.isExecMode()) {

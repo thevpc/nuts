@@ -1,7 +1,7 @@
 package net.thevpc.nuts.net;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.util.NImmutable;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
@@ -17,27 +17,38 @@ public interface NConnectionString  {
         return get(expression).get();
     }
 
-    String getUserName();
+    @NGetter
+    String userName();
 
-    String getPassword();
+    @NGetter
+    String password();
 
-    String getHost();
+    @NGetter
+    String host();
 
-    NConnectionString getRoot();
+    @NGetter
+    NConnectionString root();
 
-    NConnectionString getParent();
+    @NGetter
+    NConnectionString parent();
 
-    String getPort();
+    @NGetter
+    String port();
 
-    NOptional<Map<String, List<String>>> getQueryMap();
+    @NGetter
+    NOptional<Map<String, List<String>>> queryMap();
 
-    String getPath();
+    @NGetter
+    String path();
 
-    String getProtocol();
+    @NGetter
+    String protocol();
 
-    String getQueryString();
+    @NGetter
+    String queryString();
 
-    List<String> getNames();
+    @NGetter
+    List<String> names();
 
     NConnectionString resolve(String child);
 

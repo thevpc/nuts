@@ -15,13 +15,13 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest setOneWay(boolean oneWay);
 
-    String getUri();
+    String uri();
 
     NWebRequest uri(String url, Object... vars);
 
     NWebRequest uri(String url);
 
-    NHttpMethod getMethod();
+    NHttpMethod method();
 
     NWebRequest method(NHttpMethod method);
 
@@ -63,9 +63,9 @@ public interface NWebRequest extends NMsgFormattable {
 
     String getHeader(String name);
 
-    List<String> getHeaders(String name);
+    List<String> headers(String name);
 
-    Map<String, List<String>> getHeaders();
+    Map<String, List<String>> headers();
 
     NWebRequest setHeaders(Map<String, List<String>> headers);
 
@@ -102,7 +102,7 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest setHeader(String name, String value);
 
-    Map<String, List<String>> getParameters();
+    Map<String, List<String>> parameters();
 
     NWebRequest setParameters(Map<String, List<String>> parameters);
 
@@ -114,7 +114,7 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest setParameter(String name, String value);
 
-    NInputSource getRequestBody();
+    NInputSource requestBody();
 
     NWebRequest jsonRequestBody(Object body);
 
@@ -132,11 +132,11 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest authorization(String authorization);
 
-    String getAuthorization();
+    String authorization();
 
-    String getAuthorizationBearer();
+    String authorizationBearer();
 
-    String getContentLanguage();
+    String contentLanguage();
 
     NWebRequest addFormUrlEncoded(String key, String value);
 
@@ -152,23 +152,23 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest formUrlEncoded(Map<String, String> m);
 
-    String getContentType();
+    String contentType();
 
     NWebRequest contentTypeFormUrlEncoded();
 
     NWebRequest contentType(String contentType);
 
-    NDuration getReadTimeout();
+    NDuration readTimeout();
 
     NWebRequest timeout(NDuration readTimeout);
 
     NWebRequest readTimeout(NDuration readTimeout);
 
-    NDuration getConnectTimeout();
+    NDuration connectTimeout();
 
     NWebRequest connectTimeout(NDuration duration);
 
-    List<NWebRequestBody> getParts();
+    List<NWebRequestBody> parts();
 
     NWebRequest addPart(NWebRequestBody body);
 
@@ -180,7 +180,7 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest addPart(String name, String fileName, String contentType, NInputSource body);
 
-    String getEffectiveUrl();
+    String effectiveUrl();
 
     NWebResponse run();
 

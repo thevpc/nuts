@@ -1,33 +1,48 @@
 package net.thevpc.nuts.net;
 
 import net.thevpc.nuts.io.NInputSource;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 public interface NWebRequestBody {
-    NInputSource getBody();
+    @NGetter
+    NInputSource body();
 
-    String getContentType();
+    @NGetter
+    String contentType();
 
-    String getEncoding();
+    @NGetter
+    String encoding();
 
-    String getName();
+    @NGetter
+    String name();
 
-    String getFileName();
+    @NGetter
+    String fileName();
 
-    String getStringValue();
+    @NGetter
+    String stringValue();
 
-    String getContentDisposition();
+    @NGetter
+    String contentDisposition();
 
-    NWebRequestBody setStringValue(String source);
+    @NSetter
+    NWebRequestBody stringValue(String source);
 
-    NWebRequestBody setBody(NInputSource source);
+    @NSetter
+    NWebRequestBody body(NInputSource source);
 
-    NWebRequestBody setContentType(String contentType);
+    @NSetter
+    NWebRequestBody contentType(String contentType);
 
-    NWebRequestBody setEncoding(String encoding);
+    @NSetter
+    NWebRequestBody encoding(String encoding);
 
-    NWebRequestBody setName(String name);
+    @NSetter
+    NWebRequestBody name(String name);
 
-    NWebRequestBody setFileName(String fileName);
+    @NSetter
+    NWebRequestBody fileName(String fileName);
 
     //return parent NWebRequest
     NWebRequest end();

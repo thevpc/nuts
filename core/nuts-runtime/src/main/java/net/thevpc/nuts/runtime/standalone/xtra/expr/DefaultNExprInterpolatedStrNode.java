@@ -18,7 +18,7 @@ public class DefaultNExprInterpolatedStrNode implements NExprInterpolatedStrNode
     }
 
     @Override
-    public String getExpression() {
+    public String expression() {
         return expression;
     }
 

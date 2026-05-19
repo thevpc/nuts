@@ -11,7 +11,6 @@ import java.io.ByteArrayOutputStream;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 public class NEnvRnsh implements NEnv {
     private NConnectionString connectionString;
@@ -34,7 +33,7 @@ public class NEnvRnsh implements NEnv {
         Object c = context.getCriteria();
         if (c instanceof NConnectionString) {
             NConnectionString z = (NConnectionString) c;
-            if (isSupportedProtocol(z.getProtocol())) {
+            if (isSupportedProtocol(z.protocol())) {
                 return NScorable.DEFAULT_SCORE;
             }
         }
@@ -55,7 +54,7 @@ public class NEnvRnsh implements NEnv {
             }
 
             @Override
-            public NConnectionString getTargetConnectionString() {
+            public NConnectionString targetConnectionString() {
                 return connectionString;
             }
         };
@@ -64,68 +63,68 @@ public class NEnvRnsh implements NEnv {
     }
 
     @Override
-    public NConnectionString getConnectionString() {
+    public NConnectionString connectionString() {
         return connectionString;
     }
 
     @Override
-    public NOsFamily getOsFamily() {
-        return defEnv.getOsFamily();
+    public NOsFamily osFamily() {
+        return defEnv.osFamily();
     }
 
     @Override
-    public Set<NShellFamily> getShellFamilies() {
-        return defEnv.getShellFamilies();
+    public Set<NShellFamily> shellFamilies() {
+        return defEnv.shellFamilies();
     }
 
     @Override
-    public NShellFamily getShellFamily() {
-        return defEnv.getShellFamily();
+    public NShellFamily shellFamily() {
+        return defEnv.shellFamily();
     }
 
     @Override
-    public NId getDesktopEnvironment() {
-        return defEnv.getDesktopEnvironment();
+    public NId desktopEnvironment() {
+        return defEnv.desktopEnvironment();
     }
 
     @Override
-    public Set<NId> getDesktopEnvironments() {
-        return defEnv.getDesktopEnvironments();
+    public Set<NId> desktopEnvironments() {
+        return defEnv.desktopEnvironments();
     }
 
     @Override
-    public NDesktopEnvironmentFamily getDesktopEnvironmentFamily() {
-        return defEnv.getDesktopEnvironmentFamily();
+    public NDesktopEnvironmentFamily desktopEnvironmentFamily() {
+        return defEnv.desktopEnvironmentFamily();
     }
 
     @Override
-    public Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies() {
-        return defEnv.getDesktopEnvironmentFamilies();
+    public Set<NDesktopEnvironmentFamily> desktopEnvironmentFamilies() {
+        return defEnv.desktopEnvironmentFamilies();
     }
 
     @Override
-    public NId getJava() {
-        return defEnv.getJava();
+    public NId java() {
+        return defEnv.java();
     }
 
     @Override
-    public NId getOs() {
-        return defEnv.getOs();
+    public NId os() {
+        return defEnv.os();
     }
 
     @Override
-    public NId getOsDist() {
-        return defEnv.getOsDist();
+    public NId osDist() {
+        return defEnv.osDist();
     }
 
     @Override
-    public NId getArch() {
-        return defEnv.getArch();
+    public NId arch() {
+        return defEnv.arch();
     }
 
     @Override
-    public NArchFamily getArchFamily() {
-        return defEnv.getArchFamily();
+    public NArchFamily archFamily() {
+        return defEnv.archFamily();
     }
 
     @Override
@@ -139,8 +138,8 @@ public class NEnvRnsh implements NEnv {
     }
 
     @Override
-    public Path getDesktopPath() {
-        return defEnv.getDesktopPath();
+    public Path desktopPath() {
+        return defEnv.desktopPath();
     }
 
     @Override
@@ -149,38 +148,38 @@ public class NEnvRnsh implements NEnv {
     }
 
     @Override
-    public Map<String, String> getEnv() {
-        return defEnv.getEnv();
+    public Map<String, String> env() {
+        return defEnv.env();
     }
 
     @Override
-    public String getRootUserName() {
-        return defEnv.getRootUserName();
+    public String rootUserName() {
+        return defEnv.rootUserName();
     }
 
     @Override
-    public String getUserName() {
-        return defEnv.getUserName();
+    public String userName() {
+        return defEnv.userName();
     }
 
     @Override
-    public String getUserHome() {
-        return defEnv.getUserHome();
+    public String userHome() {
+        return defEnv.userHome();
     }
 
     @Override
-    public NId getShell() {
-        return defEnv.getShell();
+    public NId shell() {
+        return defEnv.shell();
     }
 
     @Override
-    public String getHostName() {
-        return defEnv.getHostName();
+    public String hostName() {
+        return defEnv.hostName();
     }
 
     @Override
-    public String getMachineName() {
-        return defEnv.getMachineName();
+    public String machineName() {
+        return defEnv.machineName();
     }
 
     private static boolean isSupportedProtocol(String protocol) {

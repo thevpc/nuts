@@ -118,26 +118,26 @@ public class JavaExecutorComponent implements NExecutorComponent {
     public static NWorkspaceOptionsBuilder createChildOptions(NExecutionContext executionContext) {
         NSession session = executionContext.session();
         NWorkspaceOptionsBuilder options = NWorkspace.of().bootOptions().toWorkspaceOptions().builder();
-        options.setDry(executionContext.isDry());
-        options.setBot(executionContext.isBot());
+        options.dry(executionContext.isDry());
+        options.bot(executionContext.isBot());
 
         //copy session parameters to the newly created workspace
-        options.setShowStacktrace(session.showStacktrace().orDefault());
-        options.setGui(session.isGui());
-        options.setOutLinePrefix(session.outLinePrefix());
-        options.setErrLinePrefix(session.errLinePrefix());
-        options.setDebug(session.debug().orDefault());
-        options.setTrace(session.isTrace());
-        options.setPreviewRepo(session.isPreviewRepo());
-        options.setCached(session.isCached());
-        options.setIndexed(session.isIndexed());
-        options.setConfirm(session.confirm().orDefault());
-        options.setTransitive(session.isTransitive());
-        options.setOutputFormat(session.outputFormat().orDefault());
-        switch (options.getTerminalMode().orElse(NTerminalMode.DEFAULT)) {
+        options.showStacktrace(session.showStacktrace().orDefault());
+        options.gui(session.isGui());
+        options.outLinePrefix(session.outLinePrefix());
+        options.errLinePrefix(session.errLinePrefix());
+        options.debug(session.debug().orDefault());
+        options.trace(session.isTrace());
+        options.previewRepo(session.isPreviewRepo());
+        options.cached(session.isCached());
+        options.indexed(session.isIndexed());
+        options.confirm(session.confirm().orDefault());
+        options.transitive(session.isTransitive());
+        options.outputFormat(session.outputFormat().orDefault());
+        switch (options.terminalMode().orElse(NTerminalMode.DEFAULT)) {
             //retain filtered
             case DEFAULT:
-                options.setTerminalMode(session.terminal().out().terminalMode());
+                options.terminalMode(session.terminal().out().terminalMode());
                 //retain filtered
             case FILTERED:
                 break;
@@ -145,25 +145,25 @@ public class JavaExecutorComponent implements NExecutorComponent {
             case INHERITED:
                 break;
             default:
-                options.setTerminalMode(session.terminal().out().terminalMode());
+                options.terminalMode(session.terminal().out().terminalMode());
                 break;
         }
-        options.setExpireTime(session.expireTime().orNull());
+        options.expireTime(session.expireTime().orNull());
 
         Level logTermLevel = session.logTermLevel();
         Level logFileLevel = session.logFileLevel();
         if (logTermLevel != null || logFileLevel != null) {
-            NLogConfig lc = options.getLogConfig().orNull();
+            NLogConfig lc = options.logConfig().orNull();
             if (lc == null) {
                 lc = new NLogConfig();
             } else {
                 lc = lc.copy();
             }
             if (logTermLevel != null) {
-                lc.setLogTermLevel(logTermLevel);
+                lc.logTermLevel(logTermLevel);
             }
             if (logFileLevel != null) {
-                lc.setLogFileLevel(logFileLevel);
+                lc.logFileLevel(logFileLevel);
             }
         }
         for (Iterator<String> iterator = executionContext.executorOptions().iterator(); iterator.hasNext(); ) {
@@ -180,8 +180,8 @@ public class JavaExecutorComponent implements NExecutorComponent {
             options.copyFrom(extraOptions, NAssignmentPolicy.SOURCE_NON_NULL);
         }
         //sandbox workspace children are always confined
-        if (options.getIsolationLevel().orNull() == NIsolationLevel.SANDBOX) {
-            options.setIsolationLevel(NIsolationLevel.CONFINED);
+        if (options.isolationLevel().orNull() == NIsolationLevel.SANDBOX) {
+            options.isolationLevel(NIsolationLevel.CONFINED);
         }
         options.unsetCreationOptions().unsetRuntimeOptions();
         return options;
@@ -237,13 +237,13 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
 
                 NWorkspaceOptionsBuilder options = createChildOptions(executionContext);
-                NWorkspaceOptionsConfig config = new NWorkspaceOptionsConfig().setCompact(true);
+                NWorkspaceOptionsConfig config = new NWorkspaceOptionsConfig().compact(true);
                 if (nutsDependencyVersion != null) {
-                    config.setApiVersion(nutsDependencyVersion);
+                    config.apiVersion(nutsDependencyVersion);
                     // there is no need to specify api/runtime because we are
                     // willing to run that specific version anyways...
-                    options.setApiVersion(null);
-                    options.setRuntimeId(null);
+                    options.apiVersion(null);
+                    options.runtimeId(null);
                 }
 
                 NCmdLine ncmdLine = options.toCmdLine(config);

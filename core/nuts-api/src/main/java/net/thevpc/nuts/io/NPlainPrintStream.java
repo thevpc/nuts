@@ -265,7 +265,7 @@ public class NPlainPrintStream implements NPrintStream {
     }
 
     @Override
-    public NPrintStream setTerminalMode(NTerminalMode other) {
+    public NPrintStream terminalMode(NTerminalMode other) {
         return this;
     }
 

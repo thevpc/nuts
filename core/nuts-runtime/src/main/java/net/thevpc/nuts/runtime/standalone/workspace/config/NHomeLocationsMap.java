@@ -79,7 +79,7 @@ public class NHomeLocationsMap {
     }
 
     public NHomeLocationsMap set(NHomeLocation type, String value) {
-        NStoreType storeLocation = type.getStoreType();
+        NStoreType storeLocation = type.storeType();
         if (storeLocation != null) {
             if (NBlankable.isBlank(value)) {
                 if (locations != null) {

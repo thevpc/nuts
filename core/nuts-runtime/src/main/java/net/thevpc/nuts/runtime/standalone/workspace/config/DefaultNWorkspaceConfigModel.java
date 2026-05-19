@@ -311,7 +311,7 @@ public class DefaultNWorkspaceConfigModel {
             NId pnid = NId.get(extensionId).get();
             String shortName = pnid.shortName();
             String artifactId = pnid.artifactId();
-            for (String excludedExtensionList : options.getExcludedExtensions().orElseGet(Collections::emptyList)) {
+            for (String excludedExtensionList : options.excludedExtensions().orElseGet(Collections::emptyList)) {
                 for (String s : StringTokenizerUtils.splitDefault(excludedExtensionList)) {
                     if (s.length() > 0) {
                         if (s.equals(shortName) || s.equals(artifactId)) {
@@ -1416,7 +1416,7 @@ public class DefaultNWorkspaceConfigModel {
             o.println(wconfig.getBootUserOptions()
                     .toCmdLine(
                             new NWorkspaceOptionsConfig()
-                                    .setCompact(false)
+                                    .compact(false)
                     )
             );
             for (NStoreType storeType : NStoreType.values()) {
@@ -1665,7 +1665,7 @@ public class DefaultNWorkspaceConfigModel {
 
         public NSystemTerminalBase base() {
             return NIO.of()
-                    .getSystemTerminal();
+                    .systemTerminal();
         }
     }
 
@@ -1687,32 +1687,32 @@ public class DefaultNWorkspaceConfigModel {
         }
 
         @Override
-        public String getName() {
+        public String name() {
             return getStoredConfigBoot().getName();
         }
 
         @Override
-        public NStoreStrategy getStoreStrategy() {
+        public NStoreStrategy storeStrategy() {
             return getStoredConfigBoot().getStoreStrategy();
         }
 
         @Override
-        public NStoreStrategy getRepositoryStoreStrategy() {
+        public NStoreStrategy repositoryStoreStrategy() {
             return getStoredConfigBoot().getStoreStrategy();
         }
 
         @Override
-        public NOsFamily getStoreLayout() {
+        public NOsFamily storeLayout() {
             return getStoredConfigBoot().getStoreLayout();
         }
 
         @Override
-        public Map<NStoreType, String> getStoreLocations() {
+        public Map<NStoreType, String> storeLocations() {
             return getStoredConfigBoot().getStoreLocations();
         }
 
         @Override
-        public Map<NHomeLocation, String> getHomeLocations() {
+        public Map<NHomeLocation, String> homeLocations() {
             return getStoredConfigBoot().getHomeLocations();
         }
 
@@ -1727,33 +1727,33 @@ public class DefaultNWorkspaceConfigModel {
         }
 
         @Override
-        public NId getApiId() {
+        public NId apiId() {
             NVersion v = getStoredConfigApi().getApiVersion();
             return (v == null || v.isBlank()) ? null : NId.getApi(v).get();
         }
 
         @Override
-        public NId getRuntimeId() {
+        public NId runtimeId() {
             return getStoredConfigApi().getRuntimeId();
         }
 
         @Override
-        public String getRuntimeDependencies() {
+        public String runtimeDependencies() {
             return getStoredConfigRuntime().getDependencies();
         }
 
         @Override
-        public List<String> getBootRepositories() {
+        public List<String> bootRepositories() {
             return getStoredConfigBoot().getBootRepositories();
         }
 
         @Override
-        public String getJavaCommand() {
+        public String javaCommand() {
             return getStoredConfigApi().getJavaCommand();
         }
 
         @Override
-        public String getJavaOptions() {
+        public String javaOptions() {
             return getStoredConfigApi().getJavaOptions();
         }
 

@@ -26,7 +26,7 @@ public class DefaultFunctionNode implements NExprFunctionNode {
         return args[index];
     }
 
-    public List<NExprNode> getArguments() {
+    public List<NExprNode> arguments() {
         return Arrays.asList(args);
     }
 

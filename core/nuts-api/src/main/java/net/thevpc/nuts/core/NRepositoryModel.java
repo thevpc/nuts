@@ -54,29 +54,29 @@ public interface NRepositoryModel extends NComponent {
 
 
     @NGetter
-    String getName();
+    String name();
 
     @NGetter
-    default NStoreStrategy getStoreStrategy() {
+    default NStoreStrategy storeStrategy() {
         return null;
     }
 
     @NGetter
-    default String getUuid() {
+    default String uuid() {
         return null;
     }
 
     @NGetter
-    default int getMode() {
+    default int mode() {
         return MIRRORING | LIB | CACHE;
     }
 
     @NGetter
-    default NSpeedQualifier getSpeed() {
+    default NSpeedQualifier speed() {
         return NSpeedQualifier.NORMAL;
     }
 
-    default String getRepositoryType() {
+    default String repositoryType() {
         return "custom";
     }
 

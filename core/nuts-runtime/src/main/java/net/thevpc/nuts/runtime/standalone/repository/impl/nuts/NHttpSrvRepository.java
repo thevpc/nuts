@@ -111,7 +111,7 @@ public class NHttpSrvRepository extends NCachedRepository {
                 .addPart("descriptor-hash", NDigest.of().sha1().source(desc).computeString())
                 .addPart("content-hash", NDigestUtils.evalSHA1Hex(content))
                 .addPart("force", NDigestUtils.evalSHA1Hex(content))
-                .addPart().setName("descriptor").setFileName("Project.nuts").setBody(
+                .addPart().name("descriptor").fileName("Project.nuts").body(
                         NInputSource.of(descStream.toByteArray())).end()
                 .run()
         ;
@@ -182,10 +182,10 @@ public class NHttpSrvRepository extends NCachedRepository {
                         .uri(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
                         .addPart("root", "/")
                         .doWith(r->prepareNWebRequest(r,ulp))
-                        .addPart("js").setFileName("search.js").setBody(
+                        .addPart("js").fileName("search.js").body(
                                 NInputSource.of(js.getBytes())).end()
                         .run()
-                        .getContent().inputStream();
+                        .content().inputStream();
                 return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(NDefinitionFilterUtils.toIdPredicate(filter)).iterator();
             }
         } else {
@@ -197,7 +197,7 @@ public class NHttpSrvRepository extends NCachedRepository {
                     .addPart("pattern", ("*"))
                     .addPart("transitive", String.valueOf(transitive))
                     .run()
-                    .getContent().inputStream();
+                    .content().inputStream();
         }
         if (filter == null) {
             return new NamedNIdFromStreamIterator(ret);

@@ -204,8 +204,8 @@ public class DefaultNRepositoryModel {
     }
 
     public NRepository createRepository(NRepositorySpec options, Path rootFolder, NRepository parentRepository, NRepositoryModel repoModel) {
-        String name = repoModel.getName();
-        String uuid = repoModel.getUuid();
+        String name = repoModel.name();
+        String uuid = repoModel.uuid();
         if (NBlankable.isBlank(name)) {
             name = "custom";
         }
@@ -216,7 +216,7 @@ public class DefaultNRepositoryModel {
         options2.name(NStringUtils.firstNonBlankTrimmed(options.name(),name));
         options2.sourceLocation(NRepositoryLocation.of("custom@"));
         options2.uuid(uuid);
-        options2.storeStrategy(repoModel.getStoreStrategy());
+        options2.storeStrategy(repoModel.storeStrategy());
         options2.deployWeight(options.deployWeight());
         options2.temporary(true);
         options2.enabled(options.isEnabled());

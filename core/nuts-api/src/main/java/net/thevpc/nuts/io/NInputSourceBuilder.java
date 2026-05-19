@@ -15,23 +15,23 @@ public interface NInputSourceBuilder {
         return NIORPI.of().ofInputSourceBuilder(is);
     }
 
-    NInputSourceBuilder setBase(InputStream baseInputStream);
+    NInputSourceBuilder base(InputStream baseInputStream);
 
     boolean isCloseBase();
 
-    NInputSourceBuilder setCloseBase(boolean closeBase);
+    NInputSourceBuilder closeBase(boolean closeBase);
 
-    Runnable getCloseAction();
+    Runnable closeAction();
 
-    NInputSourceBuilder setCloseAction(Runnable closeAction);
+    NInputSourceBuilder closeAction(Runnable closeAction);
 
     boolean isInterruptible();
 
-    NInputSourceBuilder setInterruptible(boolean interruptible);
+    NInputSourceBuilder interruptible(boolean interruptible);
 
-    NContentMetadata getMetadata();
+    NContentMetadata metadata();
 
-    NInputSourceBuilder setMetadata(NContentMetadata metadata);
+    NInputSourceBuilder metadata(NContentMetadata metadata);
 
     @NGetter
     Object source();

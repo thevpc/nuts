@@ -405,8 +405,8 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                                 v = NTerminalMode.INHERITED;
                             }
                         }
-                        terminal().out(terminal().out().setTerminalMode(v));
-                        terminal().err(terminal().err().setTerminalMode(v));
+                        terminal().out(terminal().out().terminalMode(v));
+                        terminal().err(terminal().err().terminalMode(v));
                     }
                     return true;
                 }
@@ -416,8 +416,8 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     if (active) {
                         bot(a.getBooleanValue().get());
                         if (isBot()) {
-                            terminal().out(terminal().out().setTerminalMode(NTerminalMode.FILTERED));
-                            terminal().err(terminal().err().setTerminalMode(NTerminalMode.FILTERED));
+                            terminal().out(terminal().out().terminalMode(NTerminalMode.FILTERED));
+                            terminal().err(terminal().err().terminalMode(NTerminalMode.FILTERED));
                             //setProgressOptions("none");
                             //setConfirm(NConfirmationMode.ERROR);
                             //setTrace(false);
@@ -902,26 +902,26 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     @Override
     public NSession copyFrom(NWorkspaceOptions options) {
         if (options != null) {
-            this.trace = options.getTrace().orElse(true);
-            this.debug = options.getDebug().orNull();
-            this.progressOptions = options.getProgressOptions().orNull();
-            this.dry = options.getDry().orNull();
-            this.cached = options.getCached().orNull();
-            this.indexed = options.getIndexed().orNull();
-            this.gui = options.getGui().orNull();
-            this.confirm = options.getConfirm().orNull();
-            this.errLinePrefix = options.getErrLinePrefix().orNull();
-            this.outLinePrefix = options.getOutLinePrefix().orNull();
-            this.fetchStrategy = options.getFetchStrategy().orNull();
-            this.outputFormat = options.getOutputFormat().orNull();
+            this.trace = options.trace().orElse(true);
+            this.debug = options.debug().orNull();
+            this.progressOptions = options.progressOptions().orNull();
+            this.dry = options.dry().orNull();
+            this.cached = options.cached().orNull();
+            this.indexed = options.indexed().orNull();
+            this.gui = options.gui().orNull();
+            this.confirm = options.confirm().orNull();
+            this.errLinePrefix = options.errLinePrefix().orNull();
+            this.outLinePrefix = options.outLinePrefix().orNull();
+            this.fetchStrategy = options.fetchStrategy().orNull();
+            this.outputFormat = options.outputFormat().orNull();
             this.outputFormatOptions.clear();
-            this.outputFormatOptions.addAll(options.getOutputFormatOptions().orElseGet(Collections::emptyList));
-            NLogConfig logConfig = options.getLogConfig().orNull();
+            this.outputFormatOptions.addAll(options.outputFormatOptions().orElseGet(Collections::emptyList));
+            NLogConfig logConfig = options.logConfig().orNull();
             if (logConfig != null) {
-                this.logTermLevel = logConfig.getLogTermLevel();
-                this.logFileLevel = logConfig.getLogFileLevel();
+                this.logTermLevel = logConfig.logTermLevel();
+                this.logFileLevel = logConfig.logFileLevel();
             }
-            this.dependencySolver = options.getDependencySolver().orNull();
+            this.dependencySolver = options.dependencySolver().orNull();
         }
         return this;
     }
@@ -944,8 +944,8 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
             this.outputFormatOptions.addAll(options.outputFormatOptions().orElseGet(Collections::emptyList));
             NLogConfig logConfig = options.logConfig().orNull();
             if (logConfig != null) {
-                this.logTermLevel = logConfig.getLogTermLevel();
-                this.logFileLevel = logConfig.getLogFileLevel();
+                this.logTermLevel = logConfig.logTermLevel();
+                this.logFileLevel = logConfig.logFileLevel();
             }
             this.dependencySolver = options.dependencySolver().orNull();
         }
@@ -1380,68 +1380,68 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     @Override
     public NSession configure(NWorkspaceOptions options) {
         if (options != null) {
-            if (options.getCached().isPresent()) {
-                this.cached(options.getCached().orNull());
+            if (options.cached().isPresent()) {
+                this.cached(options.cached().orNull());
             }
-            if (options.getConfirm().isPresent()) {
-                this.confirm(options.getConfirm().orNull());
+            if (options.confirm().isPresent()) {
+                this.confirm(options.confirm().orNull());
             }
-            if (options.getDry().isPresent()) {
-                this.dry(options.getDry().orNull());
+            if (options.dry().isPresent()) {
+                this.dry(options.dry().orNull());
             }
-            if (options.getOutputFormat().isPresent()) {
-                this.outputFormat(options.getOutputFormat().orNull());
+            if (options.outputFormat().isPresent()) {
+                this.outputFormat(options.outputFormat().orNull());
             }
-            if (options.getOutputFormatOptions().isPresent()) {
-                this.outputFormatOptions(options.getOutputFormatOptions().orElseGet(Collections::emptyList));
+            if (options.outputFormatOptions().isPresent()) {
+                this.outputFormatOptions(options.outputFormatOptions().orElseGet(Collections::emptyList));
             }
-            if (options.getErrLinePrefix().isPresent()) {
-                this.errLinePrefix(options.getErrLinePrefix().orNull());
+            if (options.errLinePrefix().isPresent()) {
+                this.errLinePrefix(options.errLinePrefix().orNull());
             }
-            if (options.getFetchStrategy().isPresent()) {
-                this.fetchStrategy(options.getFetchStrategy().orNull());
+            if (options.fetchStrategy().isPresent()) {
+                this.fetchStrategy(options.fetchStrategy().orNull());
             }
-            if (options.getExpireTime().isPresent()) {
-                this.expireTime(options.getExpireTime().orNull());
+            if (options.expireTime().isPresent()) {
+                this.expireTime(options.expireTime().orNull());
             }
-            if (options.getGui().isPresent()) {
-                this.gui(options.getGui().orNull());
+            if (options.gui().isPresent()) {
+                this.gui(options.gui().orNull());
             }
-            if (options.getProgressOptions().isPresent()) {
-                this.progressOptions(options.getProgressOptions().orNull());
+            if (options.progressOptions().isPresent()) {
+                this.progressOptions(options.progressOptions().orNull());
             }
-            if (options.getIndexed().isPresent()) {
-                this.indexed(options.getIndexed().orElse(true));
+            if (options.indexed().isPresent()) {
+                this.indexed(options.indexed().orElse(true));
             }
-            if (options.getTrace().isPresent()) {
-                this.trace(options.getTrace().orElse(true));
+            if (options.trace().isPresent()) {
+                this.trace(options.trace().orElse(true));
             }
-            if (options.getBot().isPresent()) {
+            if (options.bot().isPresent()) {
                 boolean wasBot = isBot();
-                boolean becomesBot = options.getBot().orElse(false);
+                boolean becomesBot = options.bot().orElse(false);
                 this.bot(becomesBot);
                 if (/*!wasBot && */becomesBot) {
                     if (terminal().out().terminalMode() != NTerminalMode.FILTERED) {
-                        terminal().out(terminal().out().setTerminalMode(NTerminalMode.FILTERED));
+                        terminal().out(terminal().out().terminalMode(NTerminalMode.FILTERED));
                     }
                     if (terminal().err().terminalMode() != NTerminalMode.FILTERED) {
-                        terminal().err(terminal().err().setTerminalMode(NTerminalMode.FILTERED));
+                        terminal().err(terminal().err().terminalMode(NTerminalMode.FILTERED));
                     }
                 }
             }
-            if (options.getTransitive().isPresent()) {
-                this.transitive(options.getTransitive().orNull());
+            if (options.transitive().isPresent()) {
+                this.transitive(options.transitive().orNull());
             }
-            if (options.getTerminalMode().isPresent() && NTerminalMode.DEFAULT != options.getTerminalMode().orNull()) {
+            if (options.terminalMode().isPresent() && NTerminalMode.DEFAULT != options.terminalMode().orNull()) {
                 terminal().out(
-                        terminal().out().setTerminalMode(options.getTerminalMode().orNull())
+                        terminal().out().terminalMode(options.terminalMode().orNull())
                 );
             }
-            if (options.getExecutionType().isPresent()) {
-                executionType(options.getExecutionType().orNull());
+            if (options.executionType().isPresent()) {
+                executionType(options.executionType().orNull());
             }
-            if (options.getDependencySolver().isPresent()) {
-                dependencySolver(options.getDependencySolver().orNull());
+            if (options.dependencySolver().isPresent()) {
+                dependencySolver(options.dependencySolver().orNull());
             }
         }
         return this;

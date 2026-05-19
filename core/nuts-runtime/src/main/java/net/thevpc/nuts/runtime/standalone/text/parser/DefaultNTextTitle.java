@@ -144,10 +144,6 @@ public class DefaultNTextTitle extends AbstractNText implements NTextTitle {
         return prerender().substring(start, end);
     }
 
-    public List<NText> split(String chars, boolean returnSeparator) {
-        return prerender().split(chars, returnSeparator);
-    }
-
     private NText prerender() {
         NTextBuilder sb = new DefaultNTextBuilder();
         sb.append(new DefaultNTextStyled(getChild(), NTextStyles.of(NTextStyle.primary(level))));

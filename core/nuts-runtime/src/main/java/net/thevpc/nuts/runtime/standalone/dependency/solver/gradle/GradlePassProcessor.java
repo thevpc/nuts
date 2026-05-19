@@ -314,7 +314,7 @@ class GradlePassProcessor {
         final NDependency[] nonMergedDepsList = nonMergedVisitedSet.visitedSet.values().stream().map(NDependencyInfo::getDependency)
                 .toArray(NDependency[]::new);
         return new DefaultNDependencies(
-                gradleSolver.getName(),
+                gradleSolver.name(),
                 sourceIds.toArray(new NId[0]), gradleSolver.getDependencyFilter(),
                 immediates.toArray(new NDependency[0]),
                 nonMergedDepsList,

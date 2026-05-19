@@ -467,7 +467,7 @@ public final class JavaExecutorOptions {
         String cacheKey = dh.getDigest();
         NPath cacheFile = NPath.of(NStoreKey.ofCache(NWorkspace.of().apiId())).resolve("classpaths").resolve(cacheKey);
         if (cacheFile != null && cacheFile.exists()) {
-            try (BufferedReader br = cacheFile.getBufferedReader()) {
+            try (BufferedReader br = cacheFile.asBufferedReader()) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     if (!line.trim().isEmpty()) {
@@ -661,7 +661,7 @@ public final class JavaExecutorOptions {
         if (!nutsPlatformLocation.isPresent()) {
             throw new NExecutionException(NMsg.ofC("no java version %s was found", NStringUtils.trim(getJavaVersion())), NExecutionException.ERROR_1);
         }
-        javaEffVersion = nutsPlatformLocation.get().getVersion();
+        javaEffVersion = nutsPlatformLocation.get().version();
         javaCommand = nJavaSdkUtils.resolveJavaCommandByVersion(nutsPlatformLocation.get(), javaw).orNull();
         if (javaCommand == null) {
             throw new NExecutionException(NMsg.ofC("no java version %s was found", getJavaVersion()), NExecutionException.ERROR_1);

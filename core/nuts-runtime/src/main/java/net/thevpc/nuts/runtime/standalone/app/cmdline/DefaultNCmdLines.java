@@ -60,7 +60,7 @@ public class DefaultNCmdLines implements NCmdLines {
     private String[] parseCmdLineArr(String line) {
         NShellFamily f = shellFamily();
         if (f == null) {
-            f = NEnv.of().getShellFamily();
+            f = NEnv.of().shellFamily();
         }
         if (f == null) {
             f = NShellFamily.getCurrent();

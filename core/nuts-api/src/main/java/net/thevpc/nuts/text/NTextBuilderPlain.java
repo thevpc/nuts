@@ -1,6 +1,8 @@
 package net.thevpc.nuts.text;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.elem.NElement;
@@ -316,6 +318,26 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
+    public List<NText> splitLines(boolean returnSeparator) {
+        return build().splitLines(returnSeparator);
+    }
+
+    @Override
+    public List<NText> splitLines() {
+        return build().splitLines();
+    }
+
+    @Override
+    public List<NText> split(Pattern separator, boolean returnSeparator) {
+        return build().split(separator,returnSeparator);
+    }
+
+    @Override
+    public List<NPrimitiveText> toPrimitiveList() {
+        return build().toPrimitiveList();
+    }
+
+    @Override
     public List<NText> getChildren() {
         return Collections.singletonList(build());
     }
@@ -518,7 +540,7 @@ public class NTextBuilderPlain implements NTextBuilder {
         }
         StringBuilder b = new StringBuilder();
         for (int i = 0; i < times; i++) {
-            b.append(sb.toString());
+            b.append(sb);
         }
         return new ImmutableNTextPlain(b.toString());
     }
@@ -536,7 +558,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             if (i > 0) {
                 b.append("\n");
             }
-            b.append(sb.toString());
+            b.append(sb);
         }
         return new ImmutableNTextPlain(b.toString());
     }
@@ -672,6 +694,11 @@ public class NTextBuilderPlain implements NTextBuilder {
         }
 
         @Override
+        public List<NPrimitiveText> toPrimitiveList() {
+            return Arrays.asList(this);
+        }
+
+        @Override
         public NStream<NPrimitiveText> toCharStream() {
             return NStream.ofStream(str.codePoints().mapToObj(c -> new ImmutableNTextPlain(new String(Character.toChars(c)))));
         }
@@ -697,13 +724,32 @@ public class NTextBuilderPlain implements NTextBuilder {
         }
 
         @Override
-        public List<NText> split(String separator, boolean returnSeparator) {
-            StringTokenizer st = new StringTokenizer(str, separator, true);
+        public List<NText> split(Pattern regex, boolean returnSeparator) {
+            Matcher m = regex.matcher(getValue());
             List<NText> all = new ArrayList<>();
-            while (st.hasMoreElements()) {
-                all.add(new ImmutableNTextPlain(st.nextToken()));
+            int last = 0;
+            while (m.find()) {
+                all.add(new ImmutableNTextPlain(getValue().substring(last, m.start()))); // before separator
+                if (returnSeparator) {
+                    all.add(new ImmutableNTextPlain(m.group())); // the separator itself (\n or \r\n)
+                }
+                last = m.end();
             }
+            all.add(new ImmutableNTextPlain(getValue().substring(last))); // remainder, even if empty
             return all;
+        }
+
+        public List<NText> split(String separator, boolean returnSeparator) {
+            return split(Pattern.compile(Pattern.quote(separator)), returnSeparator);
+        }
+
+        public List<NText> splitLines(boolean returnSeparator) {
+            return split(Pattern.compile("\\r?\\n"), returnSeparator);
+        }
+
+        @Override
+        public List<NText> splitLines() {
+            return splitLines(false);
         }
 
         @Override

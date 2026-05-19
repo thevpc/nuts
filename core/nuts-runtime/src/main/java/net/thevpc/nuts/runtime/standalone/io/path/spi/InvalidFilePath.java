@@ -345,7 +345,7 @@ public class InvalidFilePath implements NPathSPI {
 
         private final InvalidFilePath p;
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 

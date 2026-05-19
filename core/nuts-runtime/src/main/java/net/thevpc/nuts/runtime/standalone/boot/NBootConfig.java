@@ -132,16 +132,16 @@ public final class NBootConfig implements Cloneable, Serializable {
 
     public NBootConfig(NWorkspaceOptions options) {
         if (options != null) {
-            this.setWorkspace(options.getWorkspace().orNull());
-            this.setName(options.getName().orNull());
-            this.setStoreStrategy(options.getStoreStrategy().orNull());
-            this.setRepositoryStoreStrategy(options.getRepositoryStoreStrategy().orNull());
-            this.setStoreLayout(options.getStoreLayout().orNull());
-            this.storeLocations = NCollections.nonNullMap(options.getStoreLocations().orNull());
-            this.homeLocations = NCollections.nonNullMap(options.getHomeLocations().orNull());
-            this.setRuntimeId(options.getRuntimeId().orNull());
-            this.system = options.getSystem().orElse(false);
-            this.runtimeId = options.getRuntimeId().orNull();
+            this.setWorkspace(options.workspace().orNull());
+            this.setName(options.name().orNull());
+            this.setStoreStrategy(options.storeStrategy().orNull());
+            this.setRepositoryStoreStrategy(options.repositoryStoreStrategy().orNull());
+            this.setStoreLayout(options.storeLayout().orNull());
+            this.storeLocations = NCollections.nonNullMap(options.storeLocations().orNull());
+            this.homeLocations = NCollections.nonNullMap(options.homeLocations().orNull());
+            this.setRuntimeId(options.runtimeId().orNull());
+            this.system = options.system().orElse(false);
+            this.runtimeId = options.runtimeId().orNull();
         }
     }
 

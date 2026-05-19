@@ -520,64 +520,64 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NOptional<NSupportMode> getDesktopLauncher() {
+    public NOptional<NSupportMode> desktopLauncher() {
         return NOptional.ofNamed(desktopLauncher, "desktopLauncher");
     }
 
     @Override
-    public NOptional<NSupportMode> getMenuLauncher() {
+    public NOptional<NSupportMode> menuLauncher() {
         return NOptional.ofNamed(menuLauncher, "menuLauncher");
     }
 
     @Override
-    public NOptional<NSupportMode> getUserLauncher() {
+    public NOptional<NSupportMode> userLauncher() {
         return NOptional.ofNamed(userLauncher, "userLauncher");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setInitLaunchers(Boolean initLaunchers) {
+    public NWorkspaceOptionsBuilder initLaunchers(Boolean initLaunchers) {
         this.initLaunchers = initLaunchers;
         return this;
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setInitScripts(Boolean initScripts) {
+    public NWorkspaceOptionsBuilder initScripts(Boolean initScripts) {
         this.initScripts = initScripts;
         return this;
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setInitPlatforms(Boolean initPlatforms) {
+    public NWorkspaceOptionsBuilder initPlatforms(Boolean initPlatforms) {
         this.initPlatforms = initPlatforms;
         return this;
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setInitJava(Boolean initJava) {
+    public NWorkspaceOptionsBuilder initJava(Boolean initJava) {
         this.initJava = initJava;
         return this;
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setIsolationLevel(NIsolationLevel isolationLevel) {
+    public NWorkspaceOptionsBuilder isolationLevel(NIsolationLevel isolationLevel) {
         this.isolationLevel = isolationLevel;
         return this;
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setDesktopLauncher(NSupportMode desktopLauncher) {
+    public NWorkspaceOptionsBuilder desktopLauncher(NSupportMode desktopLauncher) {
         this.desktopLauncher = desktopLauncher;
         return this;
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setMenuLauncher(NSupportMode menuLauncher) {
+    public NWorkspaceOptionsBuilder menuLauncher(NSupportMode menuLauncher) {
         this.menuLauncher = menuLauncher;
         return this;
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setUserLauncher(NSupportMode userLauncher) {
+    public NWorkspaceOptionsBuilder userLauncher(NSupportMode userLauncher) {
         this.userLauncher = userLauncher;
         return this;
     }
@@ -589,7 +589,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
 
     @Override
-    public NOptional<NVersion> getApiVersion() {
+    public NOptional<NVersion> apiVersion() {
         return NOptional.ofNamed(apiVersion, "apiVersion");
     }
 
@@ -600,13 +600,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setApiVersion(NVersion apiVersion) {
+    public NWorkspaceOptionsBuilder apiVersion(NVersion apiVersion) {
         this.apiVersion = apiVersion;
         return this;
     }
 
     @Override
-    public NOptional<List<String>> getApplicationArguments() {
+    public NOptional<List<String>> applicationArguments() {
         return NOptional.ofNamed(applicationArguments, "applicationArguments");
     }
 
@@ -617,13 +617,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setApplicationArguments(List<String> applicationArguments) {
+    public NWorkspaceOptionsBuilder applicationArguments(List<String> applicationArguments) {
         this.applicationArguments = applicationArguments;
         return this;
     }
 
     @Override
-    public NOptional<String> getArchetype() {
+    public NOptional<String> archetype() {
         return NOptional.ofNamed(archetype, "archetype");
     }
 
@@ -634,13 +634,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setArchetype(String archetype) {
+    public NWorkspaceOptionsBuilder archetype(String archetype) {
         this.archetype = archetype;
         return this;
     }
 
     @Override
-    public NOptional<Supplier<ClassLoader>> getClassLoaderSupplier() {
+    public NOptional<Supplier<ClassLoader>> classLoaderSupplier() {
         return NOptional.ofNamed(classLoaderSupplier, "classLoaderSupplier");
     }
 
@@ -651,13 +651,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setClassLoaderSupplier(Supplier<ClassLoader> provider) {
+    public NWorkspaceOptionsBuilder classLoaderSupplier(Supplier<ClassLoader> provider) {
         this.classLoaderSupplier = provider;
         return this;
     }
 
     @Override
-    public NOptional<NConfirmationMode> getConfirm() {
+    public NOptional<NConfirmationMode> confirm() {
         return NOptional.ofNamed(confirm, "confirm");
     }
 
@@ -668,18 +668,18 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setConfirm(NConfirmationMode confirm) {
+    public NWorkspaceOptionsBuilder confirm(NConfirmationMode confirm) {
         this.confirm = confirm;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getDry() {
+    public NOptional<Boolean> dry() {
         return NOptional.ofNamed(dry, "dry");
     }
 
     @Override
-    public NOptional<Boolean> getShowStacktrace() {
+    public NOptional<Boolean> showStacktrace() {
         return NOptional.ofNamed(showStacktrace, "showStacktrace");
     }
 
@@ -690,7 +690,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setDry(Boolean dry) {
+    public NWorkspaceOptionsBuilder dry(Boolean dry) {
         this.dry = dry;
         return this;
     }
@@ -703,13 +703,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @since 0.8.4
      */
     @Override
-    public NWorkspaceOptionsBuilder setShowStacktrace(Boolean showStacktrace) {
+    public NWorkspaceOptionsBuilder showStacktrace(Boolean showStacktrace) {
         this.showStacktrace = showStacktrace;
         return this;
     }
 
     @Override
-    public NOptional<Instant> getCreationTime() {
+    public NOptional<Instant> creationTime() {
         return NOptional.ofNamed(creationTime, "creationTime");
     }
 
@@ -720,13 +720,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setCreationTime(Instant creationTime) {
+    public NWorkspaceOptionsBuilder creationTime(Instant creationTime) {
         this.creationTime = creationTime;
         return this;
     }
 
     @Override
-    public NOptional<List<String>> getExcludedExtensions() {
+    public NOptional<List<String>> excludedExtensions() {
         return NOptional.ofNamed(excludedExtensions, "excludedExtensions");
     }
 
@@ -737,13 +737,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setExcludedExtensions(List<String> excludedExtensions) {
+    public NWorkspaceOptionsBuilder excludedExtensions(List<String> excludedExtensions) {
         this.excludedExtensions = excludedExtensions;
         return this;
     }
 
     @Override
-    public NOptional<NExecutionType> getExecutionType() {
+    public NOptional<NExecutionType> executionType() {
         return NOptional.ofNamed(executionType, "executionType");
     }
 
@@ -754,13 +754,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setExecutionType(NExecutionType executionType) {
+    public NWorkspaceOptionsBuilder executionType(NExecutionType executionType) {
         this.executionType = executionType;
         return this;
     }
 
     @Override
-    public NOptional<NRunAs> getRunAs() {
+    public NOptional<NRunAs> runAs() {
         return NOptional.ofNamed(runAs, "runAs");
     }
 
@@ -770,13 +770,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @param runAs new value
      * @return {@code this} instance
      */
-    public NWorkspaceOptionsBuilder setRunAs(NRunAs runAs) {
+    public NWorkspaceOptionsBuilder runAs(NRunAs runAs) {
         this.runAs = runAs;
         return this;
     }
 
     @Override
-    public NOptional<List<String>> getExecutorOptions() {
+    public NOptional<List<String>> executorOptions() {
         return NOptional.ofNamed(executorOptions, "executorOptions");
     }
 
@@ -787,7 +787,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setExecutorOptions(List<String> executorOptions) {
+    public NWorkspaceOptionsBuilder executorOptions(List<String> executorOptions) {
         this.executorOptions = executorOptions;
         return this;
     }
@@ -798,12 +798,12 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NOptional<Map<NHomeLocation, String>> getHomeLocations() {
+    public NOptional<Map<NHomeLocation, String>> homeLocations() {
         return NOptional.ofNamed(homeLocations, "homeLocations");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setHomeLocations(Map<NHomeLocation, String> homeLocations) {
+    public NWorkspaceOptionsBuilder homeLocations(Map<NHomeLocation, String> homeLocations) {
         if (homeLocations != null) {
             if (this.homeLocations == null) {
                 this.homeLocations = new HashMap<>();
@@ -816,18 +816,18 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NOptional<String> getJavaCommand() {
+    public NOptional<String> javaCommand() {
         return NOptional.ofNamed(javaCommand, "javaCommand");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setJavaCommand(String javaCommand) {
+    public NWorkspaceOptionsBuilder javaCommand(String javaCommand) {
         this.javaCommand = javaCommand;
         return this;
     }
 
     @Override
-    public NOptional<String> getJavaOptions() {
+    public NOptional<String> javaOptions() {
         return NOptional.ofNamed(javaOptions, "javaOptions");
     }
 
@@ -838,13 +838,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setJavaOptions(String javaOptions) {
+    public NWorkspaceOptionsBuilder javaOptions(String javaOptions) {
         this.javaOptions = javaOptions;
         return this;
     }
 
     @Override
-    public NOptional<NLogConfig> getLogConfig() {
+    public NOptional<NLogConfig> logConfig() {
         return NOptional.ofNamed(logConfig, "logConfig");
     }
 
@@ -855,13 +855,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setLogConfig(NLogConfig logConfig) {
+    public NWorkspaceOptionsBuilder logConfig(NLogConfig logConfig) {
         this.logConfig = logConfig == null ? null : logConfig.copy();
         return this;
     }
 
     @Override
-    public NOptional<String> getName() {
+    public NOptional<String> name() {
         return NOptional.ofNamed(name, "name");
     }
 
@@ -872,13 +872,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setName(String workspaceName) {
+    public NWorkspaceOptionsBuilder name(String workspaceName) {
         this.name = workspaceName;
         return this;
     }
 
     @Override
-    public NOptional<NOpenMode> getOpenMode() {
+    public NOptional<NOpenMode> openMode() {
         return NOptional.ofNamed(openMode, "openMode");
     }
 
@@ -889,13 +889,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setOpenMode(NOpenMode openMode) {
+    public NWorkspaceOptionsBuilder openMode(NOpenMode openMode) {
         this.openMode = openMode;
         return this;
     }
 
     @Override
-    public NOptional<NContentType> getOutputFormat() {
+    public NOptional<NContentType> outputFormat() {
         return NOptional.ofNamed(outputFormat, "outputFormat");
     }
 
@@ -906,13 +906,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setOutputFormat(NContentType outputFormat) {
+    public NWorkspaceOptionsBuilder outputFormat(NContentType outputFormat) {
         this.outputFormat = outputFormat;
         return this;
     }
 
     @Override
-    public NOptional<List<String>> getOutputFormatOptions() {
+    public NOptional<List<String>> outputFormatOptions() {
         return NOptional.ofNamed(outputFormatOptions, "outputFormatOptions");
     }
 
@@ -923,7 +923,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setOutputFormatOptions(List<String> options) {
+    public NWorkspaceOptionsBuilder outputFormatOptions(List<String> options) {
         if (options != null) {
             if (outputFormatOptions == null) {
                 outputFormatOptions = new ArrayList<>();
@@ -945,7 +945,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NOptional<char[]> getCredential() {
+    public NOptional<char[]> credential() {
         return NOptional.ofNamed(credentials, "credentials");
     }
 
@@ -956,13 +956,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setCredential(char[] credentials) {
+    public NWorkspaceOptionsBuilder credential(char[] credentials) {
         this.credentials = credentials;
         return this;
     }
 
     @Override
-    public NOptional<NStoreStrategy> getRepositoryStoreStrategy() {
+    public NOptional<NStoreStrategy> repositoryStoreStrategy() {
         return NOptional.ofNamed(repositoryStoreStrategy, "repositoryStoreStrategy");
     }
 
@@ -973,13 +973,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setRepositoryStoreStrategy(NStoreStrategy repositoryStoreStrategy) {
+    public NWorkspaceOptionsBuilder repositoryStoreStrategy(NStoreStrategy repositoryStoreStrategy) {
         this.repositoryStoreStrategy = repositoryStoreStrategy;
         return this;
     }
 
     @Override
-    public NOptional<NId> getRuntimeId() {
+    public NOptional<NId> runtimeId() {
         return NOptional.ofNamed(runtimeId, "runtimeId");
     }
 
@@ -990,18 +990,18 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setRuntimeId(NId runtimeId) {
+    public NWorkspaceOptionsBuilder runtimeId(NId runtimeId) {
         this.runtimeId = runtimeId;
         return this;
     }
 
     @Override
-    public NOptional<String> getStoreType(NStoreType folder) {
+    public NOptional<String> storeType(NStoreType folder) {
         return NOptional.ofNamed(storeLocations == null ? null : storeLocations.get(folder), "storeLocations[" + folder + "]");
     }
 
     @Override
-    public NOptional<NOsFamily> getStoreLayout() {
+    public NOptional<NOsFamily> storeLayout() {
         return NOptional.ofNamed(storeLayout, "storeLayout");
     }
 
@@ -1012,13 +1012,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setStoreLayout(NOsFamily storeLayout) {
+    public NWorkspaceOptionsBuilder storeLayout(NOsFamily storeLayout) {
         this.storeLayout = storeLayout;
         return this;
     }
 
     @Override
-    public NOptional<NStoreStrategy> getStoreStrategy() {
+    public NOptional<NStoreStrategy> storeStrategy() {
         return NOptional.ofNamed(storeStrategy, "storeStrategy");
     }
 
@@ -1029,18 +1029,18 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setStoreStrategy(NStoreStrategy storeStrategy) {
+    public NWorkspaceOptionsBuilder storeStrategy(NStoreStrategy storeStrategy) {
         this.storeStrategy = storeStrategy;
         return this;
     }
 
     @Override
-    public NOptional<Map<NStoreType, String>> getStoreLocations() {
+    public NOptional<Map<NStoreType, String>> storeLocations() {
         return NOptional.ofNamed(storeLocations, "storeLocations");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setStoreLocations(Map<NStoreType, String> storeLocations) {
+    public NWorkspaceOptionsBuilder storeLocations(Map<NStoreType, String> storeLocations) {
         if (storeLocations != null) {
             if (this.storeLocations == null) {
                 this.storeLocations = new HashMap<>();
@@ -1054,7 +1054,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NOptional<NTerminalMode> getTerminalMode() {
+    public NOptional<NTerminalMode> terminalMode() {
         return NOptional.ofNamed(terminalMode, "terminalMode");
     }
 
@@ -1065,18 +1065,18 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setTerminalMode(NTerminalMode terminalMode) {
+    public NWorkspaceOptionsBuilder terminalMode(NTerminalMode terminalMode) {
         this.terminalMode = terminalMode;
         return this;
     }
 
     @Override
-    public NOptional<List<String>> getRepositories() {
+    public NOptional<List<String>> repositories() {
         return NOptional.ofNamed(repositories, "repositories");
     }
 
     @Override
-    public NOptional<List<String>> getBootRepositories() {
+    public NOptional<List<String>> bootRepositories() {
         return NOptional.ofNamed(bootRepositories, "bootRepositories");
     }
 
@@ -1087,7 +1087,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setRepositories(List<String> repositories) {
+    public NWorkspaceOptionsBuilder repositories(List<String> repositories) {
         this.repositories = repositories;
         return this;
     }
@@ -1099,18 +1099,18 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setBootRepositories(List<String> repositories) {
+    public NWorkspaceOptionsBuilder bootRepositories(List<String> repositories) {
         this.bootRepositories = repositories;
         return this;
     }
 
     @Override
-    public NOptional<String> getUserName() {
+    public NOptional<String> userName() {
         return NOptional.ofNamed(userName, "userName");
     }
 
     @Override
-    public NOptional<String> getWorkspace() {
+    public NOptional<String> workspace() {
         return NOptional.ofNamed(workspace, "workspace");
     }
 
@@ -1121,13 +1121,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setWorkspace(String workspace) {
+    public NWorkspaceOptionsBuilder workspace(String workspace) {
         this.workspace = workspace;
         return this;
     }
 
     @Override
-    public NOptional<String> getDebug() {
+    public NOptional<String> debug() {
         return NOptional.ofNamed(debug, "debug");
     }
 
@@ -1138,13 +1138,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setDebug(String debug) {
+    public NWorkspaceOptionsBuilder debug(String debug) {
         this.debug = debug;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getSystem() {
+    public NOptional<Boolean> system() {
         return NOptional.ofNamed(system, "system");
     }
 
@@ -1155,13 +1155,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setSystem(Boolean system) {
+    public NWorkspaceOptionsBuilder system(Boolean system) {
         this.system = system;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getGui() {
+    public NOptional<Boolean> gui() {
         return NOptional.ofNamed(gui, "gui");
     }
 
@@ -1172,13 +1172,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setGui(Boolean gui) {
+    public NWorkspaceOptionsBuilder gui(Boolean gui) {
         this.gui = gui;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getInherited() {
+    public NOptional<Boolean> inherited() {
         return NOptional.ofNamed(inherited, "inherited");
     }
 
@@ -1189,13 +1189,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setInherited(Boolean inherited) {
+    public NWorkspaceOptionsBuilder inherited(Boolean inherited) {
         this.inherited = inherited;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getReadOnly() {
+    public NOptional<Boolean> readOnly() {
         return NOptional.ofNamed(readOnly, "readOnly");
     }
 
@@ -1206,13 +1206,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setReadOnly(Boolean readOnly) {
+    public NWorkspaceOptionsBuilder readOnly(Boolean readOnly) {
         this.readOnly = readOnly;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getRecover() {
+    public NOptional<Boolean> recover() {
         return NOptional.ofNamed(recover, "recover");
     }
 
@@ -1223,13 +1223,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setRecover(Boolean recover) {
+    public NWorkspaceOptionsBuilder recover(Boolean recover) {
         this.recover = recover;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getReset() {
+    public NOptional<Boolean> reset() {
         return NOptional.ofNamed(reset, "reset");
     }
 
@@ -1240,48 +1240,48 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setReset(Boolean reset) {
+    public NWorkspaceOptionsBuilder reset(Boolean reset) {
         this.reset = reset;
         return this;
     }
 
 
     @Override
-    public NOptional<Boolean> getResetHard() {
+    public NOptional<Boolean> resetHard() {
         return NOptional.ofNamed(resetHard, "resetHard");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setResetHard(Boolean resetHard) {
+    public NWorkspaceOptionsBuilder resetHard(Boolean resetHard) {
         this.resetHard = resetHard;
         return this;
     }
 
 
     @Override
-    public NOptional<Boolean> getCommandVersion() {
+    public NOptional<Boolean> commandVersion() {
         return NOptional.ofNamed(commandVersion, "commandVersion");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setCommandVersion(Boolean version) {
+    public NWorkspaceOptionsBuilder commandVersion(Boolean version) {
         this.commandVersion = version;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getCommandHelp() {
+    public NOptional<Boolean> commandHelp() {
         return NOptional.ofNamed(commandHelp, "commandHelp");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setCommandHelp(Boolean help) {
+    public NWorkspaceOptionsBuilder commandHelp(Boolean help) {
         this.commandHelp = help;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getInstallCompanions() {
+    public NOptional<Boolean> installCompanions() {
         return NOptional.ofNamed(installCompanions, "installCompanions");
     }
 
@@ -1292,13 +1292,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setInstallCompanions(Boolean skipInstallCompanions) {
+    public NWorkspaceOptionsBuilder installCompanions(Boolean skipInstallCompanions) {
         this.installCompanions = skipInstallCompanions;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getSkipWelcome() {
+    public NOptional<Boolean> skipWelcome() {
         return NOptional.ofNamed(skipWelcome, "skipWelcome");
     }
 
@@ -1309,35 +1309,35 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setSkipWelcome(Boolean skipWelcome) {
+    public NWorkspaceOptionsBuilder skipWelcome(Boolean skipWelcome) {
         this.skipWelcome = skipWelcome;
         return this;
     }
 
     @Override
-    public NOptional<String> getOutLinePrefix() {
+    public NOptional<String> outLinePrefix() {
         return NOptional.ofNamed(outLinePrefix, "outLinePrefix");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setOutLinePrefix(String outLinePrefix) {
+    public NWorkspaceOptionsBuilder outLinePrefix(String outLinePrefix) {
         this.outLinePrefix = outLinePrefix;
         return this;
     }
 
     @Override
-    public NOptional<String> getErrLinePrefix() {
+    public NOptional<String> errLinePrefix() {
         return NOptional.ofNamed(errLinePrefix, "errLinePrefix");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setErrLinePrefix(String errLinePrefix) {
+    public NWorkspaceOptionsBuilder errLinePrefix(String errLinePrefix) {
         this.errLinePrefix = errLinePrefix;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getSkipBoot() {
+    public NOptional<Boolean> skipBoot() {
         return NOptional.ofNamed(skipBoot, "skipBoot");
     }
 
@@ -1348,13 +1348,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setSkipBoot(Boolean skipBoot) {
+    public NWorkspaceOptionsBuilder skipBoot(Boolean skipBoot) {
         this.skipBoot = skipBoot;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getTrace() {
+    public NOptional<Boolean> trace() {
         return NOptional.ofNamed(trace, "trace");
     }
 
@@ -1365,181 +1365,181 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setTrace(Boolean trace) {
+    public NWorkspaceOptionsBuilder trace(Boolean trace) {
         this.trace = trace;
         return this;
     }
 
-    public NOptional<String> getProgressOptions() {
+    public NOptional<String> progressOptions() {
         return NOptional.ofNamed(progressOptions, "progressOptions");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setProgressOptions(String progressOptions) {
+    public NWorkspaceOptionsBuilder progressOptions(String progressOptions) {
         this.progressOptions = progressOptions;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getCached() {
+    public NOptional<Boolean> cached() {
         return NOptional.ofNamed(cached, "cached");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setCached(Boolean cached) {
+    public NWorkspaceOptionsBuilder cached(Boolean cached) {
         this.cached = cached;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getIndexed() {
+    public NOptional<Boolean> indexed() {
         return NOptional.ofNamed(indexed, "indexed");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setIndexed(Boolean indexed) {
+    public NWorkspaceOptionsBuilder indexed(Boolean indexed) {
         this.indexed = indexed;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getTransitive() {
+    public NOptional<Boolean> transitive() {
         return NOptional.ofNamed(transitive, "transitive");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setTransitive(Boolean transitive) {
+    public NWorkspaceOptionsBuilder transitive(Boolean transitive) {
         this.transitive = transitive;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getBot() {
+    public NOptional<Boolean> bot() {
         return NOptional.ofNamed(bot, "bot");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setBot(Boolean bot) {
+    public NWorkspaceOptionsBuilder bot(Boolean bot) {
         this.bot = bot;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getPreviewRepo() {
+    public NOptional<Boolean> previewRepo() {
         return NOptional.ofNamed(previewRepo, "previewRepo");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setPreviewRepo(Boolean bot) {
+    public NWorkspaceOptionsBuilder previewRepo(Boolean bot) {
         this.previewRepo = bot;
         return this;
     }
 
     @Override
-    public NOptional<NFetchStrategy> getFetchStrategy() {
+    public NOptional<NFetchStrategy> fetchStrategy() {
         return NOptional.ofNamed(fetchStrategy, "fetchStrategy");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setFetchStrategy(NFetchStrategy fetchStrategy) {
+    public NWorkspaceOptionsBuilder fetchStrategy(NFetchStrategy fetchStrategy) {
         this.fetchStrategy = fetchStrategy;
         return this;
     }
 
     @Override
-    public NOptional<InputStream> getStdin() {
+    public NOptional<InputStream> stdin() {
         return NOptional.ofNamed(stdin, "stdin");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setStdin(InputStream stdin) {
+    public NWorkspaceOptionsBuilder stdin(InputStream stdin) {
         this.stdin = stdin;
         return this;
     }
 
     @Override
-    public NOptional<PrintStream> getStdout() {
+    public NOptional<PrintStream> stdout() {
         return NOptional.ofNamed(stdout, "stdout");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setStdout(PrintStream stdout) {
+    public NWorkspaceOptionsBuilder stdout(PrintStream stdout) {
         this.stdout = stdout;
         return this;
     }
 
     @Override
-    public NOptional<PrintStream> getStderr() {
+    public NOptional<PrintStream> stderr() {
         return NOptional.ofNamed(stderr, "stderr");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setStderr(PrintStream stderr) {
+    public NWorkspaceOptionsBuilder stderr(PrintStream stderr) {
         this.stderr = stderr;
         return this;
     }
 
     @Override
-    public NOptional<ExecutorService> getExecutorService() {
+    public NOptional<ExecutorService> executorService() {
         return NOptional.ofNamed(executorService, "executorService");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setExecutorService(ExecutorService executorService) {
+    public NWorkspaceOptionsBuilder executorService(ExecutorService executorService) {
         this.executorService = executorService;
         return this;
     }
 
     @Override
-    public NOptional<Instant> getExpireTime() {
+    public NOptional<Instant> expireTime() {
         return NOptional.ofNamed(expireTime, "expireTime");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setExpireTime(Instant expireTime) {
+    public NWorkspaceOptionsBuilder expireTime(Instant expireTime) {
         this.expireTime = expireTime;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getSkipErrors() {
+    public NOptional<Boolean> skipErrors() {
         return NOptional.ofNamed(skipErrors, "skipErrors");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setSkipErrors(Boolean value) {
+    public NWorkspaceOptionsBuilder skipErrors(Boolean value) {
         this.skipErrors = value;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getSwitchWorkspace() {
+    public NOptional<Boolean> switchWorkspace() {
         return NOptional.ofNamed(switchWorkspace, "switchWorkspace");
     }
 
-    public NWorkspaceOptionsBuilder setSwitchWorkspace(Boolean switchWorkspace) {
+    public NWorkspaceOptionsBuilder switchWorkspace(Boolean switchWorkspace) {
         this.switchWorkspace = switchWorkspace;
         return this;
     }
 
     @Override
-    public NOptional<List<NMsg>> getErrors() {
+    public NOptional<List<NMsg>> errors() {
         return NOptional.ofNamed(errors, "errors");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setErrors(List<NMsg> errors) {
+    public NWorkspaceOptionsBuilder errors(List<NMsg> errors) {
         this.errors = errors;
         return this;
     }
 
     @Override
-    public NOptional<List<String>> getCustomOptions() {
+    public NOptional<List<String>> customOptions() {
         return NOptional.ofNamed(customOptions, "customOptions");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setCustomOptions(List<String> properties) {
+    public NWorkspaceOptionsBuilder customOptions(List<String> properties) {
         this.customOptions = properties;
         return this;
     }
@@ -1550,7 +1550,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setLocale(String locale) {
+    public NWorkspaceOptionsBuilder locale(String locale) {
         this.locale = locale;
         return this;
     }
@@ -1561,7 +1561,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setTheme(String theme) {
+    public NWorkspaceOptionsBuilder theme(String theme) {
         this.theme = theme;
         return this;
     }
@@ -1571,83 +1571,83 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         if (other == null) {
             return this;
         }
-        this.setApiVersion(other.getApiVersion().orNull());
-        this.setRuntimeId(other.getRuntimeId().orNull());
-        this.setJavaCommand(other.getJavaCommand().orNull());
-        this.setJavaOptions(other.getJavaOptions().orNull());
-        this.setWorkspace(other.getWorkspace().orNull());
-        this.setName(other.getName().orNull());
-        this.setInstallCompanions(other.getInstallCompanions().orNull());
-        this.setSkipWelcome(other.getSkipWelcome().orNull());
-        this.setSkipBoot(other.getSkipBoot().orNull());
-        this.setSystem(other.getSystem().orNull());
-        this.setGui(other.getGui().orNull());
-        this.setUserName(other.getUserName().orNull());
-        this.setCredential(other.getCredential().orNull());
-        this.setTerminalMode(other.getTerminalMode().orNull());
-        this.setReadOnly(other.getReadOnly().orNull());
-        this.setTrace(other.getTrace().orNull());
-        this.setProgressOptions(other.getProgressOptions().orNull());
-        this.setLogConfig(other.getLogConfig().orNull());
-        this.setConfirm(other.getConfirm().orNull());
-        this.setConfirm(other.getConfirm().orNull());
-        this.setOutputFormat(other.getOutputFormat().orNull());
-        this.setOutputFormatOptions(other.getOutputFormatOptions().orNull());
-        this.setOpenMode(other.getOpenMode().orNull());
-        this.setCreationTime(other.getCreationTime().orNull());
-        this.setDry(other.getDry().orNull());
-        this.setShowStacktrace(other.getShowStacktrace().orNull());
-        this.setClassLoaderSupplier(other.getClassLoaderSupplier().orNull());
-        this.setExecutorOptions(other.getExecutorOptions().orNull());
-        this.setRecover(other.getRecover().orNull());
-        this.setReset(other.getReset().orNull());
-        this.setResetHard(other.getResetHard().orNull());
-        this.setCommandVersion(other.getCommandVersion().orNull());
-        this.setCommandHelp(other.getCommandHelp().orNull());
-        this.setDebug(other.getDebug().orNull());
-        this.setInherited(other.getInherited().orNull());
-        this.setExecutionType(other.getExecutionType().orNull());
-        this.setRunAs(other.getRunAs().orNull());
-        this.setArchetype(other.getArchetype().orNull());
-        this.setStoreStrategy(other.getStoreStrategy().orNull());
-        this.setHomeLocations(other.getHomeLocations().orNull());
-        this.setStoreLocations(other.getStoreLocations().orNull());
-        this.setStoreLayout(other.getStoreLayout().orNull());
-        this.setStoreStrategy(other.getStoreStrategy().orNull());
-        this.setRepositoryStoreStrategy(other.getRepositoryStoreStrategy().orNull());
-        this.setFetchStrategy(other.getFetchStrategy().orNull());
-        this.setCached(other.getCached().orNull());
-        this.setIndexed(other.getIndexed().orNull());
-        this.setTransitive(other.getTransitive().orNull());
-        this.setBot(other.getBot().orNull());
-        this.setStdin(other.getStdin().orNull());
-        this.setStdout(other.getStdout().orNull());
-        this.setStderr(other.getStderr().orNull());
-        this.setExecutorService(other.getExecutorService().orNull());
+        this.apiVersion(other.apiVersion().orNull());
+        this.runtimeId(other.runtimeId().orNull());
+        this.javaCommand(other.javaCommand().orNull());
+        this.javaOptions(other.javaOptions().orNull());
+        this.workspace(other.workspace().orNull());
+        this.name(other.name().orNull());
+        this.installCompanions(other.installCompanions().orNull());
+        this.skipWelcome(other.skipWelcome().orNull());
+        this.skipBoot(other.skipBoot().orNull());
+        this.system(other.system().orNull());
+        this.gui(other.gui().orNull());
+        this.setUserName(other.userName().orNull());
+        this.credential(other.credential().orNull());
+        this.terminalMode(other.terminalMode().orNull());
+        this.readOnly(other.readOnly().orNull());
+        this.trace(other.trace().orNull());
+        this.progressOptions(other.progressOptions().orNull());
+        this.logConfig(other.logConfig().orNull());
+        this.confirm(other.confirm().orNull());
+        this.confirm(other.confirm().orNull());
+        this.outputFormat(other.outputFormat().orNull());
+        this.outputFormatOptions(other.outputFormatOptions().orNull());
+        this.openMode(other.openMode().orNull());
+        this.creationTime(other.creationTime().orNull());
+        this.dry(other.dry().orNull());
+        this.showStacktrace(other.showStacktrace().orNull());
+        this.classLoaderSupplier(other.classLoaderSupplier().orNull());
+        this.executorOptions(other.executorOptions().orNull());
+        this.recover(other.recover().orNull());
+        this.reset(other.reset().orNull());
+        this.resetHard(other.resetHard().orNull());
+        this.commandVersion(other.commandVersion().orNull());
+        this.commandHelp(other.commandHelp().orNull());
+        this.debug(other.debug().orNull());
+        this.inherited(other.inherited().orNull());
+        this.executionType(other.executionType().orNull());
+        this.runAs(other.runAs().orNull());
+        this.archetype(other.archetype().orNull());
+        this.storeStrategy(other.storeStrategy().orNull());
+        this.homeLocations(other.homeLocations().orNull());
+        this.storeLocations(other.storeLocations().orNull());
+        this.storeLayout(other.storeLayout().orNull());
+        this.storeStrategy(other.storeStrategy().orNull());
+        this.repositoryStoreStrategy(other.repositoryStoreStrategy().orNull());
+        this.fetchStrategy(other.fetchStrategy().orNull());
+        this.cached(other.cached().orNull());
+        this.indexed(other.indexed().orNull());
+        this.transitive(other.transitive().orNull());
+        this.bot(other.bot().orNull());
+        this.stdin(other.stdin().orNull());
+        this.stdout(other.stdout().orNull());
+        this.stderr(other.stderr().orNull());
+        this.executorService(other.executorService().orNull());
 //        this.setBootRepositories(other.getBootRepositories());
 
-        this.setExcludedExtensions(other.getExcludedExtensions().orNull());
+        this.excludedExtensions(other.excludedExtensions().orNull());
 //        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
-        this.setRepositories(other.getRepositories().orNull());
-        this.setApplicationArguments(other.getApplicationArguments().orNull());
-        this.setCustomOptions(other.getCustomOptions().orNull());
-        this.setExpireTime(other.getExpireTime().orNull());
-        this.setErrors(other.getErrors().orNull());
-        this.setSkipErrors(other.getSkipErrors().orNull());
-        this.setSwitchWorkspace(other.getSwitchWorkspace().orNull());
-        this.setLocale(other.getLocale().orNull());
-        this.setTheme(other.getTheme().orNull());
-        this.setDependencySolver(other.getDependencySolver().orNull());
-        this.setIsolationLevel(other.getIsolationLevel().orNull());
-        this.setInitLaunchers(other.getInitLaunchers().orNull());
-        this.setInitJava(other.getInitJava().orNull());
-        this.setInitScripts(other.getInitScripts().orNull());
-        this.setInitPlatforms(other.getInitPlatforms().orNull());
-        this.setDesktopLauncher(other.getDesktopLauncher().orNull());
-        this.setMenuLauncher(other.getMenuLauncher().orNull());
-        this.setUserLauncher(other.getUserLauncher().orNull());
-        this.setSharedInstance(other.getSharedInstance().orNull());
-        this.setPreviewRepo(other.getPreviewRepo().orNull());
+        this.repositories(other.repositories().orNull());
+        this.applicationArguments(other.applicationArguments().orNull());
+        this.customOptions(other.customOptions().orNull());
+        this.expireTime(other.expireTime().orNull());
+        this.errors(other.errors().orNull());
+        this.skipErrors(other.skipErrors().orNull());
+        this.switchWorkspace(other.switchWorkspace().orNull());
+        this.locale(other.locale().orNull());
+        this.theme(other.theme().orNull());
+        this.dependencySolver(other.dependencySolver().orNull());
+        this.isolationLevel(other.isolationLevel().orNull());
+        this.initLaunchers(other.initLaunchers().orNull());
+        this.initJava(other.initJava().orNull());
+        this.initScripts(other.initScripts().orNull());
+        this.initPlatforms(other.initPlatforms().orNull());
+        this.desktopLauncher(other.desktopLauncher().orNull());
+        this.menuLauncher(other.menuLauncher().orNull());
+        this.userLauncher(other.userLauncher().orNull());
+        this.sharedInstance(other.sharedInstance().orNull());
+        this.previewRepo(other.previewRepo().orNull());
         return this;
     }
 
@@ -1657,83 +1657,83 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         if (other == null) {
             return this;
         }
-        this.setApiVersion(other.getApiVersion().orNull());
-        this.setRuntimeId(other.getRuntimeId().orNull());
-        this.setJavaCommand(other.getJavaCommand().orNull());
-        this.setJavaOptions(other.getJavaOptions().orNull());
-        this.setWorkspace(other.getWorkspace().orNull());
-        this.setName(other.getName().orNull());
-        this.setInstallCompanions(other.getInstallCompanions().orNull());
-        this.setSkipWelcome(other.getSkipWelcome().orNull());
-        this.setSkipBoot(other.getSkipBoot().orNull());
-        this.setSystem(other.getSystem().orNull());
-        this.setGui(other.getGui().orNull());
-        this.setUserName(other.getUserName().orNull());
-        this.setCredential(other.getCredential().orNull());
-        this.setTerminalMode(other.getTerminalMode().orNull());
-        this.setReadOnly(other.getReadOnly().orNull());
-        this.setTrace(other.getTrace().orNull());
-        this.setProgressOptions(other.getProgressOptions().orNull());
-        this.setLogConfig(other.getLogConfig().orNull());
-        this.setConfirm(other.getConfirm().orNull());
-        this.setConfirm(other.getConfirm().orNull());
-        this.setOutputFormat(other.getOutputFormat().orNull());
-        this.setOutputFormatOptions(other.getOutputFormatOptions().orNull());
-        this.setOpenMode(other.getOpenMode().orNull());
-        this.setCreationTime(other.getCreationTime().orNull());
-        this.setDry(other.getDry().orNull());
-        this.setShowStacktrace(other.getShowStacktrace().orNull());
-        this.setClassLoaderSupplier(other.getClassLoaderSupplier().orNull());
-        this.setExecutorOptions(other.getExecutorOptions().orNull());
-        this.setRecover(other.getRecover().orNull());
-        this.setReset(other.getReset().orNull());
-        this.setResetHard(other.getResetHard().orNull());
-        this.setCommandVersion(other.getCommandVersion().orNull());
-        this.setCommandHelp(other.getCommandHelp().orNull());
-        this.setDebug(other.getDebug().orNull());
-        this.setInherited(other.getInherited().orNull());
-        this.setExecutionType(other.getExecutionType().orNull());
-        this.setRunAs(other.getRunAs().orNull());
-        this.setArchetype(other.getArchetype().orNull());
-        this.setStoreStrategy(other.getStoreStrategy().orNull());
-        this.setHomeLocations(other.getHomeLocations().orNull());
-        this.setStoreLocations(other.getStoreLocations().orNull());
-        this.setStoreLayout(other.getStoreLayout().orNull());
-        this.setStoreStrategy(other.getStoreStrategy().orNull());
-        this.setRepositoryStoreStrategy(other.getRepositoryStoreStrategy().orNull());
-        this.setFetchStrategy(other.getFetchStrategy().orNull());
-        this.setCached(other.getCached().orNull());
-        this.setIndexed(other.getIndexed().orNull());
-        this.setTransitive(other.getTransitive().orNull());
-        this.setBot(other.getBot().orNull());
-        this.setStdin(other.getStdin().orNull());
-        this.setStdout(other.getStdout().orNull());
-        this.setStderr(other.getStderr().orNull());
-        this.setExecutorService(other.getExecutorService().orNull());
+        this.apiVersion(other.apiVersion().orNull());
+        this.runtimeId(other.runtimeId().orNull());
+        this.javaCommand(other.javaCommand().orNull());
+        this.javaOptions(other.javaOptions().orNull());
+        this.workspace(other.workspace().orNull());
+        this.name(other.name().orNull());
+        this.installCompanions(other.installCompanions().orNull());
+        this.skipWelcome(other.skipWelcome().orNull());
+        this.skipBoot(other.skipBoot().orNull());
+        this.system(other.system().orNull());
+        this.gui(other.gui().orNull());
+        this.setUserName(other.userName().orNull());
+        this.credential(other.credential().orNull());
+        this.terminalMode(other.terminalMode().orNull());
+        this.readOnly(other.readOnly().orNull());
+        this.trace(other.trace().orNull());
+        this.progressOptions(other.progressOptions().orNull());
+        this.logConfig(other.logConfig().orNull());
+        this.confirm(other.confirm().orNull());
+        this.confirm(other.confirm().orNull());
+        this.outputFormat(other.outputFormat().orNull());
+        this.outputFormatOptions(other.outputFormatOptions().orNull());
+        this.openMode(other.openMode().orNull());
+        this.creationTime(other.creationTime().orNull());
+        this.dry(other.dry().orNull());
+        this.showStacktrace(other.showStacktrace().orNull());
+        this.classLoaderSupplier(other.classLoaderSupplier().orNull());
+        this.executorOptions(other.executorOptions().orNull());
+        this.recover(other.recover().orNull());
+        this.reset(other.reset().orNull());
+        this.resetHard(other.resetHard().orNull());
+        this.commandVersion(other.commandVersion().orNull());
+        this.commandHelp(other.commandHelp().orNull());
+        this.debug(other.debug().orNull());
+        this.inherited(other.inherited().orNull());
+        this.executionType(other.executionType().orNull());
+        this.runAs(other.runAs().orNull());
+        this.archetype(other.archetype().orNull());
+        this.storeStrategy(other.storeStrategy().orNull());
+        this.homeLocations(other.homeLocations().orNull());
+        this.storeLocations(other.storeLocations().orNull());
+        this.storeLayout(other.storeLayout().orNull());
+        this.storeStrategy(other.storeStrategy().orNull());
+        this.repositoryStoreStrategy(other.repositoryStoreStrategy().orNull());
+        this.fetchStrategy(other.fetchStrategy().orNull());
+        this.cached(other.cached().orNull());
+        this.indexed(other.indexed().orNull());
+        this.transitive(other.transitive().orNull());
+        this.bot(other.bot().orNull());
+        this.stdin(other.stdin().orNull());
+        this.stdout(other.stdout().orNull());
+        this.stderr(other.stderr().orNull());
+        this.executorService(other.executorService().orNull());
 //        this.setBootRepositories(other.getBootRepositories());
 
-        this.setExcludedExtensions(other.getExcludedExtensions().orNull());
+        this.excludedExtensions(other.excludedExtensions().orNull());
 //        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
-        this.setRepositories(other.getRepositories().orNull());
-        this.setApplicationArguments(other.getApplicationArguments().orNull());
-        this.setCustomOptions(other.getCustomOptions().orNull());
-        this.setExpireTime(other.getExpireTime().orNull());
-        this.setErrors(other.getErrors().orNull());
-        this.setSkipErrors(other.getSkipErrors().orNull());
-        this.setSwitchWorkspace(other.getSwitchWorkspace().orNull());
-        this.setLocale(other.getLocale().orNull());
-        this.setTheme(other.getTheme().orNull());
-        this.setDependencySolver(other.getDependencySolver().orNull());
-        this.setIsolationLevel(other.getIsolationLevel().orNull());
-        this.setInitLaunchers(other.getInitLaunchers().orNull());
-        this.setInitJava(other.getInitJava().orNull());
-        this.setInitScripts(other.getInitScripts().orNull());
-        this.setInitPlatforms(other.getInitPlatforms().orNull());
-        this.setDesktopLauncher(other.getDesktopLauncher().orNull());
-        this.setMenuLauncher(other.getMenuLauncher().orNull());
-        this.setUserLauncher(other.getUserLauncher().orNull());
-        this.setSharedInstance(other.getSharedInstance().orNull());
-        this.setPreviewRepo(other.getPreviewRepo().orNull());
+        this.repositories(other.repositories().orNull());
+        this.applicationArguments(other.applicationArguments().orNull());
+        this.customOptions(other.customOptions().orNull());
+        this.expireTime(other.expireTime().orNull());
+        this.errors(other.errors().orNull());
+        this.skipErrors(other.skipErrors().orNull());
+        this.switchWorkspace(other.switchWorkspace().orNull());
+        this.locale(other.getLocale().orNull());
+        this.theme(other.getTheme().orNull());
+        this.dependencySolver(other.dependencySolver().orNull());
+        this.isolationLevel(other.isolationLevel().orNull());
+        this.initLaunchers(other.initLaunchers().orNull());
+        this.initJava(other.initJava().orNull());
+        this.initScripts(other.initScripts().orNull());
+        this.initPlatforms(other.initPlatforms().orNull());
+        this.desktopLauncher(other.desktopLauncher().orNull());
+        this.menuLauncher(other.menuLauncher().orNull());
+        this.userLauncher(other.userLauncher().orNull());
+        this.sharedInstance(other.sharedInstance().orNull());
+        this.previewRepo(other.previewRepo().orNull());
         return this;
     }
 
@@ -1742,62 +1742,62 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     public NWorkspaceOptionsBuilder copyFrom(NBootOptionsInfo other) {
-        this.setApiVersion(other.getApiVersion() == null ? null : NVersion.get(other.getApiVersion()).orNull());
-        this.setRuntimeId(other.getRuntimeId() == null ? null :
+        this.apiVersion(other.getApiVersion() == null ? null : NVersion.get(other.getApiVersion()).orNull());
+        this.runtimeId(other.getRuntimeId() == null ? null :
                 other.getRuntimeId().contains("#") ? NId.get(other.getRuntimeId()).orNull() :
                         NId.getRuntime(other.getRuntimeId()).orNull()
         );
-        this.setJavaCommand(other.getJavaCommand());
-        this.setJavaOptions(other.getJavaOptions());
-        this.setWorkspace(other.getWorkspace());
-        this.setName(other.getName());
-        this.setInstallCompanions(other.getInstallCompanions());
-        this.setSkipWelcome(other.getSkipWelcome());
-        this.setSkipBoot(other.getSkipBoot());
-        this.setSystem(other.getSystem());
-        this.setGui(other.getGui());
+        this.javaCommand(other.getJavaCommand());
+        this.javaOptions(other.getJavaOptions());
+        this.workspace(other.getWorkspace());
+        this.name(other.getName());
+        this.installCompanions(other.getInstallCompanions());
+        this.skipWelcome(other.getSkipWelcome());
+        this.skipBoot(other.getSkipBoot());
+        this.system(other.getSystem());
+        this.gui(other.getGui());
         this.setUserName(other.getUserName());
-        this.setCredential(other.getCredential());
-        this.setTerminalMode(NTerminalMode.parse(other.getTerminalMode()).orNull());
-        this.setReadOnly(other.getReadOnly());
-        this.setTrace(other.getTrace());
-        this.setProgressOptions(other.getProgressOptions());
+        this.credential(other.getCredential());
+        this.terminalMode(NTerminalMode.parse(other.getTerminalMode()).orNull());
+        this.readOnly(other.getReadOnly());
+        this.trace(other.getTrace());
+        this.progressOptions(other.getProgressOptions());
         {
             NBootLogConfig c = other.getLogConfig();
             NLogConfig v = null;
             if (c != null) {
                 v = new NLogConfig();
-                v.setLogFileBase(c.getLogFileBase());
-                v.setLogFileLevel(c.getLogFileLevel());
-                v.setLogTermLevel(c.getLogTermLevel());
-                v.setLogFileSize(c.getLogFileSize());
-                v.setLogFileCount(c.getLogFileCount());
-                v.setLogFileName(c.getLogFileName());
-                v.setLogFileBase(c.getLogFileBase());
+                v.logFileBase(c.getLogFileBase());
+                v.logFileLevel(c.getLogFileLevel());
+                v.logTermLevel(c.getLogTermLevel());
+                v.logFileSize(c.getLogFileSize());
+                v.logFileCount(c.getLogFileCount());
+                v.logFileName(c.getLogFileName());
+                v.logFileBase(c.getLogFileBase());
             }
-            this.setLogConfig(v);
+            this.logConfig(v);
         }
-        this.setConfirm(NConfirmationMode.parse(other.getConfirm()).orNull());
-        this.setConfirm(NConfirmationMode.parse(other.getConfirm()).orNull());
-        this.setOutputFormat(NContentType.parse(other.getOutputFormat()).orNull());
-        this.setOutputFormatOptions(other.getOutputFormatOptions());
-        this.setOpenMode(NOpenMode.parse(other.getOpenMode()).orNull());
-        this.setCreationTime(other.getCreationTime());
-        this.setDry(other.getDry());
-        this.setShowStacktrace(other.getShowStacktrace());
-        this.setClassLoaderSupplier(other.getClassLoaderSupplier());
-        this.setExecutorOptions(other.getExecutorOptions());
-        this.setRecover(other.getRecover());
-        this.setReset(other.getReset());
-        this.setResetHard(other.getResetHard());
-        this.setCommandVersion(other.getCommandVersion());
-        this.setCommandHelp(other.getCommandHelp());
-        this.setDebug(other.getDebug());
-        this.setInherited(other.getInherited());
-        this.setExecutionType(NExecutionType.parse(other.getExecutionType()).orNull());
-        this.setRunAs(NRunAs.parse(other.getRunAs()).orNull());
-        this.setArchetype(other.getArchetype());
-        this.setStoreStrategy(NStoreStrategy.parse(other.getStoreStrategy()).orNull());
+        this.confirm(NConfirmationMode.parse(other.getConfirm()).orNull());
+        this.confirm(NConfirmationMode.parse(other.getConfirm()).orNull());
+        this.outputFormat(NContentType.parse(other.getOutputFormat()).orNull());
+        this.outputFormatOptions(other.getOutputFormatOptions());
+        this.openMode(NOpenMode.parse(other.getOpenMode()).orNull());
+        this.creationTime(other.getCreationTime());
+        this.dry(other.getDry());
+        this.showStacktrace(other.getShowStacktrace());
+        this.classLoaderSupplier(other.getClassLoaderSupplier());
+        this.executorOptions(other.getExecutorOptions());
+        this.recover(other.getRecover());
+        this.reset(other.getReset());
+        this.resetHard(other.getResetHard());
+        this.commandVersion(other.getCommandVersion());
+        this.commandHelp(other.getCommandHelp());
+        this.debug(other.getDebug());
+        this.inherited(other.getInherited());
+        this.executionType(NExecutionType.parse(other.getExecutionType()).orNull());
+        this.runAs(NRunAs.parse(other.getRunAs()).orNull());
+        this.archetype(other.getArchetype());
+        this.storeStrategy(NStoreStrategy.parse(other.getStoreStrategy()).orNull());
         {
             Map<NBootHomeLocation, String> c = other.getHomeLocations();
             Map<NHomeLocation, String> v = null;
@@ -1810,7 +1810,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                     ), e.getValue());
                 }
             }
-            this.setHomeLocations(v);
+            this.homeLocations(v);
         }
         {
             Map<String, String> c = other.getStoreLocations();
@@ -1821,45 +1821,45 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                     v.put(NStoreType.parse(e.getKey()).get(), e.getValue());
                 }
             }
-            this.setStoreLocations(v);
+            this.storeLocations(v);
         }
-        this.setStoreLayout(NOsFamily.parse(other.getStoreLayout()).orNull());
-        this.setStoreStrategy(NStoreStrategy.parse(other.getStoreStrategy()).orNull());
-        this.setRepositoryStoreStrategy(NStoreStrategy.parse(other.getRepositoryStoreStrategy()).orNull());
-        this.setFetchStrategy(NFetchStrategy.parse(other.getFetchStrategy()).orNull());
-        this.setCached(other.getCached());
-        this.setIndexed(other.getIndexed());
-        this.setTransitive(other.getTransitive());
-        this.setBot(other.getBot());
-        this.setStdin(other.getStdin());
-        this.setStdout(other.getStdout());
-        this.setStderr(other.getStderr());
-        this.setExecutorService(other.getExecutorService());
+        this.storeLayout(NOsFamily.parse(other.getStoreLayout()).orNull());
+        this.storeStrategy(NStoreStrategy.parse(other.getStoreStrategy()).orNull());
+        this.repositoryStoreStrategy(NStoreStrategy.parse(other.getRepositoryStoreStrategy()).orNull());
+        this.fetchStrategy(NFetchStrategy.parse(other.getFetchStrategy()).orNull());
+        this.cached(other.getCached());
+        this.indexed(other.getIndexed());
+        this.transitive(other.getTransitive());
+        this.bot(other.getBot());
+        this.stdin(other.getStdin());
+        this.stdout(other.getStdout());
+        this.stderr(other.getStderr());
+        this.executorService(other.getExecutorService());
 //        this.setBootRepositories(other.getBootRepositories());
 
-        this.setExcludedExtensions(other.getExcludedExtensions());
+        this.excludedExtensions(other.getExcludedExtensions());
 //        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
-        this.setRepositories(other.getRepositories());
-        this.setBootRepositories(other.getBootRepositories());
-        this.setApplicationArguments(other.getApplicationArguments());
-        this.setCustomOptions(other.getCustomOptions());
-        this.setExpireTime(other.getExpireTime());
-        this.setErrors(other.getErrors() == null ? new ArrayList<>() : other.getErrors().stream().map(x -> NMsg.ofPlain(x)).collect(Collectors.toList()));
-        this.setSkipErrors(other.getSkipErrors());
-        this.setSwitchWorkspace(other.getSwitchWorkspace());
-        this.setLocale(other.getLocale());
-        this.setTheme(other.getTheme());
-        this.setDependencySolver(other.getDependencySolver());
-        this.setIsolationLevel(NIsolationLevel.parse(other.getIsolationLevel()).orNull());
-        this.setInitLaunchers(other.getInitLaunchers());
-        this.setInitJava(other.getInitJava());
-        this.setInitScripts(other.getInitScripts());
-        this.setInitPlatforms(other.getInitPlatforms());
-        this.setDesktopLauncher(NSupportMode.parse(other.getDesktopLauncher()).orNull());
-        this.setMenuLauncher(NSupportMode.parse(other.getMenuLauncher()).orNull());
-        this.setUserLauncher(NSupportMode.parse(other.getUserLauncher()).orNull());
-        this.setSharedInstance(other.getSharedInstance());
-        this.setPreviewRepo(other.getPreviewRepo());
+        this.repositories(other.getRepositories());
+        this.bootRepositories(other.getBootRepositories());
+        this.applicationArguments(other.getApplicationArguments());
+        this.customOptions(other.getCustomOptions());
+        this.expireTime(other.getExpireTime());
+        this.errors(other.getErrors() == null ? new ArrayList<>() : other.getErrors().stream().map(x -> NMsg.ofPlain(x)).collect(Collectors.toList()));
+        this.skipErrors(other.getSkipErrors());
+        this.switchWorkspace(other.getSwitchWorkspace());
+        this.locale(other.getLocale());
+        this.theme(other.getTheme());
+        this.dependencySolver(other.getDependencySolver());
+        this.isolationLevel(NIsolationLevel.parse(other.getIsolationLevel()).orNull());
+        this.initLaunchers(other.getInitLaunchers());
+        this.initJava(other.getInitJava());
+        this.initScripts(other.getInitScripts());
+        this.initPlatforms(other.getInitPlatforms());
+        this.desktopLauncher(NSupportMode.parse(other.getDesktopLauncher()).orNull());
+        this.menuLauncher(NSupportMode.parse(other.getMenuLauncher()).orNull());
+        this.userLauncher(NSupportMode.parse(other.getUserLauncher()).orNull());
+        this.sharedInstance(other.getSharedInstance());
+        this.previewRepo(other.getPreviewRepo());
         return this;
     }
 
@@ -1869,81 +1869,81 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             if (assignmentPolicy == null) {
                 assignmentPolicy = NAssignmentPolicy.ANY;
             }
-            assignmentPolicy.applyOptionalValue(this::getApiVersion, other::getApiVersion, this::setApiVersion);
-            assignmentPolicy.applyOptionalValue(this::getRuntimeId, other::getRuntimeId, this::setRuntimeId);
-            assignmentPolicy.applyOptionalValue(this::getJavaOptions, other::getJavaOptions, this::setJavaOptions);
-            assignmentPolicy.applyOptionalValue(this::getJavaCommand, other::getJavaCommand, this::setJavaCommand);
-            assignmentPolicy.applyOptionalValue(this::getWorkspace, other::getWorkspace, this::setWorkspace);
-            assignmentPolicy.applyOptionalValue(this::getName, other::getName, this::setName);
-            assignmentPolicy.applyOptionalValue(this::getInstallCompanions, other::getInstallCompanions, this::setInstallCompanions);
-            assignmentPolicy.applyOptionalValue(this::getSkipWelcome, other::getSkipWelcome, this::setSkipWelcome);
-            assignmentPolicy.applyOptionalValue(this::getSkipBoot, other::getSkipBoot, this::setSkipBoot);
-            assignmentPolicy.applyOptionalValue(this::getSystem, other::getSystem, this::setSystem);
-            assignmentPolicy.applyOptionalValue(this::getGui, other::getGui, this::setGui);
-            assignmentPolicy.applyOptionalValue(this::getUserName, other::getUserName, this::setUserName);
-            assignmentPolicy.applyOptionalValue(this::getCredential, other::getCredential, this::setCredential);
-            assignmentPolicy.applyOptionalValue(this::getTerminalMode, other::getTerminalMode, this::setTerminalMode);
-            assignmentPolicy.applyOptionalValue(this::getReadOnly, other::getReadOnly, this::setReadOnly);
-            assignmentPolicy.applyOptionalValue(this::getTrace, other::getTrace, this::setTrace);
-            assignmentPolicy.applyOptionalValue(this::getProgressOptions, other::getProgressOptions, this::setProgressOptions);
-            assignmentPolicy.applyOptionalValue(this::getLogConfig, other::getLogConfig, this::setLogConfig);
-            assignmentPolicy.applyOptionalValue(this::getConfirm, other::getConfirm, this::setConfirm);
-            assignmentPolicy.applyOptionalValue(this::getConfirm, other::getConfirm, this::setConfirm);
-            assignmentPolicy.applyOptionalValue(this::getOutputFormat, other::getOutputFormat, this::setOutputFormat);
-            assignmentPolicy.applyOptionalValue(this::getOutputFormatOptions, other::getOutputFormatOptions, this::setOutputFormatOptions);
-            assignmentPolicy.applyOptionalValue(this::getOpenMode, other::getOpenMode, this::setOpenMode);
-            assignmentPolicy.applyOptionalValue(this::getCreationTime, other::getCreationTime, this::setCreationTime);
-            assignmentPolicy.applyOptionalValue(this::getDry, other::getDry, this::setDry);
-            assignmentPolicy.applyOptionalValue(this::getShowStacktrace, other::getShowStacktrace, this::setShowStacktrace);
-            assignmentPolicy.applyOptionalValue(this::getClassLoaderSupplier, other::getClassLoaderSupplier, this::setClassLoaderSupplier);
-            assignmentPolicy.applyOptionalValue(this::getExecutorOptions, other::getExecutorOptions, this::setExecutorOptions);
-            assignmentPolicy.applyOptionalValue(this::getRecover, other::getRecover, this::setRecover);
-            assignmentPolicy.applyOptionalValue(this::getReset, other::getReset, this::setReset);
-            assignmentPolicy.applyOptionalValue(this::getResetHard, other::getResetHard, this::setResetHard);
-            assignmentPolicy.applyOptionalValue(this::getCommandVersion, other::getCommandVersion, this::setCommandVersion);
-            assignmentPolicy.applyOptionalValue(this::getCommandHelp, other::getCommandHelp, this::setCommandHelp);
-            assignmentPolicy.applyOptionalValue(this::getDebug, other::getDebug, this::setDebug);
-            assignmentPolicy.applyOptionalValue(this::getInherited, other::getInherited, this::setInherited);
-            assignmentPolicy.applyOptionalValue(this::getExecutionType, other::getExecutionType, this::setExecutionType);
-            assignmentPolicy.applyOptionalValue(this::getRunAs, other::getRunAs, this::setRunAs);
-            assignmentPolicy.applyOptionalValue(this::getArchetype, other::getArchetype, this::setArchetype);
-            assignmentPolicy.applyOptionalValue(this::getStoreStrategy, other::getStoreStrategy, this::setStoreStrategy);
-            assignmentPolicy.applyOptionalValue(this::getHomeLocations, other::getHomeLocations, this::setHomeLocations);
-            assignmentPolicy.applyOptionalValue(this::getStoreLocations, other::getStoreLocations, this::setStoreLocations);
-            assignmentPolicy.applyOptionalValue(this::getStoreLayout, other::getStoreLayout, this::setStoreLayout);
-            assignmentPolicy.applyOptionalValue(this::getStoreStrategy, other::getStoreStrategy, this::setStoreStrategy);
-            assignmentPolicy.applyOptionalValue(this::getRepositoryStoreStrategy, other::getRepositoryStoreStrategy, this::setRepositoryStoreStrategy);
-            assignmentPolicy.applyOptionalValue(this::getFetchStrategy, other::getFetchStrategy, this::setFetchStrategy);
-            assignmentPolicy.applyOptionalValue(this::getCached, other::getCached, this::setCached);
-            assignmentPolicy.applyOptionalValue(this::getIndexed, other::getIndexed, this::setIndexed);
-            assignmentPolicy.applyOptionalValue(this::getTransitive, other::getTransitive, this::setTransitive);
-            assignmentPolicy.applyOptionalValue(this::getBot, other::getBot, this::setBot);
-            assignmentPolicy.applyOptionalValue(this::getStdin, other::getStdin, this::setStdin);
-            assignmentPolicy.applyOptionalValue(this::getStdout, other::getStdout, this::setStdout);
-            assignmentPolicy.applyOptionalValue(this::getStderr, other::getStderr, this::setStderr);
-            assignmentPolicy.applyOptionalValue(this::getExecutorService, other::getExecutorService, this::setExecutorService);
-            assignmentPolicy.applyOptionalValue(this::getExcludedExtensions, other::getExcludedExtensions, this::setExcludedExtensions);
-            assignmentPolicy.applyOptionalValue(this::getRepositories, other::getRepositories, this::setRepositories);
-            assignmentPolicy.applyOptionalValue(this::getBootRepositories, other::getBootRepositories, this::setBootRepositories);
-            assignmentPolicy.applyOptionalValue(this::getApplicationArguments, other::getApplicationArguments, this::setApplicationArguments);
-            assignmentPolicy.applyOptionalValue(this::getCustomOptions, other::getCustomOptions, this::setCustomOptions);
-            assignmentPolicy.applyOptionalValue(this::getExpireTime, other::getExpireTime, this::setExpireTime);
-            assignmentPolicy.applyOptionalValue(this::getErrors, other::getErrors, this::setErrors);
-            assignmentPolicy.applyOptionalValue(this::getSkipErrors, other::getSkipErrors, this::setSkipErrors);
-            assignmentPolicy.applyOptionalValue(this::getSwitchWorkspace, other::getSwitchWorkspace, this::setSwitchWorkspace);
-            assignmentPolicy.applyOptionalValue(this::getLocale, other::getLocale, this::setLocale);
-            assignmentPolicy.applyOptionalValue(this::getTheme, other::getTheme, this::setTheme);
-            assignmentPolicy.applyOptionalValue(this::getDependencySolver, other::getDependencySolver, this::setDependencySolver);
-            assignmentPolicy.applyOptionalValue(this::getIsolationLevel, other::getIsolationLevel, this::setIsolationLevel);
-            assignmentPolicy.applyOptionalValue(this::getInitLaunchers, other::getInitLaunchers, this::setInitLaunchers);
-            assignmentPolicy.applyOptionalValue(this::getInitJava, other::getInitJava, this::setInitJava);
-            assignmentPolicy.applyOptionalValue(this::getInitScripts, other::getInitScripts, this::setInitScripts);
-            assignmentPolicy.applyOptionalValue(this::getInitLaunchers, other::getInitLaunchers, this::setInitLaunchers);
-            assignmentPolicy.applyOptionalValue(this::getDesktopLauncher, other::getDesktopLauncher, this::setDesktopLauncher);
-            assignmentPolicy.applyOptionalValue(this::getMenuLauncher, other::getMenuLauncher, this::setMenuLauncher);
-            assignmentPolicy.applyOptionalValue(this::getUserLauncher, other::getUserLauncher, this::setUserLauncher);
-            assignmentPolicy.applyOptionalValue(this::getPreviewRepo, other::getPreviewRepo, this::setPreviewRepo);
-            assignmentPolicy.applyOptionalValue(this::getSharedInstance, other::getSharedInstance, this::setSharedInstance);
+            assignmentPolicy.applyOptionalValue(this::apiVersion, other::apiVersion, this::apiVersion);
+            assignmentPolicy.applyOptionalValue(this::runtimeId, other::runtimeId, this::runtimeId);
+            assignmentPolicy.applyOptionalValue(this::javaOptions, other::javaOptions, this::javaOptions);
+            assignmentPolicy.applyOptionalValue(this::javaCommand, other::javaCommand, this::javaCommand);
+            assignmentPolicy.applyOptionalValue(this::workspace, other::workspace, this::workspace);
+            assignmentPolicy.applyOptionalValue(this::name, other::name, this::name);
+            assignmentPolicy.applyOptionalValue(this::installCompanions, other::installCompanions, this::installCompanions);
+            assignmentPolicy.applyOptionalValue(this::skipWelcome, other::skipWelcome, this::skipWelcome);
+            assignmentPolicy.applyOptionalValue(this::skipBoot, other::skipBoot, this::skipBoot);
+            assignmentPolicy.applyOptionalValue(this::system, other::system, this::system);
+            assignmentPolicy.applyOptionalValue(this::gui, other::gui, this::gui);
+            assignmentPolicy.applyOptionalValue(this::userName, other::userName, this::setUserName);
+            assignmentPolicy.applyOptionalValue(this::credential, other::credential, this::credential);
+            assignmentPolicy.applyOptionalValue(this::terminalMode, other::terminalMode, this::terminalMode);
+            assignmentPolicy.applyOptionalValue(this::readOnly, other::readOnly, this::readOnly);
+            assignmentPolicy.applyOptionalValue(this::trace, other::trace, this::trace);
+            assignmentPolicy.applyOptionalValue(this::progressOptions, other::progressOptions, this::progressOptions);
+            assignmentPolicy.applyOptionalValue(this::logConfig, other::logConfig, this::logConfig);
+            assignmentPolicy.applyOptionalValue(this::confirm, other::confirm, this::confirm);
+            assignmentPolicy.applyOptionalValue(this::confirm, other::confirm, this::confirm);
+            assignmentPolicy.applyOptionalValue(this::outputFormat, other::outputFormat, this::outputFormat);
+            assignmentPolicy.applyOptionalValue(this::outputFormatOptions, other::outputFormatOptions, this::outputFormatOptions);
+            assignmentPolicy.applyOptionalValue(this::openMode, other::openMode, this::openMode);
+            assignmentPolicy.applyOptionalValue(this::creationTime, other::creationTime, this::creationTime);
+            assignmentPolicy.applyOptionalValue(this::dry, other::dry, this::dry);
+            assignmentPolicy.applyOptionalValue(this::showStacktrace, other::showStacktrace, this::showStacktrace);
+            assignmentPolicy.applyOptionalValue(this::classLoaderSupplier, other::classLoaderSupplier, this::classLoaderSupplier);
+            assignmentPolicy.applyOptionalValue(this::executorOptions, other::executorOptions, this::executorOptions);
+            assignmentPolicy.applyOptionalValue(this::recover, other::recover, this::recover);
+            assignmentPolicy.applyOptionalValue(this::reset, other::reset, this::reset);
+            assignmentPolicy.applyOptionalValue(this::resetHard, other::resetHard, this::resetHard);
+            assignmentPolicy.applyOptionalValue(this::commandVersion, other::commandVersion, this::commandVersion);
+            assignmentPolicy.applyOptionalValue(this::commandHelp, other::commandHelp, this::commandHelp);
+            assignmentPolicy.applyOptionalValue(this::debug, other::debug, this::debug);
+            assignmentPolicy.applyOptionalValue(this::inherited, other::inherited, this::inherited);
+            assignmentPolicy.applyOptionalValue(this::executionType, other::executionType, this::executionType);
+            assignmentPolicy.applyOptionalValue(this::runAs, other::runAs, this::runAs);
+            assignmentPolicy.applyOptionalValue(this::archetype, other::archetype, this::archetype);
+            assignmentPolicy.applyOptionalValue(this::storeStrategy, other::storeStrategy, this::storeStrategy);
+            assignmentPolicy.applyOptionalValue(this::homeLocations, other::homeLocations, this::homeLocations);
+            assignmentPolicy.applyOptionalValue(this::storeLocations, other::storeLocations, this::storeLocations);
+            assignmentPolicy.applyOptionalValue(this::storeLayout, other::storeLayout, this::storeLayout);
+            assignmentPolicy.applyOptionalValue(this::storeStrategy, other::storeStrategy, this::storeStrategy);
+            assignmentPolicy.applyOptionalValue(this::repositoryStoreStrategy, other::repositoryStoreStrategy, this::repositoryStoreStrategy);
+            assignmentPolicy.applyOptionalValue(this::fetchStrategy, other::fetchStrategy, this::fetchStrategy);
+            assignmentPolicy.applyOptionalValue(this::cached, other::cached, this::cached);
+            assignmentPolicy.applyOptionalValue(this::indexed, other::indexed, this::indexed);
+            assignmentPolicy.applyOptionalValue(this::transitive, other::transitive, this::transitive);
+            assignmentPolicy.applyOptionalValue(this::bot, other::bot, this::bot);
+            assignmentPolicy.applyOptionalValue(this::stdin, other::stdin, this::stdin);
+            assignmentPolicy.applyOptionalValue(this::stdout, other::stdout, this::stdout);
+            assignmentPolicy.applyOptionalValue(this::stderr, other::stderr, this::stderr);
+            assignmentPolicy.applyOptionalValue(this::executorService, other::executorService, this::executorService);
+            assignmentPolicy.applyOptionalValue(this::excludedExtensions, other::excludedExtensions, this::excludedExtensions);
+            assignmentPolicy.applyOptionalValue(this::repositories, other::repositories, this::repositories);
+            assignmentPolicy.applyOptionalValue(this::bootRepositories, other::bootRepositories, this::bootRepositories);
+            assignmentPolicy.applyOptionalValue(this::applicationArguments, other::applicationArguments, this::applicationArguments);
+            assignmentPolicy.applyOptionalValue(this::customOptions, other::customOptions, this::customOptions);
+            assignmentPolicy.applyOptionalValue(this::expireTime, other::expireTime, this::expireTime);
+            assignmentPolicy.applyOptionalValue(this::errors, other::errors, this::errors);
+            assignmentPolicy.applyOptionalValue(this::skipErrors, other::skipErrors, this::skipErrors);
+            assignmentPolicy.applyOptionalValue(this::switchWorkspace, other::switchWorkspace, this::switchWorkspace);
+            assignmentPolicy.applyOptionalValue(this::getLocale, other::locale, this::locale);
+            assignmentPolicy.applyOptionalValue(this::getTheme, other::theme, this::theme);
+            assignmentPolicy.applyOptionalValue(this::dependencySolver, other::dependencySolver, this::dependencySolver);
+            assignmentPolicy.applyOptionalValue(this::isolationLevel, other::isolationLevel, this::isolationLevel);
+            assignmentPolicy.applyOptionalValue(this::initLaunchers, other::initLaunchers, this::initLaunchers);
+            assignmentPolicy.applyOptionalValue(this::initJava, other::initJava, this::initJava);
+            assignmentPolicy.applyOptionalValue(this::initScripts, other::initScripts, this::initScripts);
+            assignmentPolicy.applyOptionalValue(this::initLaunchers, other::initLaunchers, this::initLaunchers);
+            assignmentPolicy.applyOptionalValue(this::desktopLauncher, other::desktopLauncher, this::desktopLauncher);
+            assignmentPolicy.applyOptionalValue(this::menuLauncher, other::menuLauncher, this::menuLauncher);
+            assignmentPolicy.applyOptionalValue(this::userLauncher, other::userLauncher, this::userLauncher);
+            assignmentPolicy.applyOptionalValue(this::previewRepo, other::previewRepo, this::previewRepo);
+            assignmentPolicy.applyOptionalValue(this::sharedInstance, other::sharedInstance, this::sharedInstance);
         }
         return this;
     }
@@ -1960,12 +1960,12 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         return this;
     }
 
-    public NOptional<Boolean> getSharedInstance() {
+    public NOptional<Boolean> sharedInstance() {
         return NOptional.ofNamed(sharedInstance, "sharedInstance");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setSharedInstance(Boolean sharedInstance) {
+    public NWorkspaceOptionsBuilder sharedInstance(Boolean sharedInstance) {
         this.sharedInstance = sharedInstance;
         return this;
     }
@@ -2052,12 +2052,12 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
 
     @Override
-    public NOptional<String> getDependencySolver() {
+    public NOptional<String> dependencySolver() {
         return NOptional.ofNamed(dependencySolver, "dependencySolver");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setDependencySolver(String dependencySolver) {
+    public NWorkspaceOptionsBuilder dependencySolver(String dependencySolver) {
         this.dependencySolver = dependencySolver;
         return this;
     }
@@ -2070,28 +2070,28 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     @Override
     public NWorkspaceOptions build() {
         return new DefaultNWorkspaceOptions(
-                getApiVersion().orNull(), getRuntimeId().orNull(), getWorkspace().orNull(),
-                getName().orNull(), getJavaCommand().orNull(), getJavaOptions().orNull(),
-                getOutLinePrefix().orNull(), getErrLinePrefix().orNull(), getUserName().orNull(),
-                getCredential().orNull(), getProgressOptions().orNull(), getDependencySolver().orNull(),
-                getDebug().orNull(), getArchetype().orNull(), getLocale().orNull(), getTheme().orNull(),
-                getLogConfig().orNull(), getConfirm().orNull(), getOutputFormat().orNull(), getOpenMode().orNull(),
-                getExecutionType().orNull(), getStoreStrategy().orNull(), getRepositoryStoreStrategy().orNull(),
-                getStoreLayout().orNull(), getTerminalMode().orNull(), getFetchStrategy().orNull(),
-                getRunAs().orNull(), getCreationTime().orNull(), getExpireTime().orNull(),
-                getInstallCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull(),
-                getSystem().orNull(), getGui().orNull(), getReadOnly().orNull(), getTrace().orNull(),
-                getDry().orNull(), getShowStacktrace().orNull(), getRecover().orNull(), getReset().orNull(), getResetHard().orNull(), getCommandVersion().orNull(),
-                getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(),
-                getIndexed().orNull(), getTransitive().orNull(), getBot().orNull(), getSkipErrors().orNull(),
-                getIsolationLevel().orNull(), getInitLaunchers().orNull(), getInitScripts().orNull(), getInitPlatforms().orNull(),
-                getInitJava().orNull(), getStdin().orNull(), getStdout().orNull(), getStdout().orNull(), getExecutorService().orNull(),
-                getClassLoaderSupplier().orNull(), getApplicationArguments().orNull(), getOutputFormatOptions().orNull(),
-                getCustomOptions().orNull(), getExcludedExtensions().orNull(), getRepositories().orNull(), getBootRepositories().orNull(),
-                getExecutorOptions().orNull(), getErrors().orNull(), getStoreLocations().orNull(), getHomeLocations().orNull(),
-                getDesktopLauncher().orNull(), getMenuLauncher().orNull(), getUserLauncher().orNull()
-                , getPreviewRepo().orNull()
-                , getSharedInstance().orNull()
+                apiVersion().orNull(), runtimeId().orNull(), workspace().orNull(),
+                name().orNull(), javaCommand().orNull(), javaOptions().orNull(),
+                outLinePrefix().orNull(), errLinePrefix().orNull(), userName().orNull(),
+                credential().orNull(), progressOptions().orNull(), dependencySolver().orNull(),
+                debug().orNull(), archetype().orNull(), getLocale().orNull(), getTheme().orNull(),
+                logConfig().orNull(), confirm().orNull(), outputFormat().orNull(), openMode().orNull(),
+                executionType().orNull(), storeStrategy().orNull(), repositoryStoreStrategy().orNull(),
+                storeLayout().orNull(), terminalMode().orNull(), fetchStrategy().orNull(),
+                runAs().orNull(), creationTime().orNull(), expireTime().orNull(),
+                installCompanions().orNull(), skipWelcome().orNull(), skipBoot().orNull(),
+                system().orNull(), gui().orNull(), readOnly().orNull(), trace().orNull(),
+                dry().orNull(), showStacktrace().orNull(), recover().orNull(), reset().orNull(), resetHard().orNull(), commandVersion().orNull(),
+                commandHelp().orNull(), commandHelp().orNull(), switchWorkspace().orNull(), cached().orNull(),
+                indexed().orNull(), transitive().orNull(), bot().orNull(), skipErrors().orNull(),
+                isolationLevel().orNull(), initLaunchers().orNull(), initScripts().orNull(), initPlatforms().orNull(),
+                initJava().orNull(), stdin().orNull(), stdout().orNull(), stdout().orNull(), executorService().orNull(),
+                classLoaderSupplier().orNull(), applicationArguments().orNull(), outputFormatOptions().orNull(),
+                customOptions().orNull(), excludedExtensions().orNull(), repositories().orNull(), bootRepositories().orNull(),
+                executorOptions().orNull(), errors().orNull(), storeLocations().orNull(), homeLocations().orNull(),
+                desktopLauncher().orNull(), menuLauncher().orNull(), userLauncher().orNull()
+                , previewRepo().orNull()
+                , sharedInstance().orNull()
         );
     }
 
@@ -2111,103 +2111,103 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NOptional<NIsolationLevel> getIsolationLevel() {
+    public NOptional<NIsolationLevel> isolationLevel() {
         return NOptional.ofNamed(isolationLevel, "isolationLevel");
     }
 
     @Override
-    public NOptional<Boolean> getInitLaunchers() {
+    public NOptional<Boolean> initLaunchers() {
         return NOptional.ofNamed(initLaunchers, "initLaunchers");
     }
 
     @Override
-    public NOptional<Boolean> getInitScripts() {
+    public NOptional<Boolean> initScripts() {
         return NOptional.ofNamed(initScripts, "initScripts");
     }
 
     @Override
-    public NOptional<Boolean> getInitPlatforms() {
+    public NOptional<Boolean> initPlatforms() {
         return NOptional.ofNamed(initPlatforms, "initPlatforms");
     }
 
     @Override
-    public NOptional<Boolean> getInitJava() {
+    public NOptional<Boolean> initJava() {
         return NOptional.ofNamed(initJava, "initJava");
     }
 
     @Override
     public NWorkspaceOptionsBuilder unsetRuntimeOptions() {
-        setCommandHelp(null);
-        setCommandVersion(null);
-        setOpenMode(null);
-        setExecutionType(null);
-        setRunAs(null);
-        setReset(null);
-        setRecover(null);
-        setDry(null);
-        setShowStacktrace(null);
-        setExecutorOptions(null);
-        setApplicationArguments(null);
+        commandHelp(null);
+        commandVersion(null);
+        openMode(null);
+        executionType(null);
+        runAs(null);
+        reset(null);
+        recover(null);
+        dry(null);
+        showStacktrace(null);
+        executorOptions(null);
+        applicationArguments(null);
         return this;
     }
 
     @Override
     public NWorkspaceOptionsBuilder unsetCreationOptions() {
-        setName(null);
-        setArchetype(null);
-        setStoreLayout(null);
-        setStoreStrategy(null);
-        setRepositoryStoreStrategy(null);
-        setStoreLocations(null);
-        setHomeLocations(null);
-        setSwitchWorkspace(null);
-        setBootRepositories(null);
+        name(null);
+        archetype(null);
+        storeLayout(null);
+        storeStrategy(null);
+        repositoryStoreStrategy(null);
+        storeLocations(null);
+        homeLocations(null);
+        switchWorkspace(null);
+        bootRepositories(null);
         return this;
     }
 
     @Override
     public NWorkspaceOptionsBuilder unsetExportedOptions() {
-        setJavaCommand(null);
-        setJavaOptions(null);
-        setWorkspace(null);
+        javaCommand(null);
+        javaOptions(null);
+        workspace(null);
         setUserName(null);
-        setCredential(null);
-        setApiVersion(null);
-        setRuntimeId(null);
-        setTerminalMode(null);
-        setLogConfig(null);
-        setExcludedExtensions(null);
-        setRepositories(null);
-        setSystem(null);
-        setGui(null);
-        setReadOnly(null);
-        setTrace(null);
-        setProgressOptions(null);
-        setDependencySolver(null);
-        setDebug(null);
-        setInstallCompanions(null);
-        setSkipWelcome(null);
-        setSkipBoot(null);
-        setOutLinePrefix(null);
-        setErrLinePrefix(null);
-        setCached(null);
-        setIndexed(null);
-        setTransitive(null);
-        setBot(null);
-        setFetchStrategy(null);
-        setConfirm(null);
-        setOutputFormat(null);
-        setOutputFormatOptions((List<String>) null);
-        setExpireTime(null);
-        setTheme(null);
-        setLocale(null);
-        setInitLaunchers(null);
-        setInitPlatforms(null);
-        setInitScripts(null);
-        setInitJava(null);
-        setDesktopLauncher(null);
-        setMenuLauncher(null);
-        setUserLauncher(null);
+        credential(null);
+        apiVersion(null);
+        runtimeId(null);
+        terminalMode(null);
+        logConfig(null);
+        excludedExtensions(null);
+        repositories(null);
+        system(null);
+        gui(null);
+        readOnly(null);
+        trace(null);
+        progressOptions(null);
+        dependencySolver(null);
+        debug(null);
+        installCompanions(null);
+        skipWelcome(null);
+        skipBoot(null);
+        outLinePrefix(null);
+        errLinePrefix(null);
+        cached(null);
+        indexed(null);
+        transitive(null);
+        bot(null);
+        fetchStrategy(null);
+        confirm(null);
+        outputFormat(null);
+        outputFormatOptions((List<String>) null);
+        expireTime(null);
+        theme(null);
+        locale(null);
+        initLaunchers(null);
+        initPlatforms(null);
+        initScripts(null);
+        initJava(null);
+        desktopLauncher(null);
+        menuLauncher(null);
+        userLauncher(null);
         return this;
     }
 

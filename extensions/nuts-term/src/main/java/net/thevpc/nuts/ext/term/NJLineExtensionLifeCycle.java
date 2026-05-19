@@ -15,7 +15,7 @@ public class NJLineExtensionLifeCycle implements NExtensionLifeCycle {
 
     @Override
     public void onInitExtension(NWorkspaceExtension extension) {
-        NIO.of().setSystemTerminal(new NJLineTerminal());
+        NIO.of().systemTerminal(new NJLineTerminal());
     }
 
     @Override
@@ -30,6 +30,6 @@ public class NJLineExtensionLifeCycle implements NExtensionLifeCycle {
 
     @Override
     public void onDestroyExtension(NWorkspaceExtension extension) {
-        NIO.of().setSystemTerminal(null);
+        NIO.of().systemTerminal(null);
     }
 }

@@ -183,7 +183,7 @@ public class DefaultNInstall extends AbstractNInstall {
             // In all cases, even though search may be empty we consider that the list is not empty
             // so that no empty exception is thrown
             list.emptyCommand = false;
-            for (NId sid : NExtensions.of().getCompanionIds()) {
+            for (NId sid : NExtensions.of().companionIds()) {
                 if (!list.isVisited(sid)) {
                     List<NId> allIds = NSearch.of().addId(sid).latest(true).targetApiVersion(ws.apiVersion()).getResultIds().toList();
                     if (allIds.isEmpty()) {

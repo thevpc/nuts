@@ -38,13 +38,13 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
 
     public DefaultNConnectionStringBuilder(NConnectionString other) {
         if (other != null) {
-            this.protocol = other.getProtocol();
-            this.userName = other.getUserName();
-            this.password = other.getPassword();
-            this.host = other.getHost();
-            this.port = other.getPort();
-            this.path = other.getPath();
-            this.queryMap = prepareQueryMap(other.getQueryMap().orNull(), false);
+            this.protocol = other.protocol();
+            this.userName = other.userName();
+            this.password = other.password();
+            this.host = other.host();
+            this.port = other.port();
+            this.path = other.path();
+            this.queryMap = prepareQueryMap(other.queryMap().orNull(), false);
         }
     }
 
@@ -83,22 +83,22 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
             path = value;
         }
         value = path;
-        v.setProtocol(protocol);
+        v.protocol(protocol);
         Matcher matcher = NAME_PATTERN.matcher(value);
         String pathAndQuery = null;
         if (matcher.matches()) {
             if (protocol == null) {
                 pathAndQuery = "/" + value;
             } else {
-                v.setHost(value);
+                v.host(value);
             }
         } else {
             matcher = CONNECTION_PATTERN.matcher(value);
             if (matcher.matches()) {
-                v.setUserName(matcher.group("user"));
-                v.setPassword(matcher.group("password"));
-                v.setHost(matcher.group("server"));
-                v.setPort(matcher.group("port"));
+                v.userName(matcher.group("user"));
+                v.password(matcher.group("password"));
+                v.host(matcher.group("server"));
+                v.port(matcher.group("port"));
                 String spath = matcher.group("path");
                 if (spath != null && spath.startsWith(":")) {
                     spath = spath.substring(1);
@@ -113,10 +113,10 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
             if (i >= 0) {
                 String p = pathAndQuery.substring(0, i);
                 String q = pathAndQuery.substring(i + 1);
-                v.setPath(p);
-                v.setQueryString(q);
+                v.path(p);
+                v.queryString(q);
             } else {
-                v.setPath(pathAndQuery);
+                v.path(pathAndQuery);
             }
         }
         return NOptional.of(v);
@@ -124,45 +124,45 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
 
 
     @Override
-    public String getUserName() {
+    public String userName() {
         return userName;
     }
 
     @Override
-    public NConnectionStringBuilder setUserName(String userName) {
+    public NConnectionStringBuilder userName(String userName) {
         this.userName = userName;
         return this;
     }
 
     @Override
-    public String getPassword() {
+    public String password() {
         return password;
     }
 
     @Override
-    public NConnectionStringBuilder setPassword(String password) {
+    public NConnectionStringBuilder password(String password) {
         this.password = password;
         return this;
     }
 
     @Override
-    public String getHost() {
+    public String host() {
         return host;
     }
 
     @Override
-    public NConnectionStringBuilder setHost(String host) {
+    public NConnectionStringBuilder host(String host) {
         this.host = host;
         return this;
     }
 
     @Override
-    public DefaultNConnectionStringBuilder getRoot() {
-        return copy().setPath("/");
+    public DefaultNConnectionStringBuilder root() {
+        return copy().path("/");
     }
 
     @Override
-    public DefaultNConnectionStringBuilder getParent() {
+    public DefaultNConnectionStringBuilder parent() {
         String ppath = path;
         if (NBlankable.isBlank(ppath) || "/".equals(ppath)) {
             return null;
@@ -171,7 +171,7 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
             ppath = ppath.substring(0, ppath.length() - 1);
         }
         if (ppath.isEmpty()) {
-            return copy().setPath("/");
+            return copy().path("/");
         }
         int i = ppath.lastIndexOf('/');
         if (i <= 0) {
@@ -179,16 +179,16 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
         } else {
             ppath = ppath.substring(0, i + 1);
         }
-        return copy().setPath(ppath);
+        return copy().path(ppath);
     }
 
     @Override
-    public String getPort() {
+    public String port() {
         return port;
     }
 
     @Override
-    public DefaultNConnectionStringBuilder setPort(String port) {
+    public DefaultNConnectionStringBuilder port(String port) {
         this.port = port;
         return this;
     }
@@ -198,7 +198,7 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
     }
 
     @Override
-    public NConnectionStringBuilder setQueryMap(Map<String, List<String>> queryMap) {
+    public NConnectionStringBuilder queryMap(Map<String, List<String>> queryMap) {
         this.queryMap = prepareQueryMap(queryMap, false);
         return this;
     }
@@ -294,7 +294,7 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
     }
 
     @Override
-    public NOptional<Map<String, List<String>>> getQueryMap() {
+    public NOptional<Map<String, List<String>>> queryMap() {
         return NOptional.ofNamed(queryMap, "queryMap");
     }
 
@@ -311,23 +311,23 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
     }
 
     @Override
-    public String getPath() {
+    public String path() {
         return path;
     }
 
     @Override
-    public DefaultNConnectionStringBuilder setPath(String path) {
+    public DefaultNConnectionStringBuilder path(String path) {
         this.path = path;
         return this;
     }
 
     @Override
-    public String getProtocol() {
+    public String protocol() {
         return protocol;
     }
 
     @Override
-    public DefaultNConnectionStringBuilder setProtocol(String protocol) {
+    public DefaultNConnectionStringBuilder protocol(String protocol) {
         this.protocol = protocol;
         return this;
     }
@@ -338,7 +338,7 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
     }
 
     @Override
-    public NConnectionStringBuilder setQueryString(String queryString) {
+    public NConnectionStringBuilder queryString(String queryString) {
         this.queryMap = deserializeQueryMap(queryString);
         return this;
     }
@@ -452,7 +452,7 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
     }
 
     @Override
-    public NConnectionStringBuilder setNormalized(boolean normalized) {
+    public NConnectionStringBuilder normalized(boolean normalized) {
         this.normalized = normalized;
         return this;
     }
@@ -474,7 +474,7 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
     }
 
     @Override
-    public List<String> getNames() {
+    public List<String> names() {
         return NStringUtils.split(path, "/", true, true)
                 .stream().map(s -> s).collect(Collectors.toList());
     }
@@ -498,7 +498,7 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
     @Override
     public DefaultNConnectionStringBuilder resolve(String child) {
         if (!NBlankable.isBlank(child)) {
-            return copy().setPath(NStringUtils.pjoin("/", path, child));
+            return copy().path(NStringUtils.pjoin("/", path, child));
         }
         return this;
     }

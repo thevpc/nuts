@@ -27,6 +27,7 @@
 package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NGetter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -112,6 +113,7 @@ public final class NMsgIntent {
         return t;
     }
 
+    @NGetter
     public String name() {
         return name;
     }

@@ -285,14 +285,14 @@ public class NPathFromSPI extends NPathBase {
     @Override
     public InputStream getInputStream(NPathOption... options) {
         return NInputSourceBuilder.of(base.getInputStream(this, options))
-                .setMetadata(metaData())
+                .metadata(metaData())
                 .createInputStream();
     }
 
     @Override
     public OutputStream getOutputStream(NPathOption... options) {
         return NOutputStreamBuilder.of(base.getOutputStream(this, options))
-                .setMetadata(this.metaData())
+                .metadata(this.metaData())
                 .createOutputStream()
                 ;
     }
@@ -625,7 +625,7 @@ public class NPathFromSPI extends NPathBase {
             ).collect(Collectors.toList());
         }
         return list().stream().map(x -> new NPathChildStringDigestInfo().name(x.name()).digest(
-                NHex.fromBytes(x.getDigest())
+                NHex.fromBytes(x.digest())
         )).collect(Collectors.toList());
     }
 

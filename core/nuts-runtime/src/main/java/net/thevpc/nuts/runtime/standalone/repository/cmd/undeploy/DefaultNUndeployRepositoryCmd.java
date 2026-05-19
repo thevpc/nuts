@@ -47,9 +47,9 @@ public class DefaultNUndeployRepositoryCmd extends AbstractNUndeployRepositoryCm
         try {
             NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
             xrepo.undeployImpl(this);
-            if (session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+            if (session.isIndexed() && xrepo.indexStore() != null && xrepo.indexStore().isEnabled()) {
                 try {
-                    xrepo.getIndexStore().invalidate(this.getId());
+                    xrepo.indexStore().invalidate(this.getId());
                 } catch (NException ex) {
                     _LOG().log(
                             NMsg.ofC("error invalidating Indexer for %s : %s", getRepo().name(), ex)

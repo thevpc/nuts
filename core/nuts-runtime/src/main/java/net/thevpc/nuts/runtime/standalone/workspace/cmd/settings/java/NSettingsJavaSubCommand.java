@@ -134,15 +134,15 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                 Arrays.sort(sdks, new Comparator<NExecutionEngineLocation>() {
                     @Override
                     public int compare(NExecutionEngineLocation o1, NExecutionEngineLocation o2) {
-                        int x = o1.getName().compareTo(o2.getName());
+                        int x = o1.name().compareTo(o2.name());
                         if (x != 0) {
                             return x;
                         }
-                        x = o1.getVersion().compareTo(o2.getVersion());
+                        x = o1.version().compareTo(o2.version());
                         if (x != 0) {
                             return x;
                         }
-                        x = o1.getPath().compareTo(o2.getPath());
+                        x = o1.path().compareTo(o2.path());
                         if (x != 0) {
                             return x;
                         }
@@ -150,7 +150,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                     }
                 });
                 for (NExecutionEngineLocation jloc : sdks) {
-                    m.addRow(NText.of(jloc.getName()), NText.of(jloc.getVersion()), NText.of(jloc.getPath()));
+                    m.addRow(NText.of(jloc.name()), NText.of(jloc.version()), NText.of(jloc.path()));
                 }
                 out.print(NTextArt.of().getTableRenderer().get().render(m));
             }

@@ -206,7 +206,7 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
     public NDefinitionFilter byCompanion(NVersion targetApiVersion) {
         return new NDefinitionExecCompanionFilter(
                 targetApiVersion == null ? null : NId.get(NConstants.Ids.NUTS_API).get().builder().version(targetApiVersion).build(),
-                NExtensions.of().getCompanionIds().stream().map(NId::shortName).toArray(String[]::new)
+                NExtensions.of().companionIds().stream().map(NId::shortName).toArray(String[]::new)
         );
     }
 
@@ -401,16 +401,16 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
 
     @Override
     public NDefinitionFilter byCurrentDesktopEnvironmentFamily() {
-        return byDesktopEnvironmentFamily(NEnv.of().getDesktopEnvironmentFamilies().toArray(new NDesktopEnvironmentFamily[0]));
+        return byDesktopEnvironmentFamily(NEnv.of().desktopEnvironmentFamilies().toArray(new NDesktopEnvironmentFamily[0]));
     }
 
     public NDefinitionFilter byCurrentArch() {
-        return byArch(NEnv.of().getArchFamily());
+        return byArch(NEnv.of().archFamily());
     }
 
     @Override
     public NDefinitionFilter byCurrentOsFamily() {
-        return byOsFamily(NEnv.of().getOsFamily());
+        return byOsFamily(NEnv.of().osFamily());
     }
 
     public NDefinitionFilter byCurrentEnv() {

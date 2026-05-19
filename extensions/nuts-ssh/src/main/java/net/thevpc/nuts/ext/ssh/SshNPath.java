@@ -56,9 +56,9 @@ class SshNPath implements NPathSPI {
     @Override
     public NStream<NPath> list(NPath basePath) {
         try (SshConnection c = prepareSshConnection()) {
-            return NStream.ofStream(c.list(path.getPath())
+            return NStream.ofStream(c.list(path.path())
                     .stream()).map(
-                    NFunction.of((String cc) -> NPath.of(path.builder().setPath(cc).build().toString()))
+                    NFunction.of((String cc) -> NPath.of(path.builder().path(cc).build().toString()))
                             .withDescription(NDescribables.ofDesc("NPath::of"))
             );
         } catch (Exception e) {
@@ -82,7 +82,7 @@ class SshNPath implements NPathSPI {
     public NObjectWriterSPI formatter(NPath basePath) {
         return new NObjectWriterSPI() {
             @Override
-            public String getName() {
+            public String name() {
                 return "path";
             }
 
@@ -95,11 +95,11 @@ class SshNPath implements NPathSPI {
 //        if(true) {
                 NTexts text = NTexts.of();
                 NTextBuilder sb = text.ofBuilder();
-                String user = path.getUserName();
-                String host = path.getHost();
-                int port = NLiteral.of(path.getPort()).asInt().orElse(-1);
-                String path0 = path.getPath();
-                String password = path.getPassword();
+                String user = path.userName();
+                String host = path.host();
+                int port = NLiteral.of(path.port()).asInt().orElse(-1);
+                String path0 = path.path();
+                String password = path.password();
                 String keyFile = path.builder().getQueryParam(SshConnection.IDENTITY_FILE).orNull();
 
                 sb.append(text.ofStyled("ssh://", _sep));
@@ -168,13 +168,13 @@ class SshNPath implements NPathSPI {
             return basePath;
         }
         if (isAbsolutePathString(path)) {
-            c.setPath(path);
+            c.path(path);
             return NPath.of(c.toString());
         }
-        List<String> a = splitPath(c.getPath());
+        List<String> a = splitPath(c.path());
         a.addAll(splitPath(path));
         a = normalize(a);
-        c.setPath(joinPathString(a));
+        c.path(joinPathString(a));
         return NPath.of(c.toString());
     }
 
@@ -186,16 +186,16 @@ class SshNPath implements NPathSPI {
         }
 
         if (isAbsolutePathString(path)) {
-            c.setPath(path);
+            c.path(path);
             return NPath.of(c.toString());
         }
-        List<String> a = splitPath(c.getPath());
+        List<String> a = splitPath(c.path());
         a.addAll(splitPath(path));
         a = normalize(a);
         if (!a.isEmpty()) {
             a.remove(a.size() - 1);
         }
-        c.setPath(joinPathString(a));
+        c.path(joinPathString(a));
         return NPath.of(this.path.toString());
     }
 
@@ -247,7 +247,7 @@ class SshNPath implements NPathSPI {
         if (cachedType == null) {
             cachedType = NCachedValue.of(() -> {
                 try (SshConnection c = prepareSshConnection()) {
-                    return c.type(path.getPath());
+                    return c.type(path.path());
                 } catch (Exception e) {
                     return NPathType.NOT_FOUND;
                 }
@@ -264,7 +264,7 @@ class SshNPath implements NPathSPI {
     @Override
     public long getContentLength(NPath basePath) {
         try (SshConnection c = prepareSshConnection()) {
-            return c.getContentLength(path.getPath());
+            return c.getContentLength(path.path());
         } catch (Exception e) {
             return -1;
         }
@@ -273,7 +273,7 @@ class SshNPath implements NPathSPI {
     @Override
     public String getContentEncoding(NPath basePath) {
         try (SshConnection c = prepareSshConnection()) {
-            return c.getContentEncoding(path.getPath());
+            return c.getContentEncoding(path.path());
         } catch (Exception e) {
             return null;
         }
@@ -282,7 +282,7 @@ class SshNPath implements NPathSPI {
     @Override
     public String getContentType(NPath basePath) {
         try (SshConnection c = prepareSshConnection()) {
-            return c.getContentType(path.getPath());
+            return c.getContentType(path.path());
         } catch (Exception e) {
             return null;
         }
@@ -291,7 +291,7 @@ class SshNPath implements NPathSPI {
     @Override
     public String getCharset(NPath basePath) {
         try (SshConnection c = prepareSshConnection()) {
-            return c.getCharset(path.getPath());
+            return c.getCharset(path.path());
         } catch (Exception e) {
             return null;
         }
@@ -299,32 +299,32 @@ class SshNPath implements NPathSPI {
 
     @Override
     public String getLocation(NPath basePath) {
-        return path.getPath();
+        return path.path();
     }
 
     @Override
     public InputStream getInputStream(NPath basePath, NPathOption... options) {
         try (SshConnection session = prepareSshConnection()) {
-            return session.getInputStream(path.getPath());
+            return session.getInputStream(path.path());
         }
     }
 
     @Override
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
         try (SshConnection session = prepareSshConnection()) {
-            return session.getOutputStream(path.getPath());
+            return session.getOutputStream(path.path());
         }
     }
 
     public void delete(NPath basePath, boolean recurse) {
         try (SshConnection session = prepareSshConnection()) {
-            session.rm(path.getPath(), recurse);
+            session.rm(path.path(), recurse);
         }
     }
 
     public void mkdir(boolean parents, NPath basePath) {
         try (SshConnection c = prepareSshConnection()) {
-            c.mkdir(path.getPath(), parents);
+            c.mkdir(path.path(), parents);
         }
     }
 
@@ -345,11 +345,11 @@ class SshNPath implements NPathSPI {
 
     @Override
     public NPath getParent(NPath basePath) {
-        String loc = getURLParentPath(this.path.getPath());
+        String loc = getURLParentPath(this.path.path());
         if (loc == null) {
             return null;
         }
-        return NPath.of(path.builder().setPath(loc).build().toString());
+        return NPath.of(path.builder().path(loc).build().toString());
     }
 
     @Override
@@ -425,7 +425,7 @@ class SshNPath implements NPathSPI {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return NPath.of(path.builder().setPath("/").build().toString());
+        return NPath.of(path.builder().path("/").build().toString());
     }
 
     @Override
@@ -433,11 +433,11 @@ class SshNPath implements NPathSPI {
 //        Set<NPathOption> optionsSet = new HashSet<>();
 //        optionsSet.addAll(Arrays.asList(options));
         try (SshConnection c = prepareSshConnection()) {
-            List<String> ss = c.walk(path.getPath(), true, maxDepth);
+            List<String> ss = c.walk(path.path(), true, maxDepth);
             return NStream.ofIterable(ss).map(
                     NFunction.of(
                             (String x) -> {
-                                return NPath.of(path.builder().setPath(x).build().toString());
+                                return NPath.of(path.builder().path(x).build().toString());
                             }
 
                     ).withDescription(NDescribables.ofDesc("NPath::of"))
@@ -463,12 +463,12 @@ class SshNPath implements NPathSPI {
         if (other.toString().startsWith("ssh:")) {
             NConnectionStringBuilder sp = NConnectionStringBuilder.of(other.toString());
             if (
-                    Objects.equals(sp.getHost(), path.getHost())
-                            && Objects.equals(sp.getUserName(), path.getUserName())
+                    Objects.equals(sp.host(), path.host())
+                            && Objects.equals(sp.userName(), path.userName())
             ) {
                 int r = -1;
                 try (SshConnection c = prepareSshConnection()) {
-                    r = c.mv(path.getPath(), sp.getPath());
+                    r = c.mv(path.path(), sp.path());
                 }
                 if (r != 0) {
                     throw new NIOException(NMsg.ofC("unable to move %s", this));
@@ -493,7 +493,7 @@ class SshNPath implements NPathSPI {
                 if (ssh1.path.withPath("/").equals(ssh2.path.withPath("/"))) {
                     // same filesystem
                     try (SshConnection session = prepareSshConnection()) {
-                        session.cp(ssh1.path.getPath(), ssh2.path.getPath(), true);
+                        session.cp(ssh1.path.path(), ssh2.path.path(), true);
                         return true;
                     }
                 }
@@ -518,15 +518,15 @@ class SshNPath implements NPathSPI {
     @Override
     public String toString() {
         NConnectionStringBuilder c = path.builder();
-        c.setQueryString(null);
-        c.setPath(null);
+        c.queryString(null);
+        c.path(null);
         StringBuilder sb = new StringBuilder();
         sb.append(c);
         sb.append(':');
-        sb.append(path.getPath());
-        if (!NBlankable.isBlank(path.getQueryString())) {
+        sb.append(path.path());
+        if (!NBlankable.isBlank(path.queryString())) {
             sb.append('?');
-            sb.append(path.getQueryString());
+            sb.append(path.queryString());
         }
         return sb.toString();
     }
@@ -534,7 +534,7 @@ class SshNPath implements NPathSPI {
     @Override
     public byte[] getDigest(NPath basePath, String algo) {
         try (SshConnection c = prepareSshConnection()) {
-            return c.getDigestWithCommand(algo, path.getPath());
+            return c.getDigestWithCommand(algo, path.path());
         }
     }
 
@@ -570,16 +570,16 @@ class SshNPath implements NPathSPI {
     @Override
     public NPathInfo getInfo(NPath basePath) {
         try (SshConnection c = prepareSshConnection()) {
-            return c.getInfo(path.getPath());
+            return c.getInfo(path.path());
         } catch (Exception e) {
-            return DefaultNPathInfo.ofNotFound(path.getPath());
+            return DefaultNPathInfo.ofNotFound(path.path());
         }
     }
 
     @Override
     public List<NPathInfo> listInfos(NPath basePath) {
         try (SshConnection c = prepareSshConnection()) {
-            return c.listInfos(path.getPath());
+            return c.listInfos(path.path());
         } catch (Exception e) {
             return Collections.emptyList();
         }

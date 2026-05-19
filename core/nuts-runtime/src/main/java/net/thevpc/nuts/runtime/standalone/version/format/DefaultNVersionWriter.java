@@ -99,7 +99,7 @@ public class DefaultNVersionWriter extends DefaultObjectWriterBase<NVersionWrite
                     )
             );
         }else{
-            out = out.setTerminalMode(NTerminalMode.FILTERED);
+            out = out.terminalMode(NTerminalMode.FILTERED);
             out.print(aValue.toString());
         }
     }
@@ -116,7 +116,7 @@ public class DefaultNVersionWriter extends DefaultObjectWriterBase<NVersionWrite
         if (all) {
             props.put("java-version", System.getProperty("java.version"));
             NEnv environment = NEnv.of();
-            props.put("os-version", environment.getOs().version().toString());
+            props.put("os-version", environment.os().version().toString());
         }
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));
